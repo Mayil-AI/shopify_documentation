@@ -1,0 +1,30 @@
+Testing
+ Review process
+ Theme success
+ Overview
+ Prohibited actions
+ Managing theme reviews
+ Brand asset guidance
+ Updating your theme
+ Removing a theme
+ Theme revenue share
+ Removing your theme from the Shopify Theme Store
+ This guide describes the process of removing a theme that you no longer want to support from the Shopify Theme Store.
+ Should I remove a theme?
+ The success of a merchant’s business depends greatly on their theme, and removing a theme from the Shopify Theme Store could have an adverse impact on their business. When purchasing a theme, a merchant expects that the theme includes support, future platform updates, and bug fixes.
+ As a Shopify Partner, you have a responsibility to your merchants, and removing a theme should always be a last resort. When removing your theme, make sure to minimize the negative impact on merchants.
+ Tip
+ If your reason for removing a theme is related to poor sales, then explore ways to improve your theme’s success.
+ Removing a theme
+ If you want to remove a theme that you've listed on the Shopify Theme Store, then contact Partner Support through your Partner Dashboard and inform them that you want to notify the Theme Store Operations team that you intend to remove your theme. Make sure that you provide the reasons behind your decision.
+ While you wait for your theme to be removed, you need to continue supporting your theme and providing bug fixes. You're also expected to continue to support existing merchants using your theme with general bug fixes and maintenance for at least one month after removal.
+ Caution
+ Failing to follow these guidelines can impact your relationship with Shopify and the Shopify Theme Store.
+ Previous theme removals or inactive themes
+ If a theme has been removed from the Shopify Theme Store or is inactive for over two years, then Shopify has the right to reuse the theme's name for a different theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Should I remove a theme?
+ Removing a theme
+ Previous theme removals or inactive themes

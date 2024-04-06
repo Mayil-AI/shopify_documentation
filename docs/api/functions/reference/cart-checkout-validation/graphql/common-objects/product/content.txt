@@ -1,0 +1,80 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Product object
+ 2024-04 latest
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Represents a product.
+ On this page
+ Fields
+ Types that return Product
+ Implements
+ Fields
+ handle (Handle!)
+ A unique human-friendly string of the product's title.
+ hasAnyTag (Boolean!)
+ Whether the product has any of the given tags.
+ Argument Description
+ tags ( [String!]! ) required
+ The tags to check.
+ Default value: []
+ hasTags ([HasTagResponse!]!)
+ Whether the product has the given tags.
+ Argument Description
+ tags ( [String!]! ) required
+ The tags to check.
+ Default value: []
+ id (ID!)
+ A globally-unique identifier.
+ inAnyCollection (Boolean!)
+ Whether the product is in any of the given collections.
+ Argument Description
+ ids ( [ID!]! ) required
+ The IDs of the collections to check.
+ Default value: []
+ inCollections ([CollectionMembership!]!)
+ Whether the product is in the given collections.
+ Argument Description
+ ids ( [ID!]! ) required
+ The IDs of the collections to check.
+ Default value: []
+ isGiftCard (Boolean!)
+ Whether the product is a gift card.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ productType (String)
+ The product type specified by the merchant.
+ title (String!)
+ The localized title of the product in the customer’s locale.
+ vendor (String)
+ The name of the product's vendor.
+ Types that return Product
+ ProductVariant.product
+ Implements
+ HasMetafields
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Was this page helpful?
+ YesNo

@@ -1,0 +1,460 @@
+Product subscription app extensions
+ Retrieve product data using the new product model
+ After you understand the new product model, you can use it to interact with products, variants, and options in a store.
+ In this guide, you'll use the GraphQL Admin API to query product variant data.
+ Note
+ If your app or use case aligns with the database sync workflow, then use the productSet mutation to retrieve data asynchronously.
+ What you'll learn
+ In this guide, you'll learn how to request data on existing product variants using the GraphQL Admin API, taking into consideration GraphQL features like nested pagination. Nested pagination might be new to you if you're migrating from the REST Admin API.
+ Query product variants with fragments and cursor-based pagination
+ Retrieving a list of product variants with the GraphQL Admin API may require pagination if the number of variants exceeds the page size limit of 250. For example, to fetch data from 300 variants in a product, you need to run a query to retrieve 250 variants and then run it again to retrieve the remaining 50.
+ The following examples demonstrate how to use fragments and cursor-based pagination to query product variants with the GraphQL Admin API. In this context, nested pagination refers to the process of retrieving all variants (a nested field) of a product in multiple steps due to the page size limit. Initially, the first 250 variants are fetched. Then, using the cursor from the last variant of the first batch, the remaining variants are fetched in a subsequent query.
+ Fragments example: Product fields
+ Use fragments to request the same fields in multiple queries without duplicating them:
+ Fragment for requesting product data across multiple queries
+ 1 fragment ProductFields on Product {
+ 2
+    id
+ 3
+    title
+ 4
+    description
+ 5
+    options {
+ 6
+      id
+ 7
+      name
+ 8
+      position
+ 9
+      values
+ 10
+      optionValues {
+ 11
+        id
+ 12
+        name
+ 13
+        hasVariants
+ 14
+      }
+ 15
+    }
+ 16 }
+ Fragments example: Variant fields
+ Use fragments to request the same fields in multiple queries without duplicating them:
+ Fragment for requesting product variant data across multiple queries
+ 1 fragment VariantFields on ProductVariant {
+ 2
+    id
+ 3
+    title
+ 4
+    price
+ 5
+    sku
+ 6 }
+ Query the first 250 variants
+ GraphQL offers a cursor field, which acts as a reference to a node's position in a connection. To ensure that you can retrieve all of the nodes in a connection, or, all of the variants that are attached to a product, request the cursor field. You can pass this value in your next query to start retrieving where you left off.
+ The first query requests the first 250 variants:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query GetProductAndFirst250Variants {
+ 2
+    product(id: "gid://shopify/Product/456") {
+ 3
+      ...ProductFields
+ 4
+      variants(first: 250) {
+ 5
+        edges {
+ 6
+          cursor
+ 7
+          node {
+ 8
+            ...VariantFields
+ 9
+          }
+ 10
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "id": "gid://shopify/Product/18",
+ 5
+        "title": "My Extra Cool Socks",
+ 6
+        "description": "",
+ 7
+        "options": [
+ 8
+          {
+ 9
+            "id": "gid://shopify/ProductOption/42",
+ 10
+            "name": "Color",
+ 11
+            "position": 1,
+ 12
+            "values": [
+ 13
+              "Blue",
+ 14
+              "Yellow",
+ 15
+              "Orange",
+ 16
+              "Turquoise",
+ 17
+              "Red",
+ 18
+              "Green"
+ 19
+            ],
+ 20
+            "optionValues": [
+ 21
+              {
+ 22
+                "id": "gid://shopify/ProductOptionValue/161",
+ 23
+                "name": "Blue",
+ 24
+                "hasVariants": true
+ 25
+              },
+ 26
+              {
+ 27
+                "id": "gid://shopify/ProductOptionValue/170",
+ 28
+                "name": "Yellow",
+ 29
+                "hasVariants": true
+ 30
+              },
+ 31
+              {
+ 32
+                "id": "gid://shopify/ProductOptionValue/171",
+ 33
+                "name": "Orange",
+ 34
+                "hasVariants": true
+ 35
+              },
+ 36
+              {
+ 37
+                "id": "gid://shopify/ProductOptionValue/172",
+ 38
+                "name": "Turquoise",
+ 39
+                "hasVariants": true
+ 40
+              },
+ 41
+              {
+ 42
+                "id": "gid://shopify/ProductOptionValue/173",
+ 43
+                "name": "Red",
+ 44
+                "hasVariants": true
+ 45
+              },
+ 46
+              {
+ 47
+                "id": "gid://shopify/ProductOptionValue/174",
+ 48
+                "name": "Green",
+ 49
+                "hasVariants": true
+ 50
+              }
+ 51
+            ]
+ 52
+          },
+ 53
+          {
+ 54
+            "id": "gid://shopify/ProductOption/44",
+ 55
+            "name": "Fabric",
+ 56
+            "position": 2,
+ 57
+            "values": [
+ 58
+              "Cotton",
+ 59
+              "Wool"
+ 60
+            ],
+ 61
+            "optionValues": [
+ 62
+              {
+ 63
+                "id": "gid://shopify/ProductOptionValue/165",
+ 64
+                "name": "Cotton",
+ 65
+                "hasVariants": true
+ 66
+              },
+ 67
+              {
+ 68
+                "id": "gid://shopify/ProductOptionValue/166",
+ 69
+                "name": "Wool",
+ 70
+                "hasVariants": true
+ 71
+              }
+ 72
+            ]
+ 73
+          }
+ 74
+        ],
+ 75
+        "variants": {
+ 76
+          "edges": [
+ 77
+            {
+ 78
+              "cursor": "eyJsYXN0X2lkIjoxNDI5LCJsYXN0X3ZhbHVlIjoiMSJ9",
+ 79
+              "node": {
+ 80
+                "id": "gid://shopify/ProductVariant/1429",
+ 81
+                "title": "Blue / Cotton",
+ 82
+                "price": "4.99",
+ 83
+                "sku": ""
+ 84
+              }
+ 85
+            },
+ 86
+            {
+ 87
+              "cursor": "eyJsYXN0X2lkIjoxNDMyLCJsYXN0X3ZhbHVlIjoiMiJ9",
+ 88
+              "node": {
+ 89
+                "id": "gid://shopify/ProductVariant/1432",
+ 90
+                "title": "Yellow / Cotton",
+ 91
+                "price": "4.99",
+ 92
+                "sku": ""
+ 93
+              }
+ 94
+            },
+ 95
+            {
+ 96
+              "cursor": "eyJsYXN0X2lkIjoxNDMzLCJsYXN0X3ZhbHVlIjoiMyJ9",
+ 97
+              "node": {
+ 98
+                "id": "gid://shopify/ProductVariant/1433",
+ 99
+                "title": "Orange / Cotton",
+ 100
+                "price": "4.99",
+ 101
+                "sku": ""
+ 102
+              }
+ 103
+            },
+ 104
+            {
+ 105
+              "cursor": "eyJsYXN0X2lkIjoxNDM0LCJsYXN0X3ZhbHVlIjoiNCJ9",
+ 106
+              "node": {
+ 107
+                "id": "gid://shopify/ProductVariant/1434",
+ 108
+                "title": "Turquoise / Wool",
+ 109
+                "price": "4.99",
+ 110
+                "sku": ""
+ 111
+              }
+ 112
+            },
+ 113
+            {
+ 114
+              "cursor": "eyJsYXN0X2lkIjoxNDM1LCJsYXN0X3ZhbHVlIjoiNSJ9",
+ 115
+              "node": {
+ 116
+                "id": "gid://shopify/ProductVariant/1435",
+ 117
+                "title": "Blue / Wool",
+ 118
+                "price": "4.99",
+ 119
+                "sku": ""
+ 120
+              }
+ 121
+            },
+ 122
+            {
+ 123
+              "cursor": "eyJsYXN0X2lkIjoxNDM2LCJsYXN0X3ZhbHVlIjoiNiJ9",
+ 124
+              "node": {
+ 125
+                "id": "gid://shopify/ProductVariant/1436",
+ 126
+                "title": "Red / Wool",
+ 127
+                "price": "4.99",
+ 128
+                "sku": ""
+ 129
+              }
+ 130
+            },
+ 131
+            {
+ 132
+              "cursor": "eyJsYXN0X2lkIjoxNDM3LCJsYXN0X3ZhbHVlIjoiNyJ9",
+ 133
+              "node": {
+ 134
+                "id": "gid://shopify/ProductVariant/1437",
+ 135
+                "title": "Green / Wool",
+ 136
+                "price": "4.99",
+ 137
+                "sku": ""
+ 138
+              }
+ 139
+            },
+ 140
+            {
+ 141
+              "cursor": "eyJsYXN0X2lkIjoxNDM4LCJsYXN0X3ZhbHVlIjoiOCJ9",
+ 142
+              "node": {
+ 143
+                "id": "gid://shopify/ProductVariant/1438",
+ 144
+                "title": "Orange / Wool",
+ 145
+                "price": "4.99",
+ 146
+                "sku": ""
+ 147
+              }
+ 148
+            },
+ 149
+            {
+ 150
+              "cursor": "eyJsYXN0X2lkIjoxNDM5LCJsYXN0X3ZhbHVlIjoiOSJ9",
+ 151
+              "node": {
+ 152
+                "id": "gid://shopify/ProductVariant/1439",
+ 153
+                "title": "Yellow / Wool",
+ 154
+                "price": "4.99",
+ 155
+                "sku": ""
+ 156
+              }
+ 157
+            }
+ 158
+          ]
+ 159
+        }
+ 160
+      }
+ 161
+    }
+ 162 }
+ Query the remaining variants
+ The second query requests the next set of data, or the remaining 50 variants, by passing the cursor value in an after argument:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query GetProductAndLast50Variants {
+ 2
+    product(id: "gid://shopify/Product/456") {
+ 3
+      ...ProductFields
+ 4
+      variants(first: 50, after: "eyJsYXN0X2lkIjoxLCJsYXN0X3ZhbHVlIjoiMSJ9") {
+            ...VariantFields
+ 8
+          }
+ 9
+        }
+ JSON response
+ 1 {
+ 2
+    // The response's data structure will be the same as the return for the first 250 variants
+ 3 }
+ Tip: Check the number of product variants
+ A quick way to check the number of variants in a product is by requesting the Product object's variantCount field. This field is useful when you're managing large volumes of variants, and is highly optimized.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query GetProductVariantsCount {
+ 2
+    product(id: "gid://shopify/Product/456") {
+ 3
+      variantsCount
+ 4
+    }
+ 5 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "variantsCount": 9
+ Next steps
+ Add data
+ Learn how to add product data, including variants and options.
+ Edit data
+ Learn how to edit product data, including variants and options.
+ Sync data
+ Learn how you can sync product data from an external source into Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Query product variants with fragments and cursor-based pagination
+ Next steps
+ Updates & News
+ Developer changelog

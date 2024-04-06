@@ -1,0 +1,195 @@
+Billing
+ Bulk operations
+ Cart
+ Checkout branding
+ Common objects
+ Customers
+ Queries
+ Mutations
+ Objects
+ Customer
+ CustomerAccountsV2
+ CustomerCreditCard
+ CustomerCreditCardBillingAddress
+ CustomerEmailAddress
+ CustomerEmailMarketingConsentState
+ CustomerMergeable
+ CustomerMergeError
+ CustomerMergePreview
+ CustomerMergePreviewAlternateFields
+ CustomerMergePreviewBlockingFields
+ CustomerMergePreviewDefaultFields
+ CustomerMergeRequest
+ CustomerPaymentInstrumentBillingAddress
+ CustomerPaymentMethod
+ Fields
+ Connections
+ Queries
+ Mutations
+ Implements
+ CustomerPaypalBillingAgreement
+ CustomerPhoneNumber
+ CustomerSegmentMember
+ CustomerSegmentMembersQuery
+ CustomerShopPayAgreement
+ CustomerSmsMarketingConsentError
+ CustomerSmsMarketingConsentState
+ CustomerStatistics
+ Segment
+ SegmentAssociationFilter
+ SegmentAttributeStatistics
+ SegmentBooleanFilter
+ SegmentDateFilter
+ SegmentEnumFilter
+ SegmentEventFilter
+ SegmentEventFilterParameter
+ SegmentFloatFilter
+ SegmentIntegerFilter
+ SegmentMembership
+ SegmentMembershipResponse
+ SegmentMigration
+ SegmentStatistics
+ SegmentStringFilter
+ SegmentValue
+ TaxAppConfiguration
+ Discounts and marketing
+ Events
+ Inventory
+ Localizations
+ Marketplaces
+ Metafields
+ Metaobjects
+ Online store
+ Orders
+ Products and collections
+ Retail
+ Shipping and fulfillment
+ Shopify Markets
+ Shopify Payments
+ Store properties
+ GraphQL Types
+ CustomerPaymentMethod
+ object
+ Requires read_customers access scope. Also: Requires read_customer_payment_methods scope.
+ A customer's payment method.
+ Fields
+ customer
+ Customer
+ The customer to whom the payment method belongs.
+ Show fields
+ id
+ ID!
+ non-null
+ The ID of this payment method.
+ instrument
+ CustomerPaymentInstrument
+ The instrument for this payment method.
+ Show union types
+ revokedAt
+ DateTime
+ The time that the payment method was revoked.
+ revokedReason
+ CustomerPaymentMethodRevocationReason
+ The revocation reason for this payment method.
+ Show enum values
+ Was this section helpful?
+ YesNo
+ Connections
+ subscriptionContracts
+ [SubscriptionContract!]!
+ non-null
+ List Subscription Contracts.
+ Show arguments and fields
+ Was this section helpful?
+ YesNo
+ Map
+ Fields from
+ CustomerPaymentMethodEdge
+ .
+ node
+ SubscriptionBillingCycleEditedContract
+ .
+ customerPaymentMethod
+ SubscriptionContract
+ .
+ customerPaymentMethod
+ SubscriptionDraft
+ .
+ customerPaymentMethod
+ Connections from
+ Customer
+ .
+ paymentMethods
+ CustomerPaymentMethodConnection
+ .
+ nodes
+ CustomerPaymentMethod
+ Queries
+ customer
+ PaymentMethod
+ (arguments)
+ query
+ Returns a CustomerPaymentMethod resource by its ID.
+ Show arguments and fields
+ Was this section helpful?
+ YesNo
+ <?>
+ CustomerPaymentMethod Queries
+ CustomerPaymentMethod
+ Queried by
+ customerPaymentMethod
+ Mutations
+ customer
+ PaymentMethodCreditCardCreate
+ (arguments)
+ mutation
+ Creates a credit card payment method for a customer using a session id. These values are only obtained through card imports happening from a PCI compliant environment. Please use customerPaymentMethodRemoteCreate if you are not managing credit cards directly.
+ Show arguments
+ customer
+ PaymentMethodCreditCardUpdate
+ (arguments)
+ mutation
+ Updates the credit card payment method for a customer.
+ Show arguments
+ customer
+ PaymentMethodPaypalBillingAgreementCreate
+ (arguments)
+ mutation
+ Creates a PayPal billing agreement for a customer.
+ Show arguments
+ customer
+ PaymentMethodPaypalBillingAgreementUpdate
+ (arguments)
+ mutation
+ Updates a PayPal billing agreement for a customer.
+ Show arguments
+ customer
+ PaymentMethodRemoteCreate
+ (arguments)
+ mutation
+ Create a payment method from remote gateway identifiers.
+ Show arguments
+ Show deprecated mutations
+ deprecated
+ Was this section helpful?
+ YesNo
+ <~>
+ CustomerPaymentMethod Mutations
+ CustomerPaymentMethod
+ Mutated by
+ customerPaymentMethodCreditCardCreate
+ customerPaymentMethodCreditCardUpdate
+ customerPaymentMethodPaypalBillingAgreementCreate
+ customerPaymentMethodPaypalBillingAgreementUpdate
+ customerPaymentMethodRemoteCreate
+ Show deprecated mutations
+ Implements
+ Node
+ interface
+ Was this section helpful?
+ YesNo
+ ||-
+ CustomerPaymentMethod Implements
+ CustomerPaymentMethod
+ Implements
+ Node

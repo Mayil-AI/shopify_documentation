@@ -1,0 +1,30 @@
+Overview
+ Getting started
+ Overview
+ Get started
+ Channel app
+ Marketplace homepage
+ Developer tools
+ Shop discovery
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Creating a channel app experience
+ Previously, you created a marketplace framework that included a basic merchant-facing page for your channel app in the Shopify admin. The merchant-facing channel app that you cloned includes the code that's required for a basic overview page and product listings on the merchant-facing page.
+ Requirements
+ You've completed the tutorial for getting started with Marketplace Kit.
+ Channel app overview page
+ The Channels UI component library creates a simple channel app overview page in the Shopify admin allowing merchants the ability to see what they've listed and which products are available in your marketplace.
+ Next steps
+ Learn how to connect the buyer-facing marketplace homepage to merchant stores.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Channel app overview page
+ Next steps
+ Updates & News
+ Developer changelog

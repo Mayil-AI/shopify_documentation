@@ -1,0 +1,85 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Section Rendering API
+ You can use the Section Rendering API to request the HTML markup for theme sections using an AJAX request. This can allow you to update page content without reloading the entire page by fetching and dynamically replacing only certain elements.
+ For example, you can use the Section Rendering API to paginate search results without performing a full page reload between pages.
+ Tip
+ If you want to use the Section Rendering API to update a page based on changes to the cart, then you should consider bundled section rendering.
+ Request sections
+ You can use the sections query parameter to render up to five sections, identified by their section IDs. The response is a JSON object that includes pairs for each section ID and its corresponding rendered HTML.
+ The sections parameter can be a comma-separated list of IDs or an array:
+ Example
+ 1 ?sections=main-password-header,sections--1234__header
+ 2 ?sections[]=main-password-header&sections[]=sections--1234__header
+ Sections can be rendered in the context of any page by appending the sections parameter to any page URL. For example, you can request /?sections=sections--1234__header for the root page, or you can request /collections/featured?sections=sections--1234__header for a featured collection page.
+ Note
+ You can't specify section setting values through the Section Rendering API. If a requested section exists in a template, or is statically rendered, then the existing section settings apply. Otherwise, any default values are used.
+ The following example code requests two sections using a JavaScript XMLHttpRequest:
+ Example
+ 1 function handleResponse() {
+ 2
+    JSON.parse(this.responseText);
+ 3 }
+ 4
+ 5 const request = new XMLHttpRequest();
+ 6
+ 7 request.addEventListener('load', handleResponse);
+ 8 request.open('GET', '/?sections=main-password-header,sections--1234__header', true);
+ 9 request.send();
+ Response text
+ 1 {
+ 2
+    "header": "<div id=\"shopify-section-main-password-header\" class=\"shopify-section\">\n<!-- section content -->\n</div>",
+ 3
+    "footer": "<div id=\"shopify-section-sections--1234__header\" class=\"shopify-section shopify-section-group-header-group\">\n<!-- section content -->\n</div>"
+ 4 }
+ Tip
+ Any query parameters that are respected when rendering the full page, such as q or page, are also respected when sections are rendered.
+ Sections error response
+ Sections that fail to render, including those that fail because they do not exist for the published theme, are returned as null in the JSON response. A response might have an HTTP 200 status, but still include one or more sections that failed to render. Because of this, you should account for the possibility of null sections.
+ Request a single section
+ You can use the sections parameter and its JSON response in most cases, including rendering a single section. As an alternative, you can use the section_id query parameter to request a single section.
+ Example
+ 1 ?section_id=main-password-header
+ Sections rendered in response to the section_id query parameter are returned directly as HTML and, like sections, this parameter can be used to render a section in the context of any page.
+ Note
+ You can't specify section setting values through the Section Rendering API. If a requested section exists in a template, or is statically rendered, then the existing section settings apply. Otherwise, any default values are used.
+ Single section error response
+ If the requested section ID doesn’t exist on the theme, then the server responds with a 404 status.
+ Find section IDs
+ You can access a section ID in two ways:
+ Through the Liquid section object, using section.id
+ Extract it from the ID attribute of the section wrapper
+ Tip
+ If you want to reference a statically rendered section, then the section ID is the file name. For example, if you had a social.liquid section, then the ID would be social.
+ Extract a section ID from the wrapper
+ You can extract a section ID from the ID attribute of the section wrapper. For example, the following is the general format for a section wrapper:
+ Section wrapper format
+ 1 <div id="shopify-section-[section-id]" class="shopify-section">
+ 2
+    <!-- section content -->
+ 3 </div>
+ If a section is included in a JSON template or a section group, then it's assigned a dynamic section ID. Dynamic section IDs ensure no two sections of the same type have the same ID.
+ For example, a section inside of a section group might have an ID of sections--1234__header, and a section inside of a JSON template might have an ID of template--5678__image_banner.
+ Locale-aware URLs
+ Stores can have dynamic URLs generated for them when they sell internationally or in multiple languages. When using the Section Rendering API, it’s important to use dynamic, locale-aware URLs so that you can give visitors a consistent experience for the language and country that they’ve chosen.
+ The global value window.Shopify.routes.root is available to use as a base when building locale-aware URLs in JavaScript:
+ Loading a section in the context of the root
+ 1 fetch(window.Shopify.routes.root + "?sections={section-id}")
+ 2
+    .then(res => res.json())
+ Alternatively, a section can be loaded in the context of the current page by using window.location.pathname as a base:
+ Loading a section in the context of the current page
+ 1 fetch(window.location.pathname + "?sections={section-id}")
+ 2
+    .then(res => res.json())
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Request sections
+ Request a single section
+ Find section IDs
+ Locale-aware URLs
+ Updates & News

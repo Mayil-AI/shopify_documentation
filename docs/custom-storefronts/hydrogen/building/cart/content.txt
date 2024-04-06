@@ -1,0 +1,210 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Build a Cart with Hydrogen
+ Previously, you built a product page. Your Hydrogen storefront now renders detailed information about products and provides a "Shop Pay" button to customers. You're now ready to build a cart in your app.
+ In this tutorial, you'll build a cart that contains the merchandise that a customer wants to buy, and the estimated cost that's associated with the cart.
+ The Skeleton template you're working with ships with a cart handler already configured and some essential components. In this tutorial, you'll wire everything up. To learn how to build a cart from scratch, refer to the cart docs.
+ What you’ll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Create a cart route with a Remix action to handle submitted form data
+ Update the product details page to include an Add to cart option
+ Requirements
+ You’ve built a product page.
+ You're using API version 2023-07 or higher.
+ Step 1: Create a cart route
+ Your first step is to set up a route that handles adding, removing and updating cart lines as well as discount codes.
+ Create a new file app/routes/cart.jsx and add the following code:
+ app/routes/cart.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3
+ 4 export async function action({request, context}) {
+ 5
+    // The Skeleton template already has a cart handler which is passed
+ 6
+    // to the loader and action context.
+ 7
+    const {cart} = context;
+ 8
+ 9
+    const formData = await request.formData();
+ 10
+    const {action, inputs} = CartForm.getFormInput(formData);
+ 11
+ 12
+    if (!action) {
+ 13
+      throw new Error('No action provided');
+ 14
+    }
+ 15
+ 16
+    let status = 200;
+ 17
+    let result;
+ 18
+ 19
+    switch (action) {
+ 20
+      case CartForm.ACTIONS.LinesAdd:
+ 21
+        result = await cart.addLines(inputs.lines);
+ 22
+        break;
+ 23
+      case CartForm.ACTIONS.LinesUpdate:
+ 24
+        result = await cart.updateLines(inputs.lines);
+ 25
+        break;
+ 26
+      case CartForm.ACTIONS.LinesRemove:
+ 27
+        result = await cart.removeLines(inputs.lineIds);
+ 28
+        break;
+ 29
+      case CartForm.ACTIONS.DiscountCodesUpdate: {
+ 30
+        const formDiscountCode = inputs.discountCode;
+ 31
+ 32
+        // User inputted discount code
+ 33
+        const discountCodes = formDiscountCode ? [formDiscountCode] : [];
+ 34
+ 35
+        // Combine discount codes already applied on cart
+ 36
+        discountCodes.push(...inputs.discountCodes);
+ 37
+ 38
+        result = await cart.updateDiscountCodes(discountCodes);
+ 39
+        break;
+ 40
+      }
+ 41
+      default:
+ 42
+        throw new Error(`${action} cart action is not defined`);
+ 43
+    }
+ 44
+ 45
+    const headers = cart.setCartId(result.cart.id);
+ 46
+    const {cart: cartResult, errors} = result;
+ 47
+ 48
+    const redirectTo = formData.get('redirectTo') ?? null;
+ 49
+    if (typeof redirectTo === 'string') {
+ 50
+      status = 303;
+ 51
+      headers.set('Location', redirectTo);
+ 52
+    }
+ 53
+ 54
+    return json(
+ 55
+      {
+ 56
+        cart: cartResult,
+ 57
+        errors,
+ 58
+      },
+ 59
+      {status, headers},
+ 60
+    );
+ 61 }
+ Your cart action function is ready to accept form requests for adding, updating, and removing cart items as well as discount codes.
+ Step 2: Create an Add to cart button
+ You're now ready to add products to the cart. You'll use the CartForm component to creates a form for managing cart operations. Make the following changes to the product page.
+ At the top of the file, import CartForm:
+ app/routes/products.$handle.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ Using the CartForm to render an Add to cart button above the product description.
+ app/routes/products.$handle.jsx
+ 1 <CartForm
+ 2
+    route="/cart"
+ 3
+    inputs={{
+ 4
+      lines: [
+ 5
+        {
+ 6
+          merchandiseId: selectedVariant.id,
+ 7
+        },
+ 8
+      ],
+ 9
+    }}
+ 10
+    action={CartForm.ACTIONS.LinesAdd}
+ 11 >
+ 12
+    {(fetcher) => (
+ 13
+      <>
+ 14
+        <button
+ 15
+          type="submit"
+ 16
+          onClick={() => {
+ 17
+            window.location.href = window.location.href + '#cart-aside';
+ 18
+          }}
+ 19
+          disabled={
+ 20
+            !selectedVariant.availableForSale ??
+ 21
+            fetcher.state !== 'idle'
+ 22
+          }
+ 23
+          className="border border-black rounded-sm w-full px-4 py-2 text-white bg-black uppercase hover:bg-white hover:text-black transition-colors duration-150"
+ 24
+        >
+ 25
+          {selectedVariant?.availableForSale
+ 26
+            ? 'Add to cart'
+ 27
+            : 'Sold out'}
+ 28
+        </button>
+ 29
+      </>
+ 30
+    )}
+ 31 </CartForm>
+ You should now be able to add products to your cart.
+ Next steps
+ You can build on the code in this guide as you explore more features of Hydrogen and Remix.
+ Get more familiar with Remix.
+ Explore additional commerce pieces like Analytics and SEO.
+ Implement missing features like news, policies or accounts.
+ Add optimistic UI for adding, updating, and removing cart line items
+ The Hydrogen demo store repo showcases a fully functional Hydrogen storefront. You can explore all of these features and build upon what you have learned in this guide.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you’ll learn
+ Requirements
+ Step 1: Create a cart route
+ Step 2: Create an Add to cart button
+ Next steps
+ Updates & News
+ Developer changelog

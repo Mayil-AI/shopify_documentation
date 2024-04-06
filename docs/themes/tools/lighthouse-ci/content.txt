@@ -1,0 +1,110 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Shopify Lighthouse CI GitHub Action
+ Optimizing your theme for performance is key to the success of the merchants that you support, and the experience of their customers. It directly influences conversion rates, repeat business, and search engine rankings.
+ Every change you make to your theme code can have an impact on performance. To make sure that you identify code that is slowing down your theme before it is in production, you can integrate Lighthouse tests into your theme development workflow using the Shopify Lighthouse CI GitHub Action.
+ The Shopify Lighthouse CI GitHub Action is a Shopify-specific GitHub Action based off of Google's Lighthouse CI. It runs a Lighthouse audit as part of your continuous integration process for every pull request that you create. It tests the performance of your theme's home page, a product page, and a collection page.
+ In this tutorial, you'll learn how to implement the Shopify Lighthouse CI GitHub Action and, optionally, add a status check for the action to GitHub.
+ Requirements
+ A development store - You should create a development store that is dedicated to running Lighthouse CI and manual performance tests.
+ Performance-specific store data - To get consistent results from Lighthouse, you should populate your store using the test product csv. The store should have no other collections, products, or variants. This file contains the same data that is used to test themes before they are accepted into the Shopify Theme Store.
+ API credentials for the development store - Lighthouse CI uses custom app access tokens to connect to your store. Create a custom app on the store with the read_products and write_themes access scopes.
+ You'll need the Admin API access token for the custom app that you create.
+ Step 1: Add your custom app access token to GitHub
+ In your theme's GitHub repo, add the following information as repository secrets:
+ SHOP_ACCESS_TOKEN - The Admin API access token from your custom app.
+ SHOP_STORE - Your store's myshopify.com URL, in the format your-store-name.myshopify.com.
+ If your store is password protected, then you should also add a repository secret that contains your store password. If you don't provide it, then Lighthouse is redirected to the password page and can't accurately test your theme's performance.
+ Step 2: Create a new GitHub Action workflow
+ Create a new GitHub Action workflow file that runs shopify/lighthouse-ci-action:
+ .github/workflows/lighthouse-ci.yml
+ 1 name: Shopify Lighthouse CI
+ 2 on: [push]
+ 3 jobs:
+ 4
+    lhci:
+ 5
+      name: Lighthouse
+ 6
+      runs-on: ubuntu-latest
+ 7
+      steps:
+ 8
+      - uses: actions/checkout@v2
+ 9
+      - name: Lighthouse
+ 10
+        uses: shopify/lighthouse-ci-action@v1
+ 11
+        with:
+ 12
+          access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}
+ 13
+          store: ${{ secrets.SHOP_STORE }}
+ 14
+          password: ${{ secrets.SHOP_PASSWORD }}
+ Commit this code and create a pull request. You should see a GitHub Action that runs Lighthouse on your pull request’s code.
+ Step 3: Add Lighthouse CI as a GitHub status check (optional)
+ GitHub status checks let you see the status of your Lighthouse CI run in the GitHub UI. If you want to turn the performance and accessibility checks into GitHub status checks, then do the following:
+ Install the Lighthouse CI GitHub app as the owner of your theme's repo, and then copy the token provided.
+ In your theme's GitHub repo, create a new repository secret named LHCI_GITHUB_APP_TOKEN. The value should be the token from the previous step.
+ In the GitHub Action workflow file that you created in step 2, add a new configuration attribute called lhci_github_app_token. The attribute's value should be a reference to the LHCI_GITHUB_APP_TOKEN secret:
+ 1 name: Shopify Lighthouse CI
+ 2 on: [push]
+ 3 jobs:
+ 4
+    lhci:
+ 5
+      name: Lighthouse
+ 6
+      runs-on: ubuntu-latest
+ 7
+      steps:
+ 8
+      - uses: actions/checkout@v2
+ 9
+      - name: Lighthouse
+ 10
+        uses: shopify/lighthouse-ci-action@v1
+ 11
+        with:
+ 12
+          access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}}
+ 13
+          store: ${{ secrets.SHOP_STORE }}
+ 14
+          password: ${{ secrets.SHOP_PASSWORD }}
+ 15
+          lhci_github_app_token: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+ Commit this code and create a pull request. You should see a GitHub Action that runs Lighthouse on your pull request’s code.
+ Your PRs will now pass or fail depending on whether they pass the Lighthouse CI checks.
+ Arguments
+ The Shopify Lighthouse CI GitHub Action accepts the following arguments in the workflow configuration:
+ Attribute Description Required
+ access_token Your custom app's access token. yes
+ store Your store's myshopify.com URL, in the format {shop}.myshopify.com. yes
+ password The password for your store. Required for password-protected stores such as development stores. no
+ product_handle The product handle to run the product page Lighthouse test on. If no handle is specified, then the first product is used. no
+ theme_root The root directory of where theme files are uploaded in the repository. If a root directory isn't specified, then the root directory of the repository is used. no
+ collection_handle The collection handle to run the collection page Lighthouse test on. If no handle is specified, then the first product is used. no
+ pull_theme The ID or name of a theme from which the settings and JSON templates should be pulled. If provided, those settings will be pulled into the development theme. If not provided, the default settings for the theme will be used. no
+ lhci_min_score_performance The minimum performance score for a Lighthouse audit to be marked as passed. This value must be a decimal number between 0 and 1. The default value is 0.6. no
+ lhci_min_score_accessibility The minimum accessibility score for a Lighthouse audit to be marked as passed. This value must be a decimal number between 0 and 1. The default value is 0.9. no
+ Accepted tokens for GitHub status checks
+ You need to provide one of the following tokens to log Lighthouse CI runs as GitHub status checks. To understand the difference between the two token types, refer to the Lighthouse CI documentation.
+ Attribute Description
+ lhci_github_app_token A token for the Lighthouse GitHub app to access the repo.
+ lhci_github_token A GitHub personal access token.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Add your custom app access token to GitHub
+ Step 2: Create a new GitHub Action workflow
+ Step 3: Add Lighthouse CI as a GitHub status check (optional)
+ Arguments
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

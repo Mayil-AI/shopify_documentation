@@ -1,0 +1,30 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Build a Hydrogen storefront
+ Learn how to build a Hydrogen storefront and access resources to learn more about Hydrogen.
+ Hydrogen tutorial series
+ Follow the Hydrogen tutorial series to go from a minimal template to a fully built Shopify custom storefront.
+ Tutorial 1: Begin development
+ Create a Hydrogen app locally to begin developing a Hydrogen storefront.
+ Tutorial 2: Build a collection page
+ Build a page that renders a collection and products that belong to the collection.
+ Tutorial 3: Build a product page
+ Build a page that shows detailed product information.
+ Tutorial 4: Build a cart
+ Implement a cart that contains the merchandise that a customer intends to purchase.
+ More resources
+ Consult additional resources to learn more about Hydrogen.
+ Shopify Devs on Discord
+ Join the Shopify Devs community.
+ Hydrogen discussions on GitHub
+ Join discussions on Hydrogen and share your feedback.
+ Hydrogen release notes
+ Explore the changelog for Hydrogen release versions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Hydrogen tutorial series
+ More resources
+ Updates & News
+ Developer changelog

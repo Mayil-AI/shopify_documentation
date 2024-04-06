@@ -1,0 +1,675 @@
+Product subscription app extensions
+ Customer Eligibility Card
+ The CustomerEligibilityCard component enables users to select customers who are eligible for this discount code.
+ Properties
+ Name Type Description Required
+ eligibility Field<Eligibility> Whether the discount applies to all customers, specific customers, or specific customer segments. Yes
+ customerSelector React.ReactNode A widget that enables users to select customers. Yes
+ selectedCustomers Field<Customer[]> A list of customers that the discount will apply to. Yes
+ customerSegmentSelector React.ReactNode A widget that enables users to select customer segments. Yes
+ selectedCustomerSegments Field<CustomerSegment[]> A list of customer segments that the discount will apply to. Yes
+ Example Code
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    CustomerEligibilityCard,
+ 4
+    Eligibility,
+ 5 } from "@shopify/discount-app-components";
+ 6
+ 7 import CustomerSelector from "./CustomerSelector";
+ 8
+ 9 export default function MyApp() {
+ 10
+    const [selectedCustomerSegments, setSelectedCustomerSegments] = useState([]);
+ 11
+    const [selectedCustomers, setSelectedCustomers] = useState([]);
+ 12
+    const [eligibility, setEligibility] = useState(Eligibility.Customers);
+ 13
+ 14
+    return (
+ 15
+      <CustomerEligibilityCard
+ 16
+        eligibility={{
+ 17
+          value: eligibility,
+ 18
+          onChange: setEligibility,
+ 19
+        }}
+ 20
+        selectedCustomerSegments={{
+ 21
+          value: selectedCustomerSegments,
+ 22
+          onChange: setSelectedCustomerSegments,
+ 23
+        }}
+ 24
+        selectedCustomers={{
+ 25
+          value: selectedCustomers,
+ 26
+          onChange: setSelectedCustomers,
+ 27
+        }}
+ 28
+        customerSelector={
+ 29
+          <CustomerSelector
+ 30
+            selectedCustomers={selectedCustomers}
+ 31
+            setSelectedCustomers={setSelectedCustomers}
+ 32
+          />
+ 33
+        }
+ 34
+        customerSegmentSelector={
+ 35
+          <CustomerSegmentSelector
+ 36
+            selectedCustomerSegments={selectedCustomerSegments}
+ 37
+            setSelectedCustomerSegments={setSelectedCustomerSegments}
+ 38
+          />
+ 39
+        }
+ 40
+      />
+ 41
+    );
+ 42 }
+ CustomerSelector
+ The following code is an example of the CustomerSelector component:
+ 1 import React, { useState } from "react";
+ 2 import { TextField, Icon, Button } from "@shopify/polaris";
+ 3 import { SearchMinor } from "@shopify/polaris-icons";
+ 4
+ 5 import CustomerPicker from "./CustomerPicker";
+ 6
+ 7 export default function CustomerSelector({
+ 8
+    selectedCustomers,
+ 9
+    setSelectedCustomers,
+ 10 }) {
+ 11
+    const [isOpen, setIsOpen] = useState(false);
+ 12
+    const [searchQuery, setSearchQuery] = useState("");
+ 13
+    return (
+ 14
+      <div>
+ 15
+        <TextField
+ 16
+          placeholder="Search customers"
+ 17
+          labelHidden
+ 18
+          onChange={(nextSearchQuery) => {
+ 19
+            setSearchQuery(nextSearchQuery);
+ 20
+            setIsOpen(true);
+ 21
+          }}
+ 22
+          value={searchQuery}
+ 23
+          autoComplete="off"
+ 24
+          prefix={<Icon source={SearchMinor} color="subdued" />}
+ 25
+          connectedRight={
+ 26
+            <Button
+ 27
+              onClick={() => {
+ 28
+                setIsOpen(true);
+ 29
+              }}
+ 30
+            >
+ 31
+              Browse
+ 32
+            </Button>
+ 33
+          }
+ 34
+        />
+ 35
+        <CustomerPicker
+ 36
+          isOpen={isOpen}
+ 37
+          searchQuery={searchQuery}
+ 38
+          setSearchQuery={setSearchQuery}
+ 39
+          initialSelectedItems={selectedCustomers}
+ 40
+          onCancel={() => setIsOpen(false)}
+ 41
+          onSelect={(customers) => {
+ 42
+            setIsOpen(false);
+ 43
+            setSelectedCustomers(customers);
+ 44
+          }}
+ 45
+        />
+ 46
+      </div>
+ 47
+    );
+ 48 }
+ CustomerPicker
+ To load the app user's customers, an authenticated server needs to proxy the GraphQL request. In the following CustomerPicker component, ./authenticatedGraphQL is used to do so:
+ 1 import React, { useState } from "React";
+ 2 import { gql } from "graphql-request";
+ 3 import { useInfiniteQuery } from "react-query";
+ 4 import { unstable_Picker as Picker } from "@shopify/app-bridge-react";
+ 5
+ 6 import { fetchGraphQL } from "./authenticatedGraphQL"; // A request to proxy the GraphQL request
+ 7
+ 8 // Use GraphQL Admin API to load the customers
+ 9 const CUSTOMER_PICKER_QUERY = gql`
+ 10
+    query GetCustomers($first: Int!, $searchQuery: String = "", $after: String) {
+ 11
+      customers(
+ 12
+        first: $first
+ 13
+        query: $searchQuery
+ 14
+        after: $after
+ 15
+        sortKey: NAME
+ 16
+      ) {
+ 17
+        edges {
+ 18
+          cursor
+ 19
+          node {
+ 20
+            id
+ 21
+            displayName
+ 22
+            email
+ 23
+          }
+ 24
+        }
+ 25
+        pageInfo {
+ 26
+          hasNextPage
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 `;
+ 31
+ 32 const PAGE_SIZE = 20;
+ 33
+ 34 export default function CustomerPicker({
+ 35
+    isOpen,
+ 36
+    onCancel,
+ 37
+    onSelect,
+ 38
+    searchQuery,
+ 39
+    setSearchQuery,
+ 40
+    initialSelectedItems,
+ 41 }) {
+ 42
+    const [selectedItems, setSelectedItems] = useState();
+ 43
+    let customers = [];
+ 44
+    let customerNodes = [];
+ 45
+ 46
+    useEffect(() => {
+ 47
+      setSelectedItems(initialSelectedItems);
+ 48
+    }, [initialSelectedItems]);
+ 49
+ 50
+    // The request to fetch customers specifies the page, search query, and page size
+ 51
+    const fetchCustomers = async ({ pageParam }) =>
+ 52
+      fetchGraphQL(CUSTOMER_PICKER_QUERY, {
+ 53
+        first: PAGE_SIZE,
+ 54
+        searchQuery: searchQuery,
+ 55
+        after: pageParam,
+ 56
+      });
+ 57
+ 58
+    // This uses `useInfiniteQuery` from `react-query` to provide infinit loading
+ 59
+    const {
+ 60
+      data,
+ 61
+      error,
+ 62
+      isLoading: dataIsLoading,
+ 63
+      fetchNextPage,
+ 64
+      hasNextPage,
+ 65
+      isFetchingNextPage,
+ 66
+    } = useInfiniteQuery("GetCustomers", fetchCustomers, {
+ 67
+      getNextPageParam: (lastPage, pages) => {
+ 68
+        const edges = lastPage.data.customers.edges;
+ 69
+        return edges.length > 0 ? edges[edges.length - 1].cursor : null;
+ 70
+      },
+ 71
+    });
+ 72
+ 73
+    // Format the API response for the picker
+ 74
+    if (!dataIsLoading && !error) {
+ 75
+      customerNodes = data.pages.reduce(
+ 76
+        (nodes, page) => [
+ 77
+          ...nodes,
+ 78
+          ...page.data.customers.edges.map(({ node }) => node),
+ 79
+        ],
+ 80
+        []
+ 81
+      );
+ 82
+      customers = customerNodes.map((node) => ({
+ 83
+        id: node.id,
+ 84
+        name: `${node.email} ${node.displayName}`,
+ 85
+      }));
+ 86
+    }
+ 87
+ 88
+    return (
+ 89
+      <Picker
+ 90
+        open={isOpen}
+ 91
+        items={customers}
+ 92
+        selectedItems={selectedItems}
+ 93
+        maxSelectable={0}
+ 94
+        searchQuery={searchQuery}
+ 95
+        onCancel={onCancel}
+ 96
+        onSelect={({ selectedItems }) => {
+ 97
+          onSelect(
+ 98
+            selectedItems.map((item) =>
+ 99
+              customerNodes.find((node) => node.id === item.id)
+ 100
+            )
+ 101
+          );
+ 102
+        }}
+ 103
+        onSearch={(options) => {
+ 104
+          setSearchQuery(options.searchQuery);
+ 105
+        }}
+ 106
+        onLoadMore={() => {
+ 107
+          if (hasNextPage) {
+ 108
+            fetchNextPage();
+ 109
+          }
+ 110
+        }}
+ 111
+        emptySearchLabel={{
+ 112
+          title: "No Customer",
+ 113
+          description: "There is no customer for this search",
+ 114
+          withIllustration: true,
+ 115
+        }}
+ 116
+        loading={dataIsLoading || isFetchingNextPage}
+ 117
+        searchQueryPlaceholder="Search customers"
+ 118
+        primaryActionLabel="Select"
+ 119
+        secondaryActionLabel="Cancel"
+ 120
+        title="Customer Picker"
+ 121
+      />
+ 122
+    );
+ 123 }
+ CustomerSegmentSelector
+ The following code is an example of the CustomerSegmentSelector component:
+ 1 import React, { useState } from "react";
+ 2 import { TextField, Icon, Button } from "@shopify/polaris";
+ 3 import { SearchMinor } from "@shopify/polaris-icons";
+ 4
+ 5 import CustomerSegmentPicker from "./CustomerSegmentPicker";
+ 6
+ 7 function CustomerSegmentSelector({
+ 8
+    selectedCustomerSegments,
+ 9
+    setSelectedCustomerSegments,
+ 10 }) {
+ 11
+    const [isOpen, setIsOpen] = useState(false);
+ 12
+    const [searchQuery, setSearchQuery] = useState("");
+ 13
+    return (
+ 14
+      <div>
+ 15
+        <TextField
+ 16
+          placeholder="Search customer segment"
+ 17
+          labelHidden
+ 18
+          onChange={(nextSearchQuery) => {
+ 19
+            setSearchQuery(nextSearchQuery);
+ 20
+            setIsOpen(true);
+ 21
+          }}
+ 22
+          value={searchQuery}
+ 23
+          autoComplete="off"
+ 24
+          prefix={<Icon source={SearchMinor} color="subdued" />}
+ 25
+          connectedRight={
+ 26
+            <div>
+ 27
+              <Button
+ 28
+                onClick={() => {
+ 29
+                  setIsOpen(true);
+ 30
+                }}
+ 31
+              >
+ 32
+                Browse
+ 33
+              </Button>
+ 34
+            </div>
+ 35
+          }
+ 36
+        />
+ 37
+        <CustomerSegmentsPicker
+ 38
+          isOpen={isOpen}
+ 39
+          searchQuery={searchQuery}
+ 40
+          setSearchQuery={setSearchQuery}
+ 41
+          initialSelectedItems={selectedCustomerSegments}
+ 42
+          onCancel={() => setIsOpen(false)}
+ 43
+          onSelect={(customerSegments) => {
+ 44
+            setIsOpen(false);
+ 45
+            setSelectedCustomerSegments(customerSegments);
+ 46
+          }}
+ 47
+        />
+ 48
+      </div>
+ 49
+    );
+ 50 }
+ CustomerSegmentPicker
+ The following code is an example of the CustomerSegmentPicker component. The CustomerSegmentSelector component uses the CustomerSegmentPicker component to load the user's segments.
+ 1 import React, { useState } from "React";
+ 2 import { gql } from "graphql-request";
+ 3 import { useQuery } from "react-query";
+ 4 import { unstable_Picker as Picker } from "@shopify/app-bridge-react";
+ 5
+ 6 import { fetchGraphQL } from "./authenticatedGraphQL"; // A request to proxy the GraphQL request
+ 7
+ 8 const CUSTOMER_SEGMENT_PICKER_QUERY = gql`
+ 9
+    query GetCustomerSegments($first: Int!, $searchQuery: String) {
+ 10
+      segments(query: $searchQuery, first: $first) {
+ 11
+        edges {
+ 12
+          cursor
+ 13
+          node {
+ 14
+            id
+ 15
+            name
+ 16
+          }
+ 17
+        }
+ 18
+      }
+ 19
+    }
+ 20 `;
+ 21
+ 22 function CustomerSegmentsPicker({
+ 23
+    isOpen,
+ 24
+    onCancel,
+ 25
+    onSelect,
+ 26
+    searchQuery,
+ 27
+    setSearchQuery,
+ 28
+    initialSelectedItems,
+ 29 }) {
+ 30
+    const [selectedItems, setSelectedItems] = useState();
+ 31
+    const graphQLClient = useGraphQLClient();
+ 32
+    let customerSegments = [];
+ 33
+    let customerSegmentNodes = [];
+ 34
+ 35
+    useEffect(() => {
+ 36
+      setSelectedItems(initialSelectedItems);
+ 37
+    }, [initialSelectedItems]);
+ 38
+ 39
+    // The request to fetch customers specifies the page, search query, and page size
+ 40
+    const fetchCustomerSegments = async ({ pageParam }) =>
+ 41
+      fetchGraphQL(CUSTOMER_SEGMENT_PICKER_QUERY, {
+ 42
+        first: PAGE_SIZE,
+ 43
+        searchQuery: searchQuery,
+ 44
+      });
+ 45
+ 46
+    const {
+ 47
+      data,
+ 48
+      error,
+ 49
+      isLoading: dataIsLoading,
+ 50
+    } = useQuery(["GetCustomerSegments", searchQuery], fetchCustomerSegments);
+ 51
+ 52
+    if (!dataIsLoading && !error) {
+ 53
+      (customerSegmentNodes = data.data.segments.edges.map(({ node }) => node)),
+ 54
+        (customerSegments = customerSegmentNodes.map((node) => ({
+ 55
+          id: node.id,
+ 56
+          name: node.name,
+ 57
+        })));
+ 58
+    }
+ 59
+ 60
+    return (
+ 61
+      <Picker
+ 62
+        open={isOpen}
+ 63
+        items={customerSegments}
+ 64
+        selectedItems={selectedItems}
+ 65
+        maxSelectable={0}
+ 66
+        searchQuery={searchQuery}
+ 67
+        onCancel={onCancel}
+ 68
+        onSelect={({ selectedItems }) => {
+ 69
+          onSelect(
+ 70
+            selectedItems.map((item) =>
+ 71
+              customerSegmentNodes.find((node) => node.id === item.id)
+ 72
+            )
+ 73
+          );
+ 74
+        }}
+ 75
+        onSearch={(options) => {
+ 76
+          setSearchQuery(options.searchQuery);
+ 77
+        }}
+ 78
+        onLoadMore={() => {
+ 79
+          if (hasNextPage) {
+ 80
+            fetchNextPage();
+ 81
+          }
+ 82
+        }}
+ 83
+        emptySearchLabel={{
+ 84
+          title: "No Customer Segment",
+ 85
+          description: "There is no customer segment for this search",
+ 86
+          withIllustration: true,
+ 87
+        }}
+ 88
+        loading={dataIsLoading}
+ 89
+        searchQueryPlaceholder="Search customer segment"
+ 90
+        primaryActionLabel="Select"
+ 91
+        secondaryActionLabel="Cancel"
+ 92
+        title="Customer Segment Picker"
+ 93
+      />
+ 94
+    );
+ 95 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Properties
+ Example Code
+ Updates & News

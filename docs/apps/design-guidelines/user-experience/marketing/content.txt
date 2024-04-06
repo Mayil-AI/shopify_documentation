@@ -1,0 +1,30 @@
+Billing
+ App Store
+ Marketing
+ The Shopify admin is first and foremost a place for merchants to get work done. These directives explain how to incorporate marketing messages in your app in an unobtrusive way.
+ Branding
+ Branding can set your app apart from others, but over-branding sets it apart from Shopify. We recommend expressing your brand with a light touch. Imagery and illustration styles are great and non-disruptive ways to do this.
+ Express your app’s brand through illustration and imagery. Try to keep your app’s layouts and common components, like Cards, consistent with the Shopify admin.
+ Promotion
+ Promotional messages include requests to rate the app, plan or subscription upgrades, or calls to download additional apps.
+ Remember that merchants are looking to the current app they installed to accomplish a task or certain workflow. We have specific directives to limit the interference of marketing messages.
+ Tip
+ Place promotional messages into a dismissible container, such as a card or gallery, at the bottom of your app homepage. Or, create a separate page dedicated to promotional messages.
+ Must Do
+ Promotional information on the app home page must be dismissible. If dismissed, the information shouldn't display for the same user again.
+ Must Do
+ Features that are only available to paid or premium plans must be in a visually-disabled state. Use caption-style text in a subdued color to communicate that the feature is available only by upgrading.
+ Do Not
+ Don't mislead or pressure merchants. Your app must not include fake reviews, false special offers, or use elements like countdown timers for limited-time opportunities. Deceptive or manipulative promotion practices erode merchant trust in your app and in Shopify.
+ Do Not
+ Don’t oversell or overpromise. This can break trust with customers.
+ Do Not
+ Don't mix the primary call to action (CTA) with unrelated actions such as marketing messages or requests for support. This obscures the primary action.
+ Do Not
+ Don't present the same marketing messages on all app pages.
+ Previous
+ Onboarding
+ Next
+ Forms
+ Was this page helpful?
+ YesNo

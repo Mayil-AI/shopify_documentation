@@ -1,0 +1,130 @@
+Customer engagement
+ Markets
+ Site navigation and search
+ SEO
+ Overview
+ Metadata
+ hreflang tags
+ robots.txt
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Customize robots.txt
+ The robots.txt file tells search engines which pages can, or can't, be crawled on a site. It contains groups of rules for doing so, and each group has three main components:
+ The user agent, which notes which crawler the group of rules applies to. For example, adsbot-google.
+ The rules themselves, which note specific URLs that crawlers can, or can't, access.
+ An optional sitemap URL.
+ Tip
+ To learn more about robots.txt and rule-set components, refer to Google's documentation.
+ Shopify generates a default robots.txt file that works for most stores. However, you can add the robots.txt.liquid template to make customizations.
+ In this tutorial, you'll learn how you can customize the robots.txt.liquid template.
+ Requirements
+ Add the robots.txt.liquid template with the following steps:
+ In the code editor for the theme you want to edit, open the Templates folder.
+ Click Add a new template.
+ Select robots.txt under the Create a new template for drop-down menu.
+ Click Create template.
+ Resources
+ The robots.txt.liquid template supports only the following Liquid objects:
+ robots
+ group
+ rule
+ user_agent
+ sitemap
+ Customize robots.txt.liquid
+ You can make the following customizations:
+ Add a new rule to an existing group
+ Remove a rule from an existing group
+ Add custom rules
+ Tip
+ The examples below make use of Liquid's whitespace control in order to maintain standard formatting.
+ While you can replace all of the template content with plain text rules, it's strongly recommended to use the provided Liquid objects whenever possible. The default rules are updated regularly to ensure that SEO best practices are always applied.
+ Add a new rule to an existing group
+ If you want to add a new rule to an existing group, then you can adjust the Liquid for outputting the default rules to check for the associated group and include your rule.
+ For example, you can use the following to block all crawlers from accessing pages with the URL parameter ?q=:
+ 1 {% for group in robots.default_groups %}
+ 2
+    {{- group.user_agent }}
+ 3
+ 4
+    {%- for rule in group.rules -%}
+ 5
+      {{ rule }}
+ 6
+    {%- endfor -%}
+ 7
+ 8
+    {%- if group.user_agent.value == '*' -%}
+ 9
+      {{ 'Disallow: /*?q=*' }}
+ 10
+    {%- endif -%}
+ 11
+ 12
+    {%- if group.sitemap != blank -%}
+ 13
+        {{ group.sitemap }}
+ 14
+    {%- endif -%}
+ 15 {% endfor %}
+ Remove a default rule from an existing group
+ If you want to remove a default rule from an existing group, then you can adjust the Liquid for outputting the default rules to check for that rule and skip over it.
+ For example, you can use the following to remove the rule blocking crawlers from accessing the /policies/ page:
+ 1 {% for group in robots.default_groups %}
+ 2
+    {{- group.user_agent }}
+ 3
+ 4
+    {%- for rule in group.rules -%}
+ 5
+      {%- unless rule.directive == 'Disallow' and rule.value == '/policies/' -%}
+ 6
+        {{ rule }}
+ 7
+      {%- endunless -%}
+ 8
+    {%- endfor -%}
+ 9
+ 10
+    {%- if group.sitemap != blank -%}
+ 11
+        {{ group.sitemap }}
+ 12
+    {%- endif -%}
+ 13 {% endfor %}
+ Add custom rules
+ If you want to add a new rule that's not part of a default group, then you can manually enter the rule outside of the Liquid for outputting the default rules.
+ Common examples of these custom rules are:
+ Block certain crawlers
+ Allow certain crawlers
+ Add extra sitemap URLs
+ Block certain crawlers
+ If a crawler isn't in the default rule set, then you can manually add a rule to block it.
+ For example, the following directive would allow you to block the discobot crawler:
+ <!-- Liquid for default rules -->
+ 
+ User-agent: discobot
+ Disallow: /
+ Allow certain crawlers
+ Similar to blocking certain crawlers, you can also manually add a rule to allow search engines to crawl a subdirectory or page.
+ For example, the following directive would allow the discobot crawler:
+ <!-- Liquid for default rules -->
+ 
+ User-agent: discobot
+ Allow: /
+ Add extra sitemap URLs
+ The following example, where [sitemap-url] is the sitemap URL, would allow you to include an extra sitemap URL:
+ <!-- Liquid for default rules -->
+ 
+ Sitemap: [sitemap-url]
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Resources
+ Customize `robots.txt.liquid`
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,40 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Measure CPU startup time locally
+ Oxygen deployments can sometimes fail due to the app startup time exceeding the limit of the platform. This guide shows you how to measure the startup time of your app locally and find out ways to optimize it.
+ Step 1: Run the CPU profiler
+ To measure the startup time of your app, run the CPU profiler with following command in your terminal:
+ Terminal
+ $ npx shopify hydrogen debug cpu
+ This command builds your app and runs the generated bundle code once. It then watches for changes and rebuilds the app when necessary.
+ Note
+ CPU start up time and profiling are bound to your local CPU and might not be an accurate representation of the startup time on the Oxygen platform. However, measuring start time locally still be useful for observing trends when making changes in your app.
+ Output
+ Starting profiler for CPU startup...Profile will be written to:
+ ./startup.cpuprofile
+ 
+ #1 Total time: 362.337 ms
+ 
+ #2 Total time: 123.359 ms
+ 
+ #3 Total time: 72.048 ms
+ ./startup.cpuprofile
+ 
+ Waiting for changes...
+ Every time you save a file, an updated startup time measure is logged to the terminal. You can use this information to observe trends when making changes in your app.
+ Step 2: View the startup time report
+ The CPU profiler displays your app's startup time in the terminal. It also generates a more comprehensive startup time report and saves it to ./startup.cpuprofile.
+ To view this report, open it with a flame graph viewer such as Flame Chart Visualizer for JavaScript Profiles in Visual Studio Code, or Speedscope in a browser.
+ Note
+ Depending on the tool that you're using to view the flame graph, you need to close the file and reopen it to view the updated flame graph whenever the profiler generates a new report.
+ Step 3: Optimize your startup time
+ After you find the parts of your app that contribute to the startup time, you can start optimizing them. Some common scenarios that can cause slow startup times include the following:
+ Using dependencies that perform unnecessary computations during import. For example, a dependency might establish a connection with a third-party API during import.
+ Calling functions or template literals that perform computation outside of a request cycle, such as at the top-level of a module. For example, a common scenario is using graphql-tag to parse GraphQL queries at the top level of a route file, which internally transforms strings into AST objects. This can be avoided by using a #graphql comment instead, which turns on syntax highlighting for GraphQL queries without parsing them.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Run the CPU profiler
+ Step 2: View the startup time report
+ Step 3: Optimize your startup time

@@ -1,0 +1,45 @@
+Delivery Customization API
+ Discounts APIs
+ Order Discount API
+ Product Discount API
+ Overview
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ Metafield
+ MoneyV2
+ Percentage
+ Product
+ ProductVariant
+ ProductVariantTarget
+ PurchasingCompany
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ Shop
+ Target
+ Value
+ INTERFACES
+ HasGates
+ DeliveryMethod
+ DiscountApplicationStrategy
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Shipping Discount API
+ Discounts Allocator API
+ ProductVariantTarget object
+ 2024-04 latest
+ The target product variant.
+ Fields
+ id (ID!) required
+ The ID of the target product variant.
+ quantity (Int)
+ The number of line items that are being discounted. The default value is null, which represents the quantity of the matching line items.
+ The value is validated against: > 0.
+ Was this page helpful?

@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ DeliverableCartLine object
+ 2024-04 latest
+ Represents information about the merchandise in the cart.
+ On this page
+ Fields
+ Types that return DeliverableCartLine
+ Fields
+ attribute (Attribute)
+ Retrieve a cart line attribute by key.
+ Cart line attributes are also known as line item properties in Liquid.
+ Argument Description
+ key ( String )
+ The key of the attribute to retrieve.
+ id (ID!)
+ The ID of the cart line.
+ merchandise (Merchandise!)
+ The merchandise that the buyer intends to purchase.
+ quantity (Int!)
+ The quantity of the merchandise that the customer intends to purchase.
+ Types that return DeliverableCartLine
+ Cart.deliverableLines
+ Was this page helpful?

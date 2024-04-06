@@ -1,0 +1,170 @@
+Section blocks
+ Theme blocks
+ App blocks
+ Section groups
+ Config
+ Theme Store
+ App blocks for themes
+ If your section is part of a JSON template, then you should support blocks of type @app. These blocks enable app developers to create blocks for merchants to add app content to their theme without having to directly edit theme code. You can build app blocks using theme app extensions.
+ Note
+ Blocks of type @app aren't supported in statically rendered sections.
+ In the theme editor, merchants can choose to add app blocks to existing sections, or in a new section.
+ When merchants choose to add the app to a new section, Shopify automatically wraps the app block in a wrapper section called Apps. You can customize this wrapper section by your own apps.liquid section.
+ To add support for app blocks to your sections and theme blocks, you need take the following steps:
+ Add support for app blocks to the schema
+ Render the block content
+ Ensure that you have valid section settings
+ Refer to Dawn's main product section for an example implementation of an existing theme section that opts-in to accepting app blocks.
+ Tip
+ For framework information about app blocks, including the valid schema for app blocks, refer to the theme app extensions framework documentation.
+ Supporting app blocks
+ To allow merchants to add app blocks to a section or a theme block, you need to include a generic block of type @app in the section or block schema.
+ For example:
+ 1 "blocks": [
+ 2
+    {
+ 3
+      "type": "@app"
+ 4
+    }
+ 5 ]
+ Caution
+ Blocks of type @app don't accept the limit parameter. Including this will result in an error.
+ Render app blocks
+ To render app blocks, the theme block must use the {% content_for 'blocks' %} Liquid tag. This tag handles block rendering, including app blocks.
+ For example:
+ 1 <div class="group">
+ 2
+    {% content_for 'blocks' %}
+ 3 </div>
+ Render app blocks alongside section-defined blocks
+ To render an app block alongside section-defined blocks, you need to check for the appropriate type, and use the following code:
+ 1 {% render block %}
+ For example:
+ 1 {% for block in section.blocks %}
+ 2
+    {% case block.type %}
+ 3
+      {% when '@app' %}
+ 4
+        {% render block %}
+ 5
+      ...
+ 6
+    {% endcase %}
+ 7 {% endfor %}
+ App blocks and section settings
+ To prevent ambiguity with autofill settings, sections that support app blocks can include only one resource setting of each type as a section setting. For example, a section might include only one product setting and only one collection setting.
+ App block wrapper
+ Merchants can add app blocks to a page in the following ways:
+ As a block within the confines of the section that's rendering the block
+ In a similar manner to sections, giving them the full width of the page to render content
+ As app blocks aren't sections themselves, Shopify wraps these full-width app blocks in a platform-generated section by default. However, you can override this default section by creating your own section called apps.liquid.
+ The apps.liquid section schema needs to include a block of type @app, as well as a preset. If either of these is missing, then an Apps not supported or Apps section is invalid error is returned in the theme editor and merchants aren't able to use the section.
+ Caution
+ The apps.liquid section schema can't contain the templates schema attribute. This also includes the templates attribute within the enabled_on/disabled_on schema attributes. It's expected that the apps.liquid section is available on all templates.
+ For example:
+ /sections/apps.liquid
+ 1 {% for block in section.blocks %}
+ 2
+    {% render block %}
+ 3 {% endfor %}
+ 4
+ 5 {% schema %}
+ 6
+    {
+ 7
+      "name": "App wrapper",
+ 8
+      "settings": [],
+ 9
+      "blocks": [
+ 10
+        {
+ 11
+          "type": "@app"
+ 12
+        }
+ 13
+      ],
+ 14
+      "presets": [
+ 15
+        {
+ 16
+          "name": "App wrapper"
+ 17
+        }
+ 18
+      ]
+ 19
+    }
+ 20 {% endschema %}
+ To enable merchants to control how the app looks inside of an app section, you can add a setting that lets merchants add margins around the app blocks. This helps make the app section margins consistent with your theme's layout.
+ /sections/apps.liquid
+ 1 <div class="{% if section.settings.include_padding %}padded{% endif %}">
+ 2
+    {% for block in section.blocks %}
+ 3
+      {% render block %}
+ 4
+    {% endfor %}
+ 5 </div>
+ 6
+ 7 {% schema %}
+ 8
+    {
+ 9
+      "name": "App wrapper",
+ 10
+      "settings": [
+ 11
+        {
+ 12
+          "type": "checkbox",
+ 13
+          "id": "include_padding",
+ 14
+          "default": true,
+ 15
+          "label": "Make section margins the same as theme"
+ 16
+        }
+ 17
+      ],
+ 18
+      "blocks": [
+ 19
+        {
+ 20
+          "type": "@app"
+ 21
+        }
+ 22
+      ],
+ 23
+      "presets": [
+ 24
+        {
+ 25
+          "name": "App wrapper"
+ 26
+        }
+ 27
+      ]
+ 28
+    }
+ 29 {% endschema %}
+ Note
+ The apps.liquid section isn't a standard theme section. It can't be manually rendered, meaning you can't include it with {% section 'apps' %}, and it won't show up in the theme editor for merchants to add to pages.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Supporting app blocks
+ Render app blocks
+ App blocks and section settings
+ App block wrapper
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

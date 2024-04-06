@@ -1,0 +1,355 @@
+Ajax API
+ Overview
+ Reference
+ Cart
+ Product
+ Product recommendations
+ Predictive search
+ Section Rendering API
+ Customer Privacy API
+ Storefront API
+ Product API reference
+ You can make a GET request for the information of any product using the Ajax Product API.
+ All Ajax API requests should use locale-aware URLs to give visitors a consistent experience.
+ GET /{locale}/products/{product-handle}.js
+ Get the JSON of a product using the product handle.
+ All monetary properties are returned in the customer's presentment currency. To check the customer's presentment currency, you can use the currency field of the /{locale}/cart.js endpoint. To learn more about selling in multiple currencies, see Support multiple currencies and languages.
+ Example
+ 1 fetch(window.Shopify.routes.root + 'products/red-rain-coat.js')
+ 2
+    .then(response => response.json())
+ 3
+    .then(product => alert('The title of this product is ' + product.title));
+ Response
+ The JSON of the product.
+ Example:
+ 1 {
+ 2
+    "id": 329678821,
+ 3
+    "title": "Red Rain Coat",
+ 4
+    "handle": "red-rain-coat",
+ 5
+    "description": "<p>Lorem Ipsum.</p>",
+ 6
+    "published_at": "2014-06-12T16:28:11-04:00",
+ 7
+    "created_at": "2014-06-12T16:28:13-04:00",
+ 8
+    "vendor": "Shopify",
+ 9
+    "type": "Coat",
+ 10
+    "tags": [
+ 11
+      "Spring"
+ 12
+    ],
+ 13
+    "price": 12900,
+ 14
+    "price_min": 12900,
+ 15
+    "price_max": 12900,
+ 16
+    "available": true,
+ 17
+    "price_varies": false,
+ 18
+    "compare_at_price": null,
+ 19
+    "compare_at_price_min": 0,
+ 20
+    "compare_at_price_max": 0,
+ 21
+    "compare_at_price_varies": false,
+ 22
+    "variants": [
+ 23
+      {
+ 24
+        "id": 794864229,
+ 25
+        "title": "Small",
+ 26
+        "options": [
+ 27
+          "Small"
+ 28
+        ],
+ 29
+        "option1": "Small",
+ 30
+        "option2": null,
+ 31
+        "option3": null,
+ 32
+        "price": 12900,
+ 33
+        "weight": 0,
+ 34
+        "compare_at_price": null,
+ 35
+        "inventory_management": "shopify",
+ 36
+        "available": true,
+ 37
+        "sku": null,
+ 38
+        "requires_shipping": true,
+ 39
+        "taxable": true,
+ 40
+        "barcode": "49738645"
+ 41
+      },
+ 42
+      {
+ 43
+        "id": 794864233,
+ 44
+        "title": "Medium",
+ 45
+        "options": [
+ 46
+          "Medium"
+ 47
+        ],
+ 48
+        "option1": "Medium",
+ 49
+        "option2": null,
+ 50
+        "option3": null,
+ 51
+        "price": 12900,
+ 52
+        "weight": 0,
+ 53
+        "compare_at_price": null,
+ 54
+        "inventory_management": "shopify",
+ 55
+        "available": true,
+ 56
+        "sku": null,
+ 57
+        "requires_shipping": true,
+ 58
+        "taxable": true,
+ 59
+        "barcode": "49738657"
+ 60
+      },
+ 61
+      {
+ 62
+        "id": 794864237,
+ 63
+        "title": "Large",
+ 64
+        "options": [
+ 65
+          "Large"
+ 66
+        ],
+ 67
+        "option1": "Large",
+ 68
+        "option2": null,
+ 69
+        "option3": null,
+ 70
+        "price": 12900,
+ 71
+        "weight": 0,
+ 72
+        "compare_at_price": null,
+ 73
+        "inventory_management": "shopify",
+ 74
+        "available": true,
+ 75
+        "sku": null,
+ 76
+        "requires_shipping": true,
+ 77
+        "taxable": true,
+ 78
+        "barcode": "49738673"
+ 79
+      }
+ 80
+    ],
+ 81
+    "images": [
+ 82
+      "//cdn.shopify.com/s/files/1/0040/7092/products/red-rain-coat.jpeg?v=1402604893"
+ 83
+    ],
+ 84
+    "featured_image": "//cdn.shopify.com/s/files/1/0040/7092/products/red-rain-coat.jpeg?v=1402604893",
+ 85
+    "options": [
+ 86
+      {
+ 87
+        "name": "Size",
+ 88
+        "position": 1
+ 89
+      }
+ 90
+    ],
+ 91
+    "url": "/products/red-rain-coat"
+ 92 }
+ Selling plan example
+ Products with selling plans will have the following additional properties available at /{locale}/products/<handle>.js.
+ 1 {
+ 2
+   "id":5290511958181,
+ 3
+   // ...
+ 4
+   "variants":[
+ 5
+      {
+ 6
+         "id":34620489400485,
+ 7
+         // ...
+ 8
+         "requires_selling_plan":false,
+ 9
+         "selling_plan_allocations":[
+ 10
+            {
+ 11
+               "price":3120,
+ 12
+               "compare_at_price":3900,
+ 13
+               "per_delivery_price":3120,
+ 14
+               "selling_plan_id":360613,
+ 15
+               "selling_plan_group_id":14699254537353206000
+ 16
+            },
+ 17
+            {
+ 18
+               "price":3510,
+ 19
+               "compare_at_price":3900,
+ 20
+               "per_delivery_price":3510,
+ 21
+               "selling_plan_id":393381,
+ 22
+               "selling_plan_group_id":14699254537353206000
+ 23
+            }
+ 24
+         ]
+ 25
+      }
+ 26
+   ],
+ 27
+   "requires_selling_plan":false,
+ 28
+   "selling_plan_groups":[
+ 29
+      {
+ 30
+         "id":14699254537353206000,
+ 31
+         "name":"Subscribe and Save",
+ 32
+         "options":[
+ 33
+            {
+ 34
+               "name":"Delivery Frequency",
+ 35
+               "position":1,
+ 36
+               "values":[
+ 37
+                  "Month",
+ 38
+                  "Week"
+ 39
+               ]
+ 40
+            },
+ 41
+            {
+ 42
+               "name":"Billing Frequency",
+ 43
+               "position":2,
+ 44
+               "values":[
+ 45
+                  "Month",
+ 46
+                  "Week"
+ 47
+               ]
+ 48
+            }
+ 49
+         ],
+ 50
+         "selling_plans":[
+ 51
+            {
+ 52
+               "id":360613,
+ 53
+               "name":"Pay every month, delivery every month | save 20%",
+ 54
+               "description":"No commitment · Auto-renews · Skip or cancel anytime",
+ 55
+               "options":[
+ 56
+                  {
+ 57
+                     "name":"Delivery Frequency",
+ 58
+                     "position":1,
+ 59
+                     "value":"Month"
+ 60
+                  },
+ 61
+                  {
+ 62
+                     "name":"Billing Frequency",
+ 63
+                     "position":2,
+ 64
+                     "value":"Month"
+ 65
+                  }
+ 66
+               ],
+ 67
+               "recurring_deliveries":true
+ 68
+            },
+ 69
+            {
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ GET /{locale}/products/{product-handle}.js
+ Response
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,50 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Debugging and testing Hydrogen apps
+ Any web app can run into issues, and Hydrogen apps are no exception. This guide shows you how to debug and troubleshoot your Hydrogen app for common issues.
+ Debugging Hydrogen code
+ When your app doesn't work as expected, you can attach a debugger to your Hydrogen app to inspect the code and find the issue.
+ If you can determine that the issue occurs only on the browser, then you can use the browser's developer tools to debug your code.
+ However, when the issue is happening during server-side rendering or subsequent navigations on the server, you can debug server code by attaching a debugger to your Oxygen worker. For more information, refer to the guide on debugging server code.
+ Debugging in oxygen
+ If your app is deployed to Oxygen, server logs and an error console are available to help you debug problems.
+ Common errors
+ Review the following common errors in Hydrogen code, and their causes.
+ React hydration errors
+ React hydration errors in the browser console indicate that the HTML rendered on the server doesn't match the HTML that React found on the browser when adding interactivity with JavaScript. This can happen for multiple reasons and is likely specific to your code, so there's no single solution that can fix the problem. Generally, you can try to comment out or remove part of your code to isolate the issue and find the root cause.
+ A common cause of hydration mismatch in React and Remix apps is that a browser extension modifies the HTML of the page before React uses it. You can check if this is the case in your app by opening incognito mode or private browsing without browser extensions. Refer to this issue for more information.
+ Some dependencies aren't working on Oxygen
+ Oxygen is worker-based runtime. Because of this, it difers from Node.js in some ways. For example, Oxygen doesn't support the fs module and other Node.js APIs. As a result, some dependencies that rely on Node.js-specific APIs might not work on Oxygen. If you're using a dependency that isn't working on Oxygen, then you can try to find an alternative that's built for the browser instead of Node.js. Browser-based alternatives are closer to Oxygen's runtime environment.
+ To learn more about the differences between Oxygen and Node.js, refer to Worker runtime APIs.
+ Diagnosing slow apps
+ Slow apps can be caused by many factors. The following are a few key reasons why your app might be slow:
+ Slow server-side network requests
+ Your app might be slow because your network requests aren't sufficiently optimized. Use the Subrequest Profiler to isolate bottlenecks in your data-loading strategies.
+ Unoptimized caching strategies
+ By default, all the GraphQL queries to the Storefront API are cached. However, you can adjust the caching strategy to better suit your app's needs. For example, the result of a query to retrieve header or footer menus doesn't change frequently, so you can cache it for a longer period of time than the default.
+ Learn more about caching Shopify API data with Hydrogen and Oxygen. You can also use the Subrequest Profiler to inspect whether your data is being cached properly.
+ Slow or heavy dependencies
+ Certain dependencies can slow down your app. You can use the bundle size analyzer to find the dependencies that contribute to the bundle size of your app.
+ You can also try debugging your server code to identify where the bottleneck is. For more information, refer to See the guide on Attach a debugger to an Oxygen worker.
+ Failing Oxygen deployments
+ When deploying your Hydrogen app to Oxygen, the process might fail for several reasons. You can check the deployment logs to identify the cause of the failure.
+ The Oxygen platform has some file size limits and sometimes a code change can inadvertently exceed one of these limits.
+ Depending on the error message, you can try to do the following:
+ Reduce the size of your app bundle by removing unused dependencies or replacing them with smaller alternatives. For more information, refer to Inspect your Hydrogen app bundle size.
+ Speed up the CPU startup time of your app by reducing the amount of code that runs on startup, outside of request handlers. Learn how to measure and reduce your CPU startup time.
+ Reduce the size of your assets by compressing them, or use an external CDN to load the assets that exceed the Oxygen limit.
+ End-to-end testing
+ You can add end-to-end testing of your Hydrogen deployments with authentication bypass tokens. These tokens allow third-party CI/CD platforms to securely access your deployments for testing purposes.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Debugging Hydrogen code
+ Common errors
+ Diagnosing slow apps
+ Failing Oxygen deployments
+ End-to-end testing
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

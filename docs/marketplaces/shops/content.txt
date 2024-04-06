@@ -1,0 +1,35 @@
+Shops details overview
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ A well-designed marketplace drives conversion by giving buyers key details about shops and their products. These details also help merchants distinguish their shops in a competitive marketplace. You can leverage Shopify's commerce essentials and the Storefront API to build an immersive storefront experience for each shop on the marketplace.
+ This guide introduces you to the tutorials for building buyer-facing pages at the shop-level.
+ Marketplace considerations
+ Creating shop pages in the context of a marketplace is unique. For example, a custom storefront might have a dedicated homepage and discrete pages for product categories. In a marketplace, one channel app hosts multiple storefronts on a single platform. A marketplace needs to control the look and feel of multiple brands, with often a single page devoted to a shop and its products.
+ Shop pages
+ Shop pages surface storefront details for each shop in the marketplace. For example, render a page with the shop name, description, and a link to the storefront.
+ Product categories
+ Product categories surface the product types that merchants have created in their storefront. For example, render clothing in categories like coats, handbags, and dresses.
+ Product sort
+ Product sort enables buyers to order shops on the marketplace by specific criteria. For example, add the ability to sort shops on the marketplace by name.
+ Product filter
+ Shop filters enable buyers to narrow shops on the marketplace by specific criteria. For example, add the ability to filter products by price range.
+ Marketplace Kit app code
+ The app that you cloned includes code to simplify adding shop details to the marketplace.
+ server/graphql/resolvers.js and server/graphql/schema.js have queries to the Storefront API that you can run to retrieve shop details.
+ Limitations
+ The Storefront API limits your ability to interact with shops across the marketplace. For example, you can't use the Storefront API to retrieve a product category populated with items from multiple shops. Throughout the tutorials in this section, all filtering, sorting, and other ways of parsing product data is done at the shop level, not the marketplace level.
+ Parsing product data across multiple shops requires product sync, which Shopify doesn't fully support out of the box.
+ Next steps
+ Learn how to include a dedicated page for each shop in a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Marketplace considerations
+ Shop pages
+ Product categories
+ Product sort
+ Product filter
+ Marketplace Kit app code

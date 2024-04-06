@@ -1,0 +1,65 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Tools for building Shopify themes
+ Shopify provides a range of tools to help you build Shopify themes faster.
+ Tools for building and editing themes
+ The following tools help you quickly scaffold, test, share, and develop Shopify themes.
+ Shopify CLI 3.x
+ A powerful command-line tool for building Shopify themes, and exploring Liquid code in a REPL interface.
+ Shopify Liquid VS Code extension
+ Use the Shopify Liquid Visual Studio Code extension to improve your local development experience.
+ Legacy tools
+ Shopify CLI 2.x
+ The previous major version of Shopify CLI.
+ Theme Kit
+ A legacy command-line tool for building Shopify themes.
+ Web-based editors for themes
+ The following tools can be used by merchants and developers to customize themes in the Shopify admin. As a developer, you should account for these tools when you're developing your theme to ensure the best merchant experience.
+ Admin theme editor
+ An interactive editor that lets merchants customize their online store and theme.
+ Admin code editor
+ A code editor built into the Shopify admin.
+ Access tools
+ The following tools allow you to access Shopify infrastructure for testing, and help you to safely access merchant stores.
+ Development stores
+ A free Shopify account that you can use to build and test themes.
+ Collaborator accounts
+ An account that lets you access and manage a merchant's store through the Partner Dashboard.
+ Theme Access app
+ An app that grants programmatic access to themes in a particular store. Used with Shopify CLI and Theme Kit.
+ Version control tools
+ The Shopify GitHub integration helps you to track and push changes to and from a theme in a Shopify store by using Git.
+ Shopify GitHub integration
+ Manage your Shopify theme code by using Git version control.
+ Testing tools
+ The following tools help you to optimize and detect errors in your theme code.
+ Theme Check
+ A command-line based linter for themes. Also offered as part of the Shopify Liquid Visual Studio Code extension.
+ Liquid Prettier Plugin
+ Use the Liquid Prettier Plugin to format your Liquid and HTML in a consistent style.
+ Shopify Theme Inspector for Chrome
+ Profile and debug your Liquid template performance with this extension for Chrome Developer Tools.
+ Lighthouse CI
+ Ensure that your theme is performant by using the Lighthouse CI GitHub Action.
+ Tools for learning Liquid
+ The following tools help you to learn and write Liquid.
+ ImageryNEW
+ Learn how to write image tags, and understand how images are dynamically transformed with Imagery.
+ Example theme
+ The Dawn theme is Shopify's example theme. You can refer to it to understand how a theme can be put together, or fork it as a starting point to build your own theme.
+ Dawn
+ Use Dawn as an example of how to build a Shopify theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Tools for building and editing themes
+ Web-based editors for themes
+ Access tools
+ Version control tools
+ Testing tools
+ Tools for learning Liquid
+ Example theme
+ Updates & News
+ Developer changelog
+ Partner blog

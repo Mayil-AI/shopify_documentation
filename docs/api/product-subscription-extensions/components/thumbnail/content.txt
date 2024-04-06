@@ -1,0 +1,35 @@
+TextField
+ Thumbnail
+ Thumbnail
+ Thumbnails are used as a visual anchor and identifier for an object. They should be used along with text to provide context.
+ JavaScript
+ React
+ 1 import {extend, Thumbnail} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const thumbnail = root.createComponent(Thumbnail, {
+ 5
+      size: 'small',
+ 6
+      scaleType: 'fit',
+ 7
+      source: 'https://cdn.shopify.com/shopify-marketing_assets/static/shopify-favicon.png',
+ 8
+      alt: 'Shopify',
+ 9
+    });
+ 10
+ 11
+    root.appendChild(thumbnail);
+ 12
+    root.mount();
+ 13 });
+ Props
+ optional = ?
+ Name Type Description
+ size? "small" | "base" | "medium" | "large" | "extraLarge"
+ scaleType? "fill" | "fit" | "crop"
+ source string URL for the thumbnail image.
+ alt string Alt text for the thumbnail.
+ Was this page helpful?

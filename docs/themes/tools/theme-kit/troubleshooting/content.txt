@@ -1,0 +1,70 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Troubleshooting Theme Kit
+ This reference guide contains troubleshooting information to help you resolve common issues in Theme Kit.
+ Update Theme Kit
+ Before you run any Theme Kit commands, make sure you're using the latest version of Theme Kit. You should also uninstall the shopify-theme gem, if you have used it previously.
+ Note
+ If it's your first time installing Theme Kit, then you can ignore the following instructions and refer to the getting started guide.
+ You can uninstall existing instances of the shopify-theme gem with the following command:
+ Terminal
+ $ gem uninstall shopify-theme
+ To update Theme Kit to the latest version, run the following command:
+ Terminal
+ $ theme update --version=[version number]
+ For example, if you want to update Theme Kit to version 1.1.1, then you can run the following command:
+ Terminal
+ $ theme update --version=v1.1.1
+ To test that Theme Kit is installed and working, run the following command:
+ Terminal
+ $ theme --help
+ Reload a page
+ To reload a page automatically when you make changes to Theme Kit, you can use a reloading tool. There are many options, including the following:
+ Prepros
+ LivePage Chrome Plugin
+ BrowserSync
+ LiveReload
+ Tip
+ To learn how to set up Prepos, refer to the Live Reloading Shopify Themes guide. The instructions in the guide can also apply to different tools.
+ Notifying about changes
+ To provide Theme Kit with a file to update whenever you make a change, run the following command:
+ Terminal
+ $ theme watch --notify=/var/tmp/theme_ready
+ If this file doesn't exist, then Theme Kit will create it when the first change happens. Then, on subsequent events, the file will be updated.
+ The file is updated only after the request to Shopify has been completed, and not after saving the file. You can then provide the file path to your reloading tool to trigger your browser refresh.
+ Common errors
+ The following section provides some solutions to common errors that you might experience in Theme Kit.
+ Problems uploading changes
+ If you're having trouble uploading changes to Theme Kit, then check if your file is being ignored. Your file might be matching one of the ignore patterns that you previously specified.
+ Error: ‘TLS handshake timeout’
+ This error has to do with a file descriptor limit, typically due to using Theme Kit for a long time. You can usually fix this by restarting your terminal. For a long-term solution, refer to the next section.
+ Error: ‘Could not watch directory, too many open files’
+ If you receive this error, then it's probably because you're using macOS. macOS has a low limit on file descriptors. You need to raise this limit manually. To raise the limit, run the following commands:
+ Terminal
+ $ echo kern.maxfiles=65536 | sudo tee -a /etc/sysctl.conf
+ $ echo kern.maxfilesperproc=65536 | sudo tee -a /etc/sysctl.conf
+ $ sudo sysctl -w kern.maxfiles=65536
+ $ sudo sysctl -w kern.maxfilesperproc=65536
+ $ ulimit -n 65536 65536
+ Cloud9 replaces files with other content
+ If you're using the Cloud9 Editor, then you can make Theme Kit work by placing all of your theme files in a folder in your workspace. After you move the files, run Theme Kit in the new folder.
+ For more information, refer to this GitHub issue.
+ Remove Theme Kit
+ You can remove Theme Kit by running the following command:
+ Terminal
+ $ rm $(name of the theme)
+ If you installed Theme Kit using Homebrew, then you can run:
+ Terminal
+ $ brew uninstall themekit
+ Next steps
+ Refer to Getting started with Theme Kit to learn how to install and configure Theme Kit, use the Admin API to connect to the Shopify platform, create a new theme, and configure an existing theme.
+ Learn about the different commands that you can use in Theme Kit to execute key operations.
+ Familiarize yourself with the configuration variables available and their accepted values in Theme Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Update Theme Kit
+ Reload a page
+ Common errors
+ Remove Theme Kit

@@ -1,0 +1,35 @@
+ToastApi
+ Components
+ LayoutApi
+ You can use the Layout utility to adjust your content based on the user's screen size. Layout returns 'compact' on mobile devices and at narrow screen widths, and 'regular' otherwise.
+ JavaScript
+ React
+ 1 import {extend, Text} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Admin::Product::SubscriptionPlan::Add', (root, api) => {
+ 4
+    const {layout} = api;
+ 5
+    const currentLayoutText = root.createText(`The current layout is: ${layout.initialValue.horizontal}`);
+ 6
+ 7
+    layout.setOnChange((newLayout) => {
+ 8
+      currentLayoutText.updateText(`The current layout is: ${newLayout.horizontal}`)
+ 9
+    });
+ 10
+ 11
+    root.appendChild(currentLayoutText);
+ 12
+    root.mount();
+ 13 });
+ Props
+ optional = ?
+ Name Type Description
+ initialValue Layout
+ setOnChange (onChange: (layout: Layout) => void) => void
+ Layout
+ Name Type Description
+ horizontal "regular" | "compact"
+ Was this page helpful?

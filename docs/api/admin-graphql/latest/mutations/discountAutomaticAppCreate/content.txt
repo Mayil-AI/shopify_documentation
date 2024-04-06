@@ -1,0 +1,250 @@
+Billing
+ Bulk operations
+ Cart
+ Checkout branding
+ Common objects
+ Customers
+ Discounts and marketing
+ Queries
+ Mutations
+ abandonmentEmailStateUpdate
+ abandonmentUpdateActivitiesDeliveryStatuses
+ discountAutomaticActivate
+ discountAutomaticAppCreate
+ discountAutomaticAppUpdate
+ discountAutomaticBasicCreate
+ discountAutomaticBasicUpdate
+ discountAutomaticBulkDelete
+ discountAutomaticBxgyCreate
+ discountAutomaticBxgyUpdate
+ discountAutomaticDeactivate
+ discountAutomaticDelete
+ discountAutomaticFreeShippingCreate
+ discountAutomaticFreeShippingUpdate
+ discountCodeActivate
+ discountCodeAppCreate
+ discountCodeAppUpdate
+ discountCodeBasicCreate
+ discountCodeBasicUpdate
+ discountCodeBulkActivate
+ discountCodeBulkDeactivate
+ discountCodeBulkDelete
+ discountCodeBxgyCreate
+ discountCodeBxgyUpdate
+ discountCodeDeactivate
+ discountCodeDelete
+ discountCodeFreeShippingCreate
+ discountCodeFreeShippingUpdate
+ discountCodeRedeemCodeBulkDelete
+ discountRedeemCodeBulkAdd
+ eventBridgeServerPixelUpdate
+ marketingActivitiesDeleteAllExternal
+ marketingActivityCreate
+ marketingActivityCreateExternal
+ marketingActivityDeleteExternal
+ marketingActivityUpdate
+ marketingActivityUpdateExternal
+ marketingActivityUpsertExternal
+ marketingEngagementCreate
+ marketingEngagementsDelete
+ priceRuleActivate
+ priceRuleCreate
+ priceRuleDeactivate
+ priceRuleDelete
+ priceRuleDiscountCodeCreate
+ priceRuleDiscountCodeUpdate
+ priceRuleUpdate
+ pubSubServerPixelUpdate
+ serverPixelCreate
+ serverPixelDelete
+ webPixelCreate
+ webPixelDelete
+ webPixelUpdate
+ Objects
+ Events
+ Inventory
+ Localizations
+ Marketplaces
+ Metafields
+ Metaobjects
+ Online store
+ Orders
+ Products and collections
+ Retail
+ Shipping and fulfillment
+ Shopify Markets
+ Shopify Payments
+ Store properties
+ GraphQL Types
+ discountAutomaticAppCreate
+ mutation
+ Requires write_discounts access scope.
+ Creates an app discount.
+ Arguments
+ automaticAppDiscount
+ DiscountAutomaticAppInput!
+ required
+ The input data used to create the app discount.
+ Show input fields
+ Was this section helpful?
+ YesNo
+ DiscountAutomaticAppCreatePayload returns
+ automaticAppDiscount
+ DiscountAutomaticApp
+ The created app discount.
+ Show fields
+ userErrors
+ [DiscountUserError!]!
+ non-null
+ The list of errors that occurred from executing the mutation.
+ Show fields
+ Was this section helpful?
+ YesNo
+ Code
+ Map
+ Mutation
+ 11
+ mutation discountAutomaticAppCreate($automaticAppDiscount: DiscountAutomaticAppInput!) {
+ discountAutomaticAppCreate(automaticAppDiscount: $automaticAppDiscount) {
+ automaticAppDiscount {
+ # DiscountAutomaticApp fields
+ }
+ userErrors {
+ field
+ message
+ }
+ }
+ }
+ Input
+ Variables
+ Schema
+ 21
+ 22
+ 23
+ {
+ "automaticAppDiscount": {
+ "combinesWith": {
+ "orderDiscounts": true,
+ "productDiscounts": true,
+ "shippingDiscounts": true
+ },
+ "endsAt": "2019-09-07T15:50:00Z",
+ "functionId": "<your-functionId>",
+ "metafields": [
+ {
+ "description": "<your-description>",
+ "id": "gid://shopify/<objectName>/10079785100",
+ "key": "<your-key>",
+ "namespace": "<your-namespace>",
+ "type": "<your-type>",
+ "value": "<your-value>"
+ }
+ ],
+ "startsAt": "2019-09-07T15:50:00Z",
+ "title": "<your-title>"
+ }
+ }
+ Examples
+ Create an app automatic discount
+ This endpoint creates an app automatic discount. This is different from basic code discount creation as this endpoint creates a discount with the function id as input and the function id is used to find the function to run. Depending on the function, we can create order, product or shipping discounts.
+ Was this section helpful?
+ YesNo
+ GQL
+ cURL
+ Remix
+ Ruby
+ Node.js
+ PHP
+ Mutation
+ 1
+ 2
+ 23
+ 24
+ mutation discountAutomaticAppCreate($automaticAppDiscount: DiscountAutomaticAppInput!) {
+ discountAutomaticAppCreate(automaticAppDiscount: $automaticAppDiscount) {
+ userErrors {
+ field
+ message
+ }
+ automaticAppDiscount {
+ discountId
+ title
+ startsAt
+ endsAt
+ status
+ appDiscountType {
+ appKey
+ functionId
+ }
+ combinesWith {
+ orderDiscounts
+ productDiscounts
+ shippingDiscounts
+ }
+ }
+ }
+ }
+ Input variables
+ 1
+ 2
+ 3
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ {
+ "automaticAppDiscount": {
+ "title": "Take 5$ from discount",
+ "functionId": "0af97bd8-54ea-434c-bd92-4fa3a5f72d64",
+ "combinesWith": {
+ "orderDiscounts": true,
+ "productDiscounts": true,
+ "shippingDiscounts": true
+ },
+ "startsAt": "2021-02-02T17:09:21Z",
+ "endsAt": "2022-02-02T17:09:21Z",
+ "metafields": [
+ {
+ "namespace": "default",
+ "key": "function-configuration",
+ "type": "json",
+ "value": "{\"discounts\":[{\"value\":{\"fixedAmount\":{\"amount\":5}},\"targets\":\n [{\"orderSubtotal\":{\"excludedVariantIds\":[]}}]}],\"discountApplicationStrategy\":\"FIRST\"}"
+ }
+ ]
+ }
+ }
+ 17
+ 18
+ 19
+ 20
+ 21
+ {
+ "discountAutomaticAppCreate": {
+ "userErrors": [],
+ "automaticAppDiscount": {
+ "discountId": "gid://shopify/DiscountAutomaticNode/996606721",
+ "title": "Take 5$ from discount",
+ "startsAt": "2021-02-02T17:09:21Z",
+ "endsAt": "2022-02-02T17:09:21Z",
+ "status": "EXPIRED",
+ "appDiscountType": {
+ "appKey": "shopify-web",
+ "functionId": "0af97bd8-54ea-434c-bd92-4fa3a5f72d64"
+ },
+ "combinesWith": {
+ "orderDiscounts": true,
+ "productDiscounts": true,
+ "shippingDiscounts": true
+ }
+ }
+ }
+ }
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

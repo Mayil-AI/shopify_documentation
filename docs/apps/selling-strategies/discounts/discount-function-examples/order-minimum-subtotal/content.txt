@@ -1,0 +1,930 @@
+Discount function examples
+ Overview
+ Order discount
+ Discounts allocator
+ Bundles
+ Billing
+ App Store
+ Order Discount Function with `orderMinimumSubtotal`
+ In this example, you create an Order Discount Function that uses the OrderMinimumSubtotal Condition. After you run the example code, the FunctionResult returns the following:
+ 1 {
+ 2
+    "discounts": [
+ 3
+      {
+ 4
+        "value": {
+ 5
+          "fixedAmount": {
+ 6
+            "amount": 10
+ 7
+          }
+ 8
+        },
+ 9
+        "conditions": [
+ 10
+          {
+ 11
+            "orderMinimumSubtotal": {
+ 12
+              "targetType": "ORDER_SUBTOTAL",
+ 13
+              "minimumAmount": 100,
+ 14
+            }
+ 15
+          }
+ 16
+        ],
+ 17
+        "targets": [
+ 18
+          {
+ 19
+            "orderSubtotal": {
+ 20
+              "excludedVariantIds": [],
+ 21
+            },
+ 22
+          },
+ 23
+        ],
+ 24
+      }
+ 25
+    ],
+ 26
+    "discountApplicationStrategy": "FIRST"
+ 27 }
+ See sample app with completed example here
+ Related common objects in Order Discount API
+ Condition
+ OrderSubtotalTarget
+ OrderMinimumSubtotal
+ Step 1: Create the order discount Function
+ To create your Order Discount Function, use Shopify CLI to generate a starter Function, specify the inputs for your Function using an input query, and implement your Function logic using JavaScript or Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new Order Discount Function extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template order_discounts --name order-discount
+ Choose the language that you want to use. For this tutorial, select either JavaScript or Rust.
+ Navigate to extensions/order-discount.
+ Terminal
+ $ cd extensions/order-discount
+ Replace the contents of src/run.graphql file with the following code. run.graphql defines the input for the Function target. The query is slightly different in JavaScript and Rust due to code generation requirements.
+ run.GraphQL
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    discountNode {
+ 3
+      metafield(
+ 4
+        namespace: "$app:minimum-subtotal"
+ 5
+        key: "function-configuration"
+ 6
+      ) {
+ 7
+        value
+ 8
+      }
+ 9
+    }
+ 10 }
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the content of the src/run.js or src/run.rs file with the following code. This logic applies a 10% discount to any order that has a minimum subtotal greater than $100.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2 import {DiscountApplicationStrategy} from '../generated/api';
+ 3
+ 4 /**
+ 5 * @typedef {import("../generated/api").RunInput} RunInput
+ 6 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 7 * @typedef {import("../generated/api").Target} Target
+ 8 * @typedef {import("../generated/api").ProductVariant} ProductVariant
+ 9 */
+ 10
+ 11 /**
+ 12 * @type {FunctionRunResult}
+ 13 */
+ 14 const EMPTY_DISCOUNT = {
+ 15
+    discountApplicationStrategy: DiscountApplicationStrategy.First,
+ 16
+    discounts: [],
+ 17 };
+ 18
+ 19 /**
+ 20 * @param {RunInput} input
+ 21 * @returns {FunctionRunResult}
+ 22 */
+ 23 export function run(input) {
+ 24
+    const configuration = JSON.parse(
+ 25
+      input?.discountNode?.metafield?.value ?? '{}',
+ 26
+    );
+ 27
+ 28
+    if (!configuration.percentage || !configuration.minimumAmount) {
+ 29
+      throw new Error('Configuration missing!');
+ 30
+      return EMPTY_DISCOUNT;
+ 31
+    }
+ 32
+ 33
+    return {
+ 34
+      discounts: [
+ 35
+        {
+ 36
+          value: {
+ 37
+            percentage: {
+ 38
+              value: configuration.percentage,
+ 39
+            },
+ 40
+          },
+ 41
+          conditions: [
+ 42
+            {
+ 43
+              orderMinimumSubtotal: {
+ 44
+                targetType: 'ORDER_SUBTOTAL',
+ 45
+                minimumAmount: configuration.minimumAmount,
+ 46
+                excludedVariantIds: [],
+ 47
+              },
+ 48
+            },
+ 49
+          ],
+ 50
+          targets: [
+ 51
+            {
+ 52
+              orderSubtotal: {
+ 53
+                excludedVariantIds: [],
+ 54
+              },
+ 55
+            },
+ 56
+          ],
+ 57
+        },
+ 58
+      ],
+ 59
+      discountApplicationStrategy: DiscountApplicationStrategy.First,
+ 60
+    };
+ 61 };
+ Step 2: Create the frontend UI for your Function
+ In app/routes, create a new file named app.minimum-subtotal.$functionId.new.jsx.
+ The Shopify Remix app template uses file-based routing, so the filename determines the page's URL. The $ prefix indicates functionId is a dynamic segment. The path for this page is /app/minimum-subtotal/{functionId}/new.
+ Add the following code in app.minimum-subtotal.$functionId.new.jsx. The action function handles submitting the form data to Shopify to create the discount. The MinimumSubtotalNew function renders the page and form components using Polaris components, Remix hooks, and discount app components.
+ app/routes/app.minimum-subtotal.$functionId.new.jsx
+ 1 import {useEffect, useMemo} from 'react';
+ 2 import {json} from '@remix-run/node';
+ 3 import {useForm, useField} from '@shopify/react-form';
+ 4 import {useAppBridge} from '@shopify/app-bridge-react';
+ 5 import {Redirect} from '@shopify/app-bridge/actions';
+ 6 import {CurrencyCode} from '@shopify/react-i18n';
+ 7 import {Form, useActionData, useNavigation, useSubmit} from '@remix-run/react';
+ 8 import {
+ 9
+    ActiveDatesCard,
+ 10
+    CombinationCard,
+ 11
+    DiscountClass,
+ 12
+    DiscountMethod,
+ 13
+    MethodCard,
+ 14
+    DiscountStatus,
+ 15
+    RequirementType,
+ 16
+    SummaryCard,
+ 17
+    UsageLimitsCard,
+ 18
+    onBreadcrumbAction,
+ 19 } from '@shopify/discount-app-components';
+ 20 import {
+ 21
+    Banner,
+ 22
+    Card,
+ 23
+    Text,
+ 24
+    Layout,
+ 25
+    Page,
+ 26
+    PageActions,
+ 27
+    TextField,
+ 28
+    BlockStack,
+ 29 } from '@shopify/polaris';
+ 30
+ 31 import shopify from '../shopify.server';
+ 32
+ 33 // This is a server-side action that is invoked when the form is submitted.
+ 34 // It makes an admin GraphQL request to create a discount.
+ 35 export const action = async ({params, request}) => {
+ 36
+    const {functionId} = params;
+ 37
+    const {admin} = await shopify.authenticate.admin(request);
+ 38
+    const formData = await request.formData();
+ 39
+    const {
+ 40
+      title,
+ 41
+      method,
+ 42
+      code,
+ 43
+      combinesWith,
+ 44
+      usageLimit,
+ 45
+      appliesOncePerCustomer,
+ 46
+      startsAt,
+ 47
+      endsAt,
+ 48
+      configuration,
+ 49
+    } = JSON.parse(formData.get('discount'));
+ 50
+ 51
+    const baseDiscount = {
+ 52
+      functionId,
+ 53
+      title,
+ 54
+      combinesWith,
+ 55
+      startsAt: new Date(startsAt),
+ 56
+      endsAt: endsAt && new Date(endsAt),
+ 57
+    };
+ 58
+ 59
+    if (method === DiscountMethod.Code) {
+ 60
+      const baseCodeDiscount = {
+ 61
+        ...baseDiscount,
+ 62
+        title: code,
+ 63
+        code,
+ 64
+        usageLimit,
+ 65
+        appliesOncePerCustomer,
+ 66
+      };
+ 67
+ 68
+      const response = await admin.graphql(
+ 69
+        `#graphql
+ 70
+            mutation CreateCodeDiscount($discount: DiscountCodeAppInput!) {
+ 71
+              discountCreate: discountCodeAppCreate(codeAppDiscount: $discount) {
+ 72
+                userErrors {
+ 73
+                  code
+ 74
+                  message
+ 75
+                  field
+ 76
+                }
+ 77
+              }
+ 78
+            }`,
+ 79
+        {
+ 80
+          variables: {
+ 81
+            discount: {
+ 82
+              ...baseCodeDiscount,
+ 83
+              metafields: [
+ 84
+                {
+ 85
+                  namespace: '$app:minimum-subtotal',
+ 86
+                  key: 'function-configuration',
+ 87
+                  type: 'json',
+ 88
+                  value: JSON.stringify({
+ 89
+                    minimumAmount: configuration.minimumAmount,
+ 90
+                    percentage: configuration.percentage,
+ 91
+                  }),
+ 92
+                },
+ 93
+              ],
+ 94
+            },
+ 95
+          },
+ 96
+        },
+ 97
+      );
+ 98
+ 99
+      const responseJson = await response.json();
+ 100
+      const errors = responseJson.data.discountCreate?.userErrors;
+ 101
+      return json({errors});
+ 102
+    } else {
+ 103
+      const response = await admin.graphql(
+ 104
+        `#graphql
+ 105
+            mutation CreateAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
+ 106
+              discountCreate: discountAutomaticAppCreate(automaticAppDiscount: $discount) {
+ 107
+                userErrors {
+ 108
+                  code
+ 109
+                  message
+ 110
+                  field
+ 111
+                }
+ 112
+              }
+ 113
+            }`,
+ 114
+        {
+ 115
+          variables: {
+ 116
+            discount: {
+ 117
+              ...baseDiscount,
+ 118
+              metafields: [
+ 119
+                {
+ 120
+                  namespace: '$app:minimum-subtotal',
+ 121
+                  key: 'function-configuration',
+ 122
+                  type: 'json',
+ 123
+                  value: JSON.stringify({
+ 124
+                    minimumAmount: configuration.minimumAmount,
+ 125
+                    percentage: configuration.percentage,
+ 126
+                  }),
+ 127
+                },
+ 128
+              ],
+ 129
+            },
+ 130
+          },
+ 131
+        },
+ 132
+      );
+ 133
+ 134
+      const responseJson = await response.json();
+ 135
+      const errors = responseJson.data.discountCreate?.userErrors;
+ 136
+      return json({errors});
+ 137
+    }
+ 138 };
+ 139
+ 140 // This is the React component for the page.
+ 141 export default function MinimumSubtotalNew() {
+ 142
+    const submitForm = useSubmit();
+ 143
+    const actionData = useActionData();
+ 144
+    const navigation = useNavigation();
+ 145
+    const app = useAppBridge();
+ 146
+    const todaysDate = useMemo(() => new Date(), []);
+ 147
+ 148
+    const isLoading = navigation.state === 'submitting';
+ 149
+    const currencyCode = CurrencyCode.Cad;
+ 150
+    const submitErrors = actionData?.errors || [];
+ 151
+    const redirect = Redirect.create(app);
+ 152
+ 153
+    useEffect(() => {
+ 154
+      if (actionData?.errors.length === 0) {
+ 155
+        redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 156
+          name: Redirect.ResourceType.Discount,
+ 157
+        });
+ 158
+      }
+ 159
+    }, [actionData]);
+ 160
+ 161
+    const {
+ 162
+      fields: {
+ 163
+        discountTitle,
+ 164
+        discountCode,
+ 165
+        discountMethod,
+ 166
+        combinesWith,
+ 167
+        requirementType,
+ 168
+        requirementSubtotal,
+ 169
+        requirementQuantity,
+ 170
+        usageLimit,
+ 171
+        appliesOncePerCustomer,
+ 172
+        startDate,
+ 173
+        endDate,
+ 174
+        configuration,
+ 175
+      },
+ 176
+      submit,
+ 177
+    } = useForm({
+ 178
+      fields: {
+ 179
+        discountTitle: useField(''),
+ 180
+        discountMethod: useField(DiscountMethod.Code),
+ 181
+        discountCode: useField(''),
+ 182
+        combinesWith: useField({
+ 183
+          orderDiscounts: false,
+ 184
+          productDiscounts: false,
+ 185
+          shippingDiscounts: false,
+ 186
+        }),
+ 187
+        requirementType: useField(RequirementType.None),
+ 188
+        requirementSubtotal: useField('0'),
+ 189
+        requirementQuantity: useField('0'),
+ 190
+        usageLimit: useField(null),
+ 191
+        appliesOncePerCustomer: useField(false),
+ 192
+        startDate: useField(todaysDate.toString()),
+ 193
+        endDate: useField(null),
+ 194
+        configuration: {
+ 195
+          // Add minimumAmount and percentage configuration to form data
+ 196
+          minimumAmount: useField('100'),
+ 197
+          percentage: useField('10'),
+ 198
+        },
+ 199
+      },
+ 200
+      onSubmit: async form => {
+ 201
+        const discount = {
+ 202
+          title: form.discountTitle,
+ 203
+          method: form.discountMethod,
+ 204
+          code: form.discountCode,
+ 205
+          combinesWith: form.combinesWith,
+ 206
+          usageLimit: form.usageLimit == null ? null : parseInt(form.usageLimit),
+ 207
+          appliesOncePerCustomer: form.appliesOncePerCustomer,
+ 208
+          startsAt: form.startDate,
+ 209
+          endsAt: form.endDate,
+ 210
+          configuration: {
+ 211
+            minimumAmount: parseInt(form.configuration.minimumAmount),
+ 212
+            percentage: parseFloat(form.configuration.percentage),
+ 213
+          },
+ 214
+        };
+ 215
+ 216
+        submitForm({discount: JSON.stringify(discount)}, {method: 'post'});
+ 217
+ 218
+        return {status: 'success'};
+ 219
+      },
+ 220
+    });
+ 221
+ 222
+    const errorBanner =
+ 223
+      submitErrors.length > 0 ? (
+ 224
+        <Layout.Section>
+ 225
+          <Banner tone="critical">
+ 226
+            <p>There were some issues with your form submission:</p>
+ 227
+            <ul>
+ 228
+              {submitErrors.map(({message, field}, index) => {
+ 229
+                return (
+ 230
+                  <li key={`${message}${index}`}>
+ 231
+                    {field.join('.')} {message}
+ 232
+                  </li>
+ 233
+                );
+ 234
+              })}
+ 235
+            </ul>
+ 236
+          </Banner>
+ 237
+        </Layout.Section>
+ 238
+      ) : null;
+ 239
+ 240
+    return (
+ 241
+      // Render a discount form using Polaris components and the discount app components
+ 242
+      <Page
+ 243
+        title="Create minimumSubtotal discount"
+ 244
+        backAction={{
+ 245
+          content: 'Discounts',
+ 246
+          onAction: () => onBreadcrumbAction(redirect, true),
+ 247
+        }}
+ 248
+        primaryAction={{
+ 249
+          content: 'Save',
+ 250
+          onAction: submit,
+ 251
+          loading: isLoading,
+ 252
+        }}
+ 253
+      >
+ 254
+        <Layout>
+ 255
+          {errorBanner}
+ 256
+          <Layout.Section>
+ 257
+            <Form method="post">
+ 258
+              <BlockStack align="space-around" gap="200">
+ 259
+                <MethodCard
+ 260
+                  title="Minimum Subtotal"
+ 261
+                  discountTitle={discountTitle}
+ 262
+                  discountClass={DiscountClass.Order}
+ 263
+                  discountCode={discountCode}
+ 264
+                  discountMethod={discountMethod}
+ 265
+                />
+ 266
+                <Card>
+ 267
+                  <BlockStack gap="300">
+ 268
+                    <Text variant="headingMd" as="h2">
+ 269
+                      Minimum subtotal
+ 270
+                    </Text>
+ 271
+                    <TextField
+ 272
+                      label="Minimum subtotal"
+ 273
+                      autoComplete="on"
+ 274
+                      {...configuration.minimumAmount}
+ 275
+                    />
+ 276
+                    <TextField
+ 277
+                      label="Discount percentage"
+ 278
+                      autoComplete="on"
+ 279
+                      {...configuration.percentage}
+ 280
+                      suffix="%"
+ 281
+                    />
+ 282
+                  </BlockStack>
+ 283
+                </Card>
+ 284
+                {discountMethod.value === DiscountMethod.Code && (
+ 285
+                  <UsageLimitsCard
+ 286
+                    totalUsageLimit={usageLimit}
+ 287
+                    oncePerCustomer={appliesOncePerCustomer}
+ 288
+                  />
+ 289
+                )}
+ 290
+                <CombinationCard
+ 291
+                  combinableDiscountTypes={combinesWith}
+ 292
+                  discountClass={DiscountClass.Order}
+ 293
+                  discountDescriptor={'Discount'}
+ 294
+                />
+ 295
+                <ActiveDatesCard
+ 296
+                  startDate={startDate}
+ 297
+                  endDate={endDate}
+ 298
+                  timezoneAbbreviation="EST"
+ 299
+                />
+ 300
+              </BlockStack>
+ 301
+            </Form>
+ 302
+          </Layout.Section>
+ 303
+          <Layout.Section>
+ 304
+            <SummaryCard
+ 305
+              header={{
+ 306
+                discountMethod: discountMethod.value,
+ 307
+                discountDescriptor:
+ 308
+                  discountMethod.value === DiscountMethod.Automatic
+ 309
+                    ? discountTitle.value
+ 310
+                    : discountCode.value,
+ 311
+                appDiscountType: 'MinimumSubtotal',
+ 312
+                isEditing: false,
+ 313
+              }}
+ 314
+              performance={{
+ 315
+                status: DiscountStatus.Scheduled,
+ 316
+                usageCount: 0,
+ 317
+              }}
+ 318
+              minimumRequirements={{
+ 319
+                requirementType: requirementType.value,
+ 320
+                subtotal: requirementSubtotal.value,
+ 321
+                quantity: requirementQuantity.value,
+ 322
+                currencyCode: currencyCode,
+ 323
+              }}
+ 324
+              usageLimits={{
+ 325
+                oncePerCustomer: appliesOncePerCustomer.value,
+ 326
+                totalUsageLimit: usageLimit.value,
+ 327
+              }}
+ 328
+              activeDates={{
+ 329
+                startDate: startDate.value,
+ 330
+                endDate: endDate.value,
+ 331
+              }}
+ 332
+            />
+ 333
+          </Layout.Section>
+ 334
+          <Layout.Section>
+ 335
+            <PageActions
+ 336
+              primaryAction={{
+ 337
+                content: 'Save discount',
+ 338
+                onAction: submit,
+ 339
+                loading: isLoading,
+ 340
+              }}
+ 341
+              secondaryActions={[
+ 342
+                {
+ 343
+                  content: 'Discard',
+ 344
+                  onAction: () => onBreadcrumbAction(redirect, true),
+ 345
+                },
+ 346
+              ]}
+ 347
+            />
+ 348
+          </Layout.Section>
+ 349
+        </Layout>
+ 350
+      </Page>
+ 351
+    );
+ 352 }
+ Step 3: Configure the create UI path for your Function
+ The settings in the shopify.extension.toml file define the URLs that Shopify uses to enable users to create and edit discounts based on your Function. Shopify automatically fills in any dynamic tokens in these URLs.
+ In extensions/order-discount/shopify.extension.toml, populate the create and module setting in the [ui] section. This change is automatically applied as long as you're running dev.
+ extensions/order-discount/shopify.extension.toml
+ 1 create = "/app/minimum-subtotal/:functionId/new"
+ 2 details = "/app/minimum-subtotal/:functionId/:id"
+ Note
+ This tutorial doesn't cover the creation of the details UI defined here. To enable app users to edit your discount, you must also create this route at app/routes/app.minimum-subtotal.$functionId.$id.jsx.
+ Step 4: Create and test your discount
+ If your app isn't already running, then start it using Shopify CLI.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ From your Shopify admin, go to Discounts.
+ If you have existing discounts from previous tutorials, then click the checkbox next to each of them, and then click Deactivate discounts.
+ Click the Create discount button.
+ Click the order-discount discount type that you created under your app name. You should see the create page for your Minimum Subtotal discount.
+ Fill in the values for the discount:
+ For Method, use Automatic.
+ For Title, use MinimumSubtotal.
+ For Minimum subtotal, use 100.
+ For Discount percentage, use 10.
+ Click Save. The new discount is added to the list.
+ Open your development store and build a cart with a single item in it to have under $100 subtotal.
+ No discounts should be applied to the cart.
+ Increase the item quantity until you have a subtotal higher than $100.
+ The 10% MinimumSubtotal discount is applied to the cart.
+ To debug your Function, or view its output, you can review its logs in your Partner Dashboard:
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > order-discount.
+ Click on any Function run to view its input, output, and any logs written to STDERR.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Create the order discount Function
+ Step 2: Create the frontend UI for your Function
+ Step 3: Configure the create UI path for your Function
+ Step 4: Create and test your discount
+ Updates & News
+ Developer changelog
+ Partner blog

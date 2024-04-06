@@ -1,0 +1,55 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Work on an existing app
+ You can collaborate with other developers to build a Shopify CLI app.
+ Caution
+ This tutorial only applies to apps created with Shopify CLI 3 or higher. If you're using a previous version of Shopify CLI, then consider migrating your app to use the newest version.
+ Requirements
+ You've created a Partner account and a development store.
+ You understand how apps fit into Shopify.
+ You've installed Node.js 18 or higher.
+ You've installed a Node.js package manager: either npm, Yarn 1.x, or pnpm.
+ You've installed Git 2.28.0 or higher.
+ You're using the latest version of Chrome or Firefox.
+ Step 1: Install the project dependencies
+ If you haven't already, clone the app that you want to work on, and then navigate to the project directory.
+ Run your package manager's install command to install the project's dependencies. Shopify CLI is a dependency of all apps created with Shopify 3.0 or higher.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install
+ Step 2: Verify the installation
+ After you install the dependencies for the app, check the version to make sure that Shopify CLI is available.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify version
+ Step 3: Preview the app
+ After you install your app's dependencies locally, you can work with it by building the app and starting a local development server.
+ Shopify CLI uses Cloudflare to create a tunnel that allows your app to be accessed using a unique HTTPS URL. Press p to open your app's preview URL in a browser.
+ Navigate to your newly-created app directory.
+ To preview your app, run the following command:
+ 
+ The CLI walks you through the following:
+ Logging into your Shopify Partner account and, if needed, selecting a Partner organization
+ Linking your app to an existing app in the Partner Dashboard, or creating a new app.
+ Creating a new configuration file for your local development environment.
+ Creating a tunnel between your local environment and the development store using Cloudflare
+ Installing your app on a development store
+ To learn more about the processes that are executed when you run dev, refer to the Shopify CLI command reference.
+ To learn more about managing your app's configuration, refer to App configuration.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Install the project dependencies
+ Step 2: Verify the installation
+ Step 3: Preview the app
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,85 @@
+Viewing charges and earnings
+ Best practices
+ App Store
+ App subscriptions overview
+ An app subscription is a pricing model where users pay a recurring fee to access an app or certain features within the app.
+ The subscription pricing model is based on time-based, usage-based, or a combination of time and usage-based subscriptions.
+ The following guide explains how subscription models work at Shopify and the different subscription types that you can implement with the GraphQL Admin API's billing objects and mutations.
+ How it works
+ An app can have only one active subscription for each merchant. Merchants must approve the subscription, and any recurring charges are billed automatically.
+ If a merchant changes their subscription while their current plan is active, then they need to accept a new recurring app charge. The existing subscription is canceled and replaced by the new subscription after the merchant approves it. Charges and credits can be prorated, and charges can be deferred, when merchants move to a new plan depending on the subscription change.
+ Note
+ When you're creating a new app subscription for a merchant who already has an existing subscription, you can use the GraphQL Admin API's AppSubscriptionReplacementBehavior enum to determine how the change is handled.
+ When an app is uninstalled, Shopify automatically cancels the subscription. A credit isn't applied to cover the cost of the rest of the billing period. Merchants can reinstall and use the app for the remainder of the billing period.
+ When a store's billing account freezes, associated app subscriptions also freeze.
+ Subscription types
+ You can create the following types of subscriptions for your app:
+ Subscription types
+ Type Description Example use case
+ Time-based
+ Charge the merchant continuously at set intervals.
+ Provides a payment for each billing cycle. Supported cycles are annual and 30-day.
+ Apps that charge a consistent, recurring amount for a service, such as charging $X USD every 30 days for analytics and automation on email campaigns.
+ Usage-based
+ Charge based on app use. Merchants pay for the app continuously.
+ Provides a constant stream of revenue and merchants continue to get updates for the app that they subscribe to.
+ Apps that charge a fee per action, such as charging $0.05 an email for the first 1000 contacts and $0.025 an email for every contact thereafter.
+ Combined time and usage-based Combines a recurring charge fee structure with charges based on app use. Apps that perform multiple functions, some of which can be covered by a fee every 30 days and others that are charged by use, such as analytics on email campaigns with scaling charges based on the number of contacts.
+ Proration
+ Proration ensures that app subscribers aren't underpaying or overpaying for the service that they receive. Charges can be prorated, and prorated credits can be issued.
+ Prorated charges
+ New subscription charges are prorated when a merchant upgrades to a subscription with a higher price during the current billing cycle. The amount owed is based on the following variables:
+ What the merchant has already paid
+ The cost difference between the plans
+ The time left in the current billing cycle
+ The following is the equation:
+ plan1_cost + (plan2cost - plan1cost) * (cycle_days_left / total_cycle_days) = total_cost
+ For example, if a merchant begins a 30-day billing cycle on a $5.00 plan, and upgrades to a $15.00 plan on day 15 of the billing cycle, then the merchant is charged $10.00 for the upgraded plan.
+ $5.00 + ($15.00 - $5.00) * (15/30) = $10.00
+ Prorated credits
+ Caution
+ Avoid crediting on top of prorated credits. Before you issue a credit for an app downgrade, consult the Payouts page in the Partner Dashboard to verify whether Shopify has already issued a prorated credit.
+ New subscription charges are prorated when a merchant downgrades to a subscription with a lower price during the current billing cycle. The amount owed is based on the following variables:
+ The cost difference between the plans
+ The time left in the current billing cycle
+ The following is the equation:
+ (plan2cost - plan1cost) * (cycle_days_left / total_cycle_days) = total_cost
+ For example, if a merchant begins a 30-day billing cycle on a $20.00 plan, and then downgrades to a $10.00 plan on day 15 of the billing cycle, then the merchant is offered prorated credits.
+ ($20.00 - $10.00) * (15/30) = $5.00
+ The Partner payout is automatically adjusted based on the issued credit and the Partner revenue share. The following image illustrates the timeline:
+ If a new subscription includes trial days, then the merchant is still charged at the beginning of the next 30-day app billing cycle, but the bill includes a prorated credit to account for the trial days. The following image illustrates the timeline:
+ Refer to an example of canceling an app subscription and issuing prorated credits.
+ Deferral
+ In the following scenarios, new subscription plans are deferred until the current plan's billing cycle completes:
+ A merchant switches from one annual subscription to another annual subscription with a lower price.
+ A merchant switches from an annual plan to a 30-day plan.
+ A new subscription has a different discount configured.
+ For example, if a merchant begins an annual billing cycle on a $200.00 plan, and then downgrades to a 30-day billing cycle on a $10.00 plan, the 30-day billing cycle for $10.00 won't begin until the end of the annual billing cycle.
+ Cancelling subscriptions
+ When a merchant uninstalls your app, their app subscription is automatically canceled. Learn more about available subscription charge details.
+ If you want to cancel a subscription on behalf of a merchant, then you can use the appSubscriptionCancel mutation. Refer to an example of how it's done.
+ Get started
+ Get started monetizing your app by setting up subscription billing.
+ Time-based subscription billing
+ Use the GraphQL Admin API to create a time-based pricing model for your app.
+ Usage-based subscription billing
+ Use the GraphQL Admin API to create a usage-based pricing model for your app.
+ Time and usage-based subscription billing
+ Use the GraphQL Admin API to create a combined time and usage-based pricing model for your app.
+ Additional use cases
+ Learn how you can create subscription pricing models for additional use cases.
+ Subscription discounts
+ Learn about offering subscription discounts.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Subscription types
+ Proration
+ Deferral
+ Cancelling subscriptions
+ Get started
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

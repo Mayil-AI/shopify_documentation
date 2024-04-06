@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Attribute object
+ 2024-04 latest
+ Represents a generic custom attribute.
+ On this page
+ Fields
+ Types that return Attribute
+ Fields
+ key (String!)
+ Key or name of the attribute.
+ value (String)
+ Value of the attribute.
+ Types that return Attribute
+ Cart.attribute
+ CartLine.attribute
+ DeliverableCartLine.attribute
+ Was this page helpful?
+ YesNo

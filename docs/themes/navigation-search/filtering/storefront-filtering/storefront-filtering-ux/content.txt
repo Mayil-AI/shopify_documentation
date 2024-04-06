@@ -1,0 +1,80 @@
+Storefront search
+ Filtering
+ Overview
+ Storefront filtering
+ Overview
+ Support storefront filtering
+ Storefront filtering UX guidelines
+ Tag filtering
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Storefront filtering UX guidelines
+ Storefront filtering is an essential component to the customer experience as it helps them find what they're looking for faster, which can help increase conversions for merchants.
+ The following outlines some key considerations related the filtering experience.
+ To learn how to implement a basic version of storefront filtering, refer to Support storefront filtering.
+ Provide the right interface for each filter type
+ There are two filter types:
+ List
+ Price range
+ List
+ It's recommended to use a set of checkbox inputs for filters of type list to make it obvious that multiple values can be selected at once.
+ For example:
+ Price range
+ It's recommended to use a dual-handled slider for filters of type price_range, however you should also include number input fields for the "start" and "end" values of the range to account for accessibility. You should ensure that the fields number fields have labels, such as "From" and "To", even if they're visually hidden.
+ For example:
+ Provide a choice of filter layout
+ There are two standard layouts for filtering on larger screens:
+ A horizontal toolbar above the product list
+ A vertical sidebar to the left of the product list
+ In order to provide flexibility for varying merchant needs, you should consider providing both layouts as an option behind a theme setting.
+ Horizontal toolbar filters
+ A horizontal toolbar above the product list can provide a compact entry point to both filtering and sorting, but works best for smaller stores that need less than five filters at a time.
+ For example:
+ Vertical sidebar filters
+ A vertical sidebar to the left of the product list works best for stores with more than five filters.
+ For example:
+ Provide a clear visual hierarchy
+ You should style filters to make relationships clear. For example, the name of each filter group should stand out from its values, and there should be a clear separation between filter groups.
+ For example:
+ Avoid dead ends
+ Customers shouldn't end up with zero results. As such, you should always show the count of results with each filter value, and disable any values that have zero results.
+ For example:
+ Show applied filters
+ If a customer lands on a page with filters already applied, they need to be able to see which filters have been applied. Similarly, if a customer adds a filter, they need feedback that it applied.
+ In both of the above scenarios, customers should have an easy way to remove an individual filter, or clear all filters.
+ For example:
+ Often, filter values are clear enough that applied filter labels can just display the value, such as "Shoe" or "In stock". However, sometimes it may not be clear which filter a value applies to, such as having filters for both "Width" and "Height".
+ To account for this possiblity, you should add a theme setting to allow merchants to include the filter group name with the filter value.
+ For example:
+ Manage filter groups
+ In vertical sidebars, you should consider collapsing filter groups after the first five. This makes it easier to scan for the desired filter group with minimal scrolling.
+ For example:
+ Manage filter values
+ Filter groups can display up to 100 values, so you should truncate the list to 10 values with the option to show more. The first 10 values likely aren't the most relevant, so if possible, you should show the 10 most relevant values.
+ For example:
+ Optimize for mobile
+ In general, the filter interface on mobile should be moved into a drawer or modal. With that, there are two standard options for surfacing that interface:
+ A single button
+ A horizontally scrolling filter group list
+ Filter button
+ With the main filtering interface inside a drawer or modal, you can include a "filter" button to show it:
+ Horizontal filter group list
+ With the main filtering interface inside a drawer or modal, you can provide quick access to filter groups with a horizontally scrolling list of filter groups, where each group will open the associated filters in a modal. You should also consider having a "filter" button like the previous example as a fallback:
+ Use progressive enhancement
+ In order to build lean, fast themes, you should implement as much as you can without JavaScript. For filters, this means using links, or forms with manual submit buttons, to apply selected filters.
+ JavaScript can be layered onto the basic implementation to enhance the experience, such as live-updating the product grid.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Provide the right interface for each filter type
+ Provide a choice of filter layout
+ Provide a clear visual hierarchy
+ Avoid dead ends
+ Show applied filters
+ Manage filter groups
+ Manage filter values
+ Optimize for mobile
+ Use progressive enhancement

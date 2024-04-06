@@ -1,0 +1,220 @@
+App Store
+ Cart app extension
+ Apps can extend into Shopify Point of Sale (POS) to help manage loyalty programs and discounts. You can add the POS cart app extension to your app so that Shopify POS users can quickly and easily manage loyalty points and apply discounts directly to the cart from within Shopify POS.
+ Requirements
+ You've created a development store.
+ You've created an app.
+ You've embedded your app in Shopify POS.
+ Configure the app extension
+ You can configure the POS cart app extension from your Partner Dashboard.
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ Click Extensions.
+ Under Point of Sale, click the POS cart card.
+ Enter the URL path that will be used to build your POS cart app extension endpoints.
+ For example, if your app's base URL is https://myapp.com and your URL path is pos-extension-api, then the extension will use the following endpoints:
+ https://myapp.com/pos-extension-api/promotions
+ https://myapp.com/pos-extension-api/perform_action
+ https://myapp.com/pos-extension-api/revert_action
+ Click Save.
+ Create and release a new app version to make this extension available to users. You need to release a new app version whenever you update the extension configuration in the Partner Dashboard.
+ Note
+ After you enable this extension for your production app, all of the Shopify POS users who have your app installed will see the new UI card in the cart screen. If your app isn't yet returning any promotion actions, then the user will see the message No actions available in the card. There's currently no way to hide the card if the app extension is enabled.
+ Create the endpoints
+ Before your app can receive communication from Shopify through an app extension, you need to host a series of standardized API endpoints on your app's primary domain. These endpoints are called when your app extension is rendered and when there's a related action requested from your app.
+ Endpoint requirements
+ The following table shows the requirements for the POS cart app extension:
+ rule/concern type/requirement
+ API format REST
+ Content type JSON
+ Security mechanism HMAC/Signed requests. Refer to the webhooks documentation to learn how to verify a webhook created through the API.
+ Protocol HTTPS (app domain requires valid SSL certificate)
+ Responding to requests
+ All endpoints must respond within three seconds, otherwise Shopify will timeout the call and return an error to the user. This is to prevent users having a slow experience in Shopify POS.
+ Base endpoint
+ Your app needs to support three API endpoint calls for the POS cart app extension. To do this, you need to provide a path segment that is appended to the app's base URL to form the complete URL called by Shopify. This is done when configuring the app extension from your Partner Dashboard.
+ App extension architecture
+ The POS cart app extension is based on the following three endpoints:
+ promotions
+ perform_action
+ revert_action
+ See the POS cart app extension endpoints for more information about all of the following endpoints.
+ The promotions endpoint
+ When a new order is started in Shopify POS (for example, the cart is empty) or the customer on the cart changes, Shopify sends a request to your app's promotions endpoint. This request contains the supported templates and actions that your app can use when returning data to Shopify.
+ Your app's response includes the chosen template, the customer's loyalty points, and any applicable actions. Each action is a promotion that can be applied to the cart.
+ The following example shows a request to the promotions endpoint:
+ 1 {
+ 2
+    "shop_id": 1234,
+ 3
+    "customer_id": 5678,
+ 4
+    "supported_templates": [
+ 5
+      "simple_action_list"
+ 6
+    ],
+ 7
+    "supported_actions": [
+ 8
+      "flat_discount",
+ 9
+      "percent_discount",
+ 10
+      "add_variant"
+ 11
+    ],
+ 12
+    "currency_code": "USD",
+ 13
+    "locale": "en-us"
+ 14 }
+ The following example includes a template type, information about the customer's points, and the applicable actions. The action in the response applies a flat $5 discount to the customer's order.
+ 1 {
+ 2
+    "type": "simple_action_list",
+ 3
+    "points_label": "Points balance",
+ 4
+    "balance": "23867",
+ 5
+    "actions": [
+ 6
+      {
+ 7
+        "type": "flat_discount",
+ 8
+        "title": "Add $5.00 discount",
+ 9
+        "description": "-1000 points",
+ 10
+        "action_id": "123ABC",
+ 11
+        "value": "5"
+ 12
+      }
+ 13
+    ]
+ 14 }
+ The following example shows how the returned response renders:
+ Caution
+ It's important that your app returns status code 200 from the promotions request so that an error doesn't appear in the POS UI. If your app doesn't recognize the customer_id, or if there are no promotions available for any other reason, then return status code 200 with an empty array for actions. You can omit points_label and balance, but actions must be non-null.
+ The perform_action endpoint
+ After your app has returned the template and actions array, Shopify POS renders the information and the user can tap a promotion to apply it to the cart. The performed action is sent to Shopify, which proxies the action to your app's perform_action endpoint. The request contains the action_id field to identify the action properly.
+ The following example shows a request to the perform_action endpoint:
+ 1 {
+ 2
+    "action_id": "123ABC",
+ 3
+    "customer_id": 5678,
+ 4
+    "locale": "en",
+ 5
+    "supported_templates": [
+ 6
+      "simple_action_list"
+ 7
+    ],
+ 8
+    "supported_actions": [
+ 9
+      "flat_discount",
+ 10
+      "percent_discount",
+ 11
+      "add_variant"
+ 12
+    ],
+ 13
+    "currency_code": "USD",
+ 14
+    "shop_id": 1234
+ 15 }
+ In the following example response, the balance field is reduced from "23867" to "22867" since the applied discount cost 1000 points. The actions array is empty because, in this example, the customer doesn't redeem multiple offers in a single order.
+ 1 {
+ 2
+    "type": "simple_action_list",
+ 3
+    "points_label": "Point balance",
+ 4
+    "balance": "22867",
+ 5
+    "actions": []
+ 6 }
+ The revert_action endpoint
+ After a successful call to your app's perform_action endpoint, it's possible for the action to be reverted. For example, the order could be abandoned or the discount deleted from the cart. In these cases, Shopify sends a request to your app's revert_action endpoint with the ID of the action to be reverted.
+ The following example shows a request to the revert_action endpoint:
+ 1 {
+ 2
+    "action_id": "123ABC",
+ 3
+    "customer_id": 5678,
+ 4
+    "locale": "en",
+ 5
+    "supported_templates": [
+ 6
+      "simple_action_list"
+ 7
+    ],
+ 8
+    "supported_actions": [
+ 9
+      "flat_discount",
+ 10
+      "percent_discount",
+ 11
+      "add_variant"
+ 12
+    ],
+ 13
+    "currency_code": "USD",
+ 14
+    "shop_id": 1234
+ 15 }
+ In the following example response, after the discount action is reverted, the points balance is increased back to the original value of "23867", and the discount action becomes available to the customer again:
+ 1 {
+ 2
+    "type": "simple_action_list",
+ 3
+    "points_label": "Point balance",
+ 4
+    "balance": "23867",
+ 5
+    "actions": [
+ 6
+      {
+ 7
+        "type": "flat_discount",
+ 8
+        "title": "Add $5.00 discount",
+ 9
+        "description": "-1000 points",
+ 10
+        "action_id": "123ABC",
+ 11
+        "value": "5.00"
+ 12
+      }
+ 13
+    ]
+ 14 }
+ Implement verification
+ App extension requests by Shopify can be verified by calculating a digital signature.
+ Each request includes a base64-encoded X-Shopify-Hmac-SHA256 header, which is generated using the app's shared secret along with the data sent in the request.
+ To verify that the request came from Shopify, compute the HMAC digest and compare it to the value in the X-Shopify-Hmac-SHA256 header. If they match, then you can be sure that the app extension request was sent from Shopify.
+ For more information refer to the webhooks documentation to learn how to verify a webhook created through the API. This is the same procedure to be followed for app extensions.
+ Next steps
+ Learn about the fields that Shopify sends to your app for each of the POS cart app extension endpoint calls and the response fields and possible values for the templates and actions that your app sends to Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Configure the app extension
+ Create the endpoints
+ App extension architecture
+ Implement verification
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

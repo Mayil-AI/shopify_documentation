@@ -1,0 +1,35 @@
+Inline extensions
+ Overview
+ Order status
+ Profile
+ Order action menu extensions
+ Full-page extensions
+ Order status page
+ Best practices
+ Selling strategies
+ Online store
+ Inline extensions
+ Inline extensions are any static extensions or block extensions that add UI to a customer accounts page, such as Order index, Order status, or Profile.
+ How it works
+ On each customer account page, there are static and block extension targets available in designated areas. Static extension targets only render in one designated location, while block extensions offer merchants the flexibility to place the extension in a multiple designated locations on the page.
+ In the following example, the Order status page contains two extensions. The banner at the top of the page is populating the extension target customer-account.order-status.block.render. Block extensions are flexible and merchants can move them to any of the supported locations on the page. The “Write a review” feature below the order status is populating the extension target customer-account.order-status.fulfillment-details.render-after. Static extensions are fixed, and merchants cannot move them to another location.
+ Developer tools and resources
+ Target overview
+ Explore all extension targets available for customer account UI extensions.
+ Checkout UI extension components
+ Explore the checkout components you can also use to build customer account UI extensions.
+ Customer account UI extension components
+ Explore the components you can use to build customer account UI extensions.
+ Figma UI kit
+ Figma components for checkout and account UI extensions.
+ Figma: Account screens
+ Figma screens with extension targets, breakpoints, and example designs.
+ Next steps
+ Build inline extensions
+ Build extensions on the Order Status page that enable customers to see their loyalty points and write a review.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Developer tools and resources
+ Next steps

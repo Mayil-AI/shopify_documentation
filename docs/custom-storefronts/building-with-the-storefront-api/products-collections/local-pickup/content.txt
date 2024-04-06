@@ -1,0 +1,270 @@
+Building with the Customer Account API
+ Additional SDKs
+ Support local pickup on storefronts
+ You can display whether a product is in stock and available for local pickup using the Storefront API. Customers can then pick up their online orders at a retail store, a curbside pickup location, or any location that a merchant chooses.
+ This guide shows you how to support local pickup on a custom storefront.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You're familiar with querying products and collections.
+ You've created products and variants in your store.
+ You've enabled local pickup for one or more of your locations.
+ Your Headless channel or custom app has the unauthenticated_read_product_pickup_locations access scopes. Learn how to request permissions for Headless channels.
+ Step 1: Determine pickup availability for a product variant
+ When a user selects a particular product variant, you can query for its in-store pickup availability.
+ Within the storeAvailability object, you can query whether a variant is in stock at a location (available), the location where the variant is stocked (location), and the estimated amount of time that it takes for the pickup to be ready (pickUpTime).
+ The response includes a list of pickup locations that are sorted alphabetically by city and location name.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query GetStoreAvailability {
+ 2
+    product(handle: "t-shirt") {
+ 3
+      variantBySelectedOptions(selectedOptions: {name: "size", value: "large"}) {
+ 4
+        storeAvailability(first: 1) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              available
+ 8
+              pickUpTime
+ 9
+              location {
+ 10
+                name
+ 11
+              }
+ 12
+            }
+      }
+ 16
+    }
+ 17 }
+ JSON response
+ 4
+        "variantBySelectedOptions": {
+ 5
+          "storeAvailability": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "available": true,
+ 10
+                  "pickUpTime": "Usually ready in 1 hour",
+ 11
+                  "location": {
+ 12
+                    "name": "St. Laurent Shopping Centre"
+ 13
+                  }
+ 14
+                }
+ 15
+              }
+ 16
+            ]
+ 17
+          }
+ 18
+        }
+ Step 2: Retrieve in-store pickup locations
+ You might want to show customers a list of available locations so that they can establish a preferred one for future queries.
+ To retrieve this list, you can use the locations query. If you want to sort the results based on proximity to the customer's current location, then you can also pass a near argument that contains a latitude and longitude value.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query LocationsByDistance($location: GeoCoordinateInput!) {
+ 2
+    locations(near: $location, first: 5, sortKey: DISTANCE) {
+ 3
+      edges {
+          name
+ 7
+          address {
+ 8
+            formatted
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "location": {
+ 3
+      "latitude": 45.4553,
+ 4
+      "longitude": -75.6973
+ 5
+    }
+ 6 }
+      "locations": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/Location/1",
+ 8
+              "name": "St. Laurent Shopping Centre",
+ 9
+              "address": {
+ 10
+                "formatted": [
+ 11
+                  "1200 St. Laurent Blvd",
+ 12
+                  "Ottawa, Ontario K1K 3B8",
+ 13
+                  "Canada"
+ 14
+                ]
+ 15
+              }
+ 16
+            }
+ 17
+          },
+ 18
+          {
+ 19
+            "node": {
+ 20
+              "id": "gid://shopify/Location/2",
+ 21
+              "name": "CF Rideau Centre",
+ 22
+              "address": {
+ 23
+                "formatted": [
+ 24
+                  "50 Rideau St",
+ 25
+                  "Ottawa, Ontario K1N 9J7",
+ 26
+                  "Canada"
+ 27
+                ]
+ 28
+              }
+ 29
+            }
+ 30
+          },
+ 31
+          {
+ 32
+            "node": {
+ 33
+              "id": "gid://shopify/Location/3",
+ 34
+              "name": "Bayshore Shopping Centre",
+ 35
+              "address": {
+ 36
+                "formatted": [
+ 37
+                  "100 Bayshore Dr",
+ 38
+                  "Ottawa, Ontario K2B 8C1",
+ 39
+                  "Canada"
+ 40
+                ]
+ 41
+              }
+ 42
+            }
+ 43
+          }
+ 44
+        ]
+ 45
+      }
+ 46
+    }
+ 47 }
+ Step 3: Use the customer's preferred location
+ By default, storeAvailability objects are sorted by city and name. To sort them by proximity to the customer's preferred location, you can pass a location ID using the preferredLocationId argument of the @inContext directive.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query GetPreferredStoreAvailability @inContext(preferredLocationId: "gid://shopify/Location/1") {
+ 2
+    product(handle: "t-shirt") {
+ 3
+      variantBySelectedOptions(selectedOptions: {name: "size", value: "large"}) {
+ 4
+        storeAvailability(first: 1) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              available
+ 8
+              pickUpTime
+ 9
+              location {
+ 10
+                name
+ 11
+              }
+ 12
+            }
+      }
+ 16
+    }
+ 17 }
+ JSON response
+ 4
+        "variantBySelectedOptions": {
+ 5
+          "storeAvailability": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "available": true,
+ 10
+                  "pickUpTime": "Usually ready in 1 hour",
+ 11
+                  "location": {
+ 12
+                    "name": "St. Laurent Shopping Centre"
+ 13
+                  }
+ 14
+                }
+ 15
+              }
+ 16
+            ]
+ 17
+          }
+ 18
+        }
+ Next steps
+ Learn how to create and update a cart in Shopify with the Storefront API.
+ Learn how to manage customer accounts with the Storefront API.
+ Support multiple languages on a custom storefront with the Storefront API.
+ Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Determine pickup availability for a product variant
+ Step 2: Retrieve in-store pickup locations
+ Step 3: Use the customer's preferred location
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,55 @@
+Product subscription app extensions
+ Button
+ Button is used primarily for actions, such as “Continue”, “Apply”, or “Pay”.
+ Example
+ JS
+ React
+ 1 import {extend, Button} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const button = root.createComponent(
+ 5
+      Button,
+ 6
+      {
+ 7
+        // eslint-disable-next-line no-console
+ 8
+        onPress: () => console.log('Pressed!'),
+ 9
+      },
+ 10
+      'Press me',
+ 11
+    );
+ 12
+ 13
+    root.appendChild(button);
+ 14 });
+ Props
+ optional = ?
+ Name Type Description
+ submit? boolean Allows the button to submit a form
+ to? string Destination to link to, renders a Link
+ subdued? boolean Renders a visually subdued button
+ plain? boolean Renders a button that visually looks like a Link
+ loading? boolean Replaces content with a loading indicator
+ loadingLabel? string Accessible label for the loading indicator when user prefers reduced motion
+ disabled? boolean Disables the button, disallowing any interaction
+ onPress? () => void Callback when pressed
+ Best practices
+ Button labels should be clear so customers can predict what the results of interacting with a button will be.
+ Use primary buttons for actions that will progress the customer through checkout, such as "Continue to shipping", and "Pay now".
+ Use secondary buttons for actions that you want to draw attention to, but are not primary, such as ”Track your order”.
+ Use plain buttons when you want the appearance of a text link, but the hit area of a button. Works well alongside other buttons to create hierarchies such as “Continue” and “Return to cart”.
+ Related components
+ ButtonGroup: A button group controls the layout for two or more stacked buttons such as “Continue” and “Return to cart”, and adds the necessary spacing between them.
+ Link: Link makes text interactive so customers can perform an action, such as navigating to another location.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Best practices
+ Related components
+ Updates & News

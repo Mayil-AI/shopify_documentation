@@ -1,0 +1,100 @@
+password
+ The password template renders the password page, which is a landing page that's shown when password protection is applied to a store. This page includes a message that is editable by merchants, and the password form for customers to gain access to the store.
+ Tip
+ Refer to the password template and its sections in Dawn for an example implementation.
+ Location
+ The password template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── password.json
+ You can include the following in your password template or a section inside of the template:
+ A password message
+ The password form
+ The email sign-up form
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ The password message
+ When password protection is enabled on a store, there's also the option to include a message. This message can be shown using the password_message attribute of the Liquid shop object:
+ Example
+ 1 {% unless shop.password_message == blank %}
+ 2
+    {{ shop.password_message }}
+ 3 {% endunless %}
+ The password form
+ The password form can be added with the Liquid form tag and accompanying 'storefront_password' parameter. Within the form tag block, you need to include an <input> with the following attributes:
+ type="password"
+ name="password"
+ For example:
+ 1 {% form 'storefront_password' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="password">
+ 5
+      <label for="password">Password</label>
+ 6
+      <input type="password" name="password">
+ 7
+    </div>
+ 8
+ 9
+    <div class="submit">
+ 10
+      <input type="submit" value="Sign in">
+ 11
+    </div>
+ 12 {% endform %}
+ The email sign-up form
+ You can include an email sign-up form, to capture customer emails, with the Liquid form tag and accompanying 'customer' parameter. Within the form tag block, you need to include the following:
+ Input type name value
+ Tags hidden contact[tags] prospect, password page
+ Email email contact[email] -
+ For example:
+ 1 {% form 'customer' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="tags">
+ 5
+      <input type="hidden" name="contact[tags]">
+ 6
+    </div>
+ 7
+ 8
+    <div class="email">
+ 9
+      <label for="email">Email</label>
+ 10
+      <input type="email" name="contact[email]">
+ 11
+    </div>
+ 12
+ 13
+    <div class="submit">
+ 14
+      <input type="submit" value="Sign in">
+ 15
+    </div>
+ 16 {% endform %}
+ Tip
+ Shopify assists merchants in marketing to customers created with the prospect and password page tags, but you can use your own custom tags as well.
+ Usage
+ If you're working on a development store, then you can't show a custom password page on the store. A development store-specific password page is always displayed.
+ Although the customizable password page isn't used to control access to your development store, you can still view it after you log in, or edit it from the Shopify admin.
+ To view the customizable password page, logged-in visitors can navigate to https://your-store-name.myshopify.com/password, where your-store-name is the name of the development store.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Content
+ Usage
+ Updates & News
+ Developer changelog

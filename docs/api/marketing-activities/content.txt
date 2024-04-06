@@ -1,0 +1,25 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Overview
+ Components
+ Endpoints
+ Statuses
+ Product subscription app extensions
+ Marketing activities app extension reference
+ You can use a marketing activities app extension to enable users to manage promotional campaigns and marketing automations from the Marketing page in the Shopify admin using your app.
+ This guide provides the reference documentation for the marketing activities app extension.
+ Reference documentation
+ Components reference
+ Learn about the different components that you can use to build a marketing activity form.
+ Endpoints reference
+ Learn about the endpoints that you need to add to your app to support marketing activities.
+ Statuses reference
+ Learn about the different statuses for marketing activities and how to handle them.
+ Next steps
+ Learn how your app works with the marketing activities app extension and Shopify to support marketing activities.
+ Get started with marketing activities to enable users to create marketing campaigns from their Shopify admin using your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Reference documentation

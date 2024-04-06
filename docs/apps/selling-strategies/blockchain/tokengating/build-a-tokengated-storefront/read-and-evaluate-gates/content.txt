@@ -1,0 +1,985 @@
+Billing
+ App Store
+ Read and evaluate gates
+ This is the third part of a four-part tutorial series for building a tokengated storefront.
+ In this tutorial, you'll create a function that evaluates gates on products with your customer's connected wallet. The evaluation function determines if the customer should receive the associated reaction defined in the gate configuration you created in the first tutorial.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following:
+ Read gates bound to a product.
+ Use wallet data stored server-side to evaluate gate eligibility.
+ Update your ProductForm to include the Tokengate component, and display the customer's eligibility to receive the reaction defined in the gateConfiguration.
+ Requirements
+ You've followed the getting started and saving connected wallet to session storage steps of the tutorial series.
+ You've created an Alchemy account and retrieved your Alchemy API key.
+ Step 1: Update your .env file
+ Add a new environment variable named ALCHEMY_API_KEY to your ENV file. Your ENV file should look similar to the one below:
+ .env
+ 1 ALCHEMY_API_KEY="YOUR_ALCHEMY_API_KEY"
+ 2 SESSION_SECRET="YOUR_SESSION_SECRET"
+ 3 PUBLIC_STOREFRONT_API_TOKEN="YOUR_API_TOKEN"
+ 4 PUBLIC_STOREFRONT_API_VERSION="unstable"
+ 5 PUBLIC_STORE_DOMAIN="YOUR_STOREFRONT_DOMAIN"
+ Step 2: Retrieve product gates
+ To evaluate gates, you first need to retrieve the gates bound to your products. In this section, you'll make changes to your product query and your loader function to retrieve and parse the gates bound to the product.
+ Update the product query
+ Open your ($locale).products.$productHandle JSX or TSX file.
+ Near the end of the file, find the PRODUCT_QUERY constant.
+ In this query, paste the fields from the code sample below.
+ You can paste them anywhere within the product query field. In the example repository the fields are between description and options.
+ Make sure that you replace the placeholder headless_gating_example namespace with your own metafield namespace.
+ Product query
+ Gates field values
+ Full query
+ 1 gates {
+ 2
+    active
+ 3
+    configuration {
+ 4
+      appId
+ 5
+      id
+ 6
+      metafields(identifiers: [
+ 7
+        {
+ 8
+          # Replace this with your namespace
+ 9
+          namespace: "headless_gating_example",
+ 10
+          key: "reaction",
+ 11
+        },
+ 12
+        {
+ 13
+          # Replace this with your namespace
+ 14
+          namespace: "headless_gating_example",
+ 15
+          key: "requirements",
+ 16
+        },
+ 17
+      ]) {
+ 18
+        id
+ 19
+        key
+ 20
+        value
+ 21
+      }
+ 22
+      name
+ 23
+    }
+ 24
+    id
+ 25 }
+ Generate the unstable API schema (TypeScript only)
+ If you're using TypeScript, then you need to generate the types for the unstable Storefront API schema. Generating the unstable schema types allows you to assign the correct types to the gateConfiguration and product resources.
+ In a terminal, run the following command to install the packages needed to generate the schema types:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm i -S @graphql-codegen/cli @graphql-codegen/typescript dotenv
+ In your project's root folder, create a new file called codegen.js.
+ Add the following code:
+ 1 import 'dotenv/config';
+ 2
+ 3 const SCHEMA_URL = new URL(
+ 4
+    `https://${process.env.PUBLIC_STORE_DOMAIN}/api/${process.env.PUBLIC_STOREFRONT_API_VERSION}/graphql.json`,
+ 5 ).toString();
+ 6
+ 7 const config = {
+ 8
+    schema: [
+ 9
+      {
+ 10
+        [SCHEMA_URL]: {
+ 11
+          headers: {
+ 12
+            'X-Shopify-Storefront-Access-Token':
+ 13
+              process.env.PUBLIC_STOREFRONT_API_TOKEN,
+ 14
+          },
+ 15
+        },
+ 16
+      },
+ 17
+    ],
+ 18
+    generates: {
+ 19
+      './app/generated/storefront-api-types.ts': {
+ 20
+        plugins: ['typescript'],
+ 21
+      },
+ 22
+    },
+ 23
+    overwrite: true,
+ 24 };
+ 25
+ 26 export default config;
+ Generate the unstable API schema.
+ Run the following script by using your preferred package manager:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run graphql-codegen codegen.js
+ After running the following command, you'll notice a new file added to your project located in /app/generated/storefront-api-types.ts.
+ Update the loader (TypeScript only)
+ on the $productHandle route to retrieve the stored wallet value.
+ If you're using TypeScript, then you need to update the loader function in your $productHandle route to reference the correct types from the Storefront API schema.
+ Open your /app/routes/($locale).products.$productHandle JSX or TSX file.
+ Add the following import statements:
+ 1 import type {
+ 2
+    Metafield,
+ 3
+    Product as UnstableProductType,
+ 4 } from '~/generated/storefront-api-types';
+ Update the types for the GraphQL payload in the loader function by replacing the query with the following code:
+ 1 const {shop, product} = await context.storefront.query<{
+ 2
+    product: UnstableProductType & {selectedVariant?: ProductVariant};
+ 3
+    shop: Shop;
+ 4 }>(PRODUCT_QUERY, {
+ 5
+    variables: {
+ 6
+      handle: productHandle,
+ 7
+      selectedOptions,
+ 8
+      country: context.storefront.i18n.country,
+ 9
+      language: context.storefront.i18n.language,
+ 10
+    },
+ 11 });
+ Step 3: Evaluate the gate
+ In this step, you'll create a server-side function that requests data related to a user's wallet address from Alchemy. The data that you receive from Alchemy is used to evaluate whether a customer should receive the benefits defined in the gate's reaction.
+ Add Alchemy response types (TypeScript only)
+ If you're using TypeScript, then copy the following type definitions into the bottom of /app/lib/type.ts:
+ Note
+ The following types are intended to be used for this tutorial and may not reference all data returned by the Alchemy endpoint. If you need additional types for the data you receive from the endpoint, you may have to add your own types.
+ /app/lib/type.ts
+ 1 type NFTMediaObject = {
+ 2
+    gateway: string;
+ 3
+    thumbnail: string;
+ 4
+    raw: string;
+ 5
+    format: string;
+ 6
+    bytes: number;
+ 7 };
+ 8
+ 9 type Metadata = {
+ 10
+    name: string;
+ 11
+    description: string;
+ 12
+    image: string;
+ 13
+    attributes: MetadataAttribute[];
+ 14 };
+ 15
+ 16 type MetadataAttribute = {
+ 17
+    value: string;
+ 18
+    trait_type: string;
+ 19 };
+ 20
+ 21 type ContractMetadata = {
+ 22
+    name: string;
+ 23
+    symbol: string;
+ 24
+    totalSupply: string;
+ 25
+    tokenType: string;
+ 26
+    contractDeployer: string;
+ 27
+    deployedBlockNumber: number;
+ 28
+    openSea: {
+ 29
+      floorPrice: number;
+ 30
+      collectionName: string;
+ 31
+      safelistRequestStatus: string;
+ 32
+      imageUrl: string;
+ 33
+      description: string;
+ 34
+      externalUrl: string;
+ 35
+      twitterUsername: string;
+ 36
+      discordUrl: string;
+ 37
+      lastIngestedAt: string;
+ 38
+    };
+ 39 };
+ 40
+ 41 type NFT = {
+ 42
+    contract: {
+ 43
+      address: string;
+ 44
+    };
+ 45
+    id: {
+ 46
+      tokenId: string;
+ 47
+      tokenMetadata: {
+ 48
+        tokenType: string;
+ 49
+      };
+ 50
+    };
+ 51
+    balance: string;
+ 52
+    title: string;
+ 53
+    description: string;
+ 54
+    tokenUri: {
+ 55
+      gateway: string;
+ 56
+      raw: string;
+ 57
+    };
+ 58
+    media: NFTMediaObject[];
+ 59
+    metadata: Metadata;
+ 60
+    timeLastUpdated: string;
+ 61
+    contractMetadata: ContractMetadata;
+ 62 };
+ 63
+ 64 export type AlchemyGetNFTsForContractBody = {
+ 65
+    ownedNfts: NFT[];
+ 66
+    totalCount: number;
+ 67
+    blockHash: string;
+ 68 };
+ Add an evaluate gate function
+ In this step, you'll create functions to do the following:
+ Parse the provided gateConfiguration for a requirements definition.
+ Fetch a collection of owned NFTs for a wallet address.
+ In your project's /app/lib folder, create a new file called evaluateGate.server.js, or evaluateGate.server.ts if you're using TypeScript.
+ Note
+ The .server.js extension tells the Remix compiler to bundle this file for the server and not include it in browser bundle.
+ Add the following code:
+ File
+ JavaScript
+ TypeScript
+ /app/lib/evaluateGate.server.js
+ 1 async function getNFTs({
+ 2
+    context,
+ 3
+    contractAddresses,
+ 4
+    wallet,
+ 5
+    withMetadata = true,
+ 6 }) {
+ 7
+    try {
+ 8
+      const apiKey = context.env.ALCHEMY_API_KEY;
+ 9
+      const baseURL = `https://eth-mainnet.g.alchemy.com/nft/v2/${apiKey}/getNFTs`;
+ 10
+ 11
+      /**
+ 12
+       * Construct the URL for our request.
+ 13
+      *
+ 14
+      * Note: If you're using a different endpoint or blockchain query provider
+ 15
+      * you can update the apiKey and baseURL above to match your provider.
+ 16
+      */
+ 17
+      const endpoint = new URL(baseURL);
+ 18
+ 19
+      // Append our search params for the request.
+ 20
+      endpoint.searchParams.append('owner', wallet.address);
+ 21
+ 22
+      /**
+ 23
+       * For Alchemy, contract address params are an array of strings.
+ 24
+      * This means that each contract address is appended as a search parameter.
+ 25
+      *
+ 26
+      * Example:
+ 27
+      * https://{requestUrl}/nft/v2/{apiKey}/getNFTs?owner={address}&contractAddresses[]={address1}&contractAddresses[]={address2}
+ 28
+      *
+ 29
+      * See the getNfts documentation: https://docs.alchemy.com/reference/getnfts
+ 30
+      */
+ 31
+      contractAddresses.forEach((contract) =>
+ 32
+        endpoint.searchParams.append('contractAddresses[]', contract),
+ 33
+      );
+ 34
+ 35
+      endpoint.searchParams.append('withMetadata', withMetadata.toString());
+ 36
+ 37
+      const request = await fetch(endpoint, {
+ 38
+        method: 'GET',
+ 39
+      });
+ 40
+ 41
+      const response = await request.text();
+ 42
+ 43
+      const body = JSON.parse(response);
+ 44
+ 45
+      // Extract ownedNfts from the response body. In the event that
+ 46
+      // the body is empty, default to an empty array.
+ 47
+      return body?.ownedNfts || [];
+ 48
+    } catch (error) {
+ 49
+      // eslint-disable-next-line no-console
+ 50
+      console.error(
+ 51
+        'Error caught while attempting to fetch nfts owned for wallet address.',
+ 52
+        error,
+ 53
+      );
+ 54
+ 55
+      return [];
+ 56
+    }
+ 57 }
+ 58
+ 59 /**
+ 60
+   * Evaluate a provided gate with provided gate configuration and wallet.
+ 61 * @param gateConfiguration GateConfiguration https://shopify.dev/docs/api/admin-graphql/unstable/objects/GateConfiguration
+ 62 * @param wallet Wallet https://shopify.dev/docs/api/blockchain/components/connect-wallet#wallet
+ 63 */
+ 64 export async function evaluateGate({context, gateConfiguration, wallet}) {
+ 65
+    const empty = {
+ 66
+      unlockingTokens: [],
+ 67
+    };
+ 68
+ 69
+    if (!gateConfiguration || !wallet) {
+ 70
+      return empty;
+ 71
+    }
+ 72
+ 73
+    // Create an array of collection addresses for the provided gateConfiguration.
+ 74
+    const gateRequirements = gateConfiguration.metafields.filter((metafield) => {
+ 75
+      return metafield && metafield.key === 'requirements';
+ 76
+    })[0]?.value;
+ 77
+ 78
+    if (!gateRequirements) {
+ 79
+      return empty;
+ 80
+    }
+ 81
+ 82
+    const gateRequirement = JSON.parse(gateRequirements);
+ 83
+ 84
+    const contractAddresses = gateRequirement.conditions.map(
+ 85
+      ({contractAddress}) => contractAddress,
+ 86
+    );
+ 87
+ 88
+    const nfts = await getNFTs({
+ 89
+      context,
+ 90
+      contractAddresses: contractAddresses || [],
+ 91
+      wallet,
+ 92
+    });
+ 93
+ 94
+    if (!nfts.length) {
+ 95
+      return empty;
+ 96
+    }
+ 97
+ 98
+    const unlockingTokens = nfts.map(
+ 99
+      ({contract, contractMetadata, media, metadata}) => {
+ 100
+        return {
+ 101
+          name: metadata.name,
+ 102
+          // metadata.image has a possibility of being an ipfs url, so try to use
+ 103
+          // the first media element's thumbnail and then default to metadata.image
+ 104
+          imageUrl: media.length ? media[0].thumbnail : metadata.image,
+ 105
+          collectionName: contractMetadata.name,
+ 106
+          contractAddress: contract.address,
+ 107
+        };
+ 108
+      },
+ 109
+    );
+ 110
+ 111
+    return {
+ 112
+      unlockingTokens,
+ 113
+    };
+ 114 }
+ Evaluate gates in the product loader
+ Using the product's gates from the PRODUCT_QUERY and the wallet stored in session from the previous step, you can now perform gate evaluation.
+ Open the /app/routes/($locale).products.$productHandle JSX or TSX file.
+ Add the following import statement:
+ 1 import {evaluateGate} from '~/lib/evaluateGate.server';
+ In the same file, update the loader by adding the following code:
+ File
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 const gates = product.gates.filter(({active}) => active);
+ 2
+ 3 const gateConfiguration = gates.length ? gates[0].configuration : undefined;
+ 4
+ 5 let unlockingTokens = [];
+ 6
+ 7 if (gateConfiguration) {
+ 8
+    const gateEvaluation = await evaluateGate({
+ 9
+      context,
+ 10
+      gateConfiguration,
+ 11
+      wallet,
+ 12
+    });
+ 13
+ 14
+    unlockingTokens = gateEvaluation.unlockingTokens;
+ 15 }
+ Before
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 export async function loader({params, request, context}) {
+ 2
+    const {getWallet} = await walletSession(request);
+ 3
+    const wallet = getWallet();
+ 4
+ 5
+    const message = wallet
+ 6
+      ? `Wallet connected with address: ${wallet.address}`
+ 7
+      : 'No wallet present in the session.';
+ 8
+ 9
+    console.log(message);
+ 10
+ 11
+    const {productHandle} = params;
+ 12
+    invariant(productHandle, 'Missing productHandle param, check route filename');
+ 13
+ 14
+    const searchParams = new URL(request.url).searchParams;
+ 15
+ 16
+    const selectedOptions = [];
+ 17
+    searchParams.forEach((value, name) => {
+ 18
+      selectedOptions.push({name, value});
+ 19
+    });
+ 20
+ 21
+    const {shop, product} = await context.storefront.query(PRODUCT_QUERY, {
+ 22
+      variables: {
+ 23
+        handle: productHandle,
+ 24
+        selectedOptions,
+ 25
+        country: context.storefront.i18n.country,
+ 26
+        language: context.storefront.i18n.language,
+ 27
+      },
+ 28
+    });
+ 29
+ 30
+    if (!product?.id) {
+ 31
+      throw new Response('product', {status: 404});
+ 32
+    }
+ 33
+ 34
+    const recommended = getRecommendedProducts(context.storefront, product.id);
+ 35
+    const firstVariant = product.variants.nodes[0];
+ 36
+    const selectedVariant = product.selectedVariant ?? firstVariant;
+ 37
+ 38
+    const productAnalytics = {
+ 39
+      productGid: product.id,
+ 40
+      variantGid: selectedVariant.id,
+ 41
+      name: product.title,
+ 42
+      variantName: selectedVariant.title,
+ 43
+      brand: product.vendor,
+ 44
+      price: selectedVariant.price.amount,
+ 45
+    };
+ 46
+ 47
+    const seo = seoPayload.product({
+ 48
+      product,
+ 49
+      selectedVariant,
+ 50
+      url: request.url,
+ 51
+    });
+ 52
+ 53
+    return defer({
+ 54
+      product,
+ 55
+      shop,
+ 56
+      storeDomain: shop.primaryDomain.url,
+ 57
+      recommended,
+ 58
+      analytics: {
+ 59
+        pageType: AnalyticsPageType.product,
+ 60
+        resourceId: product.id,
+ 61
+        products: [productAnalytics],
+ 62
+        totalValue: parseFloat(selectedVariant.price.amount),
+ 63
+      },
+ 64
+      seo,
+ 65
+    });
+ 66 }
+ After
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 export async function loader({params, request, context}) {
+ 2
+    const {getWallet} = await walletSession(request);
+ 3
+    const wallet = getWallet();
+ 4
+ 5
+    const message = wallet
+ 6
+      ? `Wallet connected with address: ${wallet.address}`
+ 7
+      : 'No wallet present in the session.';
+ 8
+ 9
+    console.log(message);
+ 10
+ 11
+    const {productHandle} = params;
+ 12
+    invariant(productHandle, 'Missing productHandle param, check route filename');
+ 13
+ 14
+    const searchParams = new URL(request.url).searchParams;
+ 15
+ 16
+    const selectedOptions = [];
+ 17
+    searchParams.forEach((value, name) => {
+ 18
+      selectedOptions.push({name, value});
+ 19
+    });
+ 20
+ 21
+    const {shop, product} = await context.storefront.query(PRODUCT_QUERY, {
+ 22
+      variables: {
+ 23
+        handle: productHandle,
+ 24
+        selectedOptions,
+ 25
+        country: context.storefront.i18n.country,
+ 26
+        language: context.storefront.i18n.language,
+ 27
+      },
+ 28
+    });
+ 29
+ 30
+    if (!product?.id) {
+ 31
+      throw new Response('product', {status: 404});
+ 32
+    }
+ 33
+ 34
+    const gates = product.gates.filter(({active}) => active);
+ 35
+ 36
+    const gateConfiguration = gates.length ? gates[0].configuration : undefined;
+ 37
+ 38
+    let unlockingTokens = [];
+ 39
+ 40
+    if (gateConfiguration) {
+ 41
+      const gateEvaluation = await evaluateGate({
+ 42
+        context,
+ 43
+        gateConfiguration,
+ 44
+        wallet,
+ 45
+      });
+ 46
+ 47
+      unlockingTokens = gateEvaluation.unlockingTokens;
+ 48
+    }
+ 49
+ 50
+    const recommended = getRecommendedProducts(context.storefront, product.id);
+ 51
+    const firstVariant = product.variants.nodes[0];
+ 52
+    const selectedVariant = product.selectedVariant ?? firstVariant;
+ 53
+ 54
+    const productAnalytics = {
+ 55
+      productGid: product.id,
+ 56
+      variantGid: selectedVariant.id,
+ 57
+      name: product.title,
+ 58
+      variantName: selectedVariant.title,
+ 59
+      brand: product.vendor,
+ 60
+      price: selectedVariant.price.amount,
+ 61
+    };
+ 62
+ 63
+    const seo = seoPayload.product({
+ 64
+      product,
+ 65
+      selectedVariant,
+ 66
+      url: request.url,
+ 67
+    });
+ 68
+ 69
+    return defer({
+ 70
+      product,
+ 71
+      shop,
+ 72
+      storeDomain: shop.primaryDomain.url,
+ 73
+      recommended,
+ 74
+      analytics: {
+ 75
+        pageType: AnalyticsPageType.product,
+ 76
+        resourceId: product.id,
+ 77
+        products: [productAnalytics],
+ 78
+        totalValue: parseFloat(selectedVariant.price.amount),
+ 79
+      },
+ 80
+      seo,
+ 81
+    });
+ 82 }
+ Update the return statement of the loader by adding gateConfiguration, unlockingTokens, and wallet to the return statement.
+ /app/routes/($locale).products.$productHandle.jsx
+ Before
+ 1 return defer({
+ 2
+    product,
+ 3
+    shop,
+ 4
+    storeDomain: shop.primaryDomain.url,
+ 5
+    recommended,
+ 6
+    analytics: {
+ 7
+      pageType: AnalyticsPageType.product,
+ 8
+      resourceId: product.id,
+ 9
+      products: [productAnalytics],
+ 10
+      totalValue: parseFloat(selectedVariant.price.amount),
+ 11
+    },
+ 12
+    seo,
+ 13 });
+ After
+ 1 return defer({
+ 2
+    product,
+ 3
+    gateConfiguration,
+ 4
+    unlockingTokens,
+ 5
+    wallet,
+ 6
+    shop,
+ 7
+    storeDomain: shop.primaryDomain.url,
+ 8
+    recommended,
+ 9
+    analytics: {
+ 10
+      pageType: AnalyticsPageType.product,
+ 11
+      resourceId: product.id,
+ 12
+      products: [productAnalytics],
+ 13
+      totalValue: parseFloat(selectedVariant.price.amount),
+ 14
+    },
+ 15
+    seo,
+ 16 });
+ Step 4: Update the product form
+ Now that the loader is returning gateConfiguration, unlockingTokens, and wallet, update your ProductForm to display your customer's eligibility, using the Tokengate component from @shopify/tokengate.
+ Open your ($locale).products.$productHandle JSX or TSX file.
+ Import the following components:
+ The ConnectButton component from the @shopify/connect-wallet package.
+ The Tokengate component from @shopify/tokengate package.
+ File
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 import {ConnectButton} from '@shopify/connect-wallet';
+ 2 import {Tokengate} from '@shopify/tokengate';
+ In the same file, locate the ProductForm component, and update the destructured data from the useLoaderData to match the following code:
+ File
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 const {
+ 2
+    analytics,
+ 3
+    gateConfiguration,
+ 4
+    product,
+ 5
+    storeDomain,
+ 6
+    unlockingTokens,
+ 7
+    wallet,
+ 8 } = useLoaderData();
+ Locate the constant named isOutOfStock within the ProductForm component.
+ The Tokengate component uses a prop named isSoldOut, which won't allow ybcibbected wallets to connect when the product is sold out.
+ Paste the following code directly below the isOutOfStock constant:
+ File
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 const allVariantsSoldOut = product.variants.nodes.every(
+ 2
+    (node) => !node.availableForSale,
+ 3 );
+ Locate the return statement for the ProductForm component.
+ Directly above the return statement, paste the following code:
+ File
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 const gateMetafields = gateConfiguration?.metafields || [];
+ 2
+ 3 // Create an array of collection addresses for the provided gateConfiguration.
+ 4 const gateReaction = gateMetafields.filter((metafield) => {
+ 5
+    return metafield && metafield.key === 'reaction';
+ 6 })[0]?.value;
+ 7
+ 8 const reaction = gateReaction ? JSON.parse(gateReaction) : undefined;
+ 9
+ 10 const gateRequirements = gateMetafields.filter((metafield) => {
+ 11
+    return metafield && metafield.key === 'requirements';
+ 12 })[0]?.value;
+ 13
+ 14 const requirements = gateRequirements
+ 15
+    ? JSON.parse(gateRequirements)
+ 16
+    : undefined;
+ 17
+ 18 // Use this variable for conditional rendering based on the variables above.
+ 19 const isGated = reaction && requirements;
+ Add the Tokengate component to the ProductForm by copying the following code and pasting it into the first div element of the ProductForm return statement.
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 {isGated ? (
+ 2
+    <Tokengate
+ 3
+      connectButton={<ConnectButton />}
+ 4
+      isConnected={Boolean(wallet)}
+ 5
+      reaction={reaction}
+ 6
+      requirements={requirements}
+ 7
+      unlockingTokens={unlockingTokens}
+ 8
+      isSoldOut={allVariantsSoldOut}
+ 9
+    />
+ 10 ) : null}
+ Directly below the code you pasted into the return statement from the last step, wrap the ProductOptions and remaining code with the following:
+ /app/routes/($locale).products.$productHandle.jsx
+ 1 {!isGated || reaction.type === 'discount' || unlockingTokens.length ? (
+ 2
+    <>
+ 3
+      {/* existing code */}
+ 4
+    </>
+ 5 ) : null}
+ To see a representation of what your code might look like, view the sample repository.
+ Next steps
+ Write gate context to cart attributes
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Update your .env file
+ Step 2: Retrieve product gates
+ Step 3: Evaluate the gate
+ Step 4: Update the product form

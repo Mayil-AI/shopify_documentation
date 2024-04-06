@@ -1,0 +1,110 @@
+Customer engagement
+ Overview
+ Email consent
+ Additional customer information
+ Add a contact form
+ Troubleshooting
+ Theme Store
+ Email consent
+ There are two ways that a customer can consent to email marketing through the theme:
+ A newsletter sign-up form
+ A checkbox input in the customer register form
+ Newsletter sign-up form
+ You can add a newsletter sign-up form to your theme with the Liquid form tag and accompanying 'customer' parameter. Inside the form, you need to include an input with the following attributes:
+ Attribute Value
+ type email
+ name contact[email]
+ For example:
+ 1 {% form 'customer' %}
+ 2
+    <div class="email">
+ 3
+      <label for="email">Email</label>
+ 4
+      <input type="email" name="contact[email]" />
+ 5
+    </div>
+ 6
+ 7
+    <div class="submit">
+ 8
+      <input type="submit" value="Sign up" />
+ 9
+    </div>
+ 10 {% endform %}
+ When a customer signs up through this form, a customer will be created with the entered email, and the accepts_marketing attribute of the associated customer object will be set to true.
+ Tip
+ For another example of a newsletter sign-up form, you can refer to Dawn's implementation.
+ Customer registration form checkbox
+ Inside the customer register form, you can include a checkbox to allow customers to consent email marketing. This requires the following inputs to be placed inside the form:
+ Input type name
+ Accepts marketing hidden customer[accepts_marketing]
+ Accepts marketing checkbox customer[accepts_marketing]
+ For example:
+ 1 {% form 'create_customer' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="first-name">
+ 5
+      <label for="first-name">First name</label>
+ 6
+      <input type="text" name="customer[first_name]" />
+ 7
+    </div>
+ 8
+ 9
+    <div class="last-name">
+ 10
+      <label for="last-name">Last name</label>
+ 11
+      <input type="text" name="customer[last_name]" />
+ 12
+    </div>
+ 13
+ 14
+    <div class="email">
+ 15
+      <label for="email">Email</label>
+ 16
+      <input type="email" name="customer[email]" />
+ 17
+    </div>
+ 18
+ 19
+    <div class="password">
+ 20
+      <label for="password">Password</label>
+ 21
+      <input type="password" name="customer[password]" />
+ 22
+    </div>
+ 23
+ 24
+    <div class="accepts-marketing">
+ 25
+      <input type="hidden" name="customer[accepts_marketing]" value="false" />
+ 26
+ 27
+      <input type="checkbox" name="customer[accepts_marketing]" />
+ 28
+      <label for="accepts-marketing">Subscribe to email marketing</label>
+ 29
+    </div>
+ 30
+ 31
+    <div class="submit">
+ 32
+      <input type="submit" value="Create" />
+ 33
+    </div>
+ 34 {% endform %}
+ Tip
+ This solution requires a hidden input, as well as the checkbox input, as an unchecked box won't record a value when the form is submitted.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Newsletter sign-up form
+ Customer registration form checkbox
+ Updates & News

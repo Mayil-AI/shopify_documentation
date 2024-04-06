@@ -1,0 +1,95 @@
+Layouts
+ Templates
+ Sections
+ Overview
+ Section schema
+ Section assets
+ Integrate with the theme editor
+ Blocks
+ Section groups
+ Config
+ Theme Store
+ Integrate sections with the theme editor
+ When users customize sections through the theme editor, the HTML of those sections is dynamically added, removed, or re-rendered directly onto the existing DOM, without reloading the entire page. However, any associated JavaScript that runs when the page loads won't run again.
+ Additionally, you must make sure that when a section or block is selected, that section or block becomes, and remains, visible while it’s selected. For example, a slideshow section should scroll into view when the section is selected, slide to a selected block (slide), and pause while that block is selected.
+ To help identify theme editor actions like section and block selection or reordering, you can use the JavaScript events emitted by the theme editor.
+ You might also want to prevent specific code from running in the theme editor. To do so, you can use Liquid and JavaScript variables for detecting the theme editor.
+ Tip
+ Section files must define presets in their schema to support being added to JSON templates using the theme editor. Section files without presets should be included in the JSON file manually, and can't be removed using the theme editor.
+ Tip: To learn more about how to make sure your theme is compatible with the theme editor preview inspector, refer to Theme editor preview inspector best practices.
+ JavaScript events
+ To identify sections and blocks, the theme editor looks for specific data attributes on the parent element of the associated section or block. Sections are wrapped by a Shopify-generated element which includes this attribute by default. However, blocks need to have the attribute added manually using the shopify_attributes property of the block object.
+ The theme editor emits section and block JavaScript events that bubble, and are not cancellable. Each event has a target (event.target), which is either the associated section or block element based on the data attribute mentioned above.
+ In addition to section and block events, the theme editor also emits events for when the theme editor preview inspector is activated or deactivated.
+ The following table outlines the events emitted by the theme editor:
+ type target detail Trigger Expected action
+ shopify:inspector:activate - - The theme editor preview inspector has been activated.
+ shopify:inspector:deactivate - - The theme editor preview inspector has been deactivated.
+ shopify:section:load section {sectionId} A section has been added or re-rendered. Re-execute any JavaScript needed for the section to work and display properly, as if the page had just been loaded.
+ shopify:section:unload section {sectionId} A section has been deleted or is being re-rendered. Clean up any event listeners, variables, etc., so that nothing breaks when the page is interacted with and no memory leaks occur.
+ shopify:section:select section
+ {
+   sectionId,
+   load
+ }
+ The user has selected the section in the sidebar. The theme editor automatically scrolls to the section, so make sure the section is in view, and stays in view, while selected.
+ shopify:section:deselect section {sectionId} The user has deselected the section in the sidebar.
+ shopify:section:reorder section {sectionId} A section has been reordered.
+ shopify:block:select block
+ {
+   blockId,
+   sectionId,
+   load
+ }
+ The user has selected the block in the sidebar. The theme editor automatically scrolls to the section, so make sure the block is in view, and stays in view, while selected.
+ shopify:block:deselect block
+ {
+   blockId,
+   sectionId
+ }
+ User has deselected the block in the sidebar.
+ In the table above, blockId represents the block ID, sectionId represents the section ID, and load indicates whether the event is being triggered by a section re-render, or a user selection. The value of load is true or false.
+ Tip
+ Refer to the theme-editor.js asset in Dawn for examples of how the theme editor JavaScript events can be used.
+ Detect the theme editor
+ You can detect whether you’re in the theme editor in Liquid and JavaScript.
+ Liquid
+ The Liquid request object has a design_mode attribute that will return true if you’re in the theme editor, and false if not. For example:
+ 1 {% if request.design_mode %}
+ 2
+    <!-- This will only render in the theme editor -->
+ 3 {% endif %}
+ JavaScript
+ In JavaScript, the global variable Shopify.designMode will return true if you’re in the theme editor, and undefined if not. For example:
+ 1 if (Shopify.designMode) {
+ 2
+    // This will only render in the theme editor
+ 3 }
+ Detect the theme editor preview inspector
+ In addition to the JavaScript events that are triggered when the theme editor preview inspector is activated or deactivated, you can use the global variable Shopify.inspectMode. It will return true if the preview inspector is activated, and false if not. For example:
+ 1 if (Shopify.inspectMode) {
+ 2
+    // This will only execute if the theme editor preview inspector is currently activated
+ 3 }
+ Detect the theme editor visual preview
+ You can detect whether you’re in the theme editor visual preview in Liquid and JavaScript.
+ Liquid
+ The Liquid request object has a visual_preview_mode attribute that returns true if you’re in the theme editor visual preview, and false if not. For example:
+ 1 {% if request.visual_preview_mode %}
+ 2
+      <!-- This will only render in the theme editor visual preview -->
+ 3 {% endif %}
+ JavaScript
+ The global variable Shopify.visualPreviewMode will return true if you're in the theme editor's visual preview, and undefined if not.
+ For example:
+ 1 if (Shopify.visualPreviewMode) {
+ 2
+    // This will only execute inside the theme editor's visual preview
+ 3 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ JavaScript events
+ Detect the theme editor
+ Detect the theme editor preview inspector
+ Detect the theme editor visual preview

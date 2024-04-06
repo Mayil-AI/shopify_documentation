@@ -1,0 +1,25 @@
+Product subscription app extensions
+ HiddenForAccessibility
+ HiddenForAccessibility removes all of its children from the accessibility tree. This can be used to improve the experience for assistive technology users by hiding purely decorative content, duplicated content and offscreen or collapsed content.
+ JS
+ React
+ 1 import {extend, HiddenForAccessibility} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const hiddenForA11y = root.createComponent(
+ 5
+      HiddenForAccessibility,
+ 6
+      undefined,
+ 7
+      'Purely decorative content',
+ 8
+    );
+ 9
+ 10
+    root.appendChild(hiddenForA11y);
+ 11 });
+ Was this page helpful?
+ YesNo
+ Updates & News

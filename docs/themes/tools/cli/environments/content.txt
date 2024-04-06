@@ -1,0 +1,75 @@
+Theme Store
+ Theme environments for Shopify CLI
+ Many command configurations, such as the theme and store to be used with the command, are passed using flags. To avoid passing multiple flags with each command, and to easily switch projects or contexts, you can use environments. Environments are sets of command configurations that can be referenced by name using a single --environment flag.
+ You might want to use environments in the following cases:
+ You need to switch between development stores frequently.
+ You access multiple stores using Theme Access passwords.
+ You want to deploy your project to development, staging, and production instances of your theme.
+ You need to configure environments in each theme repository where you work. Environments are configured using a shopify.theme.toml configuration file.
+ Configure environments
+ To configure an environment for your local theme project, do the following:
+ Create a file called shopify.theme.toml at the root of the project.
+ For each environment that you want to create, add a table heading using the syntax [environments.YOUR_ENVIRONMENT_NAME].
+ Below the heading that you created, add key-value pairs for the flags and flag values that you want to use for the environment.
+ You can set environment-specific values for any flag, except for environment, path, verbose, which are ignored.
+ To use a Boolean flag for an environment, specify true as the value.
+ shopify.theme.toml
+ 1 [environments.env1]
+ 2 theme = "123456789012"
+ 3 store = "my-store"
+ 4 password  = "shptka_123456"
+ 5 ignore = "sections/header.liquid"
+ 6
+ 7 [environments.env2]
+ 8 store = "another-store"
+ 9 path = "./dist"
+ 10 ignore = ["sections/announcement-bar.liquid", "sections/header.liquid"]
+ 11 output = "json"
+ 12 live = true
+ 13 allow-live = true
+ Caution
+ Some shared flags, such as force, have a different meaning depending on the command. Including these flags in your environment might have unintended consequences in some contexts. For example, applying force on the delete command will delete a theme without confirmation.
+ Use an environment
+ To use an environment, pass the environment name with your command:
+ Terminal
+ $ shopify theme dev --environment env1
+ $
+ # using the flag alias
+ $ shopify theme dev -e env1
+ The flag values that are applied to the command are displayed:
+ Terminal
+ $ shopify theme dev --environment env1
+ $
+ $ ╭─ info ─────────────────────────────────────────────────╮
+ $ │                                                        │
+ $ │  Using applicable flags from env1 environment:         │
+ $ │                                                        │
+ $ │    • store: my-store                                   │
+ $ │    • password: *******456                              │
+ $ │    • ignore = "sections/header.liquid"                 │
+ $ │                                                        │
+ $ ╰────────────────────────────────────────────────────────╯
+ How environment flags are applied
+ You can use environments with any theme command. Environment flags are applied using the following rules:
+ If a flag is included in an environment, but it isn't accepted for the command that you're running, then it's ignored.
+ If your environment uses the wrong data type for a flag, or applies mutually exclusive flags, then an error is thrown.
+ Flag values are applied in order of precedence:
+ Command-level flags
+ Environment variables
+ Environment settings from shopify.theme.toml
+ This means that if you pass a flag as part of a command, then the flag value that you passed in the command will be used instead of the environment flag value:
+ Terminal
+ $ shopify theme dev --environment env1 --store my-new-store --password shptka_102938
+ $
+ $ ╭─ info ─────────────────────────────────────────────────╮
+ $ │                                                        │
+ $ │  Using applicable flags from env1 environment:         │
+ $ │                                                        │
+ $ │    • ignore = "sections/header.liquid"                 │
+ $ │                                                        │
+ $ ╰────────────────────────────────────────────────────────╯
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Configure environments
+ Use an environment

@@ -1,0 +1,720 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Overview
+ Components
+ Endpoints
+ Statuses
+ Product subscription app extensions
+ Marketing activities endpoints reference
+ Before your app can receive communication from Shopify through a marketing activity app extension, you need to host a series of standardized API endpoints on your app's primary domain. These endpoints are called when your app extension is rendered and when there's a related action requested from your app.
+ Endpoint requirements
+ The requirements for the marketing activity app endpoints are as follows:
+ rule/concern type/requirement
+ API format REST
+ Content type JSON
+ Security mechanism HMAC/Signed requests (same as webhooks)
+ Protocol HTTPS (app domain requires valid SSL certificate)
+ Note
+ All endpoints must respond within three seconds, otherwise Shopify will timeout the call and return an error to the user.
+ Base endpoint
+ Your app needs to host a base endpoint so Shopify can call it when integrating in the different use cases. This endpoint must be hosted under your app's URL. You can specify a custom namespace/subpath. If your app has multiple extensions, then you can share a single namespace.
+ The following example shows a typical endpoint:
+ https://app-url.com/api/marketing_activities
+ The URL includes:
+ An HTTPS protocol (the app must have a valid SSL certificate)
+ The base application URL
+ A fixed namespace (configured in the app extension)
+ Therefore the base endpoint is:
+ https://#{base_app_url}/#{custom_namespace}
+ Preload a marketing activity form
+ When a user interacts with a marketing activity extension, the first thing that Shopify does is retrieve the form configuration from the app extensions framework. The form configuration is a schema that lists all form fields and other UI components that should be rendered in the UI.
+ HTTP request
+ POST "#{base_endpoint}/preload_form_data"
+ Expected HTTP status response:
+ 200 - OK
+ 412 - Precondition Failed (if the app can't create the activity for some reason, such as the user hasn't finished setting up the app)
+ JSON input
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en"
+ 6 }
+ shopify_domain The shop domain requesting to preload the form. Apps hold the shop domain in their database as a unique record, and use it to fetch specific data for each user or shop.
+ shop_id The shop GID.
+ user_id The ID of the user who is currently logged in to the Shopify admin. You can use the ID to link the authenticated user with an ad account instead of a broad ad account shared with many different users for a given shop.
+ locale The current session locale (string), which is the language being used in the current session by the app user.
+ marketing_activity_id (optional) The existing marketing activity GID. This is used only when editing a marketing activity. To learn more, refer to Edit a marketing activity).
+ JSON output
+ You can include a field in the response if you want to change a property of the marketing activity. If nothing is returned, then whatever is configured statically for that field (inside the app extension) is what will be rendered to the user.
+ Here's an example of an empty response:
+ 1 {
+ 2
+    "form_data": {}
+ 3 }
+ In this example, an app adds more attributes to average_daily_budget field:
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "average_daily_budget": {
+ 4
+        "currency": "CAD",
+ 5
+        "help_text": "Your shop will perform best with a $20 daily budget.",
+ 6
+        "min_amount": "13.00"
+ 7
+      }
+ 8
+    }
+ 9 }
+ Since these properties will be merged into the current state of average_daily_budget, if there was a predefined help_text, then the app would overwrite with Your shop will perform best with a $20 daily budget.. This would be true also for other fields present in that response. The state of the amount field is preserved since the app didn't mention it in the response.
+ If an app wants to clear the amount field, then it needs to provide an empty value in the response:
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "average_daily_budget": {
+ 4
+        "amount": "",
+ 5
+        "currency": "CAD",
+ 6
+        "help_text": "Your shop will perform best with a $20 daily budget.",
+ 7
+        "min_amount": "13.00"
+ 8
+      }
+ 9
+    }
+ 10 }
+ FAQ
+ Which properties are available for each field? What is the contract for each component?
+ To learn more about how to configure the components, refer to the Marketing activities components reference.
+ Is it possible for an app to add a new field in the UI dynamically?
+ No. Apps must always respect the predefined fields from the static definition of the form (as it was created from the Partners Dashboard). However, an app can show, hide, or disable UI fields using the pattern above.
+ Adding marketing activity form banners
+ In the preload call, you can return a list of banners to display on top of the form in addition to returning the preloaded form configuration and values. These app banners are useful for providing users with educational information separate from the error messages in the marketing activity form.
+ There are a few different types of app banners available. Refer to the entry for type in the App banner properties table below. To see how each one looks, refer to the Banner documentation in Shopify's Polaris design system.
+ Note
+ A maximum of 2 banners can be returned per preload call.
+ Preload call with app banners response JSON
+ 1 "form_data": {
+ 2
+     "average_daily_budget": {
+ 3
+       "value": 35,
+ 4
+       "description": "in CAD",
+ 5
+       "minimum": 13
+ 6
+     }
+ 7
+   },
+ 8
+   "app_banners":[
+ 9
+     {
+ 10
+       "type": "info",
+ 11
+       "title": "Your Dynamic Product Ad might not be effective. Please refer to this [help](https://www.teststore.myshopify.com/extension/create)",
+ 12
+       "description": "Please create a carousel ad instead.",
+ 13
+       "primary_cta": {
+ 14
+         "label": "Create a carousel Ad",
+ 15
+         "url": "https://www.teststore.myshopify.com/extension/create"
+ 16
+       },
+ 17
+       "secondary_cta": {
+ 18
+         "label": "Find out more",
+ 19
+         "url": "https://www.teststore.myshopify.com/facebook_ads/find_out_more"
+ 20
+       }
+ 21
+     }
+ 22
+   ]
+ App banner properties
+ type (required) The type of the banner. Valid values: default, info, warning, critical.
+ title (required) The title of the banner.
+ description (required) The description that appears in the banner.
+ primary_cta (optional) The primary call to action button in the banner. Includes the following properties:
+ label - The label of the call to action button.
+ url - The link of the call to action button.
+ secondary_cta (optional) The secondary call to action button in the banner. Requires that primary_cta is provided. Accepts the same properties as primary_cta.
+ App banner FAQ
+ What if I don't need to display any app banners in the form?
+ In the preload response, you can return nil or an empty array instead of returning the hash with the app_banners key.
+ Is markdown supported in the app banner?
+ Only markdown formatting for links is currently supported. The link urls can be either absolute or relative.
+ Are dismissible app banners supported?
+ No, they aren't currently supported.
+ Preview a marketing activity
+ Most marketing activities let the user preview them before they are actually created. For example, when a user creates a Facebook campaign, they can preview it after choosing different options, content, types, some descriptions, and how much they want to spend.
+ To preview a marketing activity, the app receives the marketing activity from the form and then returns a preview URL. This preview URL is embedded in Shopify in an iframe and displayed to the user.
+ Previewing a marketing activity is a good way to perform validations and give early feedback to the user. It's a good idea to perform validations before generating the preview. If there are validation errors, then return them in the response.
+ HTTP request
+ POST "#{base_endpoint}/preview"
+ Expected HTTP status responses:
+ 200 - OK (if the preview was generated and no validation errors were found)
+ 422 - Unprocessable Entity (if there are validation errors)
+ JSON input
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/4",
+ 7
+    "preview_types": [
+ 8
+      "desktop",
+ 9
+      "mobile"
+ 10
+    ],
+ 11
+    "properties": {
+ 12
+      "average_daily_budget": "13.00",
+ 13
+      "quantity": 2
+ 14
+    }
+ 15 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ marketing_activity_id (optional) The ID of the marketing activity. This is passed only if the user is previewing a marketing activity that already exists.
+ locale The current locale (string).
+ preview_types An array of preview types to request. Default: ["desktop", "mobile"].
+ properties All input field values collected from the user.
+ JSON output
+ In this example, the app was able to generate a preview (status code 200):
+ 1 {
+ 2
+    "desktop": {
+ 3
+      "preview_url": "https://app-url.com/previews/98564321",
+ 4
+      "content_type": "text/html",
+ 5
+      "width": 1000,
+ 6
+      "height": 800
+ 7
+    },
+ 8
+    "mobile": {
+ 9
+      "preview_url": "https://app-url.com/previews/98564322",
+ 10
+      "content_type": "text/html",
+ 11
+      "width": 360,
+ 12
+      "height": 800
+ 13
+    }
+ 14 }
+ preview_type The corresponding preview_type key corresponding to what was passed in the JSON request.
+ preview_url (required when 200) The URL with the preview HTML or image. Shopify embeds this preview inside an iframe.
+ content_type (required when 200) The mime type for the preview. Available options:
+ text/html
+ image/jpeg
+ image/png
+ width (required when 200) The width of the preview (Integer). Shopify uses this to adjust the size of the iframe.
+ height (required when 200) The height of the preview (Integer). Shopify uses this to adjust the size of the iframe.
+ If the app was unable to generate a preview due to validation errors (status code 422), it can respond with an error message that's displayed to the user within the preview frame. The JSON structure of the errors is the same as that for updating the status of the marketing activity to FAILED.
+ FAQ
+ Does the preview URL support HTML?
+ Yes.
+ Are asynchronous previews supported?
+ No. Apps should provide synchronous preview endpoints only.
+ If your app requires more than 10 seconds to generate a preview, then as a workaround you can provide the preview endpoint quickly as HTML and generate the preview when the URL gets hit.
+ I have all the information I need to generate the preview from the properties in the request. Do I need to use marketing_activity_id?
+ The marketing_activity_id is provided in the request when previewing an existing marketing activity. You can use it to generate the preview, but it isn't required.
+ Create a marketing activity
+ This endpoint is called when a user tries to create a marketing activity in the marketing section. The marketing activity create REST end point must schedule an asynchronous job to create a marketing activity in the marketing platform. This endpoint must validate the form and schedule an update to the marketing activity object created by Shopify. In the job, the first update to the marketing activity object must include the UTM parameters, and if it is a paid activity, also the budget fields.
+ There must be a 1-to-1 relationship between a Shopify marketing activity and the activity that your app creates on the marketing platform. When your app creates a marketing activity on the platform, verify the uniqueness of the Shopify marketing activity ID. For example, if a network issue causes the same marketing activity ID to be provided to the create endpoint twice, then your app should create only one marketing activity.
+ Note
+ All endpoints must respond within three seconds. For a more responsive user experience, update the marketing activity’s information asynchronously in a job outside of this call.
+ The workflow for creating a marketing activity includes the following steps:
+ The user fills out the marketing activity form, and clicks on the Publish button.
+ Shopify creates the marketing activity in advance and hits the app's create marketing activity REST endpoint.
+ The app should do the following:
+ Validate the form. If it's valid, then respond with 200 OK and empty JSON response. If it's invalid, then respond with the correct HTTP error code and the JSON error hash as described in previewing section.
+ Schedule an asynchronous job to set the UTM parameter and budget of the marketing activity using MarketingActivityUpdate.
+ Schedule an asynchronous job to publish the marketing activity to the platform (such as Facebook), then invoke MarketingActivityUpdate to update the status.
+ If the app responds with 200 OK, then Shopify responds back to the app with the created marketing activity in a Pending state.
+ If the app responds with an HTTP error code in the 400s or 500s, then Shopify cleans up the marketing activity it created in advance.
+ After the app has published the marketing activity to the platform, it should do the following:
+ If it's successful, then call MarketingActivityUpdate to mark the activity either as ACTIVE if it's ongoing, or as INACTIVE if it's completed.
+ If it's unsuccessful, then call MarketingActivityUpdate to mark the activity as FAILED, and pass the cause of the error so that it can be displayed on the Marketing page in the Shopify admin.
+ Sequence diagram of marketing activity creation flow
+ HTTP request
+ POST "#{base_endpoint}"
+ Expected HTTP status responses:
+ 200 - OK (if the activity was created and no validation errors were found)
+ 412 - Precondition failed (if the user hasn't finished setting up the app)
+ 422 - Unprocessable Entity (if there are validation errors)
+ JSON input
+ The JSON input for creating a marketing activity is almost the same as the input for previewing a marketing activity:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_title": "Apparel promotion",
+ 7
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34435",
+ 8
+    "context": "",
+ 9
+    "properties": {
+ 10
+      "average_daily_budget": "150.00",
+ 11
+      "quantity": 2
+ 12
+    }
+ 13 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ marketing_activity_title The title of the marketing activity (string).
+ marketing_activity_id The GID of the marketing activity that was created by Shopify.
+ context(deprecated) An encoded string that Shopify uses to identify some marketing activity properties. Note: This context needs to be relayed to Shopify if you are using the deprecated GraphQL MarketingActivityCreate endpoint.
+ properties All input field values collected from the user.
+ JSON output
+ If the app was able to create the marketing activity (status code 200), we expect an empty JSON response.
+ 1 {}
+ errors (required when 422) The app can respond with validation errors to be displayed to users if creation has failed. The error response structure is the same as that for updating the status of the marketing activity to FAILED.
+ FAQ
+ Why does Shopify create the marketing activity in advance?
+ This simplifies the process of creating a marketing activity by preventing the app from having to make an extra call to Shopify. It also reduces the chance of timeouts for this REST endpoint.
+ Why should we asynchronously update the marketing activity?
+ The marketing activity creation flow will be more responsive. It will take less time to respond to the initial call to the App.
+ What is the initial status of the marketing activity?
+ The initial status is PENDING. In the App's asynchronous job to update the marketing activity object, it is free to update to other status such as ACTIVE or FAILED or continue keep the status as PENDING.
+ Why do I need to update the marketing activity UTM parameters?
+ Shopify needs UTM parameters in order to display the engagement and the report for the ad. This is required for all marketing tactics except the storefront app tactic. The UTM parameter must be specified the first time the marketing activity is updated.
+ Do apps need to call both the marketing activity endpoints and the MarketingEvent API?
+ No. Apps that create marketing activities through the new marketing section will use only the marketing activity endpoints.
+ Will I lose old marketing events from my app?
+ No. Shopify will backfill all existing marketing events into marketing activities. Each marketing event will have a corresponding marketing activity, and any changes to either API will be reflected in both entities.
+ Edit a marketing activity
+ In some cases, the user is allowed to change some attributes of an existing marketing activity. For example, some social media apps let the user change the budget of an activity after it's been created. Some other apps have more flexibility, and let the user update additional fields.
+ This can be achieved by using the preload_form_data endpoint. For more information, refer to preload a marketing activity form).
+ In this example, Shopify sends the marketing_activity_id in the payload:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34526"
+ 7 }
+ The app must make sure that it has that marketing activity persisted in their database and respond accordingly, setting up the form fields as expected:
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "average_daily_budget": {
+ 4
+        "amount": "1000.00",
+ 5
+        "currency": "CAD",
+ 6
+        "help_text": "Your shop will perform best with a $20 daily budget.",
+ 7
+        "min_amount": "13.00"
+ 8
+      },
+ 9
+      "quantity": {
+ 10
+        "disabled": true,
+ 11
+        "value": 2
+ 12
+      },
+ 13
+      "ad_title": {
+ 14
+        "disabled": true,
+ 15
+        "value": "Welcome to John's apparel store."
+ 16
+      }
+ 17
+    }
+ 18 }
+ Update a marketing activity
+ This is the continuation of the previous use case. After all changes were made, the user submits the form. This action is similar to inline marketing activity creation.
+ HTTP request
+ PATCH "#{base_endpoint}"
+ Expected HTTP status responses:
+ 200 - OK (if the activity was synchronously updated and no validation errors were found)
+ 202 - Accepted (if the activity was scheduled to be asynchronously updated)
+ 412 - Precondition Failed (if the user hasn't finished setting up the app)
+ 422 - Unprocessable Entity (if there are validation errors)
+ After receiving a 200 response, Shopify updates the marketing activity's status to ACTIVE.
+ JSON input
+ The input to update a marketing activity is the same as inline marketing activity creation with the marketing activity GID:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34435",
+ 7
+    "marketing_activity_title": "Apparel promotion",
+ 8
+    "properties": {
+ 9
+      "average_daily_budget": 150,
+ 10
+      "quantity": 2
+ 11
+    }
+ 12 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ marketing_activity_id The GID of the marketing activity being updated.
+ marketing_activity_title The title of the marketing activity (string).
+ properties All input field values.
+ JSON output
+ If your app is able to update the marketing activity synchronously (status code 200), then Shopify expects an empty body in the response.
+ If your app has started to update the marketing activity asynchronously, then Shopify expects the status code 202 accepted and an empty body in the response.
+ However, if your app detects validation errors, it can respond with the status code 422 and the related errors. The error response structure is the same as that for updating the status of the marketing activity to FAILED.
+ Pause a marketing activity
+ You can pause a marketing activity that is in an active state. You can use the pause endpoint to pause an active marketing activity either synchronously or asynchronously.
+ HTTP request
+ PATCH "#{base_endpoint}/pause"
+ Expected HTTP status responses:
+ 200 - OK (if the activity was synchronously paused)
+ 202 - Accepted (if the activity has started asynchronous pause)
+ 412 - Precondition Failed (if the user hasn't finished setting up the app)
+ After receiving a 200 response, Shopify updates the marketing activity's status to PAUSED.
+ JSON input
+ The input to update a marketing activity is the same as inline marketing activity creation with the marketing activity GID:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34435",
+ 7 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ marketing_activity_id The GID of the marketing activity being updated.
+ JSON output
+ If your app is able to pause the marketing activity synchronously (status code 200), then Shopify expects an empty body in the response.
+ If your app has started to pause the marketing activity asynchronously, then Shopify expects the status code 202 accepted and an empty body in the response.
+ Resume a marketing activity
+ You can resume marketing activities that are in a paused state. You can use the resume endpoint to resume a paused marketing activity either synchronously or asynchronously.
+ HTTP request
+ PATCH "#{base_endpoint}/resume"
+ Expected HTTP status responses:
+ 200 - OK (if the activity was synchronously resumed)
+ 202 - Accepted (if the activity was asynchronously resumed)
+ 412 - Precondition Failed (if the user hasn't finished setting up the app)
+ After receiving a 200 response, Shopify updates the marketing activity's status to ACTIVE.
+ JSON input
+ The input to update a marketing activity is the same as inline marketing activity creation with the marketing activity GID:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34435",
+ 7 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ marketing_activity_id The GID of the marketing activity being updated.
+ JSON output
+ If your app is able to resume the marketing activity synchronously (status code 200), then Shopify expects an empty body in the response.
+ If your app has started to resume the marketing activity asynchronously, then Shopify expects the status code 202 accepted and an empty body in the response.
+ Republish a marketing activity
+ If a marketing activity creation fails, then its state changes to failed. To re-publish it, the user might need to modify a few of the activity's properties. You can use the republish endpoint to achieve this. The related request and response bodies are the same as those used to update a marketing activity.
+ HTTP request
+ POST "#{base_endpoint}/republish"
+ Expected HTTP status responses:
+ 200 - OK (if the activity was synchronously republished and no validation errors were found)
+ 202 - Accepted (if the activity has started asynchronous republish)
+ 412 - Precondition Failed (if the user hasn't finished setting up the app)
+ 422 - Unprocessable Entity (if there are validation errors)
+ After receiving a 200 response, Shopify updates the marketing activity's status to ACTIVE.
+ JSON input
+ The input to republish a marketing activity is the same as inline marketing activity creation with the marketing activity GID:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34435",
+ 7
+    "marketing_activity_title": "Apparel promotion",
+ 8
+    "properties": {
+ 9
+      "average_daily_budget": "150.00",
+ 10
+      "quantity": 2
+ 11
+    }
+ 12 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ marketing_activity_id The GID of the marketing activity being updated.
+ marketing_activity_title The title of the marketing activity (string).
+ properties All input field values.
+ JSON output
+ If your app is able to republish the marketing activity synchronously (status code 200), then Shopify expects an empty body in the response.
+ If your app has started to republish the marketing activity asynchronously, then Shopify expects the status code 202 accepted and an empty body in the response.
+ However, if your app detects validation errors, it can respond with the status code 422 and the related errors. The error response structure is the same as that for updating the status of the marketing activity to FAILED.
+ Delete a marketing activity
+ You can delete a marketing activity. You can use the delete endpoint to delete a marketing activity either synchronously or asynchronously.
+ HTTP request
+ PATCH "#{base_endpoint}/delete"
+ Expected HTTP status responses:
+ 200 - OK (if the activity was synchronously deleted)
+ 202 - Accepted (if the activity was asynchronously deleted)
+ 412 - Precondition Failed (if the user hasn't finished setting up the app)
+ After receiving a 200 response, Shopify updates the marketing activity's status to DELETED.
+ JSON input
+ The input to delete a marketing activity is the same as inline marketing activity creation with the marketing activity GID:
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "marketing_activity_id": "gid://shopify/MarketingActivity/34435",
+ 7 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ marketing_activity_id The GID of the marketing activity being deleted.
+ JSON output
+ If your app is able to delete the marketing activity synchronously (status code 200), then Shopify expects an empty body in the response.
+ If your app has started to delete the marketing activity asynchronously, then Shopify expects the status code 202 accepted and an empty body in the response.
+ Dynamic standalone fields
+ Some UI fields, such as type-ahead fields, require more comprehensive integration with an app to provide dynamic data from the backend.
+ In this example, the app wants to let the user partially type some interests and then provide a list of the available matching interests:
+ With that approach, the app directs the user towards a valid selection instead of using an open text field where the user can enter input that risks causing validation errors.
+ HTTP request
+ POST "#{base_endpoint}/load_field/#{field_name}"
+ Expected HTTP status responses:
+ 200 - OK
+ JSON input
+ 1 {
+ 2
+    "shopify_domain": "johns-apparel.myshopify.com",
+ 3
+    "shop_id": "gid://shopify/Shop/1111111",
+ 4
+    "user_id": 1,
+ 5
+    "locale": "en",
+ 6
+    "field_name": "interests",
+ 7
+    "value": "sports"
+ 8 }
+ shopify_domain The associated shop domain.
+ shop_id The associated shop GID.
+ user_id The ID of the authenticated user.
+ locale The current locale (string).
+ field_name The name of the field, specified when you create the form.
+ value The current value for the given field.
+ JSON output
+ Similar to other examples above, the app will customize the field properties but in this case it can manipulate only one field:
+ 1 {
+ 2
+    "field_data": {
+ 3
+      "options": [
+ 4
+        {
+ 5
+          "label": "Sports",
+ 6
+          "value": "sports"
+ 7
+        },
+ 8
+        {
+ 9
+          "label": "Movies",
+ 10
+          "value": "movies"
+ 11
+        },
+ 12
+        {
+ 13
+          "label": "Music",
+ 14
+          "value": "music"
+ 15
+        }
+ 16
+      ]
+ 17
+    }
+ 18 }
+ FAQ
+ Why does the endpoint include the field name? Why not have a single endpoint and send the field name in the payload only?
+ By having different endpoints for each field, you can help split the required code into smaller sections.
+ Why is the field name in both the payload and the URI?
+ Having more data in the payload can help create different HMACs for each call. This improves the security of our communications by having more random data to influence the HMAC.
+ Apps can use either the field name from the URI or the payload (both have the same effect).
+ Error feedback
+ This endpoint is called to report back to the app if the JSON output for any of the previously described endpoints does not conform to the expected format. For example, if the app response to the preload endpoint contains an invalid data type, a missing key, or any unexpected value, then the error endpoint reports that back to the app.
+ Example invalid JSON output on preload:
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "ad_title": {
+ 4
+        "random_prop": "random",
+ 5
+        "min_length": -3
+ 6
+      },
+ 7
+      "average_daily_budget": {
+ 8
+        "help_text": "Your shop will perform best with a $20 daily budget.",
+ 9
+        "min_amount": "13.00"
+ Corresponding error message which will be reported back:
+ 1 [
+ 2
+    {
+ 3
+      "ad_title": [
+ 4
+        {
+ 5
+          "#": "\"random_prop\" is not a permitted key."
+ 6
+        },
+ 7
+        {
+ 8
+          "#/min_length": "-3 must be greater than or equal to 0., -3 is not a null."
+ 9
+        }
+ 10
+      ],
+ 11
+      "average_daily_budget": [
+ 12
+        {
+ 13
+          "#": "\"currency\" wasn't supplied."
+ 14
+        }
+ 15
+      ]
+ 16
+    }
+ 17 ]
+ HTTP request
+ POST "#{base_endpoint}/errors"
+ Expected HTTP status responses:
+ 200 - OK
+ JSON input
+ 1 {
+ 2
+    "request_id": "example-request-id",
+ 3
+    "message": "[{\"ad_title\":[{\"#\\/min_length\":\"-3 must be greater than or equal to 0., -3 is not a null.\"}]}]",
+ 4 }
+ request_id The ID of the request whose response caused a validation failure.
+ message A JSON serialized string describing the errors with the app response.
+ JSON output
+ A JSON body is not required in the response.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Endpoint requirements
+ Base endpoint
+ Preload a marketing activity form
+ Preview a marketing activity
+ Create a marketing activity
+ Edit a marketing activity
+ Update a marketing activity
+ Pause a marketing activity
+ Resume a marketing activity
+ Republish a marketing activity
+ Delete a marketing activity
+ Dynamic standalone fields
+ Error feedback
+ Updates & News

@@ -1,0 +1,2390 @@
+Product subscription app extensions
+ Edit product data using the new product model
+ Learn how to use the new product model to edit the product, variant, and option data that you created.
+ Note
+ If your app or use case aligns with the database sync workflow, then use the productSet mutation to edit data in a single operation.
+ What you'll learn
+ In this guide, you'll learn how to update data for an existing product either by overwriting the data in a single mutation, or by updating its individual fields incrementally through multiple mutations.
+ You'll also learn the workflow for updating a product and its variants and operations using updated product operations.
+ Scenario
+ You've created a new product with variants and options. Now you want to make the following changes:
+ Change the title from My Cool Socks to My Extra Cool Socks.
+ Get rid of sizing, and switch to a one-size-fits-all model.
+ Add a new Material option with values of Cotton and Wool, listing all existing socks as Cotton.
+ Rename the Material option to Fabric.
+ Swap Color and Material’s positions to make Material options and variants display first in the product.
+ Remove two color options.
+ Add two new colors of cotton socks.
+ Add five new colors of wool socks.
+ Shape of the product data
+ The following diagram represents the original shape of the product data:
+ The diagram displays the "OptionValues" that are assigned to each variant, and the "Values" that belong to each "Option" relationship of the product's variants to their option values. On the right, there's the relationship of the product's options to their option values. The values that are represented in "OptionValues" correspond with a value in the product's options.
+ The following is the corresponding data structure:
+ Product data structure
+ 1 {
+ 2
+    "id": "gid://shopify/Product/456",
+ 3
+    "title": "My Cool Socks",
+ 4
+    "variants": {
+ 5
+      "edges": [
+ 6
+        {
+ 7
+          "node": {
+ 8
+            "id": "gid://shopify/ProductVariant/20",
+ 9
+            "title": "Red / Small",
+ 10
+            "selectedOptions": [
+ 11
+              {
+ 12
+                "name": "Color",
+ 13
+                "value": "Red"
+ 14
+              },
+ 15
+              {
+ 16
+                "name": "Size",
+ 17
+                "value": "Small"
+ 18
+              }
+ 19
+            ]
+ 20
+          }
+ 21
+        },
+ 22
+        {
+ 23
+          "node": {
+ 24
+            "id": "gid://shopify/ProductVariant/21",
+ 25
+            "title": "Green / Small",
+ 26
+            "selectedOptions": [
+ 27
+              {
+ 28
+                "name": "Color",
+ 29
+                "value": "Green"
+ 30
+              },
+ 31
+              {
+ 32
+                "name": "Size",
+ 33
+                "value": "Small"
+ 34
+              }
+ 35
+            ]
+ 36
+          }
+ 37
+        },
+ 38
+        {
+ 39
+          "node": {
+ 40
+            "id": "gid://shopify/ProductVariant/22",
+ 41
+            "title": "Blue / Small",
+ 42
+            "selectedOptions": [
+ 43
+              {
+ 44
+                "name": "Color",
+ 45
+                "value": "Blue"
+ 46
+              },
+ 47
+              {
+ 48
+                "name": "Size",
+ 49
+                "value": "Small"
+ 50
+              }
+ 51
+            ]
+ 52
+          }
+ 53
+        },
+ 54
+        {
+ 55
+          "node": {
+ 56
+            "id": "gid://shopify/ProductVariant/23",
+ 57
+            "title": "Red / Medium",
+ 58
+            "selectedOptions": [
+ 59
+              {
+ 60
+                "name": "Color",
+ 61
+                "value": "Red"
+ 62
+              },
+ 63
+              {
+ 64
+                "name": "Size",
+ 65
+                "value": "Medium"
+ 66
+              }
+ 67
+            ]
+ 68
+          }
+ 69
+        },
+ 70
+        {
+ 71
+          "node": {
+ 72
+            "id": "gid://shopify/ProductVariant/24",
+ 73
+            "title": "Green / Medium",
+ 74
+            "selectedOptions": [
+ 75
+              {
+ 76
+                "name": "Color",
+ 77
+                "value": "Green"
+ 78
+              },
+ 79
+              {
+ 80
+                "name": "Size",
+ 81
+                "value": "Medium"
+ 82
+              }
+ 83
+            ]
+ 84
+          }
+ 85
+        },
+ 86
+        {
+ 87
+          "node": {
+ 88
+            "id": "gid://shopify/ProductVariant/25",
+ 89
+            "title": "Blue / Medium",
+ 90
+            "selectedOptions": [
+ 91
+              {
+ 92
+                "name": "Color",
+ 93
+                "value": "Blue"
+ 94
+              },
+ 95
+              {
+ 96
+                "name": "Size",
+ 97
+                "value": "Medium"
+ 98
+              }
+ 99
+            ]
+ 100
+          }
+ 101
+        },
+ 102
+        {
+ 103
+          "node": {
+ 104
+            "id": "gid://shopify/ProductVariant/26",
+ 105
+            "title": "Red / Large",
+ 106
+            "selectedOptions": [
+ 107
+              {
+ 108
+                "name": "Color",
+ 109
+                "value": "Red"
+ 110
+              },
+ 111
+              {
+ 112
+                "name": "Size",
+ 113
+                "value": "Large"
+ 114
+              }
+ 115
+            ]
+ 116
+          }
+ 117
+        },
+ 118
+        {
+ 119
+          "node": {
+ 120
+            "id": "gid://shopify/ProductVariant/27",
+ 121
+            "title": "Green / Large",
+ 122
+            "selectedOptions": [
+ 123
+              {
+ 124
+                "name": "Color",
+ 125
+                "value": "Green"
+ 126
+              },
+ 127
+              {
+ 128
+                "name": "Size",
+ 129
+                "value": "Large"
+ 130
+              }
+ 131
+            ]
+ 132
+          }
+ 133
+        },
+ 134
+        {
+ 135
+          "node": {
+ 136
+            "id": "gid://shopify/ProductVariant/28",
+ 137
+            "title": "Blue / Large",
+ 138
+            "selectedOptions": [
+ 139
+              {
+ 140
+                "name": "Color",
+ 141
+                "value": "Blue"
+ 142
+              },
+ 143
+              {
+ 144
+                "name": "Size",
+ 145
+                "value": "Large"
+ 146
+              }
+ 147
+            ]
+ 148
+          }
+ 149
+        }
+ 150
+      ]
+ 151
+    }
+ 152 }
+ Several mutations to update the product data
+ The following mutations should be used when Shopify is the system for managing product domain information. The mutations are designed for smaller changes per request. Consequently, the valid calls are easier to construct and their individual execution duration is shorter.
+ Update the product title
+ Update the product title with the productUpdate mutation. This example updates the product title from My Cool Socks to My Extra Cool Socks:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation UpdateProduct {
+ 2
+    productUpdate(input: {
+ 3
+      id: "gid://shopify/Product/456",
+ 4
+      title: "My Extra Cool Socks"
+ 5
+    }) {
+ 6
+      product {
+ 7
+        title
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "title": "My Extra Cool Socks"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ The following diagram illustrates the product data after the update:
+ Remove the Size option
+ Because you're moving the product to a one-size-fits-all model, you can remove the Size option.
+ Remove an option with the productOptionsDelete mutation, passing the the ID of the Size option. However, the product is already offered in multiple sizes, so you need to decide which variants no longer need to be offered.
+ You can delete unneeded variants in the following ways:
+ Delete the variants that you don’t want to preserve, until each product variant remaining represents a unique Color. Update the remaining variants to all have one Size. Then, delete the Size option.
+ You might want to delete variants manually if you need fine-grained control over which variants you want to delete, For example, to preserve variants with specific SKUs or prices to be preserved.
+ Tip
+ When there are more than two options, delete variants until each product variant represents a unique option combination.
+ Use the strategy argument with a value of POSITION. This strategy automatically resolves duplicate option combinations for you, by deleting any duplicated option combinations by position (descending).
+ This behavior uses the same strategy that the Shopify admin uses to automatically delete any product variants that would be a duplicate of another variant after a product option is deleted. The POSITION strategy enables you to implement the same approach in your app with minimal effort.
+ Tip
+ When you don't care which of the variants is deleted, use this option. This helps avoid round trip calls to the API.
+ The following example deletes the Size option using strategy: POSITION:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation DeleteOptionsFromProduct {
+ 2
+    productOptionsDelete(
+ 3
+      productId: "gid://shopify/Product/456",
+ 4
+      options: ["gid://shopify/ProductOption/102"],
+ 5
+      strategy: POSITION
+ 6
+    ) {
+ 7
+      product {
+ 8
+        options {
+ 9
+          id
+ 10
+          name
+ 11
+          position
+ 12
+          optionValues {
+ 13
+            id
+ 14
+            name
+ 15
+            hasVariants
+ 16
+          }
+ 17
+        }
+ 18
+      }
+ 19
+      userErrors {
+ 20
+        field
+ 21
+        message
+ 22
+      }
+ 23
+    }
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productOptionsDelete": {
+ 4
+        "product": {
+ 5
+          "options": [
+ 6
+            {
+ 7
+              "id": "gid://shopify/ProductOption/101",
+ 8
+              "name": "Color",
+ 9
+              "position": 1,
+ 10
+              "optionValues": [
+ 11
+                {
+ 12
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 13
+                  "name": "Red",
+ 14
+                  "hasVariants": true
+ 15
+                },
+ 16
+                {
+ 17
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 18
+                  "name": "Green",
+ 19
+                  "hasVariants": true
+ 20
+                },
+ 21
+                {
+ 22
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 23
+                  "name": "Blue",
+ 24
+                  "hasVariants": true
+ 25
+                }
+ 26
+              ]
+ 27
+            }
+ 28
+          ]
+ 29
+        },
+ 30
+        "userErrors": []
+ 31
+      }
+ 32
+    }
+ 33 }
+ After the product option and its variants are deleted, the product has the following structure:
+ Note
+ Consider using the NON_DESTRUCTIVE strategy when all option combinations, excluding Size, would be unique after Size is removed. This strategy automatically updates the remaining variants, removing the Size option and ensuring a unique set of option combinations.
+ Add the Material option
+ Add a new Material option with the productOptionsCreate mutation. When you run this mutation, all existing variants are backfilled to use the first specified option value for the new option. In this example, the option is Cotton.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateProductOption($productId: ID!, $options: [OptionCreateInput!]!) {
+ 2
+    productOptionsCreate(productId: $productId, options: $options) {
+ 3
+      product {
+ 4
+        options {
+ 5
+          id
+ 6
+          name
+ 7
+          position
+ 8
+          optionValues {
+ 9
+            id
+ 10
+            name
+ 11
+            hasVariants
+ 12
+          }
+ 13
+        }
+ 14
+        variants(first: 250) {
+ 15
+          edges {
+ 16
+            node {
+ 17
+              id
+ 18
+              title
+ 19
+              selectedOptions {
+ 20
+                name
+ 21
+                value
+ 22
+              }
+ 23
+            }
+ 24
+          }
+ 25
+        }
+ 26
+      }
+ 27
+      userErrors {
+ 28
+        field
+ 29
+        message
+ 30
+      }
+ 31
+    }
+ 32 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "options": [
+ 4
+      {
+ 5
+        "name": "Material",
+ 6
+        "values": [
+ 7
+          {
+ 8
+            "name": "Cotton"
+ 9
+          },
+ 10
+          {
+ 11
+            "name": "Wool"
+ 12
+          }
+ 13
+        ]
+ 14
+      }
+ 15
+    ]
+ 16 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productOptionsCreate": {
+ 4
+        "product": {
+ 5
+          "options": [
+ 6
+            {
+ 7
+              "id": "gid://shopify/ProductOption/101",
+ 8
+              "name": "Color",
+ 9
+              "position": 1,
+ 10
+              "optionValues": [
+ 11
+                {
+ 12
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 13
+                  "name": "Red",
+ 14
+                  "hasVariants": true
+ 15
+                },
+ 16
+                {
+ 17
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 18
+                  "name": "Green",
+ 19
+                  "hasVariants": true
+ 20
+                },
+ 21
+                {
+ 22
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 23
+                  "name": "Blue",
+ 24
+                  "hasVariants": true
+ 25
+                }
+ 26
+              ]
+ 27
+            },
+ 28
+            {
+ 29
+              "id": "gid://shopify/ProductOption/103",
+ 30
+              "name": "Material",
+ 31
+              "position": 2,
+ 32
+              "optionValues": [
+ 33
+                {
+ 34
+                  "id": "gid://shopify/ProductOptionValue/7",
+ 35
+                  "name": "Cotton",
+ 36
+                  "hasVariants": true
+ 37
+                },
+ 38
+                {
+ 39
+                  "id": "gid://shopify/ProductOptionValue/8",
+ 40
+                  "name": "Wool",
+ 41
+                  "hasVariants": false
+ 42
+                }
+ 43
+              ]
+ 44
+            }
+ 45
+          ],
+ 46
+          "variants": {
+ 47
+            "edges": [
+ 48
+              {
+ 49
+                "node": {
+ 50
+                  "id": "gid://shopify/ProductVariant/101",
+ 51
+                  "title": "Red / Cotton",
+ 52
+                  "selectedOptions": [
+ 53
+                    {
+ 54
+                      "name": "Color",
+ 55
+                      "value": "Red"
+ 56
+                    },
+ 57
+                    {
+ 58
+                      "name": "Material",
+ 59
+                      "value": "Cotton"
+ 60
+                    }
+ 61
+                  ]
+ 62
+                }
+ 63
+              },
+ 64
+              {
+ 65
+                "node": {
+ 66
+                  "id": "gid://shopify/ProductVariant/102",
+ 67
+                  "title": "Green / Cotton",
+ 68
+                  "selectedOptions": [
+ 69
+                    {
+ 70
+                      "name": "Color",
+ 71
+                      "value": "Green"
+ 72
+                    },
+ 73
+                    {
+ 74
+                      "name": "Material",
+ 75
+                      "value": "Cotton"
+ 76
+                    }
+ 77
+                  ]
+ 78
+                }
+ 79
+              },
+ 80
+              {
+ 81
+                "node": {
+ 82
+                  "id": "gid://shopify/ProductVariant/103",
+ 83
+                  "title": "Blue / Cotton",
+ 84
+                  "selectedOptions": [
+ 85
+                    {
+ 86
+                      "name": "Color",
+ 87
+                      "value": "Blue"
+ 88
+                    },
+ 89
+                    {
+ 90
+                      "name": "Material",
+ 91
+                      "value": "Cotton"
+ 92
+                    }
+ 93
+                  ]
+ 94
+                }
+ 95
+              }
+ 96
+            ]
+ 97
+          }
+ 98
+        },
+ 99
+        "userErrors": []
+ 100
+      }
+ 101
+    }
+ 102 }
+ After the new product option is added, the product has the following structure:
+ Update the Material option
+ You can also use the productOptionUpdate mutation to rename a product option or reorder the options. This example renames Material to Fabric and changes its position to display first in the product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation UpdateOptionNameAndPosition($productId: ID!, $optionInput: OptionUpdateInput!) {
+ 2
+    productOptionUpdate(productId: $productId, option: $optionInput) {
+ 3
+      product {
+ 4
+        options {
+ 5
+          id
+ 6
+          name
+ 7
+          position
+ 8
+          optionValues {
+ 9
+            id
+ 10
+            name
+ 11
+            hasVariants
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+      userErrors {
+ 16
+        field
+ 17
+        message
+ 18
+      }
+ 19
+    }
+ 20 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "optionInput": {
+ 4
+      "id": "gid://shopify/ProductOption/102",
+ 5
+      "name": "Fabric",
+ 6
+      "position": 1
+ 7
+    }
+ 8 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productOptionUpdate": {
+ 4
+        "product": {
+ 5
+          "options": [
+ 6
+            {
+ 7
+              "id": "gid://shopify/ProductOption/103",
+ 8
+              "name": "Fabric",
+ 9
+              "position": 1,
+ 10
+              "optionValues": [
+ 11
+                {
+ 12
+                  "id": "gid://shopify/ProductOptionValue/7",
+ 13
+                  "name": "Cotton",
+ 14
+                  "hasVariants": true
+ 15
+                },
+ 16
+                {
+ 17
+                  "id": "gid://shopify/ProductOptionValue/8",
+ 18
+                  "name": "Wool",
+ 19
+                  "hasVariants": false
+ 20
+                }
+ 21
+              ]
+ 22
+            },
+ 23
+            {
+ 24
+              "id": "gid://shopify/ProductOption/101",
+ 25
+              "name": "Color",
+ 26
+              "position": 2,
+ 27
+              "optionValues": [
+ 28
+                {
+ 29
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 30
+                  "name": "Red",
+ 31
+                  "hasVariants": true
+ 32
+                },
+ 33
+                {
+ 34
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 35
+                  "name": "Green",
+ 36
+                  "hasVariants": true
+ 37
+                },
+ 38
+                {
+ 39
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 40
+                  "name": "Blue",
+ 41
+                  "hasVariants": true
+ 42
+                }
+ 43
+              ]
+ 44
+            }
+ 45
+          ]
+ 46
+        },
+ 47
+        "userErrors": []
+ 48
+      }
+ 49
+    }
+ 50 }
+ After the option is renamed and the options are reordered, your product has the following structure:
+ Update variant option values by ID
+ Each time you query a product option's optionValues, both Wool and Cotton are returned.
+ Because Cotton was backfilled for existing variants, its hasVariants value is true, where Wool's hasVariants value is false. Option values with a hasVariants value of false are referred to as orphaned option values.
+ Tip
+ Orphaned option values still have a GID associated with them. In subsequent requests, you can reference orphaned option values by ID, such as for data integrity purposes, local storage, and reflection in the UI.
+ The following example uses the productVariantsBulkUpdate mutation to update the Green color sock to be Wool. The option value is referenced by its id.
+ Tip
+ You can also reference your product options or option values by name.
+ For example, optionValues: { "name": "Wool", "optionName": "Fabric" }
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation UpdateVariantOptionValueByReference($productId: ID!, $variantsInput: [ProductVariantsBulkInput!]!) {
+ 2
+    productVariantsBulkUpdate(productId: $productId, variants: $variantsInput) {
+ 3
+      product {
+ 4
+        options {
+ 5
+          id
+ 6
+          name
+ 7
+          position
+ 8
+          optionValues {
+ 9
+            id
+ 10
+            name
+ 11
+            hasVariants
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+      productVariants {
+ 16
+        id
+ 17
+        title
+ 18
+        selectedOptions {
+ 19
+          name
+ 20
+          value
+ 21
+        }
+ 22
+      }
+ 23
+      userErrors {
+ 24
+        field
+ 25
+        message
+ 26
+      }
+ 27
+    }
+ 28 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "variantsInput": [
+ 4
+      {
+ 5
+        "id": "gid://shopify/ProductVariant/102",
+ 6
+        "optionValues": [
+ 7
+          {
+ 8
+            "optionId": "gid://shopify/ProductOption/3"
+ 9
+            "id": "gid://shopify/ProductOptionValue/8",
+ 10
+          }
+ 11
+        ]
+ 12
+      }
+ 13
+    ]
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productVariantsBulkUpdate": {
+ 4
+        "product": {
+ 5
+          "options": [
+ 6
+            {
+ 7
+              "id": "gid://shopify/ProductOption/3",
+ 8
+              "name": "Fabric",
+ 9
+              "position": 1,
+ 10
+              "optionValues": [
+ 11
+                {
+ 12
+                  "id": "gid://shopify/ProductOptionValue/7",
+ 13
+                  "name": "Cotton",
+ 14
+                  "hasVariants": true
+ 15
+                },
+ 16
+                {
+ 17
+                  "id": "gid://shopify/ProductOptionValue/8",
+ 18
+                  "name": "Wool",
+ 19
+                  "hasVariants": true
+ 20
+                }
+ 21
+              ]
+ 22
+            },
+ 23
+            {
+ 24
+              "id": "gid://shopify/ProductOption/1",
+ 25
+              "name": "Color",
+ 26
+              "position": 2,
+ 27
+              "optionValues": [
+ 28
+                {
+ 29
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 30
+                  "name": "Red",
+ 31
+                  "hasVariants": true
+ 32
+                },
+ 33
+                {
+ 34
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 35
+                  "name": "Green",
+ 36
+                  "hasVariants": true
+ 37
+                },
+ 38
+                {
+ 39
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 40
+                  "name": "Blue",
+ 41
+                  "hasVariants": true
+ 42
+                }
+ 43
+              ]
+ 44
+            }
+ 45
+          ]
+ 46
+        },
+ 47
+        "productVariants": [
+ 48
+          {
+ 49
+            "id": "gid://shopify/ProductVariant/102",
+ 50
+            "title": "Wool / Green",
+ 51
+            "selectedOptions": [
+ 52
+              {
+ 53
+                "name": "Fabric",
+ 54
+                "value": "Wool"
+ 55
+              },
+ 56
+              {
+ 57
+                "name": "Color",
+ 58
+                "value": "Green"
+ 59
+              }
+ 60
+            ]
+ 61
+          }
+ 62
+        ],
+ 63
+        "userErrors": []
+ 64
+      }
+ 65
+    }
+ 66 }
+ In the response, Wool’s hasVariants value is now true because the option is no longer orphaned.
+ After the Wool option value is assigned to a variant, your product has the following structure:
+ Reorder the options
+ Use the productOptionUpdate mutation to set the new position of each individual option manually. However, if you only need to reorder options and option values, or need to reorder multiple options and option values, then you might want to use the productOptionsReorder instead.
+ The following example switches the order of all of the options and option values, displays Color first with a value order of Blue, Red, Green, and then displays Fabric with a value order of Wool, Cotton:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation ReorderOptionsAndVariants($productId: ID!, $optionsInput: [OptionReorderInput!]!) {
+ 2
+    productOptionsReorder(productId: $productId, options: $optionsInput) {
+ 3
+      product {
+ 4
+        options {
+ 5
+          id
+ 6
+          name
+ 7
+          position
+ 8
+          optionValues {
+ 9
+            id
+ 10
+            name
+ 11
+            hasVariants
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+      userErrors {
+ 16
+        field
+ 17
+        message
+ 18
+      }
+ 19
+    }
+ 20 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "optionsInput": [
+ 4
+      {
+ 5
+        "name": "Color",
+ 6
+        "values": [
+ 7
+          {
+ 8
+            "name": "Blue"
+ 9
+          },
+ 10
+          {
+ 11
+            "name": "Red"
+ 12
+          },
+ 13
+          {
+ 14
+            "name": "Green"
+ 15
+          }
+ 16
+        ]
+ 17
+      },
+ 18
+      {
+ 19
+        "name": "Fabric",
+ 20
+        "values": [
+ 21
+          {
+ 22
+            "name": "Wool"
+ 23
+          },
+ 24
+          {
+ 25
+            "name": "Cotton"
+ 26
+          }
+ 27
+        ]
+ 28
+      }
+ 29
+    ]
+ 30 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productOptionsReorder": {
+ 4
+        "product": {
+ 5
+          "options": [
+ 6
+            {
+ 7
+              "id": "gid://shopify/ProductOption/1",
+ 8
+              "name": "Color",
+ 9
+              "position": 1,
+ 10
+              "optionValues": [
+ 11
+                {
+ 12
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 13
+                  "name": "Blue",
+ 14
+                  "hasVariants": true
+ 15
+                },
+ 16
+                {
+ 17
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 18
+                  "name": "Red",
+ 19
+                  "hasVariants": true
+ 20
+                },
+ 21
+                {
+ 22
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 23
+                  "name": "Green",
+ 24
+                  "hasVariants": true
+ 25
+                }
+ 26
+              ]
+ 27
+            },
+ 28
+            {
+ 29
+              "id": "gid://shopify/ProductOption/3",
+ 30
+              "name": "Fabric",
+ 31
+              "position": 2,
+ 32
+              "optionValues": [
+ 33
+                {
+ 34
+                  "id": "gid://shopify/ProductOptionValue/7",
+ 35
+                  "name": "Cotton",
+ 36
+                  "hasVariants": true
+ 37
+                },
+ 38
+                {
+ 39
+                  "id": "gid://shopify/ProductOptionValue/8",
+ 40
+                  "name": "Wool",
+ 41
+                  "hasVariants": true
+ 42
+                }
+ 43
+              ]
+ 44
+            }
+ 45
+          ]
+ 46
+        },
+ 47
+        "userErrors": []
+ 48
+      }
+ 49
+    }
+ 50 }
+ After the options and option values are reordered, your product has the following structure:
+ Remove colors
+ The following example uses the productVariantsBulkDelete mutation to remove the variants that use the Red and Green color options:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation DeleteVariants($productId: ID!, $variantsToDelete: [ID!]!) {
+ 2
+    productVariantsBulkDelete(productId: $productId, variantsIds: $variantsToDelete) {
+ 3
+      product {
+ 4
+        id
+ 5
+        options {
+ 6
+          id
+ 7
+          name
+ 8
+          position
+ 9
+          optionValues {
+ 10
+            id
+ 11
+            name
+ 12
+            hasVariants
+ 13
+          }
+ 14
+        }
+ 15
+        variants(first: 5) {
+ 16
+          nodes {
+ 17
+            id
+ 18
+            title
+ 19
+            selectedOptions {
+ 20
+              name
+ 21
+              value
+ 22
+            }
+ 23
+          }
+ 24
+        }
+ 25
+      }
+ 26
+      userErrors {
+ 27
+        field
+ 28
+        message
+ 29
+        code
+ 30
+      }
+ 31
+    }
+ 32 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "variantsToDelete": [
+ 4
+      "gid://shopify/ProductVariant/20",
+ 5
+      "gid://shopify/ProductVariant/21"
+ 6
+    ]
+ 7 }
+      "productVariantsBulkDelete": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/456",
+ 6
+          "options": [
+ 7
+            {
+ 8
+              "id": "gid://shopify/ProductOption/1",
+ 9
+              "name": "Color",
+ 10
+              "position": 1,
+ 11
+              "optionValues": [
+ 12
+                {
+ 13
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 14
+                  "name": "Blue",
+ 15
+                  "hasVariants": true
+ 16
+                },
+ 17
+                {
+ 18
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 19
+                  "name": "Red",
+ 20
+                  "hasVariants": false
+ 21
+                },
+ 22
+                {
+ 23
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 24
+                  "name": "Green",
+ 25
+                  "hasVariants": false
+ 26
+                }
+ 27
+              ]
+ 28
+            },
+ 29
+            {
+ 30
+              "id": "gid://shopify/ProductOption/3",
+ 31
+              "name": "Fabric",
+ 32
+              "position": 2,
+ 33
+              "optionValues": [
+ 34
+                {
+ 35
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 36
+                  "name": "Cotton",
+ 37
+                  "hasVariants": true
+ 38
+                },
+ 39
+                {
+ 40
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 41
+                  "name": "Wool",
+ 42
+                  "hasVariants": false
+ 43
+                }
+ 44
+              ]
+ 45
+            }
+ 46
+          ],
+ 47
+          "variants": {
+ 48
+            "nodes": [
+ 49
+              {
+ 50
+                "id": "gid://shopify/ProductVariant/103",
+ 51
+                "title": "Blue / Cotton",
+ 52
+                "selectedOptions": [
+ 53
+                  {
+ 54
+                    "name": "Color",
+ 55
+                    "value": "Blue"
+ 56
+                  },
+ 57
+                  {
+ 58
+                    "name": "Fabric",
+ 59
+                    "value": "Cotton"
+ 60
+                  }
+ 61
+                ]
+ 62
+              }
+ 63
+            ]
+ 64
+          }
+ 65
+        },
+ 66
+        "userErrors": []
+ 67
+      }
+ 68
+    }
+ 69 }
+ The option values for which all variants were deleted are preserved as orphaned option values.
+ After the variants are removed, your product has the following structure:
+ Tip: Clean up unused option values
+ You can preserve unused option values to reference by ID or name at a later point. Alternatively, you can remove the values from the option using the productOptionUpdate mutation. The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation UpdateOptionToDeleteOrphanedOptionValues($productId: ID!, $option: OptionUpdateInput!, $optionValuesToDelete: [ID!]) {
+ 2
+    productOptionUpdate(productId: $productId, option: $option, optionValuesToDelete: $optionValuesToDelete) {
+ 3
+      product {
+ 4
+        id
+ 5
+        options {
+ 6
+          id
+ 7
+          name
+ 8
+          position
+ 9
+          optionValues {
+ 10
+            id
+ 11
+            name
+ 12
+            hasVariants
+ 13
+          }
+ 14
+        }
+ 15
+        variants(first: 5) {
+ 16
+          nodes {
+ 17
+            id
+ 18
+            title
+ 19
+            selectedOptions {
+ 20
+              name
+ 21
+              value
+ 22
+            }
+ 23
+          }
+ 24
+        }
+ 25
+      }
+ 26
+      userErrors {
+ 27
+        field
+ 28
+        message
+ 29
+        code
+ 30
+      }
+ 31
+    }
+ 32 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "option": {
+ 4
+      "id": "gid://shopify/ProductOption/100",
+ 5
+    },
+ 6
+    "optionValuesToDelete": [
+ 7
+      "gid://shopify/ProductOptionValue/10079785100",
+ 8
+      "gid://shopify/ProductOptionValue/10079785101"
+ 9
+    ]
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productOptionUpdate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/456",
+ 6
+          "options": [
+ 7
+            {
+ 8
+              "id": "gid://shopify/ProductOption/1",
+ 9
+              "name": "Color",
+ 10
+              "position": 1,
+ 11
+              "optionValues": [
+ 12
+                {
+ 13
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 14
+                  "name": "Blue",
+ 15
+                  "hasVariants": true
+ 16
+                }
+ 17
+              ]
+ 18
+            },
+ 19
+            {
+ 20
+              "id": "gid://shopify/ProductOption/3",
+ 21
+              "name": "Fabric",
+ 22
+              "position": 2,
+ 23
+              "optionValues": [
+ 24
+                {
+ 25
+                  "id": "gid://shopify/ProductOptionValue/7",
+ 26
+                  "name": "Cotton",
+ 27
+                  "hasVariants": true
+ 28
+                },
+ 29
+                {
+ 30
+                  "id": "gid://shopify/ProductOptionValue/8",
+ 31
+                  "name": "Wool",
+ 32
+                  "hasVariants": false
+ 33
+                }
+ 34
+              ]
+ 35
+            }
+ 36
+          ],
+ 37
+          "variants": {
+ 38
+            "nodes": [
+ 39
+              {
+ 40
+                "id": "gid://shopify/ProductVariant/103",
+ 41
+                "title": "Blue / Cotton",
+ 42
+                "selectedOptions": [
+ 43
+                  {
+ 44
+                    "name": "Color",
+ 45
+                    "value": "Blue"
+ 46
+                  },
+ 47
+                  {
+ 48
+                    "name": "Fabric",
+ 49
+                    "value": "Cotton"
+ 50
+                  }
+ 51
+                ]
+ 52
+              }
+ 53
+            ]
+ 54
+          }
+ 55
+        },
+ 56
+        "userErrors": []
+ 57
+      }
+ 58
+    }
+ 59 }
+ Add variants
+ This example uses the productVariantsBulkCreate mutation to add the following new variants:
+ Cotton socks available in yellow and orange
+ Wool socks of different colors
+ For the mix of existing and new variants, new colors are applied using a reference value or ID. Any new values are added as option values automatically.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateProductVariants($productId: ID!, $variantsToCreate: [ProductVariantsBulkInput!]!) {
+ 2
+    productVariantsBulkCreate(productId: $productId, variants: $variantsToCreate) {
+ 3
+      product {
+ 4
+        id
+ 5
+        variants(first: 250) {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              id
+ 9
+              title
+ 10
+              selectedOptions {
+ 11
+                name
+ 12
+                value
+ 13
+              }
+ 14
+            }
+      }
+ 18
+      userErrors {
+ 19
+        field
+ 20
+        message
+ 21
+      }
+ 22
+    }
+ 23 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "variantsToCreate": [
+ 4
+      {
+ 5
+        "optionValues": [
+ 6
+          {
+ 7
+            "name": "Yellow",
+ 8
+            "optionName": "Color"
+ 9
+          },
+ 10
+          {
+ 11
+            "name": "Cotton",
+ 12
+            "optionName": "Fabric"
+ 13
+          }
+ 14
+        ]
+ 15
+      },
+ 16
+      {
+ 17
+        "optionValues": [
+ 18
+          {
+ 19
+            "name": "Orange",
+ 20
+            "optionName": "Color"
+ 21
+          },
+ 22
+          {
+ 23
+            "name": "Cotton",
+ 24
+            "optionName": "Fabric"
+ 25
+          }
+ 26
+        ]
+ 27
+      },
+ 28
+      {
+ 29
+        "optionValues": [
+ 30
+          {
+ 31
+            "name": "Turquoise",
+ 32
+            "optionName": "Color"
+ 33
+          },
+ 34
+          {
+ 35
+            "name": "Wool",
+ 36
+            "optionName": "Fabric"
+ 37
+          }
+ 38
+        ]
+ 39
+      },
+ 40
+      {
+ 41
+        "optionValues": [
+ 42
+          {
+ 43
+            "name": "Blue",
+ 44
+            "optionName": "Color"
+ 45
+          },
+ 46
+          {
+ 47
+            "name": "Wool",
+ 48
+            "optionName": "Fabric"
+ 49
+          }
+ 50
+        ]
+ 51
+      },
+ 52
+      {
+ 53
+        "optionValues": [
+ 54
+          {
+ 55
+            "name": "Red",
+ 56
+            "optionName": "Color"
+ 57
+          },
+ 58
+          {
+ 59
+            "name": "Wool",
+ 60
+            "optionName": "Fabric"
+ 61
+          }
+ 62
+        ]
+ 63
+      },
+ 64
+      {
+ 65
+        "optionValues": [
+ 66
+          {
+ 67
+            "name": "Green",
+ 68
+            "optionName": "Color"
+ 69
+          },
+ 70
+          {
+ 71
+            "name": "Wool",
+ 72
+            "optionName": "Fabric"
+ 73
+          }
+ 74
+        ]
+ 75
+      },
+ 76
+      {
+ 77
+        "optionValues": [
+ 78
+          {
+ 79
+            "name": "Orange",
+ 80
+            "optionName": "Color"
+ 81
+          },
+ 82
+          {
+ 83
+            "name": "Wool",
+ 84
+            "optionName": "Fabric"
+ 85
+          }
+ 86
+        ]
+ 87
+      },
+ 88
+      {
+ 89
+        "optionValues": [
+ 90
+          {
+ 91
+            "name": "Yellow",
+ 92
+            "optionName": "Color"
+ 93
+          },
+ 94
+          {
+ 95
+            "name": "Wool",
+ 96
+            "optionName": "Fabric"
+ 97
+          }
+ 98
+        ]
+ 99
+      }
+ 100
+    ]
+ 101 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productVariantsBulkCreate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/456",
+ 6
+          "variants": {
+ 7
+            "edges": [
+ 8
+              {
+ 9
+                "node": {
+ 10
+                  "id": "gid://shopify/ProductVariant/103",
+ 11
+                  "title": "Blue / Cotton",
+ 12
+                  "selectedOptions": [
+ 13
+                    {
+ 14
+                      "name": "Color",
+ 15
+                      "value": "Blue"
+ 16
+                    },
+ 17
+                    {
+ 18
+                      "name": "Fabric",
+ 19
+                      "value": "Cotton"
+ 20
+                    }
+ 21
+                  ]
+ 22
+                }
+ 23
+              },
+ 24
+              {
+ 25
+                "node": {
+ 26
+                  "id": "gid://shopify/ProductVariant/110",
+ 27
+                  "title": "Yellow / Cotton",
+ 28
+                  "selectedOptions": [
+ 29
+                    {
+ 30
+                      "name": "Color",
+ 31
+                      "value": "Yellow"
+ 32
+                    },
+ 33
+                    {
+ 34
+                      "name": "Fabric",
+ 35
+                      "value": "Cotton"
+ 36
+                    }
+ 37
+                  ]
+ 38
+                }
+ 39
+              },
+ 40
+              {
+ 41
+                "node": {
+ 42
+                  "id": "gid://shopify/ProductVariant/111",
+ 43
+                  "title": "Orange / Cotton",
+ 44
+                  "selectedOptions": [
+ 45
+                    {
+ 46
+                      "name": "Color",
+ 47
+                      "value": "Orange"
+ 48
+                    },
+ 49
+                    {
+ 50
+                      "name": "Fabric",
+ 51
+                      "value": "Cotton"
+ 52
+                    }
+ 53
+                  ]
+ 54
+                }
+ 55
+              },
+ 56
+              {
+ 57
+                "node": {
+ 58
+                  "id": "gid://shopify/ProductVariant/112",
+ 59
+                  "title": "Turquoise / Wool",
+ 60
+                  "selectedOptions": [
+ 61
+                    {
+ 62
+                      "name": "Color",
+ 63
+                      "value": "Turquoise"
+ 64
+                    },
+ 65
+                    {
+ 66
+                      "name": "Fabric",
+ 67
+                      "value": "Wool"
+ 68
+                    }
+ 69
+                  ]
+ 70
+                }
+ 71
+              },
+ 72
+              {
+ 73
+                "node": {
+ 74
+                  "id": "gid://shopify/ProductVariant/113",
+ 75
+                  "title": "Blue / Wool",
+ 76
+                  "selectedOptions": [
+ 77
+                    {
+ 78
+                      "name": "Color",
+ 79
+                      "value": "Blue"
+ 80
+                    },
+ 81
+                    {
+ 82
+                      "name": "Fabric",
+ 83
+                      "value": "Wool"
+ 84
+                    }
+ 85
+                  ]
+ 86
+                }
+ 87
+              },
+ 88
+              {
+ 89
+                "node": {
+ 90
+                  "id": "gid://shopify/ProductVariant/114",
+ 91
+                  "title": "Red / Wool",
+ 92
+                  "selectedOptions": [
+ 93
+                    {
+ 94
+                      "name": "Color",
+ 95
+                      "value": "Red"
+ 96
+                    },
+ 97
+                    {
+ 98
+                      "name": "Fabric",
+ 99
+                      "value": "Wool"
+ 100
+                    }
+ 101
+                  ]
+ 102
+                }
+ 103
+              },
+ 104
+              {
+ 105
+                "node": {
+ 106
+                  "id": "gid://shopify/ProductVariant/115",
+ 107
+                  "title": "Green / Wool",
+ 108
+                  "selectedOptions": [
+ 109
+                    {
+ 110
+                      "name": "Color",
+ 111
+                      "value": "Green"
+ 112
+                    },
+ 113
+                    {
+ 114
+                      "name": "Fabric",
+ 115
+                      "value": "Wool"
+ 116
+                    }
+ 117
+                  ]
+ 118
+                }
+ 119
+              },
+ 120
+              {
+ 121
+                "node": {
+ 122
+                  "id": "gid://shopify/ProductVariant/116",
+ 123
+                  "title": "Orange / Wool",
+ 124
+                  "selectedOptions": [
+ 125
+                    {
+ 126
+                      "name": "Color",
+ 127
+                      "value": "Orange"
+ 128
+                    },
+ 129
+                    {
+ 130
+                      "name": "Fabric",
+ 131
+                      "value": "Wool"
+ 132
+                    }
+ 133
+                  ]
+ 134
+                }
+ 135
+              },
+ 136
+              {
+ 137
+                "node": {
+ 138
+                  "id": "gid://shopify/ProductVariant/117",
+ 139
+                  "title": "Yellow / Wool",
+ 140
+                  "selectedOptions": [
+ 141
+                    {
+ 142
+                      "name": "Color",
+ 143
+                      "value": "Yellow"
+ 144
+                    },
+ 145
+                    {
+ 146
+                      "name": "Fabric",
+ 147
+                      "value": "Wool"
+ 148
+                    }
+ 149
+                  ]
+ 150
+                }
+ 151
+              }
+ 152
+            ]
+ 153
+          }
+ 154
+        },
+ 155
+        "userErrors": []
+ 156
+      }
+ 157
+    }
+ 158 }
+ After the new variants are added, your product has the following structure:
+ Next steps
+ Learn more about how to migrate from GraphQL to REST with the following resources:
+ Sync data
+ Learn how you can sync product data from an external source into Shopify.
+ Product management in GraphQL versus REST
+ Learn about the differences between using GraphQL and REST to interact with products, variants, and related API components.
+ Migrate to GraphQL
+ If you're new to using GraphQL at Shopify, review guides and resources for migrating your app to the GraphQL Admin API from the REST Admin API.
+ GraphQL basics
+ Learn about the basics of GraphQL, including its benefits over REST.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Scenario
+ Shape of the product data
+ Several mutations to update the product data
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

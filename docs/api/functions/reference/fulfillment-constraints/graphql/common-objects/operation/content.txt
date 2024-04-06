@@ -1,0 +1,15 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Operation object
+ 2024-04 latest
+ An operation to apply fulfillment constraints.
+ Fields
+ mustFulfillFrom (MustFulfillFrom)
+ Force a set of items to be fulfilled from a specified location. If the cart item isn't stocked at the specified location, then checkout won't return any shipping rates and completing checkout will be blocked.
+ mustFulfillFromSameLocation (MustFulfillFromSameLocation)
+ Force a set of items to be fulfilled from the same location. If the cart items with constraints aren't stocked at the same location, then checkout won't return any shipping rates and completing checkout will be blocked.
+ Was this page helpful?
+ YesNo
+ Updates & News

@@ -1,0 +1,30 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ SegmentedControl
+ The segmented control lets the merchant easily switch between different lists or views on the same page.
+ Props
+ Name Type Description
+ segments Segment[] The available segments that should be rendered in the segmented control. Each segment results in a tab.
+ selected string The currently selected segment.
+ onSelect (ID: string) => void The callback that indicates the new segment when a new segment is selected.
+ Segment
+ Name Type Description
+ id string A uique ID for the segment.
+ label string A label for the segment.
+ disabled boolean Whether the segment is disabled.
+ Guidelines
+ The highlighted segment indicates which section you’re in.
+ Other sections have subdued text within an outlined inactive area to indicate that they’re actionable.
+ Content guidelines
+ Keep the content very short and brief, ideally only 1-2 words.
+ Each label should be structured in the same way, so that they’re easy to compare. For example, they could all be nouns:
+ ✅ For discounts: Amount / Percentage
+ ❌ For discounts: Amount off / %
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Segment
+ Guidelines

@@ -1,0 +1,85 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Shopify Liquid VS Code extension
+ Installation
+ The Shopify Liquid Visual Studio Code is available on the Visual Studio Marketplace.
+ Features
+ The Shopify Liquid Visual Studio Code extension is built on top of Shopify's Liquid Language Server and offers the following features:
+ Syntax highlighting
+ Documentation on hover
+ Code completion and documentation
+ Code formatting
+ Code navigation
+ Auto-closing pairs
+ Theme checks
+ Syntax highlighting
+ The Shopify Liquid VS Code extension offers syntax highlighting. The syntax highlighting grammar is officially maintained by Shopify and is the same one that GitHub uses to highlight Liquid code.
+ Documentation on hover
+ You can hover your mouse over any piece of Liquid or HTML code in a theme to browse its definition, type, and documentation.
+ The hover menu includes clickable links to the official reference in your browser.
+ Code completion and documentation
+ The following elements of a Liquid theme are contextually completed by the extension:
+ Liquid tags, filters, objects, and object properties
+ HTML tags, attributes, and attribute values
+ Theme, section and block settings
+ Translation keys
+ Snippet names
+ A quick information window is also available and can be toggled in the following ways:
+ By clicking on the caret in the completion menu
+ By pressing the completion keyboard shortcut a second time
+ Keyboard shortcuts: Mac ^Space, Windows Ctrl+Space
+ Code formatting
+ Code formatting is powered by the Liquid Prettier plugin and can be applied in the following ways:
+ Automatically on save
+ By selecting the Format Document right-click menu item
+ By running the Format Document command in the command palette
+ By pressing the Format Document keyboard shortcut
+ Keyboard shortcuts: Mac ⇧⌥F, Windows Shift+Alt+F
+ Code navigation
+ In Shopify themes, there are multiple ways to include other files. In VS Code, references to other files are announced by an underline.
+ You can go to the associated file by using cmd+click on Mac, and ctrl+click on other platforms.
+ If the file doesn't exist, VS Code will let you create one.
+ Auto-closing pairs
+ The extension will close Liquid and HTML character pairs for you.
+ Theme checks
+ Theme check is a linter for Shopify Themes. When it finds a problem with your code, it will add a red or yellow wavy line under it. These errors and warnings (also known as diagnostics) will also appear in the Problems Tab.
+ Keyboard shortcuts: Mac ⇧⌘M, Windows Ctrl+Shift+M
+ Fixes
+ When a diagnostic is auto-fixable, it will be announced by a blue light bulb near the source code.
+ A fix can be applied in a couple of different ways:
+ Automatically on save
+ By selecting it in the Code Actions menu revealed by clicking the blue lightbulb
+ By selecting it in the menu that appears after right clicking the diagnostic in the Problems tab
+ By running the Auto fix... command in the command palette
+ By pressing the Auto fix... keyboard shortcut
+ Keyboard shortcuts: Mac ⎇⌘., Windows Ctrl+Alt+.
+ Suggestions
+ When a diagnostic offers suggestions, you're notified by a yellow light bulb near the source code, or by right clicking on the diagnostic in the Problems tab.
+ A diagnostic can offer more than one suggestion, sometimes requires additional attention, and cannot be automatically applied.
+ A suggestion can be applied in the following ways:
+ By selecting it in the Code Actions menu revealed by clicking the yellow lightbulb.
+ By selecting it in the Code Actions menu running the Quick fix... command in the command palette.
+ By selecting it in the menu that appears after pressing the Quick fix... keyboard shortcut.
+ By selecting it in the menu that appears after right clicking the diagnostic in the Problems tab.
+ Keyboard shortcuts: Mac ⌘., Windows Ctrl+.
+ Contributing to the VS Code extension
+ The VS Code extension is open source and part of our suite of theme developer tools.
+ Learn how to contribute to the theme-tools repository
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Installation
+ Features
+ Syntax highlighting
+ Documentation on hover
+ Code completion and documentation
+ Code formatting
+ Code navigation
+ Auto-closing pairs
+ Theme checks
+ Contributing to the VS Code extension
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

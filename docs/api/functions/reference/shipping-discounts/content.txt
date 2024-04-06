@@ -1,0 +1,35 @@
+Overview
+ GraphQL reference
+ Discounts Allocator API
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shipping Discount Function API overview
+ The Shipping Discount API enables you to create a new type of discount that's applied to one or more shipping rates at checkout.
+ Example use cases
+ Free shipping.
+ A discount on shipping. For example, 20% off shipping or $5 off shipping.
+ A discount on specific shipping rates. For example, 50% off Standard shipping.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Shipping Discount API reference
+ Consult the GraphQL reference for the Shipping Discount API.
+ Migrating from scripts to functions
+ If you want to migrate an existing shipping script to Shopify Functions, then you can use the following mapping:
+ Shopify Scripts method Description Shopify Functions object
+ apply_discount Applies a discount to a shipping rate Shipping discounts
+ Next steps
+ Learn how to use Shopify Functions by building a discounts experience.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Migrating from scripts to functions
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

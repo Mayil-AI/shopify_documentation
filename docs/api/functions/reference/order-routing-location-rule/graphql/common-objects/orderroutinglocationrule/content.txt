@@ -1,0 +1,75 @@
+Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ FulfillmentGroup
+ FulfillmentGroupRankedLocations
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ Localization
+ LocalTime
+ Location
+ LocationAddress
+ MailingAddress
+ Market
+ MarketRegionCountry
+ Metafield
+ MoneyV2
+ Operation
+ OrderRoutingLocationRule
+ Product
+ ProductVariant
+ PurchasingCompany
+ RankedLocation
+ CurrencyCode
+ DeliveryMethod
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Payment Customization API
+ Configuration
+ OrderRoutingLocationRule object
+ 2024-04 latest
+ A customization which ranks inventory locations for fulfillment purposes.
+ On this page
+ Fields
+ Types that return OrderRoutingLocationRule
+ Implements
+ Fields
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ Types that return OrderRoutingLocationRule
+ Input.locationRule
+ Implements
+ HasMetafields
+ Was this page helpful?

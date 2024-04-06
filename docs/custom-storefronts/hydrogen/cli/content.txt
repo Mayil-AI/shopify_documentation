@@ -1,0 +1,275 @@
+Additional SDKs
+ Hydrogen CLI
+ Hydrogen includes a built-in command-line interface for creating, developing, and managing Hydrogen storefronts. The Hydrogen CLI is a plugin that extends the Shopify CLI.
+ Requirements
+ Node.js v16.13+
+ npm v8.1.2+
+ When you create a new Hydrogen project, the Hydrogen CLI is automatically included as a project dependency.
+ Command reference
+ The Hydrogen CLI is installed as a local dependency for your project, so you should always run Hydrogen commands in your project using npx:
+ 1 npx shopify hydrogen <command>
+ Run the shortcut command to create a global h2 alias for npx shopify hydrogen. This lets you run Hydrogen commands with fewer keystrokes:
+ 1 h2 <command>
+ Command Description
+ build Builds a Hydrogen storefront for production.
+ check Returns diagnostic information about a Hydrogen storefront.
+ codegen Automatically generates GraphQL types for your project’s Storefront API queries.
+ debug cpu Profiles the server startup time and watches for changes.
+ deploy Builds and deploys your Hydrogen storefront to Oxygen.
+ dev Runs a Hydrogen storefront in a local runtime which emulates an Oxygen worker for development.
+ env list Lists the available environments on the linked Hydrogen storefront.
+ env pull Pulls environment variables from the linked Hydrogen storefront and writes them to an .env file.
+ generate route Generates sets of routes from the starter template.
+ init Creates a new Hydrogen storefront.
+ link Links your local development environment to a remote Hydrogen storefront.
+ list Lists the Hydrogen storefronts that you can link to your local development environment.
+ login Authenticate with a remote Hydrogen storefront.
+ logout Log out from the current storefront.
+ preview Runs a production build of a Hydrogen storefront for a local preview.
+ setup css Adds support for certain CSS strategies.
+ setup markets Adds support for multiple markets to your project.
+ shortcut Creates a global h2 shortcut for Shopify CLI using shell aliases.
+ unlink Unlinks your local development environment from a remote Hydrogen storefront.
+ upgrade Upgrade a Hydrogen project dependencies interactively.
+ build
+ Builds a Hydrogen storefront for production. The client and app worker files are compiled to a /dist folder in your Hydrogen project directory.
+ 1 npx shopify hydrogen build
+ Flag Description
+ --[no-]bundle-stats Shows a bundle size summary after building. Defaults to true. Deactivate with --no-bundle-stats.
+ --codegen Automatically generates GraphQL types for your project’s Storefront API queries.
+ --codegen-config-path Specifies a path to a codegen configuration file. Defaults to <root>/codegen.ts if this file exists.
+ --diff Applies the current files on top of Hydrogen's starter template in a temporary directory.
+ --disable-route-warning Disables any warnings about missing standard routes.
+ --[no-]lockfile-check Checks that there is exactly one valid lockfile in the project. Defaults to true. Deactivate with --no-lockfile-check.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --[no-]sourcemap Controls whether sourcemaps are generated. Default to true. Deactivate --no-sourcemaps.
+ check routes
+ Checks whether your Hydrogen app includes a set of standard Shopify routes.
+ 1 npx shopify hydrogen check routes
+ Flags
+ Flag Description
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ codegen
+ Automatically generates GraphQL types for your project’s Storefront API queries.
+ 1 npx shopify hydrogen codegen
+ Flags
+ Flag Description
+ --codegen-config-path Specifies a path to a codegen configuration file. Defaults to <root>/codegen.ts if this file exists.
+ --watch Watches the project for changes to update types on file save.
+ debug cpu
+ Builds the app and runs the resulting code to profile the server startup time, watching for changes. This command can be used to debug slow app startup times that cause failed deployments in Oxygen.
+ The profiling results are written to a .cpuprofile file that can be viewed with certain tools such as Flame Chart Visualizer for Visual Studio Code.
+ 1 npx shopify hydrogen debug cpu
+ Flags
+ Flag Description
+ --output PATH Specifies a path to generate the profile file. Defaults to startup.cpuprofile.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ deploy
+ Builds and deploys your Hydrogen storefront to Oxygen. Requires an Oxygen deployment token to be set with the --token flag or an environment variable (SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN). If the storefront is linked then the Oxygen deployment token for the linked storefront will be used automatically.
+ Terminal
+ $ npx shopify hydrogen deploy
+ Flags
+ Flag Description
+ --auth-bypass-token Creates a temporary token to access the deployment without authentication.
+ --build-command COMMAND Specifies the build command to run. Defaults to shopify hydrogen build.
+ --env-branch BRANCH Specifies the environment in which to create the deployment using its Git branch name.
+ --env-file PATH Specifies the path to the environment file to override the deployment's existing environment variables.
+ --force Creates the deployment even if there are uncommitted changes in the project's Git repository.
+ --[no-]json-output Creates a JSON file when the deployment is complete. Typically used in CI environments. Defaults to true. Deactivate with --no-json-output.
+ --[no-]lockfile-check Checks that there is exactly one valid lockfile in the project. Defaults to true. Deactivate with --no-lockfile-check.
+ --metadata-description DESCRIPTION Describe the changes in the deployment. Defaults to the most recent commit message.
+ --metadata-user USER The user that initiated the deployment. Defaults to the author of the latest commit.
+ --no-verify Skips the verification step to ensure that a deployment is routable.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --preview Forces a deployment to go to the Preview environment.
+ --token TOKEN_VALUE The Oxygen deployment token. Set automatically if the local project is linked to a storefront.
+ dev
+ Runs a Hydrogen storefront in a local runtime that emulates an Oxygen worker for development.
+ If your project is linked to a Hydrogen storefront, then its environment variables will be loaded with the runtime.
+ 1 npx shopify hydrogen dev
+ Flags
+ Flag Description
+ --codegen Automatically generates GraphQL types for your project’s Storefront API queries. Watches for changes and updates types on file saves.
+ --debug Enables inspector connections to the server with a debugger such as Visual Studio Code or Chrome DevTools.
+ --disable-version-check Skips checking the Hydrogen version.
+ --disable-virtual-routes Disables rendering fallback routes when a route file doesn't exist.
+ --env-branch BRANCH If linked to a Hydrogen storefront, specifies the environment to pull variables from using its Git branch name.
+ --inspector-port PORT The port where the inspector is available when you're using --debug. Defaults to 9229.
+ --legacy-runtime Runs the app in a Node.js sandbox instead of an Oxygen worker.
+ --codegen-config-path PATH Specifies a path to a codegen configuration file. Defaults to <root>/codegen.ts if this file exists.
+ --port PORT The port to run the server on. Defaults to 3000.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --[no-]sourcemap Controls whether sourcemaps are generated. Default to true. Deactivate with --no-sourcemaps.
+ env list
+ Lists all environments available on the linked Hydrogen storefront.
+ 1 npx shopify hydrogen env list
+ Flags
+ Flag Description
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --shop SHOP This flag is deprecated. Use the link command instead. Specifies a myshopify.com domain to authenticate with.
+ env pull
+ Pulls environment variables from the linked Hydrogen storefront and writes them to an .env file.
+ 1 npx shopify hydrogen env pull
+ Flags
+ Flag Description
+ --env-branch BRANCH Specifies the environment to pull variables from using its Git branch name.
+ --force Skips confirmation and overwrites the values for any keys that have been pulled.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --shop SHOP This flag is deprecated. Use the link command instead. Specifies a myshopify.com domain to authenticate with.
+ generate route
+ Generates a set of default routes from the starter template.
+ 1 npx shopify hydrogen generate route <route-name>
+ 2
+ 3 npx shopify hydrogen generate route cart
+ 4 npx shopify hydrogen generate route search
+ 5 npx shopify hydrogen generate route page
+ 6
+ 7 npx shopify hydrogen generate routes
+ Flags
+ Flag Description
+ --adapter ADAPTER Replaces matches of the Remix adapter with a custom string. Defaults to @shopify/remix-oxygen.
+ --force Skips confirmation and overwrites the files if they already exist.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ init
+ Creates a new Hydrogen storefront.
+ 1 npx shopify hydrogen init
+ Flags
+ Flag Description
+ --force Overwrites the destination directory and files if they already exist.
+ --install-deps Auto installs dependencies using the active package manager.
+ --language Sets the template language to use. LANGUAGE can be either js for JavaScript or ts for TypeScript. Example: --language js
+ --markets Sets the URL structure to support multiple markets. Must be one of: subfolders, subdomains, domains, or none. Example: --markets subfolders.
+ --mock-shop Uses mock.shop as the data source for the storefront. A Shopify account isn't required.
+ --no-git Skips intializing Git and adding initial commits.
+ --no-install-deps Skips the prompt for installing dependencies.
+ --path Sets the path to the directory of the new Hydrogen storefront. Example: --path hydrogen-storefront.
+ --shortcut Creates a global h2 shortcut for Shopify CLI using shell aliases.
+ --styling Chooses one of the available styling options. Must be one of tailwind, css-modules, vanilla-extract, postcss, or none. Example: --styling tailwind.
+ link
+ Links your local development environment to a remote Hydrogen storefront. You can link an unlimited number of development environments to a single Hydrogen storefront.
+ Linking to a Hydrogen storefront enables you to run dev and automatically inject your linked Hydrogen storefront's environment variables directly into the server runtime.
+ After you run the link command, you can access the env list, env pull, and unlink commands.
+ 1 npx shopify hydrogen link
+ Flags
+ Flag Description
+ --force Skips confirmation and overwrites any existing link.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --shop SHOP Specifies a myshopify.com domain to authenticate with. This is helpful if your account is associated to many shops.
+ --storefront Specifies the name of the storefront to link, using the first match.
+ list
+ Lists all remote Hydrogen storefronts available to link to your local development environment.
+ 1 npx shopify hydrogen list
+ Flags
+ Flag Description
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --shop SHOP This flag is deprecated. Use the link command instead. Specifies a myshopify.com domain to authenticate with.
+ login
+ Logs in to the specified shop and saves the shop domain to the project.
+ 1 npx shopify hydrogen login
+ Flags
+ Flag Description
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --shop SHOP Specify the shop to log in to. It can be the shop ID (janes-apparel) or the myshopify.com URL, with or without the protocol (janes-apparel.myshopify.com or https://janes-apparel.myshopify.com).
+ logout
+ Log out from the current shop
+ 1 npx shopify hydrogen logout
+ Flags
+ Flag Description
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ preview
+ Runs a server in your local development environment that serves your Hydrogen app's production build. Requires running the build command first.
+ 1 npx shopify hydrogen preview
+ Flags
+ Flag Description
+ --debug Enables inspector connections to the server with a debugger such as Visual Studio Code or Chrome DevTools.
+ --env-branch BRANCH Specifies the environment to pull variables from using its Git branch name.
+ --inspector-port PORT The port where the inspector is available when you're using --debug. Defaults to 9229.
+ --legacy-runtime Runs the app in a Node.js sandbox instead of an Oxygen worker.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --port PORT The port to run the server on. Defaults to 3000.
+ setup css
+ Adds support for certain CSS strategies to your project.
+ 1 npx shopify hydrogen setup css <strategy>
+ 2
+ 3 npx shopify hydrogen setup css tailwind
+ 4 npx shopify hydrogen setup css vanilla-extract
+ 5 npx shopify hydrogen setup css postcss
+ 6 npx shopify hydrogen setup css css-modules
+ Flags
+ Flag Description
+ --force Skips confirmation and overwrites the files if they already exist.
+ --install-deps Auto installs dependencies using the active package manager.
+ --no-install-deps Skips the prompt for installing dependencies.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ setup markets
+ Adds support for multiple markets to your project by using the URL structure.
+ 1 npx shopify hydrogen setup markets <strategy>
+ 2
+ 3 # domain.com/es-ES/...
+ 4 npx shopify hydrogen setup markets subfolders
+ 5 # domain.es/...
+ 6 npx shopify hydrogen setup markets domains
+ 7 # es.domain.com/...
+ 8 npx shopify hydrogen setup markets subdomains
+ Flags
+ Flag Description
+ --force Skips confirmation and overwrites the files if they already exist.
+ --install-deps Auto installs dependencies using the active package manager.
+ --no-install-deps Skips the prompt for installing dependencies.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ shortcut
+ Creates a global h2 shortcut for Shopify CLI using shell aliases.
+ 1 npx shopify hydrogen shortcut
+ The following shells are supported:
+ Bash (using ~/.bashrc)
+ ZSH (using ~/.zshrc)
+ Fish (using ~/.config/fish/functions)
+ PowerShell (added to $PROFILE)
+ After the alias is created, you can call Shopify CLI from anywhere in your project using the following commands:
+ 1 # Usage examples:
+ 2 $ ~/my-storefront/> h2 generate route <route-name>
+ 3 $ ~/my-storefront/> h2 g r <route-name>
+ 4 $ ~/my-storefront/> h2 check routes
+ 5 $ ~/my-storefront/> h2 build
+ The h2 alias runs the local version of the CLI that's installed in the current project.
+ unlink
+ Unlinks your local development environment from a remote Hydrogen storefront.
+ 1 npx shopify hydrogen unlink
+ Flags
+ Flag Description
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ upgrade
+ Upgrade Hydrogen project dependencies, preview features, fixes and breaking changes. The command also generates an instruction file for each upgrade.
+ 1 npx shopify hydrogen upgrade
+ Flags
+ Flag Description
+ --force Allow the command to run in a Git branch that has uncommitted changes.
+ --path PATH The path to the directory of the Hydrogen storefront. Defaults to the current directory where the command is run.
+ --version Specify the version to upgrade to. For example, 2024.01.0.
+ Note
+ To run the command against an outdated repository use the --path flag from a newer repository containing the cli upgrade command. Alternatively, create a new hydrogen project with npm create @shopify/hydrogen@latest, cd into the new repository and finally run h2 upgrade --path ../to-the-outdated-hydrogen-project-folder
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Command reference
+ build
+ check routes
+ codegen
+ debug cpu
+ deploy
+ dev
+ env list
+ env pull
+ generate route
+ init
+ link
+ list
+ login
+ logout
+ preview
+ setup css
+ setup markets
+ shortcut
+ unlink
+ upgrade

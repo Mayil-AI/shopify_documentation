@@ -1,0 +1,55 @@
+Marketplaces
+ APIs and references
+ Log in
+ Sign up
+ Shopify developer documentation
+ Learn how to build an app, theme, custom storefront, or marketplace. Whether you’re just getting started, deep in the development process, or ready to distribute and monetize your work, Shopify’s docs, dev tools and frameworks make building easy and efficient.
+ Apps
+ Extend Shopify’s core functionality with apps that integrate into Shopify’s admin, online store, checkout and more.
+ Build your first app
+ Themes
+ Help merchants express their unique brand in their storefront by building a custom theme.
+ Create a theme using Dawn
+ Custom storefronts
+ Take store customization further with Hydrogen, a React-based framework for headless commerce.
+ Build a Hydrogen storefront
+ Marketplaces
+ Sell products from multiple shops on any platform when merchants install your marketplace sales channel.
+ Try Marketplace Kit
+ Accelerate development with Shopify CLI 3.0
+ Initialize new apps, themes, and custom storefronts in an instant with the latest Shopify CLI. A single command installs all the dependencies you need, including the CLI itself, so you can dive straight into development.
+ Apps
+ Navigate to the directory where you want to create your app.
+ Run this command to create a new app. Your app will be added as a new subdirectory.
+ Themes
+ Custom storefronts
+ Initialize your app instance
+ npm
+ yarn
+ pnpm
+ $ npm init @shopify/app@latest
+ Launch your app or theme
+ App Store
+ When you’re ready, submit your app to the Shopify App Store so merchants can find and buy your app through search or personalized recommendations.
+ See App Store requirements
+ Theme Store
+ Promote and sell your custom theme to merchants building their brands on the Shopify Theme Store.
+ See Theme Store requirements
+ Join a community of builders
+ Developer forums
+ Q&A and advice from Shopify community experts
+ ShopifyDevs Discord server
+ Chat with other Shopify developers
+ @ShopifyDevs on Twitter
+ Product announcements, API updates, tips, and more
+ Developer Changelog
+ The latest Shopify ecosystem updates
+ ShopifyDevs YouTube channel
+ Tips and insights in dev and design
+ ShopifyDevs Twitch channel
+ Tests and demo streams
+ Shopify Partners blog
+ Educational resources and product previews
+ Updates & News
+ Developer changelog
+ Partner blog

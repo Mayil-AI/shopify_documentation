@@ -1,0 +1,35 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ PaginationSize
+ Ensures that objects are paginated with performant sizes so that too many objects aren't loaded at once. This helps to keep response times low.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ The following example includes a pagination size that leads to too many products on a single page, exceeding the max_size value:
+ 1 {% paginate collection.products by 999 %}
+ ✓ Pass
+ The following example includes a pagination size that will not negatively impact performance:
+ 1 {% paginate collection.products by 12 %}
+ Options
+ 1 PaginationSize:
+ 2
+    enabled: true
+ 3
+    min_size: 1
+ 4
+    max_size: 50
+ Parameter Description
+ enabled Whether this check is enabled.
+ min_size The minimum valid pagination size.
+ max_size The maximum valid pagination size.
+ Disabling this check
+ This check is safe to disable.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News

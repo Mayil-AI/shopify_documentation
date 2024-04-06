@@ -1,0 +1,30 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Cart object
+ 2024-04 latest
+ A cart represents the merchandise that a buyer intends to purchase, and the cost associated with the cart.
+ On this page
+ Fields
+ Types that return Cart
+ Fields
+ attribute (Attribute)
+ The attributes associated with the cart. Attributes are represented as key-value pairs.
+ Argument Description
+ key ( String )
+ The key of the attribute to retrieve.
+ buyerIdentity (BuyerIdentity)
+ Information about the buyer that is interacting with the cart.
+ cost (CartCost!)
+ The costs that the buyer will pay at checkout.
+ deliverableLines ([DeliverableCartLine!]!)
+ A list of lines containing information about the items that can be delivered.
+ deliveryGroups ([CartDeliveryGroup!]!)
+ The delivery groups available for the cart based on the buyer's shipping address.
+ lines ([CartLine!]!)
+ A list of lines containing information about the items the customer intends to purchase.
+ Types that return Cart
+ Input.cart
+ Was this page helpful?
+ YesNo
+ Updates & News

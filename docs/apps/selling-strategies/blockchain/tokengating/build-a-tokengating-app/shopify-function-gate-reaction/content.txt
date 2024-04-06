@@ -1,0 +1,570 @@
+NFT distribution
+ Tokengating
+ Overview
+ Build a tokengating app
+ Overview
+ Create gates
+ Show gates
+ Apply discount
+ Build a tokengated storefront
+ UX guidelines
+ App Store
+ Create a Shopify Function to apply the gated discount
+ In this tutorial, you'll use Shopify Functions to apply the discount specified in the GateConfiguration. The server-side validation that's implemented in this tutorial prevents users from receiving applicable gated discounts without passing the gate.
+ This is the last part of a tutorial series to build a tokengating app. Complete the previous tutorials before starting this tutorial:
+ Create gates in the admin UI using the Gates API
+ Show gates on the storefront
+ What you'll learn
+ How to build a Shopify Function to apply the discount specified in the GateConfiguration
+ Read and validate the HMAC signature stored as a cart attribute to verify your app's evaluation has not been tampered with. This will ensure your exclusive discount only goes to those who have met your gate requirements, as deemed by your app's evaluation.
+ Requirements
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Initialize a product discount extension
+ To automatically apply exclusive discounts for buyers at checkout, add a product discount function as an extension to your app.
+ Navigate to your app directory.
+ Run one of the following commands to create a new product discount extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template product_discounts --name tokengating-function
+ Choose the Rust language option.
+ Tip
+ Shopify Functions support any language that compiles to WebAssembly (Wasm), such as Rust, AssemblyScript, or TinyGo. You specify the Wasm template option when you're using a language other than Rust and can conform to the Wasm API. Learn more about the Wasm API.
+ Navigate to extensions/tokengating-function
+ Replace your Cargo.toml file with the following:
+ Cargo.toml
+ 1 [package]
+ 2 name = "tokengating-function"
+ 3 version = "1.0.0"
+ 4 edition = "2021"
+ 5 rust-version = "1.62"
+ 6
+ 7 [dependencies]
+ 8 serde = { version = "1.0.13", features = ["derive"] }
+ 9 serde_with = "1.13.0"
+ 10 serde_json = "1.0"
+ 11 sha2 = "0.9.8"
+ 12 hmac = "0.11.0"
+ 13 hex = "0.4.3"
+ 14 shopify_function = "0.2.5"
+ 15 graphql_client = "0.13.0"
+ 16
+ 17 [profile.release]
+ 18 lto = true
+ 19 opt-level = 'z'
+ 20 strip = true
+ Build the function's Wasm module.
+ Terminal
+ $ cargo wasi build
+ If you encounter any errors, ensure that you've installed Rust and cargo-wasi.
+ Step 2: Write the function logic
+ The function logic uses the input from the metafield that was defined when you created the GateConfiguration. The following _shopify_gate_context cart attribute key is the gate context that was created in the previous tutorial. This gate context is added here so that the function can determine whether the tokengated discount should be applied.
+ Input Query
+ Copy the following code into extensions/tokengating-function/input.graphql. This file defines the input for the function. Replace tokengating-example-app with the namespace that you used when creating your GateConfiguration.
+ input.GraphQL
+ 1 query Input {
+ 2
+    cart {
+ 3
+      attribute(key: "_shopify_gate_context") {
+ 4
+        value
+ 5
+      }
+ 6
+      lines {
+ 7
+        quantity
+ 8
+        merchandise {
+ 9
+          __typename
+ 10
+          ... on ProductVariant {
+ 11
+            id
+ 12
+            product {
+ 13
+              id
+ 14
+              gates(handle: "tokengating-example-app") {
+ 15
+                id
+ 16
+                configuration {
+ 17
+                  id
+ 18
+                  metafield(namespace: "tokengating-example-app", key: "reaction") {
+ 19
+                    value
+ 20
+                  }
+ 21
+                }
+ 22
+              }
+ 23
+            }
+ 24
+          }
+ 25
+        }
+ 26
+      }
+ 27
+    }
+ 28
+    discountNode {
+ 29
+      metafield(namespace: "tokengating-example-app", key: "gate_configuration_id") {
+ 30
+        value
+ 31
+      }
+ 32
+    }
+ 33 }
+ Tip
+ For a complete list of available fields, refer to the product discount input API.
+ Function Logic
+ Your main discounting logic is located in extensions/tokengating-function/src/main.rs directory and written in Rust. By the time the code in this file executes, the input query above will have resolved and we have everything we need to accomplish our tasks within the function which are:
+ Check that the automatic discount is relevant by reading its metafield for the GateConfiguration and only evaluating further if it matches the line item's GateConfiguration
+ Verify the attached HMAC value, which is your app's attestation that this buyer has met the requirements to unlock the gate.
+ If the above HMAC is verified, apply the discount by adding the corresponding discount object and returning it as the function's output. Otherwise, the function will not apply the discount.
+ The following code will set up the function logic to determine if the gate is unlocked. Replace the code in src/main.rs with the following:
+ src/main.rs
+ 1 use std::str::FromStr;
+ 2
+ 3 use shopify_function::prelude::*;
+ 4 use shopify_function::Result;
+ 5
+ 6 use hex;
+ 7 use hmac::NewMac;
+ 8 use hmac::{Hmac, Mac};
+ 9 use serde::{Deserialize, Serialize};
+ 10 use sha2::Sha256;
+ 11
+ 12 generate_types!(
+ 13
+      query_path = "./input.graphql",
+ 14
+      schema_path = "./schema.graphql"
+ 15 );
+ 16
+ 17 const SECRET_KEY: &str = "secret-key"; // This should be a secret key that is shared between the app and the function
+ 18
+ 19 #[derive(Clone, Debug, Deserialize)]
+ 20 pub struct GateContextItem {
+ 21
+      pub id: Option<ID>,
+ 22
+      pub hmac: Option<String>,
+ 23 }
+ 24
+ 25 #[derive(Clone, Debug, Deserialize, Default)]
+ 26 pub struct GateReaction {
+ 27
+      pub name: String,
+ 28
+      pub discount: Discount,
+ 29 }
+ 30
+ 31 #[derive(Clone, Debug, Deserialize)]
+ 32 #[serde(rename_all = "camelCase", tag = "type")]
+ 33 pub enum Discount {
+ 34
+      Percentage { value: StringNumberOrNumber },
+ 35
+      Amount { value: StringNumberOrNumber },
+ 36 }
+ 37
+ 38 impl Default for Discount {
+ 39
+      fn default() -> Self {
+ 40
+          Discount::Percentage {
+ 41
+              value: StringNumberOrNumber::Number(0.0f64),
+ 42
+          }
+ 43
+      }
+ 44 }
+ 45
+ 46 #[derive(Clone, Debug, Deserialize)]
+ 47 #[serde(untagged)]
+ 48 pub enum StringNumberOrNumber {
+ 49
+      StringNumber(String),
+ 50
+      Number(f64),
+ 51 }
+ 52
+ 53 impl TryInto<f64> for StringNumberOrNumber {
+ 54
+      type Error = <f64 as FromStr>::Err;
+ 55
+ 56
+      fn try_into(self) -> std::result::Result<f64, Self::Error> {
+ 57
+          match self {
+ 58
+              StringNumberOrNumber::Number(v) => Ok(v),
+ 59
+              StringNumberOrNumber::StringNumber(str) => Ok(f64::from_str(&str)?),
+ 60
+          }
+ 61
+      }
+ 62 }
+ 63
+ 64 impl ToString for StringNumberOrNumber {
+ 65
+      fn to_string(&self) -> String {
+ 66
+          match self {
+ 67
+              StringNumberOrNumber::Number(v) => v.to_string(),
+ 68
+              StringNumberOrNumber::StringNumber(str) => str.clone(),
+ 69
+          }
+ 70
+      }
+ 71 }
+ 72
+ 73 const NO_DISCOUNT: output::FunctionResult = output::FunctionResult {
+ 74
+      discounts: vec![],
+ 75
+      discount_application_strategy: output::DiscountApplicationStrategy::MAXIMUM,
+ 76 };
+ 77
+ 78 #[shopify_function]
+ 79 fn function(input: input::ResponseData) -> Result<output::FunctionResult> {
+ 80
+      let cart_lines = input.cart.lines;
+ 81
+      let gate_context = parse_gate_context_from_cart_attribute(&input.cart.attribute);
+ 82
+      let discount_gate_configuration_id = input.discount_node.metafield.unwrap().value;
+ 83
+ 84
+      if cart_lines.is_empty() || gate_context.is_empty() {
+ 85
+          return Ok(NO_DISCOUNT);
+ 86
+      }
+ 87
+ 88
+      let mut targets: Vec<output::Target> = vec![];
+ 89
+      let mut gate_reaction: GateReaction = GateReaction::default();
+ 90
+ 91
+      let product_variants = cart_lines.iter().flat_map(|line| {
+ 92
+          // Merchandise is a union type, so we need to match on the variant
+ 93
+          match &line.merchandise {
+ 94
+              input::InputCartLinesMerchandise::ProductVariant(variant) => Some(variant),
+ 95
+              _ => None,
+ 96
+          }
+ 97
+      });
+ 98
+ 99
+      for product_variant in product_variants {
+ 100
+          for gate_subject in &product_variant.product.gates {
+ 101
+              let gate_configuration = &gate_subject.configuration;
+ 102
+              let gate_context_item = gate_context.iter().find(|gate_context_item| {
+ 103
+                  gate_context_item.id == Some(gate_configuration.id.to_string())
+ 104
+              });
+ 105
+              let gate_unlocked = match &gate_context_item {
+ 106
+                  Some(ctx) => {
+ 107
+                      is_signature_valid(ctx, &gate_configuration)
+ 108
+                          && gate_configuration.id == discount_gate_configuration_id
+ 109
+                  }
+ 110
+                  _ => false,
+ 111
+              };
+ 112
+ 113
+              if gate_unlocked {
+ 114
+                  gate_reaction =
+ 115
+                      parse_gate_reaction_from_metafield(gate_configuration.metafield.as_ref());
+ 116
+ 117
+                  targets.push(output::Target::ProductVariant(
+ 118
+                      output::ProductVariantTarget {
+ 119
+                          id: product_variant.id.to_string(),
+ 120
+                          quantity: None,
+ 121
+                      },
+ 122
+                  ));
+ 123
+              }
+ 124
+          }
+ 125
+      }
+ 126
+ 127
+      if targets.is_empty() {
+ 128
+          return Ok(NO_DISCOUNT);
+ 129
+      }
+ 130
+ 131
+      let value = reaction_value(gate_reaction.clone());
+ 132
+      let message = Some(gate_reaction.name);
+ 133
+ 134
+      Ok(output::FunctionResult {
+ 135
+          discounts: vec![output::Discount {
+ 136
+              message: message,
+ 137
+              targets: targets,
+ 138
+              value: value,
+ 139
+          }],
+ 140
+          discount_application_strategy: output::DiscountApplicationStrategy::MAXIMUM,
+ 141
+      })
+ 142 }
+ 143
+ 144 fn parse_gate_context_from_cart_attribute(
+ 145
+      attribute: &Option<input::InputCartAttribute>,
+ 146 ) -> Vec<GateContextItem> {
+ 147
+      attribute
+ 148
+          .as_ref()
+ 149
+          .and_then(|a| a.value.as_ref())
+ 150
+          .map(|value| serde_json::from_str(&value).unwrap_or_default())
+ 151
+          .unwrap_or_else(|| vec![])
+ 152 }
+ 153
+ 154 fn parse_gate_reaction_from_metafield(
+ 155
+      metafield: Option<
+ 156
+          &input::InputCartLinesMerchandiseOnProductVariantProductGatesConfigurationMetafield,
+ 157
+      >,
+ 158 ) -> GateReaction {
+ 159
+      metafield
+ 160
+          .map(|metafield| serde_json::from_str(metafield.value.as_str()).unwrap())
+ 161
+          .unwrap_or_default()
+ 162 }
+ 163
+ 164 fn is_signature_valid(
+ 165
+      gate_context_item: &GateContextItem,
+ 166
+      gate_configuration: &input::InputCartLinesMerchandiseOnProductVariantProductGatesConfiguration,
+ 167 ) -> bool {
+ 168
+      let hmac = match &gate_context_item.hmac {
+ 169
+          Some(hmac) => hmac,
+ 170
+          _ => return false,
+ 171
+      };
+ 172
+ 173
+      let message = &gate_configuration.id;
+ 174
+      let signature = hmac_signature(SECRET_KEY, message);
+ 175
+ 176
+      &signature == hmac
+ 177 }
+ 178
+ 179 fn hmac_signature(key: &str, msg: &str) -> String {
+ 180
+      type HmacSha256 = Hmac<Sha256>;
+ 181
+ 182
+      let mut mac = HmacSha256::new_from_slice(key.as_bytes()).unwrap();
+ 183
+      mac.update(&msg.as_bytes());
+ 184
+ 185
+      let code_bytes = mac.finalize().into_bytes();
+ 186
+ 187
+      return hex::encode(&code_bytes.to_vec());
+ 188 }
+ 189
+ 190 fn reaction_value(reaction: GateReaction) -> output::Value {
+ 191
+      match reaction.discount {
+ 192
+          Discount::Percentage { value } => {
+ 193
+              return output::Value::Percentage(output::Percentage {
+ 194
+                  value: value.to_string(),
+ 195
+              });
+ 196
+          }
+ 197
+          Discount::Amount { value } => {
+ 198
+              return output::Value::FixedAmount(output::FixedAmount {
+ 199
+                  applies_to_each_item: None,
+ 200
+                  amount: value.to_string(),
+ 201
+              });
+ 202
+          }
+ 203
+      };
+ 204 }
+ The code checks that your automatic discount is relevant to the cart's line items, and that your app has attested that the buyer has unlocked the gate. You can review the culmination of this logic by looking at the definition of gate_unlocked.
+ Step 3: Deploy your function
+ Before deploying, ensure that the api_version in your extensions/tokengating-function/shopify.extension.toml is set to unstable. In the end, it should look like the following:
+ shopify.extension.toml
+ 1 name = "tokengating-function"
+ 2 type = "product_discounts"
+ 3 api_version = "unstable"
+ 4
+ 5 [build]
+ 6 command = "cargo wasi build --release"
+ 7 path = "target/wasm32-wasi/release/tokengating-function.wasm"
+ 8
+ 9 [ui.paths]
+ 10 create = "/CreateTokengate"
+ 11 details = "/"
+ Because the api_version is unstable, you need to update the schema.graphql file. Navigate to the extensions/tokengating-function/ directory and run the following code:
+ Terminal
+ $ npm run --silent shopify app function schema > schema.graphql
+ Deploy your app along with the function.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Step 4: Preview the function on a development store
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 5: Test the function
+ Install the Shopify GraphiQL app on your store.
+ In the GraphiQL app, in the API Version field, select the unstable version.
+ Find the ID of your function by executing the following query:
+ find-function-query.graphql
+ 1 query {
+ 2
+    shopifyFunctions(first: 25) {
+ 3
+      nodes {
+ 4
+        app {
+ 5
+          title
+ 6
+        }
+ 7
+        apiType
+ 8
+        title
+ 9
+        id
+ The result contains a node with your function's ID:
+ find-function-result.json
+ 1 {
+ 2
+    "app": {
+ 3
+      "title": "your-app-name-here"
+ 4
+    },
+ 5
+    "apiType": "product_discounts",
+ 6
+    "title": "tokengating-function",
+ 7
+    "id": "YOUR_FUNCTION_ID_HERE"
+ 8 }
+ Copy the ID and navigate to /web/api/create-discount.js to replace the YOUR_FUNCTION_ID.
+ You've now:
+ built an admin app for merchants to configure gates and the corresponding discount
+ deployed a theme app extension to display those gate requirements to buyers along with a wallet connection experience
+ used Shopify Functions to apply the discount when gated products are added to the cart
+ To see the function in action:
+ Navigate to your gated product's detail page and unlock the product.
+ Add the product to your cart.
+ View your cart and check that the exclusive discount is applied. Note that the discount should be visibile in the cart, even before initiating the checkout process.
+ Developer tools and resources
+ To view all of the code used for the tokengating example app, you can download the source code.
+ Tokengating example app
+ Explore an example app that enables merchants to tokengate products.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Initialize a product discount extension
+ Step 2: Write the function logic
+ Step 3: Deploy your function
+ Step 4: Preview the function on a development store
+ Step 5: Test the function
+ Developer tools and resources

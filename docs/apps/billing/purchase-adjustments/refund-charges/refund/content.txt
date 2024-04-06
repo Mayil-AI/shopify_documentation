@@ -1,0 +1,30 @@
+Subscription discounts
+ Refunds
+ Overview
+ Refunding app charges
+ Offering free trials
+ Viewing charges and earnings
+ Best practices
+ App Store
+ Refund an app charge
+ You can issue a full or partial refund for an app charge through the Partner Dashboard.
+ Note
+ Merchants don't receive an automatic notification of the refund status, so you must follow up with the merchant and ask them to check their invoice to make sure that the refund went through.
+ Issue a refund for an app charge
+ The following procedure explains how to issue refund for your app charge:
+ Log in to your Partner Dashboard.
+ In the Partner Dashboard search bar, enter the name of the store with the app charges that you want to check.
+ In the search results, click the name of the store.
+ Next to the app charge that you want to check, click the link in the Details column.
+ Click the arrow to open the charge, and then click Issue refund.
+ In the Refund amount field, enter the amount that you want to refund. You can refund the full amount or a partial amount.
+ Click Refund.
+ After the refund is complete, the charge details are updated to include the refund.
+ Next steps
+ Best practices
+ Learn best practices for app billing.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Issue a refund for an app charge
+ Next steps

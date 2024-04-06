@@ -1,0 +1,70 @@
+Migrating to Online Store 2.0
+ Overview
+ Assessment
+ Migration guide
+ Troubleshooting
+ Theme Store
+ Migration assessment
+ You can add Online Store 2.0 features to a store in several ways:
+ Download an Online Store 2.0 theme from the Shopify Theme Store: Update the look of a store and get access to new features by downloading a new theme from the Shopify Theme Store.
+ Download a new version of a theme: If a theme offers an updated version that uses Online Store 2.0, then you can add the latest theme version to a store manually.
+ Migrate a theme manually: Add Online Store 2.0 functionality to a theme by converting a Liquid template into a JSON template, and moving any required Liquid code or HTML into sections that you can include in the new JSON template.
+ Before you migrate your own theme or a client's theme, consider the following factors to identify which path makes sense for your or your client's business.
+ Upgrading to Online Store 2.0 isn't mandatory. Merchants can continue using a vintage theme if it meets their needs.
+ Use the following table as a quick reference to understand which migration path makes the most sense for a business. Click on the name of each consideration to learn more.
+ Consideration Action
+ Don't migrate Install new theme Install new version of the current theme Migrate manually
+ Requires Online Store 2.0 features
+ Yes ✓ ✓ ✓
+ No ✓
+ Satisfied with the current theme
+ Yes ✓ ✓
+ No ✓
+ Uses many apps and theme customizations
+ Yes ✓
+ No ✓ ✓
+ Has a budget for migration
+ Yes ✓ ✓ ✓
+ No Choose from free themes by Shopify ✓ ✓
+ Comfortable with writing and editing code
+ Yes ✓ ✓ ✓
+ No ✓ ✓ Hire an expert to migrate
+ Online Store 2.0 feature requirements
+ If you or your client wants to use any of the features introduced in Online Store 2.0, then you should consider migrating.
+ If you or your client have a basic store that doesn't require ongoing changes to the current theme, and you or your client are satisfied with the current theme, then you might not choose to migrate at this time.
+ Satisfaction with the current theme
+ Identify whether you or your client enjoy the design and basic functionality of the current theme.
+ If you or your client like the current theme but want to take advantage of Online Store 2.0 features:
+ If the theme developer offers it, download the Online Store 2.0 version of the current theme from the Shopify Theme Store
+ If the current theme hasn't been upgraded to Online Store 2.0, then follow one of the methods below:
+ Upgrade the theme manually
+ Choose a similar Online Store 2.0 theme from the Shopify Theme Store
+ If the client dislikes their current theme, they can choose a new Online Store 2.0 theme from the Shopify Theme Store to migrate to Online Store 2.0.
+ Apps and customizations
+ Customizations made by apps, or customizations made manually to a theme, can't be migrated automatically. This means that themes that rely on several apps, or themes that are heavily customized, are harder to migrate.
+ If the theme relies on apps, then you should ensure that any key apps are compatible with Online Store 2.0 before migrating using a new theme or migrating manually.
+ If the theme is a free or paid theme that doesn't use many apps or customizations, then consider installing an upgraded version of the theme, or a new Online Store 2.0 theme from the Shopify Theme Store.
+ If the theme was made specifically for you, or it is a heavily customized version of a free or paid theme, then it should be migrated manually. Consider the amount of time it will take to reinstall any required apps on your migrated themes.
+ Budget
+ If you or your client has a budget to migrate to Online Store 2.0, then consider the following options:
+ Purchase a new paid theme from the Shopify Theme Store
+ Hire a Shopify Partner to migrate the theme to Online Store 2.0 manually
+ If you or your client don't have a budget to perform a migration, then consider the following options:
+ Choose a free Online Store 2.0 theme from the Shopify Theme Store
+ If the theme developer offers it, then download the Online Store 2.0 version of the current theme from the Shopify Theme Store
+ If you're comfortable with writing or editing code, then migrate the theme manually at no cost
+ Code expertise
+ If you're comfortable with writing or editing code, then you can consider migrating your theme manually. You can migrate individual templates to take advantage of Online Store 2.0 features in specific parts of your theme, or you can migrate the entire theme by migrating all templates.
+ If you're not comfortable with writing or editing code, then you can do the following:
+ Hire a Shopify Partner to migrate the theme to Online Store 2.0 manually
+ If the theme developer offers it, then download the Online Store 2.0 version of the current theme from the Shopify Theme Store
+ Choose a new Online Store 2.0 theme from the Shopify Theme Store
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Online Store 2.0 feature requirements
+ Satisfaction with the current theme
+ Apps and customizations
+ Budget
+ Code expertise
+ Updates & News

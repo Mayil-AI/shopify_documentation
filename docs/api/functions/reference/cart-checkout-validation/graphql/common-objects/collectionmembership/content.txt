@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CollectionMembership object
+ 2024-04 latest
+ Represents whether the product is a member of the given collection.
+ On this page
+ Fields
+ Types that return CollectionMembership
+ Fields
+ collectionId (ID!)
+ The ID of the collection.
+ isMember (Boolean!)
+ Whether the product is a member of the collection.
+ Types that return CollectionMembership
+ Product.inCollections
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

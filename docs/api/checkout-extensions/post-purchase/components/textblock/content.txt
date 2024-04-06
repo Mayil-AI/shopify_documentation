@@ -1,0 +1,25 @@
+Product subscription app extensions
+ TextBlock
+ TextBlock is used to render a block of text that occupies the full width available. Usually used to render paragraphs or text.
+ Example
+ JS
+ React
+ 1 import {extend, TextBlock} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const textBlock = root.createComponent(TextBlock, undefined, 'Textblock');
+ 5
+ 6
+    root.appendChild(textBlock);
+ 7 });
+ Props
+ optional = ?
+ Name Type Description
+ size? "auto" | "fill" | number Size of the text
+ emphasized? boolean
+ subdued? boolean
+ id? string Unique identifier
+ appearance? "critical" | "warning" | "success" Changes the visual appearance
+ Was this page helpful?
+ YesNo

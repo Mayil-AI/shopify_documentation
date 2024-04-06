@@ -1,0 +1,50 @@
+Config
+ Overview
+ settings_schema.json
+ settings_data.json
+ Locales
+ Config
+ Config files define settings in the Theme settings area of the theme editor, as well as store their values.
+ Theme settings are a good place to host general settings such as typography and color options. Theme settings can be accessed through the settings object.
+ Tip
+ You can also create settings for sections and blocks. These settings are defined as part of the parent section or block object, and appear in the theme editor with the associated object.
+ Location
+ Config files are located in the config directory of the theme:
+ 1 └── theme
+ 2
+      ...
+ 3
+      ├── config
+ 4
+      |   ├── settings_data.json
+ 5
+      |   └── settings_schema.json
+ 6
+      └── locales
+ Subtypes
+ There are two config files, each with their own schema and content:
+ Type Description Required
+ settings_schema.json Controls the organization and content of the Theme settings area of the theme editor. Yes
+ settings_data.json Contains the saved values from the settings in settings_schema.json. Yes
+ Usage
+ When working with config files, you should familiarize yourself with the following:
+ Setting types
+ Accessing settings
+ Theme metadata
+ Setting types
+ There are two categories of settings:
+ Category Description
+ Input settings Settings that can hold a value, and are configurable by app users.
+ Sidebar settings Settings that can’t hold a value, and aren’t configurable by app users. They’re informational elements that can be used to provide detail and clarity for your input settings.
+ Access settings
+ Theme settings can be accessed through the settings object. To learn more about the syntax and considerations, refer to Access settings.
+ Theme metadata
+ You can add theme metadata to the Theme actions menu of the theme editor. This includes information like the theme name and version, where to find theme documentation, and theme developer contact details. To learn how to include this information in your theme, refer to Add theme metadata.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Subtypes
+ Usage
+ Updates & News
+ Developer changelog

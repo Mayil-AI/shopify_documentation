@@ -1,0 +1,50 @@
+ToastApi
+ Components
+ ToastApi
+ The toast component is a non-disruptive message that appears at the bottom of the interface to provide quick, at-a-glance feedback on the outcome of an action.
+ JavaScript
+ React
+ 1 import {extend, Button} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Admin::Product::SubscriptionPlan::Add', (root, api) => {
+ 4
+    const {toast} = api;
+ 5
+ 6
+    const button = root.createComponent(Button, {
+ 7
+      title: 'Pop toast',
+ 8
+      primary: true,
+ 9
+      onPress: () => toast.show('Toast popped!'),
+ 10
+    });
+ 11
+    root.appendChild(button);
+ 12
+ 13
+    const errorButton = root.createComponent(Button, {
+ 14
+      title: 'Do something',
+ 15
+      onPress: () => toast.show('That didn’t work.', {error: true}),
+ 16
+    });
+ 17
+    root.appendChild(errorButton);
+ 18
+ 19
+    root.mount();
+ 20 });
+ Props
+ optional = ?
+ Name Type Description
+ show (content: string, options: ShowToastOptions) => void Trigger a toast message to appear.
+ ShowToastOptions
+ Name Type Description
+ error? boolean Display toast in error format.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

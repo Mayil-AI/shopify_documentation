@@ -1,0 +1,40 @@
+Payment Customization API
+ Overview
+ GraphQL reference
+ Configuration
+ Error handling
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Payment Customization Function API overview
+ The Payment Customization API enables you to rename, reorder, and sort the payment methods available to buyers during checkout.
+ Example use cases
+ Hide payment methods for carts with totals above or below a given value
+ Reorder payment methods according to user preference
+ Hide payment methods based on customer tag or country
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Payment Customization API reference
+ Consult the GraphQL reference for the Payment Customization API.
+ Migrating from scripts to functions
+ If you want to migrate an existing payment script to Shopify Functions, then you can use the following mappings:
+ Shopify Scripts method Description Shopify Functions object Additional context
+ change_name Changes the name of a payment option RenameOperation
+ sort Sorts the payment options based on some criteria, typically to place one payment option at the top or bottom of a list MoveOperation Instead of sorting, you can move individual payment methods.
+ delete_if Removes a payment option from checkout HideOperation
+ Limitations and considerations
+ The Payment Customization API doesn't currently support draft orders.
+ You can't rename payment methods that have logos as a name.
+ Payment customizations aren't compatible with Shop Pay.
+ Next steps
+ Learn how to use Shopify Functions by building a payment customization.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Migrating from scripts to functions
+ Limitations and considerations
+ Next steps

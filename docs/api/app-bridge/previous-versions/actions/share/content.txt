@@ -1,0 +1,65 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Sharing
+ Note
+ This is a legacy API. Use the latest version of Share instead.
+ The Share action allows you to invoke the "share sheet" to share content from your embedded app on an iOS or Android device.
+ Requirements
+ These actions require the following app versions:
+ Shopify iOS v8.22.0 or above
+ Shopify Android v8.25.0 or above
+ Point of Sale iOS v5.29.0 or above
+ Point of Sale Android v3.24.0 or above
+ Setup
+ Create an app and import the Share module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Group, Share} from '@shopify/app-bridge/actions';
+ 3
+ 4 var app = createApp(config);
+ 5
+ 6 var share = Share.create(app);
+ Share Close action
+ Group Share
+ Action CLOSE
+ Action Type APP::SHARE::CLOSE
+ Description Dispatches after closing the Share Sheet.
+ The Share action lets you share content from your app to any third-party app on the user's device, as long as the app supports the payload type. Some apps only support text and some support URLs and text.
+ Subscribe to Share Close:
+ 1 share.subscribe(Share.Action.CLOSE, function (payload) {
+ 2
+    // The payload will contain `success` as its only property. This is set to `true` upon a successful share and set to `false` if the action is canceled.
+ 3 });
+ Response
+ Key Type Description
+ success Boolean Whether the share was successful or canceled.
+ Share Open action
+ Group Share
+ Action SHOW
+ Action Type APP::SHARE::SHOW
+ Description Opens a Share Sheet that allows you to share content with other apps.
+ 1 share.dispatch(Share.Action.SHOW, {
+ 2
+    text: 'Hey check this out!',
+ 3
+    url: 'https://www.reallyawesomesite.com',
+ 4 });
+ Note
+ In Debug Mode, text and url are optional but at least one needs to be included in the payload. If neither are present then an APP::ERROR::INVALID_PAYLOAD will be thrown or sent to an Error subscriber. However, in Production Mode this will silently fail.
+ Request
+ Key Type Description
+ text String? The text to share.
+ url String? The URL to share.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Setup
+ Share Close action
+ Subscribe to Share Close:
+ Share Open action
+ Updates & News
+ Developer changelog
+ Partner blog

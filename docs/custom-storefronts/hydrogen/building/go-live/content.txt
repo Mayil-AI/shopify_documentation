@@ -1,0 +1,30 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Go live with Hydrogen and Oxygen
+ This guide prepares you to go live with a Hydrogen storefront that's hosted on Oxygen.
+ Load testing
+ If you plan to load test your build before launch, then our anti-bot System might recognize your load test system as bot traffic and throttle it. To coordinate a scheduled load test, connect with your Merchant Success Manager or Shopify Support three to five weeks in advance of your go live date.
+ Shopify analytics
+ To ensure that Shopify analytics are working properly, follow our set up guide
+ Manage Shopify Scripts
+ If you're using Shopify Scripts, then you might need to unpublish and republish them and ensure that they're available to the Storefront API.
+ Update Meta & Google product feeds
+ If you're using Meta & Google apps for your product feeds for advertising, then you'll need to update those catalogs to use your Hydrogen storefront's domain. You can do this either using a third-party tool instead of the standard Facebook and Google sales channels, or by setting up feed rules. For more information, refer to Facebook, and Google documentation.
+ Redirect previous order status pages
+ If your online store has active orders before you launch your Hydrogen storefront, then redirect customers to avoid 404 responses.
+ Next Steps
+ Take live traffic with Redirect traffic to the Hydrogen channel to publish the new Hydrogen storefront.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Load testing
+ Shopify analytics
+ Manage Shopify Scripts
+ Update Meta & Google product feeds
+ Redirect previous order status pages
+ Next Steps
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

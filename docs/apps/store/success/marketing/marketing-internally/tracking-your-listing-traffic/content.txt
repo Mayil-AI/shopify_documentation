@@ -1,0 +1,140 @@
+Overview
+ Marketing
+ Overview
+ Marketing externally
+ Marketing internally
+ Overview
+ Tracking your listing traffic
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ Tracking your listing traffic
+ You can get more information about how merchants are finding your app listing in the Shopify App Store by tracking your listing traffic with Google Analytics or Facebook Pixel. Optimize your listing for both merchants and the Shopify App Store search engine, by gaining a better understanding of how merchants currently discover your app.
+ Note
+ Both listed and unlisted apps can add Google Analytics or Facebook Pixel tracking, but unlisted apps won't show up in Shopify App Store search results or category pages.
+ Set up Google Analytics for your app listing
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ Click Distribution.
+ Click Create listing or Manage listing, and then click the listing that you want to edit.
+ In the Tracking information section, next to Google analytics code (optional), enter your GA4 measurement ID.
+ Click Save.
+ Migrating from Universal Analytics to Google Analytics 4
+ Google Universal Analytics is being sunset in July 2023. If you previously used Universal Analytics for your app listing and you want to migrate to Google Analytics 4, then follow the process to set up Google Analytics, but replace your UA tracking ID with your new GA4 tracking ID.
+ Depending on how you use Universal Analytics, you might need to perform the following additional steps:
+ If you use Universal Analytics audiences, then you need to migrate audiences to GA4.
+ If you use Universal Analytics to track Google Ad conversions on your app listing, then you need to migrate conversion tracking to GA4.
+ Full-funnel app install attributions
+ To provide full details of the app installation funnel, the Shopify App Store uses Google Analytics 4's Measurement Protocol for server-side events (like app installation). To receive these events, an app listing must be on Google Analytics 4 and have entered an API secret generated in the Google Analytics UI.
+ The following events are sent to Google Analytics and display in the Real-time view. However, event parameters might take up to 24 hours to propagate and need to be added as an Event-scoped Custom Dimension.
+ Events sent to Google Analytics
+ Event name Parameters Description
+ shopify_app_install
+ api_key
+ shop_id
+ Sent when a merchant finishes installing an app.
+ shopify_app_ad_click
+ api_key
+ surface_type
+ surface_detail
+ Sent when a merchant visits an app listing from a Shopify App Store ad click.
+ To generate an API secret:
+ Log into your Google Analytics.
+ Click on the Admin icon in the bottom left corner.
+ Click on Data Streams under Property settings.
+ Select the measurement stream which corresponds to the Measurement ID which you have added to your app listing.
+ Click on Measurement Protocol API secrets and click Create to generate a new API Secret.
+ To add the API secret to your app listing:
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ Click Distribution.
+ Click Create listing or Manage listing, and then click the listing that you want to edit.
+ In the Tracking information section, next to Google analytics code (optional), ensure you have upgraded to Google Analyitics 4.
+ Enter your API Secret.
+ Click Save.
+ Other events
+ You might want to track the following additional Shopify-specific events in Google Analytics. These events are triggered client-side from the Shopify App Store, and don't use Google Analytics 4's Measurement Protocol. Currently, only one custom event is sent.
+ Event sent to Google Analytics
+ Event name Parameters Description
+ add_app_button
+ event_category: Always returns Shopify App Store.
+ event_label: The app's handle.
+ Sent when a app user clicks the Install button on an App Listing page.
+ Set up Facebook Pixel for your app listing
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ Click Distribution.
+ Click Create listing or Manage listing, and then click the listing that you want to edit.
+ In the E. Tracking section, next to 3. Facebook Pixel (optional), enter your Facebook Pixel tracking ID.
+ Click Save.
+ URL parameters
+ After you've set up Google Analytics or Facebook Pixel for your app listing, Shopify passes additional URL parameters when a merchant visits your app listing from the Shopify App Store. You can see parameters such as the following in your Google Analytics or Facebook Pixel dashboard:
+ These are noteworthy parameters which can appear in the URL and their meaning:
+ Parameter Description Possible values
+ locale The language that the merchant has selected in the Shopify App Store.
+ zh-CN: Chinese (Simplified)
+ zh-TW: Chinese (Traditional)
+ cs: Czech
+ da: Danish
+ nl: Dutch
+ fi: Finnish
+ fr: French
+ de: German
+ hi: Hindi
+ it: Italian
+ ja: Japanese
+ ko: Korean
+ nb: Norwegian (Bokmal)
+ 193
+ pl: Polish
+ pt-PT: Portuguese
+ pt-BR: Portuguese (Brazilian)
+ es: Spanish
+ sv: Swedish
+ th: Thai
+ tr: Turkish
+ surface_type The type of page the merchant came from to get to your app listing.
+ home: The home page of the Shopify App Store.
+ search: The organic search result on the Shopify App Store.
+ search_ad: The paid search result on the Shopify App Store.
+ category: One of the category pages on the Shopify App Store.
+ collection: One of the collection pages on the Shopify App Store.
+ story: One of the story pages on the Shopify App Store.
+ partners: One of the partner pages on the Shopify App Store.
+ app_details: One of the app listing pages on the Shopify App Store.
+ app_group: One of the app extension pages on the Shopify App Store.
+ surface_detail Details about the page that the merchant came from.
+ For home, this is the descriptive handle of the section of the home page where the merchant found your app.
+ For search, this is the merchant's search query.
+ For category, this includes the titles of the category and the subcategories, joined by a hyphen.
+ For collection, this is the title of the collection where the merchant found your app.
+ For story, this is the descriptive handle of the section of the story page where the merchant found your app.
+ For app-details, this is the unique handle of the app listing page where the merchant found your app.
+ surface_inter_position The section on the page where the merchant found your app.
+ For home, this is the section of the Shopify App Store home page where the merchant found your app. The sections are numbered from the top, starting with 1.
+ For search, this is the page of search results where the merchant found your app.
+ For category, this is the page of category results where the merchant found your app.
+ For collection, this is the page of collection results where the merchant found your app.
+ For story, this is the section of the story page where the merchant found your app. The sections are numbered from the top, starting with 1.
+ For app-details, this is the section of the app listing page where the merchant found your app. The sections are numbered from the top, starting with 1.
+ surface_intra_position The position within the section of the page where the merchant found your app. The positions are numbered left to right, top to bottom, starting with 1.
+ For home, this is the position of your app within the section.
+ For search, this is the position of your app on the results page.
+ For category, this is the position of your app on the category page.
+ For collection, this is the position of your app on the collection page.
+ For story, this is the position of your app within the section.
+ For partners, this is the position of your app on the partner page.
+ For app-details, this is the position of your app within the section.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Set up Google Analytics for your app listing
+ Set up Facebook Pixel for your app listing
+ URL parameters
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

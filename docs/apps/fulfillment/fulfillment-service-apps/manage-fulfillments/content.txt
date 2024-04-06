@@ -1,0 +1,1805 @@
+Inventory management apps
+ Order management apps
+ Order routing apps
+ Fulfillment service apps
+ Overview
+ Manage fulfillments
+ Returns apps
+ Migrate to fulfillment orders
+ Point of Sale
+ Marketing
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Manage fulfillments as a fulfillment service app
+ Fulfillment service apps can provide third-party warehousing, print on demand, or fulfillment services that prepare and ship orders on behalf of merchants.
+ This guide describes how to use the REST and GraphQL Admin APIs to manage fulfillments in the following ways:
+ Receive fulfillment requests and cancellations
+ Accept and reject fulfillment requests and cancellations
+ Exchange fulfillment requests notes with merchants
+ Create and perform fulfillments for assigned work
+ Optionally close fulfillment orders
+ Requirements
+ Your app can make authenticated requests to the REST Admin API or GraphQL Admin API.
+ Your app has the write_fulfillments, read_assigned_fulfillment_orders and write_assigned_fulfillment_orders access scopes. Learn how to configure your access scopes using Shopify CLI..
+ Your store has existing orders that are unfulfilled.
+ If you want to create test orders, then refer to Manage test orders.
+ If you need to make changes to an unfulfilled item, then you can edit an order.
+ You've met Shopify's protected customer data requirements.
+ Step 1: Create a fulfillment service
+ To begin managing fulfillments as a fulfillment service app, you need to create a fulfillment service in Shopify with a callback URL that will listen for fulfillment requests. A fulfillment service needs to opt in to fulfillment orders by letting Shopify know that they’re ready to perform fulfillment order-based fulfillment rather than order-based fulfillment.
+ You can use the REST Admin API's POST fulfillment_services endpoint or the GraphQL Admin API's fulfillmentServiceCreate mutation to register a callback URL and opt in a fulfillment service to use fulfillment orders.
+ To register a fulfillment service, your app requires the write_fulfillments access scope.
+ Create a fulfillment service
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_services.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_service": {
+ 3
+      "name": "My fulfillment service",
+ 4
+      "callback_url": "https://www.myapp.com/callback_url",
+ 5
+      "inventory_management": true,
+ 6
+      "permits_sku_sharing": true,
+ 7
+      "fulfillment_orders_opt_in": true,
+ 8
+      "tracking_support": true,
+ 9
+      "requires_shipping_method": true,
+ 10
+      "format": "json"
+ 11
+    }
+ 12 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_service": {
+ 3
+      "id": 10,
+ 4
+      "name": "My fulfillment service",
+ 5
+      "email": null,
+ 6
+      "service_name": "My fulfillment service",
+ 7
+      "handle": "my-fulfillment-service",
+ 8
+      "fulfillment_orders_opt_in": true,
+ 9
+      "include_pending_stock": false,
+ 10
+      "provider_id": null,
+ 11
+      "location_id": 20,
+ 12
+      "callback_url": "https://www.myapp.com/callback_url",
+ 13
+      "tracking_support": true,
+ 14
+      "inventory_management": true,
+ 15
+      "admin_graphql_api_id": "gid://shopify/ApiFulfillmentService/10"
+ 16
+    }
+ 17 }
+ Step 2: Receive fulfillment requests and cancellations
+ Apps must configure an endpoint on a callback URL where Shopify will send the notifications for fulfillment requests. This is a requirement to receive requests from Shopify. The endpoint should be structured in the following format: <callback_url>/fulfillment_order_notification.
+ The payloads that the endpoint receives include the kind property or field, which can have one of the following values:
+ REST Admin API value GraphQL Admin API value Description
+ fulfillment_request FULFILLMENT_REQUEST When a merchant requests a fulfillment in their Shopify admin
+ cancellation_request CANCELLATION_REQUEST When a merchant submits a cancellation request in their Shopify admin
+ The follow examples show payloads for each type of request:
+ Payloads
+ Fulfillment request payload
+ REST
+ GraphQL
+ 1 {
+ 2
+    "kind": "fulfillment_request"
+ 3 }
+ Cancellation request payload
+ REST
+ GraphQL
+ 1 {
+ 2
+    "kind": "cancellation_request"
+ 3 }
+ Step 3: Act on fulfillment requests
+ Each fulfillment order has a status and a request status, both of which indicate the state of the fulfillment order.
+ A fulfillment order notification of FULFILLMENT_REQUEST indicates that there’s a new fulfillment order assigned to the service, and it’s ready to be acted on because the merchant has requested a fulfillment.
+ Fulfillment services can retrieve assigned fulfillment order requests, and specify the fields that are required to determine whether it should accept or reject a fulfillment request. Requests can be validated with the same HMAC validation method that's used when Shopify sends webhooks to apps.
+ Retrieve assigned fulfillment order requests
+ The following examples show how to retrieve assigned fulfillment order requests:
+ REST example: Shows how to use the GET assigned_fulfillment_orders endpoint to retrieve a list of all requested fulfillment orders on the shop that are assigned to the fulfillment service app.
+ The assignment_status (set to fulfillment_requested) and location_ids parameters are included as part of the request URL.
+ GraphQL example: Shows how to use the assignedFulfillmentOrders connection to request the first 10 assigned fulfillment orders with the FULFILLMENT_REQUESTED status:
+ The fulfillment order destination, line items, and line item SKUs are included as part of the request.
+ The query contains the merchantRequests field, which includes any notes that the merchant provided when they submitted the request.
+ Retrieve assigned fulfillment order requests
+ Endpoint
+ REST
+ GraphQL
+ 1 GET https://{shop}.myshopify.com/admin/api/{api_version}/assigned_fulfillment_orders.json?assignment_status=fulfillment_requested&location_ids[]={assigned_location_id}
+ Request
+ REST
+ GraphQL
+ 1 // If you don't include the `assignment_status` parameter, then you receive all assigned fulfillment orders.
+ 2
+ 3 {empty request body}
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_orders": [
+ 3
+      {
+ 4
+        "id": 5862124781590,
+ 5
+        "shop_id": 20978040854,
+ 6
+        "order_id": 4807726071830,
+ 7
+        "assigned_location_id": 67794436118,
+ 8
+        "request_status": "submitted",
+ 9
+        "status": "open",
+ 10
+        "supported_actions": [
+ 11
+          "cancel_fulfillment_order"
+ 12
+        ],
+ 13
+        "destination": {
+ 14
+          "id": 5482076962838,
+ 15
+          "address1": "23 Hassall Street",
+ 16
+          "address2": "",
+ 17
+          "city": "Parramatta",
+ 18
+          "company": null,
+ 19
+          "country": "Australia",
+ 20
+          "email": "",
+ 21
+          "first_name": "Tyler",
+ 22
+          "last_name": "Kelleher",
+ 23
+          "phone": null,
+ 24
+          "province": "New South Wales",
+ 25
+          "zip": "2150"
+ 26
+        },
+ 27
+        "line_items": [
+ 28
+          {
+ 29
+            "id": 12680829239318,
+ 30
+            "shop_id": 20978040854,
+ 31
+            "fulfillment_order_id": 5862124781590,
+ 32
+            "quantity": 1,
+ 33
+            "line_item_id": 12559131312150,
+ 34
+            "inventory_item_id": 44276125368342,
+ 35
+            "fulfillable_quantity": 1,
+ 36
+            "variant_id": 42182036422678
+ 37
+          }
+ 38
+        ],
+ 39
+        "outgoing_requests": [
+ 40
+          {
+ 41
+            "message": "",
+ 42
+            "request_options": {
+ 43
+              "notify_customer": false
+ 44
+            },
+ 45
+            "sent_at": "2022-10-17T11:21:54-04:00",
+ 46
+            "kind": "fulfillment_request"
+ 47
+          }
+ 48
+        ],
+ 49
+        "fulfill_at": "2022-10-17T11:00:00-04:00",
+ 50
+        "fulfill_by": null,
+ 51
+        "international_duties": {
+ 52
+          "incoterm": "DAP"
+ 53
+        },
+ 54
+        "fulfillment_holds": [],
+ 55
+        "delivery_method": {
+ 56
+          "id": 143573385238,
+ 57
+          "method_type": "shipping",
+ 58
+          "min_delivery_date_time": null,
+ 59
+          "max_delivery_date_time": null
+ 60
+        },
+ 61
+        "assigned_location": {
+ 62
+          "address1": null,
+ 63
+          "address2": null,
+ 64
+          "city": null,
+ 65
+          "country_code": "CA",
+ 66
+          "location_id": 67794436118,
+ 67
+          "name": "test-created-via-api-2",
+ 68
+          "phone": null,
+ 69
+          "province": null,
+ 70
+          "zip": null
+ 71
+        }
+ 72
+      }
+ 73
+    ]
+ 74 }
+ Accept a fulfillment request
+ After retrieving the assigned fulfillment orders, the fulfillment service can review each fulfillment order, and determine whether it can be fulfilled.
+ To accept a fulfillment order, the fulfillment service must send an accepted request using either the REST Admin API's POST fulfillment_request/accept endpoint or the GraphQL Admin API's fulfillmentOrderAcceptFulfillmentRequest mutation:
+ Accept a fulfillment request
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/fulfillment_request/accept.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "id": "5859254534166",
+ 3
+    "message": "Reminder that tomorrow is a holiday. We won't be able to ship this until Monday."
+ 4 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order": {
+ 3
+      "id": 5859254534166,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4782479474710,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "accepted",
+ 8
+      "status": "in_progress",
+ 9
+      "supported_actions": [
+ 10
+        "request_cancellation",
+ 11
+        "create_fulfillment"
+ 12
+      ],
+ 13
+      "destination": {
+ 14
+        "id": 5479358922774,
+ 15
+        "address1": "12 York Street",
+ 16
+        "address2": "",
+ 17
+        "city": "Toronto",
+ 18
+        "company": "",
+ 19
+        "country": "Canada",
+ 20
+        "email": "",
+ 21
+        "first_name": "Tyler",
+ 22
+        "last_name": "Kelleher",
+ 23
+        "phone": null,
+ 24
+        "province": "Ontario",
+ 25
+        "zip": "M5J 0A9"
+ 26
+      },
+ 27
+      "origin": {
+ 28
+        "address1": null,
+ 29
+        "address2": null,
+ 30
+        "city": null,
+ 31
+        "country_code": "CA",
+ 32
+        "location_id": 67794436118,
+ 33
+        "name": "test-created-via-api-2",
+ 34
+        "phone": null,
+ 35
+        "province": null,
+ 36
+        "zip": null
+ 37
+      },
+ 38
+      "line_items": [
+ 39
+        {
+ 40
+          "id": 12675376545814,
+ 41
+          "shop_id": 20978040854,
+ 42
+          "fulfillment_order_id": 5859254534166,
+ 43
+          "quantity": 1,
+ 44
+          "line_item_id": 12450204712982,
+ 45
+          "inventory_item_id": 32884276494358,
+ 46
+          "fulfillable_quantity": 1,
+ 47
+          "variant_id": 31360689504278
+ 48
+        }
+ 49
+      ],
+ 50
+      "outgoing_requests": [
+ 51
+        {
+ 52
+          "message": "",
+ 53
+          "request_options": {
+ 54
+            "notify_customer": false
+ 55
+          },
+ 56
+          "sent_at": "2022-10-12T16:18:12-04:00",
+ 57
+          "kind": "fulfillment_request"
+ 58
+        }
+ 59
+      ],
+ 60
+      "fulfill_at": "2022-09-02T10:00:00-04:00",
+ 61
+      "fulfill_by": null,
+ 62
+      "international_duties": null,
+ 63
+      "fulfillment_holds": [],
+ 64
+      "delivery_method": null
+ 65
+    }
+ 66 }
+ After the fulfillment service sends an accepted request, the fulfillment order card in the Shopify admin indicates to the merchant that the request was accepted:
+ Reject a fulfillment request
+ If the fulfillment service determines that it can’t fulfill the order, then it can reject the fulfillment request using either the REST Admin API's POST fulfillment_request/reject endpoint or the fulfillmentOrderRejectFulfillmentRequest mutation:
+ Reject a fulfillment request
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/fulfillment_request/reject.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "id": "5859313385494",
+ 3
+    "line_items": [
+ 4
+      {
+ 5
+        "fulfillment_order_line_item_id": "12450204712982",
+ 6
+        "message": "We weren't able to find this product in the warehouse. Sorry!"
+ 7
+      }
+ 8
+    ],
+ 9
+    "message": "We weren't able to find this product in the warehouse. Sorry!",
+ 10
+    "reason": "inventory_out_of_stock"
+ 11 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order": {
+ 3
+      "id": 5859313385494,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4782479474710,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "rejected",
+ 8
+      "status": "open",
+ 9
+      "supported_actions": [
+ 10
+        "request_fulfillment",
+ 11
+        "create_fulfillment",
+ 12
+        "hold"
+ 13
+      ],
+ 14
+      "destination": {
+ 15
+        "id": 5479395131414,
+ 16
+        "address1": "12 York Street",
+ 17
+        "address2": "",
+ 18
+        "city": "Toronto",
+ 19
+        "company": "",
+ 20
+        "country": "Canada",
+ 21
+        "email": "",
+ 22
+        "first_name": "Tyler",
+ 23
+        "last_name": "Kelleher",
+ 24
+        "phone": null,
+ 25
+        "province": "Ontario",
+ 26
+        "zip": "M5J 0A9"
+ 27
+      },
+ 28
+      "origin": {
+ 29
+        "address1": null,
+ 30
+        "address2": null,
+ 31
+        "city": null,
+ 32
+        "country_code": "CA",
+ 33
+        "location_id": 67794436118,
+ 34
+        "name": "test-created-via-api-2",
+ 35
+        "phone": null,
+ 36
+        "province": null,
+ 37
+        "zip": null
+ 38
+      },
+ 39
+      "line_items": [
+ 40
+        {
+ 41
+          "id": 12675450699798,
+ 42
+          "shop_id": 20978040854,
+ 43
+          "fulfillment_order_id": 5859313385494,
+ 44
+          "quantity": 1,
+ 45
+          "line_item_id": 12450204712982,
+ 46
+          "inventory_item_id": 32884276494358,
+ 47
+          "fulfillable_quantity": 1,
+ 48
+          "variant_id": 31360689504278
+ 49
+        }
+ 50
+      ],
+ 51
+      "outgoing_requests": [
+ 52
+        {
+ 53
+          "message": "",
+ 54
+          "request_options": {
+ 55
+            "notify_customer": false
+ 56
+          },
+ 57
+          "sent_at": "2022-10-13T11:17:18-04:00",
+ 58
+          "kind": "fulfillment_request"
+ 59
+        }
+ 60
+      ],
+ 61
+      "fulfill_at": "2022-09-02T10:00:00-04:00",
+ 62
+      "fulfill_by": null,
+ 63
+      "international_duties": null,
+ 64
+      "fulfillment_holds": [],
+ 65
+      "delivery_method": null
+ 66
+    }
+ 67 }
+ After the fulfillment service sends a rejected request, the fulfillment order card in the Shopify admin indicates to the merchant that the request was rejected:
+ Step 4: Create fulfillments
+ After accepting a fulfillment request, the fulfillment service can begin creating fulfillments using either the REST Admin API's POST fulfillments endpoint or the GraphQL Admin API's fulfillmentCreateV2 mutation. The fulfillment service can create multiple fulfillments for a given fulfillment order if required, representing multiple packages to be shipped.
+ When an app accepts a fulfillment request, the fulfillment order status transitions to in progress. After all line items on the fulfillment order are entirely fulfilled, the fulfillment order status transitions to a closed state.
+ Note
+ Fulfillments can’t be created for a fulfillment order before the fulfillment service accepts the fulfillment request.
+ The following examples show how to create a fulfillment for a single line item, with a quantity of three. The response provides a success status, which indicates that the fulfillment has been successfully created.
+ Create a fulfillment
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillments.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2 "fulfillment":{
+ 3
+    // The array of `line_items_by_fulfillment_order` lets apps create a single fulfillment with one or many fulfillment orders.
+ 4
+    // All of the fulfillment orders need to be on the same order, and assigned to the same location.
+ 5
+    "line_items_by_fulfillment_order":[
+ 6
+    {
+ 7
+      "fulfillment_order_id":"5859341008918",
+ 8
+      // The array of `fulfillment_order_line_items` lets apps partially fulfill fulfillment orders.
+ 9
+      // If `fulfillment_order_line_items` aren't provided, then the app creates a fulfillment for all remaining line items.
+ 10
+      "fulfillment_order_line_items":[
+ 11
+      {
+ 12
+        "id":"12675478814742",
+ 13
+        "quantity":"3"
+ 14
+      }
+ 15
+      ]
+ 16
+    }
+ 17
+    ],
+ 18
+    "tracking_info":{
+ 19
+      "number":"1234",
+ 20
+      "url":"www.usps.com",
+ 21
+      "company":"Fake Company"
+ 22
+      },
+ 23
+      "notify_customer":false,
+ 24
+      "origin_address": null,
+ 25
+      "message":"test message"
+ 26
+    }
+ 27 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment": {
+ 3
+      "id": 3849429450774,
+ 4
+      "order_id": 4804938989590,
+ 5
+      "status": "success",
+ 6
+      "created_at": "2022-10-13T15:11:16-04:00",
+ 7
+      "service": "test-created-via-api-2",
+ 8
+      "updated_at": "2022-10-13T15:11:16-04:00",
+ 9
+      "tracking_company": "Fake Company",
+ 10
+      "shipment_status": null,
+ 11
+      "location_id": 67794436118,
+ 12
+      "origin_address": null,
+ 13
+      "line_items": [
+ 14
+        {
+ 15
+          "id": 12553770336278,
+ 16
+          "variant_id": 42182036422678,
+ 17
+          "title": "Cool Bag",
+ 18
+          "quantity": 3,
+ 19
+          "sku": "5432122",
+ 20
+          "variant_title": "",
+ 21
+          "vendor": "tkelleher-usa-store",
+ 22
+          "fulfillment_service": "test-created-via-api-2",
+ 23
+          "product_id": 7499901009942,
+ 24
+          "requires_shipping": true,
+ 25
+          "taxable": true,
+ 26
+          "gift_card": false,
+ 27
+          "name": "Cool Bag",
+ 28
+          "variant_inventory_management": "shopify",
+ 29
+          "properties": [],
+ 30
+          "product_exists": true,
+ 31
+          "fulfillable_quantity": 0,
+ 32
+          "grams": 0,
+ 33
+          "price": "10.00",
+ 34
+          "total_discount": "0.00",
+ 35
+          "fulfillment_status": "fulfilled",
+ 36
+          "price_set": {
+ 37
+            "shop_money": {
+ 38
+              "amount": "10.00",
+ 39
+              "currency_code": "CAD"
+ 40
+            },
+ 41
+            "presentment_money": {
+ 42
+              "amount": "10.00",
+ 43
+              "currency_code": "CAD"
+ 44
+            }
+ 45
+          },
+ 46
+          "total_discount_set": {
+ 47
+            "shop_money": {
+ 48
+              "amount": "0.00",
+ 49
+              "currency_code": "CAD"
+ 50
+            },
+ 51
+            "presentment_money": {
+ 52
+              "amount": "0.00",
+ 53
+              "currency_code": "CAD"
+ 54
+            }
+ 55
+          },
+ 56
+          "discount_allocations": [],
+ 57
+          "duties": [],
+ 58
+          "admin_graphql_api_id": "gid://shopify/LineItem/12553770336278",
+ 59
+          "tax_lines": [],
+ 60
+          "origin_location": {
+ 61
+            "id": 2851029516310,
+ 62
+            "country_code": "US",
+ 63
+            "province_code": "CT",
+ 64
+            "name": "tkelleher-usa-store",
+ 65
+            "address1": "12 Runway Road",
+ 66
+            "address2": "",
+ 67
+            "city": "East Hartford",
+ 68
+            "zip": "06118"
+ 69
+          },
+ 70
+          "destination_location": {
+ 71
+            "id": 3436470665238,
+ 72
+            "country_code": "AU",
+ 73
+            "province_code": "NSW",
+ 74
+            "name": "Tyler Kelleher",
+ 75
+            "address1": "23 Hassall Street",
+ 76
+            "address2": "",
+ 77
+            "city": "Parramatta",
+ 78
+            "zip": "2150"
+ 79
+          }
+ 80
+        }
+ 81
+      ],
+ 82
+      "tracking_number": "1234",
+ 83
+      "tracking_numbers": [
+ 84
+        "1234"
+ 85
+      ],
+ 86
+      "tracking_url": "http://www.usps.com",
+ 87
+      "tracking_urls": [
+ 88
+        "http://www.usps.com"
+ 89
+      ],
+ 90
+      "receipt": {},
+ 91
+      "name": "#6547.1",
+ 92
+      "admin_graphql_api_id": "gid://shopify/Fulfillment/3849429450774"
+ 93
+    }
+ 94 }
+ Step 5: Act on cancellation requests
+ A fulfillment order notification of CANCELLATION_REQUEST indicates that a merchant has requested for a fulfillment order to be cancelled. Similar to retrieving assigned fulfillment order requests, the fulfillment service can retrieve cancellation requests.
+ After retrieving cancellation requests, the fulfillment service can either accept or reject the cancellation request. If the fulfillment service accepts the cancellation request, then it can cancel the fulfillment.
+ Tip
+ It might take a few minutes for cancellation requests to show up as a part of your assigned fulfillment orders. We recommend polling your assigned fulfillment orders until you receive the cancellation request.
+ Merchants cancelling fulfillment orders
+ Merchants can cancel a fulfillment order before the fulfillment service responds to the cancellation request. This option is provided immediately after requesting cancellation. A warning message is also displayed to the merchant, indicating that forcibly cancelling a fulfillment order doesn’t guarantee that the fulfillment service won't ship the items.
+ After the fulfillment service responds by either rejecting or accepting the cancellation request, the option is no longer provided to the merchant. The fulfillment service can’t create fulfillments against a fulfillment order that was cancelled by a merchant.
+ Retrieve cancellation requests
+ The following examples show how to retrieve cancellation requests:
+ REST example: Shows how to use the GET assigned_fulfillment_orders to retrieve cancellation requests on the shop that have been assigned to the fulfillment service app.
+ The assignment_status (set to cancellation_requested) and location_ids parameters are included as part of the request URL.
+ GraphQL example: Shows how to use the assignedFulfillmentOrders connection to query cancellation requests. Pass in the assignmentStatus argument and set it to CANCELLATION_REQUEST to retrieve assigned fulfillment orders with the CANCELLATION_REQUEST status.
+ Note
+ A fulfillment service can’t create fulfillments for the fulfillment orders that are returned in assigned fulfillment orders until it accepts or rejects the cancellation requests.
+ Retrieve cancellation requests
+ Endpoint
+ REST
+ GraphQL
+ 1 GET https://{shop}.myshopify.com/admin/api/{api_version}/assigned_fulfillment_orders.json?assignment_status=cancellation_requested&location_ids[]={assigned_location_id}
+ Request
+ REST
+ GraphQL
+ 1 // If you don't include the `assignment_status` parameter, then you receive all assigned fulfillment orders.
+ 2
+ 3 {empty request body}
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_orders": [
+ 3
+      {
+ 4
+        "id": 5859246931990,
+ 5
+        "shop_id": 20978040854,
+ 6
+        "order_id": 4782479474710,
+ 7
+        "assigned_location_id": 67794436118,
+ 8
+        "request_status": "cancellation_requested",
+ 9
+        "status": "in_progress",
+ 10
+        "supported_actions": [
+ 11
+          "cancel_fulfillment_order",
+ 12
+          "create_fulfillment"
+ 13
+        ],
+ 14
+        "destination": {
+ 15
+          "id": 5479354892310,
+ 16
+          "address1": "12 York Street",
+ 17
+          "address2": "",
+ 18
+          "city": "Toronto",
+ 19
+          "company": "",
+ 20
+          "country": "Canada",
+ 21
+          "email": "",
+ 22
+          "first_name": "Tyler",
+ 23
+          "last_name": "Kelleher",
+ 24
+          "phone": null,
+ 25
+          "province": "Ontario",
+ 26
+          "zip": "M5J 0A9"
+ 27
+        },
+ 28
+        "line_items": [
+ 29
+          {
+ 30
+            "id": 12572086075414,
+ 31
+            "shop_id": 20978040854,
+ 32
+            "fulfillment_order_id": 5859246931990,
+ 33
+            "quantity": 1,
+ 34
+            "line_item_id": 12450204712982,
+ 35
+            "inventory_item_id": 32884276494358,
+ 36
+            "fulfillable_quantity": 1,
+ 37
+            "variant_id": 31360689504278
+ 38
+          }
+ 39
+        ],
+ 40
+        "outgoing_requests": [
+ 41
+          {
+ 42
+            "message": "",
+ 43
+            "request_options": {
+ 44
+              "notify_customer": false
+ 45
+            },
+ 46
+            "sent_at": "2022-10-12T15:33:49-04:00",
+ 47
+            "kind": "cancellation_request"
+ 48
+          }
+ 49
+        ],
+ 50
+        "fulfill_at": "2022-09-02T10:00:00-04:00",
+ 51
+        "fulfill_by": null,
+ 52
+        "international_duties": null,
+ 53
+        "fulfillment_holds": [],
+ 54
+        "delivery_method": {
+ 55
+          "id": 140734136342,
+ 56
+          "method_type": "shipping",
+ 57
+          "min_delivery_date_time": null,
+ 58
+          "max_delivery_date_time": null
+ 59
+        },
+ 60
+        "assigned_location": {
+ 61
+          "address1": null,
+ 62
+          "address2": null,
+ 63
+          "city": null,
+ 64
+          "country_code": "CA",
+ 65
+          "location_id": 67794436118,
+ 66
+          "name": "test-created-via-api-2",
+ 67
+          "phone": null,
+ 68
+          "province": null,
+ 69
+          "zip": null
+ 70
+        }
+ 71
+      }
+ 72
+    ]
+ 73 }
+ Accept a cancellation request
+ After retrieving the assigned fulfillment order cancellation requests, the fulfillment service can review each fulfillment order, and determine whether it can be cancelled.
+ If the fulfillment order can be cancelled, then the fulfillment service can use the REST Admin API's POST cancellation_request/accept endpoint or the GraphQL Admin API's fulfillmentOrderAcceptCancellationRequest mutation to accept the cancellation of the fulfillment order and send an optional message to the merchant.
+ The response returns a fulfillment order that has a request status of cancellation accepted:
+ Accept a cancellation request
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop_domain}myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/cancellation_request/accept.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "id": "5859254534166",
+ 3
+    "message": "The item was not picked and packed yet. As a result, cancelling as requested."
+ 4 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order": {
+ 3
+      "id": 5859254534166,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4782479474710,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "cancellation_accepted",
+ 8
+      "status": "cancelled",
+ 9
+      "supported_actions": [
+ 10
+        "request_fulfillment",
+ 11
+        "create_fulfillment"
+ 12
+      ],
+ 13
+      "destination": {
+ 14
+        "id": 5479358922774,
+ 15
+        "address1": "12 York Street",
+ 16
+        "address2": "",
+ 17
+        "city": "Toronto",
+ 18
+        "company": "",
+ 19
+        "country": "Canada",
+ 20
+        "email": "",
+ 21
+        "first_name": "Tyler",
+ 22
+        "last_name": "Kelleher",
+ 23
+        "phone": null,
+ 24
+        "province": "Ontario",
+ 25
+        "zip": "M5J 0A9"
+ 26
+      },
+ 27
+      "origin": {
+ 28
+        "address1": null,
+ 29
+        "address2": null,
+ 30
+        "city": null,
+ 31
+        "country_code": "CA",
+ 32
+        "location_id": 67794436118,
+ 33
+        "name": "test-created-via-api-2",
+ 34
+        "phone": null,
+ 35
+        "province": null,
+ 36
+        "zip": null
+ 37
+      },
+ 38
+      "line_items": [
+ 39
+        {
+ 40
+          "id": 12675376545814,
+ 41
+          "shop_id": 20978040854,
+ 42
+          "fulfillment_order_id": 5859254534166,
+ 43
+          "quantity": 1,
+ 44
+          "line_item_id": 12450204712982,
+ 45
+          "inventory_item_id": 32884276494358,
+ 46
+          "fulfillable_quantity": 1,
+ 47
+          "variant_id": 31360689504278
+ 48
+        }
+ 49
+      ],
+ 50
+      "outgoing_requests": [
+ 51
+        {
+ 52
+          "message": "",
+ 53
+          "request_options": {
+ 54
+            "notify_customer": false
+ 55
+          },
+ 56
+          "sent_at": "2022-10-12T16:18:12-04:00",
+ 57
+          "kind": "fulfillment_request"
+ 58
+        },
+ 59
+        {
+ 60
+          "message": "",
+ 61
+          "request_options": {},
+ 62
+          "sent_at": "2022-10-12T16:23:37-04:00",
+ 63
+          "kind": "cancellation_request"
+ 64
+        }
+ 65
+      ],
+ 66
+      "fulfill_at": "2022-09-02T10:00:00-04:00",
+ 67
+      "fulfill_by": null,
+ 68
+      "international_duties": null,
+ 69
+      "fulfillment_holds": [],
+ 70
+      "delivery_method": null
+ 71
+    }
+ 72 }
+ After the fulfillment service accepts a cancellation request, the fulfillment order card in the Shopify admin indicates to the merchant that the cancellation request was accepted:
+ Reject a cancellation request
+ If the fulfillment service determines that it can’t accept the cancellation of the fulfillment order, then it can reject the cancellation request using the REST Admin API's POST cancellation_request/reject endpoint or the GraphQL Admin API's fulfillmentOrderRejectCancellationRequest mutation.
+ The response returns a fulfillment order that has a request status of cancellation rejected. The fulfillment service can continue to create fulfillments after rejecting a cancellation.
+ Reject a cancellation request
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/cancellation_request/reject.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "id": "5859255779350",
+ 3
+    "message": "This was already picked up by the courier."
+ 4 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order": {
+ 3
+      "id": 5859255779350,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4782479474710,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "cancellation_rejected",
+ 8
+      "status": "in_progress",
+ 9
+      "supported_actions": [],
+ 10
+      "destination": {
+ 11
+        "id": 5479359709206,
+ 12
+        "address1": "12 York Street",
+ 13
+        "address2": "",
+ 14
+        "city": "Toronto",
+ 15
+        "company": "",
+ 16
+        "country": "Canada",
+ 17
+        "email": "",
+ 18
+        "first_name": "Tyler",
+ 19
+        "last_name": "Kelleher",
+ 20
+        "phone": null,
+ 21
+        "province": "Ontario",
+ 22
+        "zip": "M5J 0A9"
+ 23
+      },
+ 24
+      "origin": {
+ 25
+        "address1": null,
+ 26
+        "address2": null,
+ 27
+        "city": null,
+ 28
+        "country_code": "CA",
+ 29
+        "location_id": 67794436118,
+ 30
+        "name": "test-created-via-api-2",
+ 31
+        "phone": null,
+ 32
+        "province": null,
+ 33
+        "zip": null
+ 34
+      },
+ 35
+      "line_items": [
+ 36
+        {
+ 37
+          "id": 12675378151446,
+ 38
+          "shop_id": 20978040854,
+ 39
+          "fulfillment_order_id": 5859255779350,
+ 40
+          "quantity": 1,
+ 41
+          "line_item_id": 12450204712982,
+ 42
+          "inventory_item_id": 32884276494358,
+ 43
+          "fulfillable_quantity": 1,
+ 44
+          "variant_id": 31360689504278
+ 45
+        }
+ 46
+      ],
+ 47
+      "outgoing_requests": [
+ 48
+        {
+ 49
+          "message": "",
+ 50
+          "request_options": {
+ 51
+            "notify_customer": false
+ 52
+          },
+ 53
+          "sent_at": "2022-10-12T16:27:07-04:00",
+ 54
+          "kind": "fulfillment_request"
+ 55
+        },
+ 56
+        {
+ 57
+          "message": "",
+ 58
+          "request_options": {},
+ 59
+          "sent_at": "2022-10-12T16:28:47-04:00",
+ 60
+          "kind": "cancellation_request"
+ 61
+        }
+ 62
+      ],
+ 63
+      "fulfill_at": "2022-09-02T10:00:00-04:00",
+ 64
+      "fulfill_by": null,
+ 65
+      "international_duties": null,
+ 66
+      "fulfillment_holds": [],
+ 67
+      "delivery_method": null
+ 68
+    }
+ 69 }
+ After the fulfillment service rejects a cancellation request, the fulfillment order card in the Shopify admin indicates to the merchant that the cancellation request was rejected:
+ Step 6: Cancel a fulfillment
+ You can cancel a fulfillment using the REST Admin API's POST cancel endpoint or the GraphQL Admin API's fulfillmentCancel mutation. However, any fulfillment orders that the fulfillment was created against will be affected in the following ways:
+ If the underlying fulfillment order was entirely fulfilled, then it will be automatically closed.
+ After cancelling a fulfillment, a new fulfillment order is created consisting of the line items from the cancelled fulfillment. This new fulfillment order is assigned to the same location as the original fulfillment order if the items are still stocked there.
+ If all items from the cancelled fulfillment can't be sourced from the same location, then the new fulfillment order is assigned to a location where the items are stocked, considering the shop’s fulfillment priority settings. This might result in multiple newly opened fulfillment orders for different locations.
+ If the fulfillment order was partially fulfilled, then the fulfillment order line item and remaining quantity properties / fields are adjusted back based on the cancelled fulfillment’s line items.
+ Cancel a fulfillment
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillments/{fulfillment_id}/cancel.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "id": "3849425780758",
+ 3 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment": {
+ 3
+      "order_id": 4782479474710,
+ 4
+      "status": "cancelled",
+ 5
+      "location_id": 67794436118,
+ 6
+      "id": 3849425780758,
+ 7
+      "created_at": "2022-10-13T13:27:16-04:00",
+ 8
+      "service": "test-created-via-api-2",
+ 9
+      "updated_at": "2022-10-13T13:30:06-04:00",
+ 10
+      "tracking_company": null,
+ 11
+      "shipment_status": null,
+ 12
+      "origin_address": null,
+ 13
+      "line_items": [
+ 14
+        {
+ 15
+          "id": 12450204712982,
+ 16
+          "variant_id": 31360689504278,
+ 17
+          "title": "Tërvete T-Shirt",
+ 18
+          "quantity": 1,
+ 19
+          "sku": "123456",
+ 20
+          "variant_title": "",
+ 21
+          "vendor": "tkelleher-usa-store",
+ 22
+          "fulfillment_service": "test-created-via-api-2",
+ 23
+          "product_id": 4351387861014,
+ 24
+          "requires_shipping": true,
+ 25
+          "taxable": true,
+ 26
+          "gift_card": false,
+ 27
+          "name": "Tërvete T-Shirt",
+ 28
+          "variant_inventory_management": "shopify",
+ 29
+          "properties": [],
+ 30
+          "product_exists": true,
+ 31
+          "fulfillable_quantity": 0,
+ 32
+          "grams": 408,
+ 33
+          "price": "10.00",
+ 34
+          "total_discount": "0.00",
+ 35
+          "fulfillment_status": "fulfilled",
+ 36
+          "price_set": {
+ 37
+            "shop_money": {
+ 38
+              "amount": "10.00",
+ 39
+              "currency_code": "CAD"
+ 40
+            },
+ 41
+            "presentment_money": {
+ 42
+              "amount": "10.00",
+ 43
+              "currency_code": "CAD"
+ 44
+            }
+ 45
+          },
+ 46
+          "total_discount_set": {
+ 47
+            "shop_money": {
+ 48
+              "amount": "0.00",
+ 49
+              "currency_code": "CAD"
+ 50
+            },
+ 51
+            "presentment_money": {
+ 52
+              "amount": "0.00",
+ 53
+              "currency_code": "CAD"
+ 54
+            }
+ 55
+          },
+ 56
+          "discount_allocations": [],
+ 57
+          "duties": [],
+ 58
+          "admin_graphql_api_id": "gid://shopify/LineItem/12450204712982",
+ 59
+          "tax_lines": [],
+ 60
+          "origin_location": {
+ 61
+            "id": 2851029516310,
+ 62
+            "country_code": "US",
+ 63
+            "province_code": "CT",
+ 64
+            "name": "tkelleher-usa-store",
+ 65
+            "address1": "12 Runway Road",
+ 66
+            "address2": "",
+ 67
+            "city": "East Hartford",
+ 68
+            "zip": "06118"
+ 69
+          },
+ 70
+          "destination_location": {
+ 71
+            "id": 3332899569686,
+ 72
+            "country_code": "CA",
+ 73
+            "province_code": "ON",
+ 74
+            "name": "Tyler Kelleher",
+ 75
+            "address1": "12 York Street",
+ 76
+            "address2": "",
+ 77
+            "city": "Toronto",
+ 78
+            "zip": "M5J 0A9"
+ 79
+          }
+ 80
+        }
+ 81
+      ],
+ 82
+      "tracking_number": null,
+ 83
+      "tracking_numbers": [],
+ 84
+      "tracking_url": null,
+ 85
+      "tracking_urls": [],
+ 86
+      "receipt": {},
+ 87
+      "name": "#6540.1",
+ 88
+      "admin_graphql_api_id": "gid://shopify/Fulfillment/3849425780758"
+ 89
+    }
+ 90 }
+ After a fulfillment service cancels a fulfillment, the fulfillment order card in the Shopify admin notifies the merchant that the fulfillment request has been cancelled:
+ Step 7 (Optional): Close a fulfillment order
+ In some cases, a fulfillment service might realize that it can’t fulfill the requested items only after it’s already accepted a fulfillment order request.
+ The fulfillment service can use the REST Admin API's POST fulfillment_orders/close endpoint or the GraphQL Admin API's fulfillmentOrderClose mutation to close the fulfillment order and indicate to the merchant that they won't be fulfilling the order.
+ Closing a fulfillment results in a fulfillment order where the status is incomplete and the request status is closed.
+ Note
+ If a merchant makes a new fulfillment request on an order that had a fulfillment order marked as incomplete, then the original incomplete fulfillment order will have a closed status and a new fulfillment order will be created.
+ Close a fulfillment order
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/close.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "id": "5859255779350",
+ 3
+    "message": "Apologies, but it appears we are out of stock."
+ 4 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order": {
+ 3
+      "id": 5859255779350,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4782479474710,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "closed",
+ 8
+      "status": "incomplete",
+ 9
+      "supported_actions": [
+ 10
+        "request_fulfillment",
+ 11
+        "create_fulfillment",
+ 12
+        "hold"
+ 13
+      ],
+ 14
+      "destination": {
+ 15
+        "id": 5479359709206,
+ 16
+        "address1": "12 York Street",
+ 17
+        "address2": "",
+ 18
+        "city": "Toronto",
+ 19
+        "company": "",
+ 20
+        "country": "Canada",
+ 21
+        "email": "",
+ 22
+        "first_name": "Tyler",
+ 23
+        "last_name": "Kelleher",
+ 24
+        "phone": null,
+ 25
+        "province": "Ontario",
+ 26
+        "zip": "M5J 0A9"
+ 27
+      },
+ 28
+      "line_items": [
+ 29
+        {
+ 30
+          "id": 12675378151446,
+ 31
+          "shop_id": 20978040854,
+ 32
+          "fulfillment_order_id": 5859255779350,
+ 33
+          "quantity": 1,
+ 34
+          "line_item_id": 12450204712982,
+ 35
+          "inventory_item_id": 32884276494358,
+ 36
+          "fulfillable_quantity": 1,
+ 37
+          "variant_id": 31360689504278
+ 38
+        }
+ 39
+      ],
+ 40
+      "fulfill_at": "2022-09-02T10:00:00-04:00",
+ 41
+      "fulfill_by": null,
+ 42
+      "international_duties": null,
+ 43
+      "fulfillment_holds": [],
+ 44
+      "delivery_method": null,
+ 45
+      "assigned_location": {
+ 46
+        "address1": null,
+ 47
+        "address2": null,
+ 48
+        "city": null,
+ 49
+        "country_code": "CA",
+ 50
+        "location_id": 67794436118,
+ 51
+        "name": "test-created-via-api-2",
+ 52
+        "phone": null,
+ 53
+        "province": null,
+ 54
+        "zip": null
+ 55
+      },
+ 56
+      "merchant_requests": [
+ 57
+        {
+ 58
+          "message": "",
+ 59
+          "request_options": {
+ 60
+            "notify_customer": false
+ 61
+          },
+ 62
+          "sent_at": "2022-10-12T16:27:07-04:00",
+ 63
+          "kind": "fulfillment_request"
+ 64
+        },
+ 65
+        {
+ 66
+          "message": "",
+ 67
+          "request_options": {},
+ 68
+          "sent_at": "2022-10-12T16:28:47-04:00",
+ 69
+          "kind": "cancellation_request"
+ 70
+        }
+ 71
+      ]
+ 72
+    }
+ 73 }
+ Step 8 (Optional): Enable tracking support
+ Your app can optionally act on Shopify requests for tracking numbers by exposing a /fetch_tracking_numbers endpoint that's prefixed with the callback_url that you set in step 2.
+ If tracking_support is set to true, then once each hour, Shopify makes a request to the /fetch_tracking_numbers endpoint to determine if there are any completed fulfillments awaiting tracking numbers from the remote fulfillment service.
+ Example request
+ The following example shows how Shopify retrieves a list of tracking numbers for the specified fulfillment names. The request includes the following parameters:
+ order_names: The fulfillment names that Shopify requires tracking numbers for. Example: order_names: #1001.1.
+ shop: The shop's URL.
+ timestamp: The Unix timestamp from when the inventory request was made.
+ Shopify retrieves a list of tracking numbers for the specified fulfillment names
+ GET <callback_url>/fetch_tracking_numbers
+ 1 http://myapp.com/fetch_tracking_numbers.json?order_names[]=#1001.1&order_names[]=#1002.1&order_names[]=#1003.2&shop=testshop.myshopify.com&timestamp=1669900140
+ JSON response
+ 1 {
+ 2
+    "tracking_numbers": {
+ 3
+      "#1001.1": "qwerty",
+ 4
+      "#1002.1": "asdfg",
+ 5
+      "#1003.2": "zxcvb"
+ 6
+    },
+ 7
+    "message": "Successfully received the tracking numbers",
+ 8
+    "success": true
+ 9 }
+ Step 9 (Optional): Share inventory levels with Shopify
+ Your app can optionally act on Shopify requests for inventory levels by exposing a /fetch_stock endpoint that's prefixed with the callback_url that you set in step 2.
+ If fulfillment_service.inventory_management is set to true, then Shopify makes a request to the /fetch_stock endpoint for the inventory of an individual SKU when the product is set up initially, when its SKU is changed in the Shopify admin, or when its inventory management is set to use the fulfillment service. Please note that SKU strings are case-sensitive at Shopify, and the SKUs returned from the /fetch_stock endpoint will be matched to the Shopify product SKUs respecting the case.
+ A request for all inventory data happens once every hour to keep Shopify up to date with the remote fulfillment service.
+ Example requests
+ The following example shows how Shopify retrieves inventory levels for a particular SKU. The request includes the following parameters:
+ location_id: The ID of the fulfillment service location.
+ max_retries: The maximum number of times Shopify will send the request for inventory levels.
+ shop: The shop's URL.
+ sku: The SKU for the product variant you need stock levels for.
+ timestamp: The Unix timestamp from when the inventory request was made.
+ Shopify retrieves inventory levels for a particular SKU
+ GET <callback_url>/fetch_stock
+ 1 https://myapp.com/fetch_stock.json?location_id=123&sku=SKU1&shop=testshop.myshopify.com&max_retries=3&timestamp=1532548742
+ JSON response
+ 1 {
+ 2
+    "SKU1": 1000
+ 3 }
+ The following example shows how Shopify retrieves inventory levels for all SKUs:
+ Shopify retrieves inventory levels for all SKUs
+ GET <callback_url>/fetch_stock
+ 1 https://myapp.com/fetch_stock.json?location_id=123&shop=testshop.myshopify.com&max_retries=3&timestamp=1532548742
+ JSON response
+ 1 {
+ 2
+    "SKU1": 1000,
+ 3
+    "SKU2": 500
+ 4 }
+ Webhooks
+ In API version 2023-01 and higher, your app can subscribe to webhooks for event notifications related to fulfillment orders. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration overview.
+ Next steps
+ Learn about the recommended workflow for using Shopify APIs to track orders placed through third-party marketplaces.
+ Learn how to manage inventory using the GraphQL Admin API by referring to the inventoryItem query and inventoryActivate mutation in the reference documentation.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a fulfillment service
+ Step 2: Receive fulfillment requests and cancellations
+ Step 3: Act on fulfillment requests
+ Step 4: Create fulfillments
+ Step 5: Act on cancellation requests
+ Step 6: Cancel a fulfillment
+ Step 7 (Optional): Close a fulfillment order
+ Step 8 (Optional): Enable tracking support
+ Step 9 (Optional): Share inventory levels with Shopify
+ Webhooks
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

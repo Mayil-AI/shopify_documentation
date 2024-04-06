@@ -1,0 +1,55 @@
+Overview
+ Marketing
+ Overview
+ Marketing externally
+ Overview
+ Writing a press release
+ Brand asset guidance
+ Marketing internally
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Shopify brand assets for marketing your app
+ Shopify wants to provide Shopify app developers with the tools that they need to promote and grow their business on the Shopify App Store. To help you showcase your presence on the Shopify App Store in your marketing materials, we've created the following Shopify brand assets and guidelines for you to use in any digital display ads and digital properties (such as a website or email).
+ Before downloading and using the Shopify brand assets, make sure that you read and fully understand the usage guidelines below.
+ Shopify App Store Ad Badge
+ Below are the two official badge assets for using the Shopify brand when you market your Shopify app:
+ Left image: The preferred Shopify App Store badge. Right image: The alternative Shopify App Store badge.
+ Download the badge assets
+ Using the Shopify App Store Ad Badge
+ Having all partners use a standardized ad badge helps to create consistency across the Shopify ecosystem, and helps to build merchant awareness and trust in the Shopify App Store. To keep this consistency, the asset shouldn't be altered in any way.
+ Prohibited alterations
+ To keep consistency in how the Shopify App Store Ad Badge is used, you must never make any of the following alterations:
+ Crop any part of the badge
+ Stretch or squash the badge
+ Rotate or tilt the badge
+ Modify the colors
+ Add a gradient or shadow
+ Animate the badge
+ Accessorize the badge or layer other images over the top of it
+ Add a border or treatment around the badge
+ Layer the badge over another logo or branded image
+ Don't alter or remove parts of the badge
+ Don't stretch or squash
+ Don't rotate or tilt
+ Don't use busy backgrounds
+ Don't add gradients or shadows
+ Don't change colors
+ Minimum size and spacing
+ The badge looks best when it's big enough to read and has room to breathe. The badge shouldn't be smaller than 30 px in height. It should have a minimum clear space around it equal to the size of the Shopify bag icon in the image. Don't place any typography, imagery, or other graphical images inside the clear space.
+ Left image: Correct badge spacing. Right image: Minimum badge height (30 px).
+ Usage guidelines
+ The use of the Shopify App Store Ad Badge (the "Badge") is subject to our Trademark Usage Guidelines. Use of the Badge must be explicitly authorized by Shopify in writing. For Developers who are part of the Shopify Partner Program, this authorization is provided in Part A, Section 5.2 of the Shopify Partner Program Agreement. Where used on a web page, the Badge should include embedded hyperlinks to your app listing page on the Shopify App Store.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Shopify App Store Ad Badge
+ Using the Shopify App Store Ad Badge
+ Usage guidelines
+ Updates & News
+ Developer changelog

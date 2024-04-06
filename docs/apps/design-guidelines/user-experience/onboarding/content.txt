@@ -1,0 +1,30 @@
+Billing
+ App Store
+ Onboarding
+ Onboarding is the process that merchants follow to set up your app. The onboarding process is crucial to merchant success.
+ Purpose
+ Onboarding should welcome merchants and make them eager to use your app or feature. Onboarding makes merchants comfortable and sets their expectations as soon as they start using your app.
+ Merchants should feel like they know what to do in your app after they’ve completed the onboarding experience. This leads to higher usage retention.
+ Onboarding is about sharing your app’s benefits and quickly getting merchants ready to use your app.
+ Must Do
+ Onboarding must be brief and direct. Provide clear instructions and guide merchants to completion.
+ Guidance
+ Onboarding experiences efficiently guide merchants through your app’s features so that merchants don’t have to discover them on on their own.
+ A great onboarding experience presents the basics of your app to merchants as quickly as possible.
+ Onboarding experiences can also come in the form of a selection of actions that are quick and easy for merchants to understand.
+ Tip
+ In some cases, complex onboarding can take longer than expected. Give merchants the option to complete the onboarding at a later time to avoid stopping their workflow.
+ Tip
+ While there isn’t a ready-made Polaris pattern for setup guides, you can compose your own with Polaris components and look for examples across the Shopify admin. A good setup acts as a quick start, with discrete steps that are automatically marked as complete. Including a progress indicator is another good practice that provides encouraging feedback to merchants.
+ Must Do
+ Request information from merchants only if it’s necessary.
+ Do Not
+ If your onboarding isn’t essential, then make it dismissible using a Polaris Cancel icon.
+ Do Not
+ Don’t have more than five steps in your onboarding process. This can lead merchants to drop off and not use your app.
+ Previous
+ App home page
+ Next
+ Marketing
+ Was this page helpful?
+ YesNo

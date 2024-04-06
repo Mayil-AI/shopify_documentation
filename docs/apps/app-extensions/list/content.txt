@@ -1,0 +1,35 @@
+List of app extensions
+ App extensions relate to specific use cases and have varying requirements. This guide describes the available app extensions that you can use to surface your app's functionality to Shopify user interfaces.
+ The following table lists all of the available app extensions that you can build. For each app extension listed in the table, you can review the following information:
+ The area of the Shopify interface the app extension is associated with.
+ Whether the app extension requires review and approval from Shopify.
+ The tool to use to create the extension.
+ Links to detailed documentation.
+ Shopify interface area App extension Requires review and approval? Create using Description
+ Shopify admin Admin actions No Shopify CLI Add custom modals to resource pages in the Shopify admin.
+ Admin blocks No Shopify CLI Add custom cards to resource pages in the Shopify admin.
+ Product configuration No Shopify CLI Allow users to interact with bundles on the product details page of the Shopify admin.
+ Admin links No Partner Dashboard Add quick links to your app from any page in the Shopify admin.
+ Bulk action links No Partner Dashboard Add bulk app actions to any resource page in the Shopify admin.
+ Navigation links No Partner Dashboard Add navigation links to display your embedded app's navigation items consistently across devices.
+ Marketing activities No Partner Dashboard Enable users to manage promotional campaigns and marketing automations from the Marketing page.
+ Product subscription No Shopify CLI Add recurring billing options for users in the Shopify admin.
+ Subscription link No Partner Dashboard Customize the link that allow users to see the subscription details in your subscription-enabled application.
+ Web pixel No Shopify CLI Run JavaScript code snippets on the **Order status** page to collect behavioral data for marketing campaign optimization and analytics.
+ Checkout Checkout UI extensions No Shopify CLI Add custom workflows and functionality at defined points in the checkout process.
+ Shopify Functions No Shopify CLI Inject custom code into key areas of the Shopify platform, such as checkout or cart.
+ Post-purchase Yes Shopify CLI Help users increase sales by adding products for purchase after checkout.
+ Web pixel No Shopify CLI Run JavaScript code snippets on an online store to collect behavioral data for marketing campaign optimization and analytics.
+ Customer accounts Customer account UI extensions No Shopify CLI Add functionality at defined points in new customer accounts.
+ Flow Triggers No Shopify CLI Connect your app to Shopify Flow so that events that occur in your app can trigger workflows.
+ Actions No Shopify CLI Connect your app to Shopify Flow so that your app receives data when a workflow action runs.
+ Lifecycle Events No Partner Dashboard Improve efficiency by letting Shopify Flow notify your app when your triggers are in use.
+ Online store Theme app extensions No Shopify CLI Integrate with Online Store 2.0 themes. Theme app extensions act as a replacement for using the Script Tag or Asset resources to integrate apps with online stores.
+ Web pixel No Shopify CLI Run JavaScript code snippets on an online store to collect behavioral data for marketing campaign optimization and analytics.
+ Payments Payments extension Yes Partner Dashboard Allow customers to complete purchases using a payment method provided by your app.
+ Shopify Point of Sale (POS) POS UI Extensions No Shopify CLI Add custom functionality at defined areas in the POS app.
+ POS links No Partner Dashboard Link directly to your app from pages in the Shopify POS app.
+ Cart app extension No Partner Dashboard Add your app’s loyalty points or other promotional discounts to the cart in the Shopify POS app.
+ Product recommendations No Partner Dashboard Show product recommendations in the Shopify POS app.
+ Next steps
+ Learn how to deploy extensions to release changes to users.

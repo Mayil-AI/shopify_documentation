@@ -1,0 +1,50 @@
+Overview
+ Security badges
+ Captcha
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ CAPTCHA
+ By default, Shopify uses Google's reCAPTCHA v3 to help prevent spam through customer, contact, and blog comment forms.
+ reCAPTCHA v3 analyzes website visitor behavior to provide a score indicating the likelihood of the visitor being a bot. If the score is low enough, or too many requests are made within a short period of time, then Shopify falls back to reCAPTCHA v2 and the visitor is redirected to the /challenge page to complete the "I'm not a robot" challenge.
+ Note
+ If reCAPTCHA v3 doesn't load, Shopify will fall back to reCAPTCHA v2. To help make sure that reCAPTCHA v3 loads, refer to How reCAPTCHA is included in themes to ensure your theme is compatible.
+ Merchants are able to disable reCAPTCHA functionality on the Online Store > Preferences page in the Shopify admin.
+ How reCAPTCHA is included in themes
+ The necessary code for the reCAPTCHA functionality is included through the content_for_header object. This means that if a merchant has reCAPTCHA enabled, but the content_for_header object is not present, then the reCAPTCHA functionality won't be present.
+ The reCAPTCHA functionality is initialized based on the presence of customer, contact, and blog comment forms, and is triggered when the forms are interacted with. For example, the functionality is triggered when a user clicks into a text field of an associated form.
+ These forms are identified based on the action attribute of the form, as well as specific input attributes:
+ Form type Form action attribute Input attributes (included on a single input)
+ Customer Contains /account
+ name="form_type"
+ One of the following, depending on the form:
+ value="customer_login"
+ value="create_customer"
+ value="recover_customer_password"
+ Contact Contains /contact
+ name="form_type"
+ One of the following, depending on the form:
+ value="contact"
+ value="customer"
+ Blog Contains /blogs
+ name="form_type"
+ value="new_comment"
+ Tip
+ The form action attribute and associated input attributes are output by default when using a relevant Liquid form tag. If your theme uses custom forms, then make sure that the above attributes are included so that your forms are compatible with reCAPTCHA functionality.
+ Example
+ 1 <form action="/account/login" ...>
+ 2
+    <input type="hidden" name="form_type" value="customer_login">
+ 3
+    ...
+ 4 </form>
+ In addition to triggering the reCAPTCHA functionality on user interaction, a reCAPTCHA logo is added to the bottom right corner of the page to notify visitors of the behavior analysis. You can opt to show a text disclaimer with the form instead.
+ Show a text disclaimer
+ If reCAPTCHA is enabled and reCAPTCHA v3 has loaded, then the reCAPTCHA logo appears in the bottom right corner of any associated pages. You can choose to show a text disclaimer with the form, rather than this logo.
+ To do this, you need to include the following code within any forms you wish to change this for:
+ 1 {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How reCAPTCHA is included in themes
+ Show a text disclaimer

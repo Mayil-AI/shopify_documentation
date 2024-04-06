@@ -1,0 +1,60 @@
+Section blocks
+ Theme blocks
+ App blocks
+ Section groups
+ Config
+ Theme Store
+ Section-defined blocks
+ Sections can define blocks locally within their schema. Use section-defined blocks to create customizable content layouts within a specific section. You can only use section-defined blocks within the section where they're defined. You can't nest other blocks in section-defined blocks, so you can't use them to create hierarchy.
+ To learn more about section-defined blocks, refer to the blocks property of the section schema.
+ Define blocks within sections
+ In your section's schema, add a blocks array. Each object in the array represents a block that's local to the section.
+ The following is an example:
+ 1 {
+ 2
+    "name": "Example section",
+ 3
+    "blocks": [
+ 4
+      {
+ 5
+        "type": "heading",
+ 6
+        "name": "Heading",
+ 7
+        "settings": [
+ 8
+          {
+ 9
+            "type": "text",
+ 10
+            "id": "heading",
+ 11
+            "label": "Heading",
+ 12
+            "default": "Hello, world!"
+ 13
+          }
+ 14
+        ]
+ 15
+      }
+ 16
+    ]
+ 17 }
+ In this example, the Example section includes the Heading block. The block has the following data:
+ type: A property that represents a unique identifier for the block
+ settings: An array that contains the customizable options for the block.
+ Rendering the block
+ In your section's Liquid file, you can loop over the blocks of the section and render each block based on its type. You can access the settings of the block using the block Liquid tag. The following is an example:
+ 1 {% for block in section.blocks %}
+ 2
+    {%- case block.type -%}
+ 3
+      {%- when "heading" -%}
+ 4
+        <h1>{{ block.settings.heading }}</h1>
+ 5
+    {% endcase %}
+ 6 {% endfor %}
+ In this example, the for loop iterates over each block in the section, and the block.settings.heading expression outputs the heading of each block.

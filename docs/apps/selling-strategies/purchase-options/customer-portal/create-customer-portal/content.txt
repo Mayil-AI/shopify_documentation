@@ -1,0 +1,175 @@
+Subscriptions
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Overview
+ Create customer-facing portals
+ Markets
+ B2B
+ Channels
+ Combined listings
+ Billing
+ App Store
+ Create a customer-facing purchase option portal
+ This tutorial describes how to create an automated, secure purchase option portal where customers can manage their purchase option information without interacting with merchants. Customers can use an email link or button to access the portal.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Expose a link or button to send an email
+ Authenticate and access the customer-facing portal
+ Make requests to the GraphQL Admin API to implement relevant views and forms on your app
+ Update a customer's payment method
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Create a subscription or deferred purchase option app.
+ Set up an app proxy with the following app proxy configuration:
+ Subpath prefix: apps
+ Subpath: my-purchase-option-app
+ Proxy URL: https://my-purchase-option-app.com/app_proxy
+ Access scopes
+ Your app requires the following access scopes:
+ Subscriptions
+ write_products
+ read_customer_payment_methods
+ read_own_subscription_contracts
+ write_own_subscription_contracts
+ Deferred purchase options
+ write_products
+ read_all_orders
+ read_customer_payment_methods
+ read_purchase_options
+ write_purchase_options
+ read_payment_mandate
+ write_payment_mandate
+ Step 1: Expose a link or button to send an email
+ Provide a link or button that triggers an email to be sent to a customer. You should place a link or button in an area that’s accessible to the customer.
+ You can provide a link or button in one of the following areas:
+ On the customer account page on the storefront
+ On the Order status page, by customizing the Order status page to expose a link or button
+ In an email, sent directly to the customer after the app receives an order creation webhook or a subscription contract creation webhook. The email should contain a secure login link for the customer. For example,
+ https://example.com/apps/my-purchase-option-app/customer_area?customer_id={customer_id}&shop_id={shop_id}&authentication_token={authentication_token}
+ Caution
+ You shouldn't render the login link on the shop's storefront because untrusted JavaScript in themes and apps can read and steal information.
+ Step 2: Authenticate and access the customer-facing portal
+ After you've exposed an action to send an email, the customer can use an email link to access the secure purchase option portal. Use an authentication scheme of your choice.
+ Note
+ The login link should be revocable. A fixed URL isn't safe to use because emails can be forwarded.
+ Just verifying the authenticity of the URL isn't a secure method. Ideally, a tuple that includes the shop, customer, and token should be stored in the database.
+ The token should be deleted whenever convenient. For example, you can expire the token after X minutes or when the customer signs off. In the case of a sign off, the customer can start the process again with another email that contains a new login URL.
+ Learn about considerations for customer-facing portals.
+ Step 3: Make requests to the GraphQL Admin API
+ After clicking the link, the customer is redirected to an endpoint predetermined by the URL.
+ For example, if the following URL is provided:
+ https://example.com/apps/my-purchase-option-app/customer_area?customer_id={customer_id}&shop_id={shop_id}&authentication_token={authentication_token}
+ Then Shopify makes a request to the following endpoint:
+ https://my-purchase-option-app.com/app_proxy/customer_area?customer_id={customer_id}&shop_id={shop_id}&authentication_token={authentication_token}
+ The app can then implement the relevant views and forms. For example, the app might do the following implementation tasks:
+ Updating billing and shipping addresses
+ Pausing, unpausing, skipping, and canceling subscriptions
+ Canceling and modifying pre-orders
+ All endpoints are forwarded from the app proxy into your app, as long as the links and form actions start with https://example.com/apps/my-purchase-option-app/.
+ When your app receives the request, you can make further requests to the GraphQL Admin API. For example, you can use the sellingPlanCreate mutation and the subscriptionContractCreate mutation.
+ Step 4: Update a customer's payment method
+ For security reasons, customer payment methods, such as credit cards, can't be updated using the API. Customers need to authenticate their payment method where applicable or request a second email that redirects them to a secure flow where their payment method can be safely updated.
+ After a customer has updated their payment method, the information is available to the app using the same customer payment method ID.
+ The following request returns a secure URL to send to the customer to update their payment method:
+ Request: POST /admin/api/2024-04.json
+ 1 mutation {
+ 2
+   customerPaymentMethodGetUpdateUrl(customerPaymentMethodId: "b0761d88b49eba7568f3bcf795402080") {
+ 3
+     updatePaymentMethodUrl
+ 4
+     userErrors {
+ 5
+       code
+ 6
+       field
+ 7
+       message
+ 8
+     }
+ 9
+   }
+ 10 }
+ JSON response:
+ 1 {
+ 2
+   "data": {
+ 3
+     "customerPaymentMethodGetUpdateUrl": {
+ 4
+       "updatePaymentMethodUrl": {
+ 5
+         "https:\/\/shop1.myshopify.io\/payment_methods\/confirm?key=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklqZzRZalpqTVRNNU1UVTJZbVV6WVdRMlpHVXpaRFEwWm1ZM016UTBZV0kwSWc9PSIsImV4cCI6IjIwMjEtMDktMTVUMjE6NTE6NTUuNTIwWiIsInB1ciI6bnVsbH19--07cc836a6ce419a16d0e7ddfc514f586e48e8eae"
+ 6
+       },
+ 7
+       "userErrors": []
+ 8
+     }
+ 9
+   },
+ 10
+   "extensions": {
+ 11
+     "cost": {
+ 12
+       "requestedQueryCost": 10,
+ 13
+       "actualQueryCost": 10
+ 14
+     }
+ 15
+   }
+ 16 }
+ If the response is an error message or if the customer needs to update their payment method at a later date, then you can use the customerPaymentMethodSendUpdateEmail mutation to send an email to the email address associated with the specified ID.
+ Request: POST /admin/api/2024-04.json
+ 1 mutation {
+ 2
+   customerPaymentMethodSendUpdateEmail(customerPaymentMethodId: "b0761d88b49eba7568f3bcf795402080") {
+ 3
+     customer {
+ 4
+       id
+ 5
+     }
+ 6
+     userErrors {
+ 7
+       field
+ 8
+       message
+ 9
+     }
+ 10
+   }
+ 11 }
+ JSON response:
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerPaymentMethodSendUpdateEmail": {
+ 4
+        "customer": {
+ 5
+          "id": "gid://shopify/Customer/2"
+ 6
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10
+ Step 1: Expose a link or button to send an email
+ Step 2: Authenticate and access the customer-facing portal
+ Step 3: Make requests to the GraphQL Admin API
+ Step 4: Update a customer's payment method
+ Updates & News

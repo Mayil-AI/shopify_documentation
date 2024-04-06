@@ -1,0 +1,100 @@
+Overview
+ Catalogs
+ Overview
+ Getting started
+ Migrate to catalogs
+ Translate content
+ Locally required order data
+ B2B
+ Channels
+ Combined listings
+ Billing
+ App Store
+ Catalogs
+ Caution
+ Starting in API version 2023-04, the PriceList.contextRule field will be deprecated. If you have an existing app that uses the contextRule field, then you should migrate to catalogs.
+ A catalog is a set of products that's published and priced for certain customers based on specified conditions. For example, you can make a catalog of products for customers who are browsing the online store from Canada and the United States.
+ In this guide, you'll learn how catalogs work, and some considerations for using catalogs to publish and price products, and to sell in different contexts.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_products access scope. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your store.
+ How it works
+ A catalog represents a list of products to be published in a specified context, such as for international customers, certain business-to-business (B2B) customers, or customers on certain sales channels.
+ A Catalog has a Publication field that determines which products are visible to the customer when they visit the online store and checkout.
+ Each Catalog object also has a PriceList field that determines any price adjustments for its eligible contexts, such as a Market for international customers, a CompanyLocation for business-to-business (B2B) customers, or an App for customers on certain sales channels.
+ Price lists
+ For each PriceList, a PriceListParent can be used to control prices using percentage adjustments. You can use the PriceListPrice object to represent a final, fixed price for a single product variant.
+ If you use the PriceListPrice field to configure a fixed price for a product variant, then the fixed price takes precedence over any other adjustments that are defined at the price list level. For more information about how prices are determined, refer to Pricing prioritization.
+ API objects and relationships
+ Before you start implementing catalogs, we recommend familiarizing yourself with the following API objects and their relationships:
+ Catalog API object descriptions
+ API object Description
+ Catalog A set of products and prices that's published to a specified context, such as a market or B2B company location.
+ Market A group of one or more regions that can be targeted with a configured catalog of products and prices.
+ CompanyLocation
+ A specified location or branch for a B2B company that can be targeted with a configured catalog of products and prices.
+ B2B APIs and features are available only to merchants on the Shopify Plus plan.
+ Publication
+ A group of products and collections that's published to a catalog.
+ When a publication is associated with a catalog, customers that belong to the associated market or company location have access to view and purchase only the products and collections within the publication. Prices and adjustments from the price list apply to the associated published products.
+ When a publication isn't associated with a catalog, and the catalog is associated with a market, then the published products are determined by the sales channel. For example, if a customer uses the online store and their catalog doesn't have an associated publication, then their product selection is all products that are published to the online store sales channel.
+ When a publication isn't associated with a catalog, and the catalog is associated with a company location, then no products are published to that location for the customer that's logged into their B2B customer account.
+ PriceList
+ A list of prices for different products that are displayed to the customer if they belong to an eligible context.
+ If a customer is eligible for multiple price lists, then the displayed price list follows the pricing prioritization rules.
+ PriceListParent
+ The price adjustment rule, such as a percentage increase or decrease, that's applied to the product's or product variant's initial price.
+ Adjustments can either reduce the initial prices with the PERCENTAGE_DECREASE type, or raise the initial prices with the PERCENTAGE_INCREASE type. The adjustment value is either a positive decimal number or zero.
+ You can also use the settings.compareAtMode field to determine whether a price list with relative prices adjusts the compareAtPrice for the variant:
+ If the compareAtMode is ADJUSTED, then the price list returns an adjusted compareAtPrice. For example, if the default compareAtPrice is $10 and the price list applies a 10% price increase, then the compareAtPrice is adjusted to $11. This is the default setting.
+ If the compareAtMode is NULLIFY, then the price list returns null for the compareAtPrice.
+ PriceListPrice
+ The price of one product variant that's associated with the price list.
+ The origin type of a price list price indicates whether the price list price is FIXED (defined on the price list) or RELATIVE (calculated using the price list adjustment on the parent):
+ Fixed price list prices: Price lists can include fixed price list prices for some, all, or none of the products. Fixed price list prices are defined in the price list currency. If a fixed price list price has been configured for a product variant, then it takes precedence over any other adjustments that are defined at the price list level.
+ Relative price list prices: If a fixed price list price hasn't been configured for a product variant, then a relative price list price is calculated based on the pricing adjustment that's specified in the price list parent. Relative price list prices are returned in the store currency from the APIs and don't have rounding rules and foreign exchange rates applied. Rounding rules and foreign exchange rates are applied in the online store and checkout.
+ ProductVariant The variant that's associated with a price list and belongs to a publication.
+ Pricing prioritization
+ Price lists are displayed to customers through the online store and checkout based on their eligible catalogs. A catalog represents certain criteria about the customer that must be true for a price list to apply.
+ If a customer is logged into a B2B customer account, then any catalogs that are associated with their selected company location are prioritized over catalogs that are associated with their eligible markets or other contexts.
+ After the price list is applied, pricing is determined by priority as described in the following diagram:
+ In the example scenario depicted in the diagram, a US-based merchant configures a price list for a Canadian market with currency CAD that applies different pricing for Canadian customers:
+ If the customer doesn't match a catalog's context, then the given price is the initial price (the product variant price) in the original currency.
+ If a price list isn't associated with the catalog, then the initial price is applied using the selected currency rules. The example uses a foreign exchange rate of 1.3.
+ If a PriceListPrice isn't defined, then an adjusted relative price is calculated using the PriceListParent object. Adjusted prices work in conjunction with exchange rules and rounding. In the example, the merchant sets a rounding rule to 0.99 for all currencies. A price adjustment of 20% applies in addition to the foreign exchange rate of 1.3. The price is calculated as $20 * 1.3 * 1.2 = $31.99.
+ If a PriceListPrice is defined, then a specific fixed price is applied for the product. This price applies irrespective of foreign exchange rules or rounding.
+ Note
+ When the customer is eligible for multiple catalogs, they receive the lowest price that's associated with those catalogs, whether it's a fixed or adjusted relative price.
+ Foreign exchange and rounding rules
+ If the customer's market doesn't match the store currency and a price list isn't associated with their catalog, then foreign exchange and rounding are applied to the initial price using either automatic or manual multi-currency rules.
+ However, if the customer's market doesn't match the store currency, and an adjusted relative price has been applied through the price list parent, then foreign exchange and rounding are applied along with the adjustment. If a fixed price list price is applicable, then foreign exchange and rounding aren't applied because the prices are already in the desired currency.
+ Note
+ Foreign exchange and rounding are applicable to product variants and the adjusted relative price. Foreign exchange and rounding aren't applicable to fixed price list prices.
+ Selling plan pricing policies
+ Selling plan pricing policies work in conjunction with price lists:
+ If a selling plan has a SellingPlanPricingPolicyAdjustmentType with a value of either FIXED_AMOUNT or PERCENTAGE, then the selling plan adjustment applies to the price list, both for fixed prices and relative adjustments.
+ If the value is PRICE, then the selling plan value overrides the price list settings.
+ In the following diagram, the pricing request includes a selling plan that reduces the price. A 15% PERCENTAGE adjustment type is applied to the PriceListPrice of $35.00. The final price is $29.40.
+ Considerations
+ Each market can be assigned only one catalog.
+ Multiple catalogs can be assigned to the same B2B company location. If a customer is logged into a B2B customer account that's eligible for multiple catalogs that contain the same product, then they receive the lowest listed price within those catalogs.
+ The market currency and price list currency must match. For example, you can't create a price list that's mapped to a Canadian market catalog with currency CAD and set the price list currency to USD.
+ There are no webhooks that are associated with changes to catalogs or price lists.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about building with catalogs:
+ Catalog object
+ Consult the GraphQL Admin API reference to learn more about the Catalog object.
+ PriceList object
+ Consult the GraphQL Admin API reference to learn more about the PriceList object.
+ Next steps
+ Learn how to sell different products for different prices around the world by configuring the price list and publication of a market’s catalog.
+ Learn how to create a B2B catalog to determine the published products and prices for customers ordering for a specific B2B company location.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ How it works
+ Considerations
+ Developer tools and resources
+ Next steps

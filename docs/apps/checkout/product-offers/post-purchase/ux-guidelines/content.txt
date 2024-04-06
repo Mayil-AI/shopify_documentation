@@ -1,0 +1,30 @@
+Overview
+ Getting started
+ Create a subscription
+ UX guidelines
+ Overview
+ Upsell
+ Subscriptions
+ Payments
+ Thank you and Order status
+ Localized UI extensions
+ UX guidelines for post-purchase product offers
+ To optimize the experience for merchants and customers, we've established a set of UX guidelines that you can refer to when building post-purchase product offers.
+ UX guidelines
+ Learn how to design a great customer-facing user experience (UX) and merchant experience:
+ UX guidelines for post-purchase upsells
+ Learn how to design a post-purchase upsell experience.
+ UX guidelines for post-purchase subscriptions
+ Learn how to design a post-purchase subscription experience.
+ Next steps
+ Explore UX guidelines for the entire checkout experience.
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ UX guidelines
+ Next steps
+ Updates & News
+ Developer changelog

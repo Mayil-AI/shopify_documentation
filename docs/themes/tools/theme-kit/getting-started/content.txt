@@ -1,0 +1,100 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Getting started with Theme Kit
+ Theme Kit is a cross-platform command line tool that you can use to build Shopify themes. To get up and running quickly with Theme Kit, follow the steps in this guide.
+ Requirements
+ You have access to a Shopify store.
+ You're familiar with the basics of the command line.
+ Step 1: Install Theme Kit
+ You can install Theme Kit using the command line on the following operating systems:
+ Linux
+ macOS
+ Windows
+ Note
+ If you have previously installed Theme Kit, then make sure you're using the latest version.
+ Linux
+ Use the following installation script to automatically download and install the latest version of Theme Kit:
+ Terminal
+ $ curl -s https://shopify.dev/themekit.py | sudo python3
+ Note
+ Homebrew for Linux is not currently supported.
+ macOS
+ Use Homebrew to install Theme Kit by running the following commands:
+ Terminal
+ $ brew tap shopify/shopify
+ $ brew install themekit
+ The Apple M1 architecture is not yet natively supported, but Theme Kit will work if you start the terminal with the Open using Rosetta option.
+ Windows
+ Install Theme Kit with Chocolatey by running the following command:
+ Terminal
+ $ choco install themekit
+ Step 2: Get a Theme password
+ After you install Theme Kit, you need to get a Theme password to connect Theme Kit to your store and manage your template files. The store owner or a staff member with the appropriate permissions can create a Theme password for you using the Theme Access app.
+ Steps:
+ Ask the store owner or a staff member with the appropriate permissions to create a Theme password for you using the Theme Access app.
+ Go to your email inbox and open the invitation containing your Theme password.
+ In the invitation, click Get Theme password.
+ Copy the password. You’ll use it in the next step.
+ The link expires after 7 days or after you have viewed the password. You can only view the password once.
+ Step 3: Connect to an existing theme
+ Note
+ If you don't want to work on an existing theme, then you can create a new theme.
+ To connect to an existing theme, you'll need the theme's ID. The easiest way to get your theme's ID is to use the theme get command, which returns a list of themes and IDs that exist on the store.
+ The following is an example of the theme get command, where your-password is your Theme password from step 2 and your-store is your store's Shopify domain name:
+ Terminal
+ $ theme get --list --password=[your-password] --store="[your-store.myshopify.com]"
+ Tip
+ Don't include the URL protocol (HTTP or HTTPS) in the store parameter.
+ Using PowerShell
+ If you're using PowerShell, then you need to include quotations around the URL if it follows a single dash. This is especially important if you're using the short form in the command. For example, the following shows one example that will work, and one that won't:
+ Correct example
+ 1 theme get --list -p=[password] -s="my-store.myshopify.com"
+ Incorrect example
+ 1 theme get --list -p=[password] -s=my-store.myshopify.com
+ Step 4: Set up your config file
+ A config.yml file creates a local connection to your Shopify store’s theme. You can use the previous information you collected (Theme password and theme ID) to create a config.yml file in your theme, and then download the theme locally.
+ Steps:
+ Create a directory for your theme:
+ Terminal
+ $ mkdir [your-theme-name]
+ Navigate to the new directory:
+ Terminal
+ $ cd [your-theme-name]
+ To download a specific theme, and create the config.yml file that connects this theme with a local version in the directory you just created, run the following command:
+ Terminal
+ $ theme get --password=[your-password] --store="[your-store.myshopify.com]" --themeid=[your-theme-id]
+ Step 5: Create a new theme
+ To create a new theme, run the following command:
+ Terminal
+ $ theme new --password=[your-password] --store="[your-store.myshopify.com]" --name=[theme name]
+ Running the theme new command does the following:
+ Generates a basic theme template locally
+ Creates a new theme in your Shopify store
+ Uploads the new files to your Shopify store
+ Creates or updates your config.yml file with the configuration for your new theme
+ Step 6: Push updates to your theme
+ Now that you've established a connection to a Shopify theme, you can run the following command in your theme directory:
+ Terminal
+ $ theme watch
+ The theme watch command instructs Theme Kit to watch for any changes made to your local files, and automatically pushes changes to your theme in the connected Shopify store. To close the watch connection, type ctrl + c.
+ Next steps
+ Build and customize your themes faster using component-based Liquid examples.
+ Use the Liquid Cheat Sheet as a quick reference while you build your themes.
+ Access our comprehensive Liquid reference for detailed documentation on Liquid tags, objects, and filters.
+ Learn about the different commands that you can use in Theme Kit to execute key operations.
+ Familiarize yourself with the configuration variables and their accepted values in Theme Kit.
+ Learn how to identify and resolve common issues in Theme Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Install Theme Kit
+ Step 2: Get a Theme password
+ Step 3: Connect to an existing theme
+ Step 4: Set up your config file
+ Step 5: Create a new theme
+ Step 6: Push updates to your theme
+ Next steps
+ Updates & News
+ Developer changelog

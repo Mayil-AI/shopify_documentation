@@ -1,0 +1,260 @@
+App Store
+ Styling overview
+ Shopify Plus
+ Checkout styling customizations are available only to Shopify Plus merchants.
+ How it works
+ The GraphQL Admin API includes types and their associated fields for applying styling to checkout, checkout queue, checkout UI extensions, and customer account pages. Styles are applied across these surfaces.
+ You can save styling changes to a draft checkout, which you can preview in the checkout editor, or to a production checkout on a live site. Review the following sections to familiarize yourself with API data structures and the role of checkout profiles in styling.
+ Data structures
+ The branding API is comprised of the following objects:
+ designSystem: Sets the design language for the entire experience. Its values are set to establish your design system, which encompasses design components such as spacing, colors, typography, and other visual elements that are used throughout the branding process. The designSystem object represents the standardized design principles for the brand. designSystem provides foundational tokens that are consumed in the customizations object.
+ customizations: Styles specific parts of the UI, individual components, or groups of components. With some customizations, you can pull from design system values. Other customizations retrieve their values from a pre-defined array of tokens or a float range. These customizations can be made to adjust the interface to better align with a brand's identity or specific requirements.
+ The following example JSON object shows the separate objects and their inner contents:
+ Advanced checkout branding object
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "designSystem": {
+ 6
+            "colors": {
+ 7
+              "global": {
+ 8
+                "accent": "#d10088"
+ 9
+              },
+ 10
+              "schemes": {
+ 11
+                "scheme1": {
+ 12
+                  "base": {
+ 13
+                    "background": "#fffafd",
+ 14
+                    "text": "#d10088"
+ 15
+                  },
+ 16
+                  "primaryButton": {
+ 17
+                    "background": "#ff9cdd",
+ 18
+                    "text": "#2e001e",
+ 19
+                    "accent": "#1773b0"
+ 20
+                  }
+ 21
+                },
+ 22
+                "scheme2": {
+ 23
+                  "base": {
+ 24
+                    "background": "#fff5fb",
+ 25
+                    "text": "#2e001e"
+ 26
+                  }
+ 27
+                }
+ 28
+              }
+ 29
+            },
+ 30
+            "typography": {
+ 31
+              "size": {
+ 32
+                "base": 16,
+ 33
+                "ratio": 1.4
+ 34
+              },
+ 35
+              "primary": {
+ 36
+                "base": {
+ 37
+                  "sources": null,
+ 38
+                  "weight": 400
+ 39
+                }
+ 40
+              },
+ 41
+              "secondary": {
+ 42
+                "base": {
+ 43
+                  "sources": "local('Oswald Regular'), local('Oswald-Regular'), url(https://fonts.shopifycdn.com/oswald/oswald_n4.a5ee385bde39969d807f7f1297bf51d73fbf3c1e.woff2?valid_until=MTY3NTEyMDcxMg&hmac=a4977887b7fe80efb9c9aa29c88d4abfd7fe0a627e24ca55ea23cb2bf8474c92) format('woff2'),url(https://fonts.shopifycdn.com/oswald/oswald_n4.8f3e284746fbc2d29e34993609c51fdc432b0b24.woff?valid_until=MTY3NTEyMDcxMg&hmac=2f43504b8a6cb1c6eac0037d16ff032aab1063a05d704f7b391ee84273936643) format('woff')",
+ 44
+                  "weight": 400
+ 45
+                }
+ 46
+              }
+ 47
+            }
+ 48
+          },
+ 49
+          "customizations": {
+ 50
+            "global": {
+ 51
+              "cornerRadius": "NONE",
+ 52
+              "typography": {
+ 53
+                "letterCase": "NONE"
+ 54
+              }
+ 55
+            },
+ 56
+            "header": {
+ 57
+              "alignment": "CENTER",
+ 58
+              "position": "START"
+ 59
+            },
+ 60
+            "headingLevel1": {
+ 61
+              "typography": {
+ 62
+                "weight": "BOLD",
+ 63
+                "font": "SECONDARY",
+ 64
+                "letterCase": "UPPER",
+ 65
+                "size": "LARGE"
+ 66
+              }
+ 67
+            },
+ 68
+            "headingLevel2": {
+ 69
+              "typography": {
+ 70
+                "weight": "BOLD",
+ 71
+                "font": "SECONDARY",
+ 72
+                "letterCase": "UPPER"
+ 73
+              }
+ 74
+            },
+ 75
+            "primaryButton": {
+ 76
+              "cornerRadius": "LARGE",
+ 77
+              "typography": {
+ 78
+                "letterCase": "UPPER",
+ 79
+                "weight": "BASE",
+ 80
+                "font": "SECONDARY",
+ 81
+                "size": "MEDIUM"
+ 82
+              },
+ 83
+              "blockPadding": "TIGHT",
+ 84
+              "inlinePadding": "BASE"
+ 85
+            }
+ 86
+          }
+ 87
+        },
+ 88
+        "userErrors": []
+ 89
+      }
+ 90
+    }
+ 91 }
+ Checkout profile
+ Checkout branding properties apply to a checkout profile ID. Profiles are useful to test branding against a draft profile before publishing any changes.
+ The following example uses the checkoutProfiles query to retrieve a list of available checkout profile IDs. The is_published parameter highlights which checkout profile applies to your store's current live checkout. You supply the id in checkout branding mutations to customize your checkout's branding properties.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query checkoutProfiles {
+ 2
+    checkoutProfiles(first: 1, query: "is_published:true") {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+          name
+ 7
+ 3
+      "checkoutProfiles": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/CheckoutProfile/1",
+ 8
+              "name": "Default checkout profile"
+ 9
+            }
+ 10
+ 13
+    }
+ 14 }
+ Resetting styles
+ You can reset styles to their defaults by writing parent fields to null with the GraphQL Admin API. Refer to examples of resetting some and all values to the defaults.
+ Limitations
+ You can't currently customize styling for individual pages. Styles are applied across checkout, checkout queue, checkout UI extensions, and customer account pages.
+ SVG is not a supported image type for styling checkout.
+ Developer tools and resources
+ Checkout UI extensions API reference
+ Consult the API reference for checkout UI targets and their respective types.
+ Components for checkout UI extensions
+ Learn about the components that are available in checkout UI extensions.
+ Checkout extension configuration
+ Learn about the properties that you can configure in your checkout UI extension.
+ GraphQL Admin API branding resources
+ Consult the API reference for checkout branding and view examples of common requests.
+ Get started
+ Follow these tutorials and learn how to apply custom styles.
+ Colors
+ Design and apply a color system.
+ Typography
+ Apply unique typefaces and other typographical customizations.
+ Favicon
+ Customize the favicon that displays to users.
+ Form controls
+ Adjust other visual components in the UI.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Resetting styles
+ Limitations
+ Developer tools and resources
+ Get started

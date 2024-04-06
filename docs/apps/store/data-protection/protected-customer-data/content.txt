@@ -1,0 +1,260 @@
+App listing visibility
+ App revenue share
+ Data protection
+ Protected customer data
+ Privacy requirements
+ App Store ads
+ Security
+ Protected customer data
+ Privacy and data protection are critical foundations for ecommerce and are important to merchants and their customers. The protected customer data requirements focus on data minimization, transparency, and security so that you can better support a merchant's path towards compliance with privacy and data protection rules.
+ When your app uses the Admin API, the review process for your public, published app might require action as described in the following table:
+ Level Data use Partner actions
+ 0 No customer data No action required
+ 1 Customer data excluding name, address, phone, and email fields
+ Request access to protected customer data in the Partner Dashboard
+ Implement level 1 protected customer data requirements
+ 2 Customer data including name, address, phone, or email fields
+ Request access to protected customer data and fields in the Partner Dashboard
+ Implement level 1 and level 2 protected customer data requirements
+ Participate in data protection reviews
+ Shopify will approve your app to use protected customer data if the requested data is the minimum amount required by your app to provide the merchant with the app functionality. If you're approved to access the data that you requested, then code updates aren't required. If you aren't approved to access the data that you requested, then you might need to update your app to handle errors or redacted data. For more information, refer to the example API requests for protected customer data.
+ While we encourage all apps to meet protected customer data requirements, access to the different levels can vary based on app types. See below:
+ Level Public app Custom app Admin created custom app
+ 1 Requires review Always available Always available
+ 2 Requires review Always available Varies by plan
+ To access customer data in development, select the data and fields you're using in the Partner Dashboard. You don't need to submit a request for review for apps that are installed only on development stores.
+ Important
+ Partners are legally bound by the terms and conditions of the Shopify Partner Program Agreement and the Shopify API License and Terms of Use, regardless of the API version that they're using. Protected customer data requirements aren't intended to replace the terms and conditions that you agree to as a Shopify Partner.
+ Request access to protected customer data
+ Public apps request access to protected customer data and protected customer fields through the Partner Dashboard.
+ Protected customer data includes any data that directly relates to a customer or prospective customer, as represented in the API resources. Resources that don't refer to a single customer, such as the product, theme, or inventory resources, are not included.
+ In addition to requesting access to protected customer data, you'll need to request access to the following protected customer fields individually because they directly identify customers:
+ Name: first and last names
+ Address: address line 1, address line 2, geolocation, and zip codes in both billing and shipping addresses
+ Email
+ Phone
+ If your access is approved, these fields will appear in the protected customer API resources.
+ To request access:
+ From the Partner Dashboard, go to Apps, and then select your app.
+ In the sidebar, click API access.
+ Find Protected customer data access and click Request access.
+ Select Protected customer data, provide your reasons for using it, and click Save.
+ If your app needs access to protected customer fields, then select the relevant fields, provide your reasons for using them, and click Save.
+ Complete your Data protection details, making sure that your app meets the protected customer data requirements.
+ Submit your app for review.
+ If your app is for testing or installed only on a development store, you can access customer data in development after Step 5. You don't need to submit for review.
+ You'll receive updates about the status of your review by email and through your Partner Dashboard.
+ Protected customer data API resources
+ The REST Admin API and GraphQL Admin API docs define which resources and fields are protected customer data.
+ The following table summarizes the API resources that are considered protected customer data.
+ API Resources Protected customer data
+ Customers Data that defines facts about a single customer, including name, addresses, email, and phone number.
+ Shipping Rates Shipping rates that related to a single order, which relates to a single customer.
+ Events, Webhooks and Metafields Events and metafields that relate to a single customer or order.
+ Orders Orders, draft orders, abandoned checkouts, refunds, transactions, and other resources that relate to a single customer.
+ Checkout Checkout and payments that relate to an order by a single customer.
+ Shipping and fulfillment Shipping and fulfillment data that relate to orders by a single customer.
+ Online Store Comments on a store that contain data about the commenter.
+ GiftCards Gift cards that are used by a single customer.
+ Using protected customer data
+ After your app is approved to access protected customer data, API requests and webhooks that contain protected resources will return the data requested. Responses will include only approved fields, and unapproved fields will be redacted.
+ API requests to unapproved resources will return an HTTP 403 Forbidden reply.
+ Example API requests for protected customer data
+ The following examples show API requests and responses for an app that is approved to access protected customer data and the email and name fields. In this scenario, the phone and address fields are redacted from the REST and GraphQL replies. The GraphQL reply also includes an errors message with an explanation of redacted fields.
+ REST request
+ 1 GET /admin/api/2022-10/customers/207119551.json
+ JSON response
+ 1 HTTP/1.1 200 OK
+ 2 {
+ 3
+   {
+ 4
+    "customer": {
+ 5
+      "id": 207119551,
+ 6
+      "email": "bob.norman@mail.example.com",
+ 7
+      "accepts_marketing": false,
+ 8
+      "created_at": "2022-04-05T13:03:10-04:00",
+ 9
+      "updated_at": "2022-04-05T13:03:10-04:00",
+ 10
+      "first_name": "Bob",
+ 11
+      "last_name": "Norman",
+ 12
+      "orders_count": 1,
+ 13
+      "state": "disabled",
+ 14
+      "total_spent": "199.65",
+ 15
+      "last_order_id": 450789469,
+ 16
+      "note": null,
+ 17
+      "verified_email": true,
+ 18
+      "multipass_identifier": null,
+ 19
+      "tax_exempt": false,
+ 20
+      "tags": "",
+ 21
+      "last_order_name": "#1001",
+ 22
+      "currency": "USD",
+ 23
+      "accepts_marketing_updated_at": "2005-06-12T11:57:11-04:00",
+ 24
+      "marketing_opt_in_level": null,
+ 25
+      "tax_exemptions": [],
+ 26
+      "email_marketing_consent": {
+ 27
+        "state": "not_subscribed",
+ 28
+        "opt_in_level": null,
+ 29
+        "consent_updated_at": "2004-06-13T11:57:11-04:00"
+ 30
+      },
+ 31
+      "sms_marketing_consent": null,
+ 32
+      "admin_graphql_api_id": "gid://shopify/Customer/207119551",
+ 33
+      }
+ 34
+    }
+ 35 }
+ GraphQL request with approved fields
+ POST /admin/api/2022-10/graphql.json
+ 1 {
+ 2
+    customer(id: "gid://shopify/Customer/957611081784") {
+ 3
+      email
+ 4
+      firstName
+ 5
+      lastName
+ 6
+    }
+ 7 }
+ JSON response
+ 1 HTTP/1.1 200 OK
+ 2 {
+ 3
+    "data": {
+ 4
+      "customer": {
+ 5
+        "email": "testcustomer@example.com",
+ 6
+        "firstName": "Sally",
+ 7
+        "lastName": "Testopherson",
+ GraphQL request with unapproved fields
+ POST /admin/api/2022-10/graphql.json
+ 1 {
+ 2
+    customer(id: "gid://shopify/Customer/957611081784") {
+ 3
+      email
+ 4
+      phone
+ 5
+    }
+ 6 }
+ JSON response
+ 1 HTTP/1.1 200 OK
+ 2 {
+ 3
+    "data": {
+ 4
+      "customer": {
+ 5
+        "email": "testcustomer@example.com",
+ 6
+        "phone": null,
+ 7
+      }
+ 8
+    },
+ 9
+    "errors": [
+ 10
+      {
+ 11
+        "message": "This app is not approved to access the Customer object. See https://partners.shopify.com/123/apps/456/customer_data for more details.",
+ 12
+        "locations": ...,
+ 13
+        "path": [
+ 14
+          "customer",
+ 15
+          "phone"
+ 16
+        ]
+ 17
+      }
+ 18
+    ]
+ 19 }
+ Requirements
+ To help apps safely process protected customer data, you must implement the following requirements in your development practices and in your apps. These requirements reflect the minimum acceptable handling of protected customer data and help apps support merchants with increasingly strict privacy and security requirements. You might need to consult with a privacy or legal professional for help applying these requirements to your business.
+ If you're using only protected customer data, then you must meet the level 1 requirements.
+ If you're using protected customer data including name, address, phone, or email fields, then you must meet all of the level 1 and 2 requirements.
+ Level 1 requirements:
+ Process only the minimum personal data required to provide app functionality to merchants.
+ Processing personal data comes with legal and regulatory requirements to secure, monitor, manage, and communicate about the data. Using the minimum data required helps minimize the time and effort spent complying with these requirements, and limits the potential damage of a data breach or unauthorized access.
+ Inform merchants what personal data you process and your reason for processing it.
+ Transparency with merchants about what personal data is processed and why helps merchants manage what processing occurs on their behalf. This information is often included in your privacy policy or data protection agreement.
+ Limit your processing of personal data to the stated purposes.
+ Processing must be limited to the stated purposes to ensure that merchants and customers are correctly informed about how their data is used.
+ Where applicable, respect and apply customer consent decisions.
+ Customer consent is a critical mechanism for customers to participate in their data processing and might be required depending on the type of processing your app performs.
+ Where applicable, respect and apply customer decisions to opt out of any data sharing such as a ‘data sale’ or similar concept under applicable laws or regulations.
+ Merchants must comply with applicable laws and regulations around sharing of personal data and this requirement helps ensure you are prepared to support them.
+ If you use personal data for automated decision-making and those decisions might have legal or significant effects, then you must allow customers to opt out.
+ Automated decision-making can include personal data processing such as profiling, analyzing, predicting, or scoring algorithms. Automated decisions with legal or significant effects are those that have a material impact on people's lives and it's important to give customers the option to have their data manually processed.
+ Make privacy and data protection agreements with your merchants.
+ Data protection agreements or privacy policies represent an agreement about personal data processing and are an important tool for formal and safe data privacy practices. They often include details such as data transfer mechanisms, scope of data processed, legal roles and responsibilities, retention, and definition of terms.
+ Apply retention periods to make sure that personal data isn’t kept for longer than needed.
+ Personal data must not be kept longer than necessary for the stated processing purposes. Retaining personal data longer than necessary increases the security risk of unauthorized access or inappropriate processing.
+ Encrypt data at rest and in transit.
+ Encrypting data when stored and as it transits various networks helps to prevent bad actors from gaining access to it even if they have access to the application. It also reduces the consequences of unintentionally disclosing the data set to the general public.
+ Level 2 requirements:
+ Encrypt your data backups.
+ Data backups can contain personal data and should be treated with the same level of concern and consideration as production data in order to prevent unauthorized access.
+ Keep test and production data separate.
+ Strict separation of environments prevents personal data from production from leaking into less secure environments where it could become exposed.
+ Have a data loss prevention strategy.
+ A data loss prevention strategy is a combination of technical controls, policies, and standards that protect an organization from the possibility of a bad actor extracting data for nefarious purposes.
+ Limit staff access to protected customer data.
+ Limiting staff access to protected customer data minimizes the risk that data will be improperly accessed, exfiltrated, or processed.
+ Require strong passwords for staff accounts.
+ Strong password requirements often include minimum length and a mixture of numbers, letters, and special characters.
+ Keep an access log to protected customer data.
+ Keeping logs and reviewing them frequently allows an organization to not only keep an audit trail of activity related to data access, but also assess whether their security controls are working effectively.
+ Implement a security incident response policy.
+ A security incident response policy helps organizations respond appropriately to security incidents and/or data breaches. These policies often include incident severity scales, roles and responsibilities, escalation paths, evidence collection, and required actions.
+ Data protection review
+ To help you meet the protected customer data requirements, we might ask for a detailed review of your practices. During this review, you'll need to provide evidence that your app and your practices meet the protected customer data requirements. If we select your app for a data protection review, then we'll contact you with instructions on how to proceed. Data protection reviews can occur after you've implemented the protected customer data requirements.
+ While any app might be selected, data protection reviews will likely focus on apps that have:
+ High number of merchant installs
+ High volume of customer records
+ More protected customer fields approved
+ Long retention of personal data
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Request access to protected customer data
+ Using protected customer data
+ Requirements
+ Data protection review

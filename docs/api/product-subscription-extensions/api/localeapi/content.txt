@@ -1,0 +1,35 @@
+ToastApi
+ Components
+ LocaleApi
+ Access the merchant’s current locale (in IETF format) to internationalize your extension content.
+ JavaScript
+ React
+ 1 import {extend, Text} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Admin::Product::SubscriptionPlan::Add', (root, api) => {
+ 4
+    const {locale} = api;
+ 5
+ 6
+    const text = root.createText(`My current locale is: ${locale.initialValue}`);
+ 7
+ 8
+    locale.setOnChange((newLocale) => {
+ 9
+      text.updateText(`My current locale is: ${newLocale}`);
+ 10
+    });
+ 11
+ 12
+    root.appendChild(text);
+ 13
+    root.mount();
+ 14 });
+ Props
+ optional = ?
+ Name Type Description
+ initialValue string IETF-formatted locale at time of page load
+ setOnChange (onChange: (locale: string) => void) => void Callback when user changes locale during runtime
+ Was this page helpful?
+ YesNo
+ Updates & News

@@ -1,0 +1,55 @@
+Storefront search
+ Filtering
+ Overview
+ Storefront filtering
+ Tag filtering
+ Filter collections by tag
+ Note
+ You should consider using storefront filtering instead of filtering by tag. Storefront filtering gives merchants the ability to easily create filters based on existing product data, rather than manually building out a tag system. Storefront filtering can also apply to search results, in addition to collections.
+ You can use product tags to filter a collection into smaller subsets of products.
+ How tag filtering works
+ Tag filters are applied by appending /[tag-handle] to the collection URL, where [tag-handle] is the handleized version of the desired product tag.
+ For example, if you only wanted to show products from the frontpage collection that are tagged with new, then you could use the following URL structure:
+ 1 {shop}.myshopify.com/collections/frontpage/new
+ You can also filter by multiple tags by combining the handleized tags with a +:
+ 1 {shop}.myshopify.com/collections/frontpage/new+sale
+ Tag filtering uses the AND operator, so only products that have both new and sale are shown. If no products in the frontpage collection have both tags, then customers will see a page with no results.
+ Redirecting unused product tags
+ If a tag in the URL isn't used on any of the store's products, then Shopify redirects to a collection URL with the tag removed. For example, if the tag summer-sale is removed from all your products because a limited-time promotion is over, then any customer that goes to {shop}.myshopify.com/collections/frontpage/summer-sale will be redirected to {shop}.myshopify.com/collections/frontpage.
+ When multiple tag handles are in the collection URL, only the tags not applicable to any products in the store are removed and the rest are kept in the redirect URL.
+ This behavior supports displaying products when customers follow links to collections with outdated filters, or mistype a tag handle when manually entering a collection URL.
+ Implementing tag filtering
+ The tag filter display should be included in the collection template, or through a section that's included in the collection template.
+ To implement tag filtering in your Liquid template, loop through all of the product tags in the collection using the all_tags object of the collection object. For each tag, you can check for its presence in the current_tags object, and then output a link to add or remove it accordingly with the following URL tag filters:
+ link_to_add_tag
+ link_to_remove_tag
+ Example
+ Example tag filtering
+ 1 {% if collection.all_tags.size > 0 %}
+ 2
+    <ul class="tag-filters">
+ 3
+      {% for tag in collection.all_tags %}
+ 4
+        {% if current_tags contains tag %}
+ 5
+          <li class="tag-filters__item active">{{ tag | link_to_remove_tag: tag }}</li>
+ 6
+        {% else %}
+ 7
+          <li class="tag-filters__item">{{ tag | link_to_add_tag: tag }}</li>
+ 8
+        {% endif %}
+ 9
+      {% endfor %}
+ 10
+    </ul>
+ 11 {% endif %}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How tag filtering works
+ Implementing tag filtering
+ Updates & News
+ Developer changelog
+ Partner blog

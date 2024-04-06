@@ -1,0 +1,85 @@
+APIs
+ Collapse sidebar
+ Customer account UI extensions
+ Unstable
+ Unstable
+ Overview
+ Scaffolding an extension
+ Extension targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Tutorials
+ Resources
+ Targets Overview
+ Targets
+ APIs
+ Order Status API
+ Authenticated Account
+ Customer Account API
+ Extension
+ Localization
+ Navigation
+ Session Token
+ Storage
+ Storefront API
+ UI
+ Version
+ Components
+ Configuration
+ Error handling
+ All Customer account UI extensions apis
+ Order Status API
+ Addresses
+ The API for interacting with addresses.
+ Attributes
+ The API for interacting with cart and checkout attributes.
+ Buyer Identity
+ The API for interacting with the buyer identity.
+ Cart Lines
+ The APIs for interacting with the cart lines.
+ Checkout Settings
+ The API for interacting with the checkout settings.
+ Cost
+ The API for interacting with the cost of a checkout.
+ Discounts
+ The API for interacting with discounts.
+ Gift Cards
+ The API for interacting with gift cards.
+ Localization (Order Status API)
+ The API for localizing your extension.
+ Metafields
+ The API for interacting with metafields.
+ Note
+ The API for interacting with the note applied to checkout.
+ Order
+ The API for interacting with the order, available on the Order Status Page.
+ Settings
+ The API for interacting with merchant settings.
+ Shop
+ The API for interacting with shop.
+ Uncategorized
+ Authenticated Account
+ The API for interacting with an account in which the customer is fully authenticated.
+ Customer Account API
+ Create unique customer experiences with the Customer Account API. The API offers a full range of options making it possible for customers to view their orders, manage their profile and much more.
+ Extension
+ The API for interacting with the metadata of an extension.
+ Localization
+ The API for localizing your extension.
+ Navigation
+ The API provided to extensions to navigate to extensions or host page.
+ Session Token
+ The API for interacting with session tokens.
+ Storage
+ The API for interacting with local storage.
+ Storefront API
+ Querying the Storefront API.
+ UI
+ The API for interacting with UI.
+ Version
+ The API for interacting with version.
+ Updates & News
+ Developer changelog

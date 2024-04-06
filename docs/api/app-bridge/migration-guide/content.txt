@@ -1,0 +1,630 @@
+Previous versions
+ Remix app package
+ Partner API
+ Payments Apps API
+ Function APIs
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Migrate your app to Shopify App Bridge React 4.x.x
+ If you have an app that uses components and hooks from Shopify App Bridge React 3.x.x, then you can follow this guide to upgrade your components and hooks to the latest version.
+ Requirements
+ react and react-dom version 18 or higher
+ A Node.js package manager: either npm, Yarn 1.x, or pnpm
+ Benefits of migration
+ When you migrate your app to use Shopify App Bridge React 4.x.x, you can take advantage of the following improvements to the developer experience:
+ Simplified configuration
+ Shopify App Bridge React 4.x.x simplifies the configuration process. Apps no longer need to use a React Provider or the host config. Instead, they only need to provide their API key to the app-bridge.js script.
+ Automatic updates
+ The app-bridge.js script automatically keeps itself up to date, so you can access new Shopify App Bridge APIs as soon as they're released.
+ Use web standards
+ The latest version of Shopify App Bridge embraces the web platform and web standards, so you can use web APIs you're already familiar with. For more information about the motivation behind App Bridge, refer to Shopify's platform is the Web platform.
+ Direct API access
+ Take advantage of the new Direct API access feature. You can make requests to the Admin API directly from your app using the standard web fetch API. For more information about Direct API access, refer to the documentation.
+ Modals with custom content
+ Add modals to your app with custom content using the new Modal component from Shopify App Bridge React. This enables you to create rich modal experiences that render directly in the Shopify admin without having to handle separate routes. These modals are fast too, because they're preloaded.
+ Step 1: Add the app-bridge.js script tag
+ Include the app-bridge.js script tag in your app. Replace %SHOPIFY_API_KEY% with your app's client ID. This configures your app to use Shopify App Bridge.
+ The app-bridge.js script is CDN-hosted, so your app always gets the latest version of it.
+ index.html
+ 1 <head>
+ 2
+    <meta name="shopify-api-key" content="%SHOPIFY_API_KEY%" />
+ 3
+    <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+ 4 </head>
+ Step 2: Upgrade your @shopify/app-bridge-react dependency
+ Install or upgrade the @shopify/app-bridge-react dependency with your package manager.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install @shopify/app-bridge-react@latest
+ Step 3: Remove the Provider setup
+ In previous versions of App Bridge React, you needed to set up a context provider to enable component and hook usage. This is no longer needed, as all the setup for Shopify App Bridge is done through the app-bridge.js script tag that you added in step 1.
+ Remove all Provider import statements and usages from @shopify/app-bridge-react in your app:
+ Provider setup
+ 3.x.x
+ 1 import ReactDOM from 'react-dom';
+ 2 import {Provider} from '@shopify/app-bridge-react';
+ 3 function MyApp() {
+ 4
+    return (
+ 5
+      <Provider config={config}>
+ 6
+        <div>My app</div>
+ 7
+      </Provider>
+ 8
+    );
+ 9 }
+ 10 const root = document.createElement('div');
+ 11 document.body.appendChild(root);
+ 12 ReactDOM.createRoot(root).render(<MyApp />);
+ 4.x.x
+ 1 import ReactDOM from 'react-dom';
+ 2 function MyApp() {
+ 3
+    return (
+ 4
+      <div>My app</div>
+ 5
+    );
+ 6 }
+ 7 const root = document.createElement('div');
+ 8 document.body.appendChild(root);
+ 9 ReactDOM.createRoot(root).render(<MyApp />);
+ Step 4: Update components
+ The following components and props have been refactored, renamed, or removed. Review and update the following components as described:
+ Modal
+ Updated props:
+ size
+ message
+ title
+ onClose
+ primaryAction and secondaryActions props
+ setupModalAutoSizing utility
+ Communication with the parent page
+ TitleBar
+ Updated props:
+ primaryAction, secondaryActions, and actionGroups
+ breadcrumbs
+ NavigationMenu
+ Modal
+ The Modal component allows you to display an overlay that prevents interaction with the rest of the app until dismissed. The following updates have been made to the Modal component's behaviour and props.
+ size prop renamed to variant
+ The size prop has been renamed variant to more accurately describe it's purpose. The variant prop accepts plain strings rather than constants.
+ size > variant
+ 3.x.x
+ 1 <Modal size={Modal.Size.Large} />
+ 4.x.x
+ 1 <Modal variant='large'></Modal>
+ Note
+ The Modal component has a new variant called max. Refer to the max modal example for more details.
+ message prop removed
+ The Modal component no longer accepts a message prop. Instead, it now accepts React elements as children.
+ message prop removed
+ 3.x.x
+ 1 <Modal message="Hello world!" />
+ 4.x.x
+ 1 <Modal>
+ 2
+    <p>Hello world!</p>
+ 3 </Modal>
+ title prop removed
+ The Modal component no longer accepts a title prop, Instead, now uses the TitleBar component to control the modal title.
+ title prop removed
+ 3.x.x
+ 1 <Modal title="My modal" />
+ 4.x.x
+ 1 <Modal>
+ 2
+    <TitleBar title="My modal" />
+ 3 </Modal>
+ onClose prop renamed onHide
+ The onClose prop has been renamed to onHide in the new Modal component to standardize the props with the admin extensions components library.
+ onClose > onHide
+ 3.x.x
+ 1 <Modal onClose={handleClose} />
+ 4.x.x
+ 1 <Modal onHide={handleClose}></Modal>
+ primaryAction and secondaryActions props removed
+ The Modal component no longer accepts the primaryAction and secondaryActions props. It now uses the TitleBar component to control the modal action buttons.
+ A TitleBar component in a Modal component accepts only one secondary action.
+ primaryAction and secondaryActions props removed
+ 3.x.x
+ 1 <Modal
+ 2
+    primaryAction={{
+ 3
+      content: 'Add Instagram',
+ 4
+      onAction: handleChange
+ 5
+    }}
+ 6
+    secondaryActions={[
+ 7
+      {
+ 8
+        content: 'Learn more',
+ 9
+        onAction: handleChange,
+ 10
+      },
+ 11
+    ]}
+ 12 />
+ 4.x.x
+ 1 <Modal>
+ 2
+    <TitleBar>
+ 3
+      <button variant='primary' onClick={handleChange}>Add Instagram</button>
+ 4
+      <button onClick={handleChange}>Learn more</button>
+ 5
+    </TitleBar>
+ 6 </Modal>
+ setupModalAutoSizing utility
+ In previous versions, you needed to set up modal auto-sizing to allow your modal to update its height to fit the page content. This is no longer needed, because auto-sizing is set automatically.
+ Communication with the parent page
+ In previous versions, you needed to use the Modal.Action.DATA action to communicate between the parent page and the modal. There are now two ways to communicate between the modal and the parent page.
+ If you're using a modal with custom content, you can use the Broadcast Channel Web API to communicate with the parent page.
+ Communication with the parent page
+ 3.x.x
+ 1 function MyModal() {
+ 2
+    return (
+ 3
+      <Modal title='Hello world!' src="/modal-route" />
+ 4
+    )
+ 5 }
+ 6
+ 7 // component rendered at /modal-route
+ 8 function ModalRouteComponent() {
+ 9
+    const app = useAppBridge();
+ 10
+ 11
+    const sendMessageToApp = () => {
+ 12
+      app.dispatch(Modal.data({message: 'Hi, this is the modal!'}));
+ 13
+    }
+ 14
+ 15
+    return (
+ 16
+      <div>
+ 17
+        <button onClick={sendMessageToApp}>Send message</button>
+ 18
+      </div>
+ 19
+    )
+ 20 }
+ 21
+ 22 function MyApp() {
+ 23
+    const app = useAppBridge();
+ 24
+ 25
+    useEffect(() => {
+ 26
+      app.subscribe(Modal.Action.DATA, (data) => {
+ 27
+        console.log('Received message from modal: ', data.message);
+ 28
+      });
+ 29
+    }, []);
+ 30
+ 31
+    return (
+ 32
+      <div>My app</div>
+ 33
+    )
+ 34 }
+ 4.x.x
+ 1 const modalChannel = new BroadcastChannel('my-modal');
+ 2
+ 3 function MyModal() {
+ 4
+    const sendMessageToApp = () => {
+ 5
+      modalChannel.postMessage('Hi, this is the modal!');
+ 6
+    }
+ 7
+ 8
+    return (
+ 9
+      <Modal>
+ 10
+        <button onClick={sendMessageToApp}>Send message</button>
+ 11
+      </Modal>
+ 12
+    )
+ 13 }
+ 14
+ 15 function MyApp() {
+ 16
+    useEffect(() => {
+ 17
+      modalChannel.addEventListener('message', (event) => {
+ 18
+        console.log('Received message from modal: ', event);
+ 19
+      });
+ 20
+    }, []);
+ 21
+ 22
+    return (
+ 23
+      <div>My app</div>
+ 24
+    )
+ 25 }
+ If you're using a modal with a src prop, you can use the postMessage API to communicate with the parent page. You can access postMessage through the window.opener object in the modal and through the modal.contentWindow object in the parent page.
+ Communication with the parent page
+ 3.x.x
+ 1 function MyModal() {
+ 2
+    return (
+ 3
+      <Modal title='Hello world!' src="/modal-route" />
+ 4
+    )
+ 5 }
+ 6
+ 7 // component rendered at /modal-route
+ 8 function ModalRouteComponent() {
+ 9
+    const app = useAppBridge();
+ 10
+ 11
+    const sendMessageToApp = () => {
+ 12
+      app.dispatch(Modal.data({message: 'Hi, this is the modal!'}));
+ 13
+    }
+ 14
+ 15
+    return (
+ 16
+      <div>
+ 17
+        <button onClick={sendMessageToApp}>Send message</button>
+ 18
+      </div>
+ 19
+    )
+ 20 }
+ 21
+ 22 function MyApp() {
+ 23
+    const app = useAppBridge();
+ 24
+ 25
+    useEffect(() => {
+ 26
+      app.subscribe(Modal.Action.DATA, (data) => {
+ 27
+        console.log('Received message from modal: ', data.message);
+ 28
+      });
+ 29
+    }, []);
+ 30
+ 31
+    return (
+ 32
+      <div>My app</div>
+ 33
+    )
+ 34 }
+ 4.x.x
+ 1 function MyModal() {
+ 2
+    return (
+ 3
+      <Modal id="my-modal" src="/modal-route">
+ 4
+        <TitleBar title="Hello world!" />
+ 5
+      </Modal>
+ 6
+    )
+ 7 }
+ 8
+ 9 // component rendered at /modal-route
+ 10 function ModalRouteComponent() {
+ 11
+    const app = useAppBridge();
+ 12
+ 13
+    useEffect(() => {
+ 14
+      function handleMessageFromMainApp(ev) {
+ 15
+        console.log('Message received in modal:', ev.data);
+ 16
+      }
+ 17
+ 18
+      window.addEventListener('message', handleMessageFromMainApp)
+ 19
+      return () => {
+ 20
+        window.removeEventListener('message', handleMessageFromMainApp)
+ 21
+      }
+ 22
+    }, [])
+ 23
+ 24
+    const sendMessageToApp = () => {
+ 25
+      window.opener.postMessage('Hi, this is the modal!', location.origin);
+ 26
+    }
+ 27
+ 28
+    return (
+ 29
+      <div>
+ 30
+        <button onClick={sendMessageToApp}>Send message</button>
+ 31
+      </div>
+ 32
+    )
+ 33 }
+ 34
+ 35 function MyApp() {
+ 36
+    const app = useAppBridge();
+ 37
+ 38
+    useEffect(() => {
+ 39
+      function handleMessageFromModal(ev) {
+ 40
+        console.log('Message received in main app:', ev.data);
+ 41
+      }
+ 42
+ 43
+      window.addEventListener('message', handleMessageFromModal)
+ 44
+      return () => {
+ 45
+        window.removeEventListener('message', handleMessageFromModal)
+ 46
+      }
+ 47
+    }, [])
+ 48
+ 49
+    const sendMessageToApp = () => {
+ 50
+      const modal = document.getElementById('my-modal');
+ 51
+      modal.contentWindow.postMessage('Hi, this is the main app!', location.origin);
+ 52
+    }
+ 53
+ 54
+    return (
+ 55
+      <div>My app</div>
+ 56
+    )
+ 57 }
+ TitleBar
+ The TitleBar component allows you to populate a standardized title bar with button actions and navigation breadcrumbs. It can now also be used inside a Modal component to control the title and footer content to reduce the number of APIs that you need to learn. The following updates have been made to the title bar component's behaviour and props.
+ primaryAction, secondaryActions, and actionGroups props removed
+ The TitleBar component no longer accepts the primaryAction, secondaryActions, and actionGroups props. Instead, to provide title bar actions, add button elements as children.
+ primaryAction, secondaryActions, and actionGroups props removed
+ 3.x.x
+ 1 <TitleBar
+ 2
+    title='Hello world!'
+ 3
+    primaryAction={{
+ 4
+      content: 'Foo',
+ 5
+      onAction: handleFooClick
+ 6
+    }}
+ 7
+    secondaryActions={[
+ 8
+      {
+ 9
+        content: 'Bar',
+ 10
+        onAction: handleBarClick,
+ 11
+        loading: true,
+ 12
+      },
+ 13
+    ]}
+ 14
+    actionGroups={[
+ 15
+      {
+ 16
+        title: 'More actions',
+ 17
+        actions: [
+ 18
+          {
+ 19
+            content: 'First grouped button',
+ 20
+            onAction: handleFirstGroupedButtonClick,
+ 21
+          },
+ 22
+          {
+ 23
+            content: 'Second grouped button',
+ 24
+            onAction: handleSecondGroupedButtonClick,
+ 25
+            disabled: true,
+ 26
+          }
+ 27
+        ]
+ 28
+      }
+ 29
+    ]}
+ 30 />
+ 4.x.x
+ 1 <TitleBar title='Hello world!'>
+ 2
+    <button variant='primary' onClick={handleFooClick}>Foo</button>
+ 3
+    <button onClick={handleBarClick}>Bar</button>
+ 4
+    <section label='More actions'>
+ 5
+      <button onClick={handleFirstGroupedButtonClick}>First grouped button</button>
+ 6
+      <button onClick={handleSecondGroupedButtonClick} disabled>Second grouped button</button>
+ 7
+    </section>
+ 8 </TitleBar>
+ breadcrumbs prop removed
+ The TitleBar component no longer accepts the breadcrumbs prop. Instead, a breadcrumb can be added to the title bar using a child a or button element with the variant="breadcrumb" attribute set.
+ breadcrumbs prop removed
+ 3.x.x
+ 1 <TitleBar
+ 2
+    title='Hello world!'
+ 3
+    breadcrumbs={[
+ 4
+      {
+ 5
+        content: 'Breadcrumb',
+ 6
+        url: '/breadcrumb',
+ 7
+      }
+ 8
+    ]}
+ 9 />
+ 4.x.x
+ 1 <TitleBar title='Hello world!'>
+ 2
+    <a variant='breadcrumb' href='/breadcrumb'>Breadcrumb</a>
+ 3 </TitleBar>
+ NavigationMenu renamed NavMenu
+ The NavMenu component creates a navigation menu for your app. This component was called NavigationMenu in previous versions of Shopify App Bridge. It was renamed to NavMenu to more closely match the HTML nav element. The following updates have been made to the navigation menu component's behaviour and props.
+ navigationLinks and matcher props removed
+ The navigation menu component no longer accepts the navigationLinks and matcher props. Instead, to provide menu links, add a elements as children of the NavMenu component. The active link is automatically matched.
+ The first element of the NavMenu component is required and used to configure the home route of the app. It is not rendered as a link. It needs to have rel="home" set along with the href set to the root path of your app.
+ navigationLinks and matcher props removed
+ 3.x.x
+ 1 <NavigationMenu
+ 2
+    navigationLinks={[
+ 3
+      {
+ 4
+        label: 'Home',
+ 5
+        destination: '/',
+ 6
+      },
+ 7
+      {
+ 8
+        label: 'Templates',
+ 9
+        destination: '/templates',
+ 10
+      },
+ 11
+      {
+ 12
+        label: 'Settings',
+ 13
+        destination: '/settings',
+ 14
+      },
+ 15
+    ]}
+ 16
+    matcher={(link, location) => link.destination === location.pathname}
+ 17 />
+ 4.x.x
+ 1 <NavMenu>
+ 2
+    <a href="/" rel="home">Home</a>
+ 3
+    <a href="/templates">Templates</a>
+ 4
+    <a href="/settings">Settings</a>
+ 5 </NavMenu>
+ Other components
+ All other React components from previous versions have been removed, and replaced by new APIs provided through the shopify global variable. Refer to the following table to learn about the API replacement for each component:
+ Component New API
+ ContextualSaveBar Contextual Save Bar API
+ Loading Loading API
+ ResourcePicker ResourcePicker API
+ Toast Toast API
+ Step 5: Update hooks
+ The following hooks have been refactored, renamed, or removed. Review and update the following components as described:
+ useAppBridge hook
+ The useAppBridge hook included in the most recent version of Shopify App Bridge functions differently than the previous useAppBridge hook. Instead of returning the App Bridge app instance, it returns the shopify global variable, which is used to access App Bridge APIs such as toast and resourcePicker. As the shopify variable is only available in a browser context, the useAppBridge hook throws helpful error messages when used in a server context or in a misconfigured app.
+ You no longer need to use the app reference returned from old uses of the useAppBridge hook as App Bridge handles configuration for you.
+ 1 function GenerateBlogPostButton() {
+ 2
+    const shopify = useAppBridge();
+ 3
+ 4
+    function generateBlogPost() {
+ 5
+      // Handle generating
+ 6
+      shopify.toast.show('Blog post template generated');
+ 7
+    }
+ 8
+ 9
+    return <button onClick={generateBlogPost}>Generate Blog Post</button>;
+ 10 }
+ Other hooks
+ All other React hooks from previous versions have been removed, and replaced by new APIs provided through the shopify global variable. In most cases, you can use the useAppBridge hook in place of these hooks, and access the corresponding API through the returned shopify global variable.
+ Refer to the following table to learn about the API replacement for each hook:
+ Hook Replacement
+ useAppBridgeState This functionality has been spread out across a few APIs. For example, to retrieve the current staffMember, use the User API.
+ useAuthenticatedFetch This hook is no longer needed, because App Bridge injects automatic authorization into the global fetch function. For more information, refer to Resource Fetching.
+ useContextualSaveBar The contextual save bar is now automatically configured when you provide the data-save-bar attribute to a form element. For more information, refer to Contextual Save Bar.
+ useNavigate Navigation API
+ useNavigationHistory Navigation API
+ useToast Toast API
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Benefits of migration
+ Step 1: Add the `app-bridge.js` script tag
+ Step 2: Upgrade your `@shopify/app-bridge-react` dependency
+ Step 3: Remove the `Provider` setup
+ Step 4: Update components
+ Step 5: Update hooks

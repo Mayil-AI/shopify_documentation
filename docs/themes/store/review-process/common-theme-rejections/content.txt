@@ -1,0 +1,25 @@
+Testing
+ Review process
+ Submitting a theme
+ Theme Store listings
+ Common theme rejections
+ Theme success
+ Theme revenue share
+ Common theme rejections
+ When you submit your theme to the Shopify Theme Store, the review team reviews it to ensure that it meets our requirements. Below are a few of the most common reasons that submitted themes are rejected during this process.
+ To avoid some of these issues, you can test your theme using the same data and setup process used by the theme review team. You can also review the testing recommendations on the Shopify Partner blog.
+ The theme is missing mandatory Shopify features.
+ The theme doesn't meet our technical requirements.
+ The theme hasn't been sufficiently tested to remove bugs or errors.
+ Settings and labels don't follow our style and terminology requirements.
+ The theme doesn't meet our accessibility or performance benchmarks.
+ The theme listing is incomplete or too short, has grammar and punctuation issues, or it is missing screenshots.
+ Demo stores haven't been configured to clearly demonstrate the theme's functionality, or don't use realistic use cases to demonstrate functionality.
+ Demo stores use an outdated version of the theme.
+ Demo stores use unlicensed or restricted content.
+ The theme contains code or components that are the intellectual property of another entity.
+ Tip
+ If you're looking for a codebase to use as a starting point or reference to overcome technical challenges, then you can refer to Dawn.
+ Was this page helpful?
+ YesNo
+ Updates & News

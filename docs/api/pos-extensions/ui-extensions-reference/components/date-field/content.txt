@@ -1,0 +1,25 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ DateField
+ A component that enables users to open a dialog and select a date through a text input.
+ Props
+ Name Type Description
+ disabled boolean? Whether the field can be modified.
+ error string? Indicates an error to the user. The field is given specific stylistic treatment to communicate problems that have to be resolved immediately.
+ label string The content to use as the field label.
+ onBlur () => void? The callback when focus is removed.
+ onChange (value: string) => void? The callback when the user has finished editing a field.
+ onFocus () => void? The callback when input is focused.
+ value string? The current value for the field. Defaults to today. You should update this value in response to the onChange callback.
+ helpText string? The label under the text field which provides guidance or instructions that assist users.
+ action InputAction? A button under the text field to provide extra funtionality.
+ InputAction
+ Name Type Description
+ label string The text displayed in the button.
+ disabled boolean? Whether the button can be pressed.
+ onPress () => void A callback to be performed.
+ Guidelines
+ Use a smart default date for common selections.
+ Was this section helpful?

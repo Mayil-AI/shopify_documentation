@@ -1,0 +1,95 @@
+Functions
+ Overview
+ Input and output
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Localization practices for Shopify Functions
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ This guide describes specific localization practices that you can use when creating Shopify Functions.
+ Localizing title and description
+ The function name and description properties in the shopify.extension.toml display to merchants in the Shopify admin. To create the best experience for merchants, it's important to localize the values of name and description.
+ Use the following process to provide translations for the name and description properties:
+ In shopify.extension.toml, replace the values for name and description with values prefixed with t:. The prefix indicates the translation key that Shopify uses when displaying the properties. The following example shows how define the properties:
+ shopify.extension.toml
+ 1 name = "t:name"
+ 2 description = "t:description"
+ Create a locales folder within your function extension to contain translation resources.
+ Create a JSON file for the default language and translations for these fields.
+ The name of the file should follow the format <language-iso>.default.json. Shopify uses these translations for the language in the file name, and for any languages which you don't provide. The keys in the JSON document should match the translation keys used in your shopify.extension.toml. The following example shows how to set up a JSON file:
+ en.default.json
+ 1 {
+ 2
+    "name": "The English function name",
+ 3
+    "description": "The English function description"
+ 4 }
+ Create JSON translation resources for additional languages.
+ The name of these files should follow the format <language-iso>.json. Shopify uses these translations for the language in the file name. The keys in the JSON document should match the translation keys used in your shopify.extension.toml. The following example shows how to create JSON translation resources in French:
+ fr.json
+ 1 {
+ 2
+    "name": "Le nom de la fonction en français",
+ 3
+    "description": "La description de la fonction en français"
+ 4 }
+ Providing translated content
+ Shopify provides the current locale to function input queries as part of the Localization object. For example, the Order Discount API returns Localization from the localization field on its Input root. Your function should use this locale to provide translated content in function output for any messages that display to customers.
+ Shopify recommends using language-native libraries to embed translated content in your function WebAssembly module.
+ Converting money values
+ When selling to multiple markets, you need to be aware of the currency displayed to the customer at checkout. Function input queries provide monetary values in the customer's displayed currency. Likewise, monetary values output from functions must be in the customer's currency.
+ You can use the function input's presentment_currency_rate property for the conversion rate between the store currency and the currency displayed to the customer. You must multiply any merchant-configured amounts by the presentment_currency_rate when comparing monetary values with the cart, or when outputting value discounts.
+ For example, if your app allows merchants to configure a fixed amount for a discount function, then you can use a numeric metafield and populate the metafield with the value in the store currency. When your function executes, it must multiply the configured value by the presentment_currency_rate input to compare the configured subtotal to the customer's cart subtotal in the customer's display currency.
+ The following example shows how to apply the presentment_currency_rate on a value discount:
+ 1 fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::Error>> {
+ 2
+      let config: input::Configuration = input.configuration();
+ 3
+      let cart_lines = input.cart.lines;
+ 4
+      let rate = input.presentment_currency_rate.parse::<f64>()?;
+ 5
+ 6
+      ...
+ 7
+ 8
+      let value: api::Value = Value::FixedAmount(FixedAmount {
+ 9
+          amount: config.amount * rate,
+ 10
+          applies_to_each_item: Some(true),
+ 11
+      });
+ 12
+ 13
+      Ok(FunctionResult {
+ 14
+          discounts: vec![Discount {
+ 15
+              message: None,
+ 16
+              conditions: None,
+ 17
+              targets,
+ 18
+              value,
+ 19
+          }],
+ 20
+          discount_application_strategy: DiscountApplicationStrategy::First,
+ 21
+      })
+ 22 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Localizing title and description
+ Providing translated content
+ Converting money values

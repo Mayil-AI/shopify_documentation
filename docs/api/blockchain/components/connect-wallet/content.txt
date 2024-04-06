@@ -1,0 +1,510 @@
+Components
+ Connect wallet
+ Tokengate
+ Theming
+ Analytics
+ Connect wallet
+ The @shopify/connect-wallet package provides a standard way of connecting wallets and signing messages on Shopify storefronts.
+ Note
+ This guide shows you how to use the @shopify/connect-wallet package with any React app. To learn how to integrate this package with storefront, refer to the tokengating tutorial series.
+ Demo
+ Get started
+ To get started with using @shopify/connect-wallet you need to follow these steps:
+ Installation
+ Client configuration
+ App provider setup
+ Adding the <ConnectButton /> component to your app
+ Custom connect button
+ Installation
+ Terminal
+ npm
+ yarn
+ pnpm
+ $ npm i @shopify/connect-wallet viem wagmi
+ Client configuration
+ Retrieve the projectId for your WalletConnect app by opening the WalletConnect dashboard and navigating to your project.
+ In your project's root folder, create a new file called connect-wallet-config.js.
+ Add the following code:
+ 1 import {buildConnectors} from '@shopify/connect-wallet';
+ 2 import {configureChains, createConfig, mainnet} from 'wagmi';
+ 3 // import {alchemyProvider} from 'wagmi/providers/alchemy';
+ 4 import {publicProvider} from 'wagmi/providers/public';
+ 5
+ 6 const {chains, publicClient, webSocketPublicClient} = configureChains(
+ 7
+    [mainnet],
+ 8
+    [
+ 9
+      /**
+ 10
+       * We recommend using `alchemyProvider or `infuraProvider`
+ 11
+      * to reduce the risk of your application being rate limited.
+ 12
+      */
+ 13
+      // alchemyProvider({apiKey: 'INSERT API KEY HERE'}),
+ 14
+      publicProvider(),
+ 15
+    ],
+ 16 );
+ 17
+ 18 const {connectors, wagmiConnectors} = buildConnectors({
+ 19
+    chains,
+ 20
+    projectId: 'YOUR_WALLET_CONNECT_PROJECT_ID',
+ 21 });
+ 22
+ 23 const config = createConfig({
+ 24
+    autoConnect: true,
+ 25
+    connectors: wagmiConnectors,
+ 26
+    publicClient,
+ 27
+    webSocketPublicClient,
+ 28 });
+ 29
+ 30 export {chains, config, connectors};
+ App provider setup
+ Let's begin using the configured client and chains. In your app's entry point, (either index.tsx, _app.tsx, or your framework's entry point), wrap the rendered component with both <WagmiConfig /> and the <ConnectWalletProvider /> as follows.
+ 1 import {ConnectWalletProvider} from '@shopify/connect-wallet';
+ 2 import '@shopify/connect-wallet/styles.css';
+ 3 import {WagmiConfig} from 'wagmi';
+ 4
+ 5 import {chains, config, connectors} from './wagmi';
+ 6
+ 7 export function Index() {
+ 8
+    return (
+ 9
+      <WagmiConfig config={config}>
+ 10
+        <ConnectWalletProvider chains={chains} connectors={connectors}>
+ 11
+          /* {...your app content here} */
+ 12
+        </ConnectWalletProvider>
+ 13
+      </WagmiConfig>
+ 14
+    );
+ 15 }
+ Adding the ConnectButton component to your app
+ This example shows a pseudo code version of including the component in your navigation header, but you're welcome to place the component where you prefer.
+ 1 import {ConnectButton} from '@shopify/connect-wallet';
+ 2
+ 3 export const Header = () => {
+ 4
+    return (
+ 5
+      <MyHeaderMarkup>
+ 6
+        // {...existing header code}
+ 7
+        <Links>
+ 8
+          // {...existing links code}
+ 9
+          <ConnectButton />
+ 10
+        </Links>
+ 11
+      </MyHeaderMarkup>
+ 12
+    );
+ 13 }
+ Custom connect button
+ Don't like our connect button? All good! You can replace our button with your own and use the openModal function returned from the useConnectionModal hook.
+ 1 import {useConnectionModal} from '@shopify/connect-wallet';
+ 2
+ 3 export const MyConnectButton = () => {
+ 4
+    const {openModal} = useConnectionModal();
+ 5
+ 6
+    return (
+ 7
+      <Button
+ 8
+        onClick={openModal}
+ 9
+        ...otherProps
+ 10
+      />
+ 11
+    );
+ 12 }
+ Connectors
+ Connectors allow users to connect to their preferred wallet app.
+ buildConnectors
+ We also support adding custom connectors and editing the list of supported wallets for users to connect with. In the connect-wallet-config.ts file you created during initial configuration, you can pass additional values to the buildConnectors function to do so.
+ Props
+ Name Description Type Required Default Value
+ customConnectors A list of the custom connectors supported by your app.
+ 
+ The custom connector types currently supported are InjectedConnector and WalletConnectConnector from wagmi. CustomConnector[] false undefined
+ includeDefaults A boolean value indicating whether you choose to include the list of default connectors.
+ 
+ If customConnectors are provided, the default connectors will be appended to the end of the list of custom connectors. boolean false true
+ excludedConnectors A list of default connector ids to be excluded.
+ 
+ View default connectors
+ 
+ A value for excludedConnectors can only be provided when includeDefaults is true. string | undefined false undefined
+ Return value
+ Name Description Type
+ connectors A list of the connectors supported by your app. Used by the ConnectWalletProvider. Connector[]
+ wagmiConnectors A list of the wagmi connectors supported by your app. Used by the createClient function during client configuration. @wagmi/core/Connector
+ Default Connectors
+ Name ID
+ MetaMask metaMask
+ Coinbase coinbaseWallet
+ Ledger Live ledger
+ 
+ Ledger Live connections use WalletConnect as oppposed to Ledger Connect Kit.
+ We plan to support Ledger Connect Kit as the preferred method for connecting your Ledger Wallet in the future.
+ 
+ Read more about Ledger Connect Kit and the Ledger Extension
+ Rainbow rainbow
+ WalletConnect walletConnect
+ The following is an example of adding a custom WalletConnectConnector and removing rainbow from the list:
+ 1 // ...other imports
+ 2 import type {CustomConnector} from '@shopify/connect-wallet';
+ 3 import {WalletConnectConnector} from 'wagmi/connectors/walletConnect';
+ 4 import {CustomConnectorIcon} from './assets/CustomConnectorIcon';
+ 5
+ 6 const customConnector: CustomConnector = {
+ 7
+    id: 'customConnector',
+ 8
+    name: 'Custom Connector',
+ 9
+    connector: new WalletConnectConnector({chains, options: {qrcode: false}}),
+ 10
+    icon: CustomConnectorIcon,
+ 11
+    qrCodeSupported: true,
+ 12
+    marketingSite: 'https://www.custom.com/',
+ 13
+    mobileAppPrefixes: {
+ 14
+      Android: '',
+ 15
+      iOS: 'https://custom.app/wc?uri=',
+ 16
+    },
+ 17 };
+ 18
+ 19 const {connectors, wagmiConnectors} = buildConnectors({
+ 20
+    chains,
+ 21
+    customConnectors: [customConnector],
+ 22
+    excludedConnectors: ['rainbow'],
+ 23 });
+ 24 // ...other configuration
+ Chains
+ You can use any of the supported chains from wagmi for @shopify/connect-wallet. In the connect-wallet-config.ts file you created during initial configuration, change the value provided to configureChains like this:
+ 1 // ...other imports
+ 2 import {polygon} from 'wagmi/chains';
+ 3
+ 4 const {chains, provider, webSocketProvider} = configureChains(
+ 5
+    [
+ 6
+      polygon,
+ 7
+      {
+ 8
+        /* any other chains you would like to provide go here */
+ 9
+      },
+ 10
+    ],
+ 11
+    [publicProvider()],
+ 12 );
+ 13
+ 14 // ...other configuration
+ Providers
+ For more information about configuring providers, refer to wagmi documentation.
+ When initializing the package, we strongly recommended including an Alchemy or Infura provider to reduce the risk of rate limiting. If your app is rate limited your customers can't connect their wallets.
+ Note
+ The configureChains function accepts multiple Remote Procedure Call (RPC) Providers. configureChains wraps the providers that you supply into a viem fallback Transport, which comes with support for falling back to another RPC Provider if a Provider goes down. For example, if Infura goes down, viem will fall back to using Alchemy.
+ For more information, refer to wagmi's configuring chains documentation.
+ Components
+ There are three components exported from the package for your use:
+ ConnectButton
+ ConnectorIcon
+ ConnectWalletProvider
+ ConnectButton
+ An out of the box component that controls the connection and disconnection flow for wallet connection.
+ 1 import {ConnectButton} from '@shopify/connect-wallet';
+ 2
+ 3 export const YourView = () => {
+ 4
+    return <ConnectButton />;
+ 5 };
+ ConnectorIcon
+ A component that displays the icon for a given connector ID. This component is useful for developing a custom connect button.
+ Example
+ Button
+ CustomConnectButton
+ /src/components/Button/Button.tsx
+ 1 import {HTMLProps} from 'react';
+ 2
+ 3 export const Button = ({children, onClick, ...props}: HTMLProps<HTMLButtonElement>) => {
+ 4
+    return (
+ 5
+      <button
+ 6
+        class="border border-gray-200 bg-gray-200 text-gray-700 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-gray-300 focus:outline-none focus:shadow-outline"
+ 7
+        type="button"
+ 8
+        {...props}
+ 9
+      >
+ 10
+        {children}
+ 11
+      </button>
+ 12
+    );
+ 13 }
+ Props
+ Name Description Type Required Default Value
+ id The id of the wallet whose icon you would like to display. "coinbase" | "ledger" | "metaMask" | "rainbow" | "walletConnect" false "unknown"
+ size A string value representing the size of the icon you would like to render. "xs" | "sm" | "md" | "lg" | "xl"
+ 
+ Size values:
+ "xs" -> 20px
+ "sm" -> 24px
+ "md" -> 40px
+ "lg" -> 48px
+ "xl" -> 76px true undefined
+ ConnectWalletProvider
+ The core component for ensuring your connect wallet integration works as expected. This component must wrap your app and be placed within a WagmiConfig.
+ 1 import {ConnectWalletProvider} from '@shopify/connect-wallet';
+ 2
+ 3 export const YourApp = ({chains, children, client, connectors}) => {
+ 4
+    return (
+ 5
+      <WagmiClient client={client}>
+ 6
+        <ConnectWalletProvider chains={chains} connectors={connectors}>
+ 7
+          // App content
+ 8
+        </ConnectWalletProvider>
+ 9
+      </WagmiClient>
+ 10
+    );
+ 11 };
+ Props
+ Name Description Type Required Default Value
+ chains A list of the chains supported by your app. Chain[] true undefined
+ connectors A list of the connectors supported by your app. Connector[] true undefined
+ enableDelegateCash A boolean value indicating whether you choose to support delegate.cash wallets. boolean false true
+ orderAttributionMode Dictates how automatic order attribution functions. OrderAttributionMode false "required"
+ requireSignature A boolean value indicating whether you choose to require signatures when a wallet connects. boolean false true
+ statementGenerator Any promise-based function that returns a string to provide to the message after a wallet connects. StatementGenerator false undefined
+ delegate.cash
+ The enableDelegateCash property dictates whether your app supports delegate wallets registered with the delegate.cash service. The service enables users to link cold wallets with hot wallets, and then the hot wallet can act on behalf of the cold wallet to connect and sign messages.
+ Supporting delegate.cash empowers users with valuable assets to confidently interact with your app knowing their assests are secured. Learn more by reading the delegate.cash documentation.
+ Order attribution mode
+ The orderAttributionMode property dictates how automatic order attribution functions after successful wallet connection.
+ Order attribution is a feature provided for Shopify Online Storefronts. When enabled, a request dispatches to Shopify, adding the buyer's wallet address to a completed order with the name "Wallet Address". This allows users to associate an order with a particular wallet address.
+ Value Description
+ disabled When order attribution is disabled, no attempt to perform order attribution is made.
+ ignoreErrors When order attribution is ignoreErrors, any error that occurs during attribution will be logged to the console but ignored.
+ required When order attribution is required, any errors as a result of the order attribution process will be thrown.
+ Statement generator
+ Note
+ A function provided to statementGenerator is invoked only when requireSignature is true.
+ The statementGenerator prop allows you to customize the statement displayed in a Sign-In with Ethereum message. The function receives the address of the wallet that has connected, allowing you to expand and customize your message statements to better suit your brand.
+ Below is a sample which fetches a custom message from an endpoint with the wallet address as a parameter. The example endpoint then returns JSON data with message as a value in the body. This isn't a guideline for how this must be used, but rather an example of what's possible.
+ Example value
+ 1 import {ConnectWalletProvider} from '@shopify/connect-wallet';
+ 2
+ 3 export const YourApp = ({chains, children, client}) => {
+ 4
+    const fetchStatementForAddress = (address: string) =>
+ 5
+      fetch(`endpointUrl/address=${address}`)
+ 6
+        .then((response) => response.json())
+ 7
+        .then(({message}: {message: string}) => {
+ 8
+          return message;
+ 9
+        });
+ 10
+ 11
+    return (
+ 12
+      <WagmiClient client={client}>
+ 13
+        <ConnectWalletProvider
+ 14
+          chains={chains}
+ 15
+          statementGenerator={fetchStatementForAddress}
+ 16
+        >
+ 17
+          // App content
+ 18
+        </ConnectWalletProvider>
+ 19
+      </WagmiClient>
+ 20
+    );
+ 21 };
+ Hooks
+ There are two hooks exported from the package for your use:
+ useConnectionModal
+ useConnectWallet
+ useConnectionModal
+ The useConnectionModal hook returns two functions which control the interaction state of the modal.
+ Example
+ 1 import {useConnectionModal} from '@shopify/connect-wallet';
+ 2
+ 3 export const MyConnectButton = () => {
+ 4
+    const {openModal} = useConnectionModal();
+ 5
+ 6
+    return (
+ 7
+      <Button
+ 8
+        onClick={openModal}
+ 9
+        ...otherProps
+ 10
+      />
+ 11
+    );
+ 12 }
+ Return value
+ Name Description
+ closeModal A function used to close the connect wallet modal.
+ openModal A function used to open the connect wallet modal.
+ useConnectWallet
+ A hook that returns information related to the active connected wallet, connection status, and more.
+ 1 import {useConnectWallet, Wallet} from '@shopify/connect-wallet';
+ 2
+ 3 export const MyComponent = () => {
+ 4
+    useConnectWallet({
+ 5
+      onConnect: ({address}: Wallet) =>
+ 6
+        console.info(`Wallet with ${address} connected!`),
+ 7
+      onDisconnect: (wallet?: Wallet) => {
+ 8
+        if (wallet) {
+ 9
+          console.info(`Wallet with ${wallet.address} disconnected!`);
+ 10
+        }
+ 11
+      },
+ 12
+    });
+ 13
+ 14
+    return <MyComponentMarkup />;
+ 15 };
+ Props
+ Name Description Type Required Default Value
+ onConnect A callback invoked on successful connection of a wallet. ((wallet: Wallet) => void) | undefined false undefined
+ onDisconnect A callback invoked when a wallet disconnects. This also returns the wallet that disconnected. ((wallet?: Wallet) => void) | undefined false undefined
+ Return value
+ Name Description Type
+ chains A collection of chains in use by the ConnectWalletProvider. Chain[]
+ connecting A boolean value indicating whether a wallet is in the process of connecting. boolean
+ connectedWallets A collection of connected wallets. The package supports a single wallet connection at the moment, but this expands the capabilities of the package. Wallet[]
+ disconnect A function used to disconnect a wallet address. If an address is not provided, the activeWallet is disconnected. (address?: string => void)
+ pendingConnector The connector being used to connect a new wallet. SerializedConnector | undefined
+ pendingWallet A wallet that is pending a signature request. Once the signature request completes, verification against the signature takes place. If valid, the wallet is added to the connectedWallets collection. Wallet[] | undefined
+ signing A boolean value indicating whether a signature request is pending. boolean
+ wallet The current connected wallet. Wallet
+ Types
+ We export the types used by the package to ensure that you can type your callback functions, custom connectors, and have a better understanding of how all of the exports tie together.
+ Connector
+ Name Description Type
+ connector The underlying wagmi connector used to connect a wallet. @wagmi/core/Connector
+ desktopAppLink A link prefix for WalletConnect desktop applications such as Ledger Live. string | undefined
+ icon The icon representing this wallet application. JSX.Element | null
+ id The identifier for the connector, such as metaMask. string
+ marketingSite The marketing website for a connector. string | undefined
+ mobileAppPrefixes A record of strings with prefixes for opening a WalletConnect deeplink on Android and iOS devices. Record<string, string | undefined> | undefined
+ modalConnector A connector used for opening the default WalletConnect modal. WalletConnectConnector | undefined
+ name The name for the connector, such as MetaMask. string
+ qrCodeSupported Whether or not connecting by QR Code is possible. boolean
+ ready Whether the connector has initialized or not. boolean
+ CustomConnector
+ Name Description Type
+ connector The custom wagmi connector used to connect a wallet. InjectedConnector | WalletConnectConnector
+ desktopAppLink A link prefix for WalletConnect desktop applications such as Ledger Live. string | undefined
+ icon The icon representing this wallet application.
+ 
+ SVGs should have a height and width property of 100%. JSX.Element | null
+ id The identifier for the connector, such as metaMask. string
+ marketingSite The marketing website for a connector. string | undefined
+ mobileAppPrefixes A record of strings with prefixes for opening a WalletConnect deeplink on Android and iOS devices. Record<string, string | undefined> | undefined
+ modalConnector A connector used for opening the default WalletConnect modal. WalletConnectConnector | undefined
+ name The name for the connector, such as MetaMask. string
+ qrCodeSupported Whether or not connecting by QR Code is possible. boolean
+ SerializedConnector
+ Name Description Type
+ desktopAppLink A link prefix for WalletConnect desktop applications such as Ledger Live. string | undefined
+ id The identifier for the connector, such as metaMask. string
+ marketingSite The marketing website for a connector. string | undefined
+ mobileAppPrefixes A record of strings with prefixes for opening a WalletConnect deeplink on Android and iOS devices. Record<string, string | undefined> | undefined
+ name The name for the connector, such as MetaMask. string
+ qrCodeSupported Whether or not connecting by QR Code is possible. boolean
+ Wallet
+ Name Description Type
+ address The public address of the connected wallet. string
+ connectedAt ISO datetime string in which this wallet connected. string | undefined
+ connectorId The id associated with how this wallet connected. string | undefined
+ connectorName The connector name associated with how this wallet connected. string | undefined
+ message The message which the wallet signed. Will be undefined in the event that the wallet has not yet signed the message or if requireSignature is false. string | undefined
+ signature The signed message from the signature transaction. Will be undefined in the event that the wallet has not yet signed the message or if requireSignature is false. string | undefined
+ signedOn ISO datetime string in which the wallet passed the validation check. string | undefined
+ Examples
+ Remix example
+ Use Shopify's Connect Wallet package in Remix applications.
+ Vite example
+ Use Shopify's Connect Wallet package in Vite applications.
+ Next.js Example
+ Use Shopify's Connect Wallet package in Next.js applications.
+ Create React App Example
+ Use Shopify's Connect Wallet package in Create React App applications.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Demo
+ Get started
+ Connectors
+ Chains
+ Providers
+ Components
+ Hooks
+ Types
+ Examples

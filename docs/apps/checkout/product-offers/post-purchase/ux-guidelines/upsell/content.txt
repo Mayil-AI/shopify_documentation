@@ -1,0 +1,140 @@
+Overview
+ Getting started
+ Create a subscription
+ UX guidelines
+ Overview
+ Upsell
+ Subscriptions
+ Payments
+ Thank you and Order status
+ Localized UI extensions
+ UX guidelines for post-purchase upsells
+ Beta
+ Post-purchase checkout extensions are in beta and can be used without restrictions in a development store. To use post-purchase extensions on a live store, you need to request access.
+ When you design a post-purchase upsell, a great customer-facing user experience (UX) and merchant experience are important to the success of our merchants. The post-purchase upsell page should represent the merchant well and protect their brand’s trust.
+ User experience
+ To provide a great post-purchase experience and to help the merchant gain trust from customers, implement the following UX principles in your post-purchase checkout extension:
+ Be transparent about all the costs involved in a purchase.
+ Present clear options to accept or refuse upsell offers without pressuring customers.
+ Display a maximum of two consecutive upsell offers.
+ Present relevant products by tailoring upsell offers to the shopping behaviors and preferences of customers.
+ Provide default copy that addresses customers directly using a voice that's appropriate for any store, regardless of brand personality.
+ Header and footer
+ The styling of the header and footer is consistent across every post-purchase page:
+ Header: Confirms the payment of the initial purchase of the order. Customers can also directly access their full order confirmation (and bypass the upsell offer pages) using the View order confirmation button.
+ Footer: Contains links to the privacy policy, terms of service, and refund policy.
+ Note
+ You can't adjust the header and footer components.
+ Required components
+ App Bridge Checkout provides many powerful UI components that a rendering extension can use to build an interface. The App Bridge Checkout UI components are rendered natively by Shopify, so you can depend on them to be performant, accessible, and functional in all of the checkout’s supported browsers.
+ Before you integrate your post-purchase app into checkout, familiarize yourself with the UI guidelines and best practices for the following required components:
+ Callout banner
+ Product title and price
+ Product image
+ Price breakdown
+ Call to action buttons
+ Callout banner
+ A callout banner encourages customers to take action on a post-purchase upsell. Use the App Bridge Checkout CalloutBanner to implement this component:
+ Place a callout banner near the top of the page to let the customer know what the upsell offer is. Provide strong default copy in your app to encourage merchants to be explicit about the upsell offer.
+ Do Don't
+ Lead with clear text that explains what a customer can add to the order they've placed. For example: It’s not too late to add to your order.
+ Include the product name and the discount associated with it.
+ Use exclamation points. For example: "Wait! Before time runs out!
+ Use misleading language that makes the upsell offer feel compulsory or introduces doubt about the status of the order.
+ Product title and price
+ The product must have the same title and price that it has on the merchant’s store. Keep this consistent to maintain a customer’s trust if they compare. Place the price of the product directly below the product title.
+ If the post-purchase product is an upsell offer at a discounted price, then do the following:
+ Strike out the original price of the product.
+ Display the discounted price next to the original price so that the relationship is clear.
+ Product image
+ The product image represents the product being offered to the customer in the post-purchase upsell offer. Use the App Bridge Checkout Image component to add an image:
+ ADDING MULTIPLE IMAGES
+ If the upsell offer includes multiple images, then the images need to be easy to navigate and provide additional context to the customer. Images can be presented using different angles or sizes.
+ Note
+ There isn't an App Bridge Checkout component available for a carousel feature.
+ Do Don't
+ Use 48px previous and next arrow buttons.
+ Give customers options to swipe between images, navigate using the keyboard, or click on a thumbnail to navigate to the next image.
+ Make additional images responsive across screen sizes.
+ Implement auto-scrolling through the images, as this might overwhelm customers.
+ Price breakdown
+ The post-purchase price breakdown shows the total cost of the upsell offer that the customer is accepting. The breakdown needs to be placed under the variant and quantity pickers. The breakdown also needs to dynamically update to reflect price changes if the customer adjusts the product's quantity or variants.
+ STRUCTURE OF THE PRICE BREAKDOWN
+ The price breakdown needs to include the following:
+ Money line: An individual breakdown of costs.
+ Subtotal: The total before shipping and taxes have been included.
+ Shipping: The total shipping cost for the item(s).
+ Taxes: The added cost of goods or services.
+ Money summary: The combined total of the subtotal, shipping, and taxes.
+ If your product description is long enough that a customer can't see the price breakdown without scrolling, then you need to include a copy of the price breakdown at the end of your product description.
+ Call to action buttons
+ A call to action button allows a customer to accept or decline an upsell offer. Use the App Bridge Checkout Button component to implement call to action buttons.
+ ACCEPT BUTTON
+ The accept button is the primary action on the post-purchase upsell page.
+ Use the following text for the accept button:
+ [Pay now • Product total price]
+ If the product you are offering is free, then use the following text:
+ [Add now • Free] or [Add now • $0]
+ Note
+ Don't give merchants the option to change the button text. However, you can translate the button text to any language that you want to support.
+ CONFIRMING ACCEPTED UPSELL OFFERS
+ Use the App Bridge Checkout Banner component to display a confirmation message when a customer accepts an upsell offer. For example: [Your order has been updated].
+ Customers might not expect the accept button to generate a payment immediately because the convention is for "buy now" actions to trigger an additional confirmation step. To clarify that there is no additional confirmation step, do the following:
+ Add a summary modal to confirm whether the customer wants to proceed.
+ Add additional help text directly under the accept button informing the customer that they'll be charged immediately.
+ DECLINE BUTTON
+ The decline button needs to be placed under the accept button and should be less visually prominent than the accept button. However, despite being less visually prominent, the decline button should still be easy to see so that the merchant can easily decline the upsell offer. The decline button must contain the text [Decline upsell offer].
+ Optional components
+ In addition to the required components, you can add the following optional components to the post-purchase page:
+ Product description
+ Variant picker
+ Quantity picker
+ Product description
+ The product description provides a summary of the key features of the product being displayed in the product image (or images).
+ Use the TextBlock, TextContainer and Text App Bridge Checkout components to implement a product description.
+ All upsell offers should have a product description that accurately summarizes the product features. Encourage merchants using your app to keep the product description as short as possible.
+ LENGTHY PRODUCT DESCRIPTIONS
+ If the product description is so long that it pushes the rest of the components down (variant picker, quantity picker, price breakdown, and buttons, then divide it into the following two parts:
+ A summary description that reveals all other components without scrolling
+ A longer, more detailed description below the other components
+ Variant picker
+ If the product has several variants (for example, size or color), then the page needs to include a variant picker under the product description. Use the App Bridge Checkout Select component to implement a variant picker.
+ Label the picker with the name of the variant and the variant values. For example, Size: S, M, L, XL. If your product has several sizes, then consider linking to a size chart.
+ Quantity picker
+ The quantity picker should be placed below the product description to allow customers to adjust the quantity of a product.
+ The quantity picker needs to be a number stepper that's set to 1 as a default. Use the label [Quantity].
+ Post-purchase app selector
+ Merchants need to enable their post-purchase app in the Shopify admin checkout settings. If there are multiple post-purchase apps installed, then they can also use the checkout settings to select which post-purchase app they want to enable on the post-purchase page.
+ We recommend that you let merchants know that they might need to manually select your app to be active in the checkout settings. You could explain this in installation instructions or in your help pages.
+ Your can check whether or not it is currently selected, using the following GraphQL Query:
+ 1 {
+ 2
+    app  {
+ 3
+        isPostPurchaseAppInUse
+ 4
+    }
+ 5 }
+ Suggested merchant-facing content for your app:
+ You could use the following copy as the basis for a merchant-facing message about multiple post-purchase extensions:
+ "If you already have a post-purchase app installed, you must manually select to make [app-name] active. You can do this in the Shopify admin checkout settings. This option only shows if you already have a post-purchase app installed."
+ Performance consideration
+ To guarantee a good experience for both merchants and customers, we strongly recommend that you prioritize performance when building your extensions. You can depend on App Bridge Checkout UI components to be performant, accessible, and functional in all of the checkout's supported browsers. Keep the following guidelines in mind when building your app:
+ Network calls must complete in two seconds or less.
+ Network calls that occur before an interface presents to the customer must happen in the ShouldRender handler.
+ Render must not require a network call before an interface presents to the customer. Ensure the extension caches required data beforehand using the storage API from ShouldRender.
+ Next steps
+ Learn how to create a post-purchase upsell.
+ Explore UX guidelines for the entire checkout experience.
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ User experience
+ Post-purchase app selector
+ Performance consideration
+ Next steps
+ Updates & News
+ Developer changelog

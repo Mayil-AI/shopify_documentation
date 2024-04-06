@@ -1,0 +1,65 @@
+TextField
+ Thumbnail
+ StackItem
+ By default, each individual element in a Stack is treated as one stack item.
+ Wrap multiple elements in a StackItem component, and the Stack component will treat them as one item.
+ JavaScript
+ React
+ 1 import {extend, InlineStack, StackItem, Text} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const stack = root.createComponent(InlineStack);
+ 5
+    const stackItemFill = root.createComponent(StackItem, {fill: true});
+ 6
+ 7
+    const stackItemText = root.createComponent(Text);
+ 8
+    stackItemText.appendChild('Fill the space');
+ 9
+ 10
+    const stackItemNoFill = root.createComponent(StackItem);
+ 11
+    const text1 = root.createComponent(Text);
+ 12
+    text1.appendChild('Other text');
+ 13
+    const text2 = root.createComponent(Text);
+ 14
+    text2.appendChild('Even more text');
+ 15
+ 16
+    stackItemFill.appendChild(stackItemText);
+ 17
+    stack.appendChild(stackItemFill);
+ 18
+ 19
+    stackItemNoFill.appendChild(text1);
+ 20
+    stackItemNoFill.appendChild(text2);
+ 21
+    stack.appendChild(stackItemNoFill);
+ 22
+ 23
+    root.appendChild(stack);
+ 24
+    root.mount();
+ 25 });
+ Props
+ optional = ?
+ Name Type Description
+ fill? boolean Fill the remaining horizontal space in the stack with this item
+ Behavior
+ 📱 All children of StackItems are placed in a single view object, which makes recycling the views expensive. Consider keeping your StackItems simple.
+ ✅ Do 🛑 Don't
+ 📱 Keep StackItems shallow. Complex hierarchies have performance penalties 📱 Use complex and deep Stack layouts
+ Wrap small UI elements in StackItem to group UI elements and styles Use StackItems outside of Stacks
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Behavior
+ Updates & News
+ Developer changelog
+ Partner blog

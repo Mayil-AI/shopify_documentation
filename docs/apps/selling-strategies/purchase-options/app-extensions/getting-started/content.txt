@@ -1,0 +1,90 @@
+Get started with product subscription app extensions
+ You can build a product subscription app extension using App Bridge Admin. This tutorial explains how to get started building a product subscription app extension.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create a product subscription app extension.
+ Run the extension locally and test it on a development store.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ You've created a Partner account.
+ You've created a development store that uses generated test data.
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ Access scopes
+ Your app requires the following access scopes:
+ Subscriptions
+ write_products
+ read_customer_payment_methods
+ read_own_subscription_contracts
+ write_own_subscription_contracts
+ Deferred purchase options
+ write_products
+ read_all_orders
+ read_customer_payment_methods
+ read_purchase_options
+ write_purchase_options
+ read_payment_mandate
+ write_payment_mandate
+ Step 1: Generate a new extension
+ Use Shopify CLI to generate a new extension.
+ Navigate to your app directory.
+ To start creating the app extension, run the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension
+ Select subscription UI as the type of extension.
+ Provide a name for your extension using either dash case or snake case.
+ Select a template for your extension. You can choose from Vanilla JS or React.
+ Tip
+ Vanilla JS is suitable for smaller projects that require a more straightforward API. React is suitable when you want an easy model for mapping state updates to UI updates. With Vanilla JS, you need to map state updates yourself. This process is similar to writing a vanilla application targeting the DOM, versus using react-dom.
+ You should now have a new extension directory that includes the extension script at src/index.{file-extension}.
+ Step 2: Preview your extension
+ After your extension is created, you can work with it by building the app and starting a local development server.
+ Shopify CLI uses Cloudflare to create a tunnel that allows your app and extension to be accessed using a unique HTTPS URL.
+ Navigate to your app directory.
+ Either start or restart your server to build and preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ 
+ When you run the dev command, the CLI builds and serves your app. It also walks you through multiple configuration steps. If you've already run dev for this app, then some of these steps are skipped.
+ To learn about the processes that are executed when you run dev, refer to the list of Shopify CLI commands.
+ Tip
+ You can test using a specific product ID by passing it in using the --subscription-product-url flag. For example, --subscription-product-url="/products/12345", where 12345 is the product variant ID.
+ Press p to open the developer console.
+ In the developer console page, click on the preview link for the product subscription extension.
+ Step 3: Check the extension script status
+ Now that you have your local extension running in your development store, you can check the app extension status and update the extension script.
+ Click the Developer Console navigation option.
+ You should see the green Connected status badge and other data related to your extension.
+ You should also see a Subscriptions card on the product page. You might need to scroll down to see it.
+ Update the extension script at either ./index.ts(x) or ./index.js and test it in your development store.
+ For information on rendering extension points, refer to Create and manage a product subscription app extension.
+ Tip
+ The Developer console automatically reloads the extension after you've saved the changes to your script.
+ Step 4: Test your extension in the Shopify mobile app
+ You can test your extension in the Shopify mobile app using the Developer console.
+ Log in to your development store on the Shopify mobile app.
+ Click Developer Console, then click on the mobile icon to generate a QR code.
+ Use the camera on your mobile device or a QR code scanning app of your choice to scan the QR.
+ The Shopify mobile app opens the product details view, and your extension is available in the Subscriptions card.
+ Next steps
+ Learn about extension points.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Generate a new extension
+ Step 2: Preview your extension
+ Step 3: Check the extension script status
+ Step 4: Test your extension in the Shopify mobile app
+ Next steps
+ Updates & News
+ Developer changelog

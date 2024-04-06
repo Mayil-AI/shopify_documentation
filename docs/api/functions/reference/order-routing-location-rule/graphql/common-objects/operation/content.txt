@@ -1,0 +1,65 @@
+Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ FulfillmentGroup
+ FulfillmentGroupRankedLocations
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ Localization
+ LocalTime
+ Location
+ LocationAddress
+ MailingAddress
+ Market
+ MarketRegionCountry
+ Metafield
+ MoneyV2
+ Operation
+ OrderRoutingLocationRule
+ Product
+ ProductVariant
+ PurchasingCompany
+ RankedLocation
+ CurrencyCode
+ DeliveryMethod
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Payment Customization API
+ Configuration
+ Operation object
+ 2024-04 latest
+ An operation to apply to the fulfillment group inventory locations.
+ Fields
+ rank (FulfillmentGroupRankedLocations!) required
+ Request to rank a fulfillment group's inventory locations.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

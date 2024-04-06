@@ -1,0 +1,130 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ 2023-04 release notes
+ The API version release date and the date that the version is no longer supported
+ Release date Date version is no longer supported
+ April 1, 2023 April 1, 2024
+ What's new in 2023-04
+ The following features were added in version 2023-04 of Shopify's APIs.
+ Highlights from the GraphQL Admin API changes:
+ Metafield values can now be set for Locations
+ Move and Hold mutations for FulfillmentOrders now accept specific line items
+ Subscription contracts can now be created in a single operation
+ Customer profiles can now be combined using the Merge API
+ Functions APIs are now available for delivery and payment customizations
+ Catalog APIs are now available
+ Webhooks for B2B Customers have been added
+ Metafield definition validations can now be updated
+ Highlights from the GraphQL Storefront API changes:
+ Metafields on Locations can now be queried
+ Targeted product recommendations can now be generated
+ Catalog APIs are now available
+ A buyer's wallet preference can now be passed to the Cart
+ Customer address IDs can now be used as input for delivery address preferences
+ Highlights from the GraphQL Payments Apps API changes:
+ The status field in the Payments Apps API has been removed.
+ The previously deprecated status field has been removed from session-related objects.
+ Highlights from the REST Admin API changes:
+ Move and Hold operations for FulfillmentOrders now accept specific line items
+ Additional filtering has been added to FulfillmentOrders
+ Breaking changes
+ These changes require special attention. If your app uses these API resources, and you don’t adjust your usage of the resources according to the following instructions, then your app might break when you update to this API version.
+ Metaobjects can now be Translatable
+ Metaobjects can now be enabled with the Translatable capability.
+ Changed access scope for publishing and unpublishing to current channel objects
+ Calling the publishableUnpublishToCurrentChannel and publishablePublishToCurrentChannel mutations now requires the writepublications access scope, instead of the writeproductslistings access scope, which has been deprecated.
+ The writeproductslistings access scope has been deprecated
+ The writeproductslistings access scope has been deprecated. Use writepublications instead.
+ The contextRule field on PriceList has been removed
+ The contextRule field on PriceList has been removed. Existing apps should migrate to Catalogs. Check out our migration guide for more information.
+ The ShopifyQL parse error codes have been updated
+ The 'ParseErrorCode' values have been updated. Refer to the following list of codes for more details:
+ FulfillmentOrderLineItemsPreparedForPickupUserErrorCode codes have been updated
+ The FulfillmentOrderLineItemsPreparedForPickupUserErrorCode object has the following changes:
+ The FULFILLMENT_ORDER_CHANGED error code has been removed
+ The UNABLE_TO_PREPARE_QUANTITY error code has been added
+ PublishedTranslation has been replaced
+ The PublishedTranslation object has been replaced by Translation. All existing connections to PublishedTranslation now point to Translation. All existing fields on PublishedTranslation exist on Translation, except for the marketId field. Instead, Translation is linked directly to Market through the market field.
+ Introducing BaseCartLine
+ We have introduced BaseCartLine as an interface to CartLine. CartLineConnection has been updated to BaseCartLineConnection.
+ The status field in the Payments Apps API has been removed
+ The previously deprecated status field has been removed in favour of the state field on the following Payments Apps API objects:
+ PaymentSession
+ RefundSession
+ CaptureSession
+ VoidSession
+ New error codes in CartErrorCodes enum
+ Two new error codes, INVALID_DELIVERY_GROUP and INVALID_DELIVERY_OPTION, have been added to the CartErrorCode enum.
+ Transaction in the REST API will now return the total unsettled set amount
+ Requests for Transaction will now return total_unsettled_set. This represents the remaining amount to be captured on the transaction. total_unsettled_set is returned in both shop and presentment money objects with currency.
+ Access to the Asset API is no longer available to public apps
+ When requesting the Asset API, access to create, update and delete assets is no longer accessible for public apps. Refer to this guide for more details on the change, exemptions and how to migrate your apps.
+ Payment properties on the Order resource have been removed
+ The following properties have been removed from the Order resource:
+ gateway
+ payment_details
+ processing_method
+ GraphQL Admin API changes
+ The following are all the changes currently introduced in the 2023-04 version of the GraphQL Admin API.
+ The inventoryItemId field has been added to FulfillmentOrderLineItem
+ Functions APIs have been added in developer preview for delivery and payment customizations
+ Metafield values can now be set for Locations
+ Metaobjects can now be translated
+ Access Scope has changed for publishing and unpublishing to current channel
+ Check if a Shop is verified by Shopify tiers
+ Move and Hold mutations for FulfillmentOrders now accept specific line items
+ Orders can be filtered by return status
+ Create subscription contracts in a single operation
+ The contextRule field on PriceList has been removed
+ ShopifyQL parse error codes have been updated
+ Combine customer profiles with the Merge API
+ Create app charges using the merchant's billing currency
+ Functions APIs are now available for delivery and payment customizations
+ Catalog APIs are now available
+ Web Pixels can now be queried without specifying an ID
+ Idempotent creation of AppUsageRecord
+ SVG files are now returned as a MediaImage
+ The productVariantsBulkUpdate mutation now returns data along with errors
+ PublishedTranslation has been replaced by Translation
+ FulfillmentOrderLineItemsPreparedForPickupUserErrorCode codes have been updated
+ Webhooks for B2B Customers have been added
+ Destroy delegate access tokens
+ Additional fees fields for Orders
+ Update validations of a metafield definition
+ Server Pixels are now available to select partners
+ You can compare columns in ShopifyqlResponse
+ Added source_location field to FulfillmentOrdersMove webhook payload
+ Partial updates for bulk product variants
+ GraphQL Storefront API changes
+ Metafields on Locations can now be queried
+ Generate targeted product recommendations
+ A buyer's wallet preference can be passed to the Cart
+ Introducing BaseCartLine
+ Read 3D model configuration settings from the Storefront API
+ Focal Point setting for images is now available
+ You can use the customer's address id as input for delivery address preferences
+ GraphQL Payments Apps API changes
+ The status field in the Payments Apps API has been removed
+ New CartErrorCodes have been added
+ REST Admin API changes
+ Move and Hold operations for FulfillmentOrders now accept specific line items
+ Transaction will now return the total unsettled set amount
+ Additional filtering added to FulfillmentOrders
+ Access to the Asset API is no longer available to public apps
+ Payment properties on the Order resource have been removed
+ Additional fees fields for Orders
+ Added source_location field to FulfillmentOrdersMove webhook payload
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Breaking changes
+ GraphQL Admin API changes
+ GraphQL Storefront API changes
+ GraphQL Payments Apps API changes
+ REST Admin API changes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

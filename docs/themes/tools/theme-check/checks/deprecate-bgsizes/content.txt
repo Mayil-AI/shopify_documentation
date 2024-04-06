@@ -1,0 +1,45 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ DeprecateBgsizes
+ Discourages use of the lazysizes bgset extension instead of the CSS image-set attribute to load responsive background images.
+ You should avoid using third-party libraries over native browser features to avoid large JavaScript bundle sizes and slow load times. Learn more about theme performance.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ The following example includes a lazyload class and a data-bgset attribute:
+ 1 <script src="ls.bgset.min.js"></script>
+ 2 <script src="lazysizes.min.js"></script>
+ 3 <div class="lazyload" data-bgset="image-200.jpg 200w, image-300.jpg 300w, image-400.jpg 400w" data-sizes="auto">
+ 4 </div>
+ ✓ Pass
+ The following example uses the CSS image-set() attribute instead of data-bgset:
+ 1 <!-- CSS Stylesheet -->
+ 2 .box {
+ 3
+    background-image: -webkit-image-set(
+ 4
+      url("small-balloons.jpg") 1x,
+ 5
+      url("large-balloons.jpg") 2x);
+ 6
+    background-image: image-set(
+ 7
+      url("small-balloons.jpg") 1x,
+ 8
+      url("large-balloons.jpg") 2x);
+ 9 }
+ 10
+ 11 <!-- HTML -->
+ 12 <div class="box"></div>
+ Disabling this check
+ This check is safe to disable.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Disabling this check
+ Updates & News
+ Developer changelog
+ Partner blog

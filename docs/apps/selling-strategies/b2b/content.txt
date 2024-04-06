@@ -1,0 +1,55 @@
+Billing
+ App Store
+ Building B2B apps
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use apps with B2B features.
+ In business-to-business (B2B) commerce, merchants sell directly to other companies. When a company is the customer, there are often multiple contacts and locations, pre-negotiated payment terms, and catalogs to manage. All of these factors complicate expanding a business into the B2B space.
+ You can use the GraphQL Admin API to build apps and features that help Shopify merchants to manage their B2B commerce. For example, you can build B2B-specific interfaces for managing company locations, draft orders and invoicing, and catalogs.
+ In this guide, you'll learn how B2B objects work, and how to use the GraphQL Admin API to build common B2B features.
+ Features
+ The GraphQL Admin API's B2B resources enable you to do the following tasks:
+ Create companies and attach information to the company, such as company contacts and company locations.
+ Associate catalogs with company locations to offer exclusive product selections and negotiated pricing levels to contacts at different company locations within a company.
+ Query B2B orders and create draft orders to send to company contacts for approval and invoicing.
+ Import B2B orders for merchants with B2B operations outside of Shopify.
+ How it works
+ The GraphQL Admin API provides several company-related objects to help with managing the B2B experience between merchants and their company customers, including the following objects:
+ Object Description
+ Company
+ Information about the business entity that makes a B2B purchase.
+ A company contains locations and contacts.
+ CompanyLocation
+ A single location or branch of the company.
+ A company location contains information such as billing addresses and shipping addresses. You can also assign catalogs, tax exemptions, payment terms, and other useful information to a company location.
+ CompanyContact
+ A person that acts on behalf of the company.
+ A company contact is associated with a retail customer record.
+ The following diagram shows how company locations and company contacts relate to a company. A B2B order or draft order can be associated with the company, a specific company location, or a specific company contact. However, catalogs can be assigned only to a company location.
+ B2B lifecycle
+ The following diagram shows an example lifecycle in which merchants, company contacts, Shopify, and apps interact with B2B resources:
+ A merchant creates a company, attaching details like company contacts and company locations. A merchant can also create draft orders for company contacts to review and approve.
+ A company contact logs in with an account that's attached to a company to select products for purchase, review draft orders, and complete checkout.
+ Shopify creates a transaction and an order for the purchase.
+ Apps use the GraphQL Admin API to create related integrations, such as order management interfaces, B2B fulfillment solutions, customer loyalty programs, and customer relationship management (CRM) tools.
+ Limitations
+ Only merchants on the Shopify Plus plan can use apps with B2B features.
+ Only development stores, Shopify Plus Partners, and Shopify affiliates are able to access the GraphQL Admin API's B2B resources. Shopify Plus Partners need to use a sandbox organization.
+ B2B doesn't support subscriptions.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about building with B2B.
+ Company object
+ Consult the GraphQL Admin API reference to learn more about the Company object.
+ Catalog object
+ Consult the GraphQL Admin API reference to learn more about the Catalog object.
+ Next steps
+ Get started building for B2B.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Features
+ How it works
+ Limitations
+ Developer tools and resources
+ Next steps
+ Updates & News
+ Developer changelog

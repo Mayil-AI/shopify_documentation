@@ -1,0 +1,55 @@
+Functions
+ Overview
+ Input and output
+ Language support
+ Overview
+ JavaScript
+ Rust
+ WebAssembly
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ WebAssembly support in Shopify Functions
+ You can write your functions in any language that can compile to WebAssembly (Wasm), such as Rust, Zig, or TinyGo. This guide describes how to generate Wasm that conforms to Shopify Functions standards.
+ Requirements
+ Functions that are compiled to Wasm need to meet the following requirements:
+ Conform with the command module structure referenced in the unstable WASI application ABI specification.
+ For each target implemented by the extension, the module must export a function of type (func), which takes no arguments, and has no return values.
+ Function modules are multi-call executables that have exports mapped to Shopify extension targets in the function extension configuration.
+ Note
+ For API versions 2023-07 and earlier without configured extension targets, Shopify Functions invokes the WASI _start export instead.
+ Write output as a JSON encoded byte stream to a standard output file descriptor: STDOUT (fd=1)
+ Read input as a JSON encoded byte stream from a standard input file descriptor: STDIN (fd=0)
+ Write debug logs as a newline delimited utf-8 file to a standard error file descriptor: STDERR (fd=2)
+ Module example
+ The following sample in WebAssembly text format (WAT) shows the expected signature for module exports, and its associated extension configuration:
+ function.wat
+ 1 (module
+ 2
+   (func $_start (export "_start")
+ 3
+     ...
+ 4
+   )
+ 5
+   (func $run (export "run")
+ 6
+     ...
+ 7
+   )
+ 8 )
+ shopify.extension.toml
+ 1 [[extensions.targeting]]
+ 2 target = "purchase.product-discount.run"
+ 3 input_query = "src/run.graphql"
+ 4 export = "run" # This matches the name of the wasm export.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Module example
+ Updates & News
+ Developer changelog

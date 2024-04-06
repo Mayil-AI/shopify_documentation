@@ -1,0 +1,155 @@
+Overview
+ Reference
+ Create a trigger
+ Actions
+ Lifecycle events
+ Migrating Flow legacy extensions
+ Using complex data types
+ Payments
+ Fulfillment
+ Point of Sale
+ Trigger reference
+ When you create a new trigger extension using the Shopify CLI, the Shopify CLI generates a basic version of the TOML configuration file structure. In this comprehensive guide we will walk you through configuring the different sections and properties of the configuration file, including extension properties, extension fields, reference field types, custom field types, and more.
+ This guide will also inform you how to make HTTP requests to Flow to start the workflows in which your extension is the trigger.
+ TOML
+ Note
+ Creating Flow extensions using the CLI is an exciting new feature that is currently in development. As with any developing feature, it's important to note that the Flow CLI capabilities will continue to evolve and improve over time. Developers can expect additional functionality, enhancements, and improvements to be added as development progresses.
+ To create Flow extensions using the Shopify CLI, version 3.48 or higher is required.
+ When you create a new trigger extension using the Shopify CLI, you'll get a basic version of the TOML configuration file structure which should look like the following example:
+ File
+ 1 [[extensions]]
+ 2 name = "Auction Bid"
+ 3 type = "flow_trigger"
+ 4 handle = "auction-bid"
+ 5 description = "Your description"
+ 6
+ 7 [settings]
+ 8
+ 9
+    [[settings.fields]]
+ 10
+    type = "customer_reference"
+ 11
+ 12
+    [[settings.fields]]
+ 13
+    type = "single_line_text_field"
+ 14
+    key = "your field key"
+ Trigger extension properties
+ Extension properties are listed in the [[extensions]] section and enable you to define the interface between Flow and your event.
+ Property name Description Rules
+ name
+ required Name of your extension. Will be the merchant-facing name of your task in the editor. This should be something that is human readable.
+ type
+ required The type of your extension. This should always be set to “flow_trigger” for Flow triggers. - Value must be flow_trigger.
+ handle
+ required A unique identifier for your extension. This property cannot be changed once you’ve run the dev or deploy command. - Cannot exceed 30 characters.
+ - Must be unique across your app's extensions.
+ - Must only contain alphanumeric characters and hyphens.
+ description
+ optional A description of your extension. This description will be shown in the Flow editor navigation panel.
+ Trigger extension fields
+ Trigger extension fields are listed in the [settings] section, with each field using a [[settings.field]] header. These fields define the payload your event will send to Flow. You can add more than one field to your Flow trigger. The order of the fields in the TOML file is preserved when they're being rendered in the editor configuration panel. When sending a trigger payload, all fields defined in a trigger are required.
+ Property name Description Rules
+ type
+ required The field type. - Accepted custom field types.
+ - Accepted reference field types.
+ key
+ optional A unique key that identifies your field. This should be human readable since it will appear in the Flow editor in the environment picker menu. - Required for custom field types.
+ Should only contain alphabetic values or spaces.
+ - This property is not valid for reference field types.
+ description
+ required A description of the field. This will appear in the Flow editor configuration panel.
+ Supported field types
+ When you create a trigger, you add the fields that your trigger sends to Shopify Flow in the [settings] section of the TOML file. These fields define what your event plans to send to Shopify Flow. Merchants can then use that data in their conditions and actions.
+ You can add two types of fields: custom fields or predefined reference fields.
+ Reference field types
+ A reference field lets you send the identifier of a Shopify resource to Shopify Flow. This allows merchants to build workflows that use any data related to that resource.
+ For example, your trigger sends a customer ID to Shopify Flow. The merchant can create a condition that checks customer / amountSpent and customer / tags. In their action, the user can include the template variables for customers, such as {{customer.email}}.
+ To specify that a trigger will include a reference field, you only need to specify the type and an optional description property. For example:
+ File
+ 1 ...
+ 2
+ 3 [settings]
+ 4
+ 5
+    [[settings.fields]]
+ 6
+    type = "customer_reference"
+ You can use the following reference fields:
+ Reference type (TOML) Payload key Description
+ customer_reference customer_id The id or legacyResourceId of the customer.
+ 
+ Triggers that include this property in the request body are also available to Shopify marketing automations.
+ order_reference order_id The id or legacyResourceId of the order.
+ product_reference product_id The id or legacyResourceId of the product.
+ When making a request to Flow, include the payload key. See the mutation API reference section for a complete example.
+ Custom field
+ A custom field lets you define the data that you send as part of your trigger request. The following is an example:
+ File
+ 1 ...
+ 2
+ 3 [settings]
+ 4
+ 5
+    [[settings.fields]]
+ 6
+    type = "number_decimal"
+ 7
+    key = "Amount"
+ Custom field types
+ The following are the available custom field types:
+ Field type Description Example
+ boolean A Boolean value. true, false
+ email An email formatted string. "email@example.com"
+ single_line_text_field A string. "Hello world."
+ number_decimal A number with a decimal point. 1.0
+ url A URL formatted string. "https://example/com"
+ schema.<type> <type> can be any type defined in the provided schema. Learn more about defining complex types. { "foo": "bar", "baz": 123 }
+ Naming custom fields
+ Field names need to be self-describing and readable. Use sentence case and separate words with spaces (not underscores or hyphens). These names can contain only alphabetical characters (a-z, A-Z) and spaces.
+ When you refer to these fields in the payload that you send to Shopify Flow, enter the names verbatim . For example, { "City location": "Ottawa" } }. Don't use shortened versions.
+ Custom fields in the Shopify Flow editor
+ Fields can be used in the Shopify Flow editor either in conditions or in actions as template variables. When used as template variables, Shopify Flow converts your key property to camelCase such as {{ customerEmail }}.
+ Mutation API reference
+ Once your extension is defined, published, and activated in a workflow according to this guide, you can call Flow's mutation with an event, which will start the workflow(s).
+ 1 mutation
+ 2 {
+ 3
+    flowTriggerReceive(
+ 4
+      handle: "auction-bid-placed",
+ 5
+      payload: {
+ 6
+        "Amount": "30",
+ 7
+        "customer_id": 12345
+ 8
+    })
+ 9
+    {
+ 10
+      userErrors {field, message}
+ 11
+    }
+ 12 }
+ Property name Property usage
+ handle The extension’s handle.
+ payload The fields that you selected for your payload schema in the action configuration. These should be serialized in a key-value pair format where the keys are equal to your field's “key” properties.
+ Note
+ If you are using a Shopify admin API version of 2023-07 or earlier the mutation won't support the handle and payload properties. For information on that mutation shape you can rely on the flowTriggerReceive documentation.
+ Considerations
+ When you create a trigger, the payload that you send to Shopify Flow needs to be less than 1 MB and contain specific content in the body.
+ Triggers have the same API rate limits as the Shopify API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ TOML
+ Mutation API reference
+ Considerations
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

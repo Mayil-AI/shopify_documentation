@@ -1,0 +1,40 @@
+Get access tokens
+ Token exchange
+ Overview
+ Getting started
+ Authorization code grant
+ Access token types
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Token exchange
+ OAuth 2.0 token exchange (RFC 8693) allows apps to exchange a session token for an access token. The session token is only available for embedded apps and can be acquired using App Bridge.
+ Token exchange API
+ The following details the endpoint and parameters for the token exchange API.
+ 1 POST https://{shop}.myshopify.com/admin/oauth/access_token
+ Parameter Required? Description
+ client_id REQUIRED The API key for the app
+ client_secret REQUIRED The client secret for the app.
+ grant_type REQUIRED The value urn:ietf:params:oauth:grant-type:token-exchange indicates that token exchange is to be performed.
+ subject_token REQUIRED An ID token that represents the identity and active browser session of a merchant using the app.
+ subject_token_type REQUIRED The value urn:ietf:params:oauth:token-type:id_token indicates that the subject token type is an ID token.
+ requested_token_type OPTIONAL
+ urn:shopify:params:oauth:token-type:offline-access-token (default) for requesting offline access tokens
+ urn:shopify:params:oauth:token-type:online-access-token for requesting online access tokens
+ Request flow using token exchange API
+ The following diagram illustrates the token exchange flow from the point a merchant interacts with the app to the point the app receives an access token and can make authenticated API requests.
+ Getting started
+ You can use Shopify CLI to generate a starter app with boilerplate code that handles authorization using session tokens and token exchange. This is the recommended method.
+ You can also implement token exchange manually.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Token exchange API
+ Request flow using token exchange API
+ Getting started
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

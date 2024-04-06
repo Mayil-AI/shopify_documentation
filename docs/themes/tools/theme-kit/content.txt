@@ -1,0 +1,35 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Shopify Theme Kit
+ Theme Kit is a cross-platform command line tool that you can use to build Shopify themes.
+ Choosing between Shopify CLI and Theme Kit
+ Shopify CLI replaces Theme Kit for most Shopify theme development tasks. You should use Shopify CLI if you're working on Online Store 2.0 themes. You should use Theme Kit instead of Shopify CLI only if you're working on older themes.
+ Features
+ With Theme Kit, you can use your own development tools to interact with the Shopify platform in the following ways:
+ Use workflow tools like Git to work with a team of theme developers.
+ Upload themes to multiple environments.
+ Watch for local changes and upload them automatically to Shopify.
+ Work on Linux, macOS, and Windows.
+ Getting started
+ Refer to Getting started with Theme Kit to learn how to install and configure Theme Kit, use the Admin API to connect to the Shopify platform, create a new theme, and configure an existing theme.
+ Reference guides
+ Theme Kit command reference - Learn about the different commands that you can use in Theme Kit to execute key operations.
+ Theme Kit configuration reference - Familiarize yourself with the configuration variables and their accepted values in Theme Kit.
+ Troubleshooting
+ Refer to Troubleshooting Theme Kit to learn how to identify and resolve common issues in Theme Kit.
+ Contributing to Theme Kit
+ Theme Kit is open source and you can help contribute to the GitHub repository.
+ Where to get help
+ Open a GitHub issue - To report bugs or request new features, open an issue in the Theme Kit GitHub repository.
+ Shopify Community Forums - Visit our forums to connect with the community and learn more about Theme Kit development.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Choosing between Shopify CLI and Theme Kit
+ Features
+ Getting started
+ Reference guides
+ Troubleshooting
+ Contributing to Theme Kit
+ Where to get help

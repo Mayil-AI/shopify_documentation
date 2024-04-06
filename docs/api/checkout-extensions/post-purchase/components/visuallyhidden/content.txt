@@ -1,0 +1,25 @@
+Product subscription app extensions
+ VisuallyHidden
+ Use when an element needs to be available to assistive technology (for example, a screen reader) but otherwise hidden.
+ JS
+ React
+ 1 import {extend, VisuallyHidden} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const visuallyHidden = root.createComponent(
+ 5
+      VisuallyHidden,
+ 6
+      undefined,
+ 7
+      'Visually hidden content although available to assistive technology',
+ 8
+    );
+ 9
+ 10
+    root.appendChild(visuallyHidden);
+ 11 });
+ Was this page helpful?
+ YesNo
+ Updates & News

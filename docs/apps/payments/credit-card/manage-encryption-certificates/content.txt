@@ -1,0 +1,95 @@
+Build the app
+ Manage encryption certificates
+ Implementation considerations
+ Request reference
+ Onboard a merchant to a payments app
+ Billing
+ App Store
+ Manage encryption certificates
+ Beta
+ Processing a payment with a credit card payments app extension is supported from API version 2023-04 and is currently in closed Beta.
+ Encryption certificates are used to asymmetrically encrypt credit card data so that only the payments app can read them. This guide outlines the actions that you can take to manage encryption certificates when building a credit card payments app.
+ Requirements
+ You've created a credit card payments app extension.
+ You're a Partner organization owner.
+ Access the encryption certificates dashboard
+ Note
+ Only organization owners have access to this feature.
+ Log in to your Partner Dashboard as an organization owner.
+ Go to Settings, and navigate to the Partner certificates management section.
+ Click Manage Certificates to access the encryption certificates dashboard.
+ All of the features that are described in the following sections are available from this dashboard.
+ Create a new encryption certificate
+ To create a certificate in the Partner Dashboard, you need to create a Certificate Signing Request (CSR), and upload it to your dashboard. Shopify uses this CSR to generate and sign a certificate that you can use in your credit card payments app configuration.
+ Caution
+ The private key that's used to generate ANY of your CSRs must be stored in a PCI compliant environment at all times.
+ Shopify will never request the private key that's used to generate your CSR.
+ If your private key is compromised, immediately revoke and rotate your encryption certificate.
+ Step 1: Generate a Certificate Signing Request (CSR)
+ The CSR needs to be generated with the elliptic-curve algorithm:
+ Generate a CSR
+ $ openssl ecparam -name prime256v1 -genkey -noout -out "private_key.pem"
+ $ openssl ec -in "private_key.pem" -pubout -out "public_key.pem"
+ $ openssl req -new -sha256 -key "private_key.pem" -out "csr.pem" -subj "<SUBJECT>"
+ The subject of the CSR, which is passed using the -subj flag, must use the following format:
+ Subject format
+ Format
+ Example
+ 1 /C=<COUNTRY>/ST=<STATE>/L=<CITY>/O=<ORGANIZATION>/CN=<COMMON_NAME>
+ Make sure to replace the <COUNTRY>, <STATE>, <CITY>, <ORGANIZATION>, and <COMMON_NAME> with correct values. This allows the Shopify team to identify you as the owner of the certificate.
+ Caution
+ Don't use the content of the example subject for your own CSR, or your request will be rejected.
+ Step 2: Request an encryption certificate
+ Follow these steps to request an encryption certificate from Shopify.
+ From the certificate management dashboard, click Create Certificate, and then fill out the form.
+ In the Description field, add a short description or name to your certificate. This value will be used as a reference to your certificate so you’ll know which certificate you’re using when configuring your app.
+ In the CSR field, click Add CSR and select your CSR file, or drop your file into the upload box. The file must have the .pem extension.
+ When the form is filled, click Save.
+ A confirmation modal appears.
+ Click Create Encryption Certificate to confirm the request.
+ Step 3: Approve your encryption certificate request
+ At the email address that you use to log in to your Partner Dashboard, you'll receive an email to confirm that you requested a new certificate. Inside of the email, click Approve request.
+ After you approve the request, Shopify creates your certificate, and you're redirected to the main page of the encryption certificate dashboard.
+ Step 4: Wait for Shopify’s approval
+ After the certificate is created, its state is set to Waiting for approval. This means that your certificate needs to be reviewed by a Shopify team member.
+ You won't be able to use the certificate to process payments until the review process is finished. This process can take two weeks or more, so keep this in mind for the certificate rotation process.
+ Learn more about certificate states.
+ Certificates created by Shopify are valid for one year. Read the certificate rotation process to make sure that you’re ready to update your app with a new certificate before they expire.
+ Download an encryption certificate
+ After a certificate is created, you can download the certificate in a file.
+ From your certificate management dashboard, click on the encryption certificate that you want to download. Then, click Download.
+ After you click Download, an email is sent to you with a link to download the certificate. Only certificates approved by Shopify can be downloaded. The download link expires after seven days.
+ Revoke an encryption certificate
+ You might need to revoke your certificate in case of emergency. For example, you must revoke the certificate if your private key is compromised.
+ To revoke a certificate, go to the encryption certificate dashboard, and click on the certificate that you want to revoke. Then, click Revoke certificate.
+ Caution
+ Certificate revocation is an immediate and irreversible operation. Before you revoke a certificate in your dashboard, make sure that any app that uses this certificate has been updated to use a new encryption certificate.
+ Learn more about certificate rotation
+ Rotate an encryption certificate
+ Caution
+ When a certificate expires or is revoked, if it’s used by a credit card payments app, then this app won't be able to process payments anymore. A valid certificate is required at all times to encrypt buyer credit card information.
+ It’s your responsibility to plan in advance for certificate rotation.
+ You should always have more than one usable certificate.
+ To rotate a certificate on a credit card payments app, you need to follow the steps to generate a new certificate.
+ After the certificate is created, wait for a Shopify team member to approve it.
+ Finally, when the certificate is approved, you can go to your credit card payments app extension configuration and select the new certificate, then release a new app version.
+ Encryption certificate lifecycle
+ A certificate can be in one of multiple states during its lifecycle:
+ State Description
+ Waiting for approval The certificate is in the approval process by the Shopify team. The certificate can’t be used. Approval process can take up to two weeks.
+ Usable The certificate can be used in a credit card payments app.
+ Revoked The certificate was revoked through the Partner Dashboard, and can’t be used anymore.
+ About to expire The certificate will expire in 30 days or less.
+ Expired The certificate isn't valid anymore and can't be used in any credit card payments app. When a certificate expires, if it’s used by an app, then this app won't be able to process payments anymore. Learn how to rotate your certificates.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Access the encryption certificates dashboard
+ Create a new encryption certificate
+ Download an encryption certificate
+ Revoke an encryption certificate
+ Rotate an encryption certificate
+ Encryption certificate lifecycle
+ Updates & News
+ Developer changelog

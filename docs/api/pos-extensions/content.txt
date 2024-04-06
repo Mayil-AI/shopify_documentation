@@ -1,0 +1,20 @@
+Point of Sale app extensions
+ Overview
+ UI Extensions reference
+ Cart extension reference
+ Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify Point of Sale app extensions
+ Shopify Point of Sale (POS) app extensions make it easy for developers to extend their app code into Shopify POS and customize many aspects of the POS experience. Shopify provides the tools and resources for building POS UI Extensions, cart app extensions, and product recommendation extensions.
+ Explore the following references to learn more about building for Shopify POS.
+ POS UI extensions reference
+ Consult the extension point APIs and UI components reference.
+ POS cart app extension reference
+ Consult the POS cart app extension API reference.
+ Product recommendations extension reference
+ Consult the product recommendations extension API reference.
+ Was this page helpful?
+ YesNo
+ Updates & News

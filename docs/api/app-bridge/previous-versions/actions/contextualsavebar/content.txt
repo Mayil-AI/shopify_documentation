@@ -1,0 +1,280 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Contextual Save Bar
+ Note
+ This is a legacy API. Use the latest version of Contextual Save Bar instead.
+ Display the contextual save bar to indicate that a form on the current page contains unsaved information, or when the users is in the process of creating a new object, such as a product or customer. The contextual save bar provides save and discard buttons to a user.
+ The following are ways to use the contextual save bar:
+ Plain JavaScript
+ React hook
+ React component
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the ContextualSaveBar from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {ContextualSaveBar} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create and show
+ Create a contextual save bar instance with some initial options. Then dispatch a SHOW action to display it on the page.
+ 1 const contextualSaveBar = ContextualSaveBar.create(app, {
+ 2
+    saveAction: {
+ 3
+      disabled: false,
+ 4
+      loading: false,
+ 5
+    },
+ 6
+    discardAction: {
+ 7
+      disabled: false,
+ 8
+      loading: false,
+ 9
+      discardConfirmationModal: true,
+ 10
+    },
+ 11 });
+ 12
+ 13 contextualSaveBar.dispatch(ContextualSaveBar.Action.SHOW);
+ Note
+ Navigation actions (Redirect and History) on Shopify Admin are also blocked while the contextual save bar is visible. If your app contains a title bar, you will not be able to make any updates to the title bar buttons while a contextual save bar is being shown. In addition, all title bar buttons will be disabled automatically while the contextual save bar is displayed. The disabled state of buttons inside the title bar are automatically reset to their previous states when the contextual save bar is hidden. To learn more about the title bar, see Title Bar action.
+ Update options
+ You can modify the options at any time using the set method. If the contextual save bar is visible, the UI will update immediately.
+ 1 contextualSaveBar.set({discardAction: {loading: true}});
+ Hide
+ Dispatch a HIDE action when you want to hide the contextual save bar.
+ 1 contextualSaveBar.dispatch(ContextualSaveBar.Action.HIDE);
+ Subscribe to Discard and Save
+ Subscribe to the contextual save bar actions (ContextualSaveBar.Action.DISCARD and ContextualSaveBar.Action.SAVE) in order to do something when a user clicks the Save or Discard button. The subscribe method returns a function that you can call to unsubscribe from the action.
+ To hide the contextual save bar, dispatch a ContextualSaveBar.Action.HIDE action in the subscribe callback.
+ 1 const discardUnsubscribe = contextualSaveBar.subscribe(
+ 2
+    ContextualSaveBar.Action.DISCARD,
+ 3
+    function() {
+ 4
+      // Hide the contextual save bar
+ 5
+      contextualSaveBar.dispatch(ContextualSaveBar.Action.HIDE);
+ 6
+      // Do something with the discard action
+ 7
+    }
+ 8 );
+ 9
+ 10 const saveUnsubscribe = contextualSaveBar.subscribe(
+ 11
+    ContextualSaveBar.Action.SAVE,
+ 12
+    function() {
+ 13
+      // Optionally, show a loading spinner while the save action is in progress
+ 14
+      contextualSaveBar.set({saveAction: {loading: true}});
+ 15
+      await doSaveAction();
+ 16
+ 17
+      // Hide the contextual save bar
+ 18
+      contextualSaveBar.dispatch(ContextualSaveBar.Action.HIDE);
+ 19
+    }
+ 20 );
+ 21
+ 22 // Unsubscribe
+ 23 discardUnsubscribe();
+ 24 saveUnsubscribe();
+ Unsubscribe
+ Call the unsubscribe method to remove all current subscriptions on the contextual save bar.
+ 1 contextualSaveBar.subscribe(ContextualSaveBar.Action.DISCARD, function () {
+ 2
+    // Do something with the discard action
+ 3
+    // Hide the contextual save bar
+ 4
+    contextualSaveBar.dispatch(ContextualSaveBar.Action.HIDE);
+ 5 });
+ 6
+ 7 contextualSaveBar.subscribe(ContextualSaveBar.Action.SAVE, function () {
+ 8
+    // Do something with the save action
+ 9
+    // Hide the contextual save bar
+ 10
+    contextualSaveBar.dispatch(ContextualSaveBar.Action.HIDE);
+ 11 });
+ 12
+ 13 // Unsubscribe
+ 14 contextualSaveBar.unsubscribe();
+ Note
+ Navigation actions (Redirect and History) on Shopify Admin are blocked while the contextual save bar is visible. To dispatch navigation actions, first dispatch ContextualSaveBar.Action.HIDE.
+ React
+ useContextualSaveBar hook
+ useContextualSaveBar is a hook that accepts no arguments and returns an object with the following methods and objects:
+ show: ({fullWidth?: boolean; leaveConfirmationDisable?: boolean}) => void;
+ hide: () => void;
+ saveAction: { setOptions: (options: SaveActionOptions) => void };
+ discardAction: { setOptions: (options: DiscardActionOptions) => void };
+ Example Code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import {Provider, useContextualSaveBar} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyApp {
+ 4
+    // Setup appBridgeConfig...
+ 5
+ 6
+    const {show, hide, saveAction, discardAction} = useContextualSaveBar();
+ 7
+ 8
+    saveAction.setOptions({
+ 9
+      disabled: false,
+ 10
+      loading: false,
+ 11
+      onAction: () => console.log('On save action')
+ 12
+    });
+ 13
+ 14
+    discardAction.setOptions({
+ 15
+      disabled: false,
+ 16
+      loading: false,
+ 17
+      discardConfirmationModal: true,
+ 18
+      onAction: () => console.log('On discard action')
+ 19
+    });
+ 20
+ 21
+    return (
+ 22
+      <Provider config={appBridgeConfig}>
+ 23
+        <Button onClick={() => {
+ 24
+          show({fullWidth: true, leaveConfirmationDisable: true});
+ 25
+        }}>Show ContextualSaveBar</Button>
+ 26
+ 27
+        <Button onClick={() => {
+ 28
+          hide();
+ 29
+        }}>Hide ContextualSaveBar</Button>
+ 30
+      </Provider>
+ 31
+    );
+ 32 }
+ API
+ The useContextualSaveBar hook does not accept any props. The following are the APIs for the methods and objects that the hook returns:
+ show
+ Name Type Description Required
+ fullWidth boolean Whether the contextual save bar should fill the entire screen width No
+ leaveConfirmationDisable boolean Whether to show a confirmation modal after the user navigates away from the page No
+ hide
+ No arguments.
+ SAVEACTION.SETOPTIONS
+ Refer to SaveActionOptions.
+ DISCARDACTION.SETOPTIONS
+ Refer to DiscardActionOptions.
+ ContextualSaveBar component
+ ContextualSaveBar is a component that accepts props.
+ Example Code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import {Provider, ContextualSaveBar} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyApp {
+ 4
+    // Setup appBridgeConfig...
+ 5
+ 6
+    const saveAction = {
+ 7
+      disabled: false,
+ 8
+      loading: false,
+ 9
+      onAction: () => console.log('On save action')
+ 10
+    }
+ 11
+ 12
+    const discardAction = {
+ 13
+      disabled: false,
+ 14
+      loading: false,
+ 15
+      discardConfirmationModal: true,
+ 16
+      onAction: () => console.log('On discard action')
+ 17
+    }
+ 18
+ 19
+    return (
+ 20
+      <Provider config={appBridgeConfig}>
+ 21
+        <ContextualSaveBar
+ 22
+          saveAction={saveAction}
+ 23
+          discardAction={discardAction}
+ 24
+          fullWidth
+ 25
+          leaveConfirmationDisable
+ 26
+          visible
+ 27
+        />
+ 28
+      </Provider>
+ 29
+    );
+ 30 }
+ Props
+ The ContextualSaveBar component accepts the following props:
+ Name Type Description Required
+ saveAction SaveActionOptions Options to customize save behaviour No
+ discardAction DiscardActionOptions Options to customize discard behaviour No
+ fullWidth boolean Whether the contextual save bar should fill the entire screen width No
+ leaveConfirmationDisable boolean Whether to show a confirmation modal after the user navigates away from the page No
+ visible boolean Whether the contextual save bar appears on the screen No
+ Shared APIs
+ Both the ContextualSaveBar component and the useContextualSaveBar hook use the following types:
+ SaveActionOptions
+ Name Type Description Required
+ disabled boolean Whether the contextual save bar button is in a disabled state No
+ loading boolean Whether the contextual save bar button is in a loading state No
+ onAction () => void A callback fired when the user presses the save button No
+ DiscardActionOptions
+ Name Type Description Required
+ disabled boolean Whether the contextual discard bar button is in a disabled state No
+ loading boolean Whether the contextual discard bar button is in a loading state No
+ onAction () => void A callback fired when the user presses the discard button No
+ discardConfirmationModal boolean Whether to show a confirmation modal after the user clicks the Discard button of the contextual save bar No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog

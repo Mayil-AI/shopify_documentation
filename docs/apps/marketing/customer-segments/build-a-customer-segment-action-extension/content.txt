@@ -1,0 +1,445 @@
+Billing
+ App Store
+ Getting started with customer segment action extensions
+ A customer segment action extension is an action extension that is displayed in the Use segment modal.
+ This guide is the second part in a two-part tutorial series on how to build a feature using customer segment template extensions and customer segment action extensions in the Use segment modal. The first guide in the series is not required to complete the second part of the tutorial.
+ This guide demonstrates how to build a customer segment action extension that enables users to perform actions on a target customer segment. This action will appear under the customer segment details page, in the Use segment modal.
+ Note
+ Building a customer segment action extension follows the same pattern as building an admin action extension. If you are familiar with building admin actions, then you can skip this tutorial.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create a customer segment action extension that displays on the customer segment details page or the customer segments index page.
+ Fetch information to populate the extensions's initial state.
+ Configure the extension to gather input from users.
+ Update the data using GraphQL based on user input.
+ Run the extension locally and test it on a development store.
+ Requirements
+ You've created a Partner account and a development store.
+ You've created an app that uses the Remix template.
+ Your app is using Shopify CLI 3.48 or higher.
+ Tip
+ Learn how to check your Shopify CLI version.
+ The store you're working with has customers and segments.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_customers and write_customers access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Step 1: Create a new extension
+ To create your customer segment action extension, you can use Shopify CLI to generate a starter extension.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new admin action extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template admin_action --name loyalty-points-action --flavor react
+ The command creates a new extension template in your app's extensions directory with the following structure:
+ Admin action structure
+ 1 extensions/loyalty-points-action
+ 2 ├── README.md
+ 3 ├── locales
+ 4 │   ├── en.default.json // The default locale for the extension
+ 5 │   └── fr.json // The French language translations for the extension
+ 6 ├── package.json
+ 7 ├── shopify.extension.toml // The config file for the extension
+ 8 └── src
+ 9
+      └── AdminAction.jsx // The code that defines the action's UI and behavior
+ Step 2: Build the extension's UI
+ Complete the following steps to build the extension's UI.
+ Review the configuration
+ The extension's .toml file stores the extension's static configuration. To have the action appear in the Use segment modal, validate that the target is set to admin.customer-segment-details.action.render. For a full list of targets and the locations where they display in the Shopify admin, refer to the admin extension configuration reference.
+ shopify.extension.toml
+ 1 api_version = "2023-10"
+ 2
+ 3 [[extensions]]
+ 4 name = "t:name"
+ 5 handle = "loyalty-points-action"
+ 6 type = "ui_extension"
+ 7
+ 8 [[extensions.targeting]]
+ 9 module = "./src/ActionExtension.jsx"
+ 10 # The target must match the target used in the module file (./src/ActionExtension.jsx)
+ 11 target = "admin.customer-segment-details.action.render"
+ To update the display name when users select the action from the menu, in locale files edit the corresponding name value.
+ Locales
+ English
+ French
+ locales/en.default.json
+ 1 {
+ 2
+    "name": "Reward customers with loyalty points!"
+ 3 }
+ Create the UI
+ Note
+ This tutorial uses the React implementation of admin UI extensions. If you want to create JavaScript-only extensions, then you'll need to use the provided API from the root object.
+ Admin UI extensions are rendered using Remote UI, which is a fast and secure remote-rendering framework. Because Shopify renders the UI remotely, components used in the extensions must comply with a contract in the Shopify host. We provide these components through the UI Extensions library. For a list of all the available components and their props, refer to the admin UI extension component reference.
+ You can view the source of your extension in the src/ActionExtension.jsx file. This file defines a functional React component that's exported to run at the extension's target. You can create the extension's body by importing and using components from the @shopify/ui-extensions-react/admin package.
+ To build your action's UX, add the following code to src/ActionExtension.jsx, and the locales to locales/en.default.json.
+ Caution
+ The extension point in the component export must match the extension point defined in your .toml file, or the extension won't render.
+ Creating the UI
+ src/ActionExtension.jsx
+ locales
+ 1 import { useCallback, useEffect, useState } from "react";
+ 2 import {
+ 3
+    reactExtension,
+ 4
+    useApi,
+ 5
+    AdminAction,
+ 6
+    BlockStack,
+ 7
+    Button,
+ 8
+    Text,
+ 9
+    NumberField,
+ 10 } from "@shopify/ui-extensions-react/admin";
+ 11
+ 12 import { updateLoyaltyPoints } from "./utils";
+ 13
+ 14 // The target used here must match the target used in the extension's toml file (./shopify.extension.toml)
+ 15 const TARGET = "admin.customer-segment-details.action.render";
+ 16
+ 17 export default reactExtension(TARGET, () => <App />);
+ 18
+ 19 function App() {
+ 20
+    // The useApi hook provides access to several useful APIs like i18n, close, and data.
+ 21
+    const { i18n, close, data } = useApi(TARGET);
+ 22
+ 23
+    const [segmentName, setSegmentName] = useState("");
+ 24
+    const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+ 25
+ 26
+    // Use direct API calls to fetch data from Shopify.
+ 27
+    // See https://shopify.dev/docs/api/admin-graphql for more information about Shopify's GraphQL API
+ 28
+    useEffect(() => {
+ 29
+      (async function getSegmentInfo() {
+ 30
+        const getSegmentQuery = {
+ 31
+          query: `query Segment($id: ID!) {
+ 32
+            segment(id: $id) {
+ 33
+              name
+ 34
+            }
+ 35
+          }`,
+ 36
+          variables: { id: data.selected[0].id },
+ 37
+        };
+ 38
+ 39
+        const res = await fetch("shopify:admin/api/graphql.json", {
+ 40
+          method: "POST",
+ 41
+          body: JSON.stringify(getSegmentQuery),
+ 42
+        });
+ 43
+ 44
+        if (!res.ok) {
+ 45
+          console.error("Network error");
+ 46
+        }
+ 47
+ 48
+        const segmentData = await res.json();
+ 49
+        setSegmentName(segmentData.data.segment.name);
+ 50
+      })();
+ 51
+    }, []);
+ 52
+ 53
+    return (
+ 54
+      // The AdminAction component provides an API for setting the title and actions of the Action extension wrapper.
+ 55
+      <AdminAction
+ 56
+        primaryAction={<Button onPress={() => {
+ 57
+          close();
+ 58
+        }}>
+ 59
+          {i18n.translate("done")}
+ 60
+        </Button>}
+ 61
+        secondaryAction={
+ 62
+          <Button
+ 63
+            onPress={() => {
+ 64
+              close();
+ 65
+            }}
+ 66
+          >
+ 67
+            {i18n.translate("close")}
+ 68
+          </Button>
+ 69
+        }
+ 70
+      >
+ 71
+        <BlockStack gap>
+ 72
+          <Text>
+ 73
+            {i18n.translate("description", {
+ 74
+              segment: segmentName,
+ 75
+            })}
+ 76
+          </Text>
+ 77
+          <NumberField
+ 78
+            inputMode="numeric"
+ 79
+            max={100}
+ 80
+            label={i18n.translate("label")}
+ 81
+            value={loyaltyPoints}
+ 82
+            onChange={setLoyaltyPoints}
+ 83
+          />
+ 84
+        </BlockStack>
+ 85
+      </AdminAction>
+ 86
+    );
+ 87 }
+ Tip
+ At this point, you can use the developer console to run your app's server and preview your extension. After you preview the extension, changes to your extension's code automatically reload the extension that you're previewing. This enables you to preview your extension and see it update live as you make changes to the code.
+ Step 3: Build the extension logic and connect to the GraphQL Admin API
+ After defining the UI of the extension, you can complete the experience by building the logic to control it using standard React tooling.
+ When you're building extensions, you don't need proxy calls to the GraphQL Admin API through your app's backend. Instead, your extension can use direct API access to create requests directly using fetch. This helps extensions be more performant and responsive for users. This guide includes a utility file for GraphQL queries. Add the contents below to a new file at ./src/utils.js.
+ Your app can also get data from the extension APIs, which includes data on the current resource from the data API.
+ Extension logic
+ src/ActionExtension.jsx
+ src/utils.js
+ locales
+ 1 import { useCallback, useEffect, useState } from "react";
+ 2 import {
+ 3
+    reactExtension,
+ 4
+    useApi,
+ 5
+    AdminAction,
+ 6
+    BlockStack,
+ 7
+    Button,
+ 8
+    Text,
+ 9
+    NumberField,
+ 10 } from "@shopify/ui-extensions-react/admin";
+ 11
+ 12 import { updateLoyaltyPoints } from "./utils";
+ 13
+ 14 // The target used here must match the target used in the extension's toml file (./shopify.extension.toml)
+ 15 const TARGET = "admin.customer-segment-details.action.render";
+ 16
+ 17 export default reactExtension(TARGET, () => <App />);
+ 18
+ 19 function App() {
+ 20
+    // The useApi hook provides access to several useful APIs like i18n, close, and data.
+ 21
+    const { i18n, close, data } = useApi(TARGET);
+ 22
+ 23
+    const [segmentName, setSegmentName] = useState("");
+ 24
+    const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+ 25
+ 26
+    // Use direct API calls to fetch data from Shopify.
+ 27
+    // See https://shopify.dev/docs/api/admin-graphql for more information about Shopify's GraphQL API
+ 28
+    useEffect(() => {
+ 29
+      (async function getSegmentInfo() {
+ 30
+        const getSegmentQuery = {
+ 31
+          query: `query Segment($id: ID!) {
+ 32
+            segment(id: $id) {
+ 33
+              name
+ 34
+            }
+ 35
+          }`,
+ 36
+          variables: { id: data.selected[0].id },
+ 37
+        };
+ 38
+ 39
+        const res = await fetch("shopify:admin/api/graphql.json", {
+ 40
+          method: "POST",
+ 41
+          body: JSON.stringify(getSegmentQuery),
+ 42
+        });
+ 43
+ 44
+        if (!res.ok) {
+ 45
+          console.error("Network error");
+ 46
+        }
+ 47
+ 48
+        const segmentData = await res.json();
+ 49
+        setSegmentName(segmentData.data.segment.name);
+ 50
+      })();
+ 51
+    }, []);
+ 52
+ 53
+    const onSubmit = useCallback(async () => {
+ 54
+      // Commit changes to the database
+ 55
+      await updateLoyaltyPoints(data.selected[0].id, loyaltyPoints);
+ 56
+      // Close the modal using the 'close' API
+ 57
+      close();
+ 58
+    }, [loyaltyPoints]);
+ 59
+ 60
+    return (
+ 61
+      // The AdminAction component provides an API for setting the title and actions of the Action extension wrapper.
+ 62
+      <AdminAction
+ 63
+        primaryAction={
+ 64
+          <Button onPress={onSubmit}>
+ 65
+            {i18n.translate("done")}
+ 66
+          </Button>
+ 67
+        }
+ 68
+        secondaryAction={
+ 69
+          <Button
+ 70
+            onPress={() => {
+ 71
+              close();
+ 72
+            }}
+ 73
+          >
+ 74
+            {i18n.translate("close")}
+ 75
+          </Button>
+ 76
+        }
+ 77
+      >
+ 78
+        <BlockStack gap>
+ 79
+          <Text>
+ 80
+            {i18n.translate("description", {
+ 81
+              segment: segmentName,
+ 82
+            })}
+ 83
+          </Text>
+ 84
+          <NumberField
+ 85
+            inputMode="numeric"
+ 86
+            max={100}
+ 87
+            label={i18n.translate("label")}
+ 88
+            value={loyaltyPoints}
+ 89
+            onChange={setLoyaltyPoints}
+ 90
+          />
+ 91
+        </BlockStack>
+ 92
+      </AdminAction>
+ 93
+    );
+ 94 }
+ Step 4: Test the extension
+ After you've built the extension, you can test it by completing the following steps.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ To build and preview your app, either start or restart your server with the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Press p to open the developer console.
+ In the developer console page, click on the preview link for the loyalty points action extension.
+ The customer segment details page opens. If you don't have a customer segment in your store, then you need to create one.
+ To launch your extension, click the Use segment button and select your extension.
+ After you've entered a number of loyalty points, click Done.
+ Validate that the loyalty points metafield has properly been updated by navigating to one of the customer profiles that belongs to your segment. Click Show all in the Metafields section. The loyalty points metafield should display the correct value.
+ Next steps
+ Learn about the surfaces in the Shopify admin where you can create admin extensions.
+ Learn about the full set of available components for writing admin UI extensions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create a new extension
+ Step 2: Build the extension's UI
+ Step 3: Build the extension logic and connect to the GraphQL Admin API
+ Step 4: Test the extension

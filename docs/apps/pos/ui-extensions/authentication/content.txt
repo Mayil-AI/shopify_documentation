@@ -1,0 +1,115 @@
+Billing
+ App Store
+ Communicate with a server
+ Authenticating with a development server
+ Often, an extension running on a simulator or a device will need to communicate with a development server running on a local machine. One solution is to use the session API to get session tokens, and to pass these tokens to your development servers for authentication using the shopify_app gem.
+ CORS Considerations
+ Requests originating from an extension will be of origin cdn.shopify.com. Your server needs to allow requests from this origin.
+ HTTPS Requirement
+ Shopify POS will refuse to fetch any non-HTTPS requests. Therefore, you must find a way to host your development server where it serves HTTPS requests. For example, a standard rails server will run on localhost:3000. Attempting to access this server from an Android emulator using 10.0.2.2:3000 will fail. One strategy is to use Cloudflare Quick Tunnels, which provide an HTTPS URL to connect.
+ Example Extension
+ Below is an example extension that presents a Smart Grid tile. When tapped, the tile will present a modal that uses the Session API to get a session token, and then fetches a test endpoint on the development server.
+ 1 import React, { useEffect, useState } from 'react';
+ 2 import {
+ 3
+    Text,
+ 4
+    Tile,
+ 5
+    render,
+ 6
+    Screen,
+ 7
+    useExtensionApi,
+ 8 } from '@shopify/retail-ui-extensions-react';
+ 9
+ 10 const SmartGridTile = () => {
+ 11
+    const api = useExtensionApi<'pos.home.tile.render'>();
+ 12
+    return (
+ 13
+      <Tile
+ 14
+        title='Example extension'
+ 15
+        enabled
+ 16
+        onPress={() => api.smartGrid.presentModal()}
+ 17
+      />
+ 18
+    );
+ 19 };
+ 20
+ 21 const SmartGridModal = () => {
+ 22
+    const api = useExtensionApi();
+ 23
+    const [authenticated, setAuthenticated] = useState<number>();
+ 24
+    const [error, setError] = useState<string>();
+ 25
+    const [sessionToken, setSessionToken] = useState<string>();
+ 26
+ 27
+    useEffect(() => {
+ 28
+      api.session.getSessionToken().then((token) => {
+ 29
+        setSessionToken(token);
+ 30
+        fetch('https://YOUR_DEVELOPMENT_SERVER/api/extensions/test', {
+ 31
+          method: 'GET',
+ 32
+          mode: 'cors',
+ 33
+          credentials: 'include',
+ 34
+          headers: {
+ 35
+            'Content-Type': 'application/json',
+ 36
+            Authorization: `Bearer ${token}`,
+ 37
+          },
+ 38
+        })
+ 39
+          .then((response) => setAuthenticated(response.status))
+ 40
+          .catch(setError);
+ 41
+      });
+ 42
+    }, []);
+ 43
+ 44
+    return (
+ 45
+      <Screen name='Screen One' title='Screen One Title'>
+ 46
+        <Text>Token: {sessionToken}</Text>
+ 47
+        <Text>Authenticated: {authenticated}</Text>
+ 48
+        <Text>Error: {error}</Text>
+ 49
+      </Screen>
+ 50
+    );
+ 51 };
+ 52
+ 53 render('pos.home.tile.render', () => <SmartGridTile />);
+ 54 render('pos.home.modal.render', () => <SmartGridModal />);
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Authenticating with a development server
+ CORS Considerations
+ HTTPS Requirement
+ Example Extension
+ Updates & News
+ Developer changelog
+ Partner blog

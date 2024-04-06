@@ -1,0 +1,100 @@
+Ad permissions
+ Frequently asked questions
+ Security
+ Creating ads in the Shopify App Store
+ You can create ads from your Partner Dashboard. From there, you can also set up your ad budget and bid on the placement or keywords that you choose.
+ Create an ad
+ Log in to your Partner Dashboard.
+ Click Apps > App ads.
+ Click Create Ad.
+ On the New ad page, you can enter information about your ad's placement, settings, geotargeting, budget, and keywords.
+ Choose a placement
+ Select where you would like your ad to be displayed: as part of the search results for a specific keyword, on the homepage of the Shopify App Store, or on the category pages and subcategory pages of the Shopify App Store.
+ Name your ad
+ You can advertise multiple apps in the Shopify App Store, but each ad can only be for one app. After you create an ad for one of your apps, you can't edit the ad to include a different app. Instead, you need to create a new ad for the other app you want to advertise.
+ You also need to give your ad a name. A good name includes a goal or an identifier to make it easier for you to find your ad later. For example, if the goal of your ad is keyword discovery, then you might name it "Keyword discovery." If it’s an optimized ad with keywords that you tested before, then you might name it "Optimized."
+ Budget
+ Set a daily budget amount that you’re ready to spend on your ad. The platform slows and stops the bidding when the ad spend gets close to your daily budget amount. Your ad spend increases every time that someone clicks your ad.
+ Budget for search ads
+ For search ads, the advertising platform bids on keywords you've selected.
+ Budget for homepage ads
+ The advertising platform bids every time the homepage is visited.
+ Bidding
+ Bidding for search ads
+ When you bid on a keyword, you choose an amount that you're ready to pay when that keyword shows your ad and a merchant clicks on it from the search results page. After you enter a bid amount for an ad, you can always change this bid amount later. To learn more about how the cost of ads is calculated, refer to Pricing.
+ Bid suggestions
+ Bid suggestions give you a range of potential bids for each target keyword. Bidding within that range increases your competitiveness for that keyword. For exact match keywords, it increases the likelihood that your ad will show up on the first page of search results. For broad match keywords, it's a measure of competitiveness against other advertisers who bid on that keyword.
+ Bid suggestions take into account your current relevance score when surfacing a suggested bid range. If there’s not enough data about your keyword to make a suggestion, then a default bid is shown. The absence of a suggested bid or bid range means that your app's relevance score is too low to be competitive in an auction.
+ Bid suggestions don't guarantee that your ad will appear on the first page of search results. The best way to determine whether your bids are too high or too low is to experiment with different bid amounts and then monitor the results. To learn more about keeping track of your ads, refer to Ad reporting for the Shopify App Store.
+ Relevance and how it affects ads
+ When a merchant enters a search term and clicks through to your app from the search results, your app's relevance score for that search term increases. An app that's highly relevant to a search term needs to pay less to win auctions for that search term than a less relevant app. If an app's relevance is too low for a particular search term, then it can't compete in an auction for that search term.
+ Bidding for homepage ads
+ When you bid on the homepage ad, you choose an amount that you're ready to pay when your ad is shown and a merchant clicks on it from the home page. After you enter a bid amount for an ad, you can always change this bid amount later. To learn more about how the cost of ads is calculated, refer to Pricing.
+ Bidding for category page ads
+ When you bid on category pages ads, you choose an amount that you’re ready to pay when your ad is shown and a merchant clicks on it from the Sponsored apps section on the category pages or subcategory pages selected. After you enter a bid amount for an ad, you can always change this bid amount later. To learn more about how the cost of ads is calculated, refer to Pricing.
+ Keywords
+ Keywords apply only to search ads.
+ Keywords are the foundation of your ad, so it’s a good idea to spend time researching and testing keywords to make sure that you'll get the best results.
+ Choosing keywords
+ Keyword match types
+ Entering keywords
+ Negative keywords
+ Keyword conflicts
+ Restricted keywords
+ Choosing keywords
+ When choosing keywords, it's a good idea to imagine what your customers are searching for. Think about what words describe your app, or the features it provides. If you inserted your Google Analytics Tracking ID in your app listing, then you can already see the keywords that bring traffic to your app listing. To learn more, refer to Tracking your listing traffic.
+ You can also use the autocomplete feature on the Shopify App Store to see what popular search terms are related to any keywords you have in mind. You can use the same approach on Google or other search engines, or use the free Google Keyword Planner Tool.
+ Keyword recommendations
+ Keyword recommendations are provided to help you better identify high performing keywords. The recommendations are generated based on factors like converting organic keywords, popular sub-category and category keywords. Keyword recommendations default to exact match.
+ Keyword match types
+ Keywords have 2 match types: broad match and exact match. It's important to understand how each type works because you'll need both of them to get the most out of your ads.
+ BROAD MATCH
+ Broad match is the default match type for keywords. Ads might appear for synonyms, related keywords, misspellings, and other variations. Plural and singular forms are treated the same under broad match, so you don't need to enter a plural and singular form of the same keyword.
+ Broad match is effective for discovering keywords. For example, if you add the broad match keyword "email," then your ad might appear for the search term "email campaigns." Or if you had "image filter" as a broad match keyword, then you can also match on the search term "image edit" because both terms contain the word "image."
+ Exact match
+ Exact match keywords are triggered only if the search term matches exactly what you specified (ignoring case sensitivity).
+ Exact match keywords are enclosed in [ ] brackets. For example, [edit product photo]. When adding keywords, you can enter a keyword in brackets and the match type will automatically be exact.
+ Entering keywords
+ You can add up to 100 keywords for each ad.
+ Enter the keyword you want to add, or paste keywords separated by commas.
+ Use [ ] to contain your keywords if you want them to be exact match. Entering "[keyword a], keyword b, [keyword c]" sets "keyword a" and "keyword c" as exact matches and "keyword b" as a broad match.
+ Negative keywords
+ Negative keywords are search terms that you don't want to point to your ad. After you enter negative keywords, your ad won't be shown for any searches that contain those keywords. This can help you to avoid bidding on search terms that don't convert for your app.
+ There are a few different reasons to use negative keywords:
+ Blocking keywords that convert at a cost that's too high for your budget
+ Preventing merchants from installing your app when it doesn't offer features that they're looking for
+ Excluding keywords that aren't relevant for your app
+ For example, suppose that you create an app that reduces the file size for images on merchants' stores. Your ad appears on searches for "photo compression" because this is your app's main feature. But it's possible your ad appears also for a similar term like "photo filters" if you have keywords that broadly match on the word "photo." This isn't a great result, because your app doesn't include filters. To avoid this behavior, you can add "filter" as a broad match negative keyword in your ad, so that any search term with the word "filter" won’t trigger your ad to bid for the keyword.
+ Negative keywords also have 2 match types: broad match and exact match. They work the same way as keyword targeting, except that they prevent your ad from bidding on search terms that match the negative keywords that you've entered.
+ ADD SEARCH TERMS AS NEGATIVE KEYWORDS
+ To add multiple search terms as negative keywords:
+ From your Partner Dashboard, click Apps > Ads.
+ Click the name of the ad.
+ Click the Search terms tab.
+ Select the search terms you want to add as negatives.
+ Click Actions > Add as negative keywords.
+ Keyword conflicts
+ When you choose keywords, make sure that your keywords and negative keywords don't conflict. Keyword conflicts can prevent your ad from being shown, even for relevant search queries.
+ For example, you want to target the keyword "shipping" with a broad match, but you don't want to include any search terms that contain "shipping rates". If you entered "shipping rates" as a broad match negative keyword, then you might see limited impressions for your ad because the term "shipping" is in your negative keywords. This means that any term that contains "shipping" won't trigger your ad to compete in auctions. Instead, you should use an exact match for the negative keywords "shipping rate" and "shipping rates", or just use a broad match negative keyword of "rate".
+ Restricted keywords
+ There are certain keywords that you can't bid on, such as "Oberlo", other Shopify-branded terms, or other existing brand names. If you try to enter a keyword that's restricted, then you receive an error message.
+ Geotargeting
+ Geotargeting is only available for search ads.
+ Select whether you want to target your ad to specific countries and regions, or target your ad to all countries and regions. We recommend targeting all countries and regions unless your app is only available in certain markets. If you select Target specific countries and regions, then you can select the countries and regions that you want to target.
+ If you want to target your ad to certain countries and regions, then consider creating one ad for each country or region. This lets you monitor and adjust bids and keywords for each country or region.
+ Ad preview
+ You can preview your ad before you launch it. Your ad preview is based on your app listing metadata, and it can't be customized. To change the information that appears in your ad preview, you need to edit your app listing directly. Any changes that you make to your app listing are subject to review by Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Create an ad
+ Choose a placement
+ Name your ad
+ Budget
+ Bidding
+ Keywords
+ Geotargeting
+ Ad preview
+ Updates & News
+ Developer changelog
+ Partner blog

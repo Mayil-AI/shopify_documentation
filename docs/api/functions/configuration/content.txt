@@ -1,0 +1,125 @@
+Overview
+ API references
+ Configuration
+ Error handling
+ Discounts
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Function configuration
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ When you create a function, the shopify.extension.toml file is automatically generated in your function extension directory. This guide describes the properties available in the shopify.extension.toml file.
+ Anatomy of a function configuration file
+ The shopify.extension.toml file contains the extension's configuration, which includes the extension name, type, API version, UI paths, build configuration, and metafields for query variables.
+ shopify.extension.toml
+ 1 api_version = "2023-10"
+ 2
+ 3 [[extensions]]
+ 4 name = "Product Discount"
+ 5 handle = "product-discount"
+ 6 type = "function"
+ 7
+ 8
+    [[extensions.targeting]]
+ 9
+    target = "purchase.product-discount.run"
+ 10
+    input_query = "src/run.graphql"
+ 11
+    export = "run"
+ 12
+ 13
+    [extensions.build]
+ 14
+    command = "cargo wasi build --release"
+ 15
+    path = "target/wasm32-wasi/release/product-discount.wasm"
+ 16
+    watch = [ "src/**/*.rs" ]
+ 17
+ 18
+    [extensions.ui]
+ 19
+    enable_create = true
+ 20
+    handle = "ui-extension-handle"
+ 21
+ 22
+    [extensions.ui.paths]
+ 23
+    create = "/product-discount/:functionId/new"
+ 24
+    details = "/product-discount/:functionId/:id"
+ 25
+ 26
+    [extensions.input.variables]
+ 27
+    namespace = "my-namespace"
+ 28
+    key = "my-key"
+ Properties
+ Functions use common configuration properties for app extensions. Additionally, the following table describes the specific properties for Shopify Functions extensions available in shopify.extension.toml:
+ Property Description
+ [[extensions.targeting]]
+ required The name of the array that contains a target and its associated WebAssembly module export. Contains the following properties:
+ 
+ target:required An identifier that specifies where you're injecting code into the Shopify backend. Refer to the Function API references for available function targets.
+ input_query:optional The path to the input query file for the target. If omitted, then the function receives no input.
+ export:optional The name of the WebAssembly export in your module that executes for the target. Functions don't use the extensions.targeting.module setting. Use export instead. Defaults to _start.
+ [extensions.build]
+ optional The settings related to the build and deployment of the function extension's WebAssembly module. Contains the following properties:
+ 
+ command:optional The command to build the function, which is invoked by the Shopify CLI build command.
+ path:optional The relative path to the function's WebAssembly module. For example, build/my-module.wasm. Defaults to dist/index.wasm.
+ watch:optional The relative paths that Shopify CLI should watch when the dev command is invoked. Changes to matched files trigger a build of the function and update it in your application drafts. This setting accepts a single file path or glob pattern, or an array of file paths and glob patterns.
+ 
+ For JavaScript and TypeScript functions, this setting defaults to ['src/**/*.js', 'src/**/*.ts'].
+ 
+ Input queries are automatically included in watch paths and don't need to be configured in build.watch.
+ [extensions.ui]
+ optional The settings related to the merchant interface for your function. Contains the following properties:
+ 
+ handle: optional Learn how to create your function merchant interface.
+ enable_create:optional Learn how to configure creation workflows for function owners.
+ [extensions.ui.paths]
+ optional The settings related to the App Bridge paths of the merchant interface for your function. Contains the following properties:
+ 
+ create:optional Refer to create your function merchant interface.
+ details:optional Refer to create your function merchant interface.
+ [extensions.input.variables]
+ optional The variables to use in your input query. Contains the following properties:
+ 
+ key: The name for the metafield.
+ namespace: A container for a group of metafields. Grouping metafields within a namespace prevents your metafields from conflicting with other metafields with the same key name.
+ Properties for earlier versions
+ The following table describes the properties available in shopify.extension.toml or shopify.function.extension.toml file, for API versions 2023-07 and earlier:
+ Property Required? Description
+ name Yes The name of the function.
+ type Yes The type of extension.
+ api_version Yes The version of the Function API.
+ ui.enable_create No Refer to configuring creation workflows for function owners.
+ ui.paths.create No Refer to create your function merchant interface.
+ ui.paths.details No Refer to create your function merchant interface.
+ build.command Yes The command to build the function which is invoked by the Shopify CLI build command.
+ build.path No The relative path to the function's WebAssembly module. For example, build/my-module.wasm. Defaults to dist/index.wasm.
+ build.watch No The relative paths that Shopify CLI should watch when the dev command is invoked. Changes to matched files trigger a build of the function and update it in your application drafts. This setting accepts a single file path or glob pattern, or an array of file paths and glob patterns.
+ 
+ For JavaScript and TypeScript functions, this setting defaults to ['src/**/*.js', 'src/**/*.ts'].
+ 
+ Input queries are automatically included in watch paths and don't need to be configured in build.watch.
+ input.variables No Refer to use variables in input queries.
+ Next steps
+ Learn how to replace hard-coded variables in your function with metafield values.
+ Learn how to use variables in input queries with Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Anatomy of a function configuration file
+ Properties
+ Properties for earlier versions
+ Next steps
+ Updates & News
+ Developer changelog

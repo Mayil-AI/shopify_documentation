@@ -1,0 +1,30 @@
+B2B
+ Channels
+ Overview
+ Getting started
+ Scheduled publishing
+ Overview
+ Integrate with scheduled publishing
+ Combined listings
+ Blockchain
+ Online store
+ Scheduled publishing
+ Merchants can schedule products to be published to a sales channel at a specific datetime. Example use cases include product drops and timed sales, where merchants want to reserve sufficient inventory to meet spikes in customer demand.
+ Validation workflow
+ If your channel app requires products to meet requirements before they can display to customers, then you need to validate products before their scheduled publication datetime. This gives merchants time to update products and resubmit them for validation. Otherwise, the channel will validate the products at the scheduled datetime, and any updates required might delay their publication.
+ The following is the recommended workflow for channels that include validation:
+ A merchant schedules a product to be published on the channel app at a specified datetime.
+ Shopify sends a scheduled_product_listings/add event to the channel app.
+ The channel app validates the product against requirements for displaying it on the channel.
+ If the product fails validation, then the channel app sends feedback to the merchant using the ResourceFeedback object.
+ The merchant updates the product to meet the requirements.
+ Shopify sends a scheduled_product_listings/update event to the channel app.
+ The channel app validates the product against the requirements.
+ At the scheduled datetime, Shopify sends a product_listing/add event.
+ The channel app reads the product data and displays the product.
+ Next steps
+ Integrate your channel app to support scheduled product publishing.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Validation workflow

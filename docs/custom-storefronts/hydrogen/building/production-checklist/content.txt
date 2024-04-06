@@ -1,0 +1,35 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Production checklist
+ Before going live, review the following lists of recommendations. Complete as many items as possible to ensure that your production environment is resilient.
+ Operations
+ Monitor your operations
+ For stores on a Shopify Plus plan, set up log drains for persisted logs to your chosen log storage and monitoring provider.
+ Establish a monitoring solution to keep track of your storefront's health, such as a check for uptime, number of errors in the log files, or site performance score.
+ Set up alerts on critical events and metrics to notify your support staff and development team when problems occur in production.
+ Build a release strategy
+ Create a production rollout plan, including domain setup. Ensure that all tests pass before releasing to production.
+ Develop an incident response process. For example, isolate the incident's cause, triage to the appropriate teams for troubleshooting, and prepare for emergency deployment rollbacks.
+ For stores on the Shopify Plus plan, work with a Merchant Success Manager to ensure that they're aware of your production launch.
+ Security
+ Set up guardrails
+ Create the package-lock.json or yarn.lock files in your Git repository.
+ Plan for potential disruption to availability or increase in latency for upstream services, such as APIs or other third-party services such as content management systems (CMS).
+ Coordinate with service providers to load test your storefronts. Ensure that you allocate three to five weeks for load testing in your rollout plans so that each party has sufficient preparation time.
+ Performance
+ Optimize site performance
+ Implement caching when applicable. For more information, refer to Hydrogen caching and the Oxygen Cache API.
+ Optimize server bundle and static asset sizes, such as images and videos.
+ Next Steps
+ Go live with Hydrogen.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Operations
+ Security
+ Performance
+ Next Steps
+ Updates & News
+ Developer changelog
+ Partner blog

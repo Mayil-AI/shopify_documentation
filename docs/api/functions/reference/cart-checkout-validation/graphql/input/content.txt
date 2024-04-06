@@ -1,0 +1,35 @@
+Overview
+ Common objects
+ FunctionFetchResult
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Cart Transform API
+ Pickup Point Delivery Option Generator API
+ Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ Input object
+ 2024-04 latest
+ On this page
+ Fields
+ Fields
+ buyerJourney (BuyerJourney!)
+ The buyer journey step.
+ cart (Cart!)
+ The cart.
+ fetchResult (HttpResponse)
+ The result of the fetch target. Refer to network access for Shopify Functions.
+ localization (Localization!)
+ The localization of the Function execution context.
+ presentmentCurrencyRate (Decimal!)
+ The conversion rate between the shop's currency and the currency of the cart.
+ shop (Shop!)
+ Information about the shop.
+ validation (Validation!)
+ The validation rule that owns the current function.

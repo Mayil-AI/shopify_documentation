@@ -1,0 +1,1390 @@
+Product subscription app extensions
+ Add product data using the new product model
+ After you understand the new product model, you can use it to interact with products, variants, and options in a store.
+ Note
+ If your app or use case aligns with the database sync workflow, then use the productSet mutation to add data in a single operation.
+ What you'll learn
+ In this guide, you'll learn how to create a new product with multiple options, option values, and variants, using either a single mutation or multiple mutations.
+ You'll also learn the workflow for creating a product and its variants and operations using updated product operations.
+ Scenario
+ You want to create a product with the following data:
+ Two options:
+ Color
+ Size
+ Each option has three option values:
+ Color has Red, Green, and Blue
+ Size has Small, Medium, and Large
+ Each option value has a variant, for nine product variants total, representing all possible combinations of option values. For example:
+ Red / Small
+ Blue / Large
+ Shape of the product data
+ The following diagram represents the desired shape of the product data:
+ The diagram displays the "OptionValues" that are assigned to each variant, and the "Values" that belong to each "Option" relationship of the product's variants to their option values. On the right, there's the relationship of the product's options to their option values. The values that are represented in "OptionValues" correspond with a value in the product's options.
+ The following is the corresponding data structure:
+ Product data structure
+ 1 {
+ 2
+    "id": "gid://shopify/Product/456",
+ 3
+    "title": "My Cool Socks",
+ 4
+    "variants": {
+ 5
+      "edges": [
+ 6
+        {
+ 7
+          "node": {
+ 8
+            "id": "gid://shopify/ProductVariant/20",
+ 9
+            "title": "Red / Small",
+ 10
+            "selectedOptions": [
+ 11
+              {
+ 12
+                "name": "Color",
+ 13
+                "value": "Red"
+ 14
+              },
+ 15
+              {
+ 16
+                "name": "Size",
+ 17
+                "value": "Small"
+ 18
+              }
+ 19
+            ]
+ 20
+          }
+ 21
+        },
+ 22
+        {
+ 23
+          "node": {
+ 24
+            "id": "gid://shopify/ProductVariant/21",
+ 25
+            "title": "Green / Small",
+ 26
+            "selectedOptions": [
+ 27
+              {
+ 28
+                "name": "Color",
+ 29
+                "value": "Green"
+ 30
+              },
+ 31
+              {
+ 32
+                "name": "Size",
+ 33
+                "value": "Small"
+ 34
+              }
+ 35
+            ]
+ 36
+          }
+ 37
+        },
+ 38
+        {
+ 39
+          "node": {
+ 40
+            "id": "gid://shopify/ProductVariant/22",
+ 41
+            "title": "Blue / Small",
+ 42
+            "selectedOptions": [
+ 43
+              {
+ 44
+                "name": "Color",
+ 45
+                "value": "Blue"
+ 46
+              },
+ 47
+              {
+ 48
+                "name": "Size",
+ 49
+                "value": "Small"
+ 50
+              }
+ 51
+            ]
+ 52
+          }
+ 53
+        },
+ 54
+        {
+ 55
+          "node": {
+ 56
+            "id": "gid://shopify/ProductVariant/23",
+ 57
+            "title": "Red / Medium",
+ 58
+            "selectedOptions": [
+ 59
+              {
+ 60
+                "name": "Color",
+ 61
+                "value": "Red"
+ 62
+              },
+ 63
+              {
+ 64
+                "name": "Size",
+ 65
+                "value": "Medium"
+ 66
+              }
+ 67
+            ]
+ 68
+          }
+ 69
+        },
+ 70
+        {
+ 71
+          "node": {
+ 72
+            "id": "gid://shopify/ProductVariant/24",
+ 73
+            "title": "Green / Medium",
+ 74
+            "selectedOptions": [
+ 75
+              {
+ 76
+                "name": "Color",
+ 77
+                "value": "Green"
+ 78
+              },
+ 79
+              {
+ 80
+                "name": "Size",
+ 81
+                "value": "Medium"
+ 82
+              }
+ 83
+            ]
+ 84
+          }
+ 85
+        },
+ 86
+        {
+ 87
+          "node": {
+ 88
+            "id": "gid://shopify/ProductVariant/25",
+ 89
+            "title": "Blue / Medium",
+ 90
+            "selectedOptions": [
+ 91
+              {
+ 92
+                "name": "Color",
+ 93
+                "value": "Blue"
+ 94
+              },
+ 95
+              {
+ 96
+                "name": "Size",
+ 97
+                "value": "Medium"
+ 98
+              }
+ 99
+            ]
+ 100
+          }
+ 101
+        },
+ 102
+        {
+ 103
+          "node": {
+ 104
+            "id": "gid://shopify/ProductVariant/26",
+ 105
+            "title": "Red / Large",
+ 106
+            "selectedOptions": [
+ 107
+              {
+ 108
+                "name": "Color",
+ 109
+                "value": "Red"
+ 110
+              },
+ 111
+              {
+ 112
+                "name": "Size",
+ 113
+                "value": "Large"
+ 114
+              }
+ 115
+            ]
+ 116
+          }
+ 117
+        },
+ 118
+        {
+ 119
+          "node": {
+ 120
+            "id": "gid://shopify/ProductVariant/27",
+ 121
+            "title": "Green / Large",
+ 122
+            "selectedOptions": [
+ 123
+              {
+ 124
+                "name": "Color",
+ 125
+                "value": "Green"
+ 126
+              },
+ 127
+              {
+ 128
+                "name": "Size",
+ 129
+                "value": "Large"
+ 130
+              }
+ 131
+            ]
+ 132
+          }
+ 133
+        },
+ 134
+        {
+ 135
+          "node": {
+ 136
+            "id": "gid://shopify/ProductVariant/28",
+ 137
+            "title": "Blue / Large",
+ 138
+            "selectedOptions": [
+ 139
+              {
+ 140
+                "name": "Color",
+ 141
+                "value": "Blue"
+ 142
+              },
+ 143
+              {
+ 144
+                "name": "Size",
+ 145
+                "value": "Large"
+ 146
+              }
+ 147
+            ]
+ 148
+          }
+ 149
+        }
+ 150
+      ]
+ 151
+    }
+ 152 }
+ Several mutations to create a product with options and variants
+ To create a project with incremental mutations, run the productCreate mutation to create a standalone product variant and the productVariantsBulkCreate mutation to overwrite this data.
+ Create the standalone variant
+ The following example creates a product with color and size options, including the options' values. The productCreate mutation creates the product, the options, the option values, and a single variant that's assigned the first combination of option values. This is the standalone variant.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateProductWithOptions($productInput: ProductInput!) {
+ 2
+    productCreate(input: $productInput) {
+ 3
+      product {
+ 4
+        id
+ 5
+        title
+ 6
+        description
+ 7
+        options {
+ 8
+          id
+ 9
+          name
+ 10
+          position
+ 11
+          optionValues {
+ 12
+            id
+ 13
+            name
+ 14
+            hasVariants
+ 15
+          }
+ 16
+        }
+ 17
+        variants(first: 250) {
+ 18
+          edges {
+ 19
+            node {
+ 20
+              id
+ 21
+              title
+ 22
+              price
+ 23
+              sku
+ 24
+            }
+ 25
+          }
+ 26
+        }
+ 27
+      }
+ 28
+      userErrors {
+ 29
+        field
+ 30
+        message
+ 31
+      }
+ 32
+    }
+ 33 }
+ Arguments
+ 1 {
+ 2
+    "productInput": {
+ 3
+      "title": "My cool socks",
+ 4
+      "productOptions": [
+ 5
+        {
+ 6
+          "name": "Color",
+ 7
+          "values": [
+ 8
+            {
+ 9
+              "name": "Red"
+ 10
+            },
+ 11
+            {
+ 12
+              "name": "Green"
+ 13
+            },
+ 14
+            {
+ 15
+              "name": "Blue"
+ 16
+            }
+ 17
+          ]
+ 18
+        },
+ 19
+        {
+ 20
+          "name": "Size",
+ 21
+          "values": [
+ 22
+            {
+ 23
+              "name": "Small"
+ 24
+            },
+ 25
+            {
+ 26
+              "name": "Medium"
+ 27
+            },
+ 28
+            {
+ 29
+              "name": "Large"
+ 30
+            }
+ 31
+          ]
+ 32
+        }
+ 33
+      ]
+ 34
+    }
+ 35 }
+      "productCreate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/456",
+ 6
+          "title": "My cool socks",
+ 7
+          "description": "",
+ 8
+          "options": [
+ 9
+            {
+ 10
+              "id": "gid://shopify/ProductOption/101",
+ 11
+              "name": "Color",
+ 12
+              "position": 1,
+ 13
+              "optionValues": [
+ 14
+                {
+ 15
+                  "id": "gid://shopify/ProductOptionValue/1",
+ 16
+                  "name": "Red",
+ 17
+                  "hasVariants": true
+ 18
+                },
+ 19
+                {
+ 20
+                  "id": "gid://shopify/ProductOptionValue/2",
+ 21
+                  "name": "Green",
+ 22
+                  "hasVariants": false
+ 23
+                },
+ 24
+                {
+ 25
+                  "id": "gid://shopify/ProductOptionValue/3",
+ 26
+                  "name": "Blue",
+ 27
+                  "hasVariants": false
+ 28
+                }
+ 29
+              ]
+ 30
+            },
+ 31
+            {
+ 32
+              "id": "gid://shopify/ProductOption/102",
+ 33
+              "name": "Size",
+ 34
+              "position": 2,
+ 35
+              "optionValues": [
+ 36
+                {
+ 37
+                  "id": "gid://shopify/ProductOptionValue/4",
+ 38
+                  "name": "Small",
+ 39
+                  "hasVariants": true
+ 40
+                },
+ 41
+                {
+ 42
+                  "id": "gid://shopify/ProductOptionValue/5",
+ 43
+                  "name": "Medium",
+ 44
+                  "hasVariants": false
+ 45
+                },
+ 46
+                {
+ 47
+                  "id": "gid://shopify/ProductOptionValue/6",
+ 48
+                  "name": "Large",
+ 49
+                  "hasVariants": false
+ 50
+                }
+ 51
+              ]
+ 52
+            }
+ 53
+          ],
+ 54
+          "variants": {
+ 55
+            "edges": [
+ 56
+              {
+ 57
+                "node": {
+ 58
+                  "id": "gid://shopify/ProductVariant/101",
+ 59
+                  "title": "Red / Small",
+ 60
+                  "price": "0.00",
+ 61
+                  "sku": ""
+ 62
+                }
+ 63
+              }
+ 64
+            ]
+ 65
+          }
+ 66
+        },
+ 67
+        "userErrors": []
+ 68
+      }
+ 69
+    }
+ 70 }
+ In this example, the standalone variant has a Color value of Red and a Size value of Small. The title is automatically set to Red / Small.
+ When options have more than one optionValue, the productCreate mutation sets the first variant to have the first option value and retains all other option values as orphaned option values.
+ Tip
+ Orphaned option values still have a GID associated with them. In subsequent requests, you can reference orphaned option values by ID, such as for data integrity purposes, local storage, and reflection in the UI.
+ After running the mutation successfully and obtaining the product ID, you can use the productVariantsBulkCreate mutation to create the remaining product variants and map them to the existing options.
+ You can create up to 250 variants in a single batch using this mutation. In cases where you need to create a higher volume of variants, you need to run the mutation multiple times. Learn how to use fragments and cursor-based pagination to help do this efficiently.
+ To return only the variants that were added, and not all of the product variants, the example uses the productVariants field.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateProductVariants($productId: ID!, $variantsInput: [ProductVariantsBulkInput!]!) {
+ 2
+    productVariantsBulkCreate(productId: $productId, variants: $variantsInput) {
+ 3
+      productVariants {
+ 4
+        id
+ 5
+        title
+ 6
+        selectedOptions {
+ 7
+          name
+ 8
+          value
+ 9
+        }
+ 10
+      }
+ 11
+      userErrors {
+ 12
+        field
+ 13
+        message
+ 14
+      }
+ 15
+    }
+ 16 }
+ Arguments
+ 1 {
+ 2
+    "productId": "gid://shopify/Product/456",
+ 3
+    "variantsInput": [
+ 4
+      {
+ 5
+        "price": 4.99,
+ 6
+        "optionValues": [
+ 7
+          {
+ 8
+            "name": "Red",
+ 9
+            "optionName": "Color"
+ 10
+          },
+ 11
+          {
+ 12
+            "name": "Medium",
+ 13
+            "optionName": "Size"
+ 14
+          }
+ 15
+        ]
+ 16
+      },
+ 17
+      {
+ 18
+        "price": 4.99,
+ 19
+        "optionValues": [
+ 20
+          {
+ 21
+            "name": "Red",
+ 22
+            "optionName": "Color"
+ 23
+          },
+ 24
+          {
+ 25
+            "name": "Large",
+ 26
+            "optionName": "Size"
+ 27
+          }
+ 28
+        ]
+ 29
+      },
+ 30
+      {
+ 31
+        "price": 4.99,
+ 32
+        "optionValues": [
+ 33
+          {
+ 34
+            "name": "Green",
+ 35
+            "optionName": "Color"
+ 36
+          },
+ 37
+          {
+ 38
+            "name": "Small",
+ 39
+            "optionName": "Size"
+ 40
+          }
+ 41
+        ]
+ 42
+      },
+ 43
+      {
+ 44
+        "price": 4.99,
+ 45
+        "optionValues": [
+ 46
+          {
+ 47
+            "name": "Green",
+ 48
+            "optionName": "Color"
+ 49
+          },
+ 50
+          {
+ 51
+            "name": "Medium",
+ 52
+            "optionName": "Size"
+ 53
+          }
+ 54
+        ]
+ 55
+      },
+ 56
+      {
+ 57
+        "price": 4.99,
+ 58
+        "optionValues": [
+ 59
+          {
+ 60
+            "name": "Green",
+ 61
+            "optionName": "Color"
+ 62
+          },
+ 63
+          {
+ 64
+            "name": "Large",
+ 65
+            "optionName": "Size"
+ 66
+          }
+ 67
+        ]
+ 68
+      },
+ 69
+      {
+ 70
+        "price": 4.99,
+ 71
+        "optionValues": [
+ 72
+          {
+ 73
+            "name": "Blue",
+ 74
+            "optionName": "Color"
+ 75
+          },
+ 76
+          {
+ 77
+            "name": "Small",
+ 78
+            "optionName": "Size"
+ 79
+          }
+ 80
+        ]
+ 81
+      },
+ 82
+      {
+ 83
+        "price": 4.99,
+ 84
+        "optionValues": [
+ 85
+          {
+ 86
+            "name": "Blue",
+ 87
+            "optionName": "Color"
+ 88
+          },
+ 89
+          {
+ 90
+            "name": "Medium",
+ 91
+            "optionName": "Size"
+ 92
+          }
+ 93
+        ]
+ 94
+      },
+ 95
+      {
+ 96
+        "price": 4.99,
+ 97
+        "optionValues": [
+ 98
+          {
+ 99
+            "name": "Blue",
+ 100
+            "optionName": "Color"
+ 101
+          },
+ 102
+          {
+ 103
+            "name": "Large",
+ 104
+            "optionName": "Size"
+ 105
+          }
+ 106
+        ]
+ 107
+      }
+ 108
+    ]
+ 109 }
+      "productVariantsBulkCreate": {
+ 4
+        "productVariants": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/ProductVariant/102",
+ 7
+            "title": "Red / Medium",
+ 8
+            "selectedOptions": [
+ 9
+              {
+ 10
+                "name": "Color",
+ 11
+                "value": "Red"
+ 12
+              },
+ 13
+              {
+ 14
+                "name": "Size",
+ 15
+                "value": "Medium"
+ 16
+              }
+ 17
+            ]
+ 18
+          },
+ 19
+          {
+ 20
+            "id": "gid://shopify/ProductVariant/103",
+ 21
+            "title": "Red / Large",
+ 22
+            "selectedOptions": [
+ 23
+              {
+ 24
+                "name": "Color",
+ 25
+                "value": "Red"
+ 26
+              },
+ 27
+              {
+ 28
+                "name": "Size",
+ 29
+                "value": "Large"
+ 30
+              }
+ 31
+            ]
+ 32
+          },
+ 33
+          {
+ 34
+            "id": "gid://shopify/ProductVariant/104",
+ 35
+            "title": "Green / Small",
+ 36
+            "selectedOptions": [
+ 37
+              {
+ 38
+                "name": "Color",
+ 39
+                "value": "Green"
+ 40
+              },
+ 41
+              {
+ 42
+                "name": "Size",
+ 43
+                "value": "Small"
+ 44
+              }
+ 45
+            ]
+ 46
+          },
+ 47
+          {
+ 48
+            "id": "gid://shopify/ProductVariant/105",
+ 49
+            "title": "Green / Medium",
+ 50
+            "selectedOptions": [
+ 51
+              {
+ 52
+                "name": "Color",
+ 53
+                "value": "Green"
+ 54
+              },
+ 55
+              {
+ 56
+                "name": "Size",
+ 57
+                "value": "Medium"
+ 58
+              }
+ 59
+            ]
+ 60
+          },
+ 61
+          {
+ 62
+            "id": "gid://shopify/ProductVariant/106",
+ 63
+            "title": "Green / Large",
+ 64
+            "selectedOptions": [
+ 65
+              {
+ 66
+                "name": "Color",
+ 67
+                "value": "Green"
+ 68
+              },
+ 69
+              {
+ 70
+                "name": "Size",
+ 71
+                "value": "Large"
+ 72
+              }
+ 73
+            ]
+ 74
+          },
+ 75
+          {
+ 76
+            "id": "gid://shopify/ProductVariant/107",
+ 77
+            "title": "Blue / Small",
+ 78
+            "selectedOptions": [
+ 79
+              {
+ 80
+                "name": "Color",
+ 81
+                "value": "Blue"
+ 82
+              },
+ 83
+              {
+ 84
+                "name": "Size",
+ 85
+                "value": "Small"
+ 86
+              }
+ 87
+            ]
+ 88
+          },
+ 89
+          {
+ 90
+            "id": "gid://shopify/ProductVariant/108",
+ 91
+            "title": "Blue / Medium",
+ 92
+            "selectedOptions": [
+ 93
+              {
+ 94
+                "name": "Color",
+ 95
+                "value": "Blue"
+ 96
+              },
+ 97
+              {
+ 98
+                "name": "Size",
+ 99
+                "value": "Medium"
+ 100
+              }
+ 101
+            ]
+ 102
+          },
+ 103
+          {
+ 104
+            "id": "gid://shopify/ProductVariant/109",
+ 105
+            "title": "Blue / Large",
+ 106
+            "selectedOptions": [
+ 107
+              {
+ 108
+                "name": "Color",
+ 109
+                "value": "Blue"
+ 110
+              },
+ 111
+              {
+ 112
+                "name": "Size",
+ 113
+                "value": "Large"
+ 114
+              }
+ 115
+            ]
+ 116
+          }
+ 117
+        ],
+ 118
+        "userErrors": []
+ 119
+      }
+ 120
+    }
+ 121 }
+ Overwrite the standalone variant
+ To overwrite the standalone variant that was created in the initial productCreate mutation, run the productVariantsBulkCreate mutation with a strategy of REMOVE_STANDALONE_VARIANT.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation productVariantsBulkCreate {
+ 2
+    productVariantsBulkCreate(
+ 3
+      productId: "gid://shopify/Product/1234",
+ 4
+      strategy: REMOVE_STANDALONE_VARIANT,
+ 5
+      variants: [
+ 6
+        # Variants to be created
+ 7
+      ]
+ 8
+    )
+ 3
+      "productVariantsBulkCreate": {
+ 4
+        "productVariants": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/ProductVariant/101",
+ 7
+            "title": "Red / Small",
+ 8
+            "selectedOptions": [
+ 9
+              {
+ 10
+                "name": "Color",
+ 11
+                "value": "Red"
+ 12
+              },
+ 13
+              {
+ 14
+                "name": "Size",
+ 15
+                "value": "Medium"
+ 16
+              }
+ 17
+            ]
+ 18
+          },
+ 19
+          {
+ 20
+            "id": "gid://shopify/ProductVariant/102",
+ 21
+            "title": "Red / Medium",
+ 22
+            "selectedOptions": [
+ 23
+              {
+ 24
+                "name": "Color",
+ 25
+                "value": "Red"
+ 26
+              },
+ 27
+              {
+ 28
+                "name": "Size",
+ 29
+                "value": "Medium"
+ 30
+              }
+ 31
+            ]
+ 32
+          },
+ 33
+          {
+ 34
+            "id": "gid://shopify/ProductVariant/103",
+ 35
+            "title": "Red / Large",
+ 36
+            "selectedOptions": [
+ 37
+              {
+ 38
+                "name": "Color",
+ 39
+                "value": "Red"
+ 40
+              },
+ 41
+              {
+ 42
+                "name": "Size",
+ 43
+                "value": "Large"
+ 44
+              }
+ 45
+            ]
+ 46
+          },
+ 47
+          {
+ 48
+            "id": "gid://shopify/ProductVariant/104",
+ 49
+            "title": "Green / Small",
+ 50
+            "selectedOptions": [
+ 51
+              {
+ 52
+                "name": "Color",
+ 53
+                "value": "Green"
+ 54
+              },
+ 55
+              {
+ 56
+                "name": "Size",
+ 57
+                "value": "Small"
+ 58
+              }
+ 59
+            ]
+ 60
+          },
+ 61
+          {
+ 62
+            "id": "gid://shopify/ProductVariant/105",
+ 63
+            "title": "Green / Medium",
+ 64
+            "selectedOptions": [
+ 65
+              {
+ 66
+                "name": "Color",
+ 67
+                "value": "Green"
+ 68
+              },
+ 69
+              {
+ 70
+                "name": "Size",
+ 71
+                "value": "Medium"
+ 72
+              }
+ 73
+            ]
+ 74
+          },
+ 75
+          {
+ 76
+            "id": "gid://shopify/ProductVariant/106",
+ 77
+            "title": "Green / Large",
+ 78
+            "selectedOptions": [
+ 79
+              {
+ 80
+                "name": "Color",
+ 81
+                "value": "Green"
+ 82
+              },
+ 83
+              {
+ 84
+                "name": "Size",
+ 85
+                "value": "Large"
+ 86
+              }
+ 87
+            ]
+ 88
+          },
+ 89
+          {
+ 90
+            "id": "gid://shopify/ProductVariant/107",
+ 91
+            "title": "Blue / Small",
+ 92
+            "selectedOptions": [
+ 93
+              {
+ 94
+                "name": "Color",
+ 95
+                "value": "Blue"
+ 96
+              },
+ 97
+              {
+ 98
+                "name": "Size",
+ 99
+                "value": "Small"
+ 100
+              }
+ 101
+            ]
+ 102
+          },
+ 103
+          {
+ 104
+            "id": "gid://shopify/ProductVariant/108",
+ 105
+            "title": "Blue / Medium",
+ 106
+            "selectedOptions": [
+ 107
+              {
+ 108
+                "name": "Color",
+ 109
+                "value": "Blue"
+ 110
+              },
+ 111
+              {
+ 112
+                "name": "Size",
+ 113
+                "value": "Medium"
+ 114
+              }
+ 115
+            ]
+ 116
+          },
+ 117
+          {
+ 118
+            "id": "gid://shopify/ProductVariant/109",
+ 119
+            "title": "Blue / Large",
+ 120
+            "selectedOptions": [
+ 121
+              {
+ 122
+                "name": "Color",
+ 123
+                "value": "Blue"
+ 124
+              },
+ 125
+              {
+ 126
+                "name": "Size",
+ 127
+                "value": "Large"
+ 128
+              }
+ 129
+            ]
+ 130
+          }
+ 131
+        ],
+ 132
+        "userErrors": []
+ 133
+      }
+ 134
+    }
+ 135 }
+ Next steps
+ Edit data
+ Learn how to edit product data, including variants and options.
+ Sync data
+ Learn how you can sync product data from an external source into Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Scenario
+ Shape of the product data
+ Several mutations to create a product with options and variants
+ Next steps
+ Updates & News
+ Developer changelog

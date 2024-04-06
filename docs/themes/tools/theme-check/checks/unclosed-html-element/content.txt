@@ -1,0 +1,140 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ UnclosedHTMLElement
+ Identifies instances of unclosed HTML elements in branching code, ensuring they are opened/closed in the same parent element, condition, and stack order.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 <!-- Dangling open/close must be in conditional branches of the same parent -->
+ 2 <div>
+ 3
+    {% if cond %}
+ 4
+      <details>
+ 5
+    {% endif %}
+ 6
+    <p>
+ 7
+      {% if cond %}
+ 8
+        </details>
+ 9
+      {% endif %}
+ 10
+    </p>
+ 11 </div>
+ 12
+ 13 <!-- They must open/close in the same condition -->
+ 14 <div>
+ 15
+    {% if something %}
+ 16
+      <details>
+ 17
+    {% endif %}
+ 18
+ 19
+    {% if something_else %}
+ 20
+      </details>
+ 21
+    {% endif %}
+ 22 </div>
+ 23
+ 24 <!-- They must open/close in the correct order -->
+ 25 <div>
+ 26
+    {% if cond %}
+ 27
+      <details
+ 28
+        <summary>
+ 29
+    {% endif %}
+ 30
+ 31
+    {% if cond %}
+ 32
+      </details>
+ 33
+      </summary>
+ 34
+    {% endif %}
+ 35 </div>
+ ✓ Pass
+ 1 <!-- They must open/close in the same condition -->
+ 2 <div>
+ 3
+    {% if something %}
+ 4
+      <details>
+ 5
+    {% endif %}
+ 6
+ 7
+    {% if something %}
+ 8
+      </details>
+ 9
+    {% endif %}
+ 10 </div>
+ 11
+ 12 <!-- They must open/close in the correct order -->
+ 13 <div>
+ 14
+    {% if cond %}
+ 15
+      <details>
+ 16
+        <summary>
+ 17
+    {% endif %}
+ 18
+ 19
+    {% if cond %}
+ 20
+        </summary>
+ 21
+      </details>
+ 22
+    {% endif %}
+ 23 </div>
+ 24
+ 25 <!-- `else` and `unless` evaluate to the negated condition identifier -->
+ 26 <div>
+ 27
+    {% if cond %}
+ 28
+    {% else %}
+ 29
+      <details>
+ 30
+    {% endif %}
+ 31
+ 32
+    {% unless cond %}
+ 33
+      </details>
+ 34
+    {% endunless %}
+ 35 </div>
+ Options
+ 1 UnclosedHTMLElement:
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check

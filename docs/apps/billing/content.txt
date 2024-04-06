@@ -1,0 +1,70 @@
+Best practices
+ App Store
+ Billing users for your app
+ The app billing API resources are mandatory for all listed and unlisted apps that are distributed through the Shopify App Store, unless Shopify has notified you otherwise. Contact us if you have questions or concerns.
+ Use the GraphQL Admin API and Partner API's billing resources to process charges using Shopify’s merchant invoicing system. You can view data on app charges using the Partner Dashboard and the GraphQL Admin API.
+ Caution
+ API billing resources don't support complex calculations for charges. Instead, the API instructs the billing system to collect specific charges. You determine those charges when you configure your app's pricing model. When you configure the pricing model, you'll need to provide the necessary parameters for the API to collect the desired amount.
+ Why use Shopify's app billing resources
+ Shopify's app billing resources provide the following benefits:
+ Simplified payment process: Charges are directly added to the merchant's Shopify invoice.
+ Increased conversion rates: Apps that use the billing API resources experience higher rates of customers transitioning from free to paid versions, because charges originate directly from Shopify.
+ Revenue sharing: You automatically receive a share of the revenue that Shopify collects.
+ Chargeback handling: Shopify handles all chargeback-related processes.
+ Flexible pricing models: You can choose your pricing model and set your own prices. Shopify collects funds and ensures timely payments.
+ Pricing models
+ The pricing model determines the charges that are collected for your app.
+ You can use Shopify's app billing API resources to implement one or more of the following models:
+ App billing API resources pricing models
+ Type Description Use cases Learn how
+ Subscription fee
+ Charge either an annual or 30-day recurring fee to use the app, charge a capped fee based on usage, or employ both.
+ Charge a capped fee for dropshipping.
+ Charge merchants a fee every 30 days and a fee per SMS message sent on their behalf.
+ Time-based
+ Usage-based
+ Combination
+ Additional use cases
+ One-time purchase
+ Charge once for the app, or charge once to enable limited use.
+ Charge merchants a flat fee for translating their storefront.
+ Enable merchants to purchase credits to use in your app.
+ One-time charges and multiple one-time charges
+ Pricing adjustments
+ A pricing adjustment modifies an app's subscription fee or price. App billing API resources support the following price adjustments:
+ App billing API pricing adjustments
+ Type Description Eligibility
+ App credits Grant a sum that merchants can put towards future purchases, subscriptions, or usage charges. Merchants who have the app installed
+ Subscription discounts Offer a percentage or fixed-price discount on an app subscription for a set number of billing cycles.
+ New subscribers
+ Merchants with existing subscriptions
+ Free trials
+ Delay the start of an app's billing cycle by a number of days. This enables merchants to experiment with apps before they commit to paying.
+ Available only to merchants that agree to a new subscription. Can't be added to existing subscriptions.
+ New subscriptions only
+ Can't be added to existing subscriptions
+ Refunds Issue a full or partial refunds for a specific app charge. All users
+ Supported currencies
+ You can match your app charges to a merchant's local billing currency if they use one of the supported currencies.
+ Retrieve the merchant's local billing currency with the GraphQL Admin API's shopBillingPreferences query, passing the currency value as input.
+ Developer tools and resources
+ Explore the developer tools and resources available for app billing:
+ GraphQL Admin API
+ Review the GraphQL Admin API resources for app billing.
+ Partner API
+ Use the Partner API to create app credits.
+ Billing webhooks
+ Learn about the webhooks that you can use to listen for app billing events.
+ Remix billing functions
+ Learn about the functions that Remix apps can use to bill merchants.
+ Next steps
+ Billing process
+ Learn about the process for sending charges through Shopify's merchant invoicing system.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Why use Shopify's app billing resources
+ Pricing models
+ Pricing adjustments
+ Supported currencies
+ Developer tools and resources

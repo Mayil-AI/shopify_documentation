@@ -1,0 +1,45 @@
+Content
+ Navigation
+ User experience
+ Checkout
+ Customer accounts
+ Billing
+ App Store
+ App Design Guidelines
+ Shopify’s App Design Guidelines show you what great Shopify apps look like and how they’re crafted. These guidelines remove the guesswork, so you can build apps that are predictable and easy to use.
+ Apps that follow the App Design Guidelines, and meet other applicable criteria, are eligible for Built for Shopify status.
+ Winter Editions 2024 Changelog
+ We've introduced the following changes to improve and update the App Design Guidelines:
+ The full-screeen mode guidance has been revised and renamed to max modal.
+ The admin app block directive regarding the Summary property has been removed as it is no longer applicable.
+ Why you should use these guidelines
+ We base our design guidelines on some basic principles, which we communicate through clear directives. Following these directives helps provide a better app experience for merchants and benefits your app through the Built for Shopify program.
+ Built for Shopify
+ Apps must meet all directives to qualify for the Built for Shopify program. Achieving Built for Shopify status gives your app preferential treatment in the Shopify App Store and signals to merchants that you meet our standards for quality and trust.
+ A better merchant experience
+ Merchants expect a predictable user experience that works like the rest of the Shopify admin. Put merchant needs and context ahead of trying to make your app unique just for the sake of being different.
+ Adaptive
+ With the majority of online store traffic happening on mobile, designing for mobile devices must be at the forefront of the app building process.
+ Accessible
+ To provide a great experience for all Shopify merchants and their customers, apps must be built using accessibility best practices.
+ Directives
+ There are distinct directives that you must follow to meet the App Design Guideline standards. Some directives also determine if your app will be approved for the Shopify App Store. These directives are identified with APP STORE REQUIREMENT.
+ Must Do
+ Your app must meet these requirements to pass the App Design Guidelines portion of the Built for Shopify review.
+ Do Not
+ If your app contains these behaviors, patterns, or content, then it won’t pass the App Design Guidelines portion of the of Built for Shopify review.
+ Apps and the Shopify admin
+ Apps are a crucial part of the Shopify ecosystem. They enable merchants to add functionality to their stores without leaving the familiar environment of the Shopify admin.
+ Using Shopify App Bridge, you can create apps directly inside the Shopify admin. A single frontend that's written with Shopify App Bridge can power point-of-sale, desktop, and mobile experiences. Apps built with Shopify App Bridge are more performant, flexible, and have more features.
+ By building with Shopify App Bridge and following these App Design Guidelines, you’ll create a streamlined experience with the rest of the Shopify admin.
+ Start building now
+ Learn about some of the patterns, components, and features that are common in Shopify apps by building an example app.
+ Polaris
+ We believe that the best apps provide merchants with a user experience that matches the appearance and behaviors of the Shopify host surface. This consistency builds merchant trust, because merchant workflows often cross between apps and native pages of the Shopify admin.
+ For apps embedded into the Shopify admin, we recommend using the components, tokens, and best practices of Polaris, which is the Shopify admin design system.
+ We are constantly innovating and evolving the admin. By using Polaris, your app can evolve with us.
+ Recommended
+ Your app’s UI should show a good faith effort to follow the user experience norms of the Shopify admin, which supports merchant trust and usability. The easiest way to do this is by using the Polaris design system.
+ Next
+ App structure
+ Was this page helpful?

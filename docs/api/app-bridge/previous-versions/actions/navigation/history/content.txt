@@ -1,0 +1,120 @@
+Navigation
+ Overview
+ History
+ Redirect / Navigate
+ POS
+ Product subscription app extensions
+ History
+ Note
+ This is a legacy API. Use the latest version of the App Bridge History instead.
+ The History action set allows you to use the JavaScript History API to modify the top-level browser URL without navigating. Use the History action set to update the top-level browser URL to match your app.
+ You can use the history action in the following ways:
+ Plain JavaScript
+ React hook
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the History action from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {History} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ 5
+ 6 const history = History.create(app);
+ Push a new history entry containing the relative app path
+ The path is relative to the app origin and must be prefixed with a slash. Adding a history entry does not redirect the app.
+ 1 // Pushes {appOrigin}/settings to the history
+ 2 history.dispatch(History.Action.PUSH, '/settings');
+ Replace the current history entry with the relative app path
+ The path is relative to the app origin and must be prefixed with a slash. Replacing the history entry does not redirect the app:
+ 1 // Replaces the current history url with {appOrigin}/settings
+ 2 history.dispatch(History.Action.REPLACE, '/settings');
+ Subscribe to actions
+ You can subscribe to actions dispatched through the specific history action set:
+ 1 history.subscribe(History.Action.REPLACE, (payload: History.Payload) => {
+ 2
+    // Do something with the history replace action
+ 3
+    console.log(`Updated the history entry to path: ${payload.path}`);
+ 4 });
+ 5
+ 6 history.subscribe(History.Action.PUSH, (payload: History.Payload) => {
+ 7
+    // Do something with the history push action
+ 8
+    console.log(`Added a history entry with the path: ${payload.path}`);
+ 9 });
+ Subscribe to all history actions
+ You can subscribe to all history actions, regardless of which action sets trigger the actions:
+ 1 app.subscribe(History.Action.REPLACE, (payload: History.Payload) => {
+ 2
+    // Do something with the history replace action
+ 3
+    console.log(`Updated the history entry to path: ${payload.path}`);
+ 4 });
+ 5
+ 6 app.subscribe(History.Action.PUSH, (payload: History.Payload) => {
+ 7
+    // Do something with the history push action
+ 8
+    console.log(`Added a history entry with the path: ${payload.path}`);
+ 9 });
+ React
+ The useNavigationHistory hook enables you to modify the top-level browser URL to match your app location. It uses the browser history API and modifies the URL without navigating.
+ The useNavigationHistory hook accepts no props and returns push and replace methods.
+ Example code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ Add a new location to the history stack with push.
+ 1 import {useNavigationHistory} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const {push} = useNavigationHistory();
+ 5
+ 6
+    return (
+ 7
+      <Button onClick={() => {
+ 8
+        push({pathname: '/foo'});
+ 9
+      }}>Push "foo" onto history stack</Button>
+ 10
+    );
+ 11 }
+ Replace the current location in the history stack with replace.
+ 1 import {useNavigationHistory} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const {replace} = useNavigationHistory();
+ 5
+ 6
+    return (
+ 7
+      <Button onClick={() => {
+ 8
+        replace({pathname: '/bar'});
+ 9
+      }}>Replace current location on the history stack with "bar"</Button>
+ 10
+    );
+ 11 }
+ Props
+ The useNavigationHistory hook does not accept any arguments. The APIs for the push and replace methods are as follows:
+ push
+ Name Type Description Required
+ location string Path to add to history stack Yes
+ replace
+ Name Type Description Required
+ location string Path to replace current loaction in history stack Yes
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog

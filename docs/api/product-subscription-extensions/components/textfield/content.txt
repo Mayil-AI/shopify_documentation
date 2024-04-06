@@ -1,0 +1,75 @@
+TextField
+ Thumbnail
+ TextField
+ TextField is a versatile input field that merchants can type into.
+ It supports several input formats including numbers.
+ JavaScript
+ React
+ 1 import {extend, TextField} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const textfield = root.createComponent(TextField, {
+ 5
+      label: 'Super text field',
+ 6
+      type: 'text',
+ 7
+      value: 'I can fly!',
+ 8
+      placeholder: 'Type a thing',
+ 9
+      multiline: 3,
+ 10
+      prefix: 'I typed:',
+ 11
+      suffix: 'into this text field',
+ 12
+      error: 'I hate to break this to you, but you cannot fly',
+ 13
+      onChange: (value) => console.log(value, ' was typed'),
+ 14
+      onInput: (value) => console.log(value, ' was typed'),
+ 15
+      onFocus: () => console.log('Welcome to the super field!'),
+ 16
+      onBlur: () => console.log('Left to do something else'),
+ 17
+      clearButton: true,
+ 18
+      onClearButtonPress: () => console.log('Clear that silly statement'),
+ 19
+    });
+ 20
+ 21
+    root.appendChild(textfield);
+ 22
+    root.mount();
+ 23 });
+ Props
+ optional = ?
+ Name Type Description
+ label string Human-readable label for the input.
+ type? "text" | "search" | "number" Input type
+ value? string Input value.
+ placeholder? string Hint text to display when no text is input
+ multiline? number | boolean Allow for multiple lines of input.
+ prefix? string Text to display before the input value.
+ suffix? string Text to display after the input value.
+ error? string Error text to display beneath the label.
+ onInput? (value: string) => void Callback when value is changed.
+ onChange? (value: string) => void Callback when user leaves the input.
+ onFocus? () => void | Promise<void> Callback when input is focused.
+ onBlur? () => void | Promise<void> Callback when focus is removed.
+ clearButton? boolean Show a 'clear text' button in the input.
+ onClearButtonPress? () => void Callback when clear button is pressed.
+ Guidelines
+ TextField will expand to the width of its container
+ ✅ Do 🛑 Don't
+ 📱 Stack TextField components vertically 📱 Stack TextField components horizontally
+ Use TextField to capture merchant text input
+ For more guidelines, refer to Polaris' Text Field best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props

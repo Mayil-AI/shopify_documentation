@@ -1,0 +1,340 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Overview
+ Getting started
+ Using Customer Account API with Hydrogen
+ Customers
+ Customer Account API reference
+ Additional SDKs
+ Manage customer accounts with the Customer Account API
+ You can update customer accounts using the Customer Account API.
+ This guide covers how to update a customer, and accomplish common tasks like creating, updating and deleting an address on a customer.
+ Requirements
+ You've completed the Getting started with the Customer Account API guide.
+ Step 1: Update a customer
+ Customers are automatically created if needed when you call the API.
+ You update a customer using the customerUpdate mutation. You can use this mutation to update the profile of a customer on your storefront.
+ POST https://shopify.com/<shop_id>/account/customer/api/unstable/graphql
+ GraphQL mutation
+ 1 mutation customerUpdate($input:CustomerUpdateInput!) {
+ 2
+    customerUpdate(input:$input) {
+ 3
+      customer {
+ 4
+        id
+ 5
+        firstName
+ 6
+        lastName
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+        code
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "firstName": "John",
+ 4
+      "lastName": "Doe"
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerUpdate": {
+ 4
+        "customer": {
+ 5
+          "id": "gid://shopify/Customer/1",
+ 6
+          "firstName": "John",
+ 7
+          "lastName": "Doe"
+ 8
+        },
+ 9
+        "userErrors": []
+ 10
+      }
+ 11
+    },
+ 12
+    "extensions": {
+ 13
+      "cost": {
+ 14
+        "requestedQueryCost": 10,
+ 15
+        "actualQueryCost": 10
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 2: Create an address
+ The following example shows how to use the customerAddressCreate mutation to create a new address for a customer:
+ POST <https://shopify.com/><shop_ID>/account/customer/api/unstable/GraphQL
+ GraphQL mutation
+ 1 mutation addressCreate($addressInput:CustomerAddressInput!, $defaultAddress:Boolean) {
+ 2
+    customerAddressCreate(address:$addressInput, defaultAddress:$defaultAddress) {
+ 3
+      customerAddress {
+ 4
+        id
+ 5
+        address1
+ 6
+        city
+ 7
+        territoryCode
+ 8
+        zoneCode
+ 9
+        phoneNumber
+ 10
+        zip
+ 11
+ 14
+        message
+ 15
+        code
+ 16
+      }
+ 17
+    }
+ 18 }
+ Variables
+ 1 {
+ 2
+    "addressInput": {
+ 3
+      "lastName": "Doe",
+ 4
+      "firstName": "John",
+ 5
+      "address1": "123 Test Street",
+ 6
+      "zoneCode": "QC",
+ 7
+      "territoryCode": "CA",
+ 8
+      "zip": "H3K0X2",
+ 9
+      "city": "Montreal"
+ 10
+    },
+ 11
+    "defaultAddress": false
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerAddressCreate": {
+ 4
+        "customerAddress": {
+ 5
+          "id": "gid://shopify/CustomerAddress/1",
+ 6
+          "address1": "123 Test Street",
+ 7
+          "city": "Montreal",
+ 8
+          "territoryCode": "CA",
+ 9
+          "zoneCode": "QC",
+ 10
+          "phoneNumber": null,
+ 11
+          "zip": "H3K0X2"
+ 12
+        },
+ 13
+        "userErrors": []
+ 14
+      }
+ 15
+    },
+ 16
+    "extensions": {
+ 17
+      "cost": {
+ 18
+        "requestedQueryCost": 10,
+ 19
+        "actualQueryCost": 10
+ 20
+      }
+ 21
+    }
+ 22 }
+ Step 3: Update an address
+ The following example shows how to use the customerAddressUpdate mutation to update an existing address for a customer:
+ POST https://shopify.com/<shop_id>/account/customer/api/unstable/graphql
+ GraphQL mutation
+ 1 mutation addressUpdate($addressInput:CustomerAddressInput!, $addressId:ID!, $defaultAddress:Boolean) {
+ 2
+    customerAddressUpdate(addressId:$addressId, address:$addressInput, defaultAddress:$defaultAddress) {
+ 3
+      customerAddress {
+ 4
+        id
+ 5
+        address1
+ 6
+        city
+ 7
+        territoryCode
+ 8
+        zoneCode
+ 9
+        phoneNumber
+ 10
+        zip
+ 11
+      }
+ 12
+      userErrors {
+ 13
+        field
+ 14
+        message
+ 15
+        code
+ 16
+      }
+ 17
+    }
+ 18 }
+ Variables
+ 1 {
+ 2
+    "addressId": "gid://shopify/CustomerAddress/1",
+ 3
+    "addressInput": {
+ 4
+      "address1": "456 Test Street",
+ 5
+      "zip": "H3K8X2"
+ 6
+    },
+ 7
+    "defaultAddress": true
+ 8 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerAddressUpdate": {
+ 4
+        "customerAddress": {
+ 5
+          "id": "gid://shopify/CustomerAddress/1",
+ 6
+          "address1": "456 Test Street",
+ 7
+          "city": "Montreal",
+ 8
+          "territoryCode": "CA",
+ 9
+          "zoneCode": "QC",
+ 10
+          "phoneNumber": null,
+ 11
+          "zip": "H3K8X2"
+ 12
+        },
+ 13
+        "userErrors": []
+ 14
+      }
+ 15
+    },
+ 16
+    "extensions": {
+ 17
+      "cost": {
+ 18
+        "requestedQueryCost": 10,
+ 19
+        "actualQueryCost": 10
+ 20
+      }
+ 21
+    }
+ 22 }
+ Step 4: Delete an address
+ The following example shows how to use the customerAddressDelete mutation to create a new address for a customer:
+ POST <https://shopify.com/><shop_ID>/account/customer/api/unstable/GraphQL
+ GraphQL mutation
+ 1 mutation addressDelete($addressId:ID!) {
+ 2
+    customerAddressDelete(addressId:$addressId) {
+ 3
+    deletedAddressId
+ 4
+      userErrors {
+ 5
+        field
+ 6
+        message
+ 7
+        code
+ 8
+      }
+ 9
+    }
+ 10 }
+ Variables
+ 1 {
+ 2
+    "addressId": "gid://shopify/CustomerAddress/2"
+ 3 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerAddressDelete": {
+ 4
+        "deletedAddressId": "gid://shopify/CustomerAddress/2",
+ 5
+        "userErrors": []
+ 6
+      }
+ 7
+    },
+ 8
+    "extensions": {
+ 9
+      "cost": {
+ 10
+        "requestedQueryCost": 10,
+ 11
+        "actualQueryCost": 10
+ Next steps
+ Learn more about the Customer Account API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Update a customer
+ Step 2: Create an address
+ Step 3: Update an address
+ Step 4: Delete an address

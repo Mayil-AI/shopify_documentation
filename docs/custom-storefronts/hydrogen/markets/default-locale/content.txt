@@ -1,0 +1,130 @@
+Building with the Customer Account API
+ Additional SDKs
+ Set the default locale
+ Internationalization with Shopify Markets helps merchants expand their business to a global audience by creating shopping experiences in local languages and currencies.
+ Each Hydrogen app should have a default language and country in order to receive the correct language and currency for your storefront.
+ This guide shows you how to add or update your custom storefront's default language.
+ Requirements
+ You've completed the Hydrogen getting started with a Hello World example project.
+ You can make queries to the Storefront API.
+ You've setup your store's regions and languages using Shopify Markets.
+ Step 1: Set the default language and country
+ In server.js, when creating the Hydrogen's storefront client, set the values for i18n's language and country, using the Storefront API's supported language and country codes.
+ This ensures that the default country and language are available as context for your Remix loaders.
+ The following example sets the language to non-regional English and the country to Canada:
+ /server
+ JavaScript
+ TypeScript
+ /server.js
+ 1 ...
+ 2 const {storefront} = createStorefrontClient({
+ 3
+    ...
+ 4
+    // Update your default language and country code
+ 5
+    i18n: {language: 'EN', country: 'CA'},
+ 6
+    ...
+ 7 });
+ Step 2: Update the HTML lang attribute
+ The lang HTML attribute is used to identify the language to screen readers and search engines.
+ In this step you will update the HTML roots to match the language in server.js:
+ /app/root
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 export default function App() {
+ 2
+    return (
+ 3
+      // Update your default lang attribute
+ 4
+      <html lang="EN">
+ 5
+        ...
+ 6
+      </html>
+ 7
+    );
+ 8 }
+ Add to CatchBoundary component if exists
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 export function CatchBoundary() {
+ 2
+    return (
+ 3
+      <html lang="EN">
+ 4
+        ...
+ 5
+      </html>
+ 6
+    );
+ 7 }
+ Add to ErrorBoundary component if exists
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 export ErrorBoundary({error}: {error: Error}) {
+ 2
+    return (
+ 3
+      <html lang="EN">
+ 4
+        ...
+ 5
+      </html>
+ 6
+    );
+ 7 }
+ Step 3: Make sure redirects are properly url encoded
+ If you have multilingual handles for your product or collection, for example, products/スノーボード, make sure to encode url when making redirects.
+ Link
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.js
+ 1 export async function loader({params, request, context}) {
+ 2
+    const {productHandle} = params; // productHandle = 'スノーボード'
+ 3
+ 4
+    ...
+ 5
+ 6
+    if (noSelectedProductVariant) {
+ 7
+      // Use URL to prevent accidental double url encoding
+ 8
+      const newUrl = new URL(
+ 9
+        `/products/${productHandle}?${firstVariantSearchParams.toString()}`,
+ 10
+        'http://example.com'  // Any domain to satisfy the URL api
+ 11
+      );
+ 12
+ 13
+      // Redirect to '/products/%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89?Size=154cm&Color=Syntax'
+ 14
+      throw redirect(newUrl.pathname + newUrl.search, 302);
+ 15
+    }
+ 16
+ 17
+    ...
+ Next steps
+ Setup multiregion and multilingual storefront with URL paths: Learn how to setup multiregion and multilingual storefront with URL paths to get the right language and currency.
+ Setup multiregion and multilingual storefront with domains and subdomains: Learn how to setup multiregion and multilingual storefront with domains and subdomains to get the right language and currency.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Set the default language and country
+ Step 2: Update the HTML lang attribute
+ Step 3: Make sure redirects are properly url encoded
+ Next steps
+ Updates & News
+ Developer changelog

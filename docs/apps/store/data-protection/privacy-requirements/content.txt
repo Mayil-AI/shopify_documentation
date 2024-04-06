@@ -1,0 +1,50 @@
+App listing visibility
+ App revenue share
+ Data protection
+ Protected customer data
+ Privacy requirements
+ App Store ads
+ Security
+ Privacy requirements
+ With privacy laws in jurisdictions such as the European Economic Area, United Kingdom, and United States, it's crucial for app developers who work with merchants to disclose all data collection and usage through a privacy policy. Privacy laws such as the General Data Protection Regulation (GDPR), California Privacy Rights Act (CPRA), Colorado Privacy Act, and Virginia's Consumer Data Protection Act clarify and impose obligations on any party that collects, processes, or stores personal data of an individual.
+ We've discussed data privacy legislation on our blog and how it affects our merchants, but privacy laws may also apply to developers that build Shopify apps.
+ We want to ensure that you're setting yourself up for success by complying with any applicable privacy laws and carefully considering what, if any, personal data your app requires, by subscribing to the mandatory webhooks, and by creating a privacy policy if required.
+ Privacy laws are complex, and will apply differently based on how personal data is collected, processed, or stored. If you have any concerns, then we strongly recommend consulting a lawyer about which privacy laws specifically apply to you.
+ Caution
+ This page isn't intended to provide you with legal advice. It sets out Shopify's privacy requirements for app developers and items that you need to consider if you're handling personal data.
+ App privacy policies
+ To help comply with privacy laws, and to gain merchant trust by clarifying exactly how merchant and buyer data is used, you must provide a privacy policy and link to it from your Shopify App Store listing. These requirements are the same for both listed and unlisted apps.
+ Certain privacy laws require businesses, including app businesses, to provide their customers and users with specific information about how their app or product collects and uses personal data.
+ We recommend that you include the following details in your app's privacy policy:
+ What information do you collect through Shopify’s APIs?
+ What information do you collect directly from the merchant? For example, do you ask them for contact details? Do you ask them for information about the merchant's customers? Do you generate automated logs relating to the merchant's use of your app?
+ What information do you collect directly from merchants’ customers? For example, do you drop cookies or use other tracking technologies on their devices? Do you log information relating to how customers visit or navigate particular stores?
+ How do you use the information you collect? Do you use this information for any purposes other than providing your app’s services?
+ For how long do you store or retain the data that you collect?
+ Are you established in Europe? Are you storing or processing information outside of Europe?
+ How can merchants contact you if they have additional questions? Some jurisdictions require that you also include a physical address.
+ Note
+ It is important to be transparent and provide clear details to individuals about how their personal data is collected, processed, and stored. If you have any concerns about how best to describe your app’s data practices, then we recommend consulting with a lawyer about your specific needs.
+ Data rights of individuals
+ In several jurisdictions, individuals have certain rights with respect to how their personal data is collected, stored, and used. To ensure that your app is legally compliant, it's crucial to consider the following:
+ Individuals may have rights to access, correct, erase, and restrict how their personal data is processed. Have a process for receiving and responding to these requests.
+ Privacy laws may impose restrictions on transferring data about individuals outside the country of origin, except under certain circumstances. For example, the GDPR requires that such transfers can only take place where there are adequate protections that are essentially equivalent to those in the European Economic Area (EEA). This could be through an adequacy decision, the use of standard contractual clauses, or the use of agreed transfer frameworks.
+ Certain privacy laws, such as Singapore's Personal Data Protection Act (PDPA) or the EEA's GDPR, may require you to have a Data Protection Officer (DPO) or Privacy Officer to advise the company, in an independent manner, and monitor its compliance with applicable privacy laws.
+ You should consider whether you're required to have a DPO/Privacy Officer, and whether you want to appoint one internally or if you want to use an outside consultant or firm. Note that there are certain requirements in order to be a DPO/Privacy Officer.
+ Note
+ If you have concerns about how privacy laws affect how you currently collect, process, and store personal data, then we suggest you consult with a lawyer.
+ Consent for marketing apps
+ If your app provides marketing or advertising-related services, then you'll need to consider how privacy and marketing laws apply to you. How the laws apply to you depends on how your app uses data, but you'll need to consider the following:
+ Whether you need to obtain consent, or ensure that consent has been obtained, from individuals to use their personal data for such purposes in certain jurisdictions.
+ Whether you need to facilitate individuals opting out from such use of their personal data in certain jurisdictions.
+ How you use personal data to generate any interest-based segments or inferences to target ads or marketing.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ App privacy policies
+ Data rights of individuals
+ Consent for marketing apps
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

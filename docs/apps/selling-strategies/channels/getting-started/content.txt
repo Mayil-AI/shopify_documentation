@@ -1,0 +1,65 @@
+B2B
+ Channels
+ Overview
+ Getting started
+ Scheduled publishing
+ Distribution
+ Billing
+ App Store
+ Getting started with a sales channel app
+ To build a sales channel app, you need to create an app and turn it into a sales channel app.
+ After you've turned your app into a sales channel app, you'll need to create a channel app experience using Channels UI and onboard merchants.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following tasks:
+ Turn an app into a sales channel app
+ Request payment processing
+ Requirements
+ You've created a Partner account and a development store.
+ Step 1: Create a public app
+ Caution
+ If you create an app via the CLI, then don't install the app on your development store. You won't be able to convert the app into a sales channel app if the app has been installed.
+ From your Partner Dashboard, click Apps.
+ Click Create app.
+ Click Create app manually.
+ Enter your app name and click Create.
+ On the app overview page, click Choose distribution.
+ Click Public distribution.
+ Step 2: Turn an app into a sales channel app
+ Caution
+ Turning an app into a sales channel is a process that can't be reversed. If you no longer want your app to be a sales channel, then you'll need to re-create it.
+ After you've created an app, you can turn it into a sales channel app.
+ From your app's overview screen, click Configuration.
+ In the Sales channel section, click Turn app into sales channel.
+ Click Turn app into sales channel again to confirm that you want to convert your app into a sales channel.
+ Click Save.
+ After you've turned your app into a sales channel app, you can install it on your storefront through the CLI or the Partner Dashboard.
+ Step 3: Request payment processing (Optional)
+ After you've turned your app into a sales channel app, you can request payment processing. You should request payment processing only if you intend to process non-2D payments, such as Augmented Reality (AR), Virtual Reality (VR), or Voice payments.
+ If your app will process payments, then your selling platform must be PCI-compliant. You can meet PCI requirements by using a payment service, such as Stripe or Spreedly, or by providing Shopify with a certificate of compliance.
+ In the Sales Channel section, on the Payment processing card, click Request payment processing.
+ On the Payment processing page that opens, select your PCI DSS compliance status, as described in the following table:
+ PCI DSS status Description
+ My platform is not PCI-compliant You must determine a strategy for processing payments.
+ My platform uses Stripe You have an existing platform account with Stripe and would like to use Shopify's Stripe integration.
+ My platform uses a service such as Spreedly to deliver payment tokens You'd like to use Spreedly or similar service for credit card tokenization and PAN forwarding.
+ My platform has a certificate of compliance If you already have a PCI compliant solution in place, then you can provide Shopify with the Attestation of compliance.
+ In the Channel function textbox, provide a description of your channel's function.
+ This should be a high level overview of your channel that outlines the functionality and benefit that the channel provides to merchants.
+ In the Customer purchasing experience section, provide a description of how customers will purchase products on your channel. You should include information about how customers do the following:
+ Access the channel
+ View products listed on the channel
+ Add products to a cart
+ Purchase products added to a cart
+ In the Intended channel audience section, specify whether you're building the channel for a single merchant, or for multiple merchants. If you select Multiple stores or clients, then specify the number of stores.
+ In the Selling platform relationship section, specify whether you own the channel where customers will purchase products, or if you're building the channel independently or on behalf of a channel owner.
+ Optional: Enter your channel's website.
+ Click Request payment processing.
+ A request for payment processing can take up to 7 business days. You'll receive a notification when your request is processed.
+ Next steps
+ Create a channel app experience using Channels UI.
+ Onboard merchants.
+ Step 1: Create a public app
+ Step 2: Turn an app into a sales channel app
+ Step 3: Request payment processing (Optional)
+ Next steps
+ Updates & News

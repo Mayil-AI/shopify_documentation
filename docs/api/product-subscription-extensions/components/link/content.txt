@@ -1,0 +1,40 @@
+TextField
+ Thumbnail
+ Link
+ Links take users to another place, and usually appear within or directly following a sentence.
+ JavaScript
+ React
+ 1 import {extend, Link} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const productLink = root.createComponent(Link, {
+ 5
+      url: '/admin/products/12345',
+ 6
+    });
+ 7
+    productLink.appendChild('View product');
+ 8
+ 9
+    root.appendChild(productLink);
+ 10
+ 11
+    root.mount();
+ 12 });
+ Props
+ optional = ?
+ Name Type Description
+ onPress? () => void Callback when the link is pressed.
+ external? boolean Open the link in a new tab on desktop, or in the device browser on mobile.
+ url? string A relative path or absolute URL to link to.
+ Guidelines
+ 📱 Only nest Text within Link. Other components will be ignored. Nested Text components can be used to render the content of the Link
+ ✅ Do 🛑 Don't
+ 📱 Use external to launch URLs with the device browser Inject Javascript into the URL. This will be blocked.
+ 🖥 Use external to launch URLs in a new browser tab. Use HTTPS for URLs.
+ For more guidelines, refer to Polaris' Link best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props

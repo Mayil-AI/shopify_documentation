@@ -1,0 +1,25 @@
+Product subscription app extensions
+ Spinner
+ Spinner is used to notify buyers that their action is being processed. The Spinner is usually used when sending or receiving data from a server.
+ Any children of the Spinner are used as accessible content that will replace the animated loading indicator when buyers prefers reduced motion. If not included, it will use the loading indicator for all buyers.
+ Example
+ JS
+ React
+ 1 import {extend, Spinner} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const spinner = root.createComponent(Spinner);
+ 5
+ 6
+    root.appendChild(spinner);
+ 7 });
+ Props
+ optional = ?
+ Name Type Description
+ size? "small" | "large" Adjust the size. If not specified, it will use the default size which is about twice as big as the base text.
+ color? "inherit" Specify that the Spinner will inherit its color from its parent. If not specified, it will take the interactive color from the theme.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

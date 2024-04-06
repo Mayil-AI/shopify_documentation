@@ -1,0 +1,10 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Troubleshooting theme errors
+ Below are some errors that you might encounter while working on your theme. Click the link for details.
+ Parameter Missing or Invalid: Required parameter missing or invalid
+ Description can't be larger than 64 kilobytes
+ Browser address bar warnings, inconsistent or missing elements
+ Was this page helpful?
+ YesNo

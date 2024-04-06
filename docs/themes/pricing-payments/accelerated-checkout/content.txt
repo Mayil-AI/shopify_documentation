@@ -1,0 +1,65 @@
+Troubleshooting
+ Theme Store
+ Accelerated checkout
+ Merchants can enable payment providers that offer an off-site checkout, like Apple Pay or Google Pay, which can make the checkout process faster and easier for customers. Accelerated checkout buttons can show on the storefront, or the first step of checkout, to allow customers to use one of these off-site checkouts.
+ Accelerated checkout buttons are supported in the checkout by default. However, you can also choose to include the buttons in the storefront.
+ Note
+ In the checkout, the accelerated checkout buttons are output by the alternative_payment_methods object.
+ In this tutorial, you'll learn how to support accelerated checkout buttons on the storefront.
+ Resources
+ To display additional checkout buttons in your theme, you'll use the following Liquid objects:
+ additional_checkout_buttons - Returns true if any of the shop's enabled payment providers offer an off-site checkout, and false if not.
+ content_for_additional_checkout_buttons - Outputs HTML for a parent container that hosts a button for each payment provider that offers an off-site checkout.
+ Implementing accelerated checkout buttons in your theme
+ You can add accelerated checkout buttons anywhere in your theme. You might want to add accelerated checkout buttons to your cart template, a section inside of the template, or in a cart drawer.
+ Consider including accelerated checkout buttons near the checkout input of your cart form so customers can choose between the regular checkout and an accelerated checkout option.
+ Your code should do the following:
+ Check whether the store has any payment providers enabled that offer an off-site checkout using the additional_checkout_buttons object.
+ If additional_checkout_buttons is true, show the payment provider buttons on the cart page using the content_for_additional_checkout_buttons object.
+ Example
+ 1 {% if additional_checkout_buttons %}
+ 2
+    <div class="additional-checkout-buttons">
+ 3
+      {{ content_for_additional_checkout_buttons }}
+ 4
+    </div>
+ 5 {% endif %}
+ Note
+ You can't render accelerated checkout buttons through AJAX requests, including those through the Section Rendering API. The buttons are added by JavaScript included by Shopify through the content_for_header object, which only runs on the initial page load.
+ Accelerated checkout buttons at checkout
+ Accelerated checkout buttons can be presented to customers on both your storefront and your checkout.
+ However, if your store has checkout.liquid enabled, then accelerated checkout buttons are only presented to customers in the storefront or checkout, not both. For example, if you add the accelerated checkout buttons to the cart template and the customer visits the cart before checkout, then the buttons won't display to the customer again in checkout. If you want accelerated checkout buttons to appear in checkout, then you need to remove them anywhere they appear in your storefront.
+ Align checkout buttons
+ By default, the accelerated checkout buttons are presented vertically, within the limits of their container, and left-aligned. However, you can change both alignments using CSS.
+ Horizontal alignment
+ The button container has an attribute of data-shopify-buttoncontainer and the display: flex style applied. You can target the container with the data attribute as a selector. To control the alignment of the buttons, you can apply one of the following options to the justify-content style:
+ flex-start: Align the buttons to the left.
+ center: Align the buttons in the center.
+ flex-end: Align the buttons to the right.
+ Example
+ 1 [data-shopify-buttoncontainer] {
+ 2
+    justify-content: flex-end;
+ 3 }
+ Vertical alignment
+ To present the buttons vertically by default, you can add the class additional-checkout-buttons--vertical to the container that you put the content_for_additional_checkout_buttons object in.
+ Example
+ 1 {% if additional_checkout_buttons %}
+ 2
+    <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
+ 3
+      {{ content_for_additional_checkout_buttons }}
+ 4
+    </div>
+ 5 {% endif %}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing accelerated checkout buttons in your theme
+ Accelerated checkout buttons at checkout
+ Align checkout buttons
+ Updates & News
+ Developer changelog
+ Partner blog

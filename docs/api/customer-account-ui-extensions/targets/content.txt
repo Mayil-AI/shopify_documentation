@@ -1,0 +1,75 @@
+APIs
+ Collapse sidebar
+ Customer account UI extensions
+ Unstable
+ Unstable
+ Overview
+ Scaffolding an extension
+ Extension targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Tutorials
+ Resources
+ Targets Overview
+ Targets
+ Full-page
+ Order action menu
+ Order index
+ Order status
+ Profile (B2B)
+ Profile (Default)
+ APIs
+ Components
+ Configuration
+ Error handling
+ All Customer account UI extensions targets
+ Full-page
+ customer-account.page.render
+ This full-page extension allows you to create a new page in customer accounts. It renders in the main content area, below the header, and above the footer.
+ Order action menu
+ customer-account.order.action.menu-item.render
+ A static extension target that renders as 1 order action on the Order Index and Order Status pages in customer accounts.
+ customer-account.order.action.render
+ A static extension target that renders inside a modal, as a result of the customer clicking the button rendered via the customer-account.order.action.menu-item.render extension target.
+ Order index
+ customer-account.order-index.block.render
+ A block extension target that renders exclusively on the Order Index page in customer accounts. Merchants can choose to place this extension in any of the supported locations. To preview your extension in each supported location, use the placement reference for that location as a URL parameter.
+ Order status
+ customer-account.order-status.block.render
+ A block extension target that renders exclusively on the Order Status Page.
+ customer-account.order-status.cart-line-item.render-after
+ A static extension target that renders on every line item, inside the details under the line item properties element on the Order Status Page.
+ customer-account.order-status.cart-line-list.render-after
+ A static extension target that renders after all line items on the Order Status page.
+ Caution
+ Use the @shopify/ui-extensions/customer-account or surfaces when targeting order status targets. Importing from the surface is deprecated as of version .
+ customer-account.order-status.customer-information.render-after
+ A static extension target that renders below the order details section of the Order Status page.
+ customer-account.order-status.fulfillment-details.render-after
+ A static extension target that renders in the delivery status card on the Order Status page. A separate delivery status card is shown for each fulfillment.
+ customer-account.order-status.payment-details.render-after
+ A static extension target that renders in the payment status section of the Order Status page.
+ customer-account.order-status.return-details.render-after
+ A static extension target that renders in the return status card on the Order Status page. This card only shows when a return has been requested.
+ customer-account.order-status.unfulfilled-items.render-after
+ A static extension target that renders in the delivery status card for unfulfilled items on the Order Status page.
+ Profile (B2B)
+ customer-account.profile.company-details.render-after
+ A static extension target that renders on the Profile page in customer accounts—for B2B customers only. It renders after the company name, and before company location information.
+ customer-account.profile.company-location-addresses.render-after
+ A static extension target that renders on the Profile page in customer accounts—for B2B customers only. It renders after the Addresses section for the company location.
+ customer-account.profile.company-location-payment.render-after
+ A static extension target that renders on the Profile page in customer accounts—for B2B customers only. It renders after the Payment methods section for the company location.
+ customer-account.profile.company-location-staff.render-after
+ A static extension target that renders on the Profile page in customer accounts—for B2B customers only. It renders after the Staff and permissions section for the company location.
+ Profile (Default)
+ customer-account.profile.addresses.render-after
+ A static extension target that renders in the Addresses section of the Profile page in customer accounts. This does not show to B2B customers.
+ customer-account.profile.block.render
+ A block extension target that renders exclusively on the Profile page in customer accounts. This extension target renders for all customers, including B2B customers. Merchants can choose to place this extension in any of the supported locations. To preview your extension in each supported location, use the placement reference for that location as a URL parameter.
+ Updates & News
+ Developer changelog
+ Partner blog

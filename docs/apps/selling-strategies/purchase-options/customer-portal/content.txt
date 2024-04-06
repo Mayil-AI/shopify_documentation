@@ -1,0 +1,45 @@
+Subscriptions
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Overview
+ Create customer-facing portals
+ Markets
+ B2B
+ Channels
+ Combined listings
+ Billing
+ App Store
+ Customer-facing purchase option portal
+ You can use the GraphQL Admin API to manage SellingPlan and SubscriptionContract objects from a merchant perspective. However, customers need to do the following tasks to manage their purchase options:
+ Update shipping and billing addresses
+ Skip, pause, or unpause a current subscription
+ Cancel a subscription
+ Cancel or modify a pre-order
+ To give customers a seamless experience when managing their purchase options, we recommend using an app proxy. An app proxy enables you to present a customer-facing purchase option portal without having to leave the shop's domain.
+ Why an app proxy is useful
+ An app proxy fetches data from an app proxy server to display on a page of the online store.
+ For example, a shop with the domain coffee.example.com and the shop sells coffee with various purchase options. Shopify handles the storefront and the checkout through the coffee.example.com domain.
+ If the app managing the purchase options provides its own customer-facing page, then that page might redirect the customer to a different domain. This redirection could confuse the customer. By using an app proxy, you can ensure the entire experience stays under the coffee.example.com domain.
+ To learn how to set up an app proxy, refer to our application proxy tutorial.
+ Rendering an app proxy
+ There are several ways to render an app proxy.
+ Full page rendering (recommended)
+ Full page rendering replaces the shop's theme entirely. We recommend using the full page approach because apps and themes can execute untrusted JavaScript code on the storefront.
+ Liquid code in the shop’s theme
+ If the HTTP response from the proxy URL has Content-Type: application/liquid set in the header, then Shopify renders any Liquid code in the request body in the context of the shop using the shop's theme.
+ Caution
+ Rendering sensitive information or exposing controls using Liquid isn't safe because untrusted JavaScript can read the information on the page or act on behalf of the customer. Liquid forms are also vulnerable to attacks such as CSRF.
+ Considerations
+ When setting up your customer-facing purchase option portal, consider the following components:
+ Cookie headers: Cookie headers are stripped on app proxies. If you need to persist information between requests, such as authentication tokens, then use query string parameters.
+ Assets paths: Apps run behind the app proxy in the storefront. You might need to adjust how assets are served from your app because the URLs will use the app proxy's prefix.
+ Next steps
+ Create a customer-facing purchase option portal
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Why an app proxy is useful
+ Rendering an app proxy
+ Considerations
+ Next steps

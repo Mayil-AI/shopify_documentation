@@ -1,0 +1,60 @@
+Additional SDKs
+ Share carts
+ Tip
+ This tutorial is intended for merchants who have live traffic on their online store, and who will be migrating some or all of their traffic to the Hydrogen storefront. If the merchant doesn't have traffic on the online store, then you can skip ahead to Redirect traffic to the Hydrogen channel.
+ Hydrogen uses the Storefront API to manage carts, while the online store typically uses Liquid to manage carts. However, Liquid carts and Storefront API carts are separate. You can't query a Liquid cart through the Storefront API, and you can't access a Storefront API cart through Liquid. Because of this, customers might lose their active carts when a store migrates from the online store to a Hydrogen storefront.
+ Liquid carts are active for ten days. To share carts between the online store and Hydrogen, both implementations must use Storefront API carts. You need to implement Storefront API carts on your online store theme, and handle both Storefront API and Liquid carts for at least ten days to prevent customers from losing their active carts during the migration.
+ Requirements
+ You've completed your Hydrogen build and your Hydrogen storefront is ready for launch.
+ The merchant has live traffic on their online store.
+ Limitations
+ The following limitations are associated with switching an online store theme to use Storefront API carts:
+ The cart needs to be rendered client-side. The cart.liquid file won't work, or needs to be rebuilt with Javascript.
+ Certain analytics scripts that capture add-to-cart metrics don't fire.
+ Step 1: Update the online store to use Storefront API carts
+ You should update your online store theme to use Storefront API carts for any page where products can be added to the cart, including cart drawers and cart pages. Ensure that you read and write the Storefront API cart ID to cookies.
+ To prevent existing online store customers from losing their active carts during the migration, ensure that your theme can detect and handle both Liquid carts and Storefront API carts for ten days before launching the Hydrogen storefront. You can detect a customer with an active Liquid cart when they have a cookie with the name cart.
+ Step 2: Update the Hydrogen storefront to use the new cookie
+ After ten days have passed, all carts should be using the Storefront API. Update your Hydrogen storefront to read and write the cart ID through the cookie that you created in the previous step.
+ The following code provides an example implementation for a storefront where the Storefront API cart ID is stored in the storefrontApiCartId cookie:
+ Example code
+ /app/routes/Cart.jsx
+ 1 ...
+ 2 const cartId = document.cookie
+ 3
+    .split(';')
+ 4
+    .find((cookie) => cookie.trim().startsWith('storefrontApiCartId'));
+ 5
+ 6 const [formData, customerAccessToken] = await Promise.all([
+ 7
+    request.formData(),
+ 8
+    session.get('customerAccessToken'),
+ 9 ]);
+ 10 ...
+ /app/root.jsx
+ 1 ...
+ 2 const cartId = document.cookie
+ 3
+    .split(';')
+ 4
+    .find((cookie) => cookie.trim().startsWith('storefrontApiCartId'));
+ 5
+ 6 const [layout, selectedLocale] = await Promise.all([
+ 7
+    getLayoutData(context),
+ 8
+    getLocaleFromRequest(request),
+ 9 ]);
+ 10 ...
+ Next steps
+ Learn how to redirect traffic from the online store theme to the Hydrogen channel.
+ Learn how to adopt Hydrogen incrementally for merchants who want to use the online store theme and Hydrogen channel side-by-side.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Limitations
+ Step 1: Update the online store to use Storefront API carts
+ Step 2: Update the Hydrogen storefront to use the new cookie

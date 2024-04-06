@@ -1,0 +1,1565 @@
+Skip to Content
+ shopify.dev
+ Apps
+ Themes
+ Custom storefronts
+ Marketplaces
+ APIs and references
+ Log in
+ Sign up
+ Developer changelog
+ Subscribe to the changelog to stay up to date on recent changes to Shopify’s APIs and other developer products, as well as preview upcoming features and beta releases.
+ Get updates by RSS
+ Recent
+ Scheduled
+ Filter by tag:
+ API
+ Tools
+ Shopify App Store
+ Themes
+ Platform
+ App Store requirements
+ Only show posts with ACTION REQUIRED
+ These are the most recent changes to Shopify’s developer platform.
+ APRIL 02, 2024
+ CartDiscountCode#code has been fixed to be case insensitive. API
+ CartDiscountCode#code has been corrected to be case insensitive. For example, providing the input ["DISCOUNT", "dIsCoUnT", "discount"] on cartCreate or cartDiscountCodeUpdate will return a cart payload with one CartDiscountCode with the code value set to DISCOUNT.
+ APRIL 01, 2024
+ Expanded targets for Admin Action Extensions Platform
+ You can now seamlessly integrate your app using admin action extensions at many more locations in the Shopify admin. These include draft orders pages, abandoned checkouts pages, and variant pages. You can find the full list of targets in the admin extension targets API reference.
+ Learn how to create your first admin action extension on Shopify.dev.
+ APRIL 01, 2024
+ Cart checkoutChargeAmount returns amount before the discounts API
+ As of version 2024-04 the Storefront API field Cart.cartCost.checkoutChargeAmount will now return an estimated amount before taxes and discounts. In previous versions Cart.cartCost.checkoutChargeAmount was incorrectly returning the discounted cost.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Preloaded Cart and Checkout Validation configuration in Admin UI extensions API
+ We've added preloading of the Validation record and its metafields so that you can access them without the need of a fetch call. The Validation API will be gated by a new read_validations access scope in the near future, so you need to migrate to this new format for your extension to continue to work or the fetch call will start failing.
+ Learn more about Cart and Checkout Validation configuration on Shopify.dev.
+ APRIL 01, 2024
+ New sort options for fulfillment orders API
+ As of GraphQL Admin API version 2024-04, you can use the new sort options in fulfillmentOrders query.
+ createdAt: The date that the fulfillment order was created.
+ fulfillBy: The date by which the fulfillment order should be fulfilled by the merchant.
+ APRIL 01, 2024
+ New access scopes added to the Validation GraphQL Admin API API
+ As of today, the read_validations access scope will be required for the validation and validations queries. The write_validations access scope is required if you're using the validationCreate, validationUpdate or validationDelete mutations.
+ If you're building an extension for Cart and Checkout Validation configuration check our updated tutorial on Shopify.dev to see how to update it so that you don't need the new access scope.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Unification of count fields API
+ As of 2024-04, fields that returned a count of resources will be removed and replaced with new count fields that have consistent API design and improved features.
+ API design and naming
+ Count fields are now standalone fields with a common naming pattern and their own arguments instead of being a field under a connection type.
+ Before:
+ 1 query {
+ 2
+    products(first: 0) {
+ 3
+      totalCount
+ 4
+    }
+ 5 }
+ After:
+ 1 query {
+ 2
+    productsCount {
+ 3
+      count
+ 4
+    }
+ 5 }
+ In the before example, the products connection field was overloaded with multiple behaviors (count and pagination) which caused confusion as to how, and if, arguments affected the resulting count.
+ With the new count fields, there's one clear behavior and it simplifies how field arguments affect the count.
+ Return type
+ Instead of varying Int or UnsignedInt64 return type, all count fields now return a Count object type with precision and count fields.
+ Precision
+ The new precision field indicates if a server limit was reached such that we returned early, reporting that there were "at least" n records.
+ For example, counting the number of products has a server limit of 10,000. If there were 42 products, the count object would look like { count: 42, precision: "EXACT" }. If there were 10,042 products, the count object would look like { count: 10000, precision: "AT_LEAST" }
+ Filtering
+ Some count fields will now accept filter arguments matching that of a neighboring connection, such as products and productsCount.
+ Migration
+ CatalogConnection.totalCount --> CompanyLocation.catalogsCount, Market.catalogsCount, QueryRoot.catalogsCount
+ Collection.availablePublicationCount --> Collection.availablePublicationsCount
+ Collection.productsCount --> Collection.productsCount
+ Collection.publicationCount --> Collection.resourcePublicationsCount
+ Company.contactCount --> Company.contactsCount
+ Company.locationCount --> Company.locationsCount
+ Company.orderCount --> Company.ordersCount
+ CompanyLocation.orderCount --> CompanyLocation.ordersCount
+ CompanyLocationCatalog.companyLocationsCount --> CompanyLocationCatalog.companyLocationsCount
+ CustomerJourneySummary.momentsCount --> CustomerJourneySummary.momentsCount
+ DeliveryLocationGroup.locationsCount --> DeliveryLocationGroup.locationsCount
+ DeliveryProfile.productVariantsCount --> DeliveryProfile.productVariantsCount
+ DeliveryProfile.productVariantsCountV2 --> DeliveryProfile.productVariantsCount
+ DiscountCodeApp.codeCount --> DiscountCodeApp.codesCount
+ DiscountCodeBasic.codeCount --> DiscountCodeBasic.codesCount
+ DiscountCodeBxgy.codeCount --> DiscountCodeBxgy.codesCount
+ DiscountCodeFreeShipping.codeCount --> DiscountCodeFreeShipping.codesCount
+ FulfillmentOrderLocationForMove.availableLineItemsCount --> FulfillmentOrderLocationForMove.availableLineItemsCount
+ FulfillmentOrderLocationForMove.unavailableLineItemsCount --> FulfillmentOrderLocationForMove.unavailableLineItemsCount
+ InventoryItem.locationsCount --> InventoryItem.locationsCount
+ PriceRule.discountCodesCount --> PriceRule.discountCodesCount
+ Product.availablePublicationCount --> Product.availablePublicationsCount
+ Product.mediaCount --> Product.mediaCount
+ Product.publicationCount --> Product.resourcePublicationsCount
+ Product.sellingPlanGroupCount --> Product.sellingPlanGroupsCount
+ Product.totalVariants --> Product.variantsCount
+ ProductBundleComponent.componentVariantsCount --> ProductBundleComponent.componentVariantsCount
+ ProductBundleComponent.nonComponentVariantsCount --> ProductBundleComponent.nonComponentVariantsCount
+ ProductComponentType.componentVariantsCount --> ProductComponentType.componentVariantsCount
+ ProductComponentType.nonComponentVariantsCount --> ProductComponentType.nonComponentVariantsCount
+ ProductConnection.totalCount --> Channel.productsCount, Collection.productsCount, QueryRoot.productsCount
+ ProductVariant.sellingPlanGroupCount --> ProductVariant.sellingPlanGroupsCount
+ Publishable.availablePublicationCount --> Publishable.availablePublicationsCount
+ Publishable.publicationCount --> Publishable.resourcePublicationsCount
+ QueryRoot.channelCount --> QueryRoot.publicationsCount
+ QueryRoot.companyCount --> QueryRoot.companiesCount
+ QueryRoot.discountCodeCount --> QueryRoot.discountCodesCount
+ QueryRoot.giftCardsCount --> QueryRoot.giftCardsCount
+ QueryRoot.publicationCount --> QueryRoot.publicationsCount
+ QueryRoot.segmentCount --> QueryRoot.segmentsCount
+ SellingPlanGroup.productCount --> SellingPlanGroup.productsCount
+ SellingPlanGroup.productVariantCount --> SellingPlanGroup.productVariantsCount
+ Shop.limitedPendingOrderCount --> QueryRoot.pendingOrdersCount
+ Shop.pendingOrdersCount --> QueryRoot.pendingOrdersCount
+ SubscriptionBillingCycleEditedContract.lineCount --> SubscriptionBillingCycleEditedContract.linesCount
+ SubscriptionContract.lineCount --> SubscriptionContract.linesCount
+ SubscriptionContractBase.lineCount --> SubscriptionContractBase.linesCount
+ APRIL 01, 2024
+ Company and CompanyLocation metafields are now available in the Customer Account API API
+ As of 2024-04, you now have read access to metafields on Company and CompanyLocation resources via the Customer Account API.
+ Learn more about the Metafield object on the GraphQL Customer Account API at Shopify.dev.
+ APRIL 01, 2024
+ Metafield-linked product options API
+ As of version 2024-04 of the Admin GraphQL API, you can use the productOptionsCreate, productCreate, and productOptionUpdate mutations to create metafield-linked product options.
+ Metafield-linked product options are only available in Shopify taxonomy early access.
+ Learn more about metafield-linked product options.
+ APRIL 01, 2024
+ New GraphQL product APIs that support up to 2000 variants now available in 2024-04 API
+ As of 2024-04, new GraphQL product APIs are now available in stable release.
+ These new APIs increase per-product variant support from our historical max of 100 to a new limit of 2000.
+ In addition to higher variant support, you can use the product option mutations to manage options and option values on your products. You can also query for your product's productOptions and your product variants' optionValues.
+ Learn more about the new product and option value GraphQL APIs on Shopify.dev.
+ Also included in this stable release, you can use the productSet mutation to set the entire state of a product from an external data source into Shopify, in addition to the existing mutations for adding/deleting/updating individual variants.
+ Learn more about the new productSet GraphQL API on Shopify.dev.
+ See our guide to sync product data from an external source for more information.
+ With the 2024-04 API release, we will also be deprecating management of both variants and options via the GraphQL ProductInput object and the /products and /variants REST API endpoints. Learn more here.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Deprecation timelines related to new GraphQL product APIs API
+ With the 2024-04 API release, along with the introduction of the new GraphQL product APIs, we are deprecating management of both the variants and options via the GraphQL ProductInput object and the /products and `/variants' REST API endpoints.
+ Below you can find migration information for public and custom apps built on existing GraphQL and REST product APIs.
+ Public Apps
+ All public apps built on existing GraphQL product APIs or REST product APIs must migrate to the new GraphQL product APIs by Feb 1st, 2025.
+ Custom Apps:
+ Custom apps built using the existing GraphQL product APIs must migrate to the new GraphQL product APIs by April 1st, 2025.
+ Custom apps built on REST will also need to migrate if they end up needing to support more than 100 variants.
+ Custom apps built on REST that do not need to support more than 100 variants can continue to use the deprecated REST product APIs, however it is important to note:
+ -Developers should expect that the GraphQL API will be the only supported API over the long term and will be made aware of these timelines as they become available.
+ -The deprecated REST product APIs are in maintenance mode; all new features and support will be built only for the new GraphQL product APIs.
+ -Any merchant using custom apps built with these deprecated APIs will not be able to increase their variant limit past 100.
+ APRIL 01, 2024
+ ShippingLineInput now accepts priceWithCurrency API
+ As of 2024-04, you can use priceWithCurrency to provide the price of the shipping rate along with the currency, whereas price uses the shop currency. If priceWithCurrency is provided, price will be ignored.
+ Learn more about priceWithCurrency on Shopify.dev.
+ APRIL 01, 2024
+ Set LineItem attributes using CartTransform API
+ As of 2024-04, you can set LineItem attributes on Bundle items using CartTransform Merge and Expand operations.
+ You can set custom attributes to either the Bundle item or its components using the new field.
+ Learn more about Bundles on Shopify.dev.
+ APRIL 01, 2024
+ Storefront API now supports per-market Fulfillable Inventory API
+ As of Storefront API version 2024-04, you can use the @inContext directive to query product and productVariant fulfillable inventory for specified market country. The Fulfillable Inventory feature must be enabled.
+ query Contextualized @inContext(country:CA){
+   product(id:"gid://shopify/Product/1" )
+   {
+         availableForSale
+         totalInventory
+         variants(first:1)
+         {
+           edges
+           {
+             node
+             {
+               id
+               availableForSale
+               quantityAvailable
+               currentlyNotInStock
+ 
+             }
+           }
+         }
+       }
+ }
+ Learn more about Fulfillable Inventory on Shopify help docs.
+ APRIL 01, 2024
+ Fulfillment Orders Searching and Sorting by updated_at field API
+ As of 2024-04 developers can now sort and search Fulfillment Orders in GraphQL queries by the UPDATED_AT field.
+ This will help app developers and fulfillment services to prioritize their work on fulfillment orders and reduce the query cost when sorting and searching through other filters.
+ Learn more about sort and search parameters for fulfillment orders on Shopify.dev
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Deprecation of Checkout APIs API
+ As of API version 2024-04 the Checkout API’s will be marked as deprecated. This deprecation will impact both the Admin REST API (excluding Abandoned Checkout) and Storefront GraphQL API endpoints. To maintain continuity and unlock new capabilities, apps will need to migrate to either the Storefront Cart API, and or Checkout Sheet Kit for mobile apps.
+ Deprecation Schedule:
+ April 1, 2024 (Version: 2024-04) All affected fields within the Checkout APIs will be marked as deprecated. This is the final stable version where the Checkout APIs will remain available. The fields will also be removed from unstable and the 2024-07 Release Candidate versions onwards. We strongly recommend you to start migrating to the new API when possible to avoid any disruptions.
+ April 1, 2025 (Version: 2025-04) The 2024-04 API version will reach its end of life. As a result, Checkout mutations will no longer be available on any version.
+ Recognizing the need for a high throughput cart, Shopify introduced the Storefront Cart API in 2021 as the successor to the Checkout API, and we have been continually enriching it with new features. The Cart API offers improved performance, scalability, and a richer feature set including subscriptions, product bundles, and contextual pricing. Additionally, it integrates with Shopify's web checkout for further customization using Shopify Functions and UI extensions.
+ The Checkout Sheet Kit, compatible with Android, Swift, and React Native, streamlines mobile app development by integrating a fully-featured web checkout. This eliminates the need for a separate checkout build, reducing maintenance while preserving all customizations and business logic.
+ Action Required:
+ Follow the Cart API Migration Guide to update any application calling Admin REST API or Storefront GraphQL API checkout endpoints prior to 2025-04 to utilize the Cart API or Checkout Sheet Kit to avoid disruption.
+ If you have questions, please utilize the feedback repository.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ receipt removed from OrderTransaction GraphQL Admin API API
+ As of 2024-04, OrderTransaction.receipt will be removed from the Admin GraphQL API. The field has been deprecated since 2019-04 and is replaced by OrderTransaction.receiptJson
+ Both fields contains the same data but in different formats. receipt was returning a Ruby hash formatted as a string, while receiptJson is returning JSON.
+ Standardizing around JSON-formatted receipts will make it easier for developer to build consistent integrations and removing duplicate fields will simplify our API.
+ Learn more about the change in the OrderTransaction GraphQL API documentation
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Update note to be required in cartNoteUpdate API
+ As part of the GraphQL Storefront API 2024-04 API release, we've updated the cartNoteUpdate API to make the note argument required.
+ Learn more about the Cart object on Shopify.dev.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Removal of Customer order-related sort keys on Admin API API
+ As of GraphQL Admin API version 2024-04, the following Customer sort keys have been deprecated: LAST_ORDER_DATE, ORDERS_COUNT, TOTAL_SPENT. Ordering customers by these attributes is available when filtering customers using segments.
+ Learn more about customer segmentation on Shopify.dev.
+ APRIL 01, 2024
+ Introducing metafieldsDelete API
+ As of 2024-04, you can use the metafieldsDelete mutation to delete up to 25 metafields at once.
+ Learn more about metafields on Shopify.dev.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Removal of productDuplicateAsync mutation from the GraphQL Admin API API
+ As of 2024-04, we're removing the deprecated productDuplicateAsync mutation. The mutation was deprecated since 2023-07 version.
+ Use the productDuplicateAsyncV2 mutation instead.
+ APRIL 01, 2024
+ Adding additional value to FulfillmentOrderAssignmentStatus API
+ As of API version 2024-04, you can retrieve a subset of fulfillment orders which are assigned to locations owned by the app performing the request but have not been requested for fulfillment so far.
+ The assignment_status parameter in the assignedFulfillmentOrders query can now accept a value of FULFILLMENT_UNSUBMITTED for filtering in addition to the existing FULFILLMENT_REQUESTED, FULFILLMENT_ACCEPTED, and CANCELLATION_REQUESTED filter values.
+ APRIL 01, 2024
+ New Storefront GraphQL APIs for B2B are available in 2024-04 API
+ As of GraphQL Storefront API version 2024-04, we are adding support for query contextualization for B2B buyers via the @inContext directive. This allows developers to query the products and prices a B2B buyer may have for a particular company location.
+ Developers will also be able to query associated volume pricing and quantity rules, and work with a Cart that is aware of B2B specific rules and pricing.
+ Developers will also be able to query a purchasing company associated with a cart.
+ Learn more about B2B on Shopify.dev.
+ APRIL 01, 2024
+ Customer APIs: Allow querying of customer subscription contracts API
+ As of the 2024-04 release of the GraphQL Customer API, you can now query for a customer's subscription contracts using the subscriptionContracts or subscriptionContract fields.
+ This allows developers to query for all subscription contracts belonging to a customer, or to query for a specific subscription contract.
+ Learn more about querying for a customer's subscription contracts on Shopify.dev.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ New Error codes and updated error code mapping for payment and billing API
+ As of 2024-04, Added the following fields to the SubscriptionBillingAttemptErrorCode enum
+ InsufficientFunds
+ PurchaseTypeNotSupported
+ Paypal Error
+ CardNumberIncorrect
+ FraudSuspected
+ Additionally, the following payment error code mappings have changed: * “Insufficient Funds” has been removed from “Invalid Payment Method” and now receives its own billing attempt error * “Pick up card” has been removed from “Payment Method Declined” and is now classified as “Fraud Suspected” * “Invalid Item Total” has been added to “Payment Method Declined”
+ And the following codes from payment processors have changed:
+ Braintree
+ 2007 now maps to “Card Number Incorrect”
+ 2014 now maps to “Fraud Suspected”
+ 2105 now maps to “Transient Error”
+ 2106 now maps to “Transient Error”
+ 2107 now maps to “Invalid Payment Method”
+ 2108 now maps to “Invalid Payment Method”
+ Paypal
+ 10417 now maps to “Paypal Error General”
+ Stripe
+ cardnotsupported now maps to “Invalid Purchase Type”
+ invalid_account now maps to “Card Number Incorrect”
+ invalid_amount now maps to “Payment Method Declined”
+ APRIL 01, 2024
+ [Checkout Branding API] New color schemes API
+ As of version 2024-04 of the Admin API, you can use the checkoutBrandingUpsert mutation to configure two new color schemes: scheme3 and scheme4.
+ With this change, up to four color schemes can be configured and used in different sections.
+ Learn more about these new color chemes here
+ APRIL 01, 2024
+ [Checkout Branding API] Initial release of header and footer style customizations API
+ As of version 2024-04 of the Admin API, you can use the checkoutBrandingUpsert mutation to configure styling for the header and footer of your checkout.
+ With this change, header and footer sections can now be customized with color and spacing controls.
+ You can learn more about customizable header and footer in the GraphQL Admin API docs.
+ The new customizable fields are colorScheme and padding.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Taxonomy API API
+ Shopify has introduced a public product taxonomy, serving as an open-source, standardized, and global classification of products sold on Shopify. This taxonomy, composed of product categories, attributes, and attribute values, is utilized across Shopify and integrated with numerous marketplaces. You can view the latest product taxonomy on our taxonomy explorer.
+ The new product taxonomy is now available in our public API with the 2024-04 release. This feature allows developers to navigate the taxonomy tree for categories, attributes, and values.
+ In order to support this change a number two existing APIs have been deprecated and replaced in favor of queryRoot.taxonomy.categories
+ queryRoot.productTaxonomy
+ queryRoot.productTaxonomyNodes
+ Additionally the following changes have been made:
+ The ProductTaxonomyNode type has been replaced with a TaxonomyCategory type.
+ The productCategory field on Product has been deprecated and replaced by category. This field directly references the new TaxonomyCategory type.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Inventory Mutations and Fields Removal API
+ As of Admin API 2024-04, we are removing the following fields and mutations:
+ - InventoryLevel.available
+ - InventoryLevel.incoming
+ - InventoryLevel.deactivationAlertHtml
+ - Mutation.InventoryAdjustQuantity
+ - Mutation.InventoryBulkAdjustQuantityAtLocation
+ After building new fields to handle inventory quantities other than available, new fields and mutations that can handle all quantities were needed and released in 2023-01.
+ InventoryLevel.available and InventoryLevel.incoming should be replaced with InventoryLevel.quantities.
+ InventoryLevel.deactivationAlertHtml should be replaced with InventoryLevel.deactivationAlert.
+ Mutation.InventoryAdjustQuantity and Mutation.InventoryBulkAdjustQuantityAtLocation should be replaced with Mutation.AdjustQuantities or Mutation.MoveQuantities.
+ For those still using these fields on unstable, they will continue to work until 2024-04 is no longer supported.
+ More information on how to use these new fields can be found here
+ APRIL 01, 2024
+ New inventory_management boolean argument on fulfillmentServiceUpdatemutation API
+ As of 2024-04 version Admin GraphQL API, you can update inventory_management boolean value on the FulfillmentService object using the [fulfillmentServiceUpdate mutation]((https://shopify.dev/docs/api/admin-graphql/2024-04/mutations/fulfillmentServiceUpdate) .
+ Learn more about inventory_management argument on Shopify.dev.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ New Create Fulfillment Request Validation API
+ As of Admin version 2024-04 , there cannot be multiple of the same fulfillment_order_id within the line_items_by_fulfillment_order param for the REST "Creates a fulfillment for one or many fulfillment orders" API and GraphQL fulfillmentCreateV2 mutation.
+ Please combine any payload with the same fulfillment_order_id into one group.
+ APRIL 01, 2024
+ ACTION REQUIRED
+ Deprecation of the fulfillmentService.fulfillmentOrdersOptIn field API
+ The fulfillmentOrdersOptIn field on the FulfillmentService GraphQL and REST API objects, along with the related mutations and endpoints, is being deprecated as the migration to the Fulfillment Orders API has been completed. All properly functioning fulfillment services now have the fulfillmentOrdersOptIn field set to true.
+ In the 2024-04 API version, the fulfillmentOrdersOptIn field becomes nullable and defaults to true in the fulfillmentServiceCreate mutation and the Create Fulfillment Service REST endpoint. This field will be removed from the mutation input and the REST endpoint parameters in the subsequent API version (2024-07). To prepare for the 2024-07 API version release, stop supplying the fulfillmentOrdersOptIn parameter when creating a new fulfillment service.
+ MARCH 28, 2024
+ ACTION REQUIRED
+ Orders with payment terms no longer always include an OrderTransaction when created from a Draft Order Platform
+ Orders with payment terms no longer always include an OrderTransaction when created from a Draft Order. Going forward, the transactions field on these Orders will be treated as an output that provides specific information about payments and other financial events related to the order, rather than as an implicit signal or side effect of creating an order from a draft.
+ If your app depends on implicit OrderTransactions that are added by creating an order from a draft, then you will need to switch to alternative options, for example recording payments or payment methods on an order to create an OrderTransaction.
+ MARCH 28, 2024
+ Introducing the new Pickup Points in early access - we want your feedback! API
+ Introducing Pickup Points, a new Shopify Function that enables developers to build custom apps for Plus shops that offer pickup points in checkout to locations like post-offices and parcel lockers.
+ Developers can integrate third-party pickup locations from any network of their choice, customize delivery information based on business logic, and define location-based pricing.
+ Pickup Points is only available for Shopify Plus merchants.
+ We want your feedback! Try Pickup Points early and share feedback that will directly guide development. To request access, contact us at pickup-point-generator-early-access@shopify.com.
+ Visit the developer documentation for more information.
+ MARCH 27, 2024
+ ACTION REQUIRED
+ Plan-level trial configuration in the App Store app listing submission page Shopify App Store
+ We are changing how trials can be configured on your app listing:
+ Trials will now be plan-level rather than app-level
+ Free plans can no longer have a trial associated with them as they should not be time bound
+ The change applies to apps with recurring monthly/annual subscription plans
+ The change does not impact apps that are listed as completely free, or free to install
+ This update gives you more control on how you market trials on the App Store.
+ Shopify has auto-filled the app-level trial data to each plan card based on the last app listing submission form configuration. Please update these default values in the app listing submission form if you have plans with different trial lengths.
+ There is a grace period before plan-level trial changes appear on Shopify App Store app listing pages, which will happen on April 29th. This grace period does not apply to other fields in your app listing submission form, which you can still edit and update in real-time.
+ To modify trial durations, manage your app’s listing in the Partners Dashboard under the Distribution tab. Learn more about configuring your app listing on Shopify.dev.
+ MARCH 27, 2024
+ Introducing a new, guided app submission process Shopify App Store
+ Get your apps published faster with our streamlined app review experience. It provides a clear, guided process that ensures you’ve checked off some key requirements before submitting and contextual guidance that reduces rework. You'll know exactly where you are in the process at a glance with actionable statuses that let you know what to expect next.
+ Learn more about the app submission process on Shopify.dev.
+ MARCH 26, 2024
+ ACTION REQUIRED
+ Removal of deprecated tactics and add ability to query is_external API
+ As of 2024-04, we are making it easier to use our External Marketing API by removing old deprecated values and exposing is_external as a value.
+ Breaking Changes
+ The deprecated follow_up, receipt, display, search, seo and direct marketing tactics are being removed from the 2024-04 API version. See the MarketingTactic documentation for which tactics should be used instead.
+ Non-breaking Changes
+ The is_external attribute can be fetched in the MarketingActivitiesquery to know if an activity was created and is managed by an external platform.
+ MARCH 25, 2024
+ Network access for Shopify Functions is now available in early access API
+ Network access for Shopify Functions is now available in early access. Primarily for merchants on Shopify for enterprise, this powerful new capability allows merchants to integrate Shopify with their own commerce ecosystem and fetch information from external services.
+ Network access is currently supported in early access on the following Shopify Functions:
+ Cart and Checkout Validation
+ Local Pickup Delivery Option Generator
+ Pickup Point Delivery Option Generator
+ To learn more about Network access for Shopify Functions, please refer to the documentation.
+ MARCH 21, 2024
+ REST API 2024-04 reports resource deprecation API
+ As of REST API 2024-04, we’re deprecating the Reports resource.
+ The REST API Reports resource used to create custom reports in analytics has been deprecated. You can still use previous, stable versions of the REST API to continue creating custom reports in admin for the time being.
+ MARCH 21, 2024
+ ACTION REQUIRED
+ Update on deprecation of unpublished apps Shopify App Store
+ In May 2022, Shopify announced that unpublished apps would no longer be supported. To ensure merchant trust and security, all apps must now pass Shopify App Store review to guarantee the best app experience including branding, installation, onboarding, functionality, and quality. Developers with unpublished apps are required to take action by either converting them to public apps by meeting Shopify App Store requirements and submitting them to Shopify for review, or sunsetting their unpublished apps.
+ Impacted developers will receive an email outlining next steps, including the deadline to submit your apps for review. Please ensure your contact information is up to date.
+ If your unpublished apps have not been submitted for review or sunset by the deadline, these apps will have their API access revoked and will be uninstalled from all merchant stores. Developers will be notified at least 60 days prior to any changes being made.
+ For more information, please visit our documentation.
+ MARCH 21, 2024
+ New timeout parameters for the Order Status Page Platform
+ To enhance the security of merchant and customer information and provide additional protection for customer data, we’ve implemented level 2 protected customer data requirements for partners and developers, alongside new timeout parameters and login requirements to the Order Status Page.
+ After an order is created, customers can access the Order Status Page without logging in for a limited timeframe and/or number of browser visits. After these timeout parameters have been reached, customers must provide credentials to access the Order Status Page, such as phone number, email address, order number, or by using passwordless login.
+ We recommend that partners and developers who send transactional SMS on behalf of merchants include the customer’s order number alongside any links to the Order Status Page.
+ Learn more about changes to the Order Status Page in our developer documentation.
+ MARCH 18, 2024
+ Validation mutation endpoints now include optional title attribute API
+ As of version 2024-04 of the GraphQL Admin API, a new optional field title has been added to validationCreate and validationUpdate. This will allow you to create multiple instances of the same Validation function where the unique title will help merchants easily differentiate between them.
+ MARCH 18, 2024
+ New Location fields on GraphQL Admin API API
+ As of version 2024-04 in the GraphQL Admin API, new fields createdAt, updatedAt, and isFulfillmentService have been added to the Location object.
+ Learn more about Location fields on the GraphQL Admin API at Shopify.dev.
+ MARCH 15, 2024
+ ACTION REQUIRED
+ Level 2 protected customer data requirements are now needed to access the order.statusPageUrl field API
+ We are requiring apps to meet Level 2 Protected Customer Data Requirements in order to acess the field order.statusPageUrl on the Admin GraphQL API and on the Admin REST API. This change is applicable to all API versions. We recognize that this may be a breaking change for some apps. However, this change is necessary to ensure the protection of customer data.
+ Learn more about Protected Customer Data, including the actions you need to take to enable existing apps to continue to have access to order.statusPageUrl on Shopify.dev.
+ MARCH 15, 2024
+ ui-save-bar component added to the latest version of App Bridge Tools
+ With the latest version of App Bridge, you can use the ui-save-bar component and the SaveBar React component to declaratively control the contextual save bar, including setting loading and disabled states of the Save and Discard buttons. Learn more about it in the documentation.
+ MARCH 15, 2024
+ Modal src attribute added to the latest version of App Bridge Tools
+ With the latest version of App Bridge, you can use the src attribute with the ui-modal component and the Modal React component to display content from the provided URL. Learn more about it in the documentation.
+ MARCH 15, 2024
+ Query retail cash tracking sessions with the GraphQL Admin API API
+ As of version 2024-04, you can use the GraphQL Admin API to query a shop's Shopify POS cash tracking sessions. The API returns cash tracking data for locations that have a Shopify POS Pro subscription
+ Below are some examples of the data that's available on the new CashTrackingSession type:
+ Opening and closing times, and the staff member who performed each action
+ Adjustments to add or remove cash from the cash drawer, and the staff member who performed each action
+ Notes attached to the actions listed above
+ Aggregations, such as the total cash sales, total cash refunds, and the net cash sales that were processed during the cash tracking session
+ Discrepancies between the amount counted in the cash drawer and the amount expected
+ To find out more, see CashTrackingSession in the GraphQL Admin API reference.
+ MARCH 14, 2024
+ Swatches and images for product filters API
+ As of version 2024-04 of the Storefront API, you can use new attributes of the Filter and FilterValue objects to create visual filters for your custom storefront.
+ We are adding FilterValue.swatch intended for color and pattern swatches and FilterValue.image for more detailed imagery. Use the new Filter.presentation attribute to know the intended display of each filter.
+ Merchants must use Shopify's Search & Discovery app to set visual filters for their store.
+ MARCH 13, 2024
+ POS UI Extensions 1.7 Update: Support for multiple cart discounts API
+ As of March 13, we added the following updates to POS UI Extensions:
+ Added a discounts property to the Cart object, which includes all cart discounts.
+ Added addCartCodeDiscount to the Cart API, which allows the UI extension to add a code discount. The existing applyCartDiscount will still function for code discounts, too.
+ Added remove AllDiscounts to the Cart API, which allows the UI extension to remove all cart discounts.
+ Added a listHeaderComponent to the List component.
+ All of the changes are available for POS UI extensions version 1.7.0 and POS app version 9.4.0. See the version log for all version details.
+ MARCH 13, 2024
+ Field isGiftCard on all line item types API
+ As of Admin GraphQL API version 2024-04, the isGiftCard field that was present on DraftOrderLineItem and CalculatedDraftOrderLineItem is now also present on:
+ ExchangeCheckoutLineItem
+ ExchangeV2LineItem
+ LineItem
+ LineItemMutable
+ It is now preferable to use this field to check whether a line item is a gift card instead of using the fulfillment service.
+ MARCH 13, 2024
+ New Shopify App Store apps require the latest App Bridge Shopify App Store
+ As of March 13th, 2024, net new Shopify App Store apps must use the latest Shopify App Bridge by adding the app-bridge.js script tag to the <head> of each document of your app.
+ MARCH 12, 2024
+ Customer Redaction support on Subscriptions APIs API
+ As of version 2024-04 of the Admin GraphQL API, the subscriptionContractAtomicCreate and subscriptionContractCreate mutations will return a new error code CUSTOMER_REDACTED when creating new subscription contracts for customers scheduled for redaction or have been redacted.
+ Learn more about customer redaction here.
+ MARCH 12, 2024
+ New filter value swatch drop available, replacing the deprecated filter value's display drop API
+ You can now use a Liquid swatch drop to create visual filters for your Online store themes.
+ The filter value display drop is now considered deprecated in favour of swatch. The display drop will continue to function as it does today for backwards compatibility in merchants’ themes.
+ MARCH 11, 2024
+ Delivery Groups now contain a group type API
+ As of Storefront API's 2024-04 release, you can use cart.deliveryGroups.groupType to determine whether a delivery group represents a single delivery (ONE_TIME_PURCHASE) or is a recurring delivery (SUBSCRIPTION)
+ MARCH 08, 2024
+ More data available in the checkout_completed customer event API
+ You can now collect the id of a customer within the order object of the checkout_completed customer event. This gives you more customer insights to improve marketing campaign targeting and analytics.
+ Learn more about the checkout_completed event in our developer documentation
+ MARCH 08, 2024
+ Clarifications in the Webhooks Reference docs Tools
+ Clarified webhooks-related terminology in the Webhooks Overview page to make it easier to get started
+ Updated accuracy of Limitations on webhook delivery guarantees
+ Updated technical implementation accuracy of Avoiding debounces
+ MARCH 07, 2024
+ Hydrogen March 2024 release Platform
+ Hydrogen v2024.1.3 is out today. The March 2024 Hydrogen release contains several new features:
+ Hydrogen now includes experimental support for Vite.
+ A new env push__unstable command to upload local environment variables to Oxygen from the command line
+ You can now get comments on GitHub PRs when Oxygen creates a preview deployment on your connected storefront.
+ In addition to these new features, Hydrogen 2024.1.3 includes a range of updates, performance upgrades, and bug fixes, including an upgrade to Remix v2.8.
+ Check out our full Hydrogen March 2024 release blog post for more details. And please drop your comments, feedback, and suggestions in GitHub Discussions!
+ MARCH 06, 2024
+ App submissions now require a screencast demo Shopify App Store
+ Developers must create a video demo that illustrates how to use their app, as a now mandatory requirement for submission.
+ New apps that are in a Draft status will be asked to provide this prior to submitting for initial review. Submitted apps that are already in initial review may be asked to provide one before they can be published. Published apps that become Delisted may be asked to provide one before they can become published again.
+ This requirement will substantially help our review team to understand app flows and functionality during testing, and will speed up the review process.
+ MARCH 06, 2024
+ ACTION REQUIRED
+ Return Sales and Exchange APIs API
+ Returns will now create corresponding Sales entries.
+ As of 2024-04, SalesAgreements made as part of a return will have the type ReturnAgreement. The OrderActionType enum can have a type of RETURN.
+ As of 2024-04, the SaleLineType enum can now have a type of FEE. Fees can be of the type RestockingFee or ReturnShippingFee, representing corresponding fees on a return.
+ Any Admin API consumers of OrderActionType or SaleLineType will need to accept this new enum value. Previous versions of the Admin API will show these values as "UNKNOWN".
+ You can now view ExchangeLineItems on their associated return. This provides context on returns that will be resolved with an exchange.
+ A new webhook "returns/update" has been added. This webhook will fire when fees or line items on a return are modified or removed. All returns webhooks will now display restock and shipping fees, as well as exchange line items.
+ Dispositions can no longer be created for canceled reverse fulfillment orders. This will result in the new error code INVALID_STATE.
+ MARCH 05, 2024
+ ACTION REQUIRED
+ Inventory Item new fields and ProductVariant deprecations API
+ As of Admin GraphQL API 2024-04, there will be new fields exposed on InventoryItem (and related input types) and some fields on ProductVariant (and related input types) that were marked as deprecated.
+ For InventoryItem and related input types:
+ InventoryItemMeasurement and InventoryItemMeasurementInput were added as new types, with a single field: weight (which is a Weight type).
+ measurement was added as a field to InventoryItem.
+ harmonizedSystemCode, measurement, and requiresShipping were all added as input fields to InventoryItemInput.
+ For ProductVariant and related input types:
+ fulfillmentServiceEditable, weight, and weightUnit were all marked as deprecated on ProductVariant.
+ harmonizedSystemCode, requiresShipping, weight, and weightUnit were all marked as deprecated on ProductVariantInput and ProductVariantBulkInput.
+ These changes are all in support of removing long-deprecated fields on ProductVariant and removing the duplicated fields between ProductVariant and InventoryItem.
+ MARCH 04, 2024
+ Introducing category page ads on the Shopify App Store Shopify App Store
+ Developers can now generate even more demand for their apps by showcasing them on the category and subcategory pages of the Shopify App Store.
+ Learn more about category page ads on Shopify.dev.
+ FEBRUARY 29, 2024
+ Add and remove shipping lines with new mutations on the order editing API API
+ As of GraphQL Admin API version 2024-04, you can add new shipping lines or remove existing shipping lines when editing an order. You can also continue to query removed shipping lines.
+ The mutation orderEditAddShippingLine allows you to add a new, custom shipping line to an existing order. The mutation orderEditRemoveShippingLine allows you to remove existing shipping lines from an order. The mutation orderEditUpdateShippingLine allows you to update the attributes of a newly added shipping line before committing the order edit. The new field shippingLine.isRemoved allows you to determine whether a shipping line has been removed. The new parameter includeRemovals on the connection order.shippingLines allows you to query removed shipping lines. The default value for this parameter is false, so removed shipping lines will not be returned by default.
+ For REST API users, removed shipping lines will continue to be returned in the payload of the Order resource. As of API version 2024-04, you can determine whether a shipping line has been removed by checking the value of the new attribute is_removed.
+ For consumers of Order webhooks, removed shipping lines will also continue to be returned in the payload. As of API version 2024-04, the payload for shipping lines will have a new key is_removed. You can consume the order/edit webhook to be notified when shipping lines have been added or removed from an order.
+ For more information about editing shipping lines, visit the tutorial on editing an existing order with the Admin API.
+ FEBRUARY 28, 2024
+ OrderPaymentStatus Now Exposes Related Order Transactions API
+ As of 2024-04, you can now query the OrderPaymentStatus object to obtain information about its corresponding transactions.
+ FEBRUARY 28, 2024
+ New amount field on the OrderCreateMandatePayment Mutation API
+ As of 2024-04, you can specify custom amounts to be charged from a vaulted card through the OrderCreateMandatePayment mutation for Shopify Plus merchants.
+ FEBRUARY 28, 2024
+ New transactionVoid Mutation API
+ As of version 2024-04 of the Admin GraphQL API, you can now void a transaction through the transactionVoid mutation.
+ FEBRUARY 28, 2024
+ Defer Directive for Storefront API is now available in developer preview API
+ The @defer directive is now available in developer preview, allowing developers to prioritize part of a GraphQL query without having to make multiple requests to fetch the remaining information. Clients can make a single request and data will be received in a stream of responses.
+ This developer preview will guide our decision on the inclusion of this directive in the Storefront API. It will also provide insights into whether clients can effectively support the @defer directive in their implementations, as we are planning the introduction of fields that require mandatory use of @defer.
+ Test out the defer directive today by enabling the developer preview and following our tutorial . We value your input, please share your feedback on Github.
+ FEBRUARY 26, 2024
+ App Bridge React v4 released Platform
+ React developers can start using the App Bridge React v4 via NPM. This optional NPM package works with the required App Bridge library loaded via the <script> tag.
+ For those already using App Bridge React v3 or lower, please refer to the migration guide for how to upgrade.
+ FEBRUARY 23, 2024
+ lineItem.discountedTotalSet can optionally include code based discounts API
+ As of the 2024-04 version of the GraphQL Admin API, you can use the new argument withCodeDiscounts on the order.lineItem.discountedTotalSet field to include or exclude line item discounts originating from a discount code. The current behaviour of discountedTotalSet is to exclude code based discounts and as such, the default value for this option is false so there will be no change required for clients who want to continue to have them excluded.
+ See the documentation for discountedTotalSet on Shopify.dev. The argument is already available on the unstable Admin API.
+ FEBRUARY 20, 2024
+ ACTION REQUIRED
+ Return mutation will update sales (previously unchanged until time of Refund) API
+ As of February 20, 2024, the returnCreate mutation and the returnApproveRequest mutation will create return sales on the order. Each returned item will create a product type return sale. Previously, these mutations did not create sales.
+ To keep track of line item or value changes to the order due to returns, we will soon provide more information on subscribing to enhanced Return related webhooks. Stay tuned for these details.
+ Related changes
+ Return fees as RETURN type
+ When a merchant adds return fees to a return using the admin, return fees will show up as a RETURN OrderActionType on a SalesAgreement.
+ LineItem.currentQuantity and LineItem.refundableQuantity definition changes
+ Previously, both LineItem.currentQuantity and LineItem.refundableQuantity returned identical numbers. They represented the total quantity of the line item minus the quantity that had been removed.
+ The definitions of these properties have been updated:
+ - LineItem.currentQuantity: This property now considers returns that are in progress, even if they haven't been refunded yet. CurrentQuantity will now be the line item's total quantity minus the removed or returned quantity.
+ - LineItem.refundableQuantity: It now represents the line item's total quantity minus the refunded quantity, not the removed quantity. This indicates the quantity of line items that are available for a refund, including items in a return.
+ These changes affect all currently supported APIs (GraphQL, REST, liquid, etc.)
+ Use ReturnRefund when refunding a return line
+ Use the returnRefundGraphQL mutation when refunding a line item on a return to guarantee accurate sales ledger entries. We strongly encourage developers to migrate away from using refundCreate and POST refund to refund return line items due to potential inaccuracies in the sales ledger due to both returns and refunds producing product type return sales.
+ FEBRUARY 15, 2024
+ POS UI Extensions 1.6 Update: Banner on CameraScanner and paginated variant fetching API
+ As of February 15, we added the following updates to POS UI Extensions:
+ Added optional bannerProps to the CameraScanner component, which allows the UI extension to surface banners within the context of the CameraScanner.
+ Added fetchPaginatedProductVariantsWithProductId to the ProductSearch API, which allows the UI extension to fetch pages of variants for a product by ID.
+ All of the changes are available for POS UI extensions version 1.6.0 and POS app version 9.2.0. See the version log for all version details.
+ FEBRUARY 14, 2024
+ Product duplication now duplicates variant metafields API
+ Product duplication now includes variant metafields. Previously, variant metafields were ignored when products were duplicated. Products can be duplicated via admin or GraphQL
+ FEBRUARY 12, 2024
+ Deprecation of Order Risk APIs and Introduction of Risk Assessments API API
+ Starting from April 2024, the Order risk REST and GraphQL APIs are deprecated:
+ admin-rest / order-risk
+ admin-graphql / field-order-risks
+ admin-graphql / field-order-riskLevel
+ Clients are advised to use the new Risk Assessments API instead:
+ To create assessments, you can now use the new mutation orderRiskAssessmentCreate.
+ Additionally, a new webhook topic is available: ORDERSRISKASSESSMENT_CHANGED
+ FEBRUARY 06, 2024
+ New additionalInformation object argument on fulfillmentOrder query API
+ As of version 2024-04 of the Admin GraphQL API, you can read the additionalInformation object value on the deliveryMethod object using the fulfillmentOrder query .
+ Learn more about additionalInformation argument on Shopify.dev.
+ FEBRUARY 01, 2024
+ Store Credit Primitive and API now available in developer preview API
+ Help merchants with post-purchase customer service by enabling them to issue, track, and report accurately on store credit using Shopify’s new Store Credit Primitive and API, available in developer preview.
+ Streamline checkout, customer support and workflows, with a single, reloadable store credit balance for customers. Start using the store credit GraphQL API today to add key functionality that enables differentiation between gift cards and store credit, the linking of store credit directly to a sole customer, and more.
+ Get started
+ JANUARY 31, 2024
+ New OAuth2 Token Exchange API & Shopify managed install authorization flows available Platform
+ We've introduced OAuth2 Token Exchange and Shopify managed install to eliminate screen flickering due to full page redirects on app load and provide uninterrupted & faster embedded app loading and installs.
+ To avoid unnecessary redirects and page flickers during the app installation process, configure your app's required access scopes using Shopify CLI. This allows Shopify to manage the installation process for you.
+ OAuth2 Token Exchange allows embedded apps to exchange session tokens for access tokens. This avoids the multiple requests and redirects as a result of OAuth authorization code grant, making it easier to retrieve both online and offline access tokens.
+ Use Shopify CLI to generate a starter app, which uses token exchange and leverages Shopify managed install. For existing Remix apps, please refer to our migration guide.
+ JANUARY 31, 2024
+ Cart and Checkout Validation Function API API
+ You can now use Admin UI extensions to provide a user interface for merchants to configure your Cart and Checkout Validation Functions.
+ Additionally, merchants on any plan can now use validation functions provided by public apps distributed through the Shopify App Store.
+ Learn more on Shopify.dev.
+ JANUARY 31, 2024
+ Checkout branding supports container styles API
+ The Checkout Branding API now supports container styling for sections in the main and the order summary areas of checkout. This change is available in the 2024-04 release candidate.
+ These changes will give merchants more control over section corner radius, border styles, color scheme, spacing and shadow customizations within or between sections. We will be releasing an update to customize the header and footer sections in a subsequent release.
+ Learn more through our reference documentation.
+ JANUARY 31, 2024
+ Checkout supports header and footer customizations API
+ As of 2024-01-31, Checkout Extensibility enables merchants to customize checkout's header and footer with their brand and navigation intent.
+ Use the GraphQL Admin API's checkout branding to: * Hide the logo, breadcrumbs, default footer content, and Back to cart links * Control the footer position and alignment
+ Use checkout UI extensions to add content and replace hidden content, with the new header and footer extension targets in Checkout and the Thank you page.
+ Learn more on Shopify.dev.
+ JANUARY 31, 2024
+ New Discounts Allocator Function API in Developer Preview API
+ You can now use the Discounts Allocator Function API in Developer Preview to implement custom logic for distributing discounts across multiple products or orders.
+ This new API allows you to define your own logic for how discounts are distributed, enabling the implementation of merchant-specific discount strategies.
+ Learn more about the Discounts Allocator Function API in our developer documentation.
+ JANUARY 31, 2024
+ Theme Check 2.0: Unified theme developer tools everywhere Themes
+ Theme Check 2.0 marks the grand unification of Shopify theme developer tools. Now, you can use all Language Server Protocol (LSP) features in the admin code editor, on the Shopify Liquid VS Code extension, and on Shopify CLI.
+ Here's what's now available everywhere:
+ Hover documentation support
+ Code completion for theme, section, and block settings
+ Code completion for theme translations
+ Code completion for HTML tags, attributes, and values
+ Code completion for Liquid filters, objects, and tags
+ Enhanced auto-closing pair user experience
+ Automatic support for new Liquid tags, filters, and objects
+ We're excited to see how these changes will enhance your theme development process. Learn more about Theme Check 2.0 on Shopify.dev and happy coding!
+ JANUARY 31, 2024
+ Gain more customer behavior analytics with DOM events API
+ You can now subscribe to select DOM events with the Web Pixels API, including input_changed, input_blurred, input_focused, form_submitted, and clicked.
+ These new events will help merchants better understand how visitors are engaging with their online stores.
+ Learn more about Web Pixels on Shopify.dev.
+ JANUARY 31, 2024
+ Hydrogen updates: Tool that make your path to production painless Tools
+ With the latest release, Hydrogen and Oxygen make the path to production more seamless than ever. We’ve added new developer tools so you can more easily debug and optimize your build before you deploy:
+ Subrequest profiler: get a more detailed look at what’s happening inside your Remix loaders — identify query waterfalls, inefficient API calls, and suboptimal caching behavior.
+ Error console: stack-trace errors back to your source code, right from the Shopify admin, so you can get right to the fix.
+ CLI deploys: Deploying to Oxygen is easier than ever. Run the new deploy command to create deployments from your local dev environment, or build your own CI/CD processes on any platform.
+ End-to-end testing support: Automatically and securely run E2E tools like Playwright or Cypress on every Oxygen deployment with our new E2E testing tokens.
+ Shareable storefront previews: Share progress with colleagues and stakeholders — even if they don’t have access to your Shopify Admin — with our new revocable, token-based shareable links.
+ Runtime mirroring: Hydrogen’s development server runtime is now nearly identical to production Oxygen, and now serves assets from a separate domain to better replicate how Shopify’s CDN works.
+ Bundle insights: analyze your worker bundle file to find bloated dependencies, optimize your bundle size, and reduce cold start times, so your app stays fast over time.
+ CLI upgrade command: Stay up-to-date with the latest version of Hydrogen and Remix with h2 upgrade command from your CLI. Your project’s critical dependencies will all be updated to the latest version, along with a custom migration guide.
+ It’s easier than ever to learn Hydrogen, with our refreshed docs, and a new suite of examples.
+ Learn more about our latest release in detail.
+ JANUARY 31, 2024
+ Customer Privacy API now available on Hydrogen & Oxygen API
+ You can now integrate the Customer Privacy API and the Shopify Privacy & Compliance app into your Hydrogen storefront, making it easier to comply with data protection laws and increase customer trust. This allows consent to flow to Shopify so it can be honored on Pixels, Checkout and other services.
+ JANUARY 31, 2024
+ New structured app category details Shopify App Store
+ The Shopify App Store is introducing structured app category details to make it even easier for merchants to evaluate relevant apps within the same category. Starting today, category details can be added for apps classified under:
+ Product reviews
+ Dropshipping
+ Product bundles
+ Subscriptions
+ Loyalty and rewards
+ SEO
+ Page builder
+ Pop-ups
+ Discounts
+ Email marketing
+ Using this structured data, merchants will soon be able to see this information on the app details page, as well as on the compare apps page
+ Learn more about how App Category Details work at shopify.dev
+ JANUARY 31, 2024
+ New install modal and data access section for apps with defines permissions Shopify App Store
+ When you define the permissions your app requests, they will now show up in a new "Data Access" section on your app details page to help build merchant trust.
+ Your installation flow will also be updated to a new installation modal, rather than a full page experience, which will streamline the install process for merchants.
+ JANUARY 31, 2024
+ [General Availability] Checkout Sheet Kit for Android, React Native, Swift v1.0.0 Tools
+ Shopify’s Checkout Sheet Kit enables you to provide the world’s highest converting, customizable, one-page checkout directly within a mobile app. Today we are happy to announce that the v1.0.0 of Checkout Sheet Kit for Android, React Native and Swift is officially available and no longer in developer preview. The libraries are open-source and ready for you to start building.
+ More information can be found in documentation as well as in the Github repositories linked above.
+ JANUARY 31, 2024
+ New GraphQL APIs that support 2000 product variants now in developer preview API
+ Now in developer preview, we’ve introduced new GraphQL product APIs that support 2000 variants, allowing for support of more complex catalogs.
+ Learn more here.
+ JANUARY 31, 2024
+ Guided Search Shopify App Store
+ Merchants can now discover your app in the new AI-powered guided search that supports merchant’s natural language queries, and provides insights to help them make a better informed app decision. This can be accessed through the search bar in the Shopify App Store under the "Ask about apps" section. Keep your listing accurate and up-to-date with the solution that you provide to help the right merchants find your app.
+ Try it now
+ JANUARY 31, 2024
+ ACTION REQUIRED
+ Coming soon: New way to deploy app configuration using Shopify CLI Tools
+ An upcoming release affects the app configuration deployment process using Shopify CLI, which includes breaking changes that require your attention.
+ Effective January 31, 2024, we're introducing an improved way to release your app configuration and extensions together using the shopify app deploy command. With this update, you can version and roll back changes to your app configuration as part of app versions!
+ Upcoming Breaking Change Details: The Shopify CLI shopify app config push command will no longer be supported in any CLI version. Instead, you should use the shopify app deploy command to release your app configurations and extensions.
+ Next steps starting January 31, 2024:
+ Developers using shopify app config push to release app configuration need to update to the latest Shopify CLI version and use shopify app deploy instead.
+ Developers using shopify app config push in CI/CD workflows need to update their deployment scripts to remove this command.
+ Detailed migration instructions will be provided in app configuration documentation at the time of release on January 31.
+ JANUARY 31, 2024
+ Subscribe to compliance topics using PubSub or Eventbridge Tools
+ You can now subscribe to compliance topics using you app's TOML configuration file and use PubSub or Eventbridge URIs as your subscription endpoint.
+ Learn more about mandatory compliance topics here.
+ JANUARY 25, 2024
+ POS API added to the latest version of App Bridge Tools
+ With the latest version of App Bridge, you can use the POS API. This provides the ability to retrieve the POS user, device, and location data, while also interacting with the cart and closing the app.
+ JANUARY 22, 2024
+ Release the isFromCustomStorefront field on Abandonment into stable version API
+ As of 2024-04, the Abandonment.isFromCustomStorefront field has been released into stable version.
+ JANUARY 16, 2024
+ ACTION REQUIRED
+ Prepare for IPv6 adoption for Storefront domains Platform
+ In preparation for supporting IPv6 on storefront domains, merchants and partners should update any third-party tools, such as firewall rules, to allow traffic in the CIDR range 2620:127:f00f::/48 and 2620:127:f00e::/48 by January 16, 2024.
+ Outbound traffic from Shopify will not be affected.
+ JANUARY 15, 2024
+ Add new fields firstName and lastName on CompanyAddress API
+ As of version 2024-01, you can use the GraphQL Admin API to get and set a firstName and lastName on the CompanyAddress.
+ JANUARY 15, 2024
+ ACTION REQUIRED
+ Locale fields on MarketWebPresence now return ShopLocale object API
+ As of 2024-04 the following fields on the MarketWebPresence object will no longer return locale strings and will instead make use of the ShopLocale type:
+ defaultLocale
+ alternateLocales
+ We’re making this change as it allows callers to query for more information regarding locales on a market, such as whether it is published or primary. Please ensure to update your API calls using MarketWebPresence.defaultLocale or MarketWebPresence.alternateLocales to use the ShopLocale type.
+ Learn more about the MarketWebPresence object on Shopify.dev.
+ JANUARY 11, 2024
+ GraphiQL in Shopify CLI for apps Tools
+ As of Shopify CLI version 3.53+, you can use GraphiQL in the CLI while running app dev by simply pressing the g hotkey.
+ This GraphiQL instance uses your app's credentials, working with the same data and access scopes, ensuring that what works in GraphiQL will work exactly the same in your app. We expect this feature to streamline how you create and edit GraphQL queries.
+ Learn more about in our documentation.
+ JANUARY 09, 2024
+ Filter query added to the App Bridge Resource Picker API Tools
+ With the latest version of App Bridge, you can use the filter query option with the Resource Picker API to filter resources without showing the query in the Resource Picker search bar.
+ JANUARY 08, 2024
+ TaxLine Channel Liable REST-API Improvement API
+ As of the 2024-01 version of the REST Order APIs, channel_liable field on the TaxLine has been updated to reflect the value indicated by the app. The behaviors now align between the REST and GraphQL endpoints.
+ The channel_liable field lets developers inform merchants that another party is responsible for sales tax remittance, which then helps merchants better understand the tax that they are responsible for.
+ channel_liable can contain the following values: - true indicates that the channel is responsible for remittance of the tax line - false indicates that the channel is not responsible for remittance of the tax line
+ If the channel_liable field is not populated, a value of false will be assumed.
+ JANUARY 08, 2024
+ New error codes added for metafield capabilities API
+ As of API version 2024-01, we've added the CAPABILITY_VIOLATION error code to the MetafieldsSetUserErrorCode enum. This error code is returned if you attempt to update a metafield in a way that doesn't conform to the enabled capabilities.
+ JANUARY 02, 2024
+ New and updated operations for the Cart Transform API API
+ Previously, the Cart Transform Function API allowed percentage based adjustments to the cost of a bundle when using expand operations. The weight price algorithm would then allocate the bundle price to its component lines based on the weight of each component line (unit price * quantity).
+ As of the 2024-01 Cart Transform Function API version, expand operations will also allow you to set fixed prices on each component of the bundle, resulting in a bundle price that is the sum of each component. Additionally, the expand operation will now allow you to define a custom title and image for each parent line item. This gives you more control over bundle pricing and enables bundles to be used for add-on products.
+ A new update operation will allow you to override the price, title, and image of a given line item. This gives you more more flexibility to make additional customizations to items in the cart. The update operation is only available for Plus merchants.
+ To see what operations are available for a shop, you can query the cartTransform field on ShopFeatures.
+ Finally, the CartTransformCreate mutation in the Admin API now supports a blockOnFailure field that determines if cart and checkout operations should be blocked if the CartTransform function fails to run. This can be used as a safeguard if the Cart Transform is considered a critical component in resolving merchandise attributes (e.g. price, title, image).
+ More information can be found in the Cart Transform API documentation and the CartTransformCreate mutation.
+ JANUARY 01, 2024
+ New optional argument to include translations when duplicating product API
+ As of 2024-01 version in the admin GraphQL API, you can specify whether to include translations when calling the productDuplicate mutation. When this optional argument is passed in as true, all translations that are saved on the product, its variants, and its metafields are copied over to the new product.
+ JANUARY 01, 2024
+ Reset to default functionality for Checkout Branding Admin API mutation API
+ As of Admin API 2024-01, you can use the checkoutBrandingUpsert mutation to reset branding settings to their default state without resetting each leaf field explicitly. It is now possible to pass in a null value to the checkoutBrandingInput argument to clear all of the branding settings, which will revert the branding of the Checkout to its default state.
+ Note that for all API versions, it is also possible to pass in a null value to a non-leaf subfield, for example design_system.colors.schemes.scheme1, to reset a given group of parameters.
+ Both of these changes enhance the usability of the Checkout Branding API by allowing to easily reset groups of branding parameters.
+ JANUARY 01, 2024
+ Bugfix to Returns API: Block refunds on requested returns API
+ As of API version 2024-01, we fixed a bug that had allowed refunds specifically against a requested return. Refunds are blocked on returns with a REQUESTED status.
+ Learn more about the status of a return on Shopify.dev.
+ Learn more about requesting returns on Shopify.dev
+ Learn more about self serve returns on the help center
+ JANUARY 01, 2024
+ Adding Scheduled Changes to Inventory API
+ As of the 2024-01 version, you can Schedule Changes to your inventory quantities. For example, if an application user creates a purchase order and adds some incoming quantities for a specified inventory item at a location, they can then create a Scheduled Change that states the date these quantities are expected to be transitioning from incoming to available.
+ This information can then be used for planning to help the merchant make better buying or selling decisions. It will not automatically change any quantities, that still has to be done using one of the existing quantities mutations for inventory such as InventoryAdjustQuantitites. As part of this change there will be a new mutation inventorySetScheduledChanges along with the scheduledChanges field on the InventoryLevel query model which will allow the merchant to access the Scheduled Changes for a specific item at a given location.
+ You can include links inline in the text, and add another link at the end in this format:
+ Learn more about Inventory Scheduled changes on Shopify.dev.
+ JANUARY 01, 2024
+ ChoiceList branding controls exposed in Checkout Branding API API
+ As of Admin API 2024-01, you can use the Checkout Branding API to customize the look of the ChoiceList components on your checkout with customizations.choiceList.
+ Learn more about the ChoiceList component on Shopify.dev.
+ JANUARY 01, 2024
+ Metaobjects exposed as market localizable API
+ As of 2024-01 Metaobjects will be exposed as a MarketLocalizableResourceType. This means that metaobjects with the translatable capability will be eligible for custom content by market through the Translations API as well as the Translate and Adapt app. Localizable fields will be determined by the Metaobject type.
+ JANUARY 01, 2024
+ OrderTransaction now exposes the multiCapturable field API
+ As of 2024-01 the OrderTransaction endpoint now exposes the multiCapturable field, to inform whether a transaction can be captured multiple times.
+ Learn more about OrderTransaction.
+ JANUARY 01, 2024
+ Expose line_item field on AbandonedCheckout GraphQL API to public API
+ As of 2024-01, the line_items field on AbandonedCheckout GraphQL API will be available to public.
+ JANUARY 01, 2024
+ ACTION REQUIRED
+ Improved support for syncing external marketing activities and receiving aggregate marketing data API
+ We're revamping the External Marketing APIs in the 2024-01 version of the GraphQL Admin API.
+ Breaking changes
+ The channel field in marketingActivityCreateExternal and marketingActivityUpdateExternal has been renamed to marketingChannelType.
+ utcOffset and isCumulative are now required fields and the fetchedAt field has been removed from marketingEngagementInput.
+ The utm field has been deprecated from MarketingActivityUpdateExternalInput.
+ Improvements on the creation of marketing activities
+ marketingActivityUpsertExternal can be used to sync externally managed activities without having to keep track of Shopify IDs.
+ marketingActivityCreateExternal or marketingActivityUpsertExternal can be used to create a hierarchy of activities. Activities can be created to represent ads, ad groups, or campaigns.
+ Bulk mutation support has been added for marketingActivityUpsertExternal. Learn more about bulk mutations on Shopify.dev.
+ Now supporting the deletion of marketing activities
+ marketingActivityDeleteExternal can be used to delete a single external marketing activity.
+ marketingActivitiesDeleteAllExternal can be used to enqueue a job to bulk delete all external marketing activities. This can be used to cleanup data if a store owner revokes permission to sync data to Shopify.
+ Improved support for syncing aggregate data
+ The remoteId can be used to reference a marketing activity in marketingEngagementCreate.
+ marketingEngagementCreate can be used to sync aggregate data at the activity level and at the channel level.
+ Bulk mutation support has been added for marketingEngagementCreate. Learn more about bulk mutations on Shopify.dev.
+ marketingEngagementsDelete can be used to enqueue a job to delete all channel-level data that was sent through marketingEngagementCreate. This can be used to cleanup data if a store owner revokes permission to sync data to Shopify.
+ JANUARY 01, 2024
+ Discounts API - New fixed amount option for Buy X Get Y discount API
+ Buy X Get Y discounts now support setting a fixed amount discount. This new option can be utilized alongside the existing percentage or free item discount options for a minimum qualifying purchase.
+ Use this option to create promotions such as “Buy 2 items, get $20 off”. This option is available as both an automatic discount or a discount code using the Discounts GraphQL API.
+ For more details on how to implement this new feature, refer to our API Guide in the Shopify Developer Documentation.
+ JANUARY 01, 2024
+ Delete multiple market regions in a single mutation API
+ As of API version 2024-01, you can use the marketRegionsDelete mutation to delete multiple market regions in a single mutation.
+ Learn more about markets on Shopify.dev.
+ JANUARY 01, 2024
+ Add, remove, and update discounts with the newest order editing API API
+ You can now add, remove, and update discounts to new or existing items when editing orders.
+ The orderEditAddLineItemDiscount mutation allows you to add a fixed amount or percentage discount to an already existing item during an order edit. Previously, this mutation was limited to applying discounts to new products or custom items added to the order.
+ In addition, two new mutations allow you to remove and update discounts. The mutation orderEditRemoveDiscount removes discounts on newly added, existing products, or custom items, while the orderEditUpdateDiscount mutation allows for updating discounts.
+ For more information about using discounts with order edits, visit the tutorial on editing an existing order with the Admin API.
+ JANUARY 01, 2024
+ created_by_app and created_by_user fields on Metaobject and MetaobjectDefinition types API
+ We are introducing two new fields in the MetaobjectDefinition type: - createdByApp: The app used to create the metaobject definition. - createdByStaff: The staff member who created the metaobject definition.
+ Similarly, we are introducing two new fields in the Metaobject type: - createdByApp: The app used to create the object. - createdByStaff: The staff member who created the metaobject.
+ Additionally, we are deprecating the staffMember field in the Metaobject type. This field is being deprecated, and the createdByStaff field should be used instead.
+ JANUARY 01, 2024
+ Update storefront access control settings in custom data API
+ Upcoming in API version 2024-01, access controls (access.storefront) are modified to be more explicit for custom data. These changes affect how reserved prefixes can be modified in the admin as well as how access controls are set by apps.
+ As a reminder, by default metafields and metaobjects are owned by Shopify and provide no restrictions to reading, writing, or modifying.
+ For app reserved prefixes, access is configurable. For example, if you set access for admin to be MERCHANT_READ and storefront to be PUBLIC_READ then the merchant will have read-only access in the Shopify admin, and the metafields will be publicly readable in the storefront surface area (Liquid templates and Storefront API).
+ Learn more about access controls for metafields and metaobjects respectively on Shopify.dev.
+ JANUARY 01, 2024
+ Order Cancellation now available on GraphQL Admin API API
+ As of GraphQL Admin API version 2024-01, you can use the orderCancel mutation to cancel an order. The mutation allows apps to specify some options for cancellation (eg whether or not to refund the customer, restock inventory quantities, notify the customer) as well as a reason for cancellation and a merchant-facing staff note. The mutation performs cancellation asynchronously in a background job and as such, returns a job that can be queried for using the job API
+ JANUARY 01, 2024
+ Updates to Split and Merge Feature API
+ As of API Version 2024-01 we've added a few extra documentation details around our recent Split and Merge feature.
+ Webhooks for Split and Merge are now available.
+ FulfillmentOrderLocationForMove has had the availableLineItems and unavailableLineItems connections added along with a count of each.
+ A new error code No Line Items Provided To Split has also been added.
+ JANUARY 01, 2024
+ Enhanced the FulfillmentOrder API with additional Order details and FulfillmentOrderLineItem with financialSummaries API
+ As of REST and GraphQL API Version 2024-01 we have added more information to the FulfillmentOrder and FulfillmentOrderLineItem objects.
+ We've added the following fields to the FulfillmentOrder graphQL object: orderId, orderName, orderProcessedAt, channelId.
+ With this change, order information required to fulfill an order is accessible on the fulfillmentOrder object with any of the fulfillment_orders access scopes. The same data is available via fulfillmentOrder.order, but this requires read_orders access scope.
+ Additionally we've added the financialSummaries field to the FulfillmentOrderLineItem graphQL object. Within this field you have access to these subfields: approximateDiscountedUnitPriceSet, discountAllocations, originalUnitPriceSet and quantity. However, the quantity value on the FulfillmentOrderLineItem.financialSummaries reflects the quantity with respect to the FulfillmentOrderLineItem. The same data is available via the REST api when the query parameter include_financial_summaries=true is sent with the request.
+ With this change, order information required to calculate the financial specifics of an order is accessible via the fulfillmentOrder.lineItems connection with any of the fulfillment_orders access scopes. The same data is available via fulfillmentOrder.order.lineItems, but this requires read_orders access scope.
+ Learn more about FulfillmentOrder on Shopify.dev and FulfillmentOrderLineItem on Shopify.dev.
+ JANUARY 01, 2024
+ New webhook topics added for Metaobject events API
+ As of API version 2024-01 of the GraphQL Admin API, your app can subscribe to metaobjects/create, metaobjects/update and metaobjects/delete.
+ These new webhook topics use sub-topics so you can subscribe to events for the specific types of metaobjects your app cares about. Learn more about sub-topics on Shopify.dev
+ JANUARY 01, 2024
+ Subscriptions Contracts APIs: Introduce new mutations to update Subscription Contract status API
+ As of the 2024-01 release of the GraphQL Admin API, you can update the status field of a subscription contract in a single operation with the subscriptionContractActivate, subscriptionContractPause, subscriptionContractCancel, subscriptionContractFail, subscriptionContractExpire mutations.
+ As of the 2024-01 release of the GraphQL Customer API, you can update the status field of a subscription contract in a single operation with the subscriptionContractActivate, subscriptionContractCancel and subscriptionContractPause mutations.
+ JANUARY 01, 2024
+ Subscriptions Billing Cycles APIs: Introduce new mutations to update SubscriptionBillingCycle skipped field API
+ As of the 2024-01 release of the GraphQL Admin API and GraphQL Customer API, you can update the skipped field of a subscription billing cycle in a single operation with the subscriptionBillingCycleSkip and subscriptionBillingCycleUnskip mutations
+ JANUARY 01, 2024
+ Webhook topics introduced for updating subscription contract status API
+ As of the 2024-01 release of the GraphQL Admin API, new dedicated webhook topics have been introduced to notify whenever there is a change in the status of a subscription contract.
+ The topic subscription_contracts/activate is added when the subscription contract status turns to active, subscription_contracts/expire when a subscription contract's status turns to expire, subscription_contracts/fail when the status turns to failed, subscription_contracts/cancel when the status turns to cancelled, and subscription_contracts/pause when the status turns to paused.
+ More information on webhooks can be found here
+ JANUARY 01, 2024
+ ACTION REQUIRED
+ Subscriptions Contracts APIs - Deprecate subscriptionContract stale status API
+ As of Admin GraphQL 2024-01, the SubscriptionContractSubscriptionStatus.STALE status is being deprecated. Instead, please use EXPIRED or CANCELLED.
+ Any existing contracts with the STALE status will be returned as CANCELLED.
+ Additionally, we are now preventing the update of Subscription Contracts to have the STALE status.
+ JANUARY 01, 2024
+ Subscriptions Contracts APIs: Introduce SubscriptionContractFetchDeliveryOptions and SubscriptionContractSelectDeliveryMethod mutations API
+ As of the 2024-01 release of the GraphQL Customer API, you can fetch the available delivery options for a subscription contract with subscriptionContractFetchDeliveryOptions. And you can select an option from a delivery options result and update the delivery method on a subscription contract with the subscriptionContractSelectDeliveryMethod mutation.
+ JANUARY 01, 2024
+ ACTION REQUIRED
+ Subscription Billing Attempt is now prevented if a subscription contract has terminal status API
+ As of the 2024-01 release of the GraphQL Admin API, the SubscriptionBillingAttemptCreate mutation now prevents the creation of Billing Attempts if a subscription contract has a terminal status: EXPIRED, CANCELLED, STALE.
+ We've also added the CONTRACT_TERMINATED error code to the BillingAttemptUserErrorCode enum. This new error code is returned in the case where Billing Attempt creation is prevented.
+ Learn more about the Subscription Contracts API and Billing Attempts on Shopify.dev.
+ JANUARY 01, 2024
+ "Awaiting return items" fulfillment hold reason API
+ AWAITING_RETURN_ITEMS The fulfillment hold is applied because of return items not yet received during an exchange.
+ The new hold reason is applied to a fulfillment hold on a fulfillment order when a return is created with exchange items.
+ DECEMBER 22, 2023
+ Product type is now translatable API
+ Using the TranslationsRegister GraphQL API, you can now register translations for Product types.
+ Product type filters will now be displayed to customers shopping in the store's non-default language.
+ Learn more about TranslatableResourceTypes on Shopify.dev.
+ DECEMBER 22, 2023
+ Metaobject Pages now available in Storefront Menus API
+ As of API version 2024-01, you are now able to incorporate links to Metaobject pages as menu items in your Storefront Menus. Please note that only Metaobjects with both Renderable and OnlineStore capabilities enabled are eligible for Online Store URLs.
+ Learn more about Metaobject Pages on shopify.dev
+ DECEMBER 19, 2023
+ Optional Address Validation in Storefront API API
+ As of Storefront API's 2024-04 release, you can use buyerIdentity.deliveryAddressPreferences.deliveryAddressValidationStrategy (accepted values STRICT or COUNTRY_CODE_ONLY) to enable address validation on the passed deliveryAddress for any cart mutations that accept a buyer identity as input (like cartCreateor cartBuyerIdentityUpdate).
+ Passing STRICT will perform a full validation on the address fields, and will raise CartUserErrors for invalid addresses. Invalid addresses will not be stored on the cart.
+ Passing COUNTRY_CODE_ONLY or omitting the field will only validate the presence of a valid country in the address (unchanged behavior from previous version).
+ DECEMBER 19, 2023
+ Theme editor now supports metaobject references in text settings Themes
+ The richtext, text, and inline_text settings in the theme editor are now compatible with text fields of metaobject reference lists. For example, merchants can now create a list of product materials on a product detail page via the richtext setting using dynamic sources.
+ This includes updates to the metafield_tag and metafield_text Liquid filters to support metaobject reference metafields. For example: {{ product.metafields.custom.authors | metafield_text: field: "name" }} will output an author's name. More information on the liquid implementation can be found on the dynamic sources docs.
+ DECEMBER 14, 2023
+ Modal API added to the latest version of App Bridge Tools
+ With the latest version of App Bridge, you can use the modal API with custom DOM content.
+ You can also use the new max modal variant. This is the replacement for the previous Fullscreen API. Learn more about it in the documentation.
+ DECEMBER 07, 2023
+ General availability of Shipping Discount Function API API
+ As of API Version 2024-01, the Shipping Discount Function API will be available to use on all merchant stores.
+ This Discount Function API can be used for use cases such as:
+ Discounting specific delivery options (e.g. Free standard shipping only)
+ Discounting shipping based on contents of cart (e.g. Buy this candle and get free shipping)
+ Discounting shipping based on buyer identity, how many orders they’ve placed, etc.
+ Please note that the discountApplicationStrategy on FunctionRunResult (and its predecessor, FunctionResult field) is being deprecated, and removed in 2024-01.
+ You can learn more about the Shipping Discount Function API here.
+ DECEMBER 06, 2023
+ InventoryQuantity GraphQL object now has a globally-unique ID in Admin API API
+ As of GraphQL Admin API version 2024-01 , you can use the ID field to identify an InventoryQuantity object. This object now implements Node interface.
+ DECEMBER 06, 2023
+ Customer Accounts Extensibility is now available in Developer Preview Shopify App Store
+ We’ve unlocked the ability for partners to add unique and powerful functionality to the customer account experience by building extensions directly into new customer accounts.
+ Starting today, customer accounts extensibility is now available in developer preview, allowing partners to build extensions on new customer account pages (such as the order index, order status and customer profile pages), add highly visible order actions and create full-page extensions tailored to specific merchant needs.
+ Join us in creating better buying experiences, where customers navigate seamlessly across apps, with one single login.
+ Start building today
+ Get started by reading our developer documentation and join us on Discord December 14, 2023 at 1pm EST.
+ DECEMBER 06, 2023
+ ACTION REQUIRED
+ UI Extensions - Shipping method option list targets will be duplicated for possible types of delivery groups (One Time Purchases and Subscription) API
+ Breaking change: UI extensions on versions 2023-10 or older that use either the purchase.checkout.shipping-option-list.render-before or the purchase.checkout.shipping-option-list.render-after will no longer render if the checkout contains both a one time purchase and subscription item.
+ As of 2024-01, purchase.checkout.shipping-option-list.render-before and purchase.checkout.shipping-option-list.render-after will be duplicated for possible types of delivery groups (One Time Purchase and Subscription). You can use the new ShippingOptionListApi to target each delivery group in your extension.
+ The delivery group the extension is attached to will be passed as a target. In React, you can also use the useDeliveryGroupTarget() hook to retrieve the current delivery group. The target will be undefined if the group is not available, for example when the buyer hasn’t entered an address on One-page checkout, or when shipping is unavailable for this address.
+ We’re also introducing a new unique id on a DeliveryGroup to identify each delivery group.
+ If your extension is capturing buyer inputs at Checkout and storing the information in a metafield, you can use checkout attributes with a namespaced key to capture information for multiple delivery groups rendered on Checkout. See examples.
+ These changes can be tested today using the Checkout Extensibility developer preview using the unstable api version.
+ Learn more about these API changes on shopify.dev
+ DECEMBER 06, 2023
+ ACTION REQUIRED
+ Automatic Discount Functions now apply to B2B sessions API
+ As of December 6th, 2023, Automatic Discounts created using Shopify Functions will apply by default to B2B customers. Previously, it wasn't possible to target B2B customers with discounts. Discount codes created using Shopify Functions are also available, but gated behind a beta flag, so merchants will need to explicitly opt-in for their store.
+ App developers can use the BuyerIdentity.purchasingCompany attribute on the Cart input to detect a B2B customer, and use that to customize the discount behavior for a merchant’s B2B audience. Examples of this could include:
+ a discount that applies to B2B customers only
+ a discount that applies to a specific B2B company only
+ a discount that applies to D2C customers only
+ Note: at this time, discounts are not compatible for B2B customers configured to Submit all orders as drafts for review.
+ DECEMBER 06, 2023
+ Shopify Function to uniformly use the GraphQL scalar Handle API
+ As of 2024-01, fields returning a "handle" will use an appropriate Handle scalar as their type, instead of a String. This signals that this type is not just any string, but specifically a handle. This specificity will help prevent bugs that could be caused by unexpected data.
+ DECEMBER 05, 2023
+ ACTION REQUIRED
+ Addition of LineItem current_quantity on Admin REST API API
+ Partners currently using refund line items to calculate a line item’s current quantity should migrate to using the new currentquantity field as it is a more reliable method. We recommend migrating to GraphQL as a general practice, however the currentquantity field has been added to indicate a line item’s current quantity after removals as of Admin REST API version 2024-01.
+ Learn more about the Order.line_items object on Shopify.dev.
+ DECEMBER 04, 2023
+ Collaborator request code now required to initiate request for store access Tools
+ Partners must now obtain a unique code to initiate a collaborator request and access a merchant’s store.
+ Collaborator request codes, previously optional, are now enabled by default for all merchants. This change gives merchants more control over who can access their store as collaborators, by ensuring that only those with the unique code can send a collaborator request.
+ Learn more about collaborator requests in the Shopify Help Center.
+ DECEMBER 04, 2023
+ Customer Account API schema improvements API
+ As of release candidate API version 2024-01, the schema for the Customer Account API has evolved significantly resulting in breaking changes. This update is necessary to ensure a more streamlined developer experience. Support has also been added to redirect buyers to a specific URI after logout with the post_logout_redirect_uri query parameter, providing a solution for custom storefronts with multiple domains. Additionally, mutations for modifying marketing subscriptions have been added with customerEmailMarketingSubscribe and customerEmailMarketingUnsubscribe. The Customer Account API is available in Developer Preview and accessible via the Hydrogen and Headless channels. We encourage developers to provide feedback to help shape future iterations of this API.
+ Learn more about the schema updates and the new features in the developer documentation.
+ DECEMBER 04, 2023
+ Introducing webhook topics for discount events API
+ We’ve introduced dedicated webhook topics that will be sent out whenever a discount has been created, updated or deleted, enabling developers to keep their discount apps in sync.
+ Learn more here
+ NOVEMBER 30, 2023
+ Introducing the new Customer Data Erasure API API
+ As of GraphQL Admin API version 2024-01, we are excited to introduce the Customer Data Erasure API. This API allows merchants to handle customer data erasure requests in compliance with GDPR, CCPA, and other data protection regulations. The API includes two new mutations:
+ customerRequestDataErasure enqueues a request to erase customer's data.
+ customerCancelDataErasure cancels a pending erasure of a customer's data.
+ To learn more about how data erasure is processed and the impact on customer data, please refer to the Shopify Help Center.
+ NOVEMBER 29, 2023
+ Shopify Functions run logs now include production store executions API
+ All Shopify Functions executions are now visible for production stores in your Partner Dashboard.
+ Run details are only available for failed runs that have been shared by users.
+ More information can be found on Shopify.dev:
+ Testing and debugging practices for Shopify Functions
+ Shopify Functions error handling
+ NOVEMBER 28, 2023
+ ACTION REQUIRED
+ AppSubscriptionDiscountInput.durationLimitInIntervals will no longer accept 0 API
+ As of Admin API 2024-01, AppSubscriptionDiscountInput.durationLimitInIntervals will no longer accept 0. To create a discount with an unlimited duration, durationLimitInIntervals should not be provided.
+ NOVEMBER 16, 2023
+ [Developer preview] Checkout Kit for Android Tools
+ Shopify’s Checkout Kit for Android enables you to provide the world’s highest converting, customizable, one-page checkout directly within a mobile app. The presented experience is a fully-featured checkout that preserves all of the store customizations: Checkout UI extensions, Scripts, Functions, Web Pixels, and more. It also provides platform idiomatic defaults such as support for light and dark mode, and convenient APIs to embed, customize, and follow the lifecycle of the checkout experience.
+ Today we are launching Developer Preview of the Mobile Kit for Android, as a follow up to our iOS deverloper preview launch on October 19th.
+ More information can be found in our blog post as well as in the Github repository.
+ NOVEMBER 14, 2023
+ Breaking changes to Variants API: Removal of "ProductVariantsBulkInput.imageId" and "ProductVariantsBulkInput.imageSrc" API
+ As of GraphQL Admin API version 2024-01, we are removing the deprecated imageId and imageSrc fields from the ProductVariantsInput input object. Please use the mediaId and mediaSrc fields instead.
+ Learn more about the usage of the media fields on Shopify.dev
+ NOVEMBER 10, 2023
+ ACTION REQUIRED
+ Breaking changes to returns API: Deprecate "reverseDeliveryDispose" mutation API
+ As of GraphQL Admin API version 2025-01, we're deprecating the reverseDeliveryDispose mutation. Use the reverseFulfillmentOrderDispose mutation instead.
+ Learn more about managing reverse fulfillment orders on Shopify.dev.
+ NOVEMBER 07, 2023
+ UI extensions on the Thank you and Order status pages have launched Platform
+ As of 2023-11-07, Checkout Extensibility on the Thank you and Order status pages is available to plus merchants. Merchants can now make code-free, app-based, upgrade-safe customizations throughout the buying journey to create holistic and consistent experiences.
+ Checkout Extensibility replaces checkout.liquid, apps with script tags and additional scripts on the Thank you and Order status pages.
+ Script tags, additional scripts and checkout.liquid on the Thank you and Order status pages are now deprecated. Merchants have been notified of the following turn off dates: * August 13, 2024 - the removal date of checkout.liquid for in-checkout pages * August 28, 2025 - the removal date of checkout.liquid, apps with script tags and additional scripts on the thank you and order status page
+ Shops that aren't upgraded during these dates will be upgraded to an un-customized out-of-the-box Shopify Checkout.
+ NOVEMBER 06, 2023
+ Storefront API Cart.checkoutUrl now contains key param API
+ The Storefront API Cart now returns a new key param appended to CheckoutUrl that is required to render buyer information in checkout. This behavior is applied retroactively to all versions of the Storefront API.
+ The param is validated and removed as the buyer is navigated into checkout. This change is transparent to the buyer and does not affect what they see in the browser or their ability to copy and share checkout URLs. When a checkout is loaded without the valid key, the cart is cloned, and buyer information is removed.
+ Example Format: https://example-shop.com/cart/c/c1-09av29f248bb6420de3842b051f6a1a3?key=824bdj25mhg1242bdb385
+ Action Required: If your app is manually constructing checkout URLs from cart IDs, you need to switch and use cart.checkoutUrl. If you’re augmenting the cart.checkoutUrl with additional parameters, update and validate that your code does not override the parameter and returns a valid destination URL.
+ NOVEMBER 01, 2023
+ Theme Store Full-funnel Google Analytics attribution Themes
+ We’ve added visibility into the theme install event itself as part of our existing integration with Google Analytics.
+ In addition to having full visibility into the theme install event, you can also now tie the theme install event to a Shop ID, enabling richer insights on the type of merchants that are installing your theme.
+ Learn more on our blog and shopify.dev.
+ NOVEMBER 01, 2023
+ Introduce subscriptions contracts cleanup mechanism Shopify App Store
+ We've added a new cleanup process for Subscription Contracts.
+ This process involves automatically canceling any Subscription Contracts owned by the subscription app that have not been terminated. These contracts may be in the active, paused, or failed status. The cancellation will occur 48 hours after a user uninstalls the app.
+ This is aligned with our purchase options cleanup process.
+ OCTOBER 31, 2023
+ [Developer Preview] Cart Transform API - Updating lines in the cart API
+ Previously, the Cart Transform API enabled functions to expand a single cart line item to form a bundle of components or add-on products, or merge multiple cart lines into a single line that represents a bundle.
+ With this release, update operations will also allow you to override the price, title, and/or image of a given line item. This gives you more more flexibility to make additional customizations to items in the cart.
+ More information can be found in the Cart Transform API developer preview documentation.
+ OCTOBER 31, 2023
+ Hydrogen 2023.10 has been released Platform
+ Hydrogen v2023.10 is now available. This release includes a number of new features and breaking changes.
+ Remix 2.0 (breaking change)
+ Hydrogen 2023.10 now uses Remix 2.
+ Remix has also been made a peer dependency, so you can keep your Remix package updated independently of Hydrogen.
+ Other breaking changes
+ Hydrogen's default caching strategy has been updated to have a longer stale-while-revalidate period.
+ A dependency bump for @graphql-codegen/typescript to v4 will require updates to Scalar types if you import them directly from Hydrogen or Hydrogen React.
+ Other changes
+ All packages and examples now query v2023-10 API versions.
+ Hydrogen now includes an API client for the Customer Account API.
+ Custom cart methods are now stable.
+ The GraphiQL client available through the local development server now includes the GraphiQL Explorer plugin, which makes it easier to browse GraphQL resources.
+ Props and parameters that were deprecated in v2023-07 have been removed.
+ Additional dependency bumps, patches, and fixes.
+ OCTOBER 31, 2023
+ ACTION REQUIRED
+ Changes to Point of Sales (POS) payment processing behavior API
+ We're changing how payments are processed on POS in order to bring order cancellations to POS. These changes will go into effect beginning October 31, 2023 for POS Pro and January 22, 2024 for Shopify Plus.
+ Payments may be authorized for up to 15 minutes before being captured automatically or voided by retail staff. As such, you may notice a few changes to the Admin and Storefront APIs.
+ On the Admin API, you may see:
+ AUTHORIZED as the OrderDisplayFinancialStatus for up to 15 minutes before transitioning to PAID. The status will transition to VOIDED if the order gets canceled within these 15 minutes.
+ Separate OrderTransaction objects with AUTHORIZATION and CAPTURE as the OrderTransactionKind when the payment is authorized and captured, instead of a single transaction with the SALE kind.
+ Separate OrderTransaction objects with AUTHORIZATION and VOID as the OrderTransactionKind when the payment is authorized and voided.
+ An empty array for SuggestedRefund.suggestedTransactions until payments in the order have been captured.
+ On the Storefront API, the OrderFinancialStatus will exhibit the same behavior as the OrderDisplayFinancialStatus on the Admin API.
+ Learn more about canceling orders on POS here.
+ Learn more about OrderDisplayFinancialStatus, OrderTransactionKind, and SuggestedRefund on Shopify.dev.
+ OCTOBER 24, 2023
+ Breaking changes to Products API: Deprecate "ProductInput.images" API
+ As of GraphQL Admin API version 2024-01, we're deprecating the images field from the ProductInput input object and replacing it with a media argument in the productCreate and productUpdate mutations.
+ Learn more about the usage of the media field on Shopify.dev
+ OCTOBER 24, 2023
+ UI extensions - the order status page is getting a new look API
+ As of 2023-10-24, the order status page is getting a new look with updated visual treatment that is consistent with new customer accounts. This change will be rolling out progressively to all developer shops on checkout extensibility developer preview to ensure a smooth transition.
+ To view this change in developer shops on the checkout extensibility developer preview, navigate to Settings > Checkout > Customize and select Order Status from the page dropdown.
+ No action is required and there should be no changes to any UI extensions in development.
+ Learn more about UI extensions on the thank you and order status pages on Shopify.dev.
+ OCTOBER 23, 2023
+ New fields on Country Liquid object API
+ We've added the available_languages, continent and popular? properties on the country object in Liquid.
+ You can now access the languages that have been added to the market that a country belongs to, the country's translated continent name, and whether the country is a popular one amongst those that the shop sells to.
+ These properties provide flexibility when building a localization switcher, allowing customers to switch country and language simultaneously and allowing for grouping or sorting countries in a theme's country selector
+ Learn more about these new fields in the dev docs.
+ OCTOBER 19, 2023
+ [Developer Preview] Mobile Checkout SDK for iOS Tools
+ Shopify’s Mobile Checkout SDKs enables you to provide the world’s highest converting, customizable, one-page checkout directly within a mobile app. The presented experience is a fully-featured checkout that preserves all of the store customizations: Checkout UI extensions, Scripts, Functions, Web Pixels, and more. It also provides platform idiomatic defaults such as support for light and dark mode, and convenient APIs to embed, customize, and follow the lifecycle of the checkout experience.
+ Today we are launching Developer Preview of the Checkout SDK for iOS, with our Android SDK coming very soon. The SDKs are open-source and ready for you start building. During this developer preview, the APIs are subject to change as we adapt to feedback.
+ More information can be found in our blog post as well as in the Github repository and all feedback is welcome here.
+ OCTOBER 13, 2023
+ [Developer Preview] Cart Transform API - Pricing bundles per component & additional customizations API
+ Previously, the Cart Transform API allowed percentage based adjustments to the cost of a bundle when using expand operations. The (weight price algorithm) (http://shopify.dev/docs/api/functions/reference/cart-transform/developer-preview#/weight- price-algorithm) would then allocate the bundle price to its component lines based on the weight of each component line (unit price * quantity).
+ With this release, expand operations will also allow you to set fixed prices on each component of the bundle, resulting in a bundle price that is the sum of each component. Additionally, the expand operation will now allow you to define a custom title and image for each parent line item.
+ This gives you more control over bundle pricing and enables bundles to be used for add-on products.
+ More information can be found in the Cart Transform API developer preview documentation.
+ OCTOBER 11, 2023
+ Display Business Imprint on Shopify's App Store and Theme Store Shopify App Store
+ Starting October 11, 2023, Shopify's App Store and Theme Store will display the partner's geographical address and contact information in order to be in compliance with Business Imprint legal requirements. All partners should ensure their information is up to date.
+ Learn more about Business Imprint in the Shopify Help Center.
+ OCTOBER 10, 2023
+ App Store listings are now automatically translated into 8 languages Shopify App Store
+ Now every English-language primary app listing is automatically translated into the 8 languages listed below, unless the partner provides their own translated listings for any of those languages.
+ Brazilian Portuguese
+ Danish
+ Dutch
+ French
+ German
+ Simplified Chinese
+ Spanish
+ Swedish
+ This will improve the experience of our international merchants, and significantly boost app installs in non-English speaking markets (by as much as 20%). To maximize the effect, complement translated listings with translating your app’s UI.
+ Learn more about automated listing translation on Shopify.dev.
+ OCTOBER 04, 2023
+ Shopify Flow - Use dev command to preview tasks and use more complex data in triggers Platform
+ With this update, the dev command is now supported for Flow extensions, you can use more complex data in your triggers, and Flow in the CLI is generally available.
+ Flow in the CLI
+ Flow in the Shopify CLI is now generally available. We still welcome feedback at flow-connectors-dev@shopify.com
+ Previously, Flow actions and triggers were defined in the partner dashboard. As Shopify CLI adoption has expanded, this meant that you needed to manage and deploy your Flow extensions separately from the rest of your app.
+ Going forward, you will now create your Flow tasks and actions through the CLI. You follow these guides for how to create both triggers and actions through the CLI. In addition, you can migrate your existing tasks to be CLI-managed, unifying your code. For more details on what is possible, you can also consult Flow’s reference guide for triggers and actions.
+ Dev command
+ You can now also use the dev command to preview Flow tasks in your development store. See our docs for triggers and actions.
+ Complex data in triggers
+ Finally, like actions, Flow triggers now support more complex data structures, like lists and objects, making it easier than ever to build your triggers in Flow.
+ Requirements
+ To create Flow extensions using the CLI, version 3.48 or higher is required. To use dev version 3.49 or higher is required.
+ OCTOBER 02, 2023
+ Shopify Function configurations now use target identifiers API
+ As of API version 2023-10 and Shopify CLI 3.49.5, Shopify Functions configuration now uses targets to identify backend extensibility points in Shopify, so that configuring a function is now more like configuring other app extensions.
+ All Shopify Function APIs now support [targeting] configuration, with an extension target mapping to a specific WebAssembly export.
+ [[extensions.targeting]]
+ target = "purchase.validation.run"
+ input_query = "src/run.graphql"
+ export = "run"
+ Existing functions without targeting specified will continue to execute and deploy without any changes required. Use of targeting requires upgrading Shopify CLI to 3.49.4 or higher.
+ For more information, you can reference:
+ Configuring app extensions
+ Function configuration
+ Function API references
+ OCTOBER 02, 2023
+ New fields available for Shopify Functions input queries API
+ As of API version 2023-10, Shopify Functions APIs now include the following values in their input query GraphQL schema, so that you can do more with Functions!
+ A shop field is now available on the input root (example), which includes:
+ A localTime field, which provides the current date and allows testing the current time and date relative to provided arguments. (example)
+ A metafield field, which provides access to shop-level metafields.
+ All Function APIs now include localization as part of their input root. (example)
+ All Function APIs now include presentmentCurrencyRate as part of their input root. (example)
+ For more information, refer to the Shopify Function API references.
+ OCTOBER 02, 2023
+ Shopify Functions now support localization of their name and description API
+ Shopify Functions now supports localization of the function name and description. Function names and descriptions which are displayed in admin, such as the names of function discount types, can now be translated into the user’s native language.
+ Use of this localization requires upgrading Shopify CLI to 3.49.5 or higher.
+ Learn more about localization of functions on Shopify.dev.
+ OCTOBER 02, 2023
+ Updates to GraphQL Admin API for bundles API
+ As of 2023-10, you can now query the productvariantid field of the LineItemGroup to identify which variant was used to model the bundle after it was purchased.
+ In addition, apps can now render custom UI for the bundles card on the product details page by claiming bundle ownership of the product.
+ Learn more about the product configuration extension for bundles.
+ OCTOBER 01, 2023
+ New webhook topic added for Publication delete events API
+ As of API version 2023-10, a new webhook topic PUBLICATIONS_DELETE is added. This webhook occurs whenever a publication is deleted and requires the read_publications scope.
+ OCTOBER 01, 2023
+ Staff error as Order cancel reason API
+ As of 2023-10, we have added STAFF to the OrderCancelReason GraphQL type to serve as a reason for canceling orders due to staff errors.
+ Learn more about OrderCancelReason on Shopify.dev.
+ OCTOBER 01, 2023
+ New compare-at price range field on Product API API
+ As of version 2023-10 of the GrapqhQL Admin API, we've added the compareAtPriceRange field to Product which will return the minimum and maximum compare-at prices across a product's variants.
+ OCTOBER 01, 2023
+ Cart Line Items Now Ordered in Reverse Chronological Order Based on Time of Addition API
+ As of API version 2023-10, we've made changes to the ordering of line items in the cart. In the past, newly added items were placed at the end of the cart without explicit sorting. Now, line items will be sorted in reverse order by the time they were added to the cart, meaning the most recently added items will be positioned at the top.
+ Developers, be aware that this change could affect the ordering of cart items in your applications. If your app or store's functionality relies on the order of line items or an item's position in the cart, this update is especially relevant to you.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Apps can now change the name and address of their fulfillment service locations API
+ As of the 2023-10 API version, apps can change the name and address of their fulfillment service locations using the LocationEdit GraphQL mutation.
+ When a fulfillment service is created, Shopify also creates a new location and associates this with the new fulfillment service. This location inherits it's name from the fulfillment service.
+ Apps can now update the name and address of this location. For example, when a fulfillment service is created, it will inherit the country of the shop. If the fulfillment service is located in a different country from the shop, apps can now update the location to accurately reflect the address of the fulfillment service.
+ API breaking changes
+ New user error when editing locations
+ The LocationEdit mutation will return a new user error with the CANNOT_MODIFY_ONLINE_ORDER_FULFILLMENT_FOR_FS_LOCATION code if attempting to update the fulfillsOnlineOrders field for a fulfillment service location. This field can only be modified on manual locations. Fulfillment service locations are always enabled to fulfill online orders.
+ New authorization check when attempting to edit a fulfillment service location
+ From the 2023-10 API version, if you attempt to edit the location belonging to a fulfillment service without having the write_fulfillments access scope, you will get the following access denied error:
+ Access denied for locationEdit field. Required access: write_fulfillments access scope is required to edit the location associated with a fulfillment service.
+ Earlier API versions would return a user error with the NOT_FOUND code.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Making the primary market more flexible API
+ As of 2023-10, you can customize the primary market in three new ways:
+ The currency can be set to any currency independent of the merchant's shop currency.
+ The country can be set independently of the primary market's currency, such that combinations like Canada and USD are now possible.
+ Price lists can be created, allowing you to set fixed prices and percentage adjustments for the primary market.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Removal of Customer averageOrderAmount fields on Admin API API
+ As of GraphQL Admin API version 2023-10, the following Customer fields have been deprecated: averageOrderAmount, averageOrderAmountV2.
+ Learn more about the Customer object on Shopify.dev.
+ OCTOBER 01, 2023
+ Manage Quantity Price Breaks for B2B Customers API
+ As of the 2023-10 version of the Admin GraphQL API, you can view the quantityPriceBreaks for a product variant on priceListPrice and productVariantContextualPricing. Additionally, you will be able to use the quantityPricingByVariantUpdate mutation to manage quantity price breaks, quantity rules, and fixed prices for multiple variants.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Simplify Metafield interaction with default namespaces API
+ Starting from 2023-10, the Admin and Storefront GraphQL APIs have made the namespace field optional when creating, updating, or querying Metafields and Metafield Definitions. We have updated all relevant mutations and queries to accommodate this change. When working with Metafields from an App, the default namespace will be the app reserved namespace.
+ This update does not affect API calls that explicitly specify a namespace. However, it simplifies the process of interacting with namespaces by removing the need to provide a namespace field when the default is suitable. As a result, Apps can now create and query Metafields without the requirement of specifying a namespace.
+ Learn more in the Admin API and Storefront API documentation for Metafields.
+ OCTOBER 01, 2023
+ New field to query Order cancellation API
+ As of 2023-10, we've added a new field cancellation to Order graphQL object.
+ This field can provide additional details about the order cancellation, such as staff provided notes on why the order was cancelled. This data is currently available for some orders cancelled on Point of Sale app.
+ Learn more about Order on Shopify.dev.
+ OCTOBER 01, 2023
+ Subscriptions Support for Automatic Discounts API
+ We've added a subscription options for automatic discounts so that you can create automatic discounts for all your products. See the subscription discounts page for more details.
+ One important observation is that starting from API versions prior to 2024-01, the DiscountType will classify any automatic discount as "MANUAL". However, from 2024-01 onwards, it will accurately represent automatic discounts as "AUTOMATIC_DISCOUNT".
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Deprecation of metafield(id) query API
+ As of 2023-10, the metafield(id) query is no longer supported. Metafields should be queried via the HasMetafields connection of metafield owners. If necessary, metafields can be queried by ID via the Node interface.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Removing Shop.shopifyPaymentsAccount on Admin API API
+ As of 2023-10, we're removing the deprecated Shop.shopifyPaymentsAccount field. Use the shopifyPaymentsAccount query instead.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Multiple domains on the primary market API
+ As of API version 2023-10, you can have multiple domains on the primary market. The following changes have been introduced to the Markets API:
+ New Market.webPresences connection has been added
+ Pre-existing Market.webPresence field will return the primary domain web presence for a primary market with multiple web presences
+ marketWebPresenceCreate mutation will now allow adding additional web presences to the primary market
+ The required marketId argument has been removed from the marketWebPresenceUpdate and marketWebPresenceDelete mutations. The new required webPresenceId argument should be used instead
+ OCTOBER 01, 2023
+ More information about the Order added to the FulfillmentOrder API API
+ As of { 2023-10 }, we've added the following fields to the FulfillmentOrder graphQL object: orderId, orderName, orderProcessedAt, channelId.
+ With this change, order information required to fulfill an order is accessible on the fulfillmentOrder object with any of the fulfillmentorders access scopes. The same data is available via fulfillmentOrder.order, but this requires readorders access scope.
+ Learn more about FulfillmentOrder on Shopify.dev.
+ OCTOBER 01, 2023
+ serviceCode is available on the DeliveryMethod API API
+ As of the { 2023-10 } API version, you can use { DeliveryMethod } to get the value of the { serviceCode } chosen for the related { FulfillmentOrder} . The { DeliveryMethod } object is now accessible through any of the fulfillment order scopes.
+ Learn more about { DeliveryMethod } on Shopify.dev.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Breaking change to metafieldDefinitionUpdate mutation: access input type changed API
+ Note: This change does not affect many apps and you likely aren't affected unless you are defining a variable of type MetafieldAccessInput for the access property in your MetafieldDefinitionUpdate mutation.
+ As of GraphQL Admin API version 2023-10, we are changing the input field type of MetafieldDefinitionUpdateInput.access from MetafieldAccessInput to MetafieldAccessUpdateInput. This change is part of a broader API change to introduce support for explicit access grants (see Introducing explicit access grants for app-owned metafields for details), which will have a different input for updating the grants on existing definitions than for specifying grants on new definitions.
+ OCTOBER 01, 2023
+ Introducing explicit access grants for app-owned metafields API
+ As of GraphQL Admin API version 2023-10, you can grant READ or READ_WRITE access to your metafields to explicitly specified apps, by using the new grants property of the access object in your metafieldDefinitionCreate and metafieldDefinitionUpdate mutations. You can pass a list of up to 16 grants per definition, specifying the grantee and the level of access to grant.
+ This could be useful if you need fine-grained control over access to your metafields, for example you could keep the admin access setting PRIVATE but explicitly grant access to other app ids.
+ Learn more about metafield access controls on shopify.dev.
+ Note that the introduction of explicit grants required a breaking change to the metafieldDefinitionUpdate mutation - see Breaking change to metafieldDefinitionUpdate mutation: access input type changed for details.
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ App Revenue Attribution Record API Depreciated Shopify App Store
+ As of October 2023, the App Revenue Attribution API has been removed.
+ What does this mean?
+ appRevenueAttributionRecordCreate and appRevenueAttributionRecordDelete are no longer supported in this and future API versions.
+ What are the alternatives?
+ This change removes tracking for external app revenue attributions that occur outside of the Billing API. Partners can now use Google Analytics to track Shopify App Store Ads installs - which can be linked to external app revenue to calculate ad related return on ad spend and other ads related metrics.
+ OCTOBER 01, 2023
+ Checkout branding is moving to stable, with an update on color settings API
+ As of 2023-09-15, we've made updates to the color settings available in the Checkout Branding API, moving to the 2023-10 stable release.
+ These changes will give merchants more control over colors in checkout including defining and applying color schemes with more controls over borders, icons, form fields and button colors
+ Note: please reference the new CheckoutBrandingColorsInput element and avoid the deprecated CheckoutBrandingColorPaletteInput when making changes to checkout branding via the API. Any previous API calls that set a colorPalette have been automatically updated to the new color system. Future API calls must use the new system in order for changes to be reflected.
+ Learn more about our color settings here or review the reference documentation.
+ OCTOBER 01, 2023
+ payment_method_name available in PaymentDetails GraphQL and REST APIs to check for Shop Pay Installments transactions API
+ As of 2023-10, a new field payment_method_name is available in the PaymentDetails GraphQL API and the payment_details property in the Transaction resource of the Admin REST API. This field provides information about the payment method used to process an order transaction.
+ This update is in preparation for changes releasing in January 2024 where new Shop Pay Installment transactions will have a gateway value of shopify_payments.
+ Once released, relying on the gateway value to determine if an order is a Shop Pay Installments transaction will no longer be feasible. Instead, it will be necessary to utilize the payment_method_name value to identify the transaction type.
+ For example, you can identify Shop Pay Installments transactions by checking that payment_method_name has a value of shop_pay_installments. For historical orders prior to 2023-10, you still need to check the gateway value to identify Shop Pay Installments orders.
+ Learn more about the change in the PaymentDetails GraphQL API doc and Admin REST API doc for Transactions.
+ OCTOBER 01, 2023
+ New error code added for MetafieldDefinitionUpdate API
+ As of API version 2023-10, we've added the METAOBJECT_DEFINITION_CHANGED error code to the MetafieldDefinitionUpdateUserErrorCode enum. This new error code is returned if you attempt to update a metaobject_reference metafield definition so that it references a different Metaobject definition. Previously, this action would result in an INTERNAL_SERVER_ERROR.
+ Learn more about METAOBJECT_DEFINITION_CHANGED on https://shopify.dev/docs/api/admin-graphql/2023-07/enums/MetafieldDefinitionUpdateUserErrorCode
+ OCTOBER 01, 2023
+ ACTION REQUIRED
+ Changes to Subscription Billing Attempt creation behavior API
+ The SubscriptionBillingAttemptCreate mutation now limits the creation of Billing Attempts based on the Fraud Analysis result on the Subscription Contract’s Origin Order.
+ As of API version 2023-10, we've added the CONTRACT_UNDER_REVIEW error code to the BillingAttemptUserErrorCode enum. This new error code is returned in the case where Billing Attempt creation is prevented. In previous API versions, this action will return the INVALID error code.
+ Learn more about the Subscription Contracts API and Billing Attempts on Shopify.dev.
+ SEPTEMBER 27, 2023
+ Storefront API now supports product bundles API
+ It’s now possible for merchants using Hydrogen or the Headless Channel in the admin to offer bundles with Shopify.
+ Headless merchants can choose from creating fixed bundles and multipacks with our free Shopify Bundles app, using one of these updated bundle apps for more bundle support or using our APIs (Shopify Plus and Shopify partners only) to create a custom bundle offering.
+ Learn more about bundles on Shopify.
+ SEPTEMBER 27, 2023
+ POS UI extensions 1.4.0 update: new API, props API
+ As of September 27, we added the following updates to POS UI Extensions:
+ Introduced a Connectivity API which gives the UI extension access to the information about the device connectivity.
+ Added optional BadgeStatus prop to the Badge component
+ Added optional overrideNavigateBack prop to the Screen component
+ Added isDevice function to the Device API
+ All of the changes are available for POS UI extensions version 1.4.0 and POS app version 8.18.0. See the version log for all version details.
+ SEPTEMBER 22, 2023
+ Enhancements to range and select input settings Themes
+ New quality of life updates are here for the range and select input settings! Featuring enhancements to the design and functionality of these settings, these two changes will improve the theme editing experience.
+ We have introduced a new input box as part of the range setting updates. Merchants now have two ways to set their range value, either by using the existing slider or by typing in a value, which offers more flexibility and precision when setting values.
+ The select setting can now present itself in one of two ways, either as a dropdown list, or as a new segmented control. Depending on the options passed in, the setting will apply the ideal visual treatment accordingly.
+ Learn more about the range setting and select setting changes in our developer documentation.
+ SEPTEMBER 22, 2023
+ New input setting text_alignment launched Themes
+ A new input setting of type text_alignment has been introduced, featuring an icon-based segmented control design.
+ The setting comes pre-built with default values left, center and right, which cannot be changed.
+ Learn more about the text_alignment setting in our development documentation.
+ SEPTEMBER 18, 2023
+ New Liquid section properties and default lazy loading for image tags Themes
+ We've added default lazy loading for the image_tag when it occurs in sections further down the page.
+ We've also added new section properties so you can customize this behavior as well as fix other web performance issues dependent on layout position:
+ section.index - the 1-based index of a section within its location
+ section.index0 - the 0-based index of a section within its location
+ section.location - the location of the section (e.g., template, section group type, etc.)
+ You can now fix performance anti-patterns like lazy loading images above the fold and layout shifts due to async CSS loading without depending on section settings.
+ Learn more about the new image_tag behavior and how to use the new section properties.
+ SEPTEMBER 14, 2023
+ New GraphQL Admin API field CustomerAccountsV2 exposes shops' customer accounts settings API
+ As of Admin GraphQL API version 2023-10, you can query the CustomerAccountsV2 field on the Shop object to get information about the shop's customer accounts settings. CustomerAccountsV2 will let you adapt your app's behaviour to the merchant's customer accounts settings.
+ Learn more about CustomerAccountsV2 on Shopify.dev.
+ SEPTEMBER 13, 2023
+ Updates to the Theme Store Requirements Themes
+ We've made updates to the Theme Store requirements, in relation to the prohibited use of externally hosted scripts, and code which interferes with native Shopify functionality. These requirements are contained within Section 7, Consistency and functionality and inform that:
+ Scripts included in theme code must be hosted on Shopify's servers, with the exception of approved third-party libraries.
+ Themes must not include any Javascript or code that interferes with, or augments, any native Shopify feature within the theme editor or Shopify admin.
+ These requirements are to ensure all themes in the Shopify Theme Store are secure, reliable, performant, and maintain a consistent user experience.
+ The new requirements can be viewed on Shopify.dev.
+ SEPTEMBER 13, 2023
+ Cart validation errors on online store cart and Storefront API API
+ As of Storefront GraphQL API version 2023-10, we’ve added the VALIDATION_CUSTOM error type to CartErrorCode so that you can use validation errors in carts.
+ Learn more about cart validation errors on Shopify.dev.
+ SEPTEMBER 13, 2023
+ Admin action extensions are now generally available Tools
+ Admin action extensions are now generally available and can be deployed to apps. These new extensions enable you to seamlessly integrate your app's functionality into the Shopify admin by embedding workflows and UX on core admin pages.
+ Once deployed, merchants can find actions in the “More actions” menus at the top of Products, Orders, and Customers pages in the admin. When a merchant launches the extension, it will appear as a modal over the current page. By giving merchants access to your app's functionality, without the need to navigate away from their current task, these extensions help increase efficiency and productivity.
+ Admin action extensions come with direct API access, enabling them to use the Admin GraphQL API without having to proxy the calls through their app's backend resulting in faster and more responsive apps.
+ Learn more about admin action extensions on Shopify.dev.
+ SEPTEMBER 12, 2023
+ Introducing homepage ads on the Shopify App Store Shopify App Store
+ Developers can now generate more demand for your apps by showcasing them on the homepage of the Shopify App Store.
+ Learn more about homepage ads on our blog and shopify.dev.
+ SEPTEMBER 12, 2023
+ Full-funnel Google Analytics attribution Shopify App Store
+ We’ve added visibility into the app install event itself as part of our existing integration with Google Analytics. This addition enables developers to more easily compare the performance of your Shopify App Store Ads with your other marketing activities on and off Shopify.
+ In addition to having full visibility into the app install event, you can also now tie the app install event to a Shop ID, enabling richer insights on the type of merchants that are installing your app.
+ Learn more on our blog and shopify.dev.
+ SEPTEMBER 11, 2023
+ New APIs added to the latest version of App Bridge Tools
+ With the latest version of App Bridge, you can use the Print, Scanner and Share APIs.
+ Both Print and Share rely on web standards. Learn more about these APIs on Shopify.dev
+ SEPTEMBER 11, 2023
+ Automatic free shipping discount now available on GraphQL Admin API API
+ It is now possible to offer automatic free shipping discounts using the GraphQL Admin API using discountAutomaticFreeshippingUpdate and discountAutomaticFreeshippingCreate.
+ Learn more on Shopify.dev.
+ SEPTEMBER 07, 2023
+ Liquid Console: Test and evaluate Liquid snippets quickly using Shopify CLI Tools
+ Liquid Console is now available, a tool that enables Liquid testing and evaluation directly in your code editor through Shopify CLI. This feature accelerates your feedback loop, simplifies debugging, and assists developers learning Liquid.
+ Get started by running the command shopify theme console in your terminal. This command opens up an efficient way to experiment with Liquid filters and explore Liquid object data structures.
+ Learn more about Liquid Console on Shopify.dev.
+ SEPTEMBER 07, 2023
+ ACTION REQUIRED
+ Removal of UsageCharge billing_on field on Admin REST API API
+ As of Admin REST API version 2023-10, the following UsageCharge fields have been deprecated: billing_on.
+ Learn more about the UsageCharge object on Shopify.dev.
+ SEPTEMBER 06, 2023
+ ACTION REQUIRED
+ Breaking changes to ShopResourceLimits API: Deprecate "skuResourceLimits" API
+ As of GraphQL Admin API version 2023-10, we're deprecating the "skuResourceLimits" field from the ShopResourceLimits query object. We're no longer enforcing a limit of SKUs at a shop level. Instead, please use "maxProductVariants" to determine the limit of variants at a product level.
+ Learn more about ShopResourceLimits on Shopify.dev
+ AUGUST 31, 2023
+ Removed minimum character requirement for reviews Shopify App Store
+ We’re simplifying feedback collection and reducing non-informative content. These ratings contribute to the overall score without impacting the recent review ranking updates.
+ AUGUST 28, 2023
+ ACTION REQUIRED
+ Updates to our Terms of Use and Partner Program Agreement Shopify App Store
+ EFFECTIVE AUGUST 28, 2023 ACTION REQUIRED
+ We've made changes to our Partner Program Agreement and API License and Terms of Use. These updates include terms that clarify a partner's responsibility to sync back order data when any type of data is taken off of Shopify and facilitates an order, as well as other important updates.
+ These changes come into effect as of today, August 28, 2023.
+ We encourage all developers on our platform to review and be familiar with the API License and Terms and the Partner Program Agreement, so that you understand how to build, run, and grow your app and development business on our platform.
+ For more information and frequently asked questions, please visit the Shopify Help Center.
+ AUGUST 28, 2023
+ New inventory states: Safety Stock, Damaged and Quality Control API
+ You can now use the GraphQL Admin API to adjust new inventory states: safety_stock, damaged, and quality_control.
+ By moving inventory units to one of these states, they are tracked as part of a merchant's on_hand inventory, but are unavailable for sale. Inventory quantities in one of these states display as Unavailable to merchants that are tracking inventory in the Shopify admin.
+ Learn more about the the new states on Shopify.dev.
+ AUGUST 24, 2023
+ New App Store Requirement App Store requirements
+ Starting Monday September 18th, languages listed under the Languages section of your App Store listing must be fully available within the app. Any language listed that is not accessible within the app must be removed until translations can be completed.
+ To learn more, please see the App Store Requirements on Shopify.dev.
+ AUGUST 22, 2023
+ Search filters for Built for Shopify apps Shopify App Store
+ We've added a filter for apps that have achieved Built for Shopify status, which can be used in combination with category and feature filters. Learn more on shopify.dev.
+ AUGUST 22, 2023
+ Cart and Checkout Validation Functions now run in online store cart API
+ Cart and Checkout Validation Functions now run on the online store cart (they previously only ran on the storefront cart API). You can now apply custom validation logic to buyers on the online store as well as custom storefronts.
+ Learn more about Cart and Checkout Validation Functions on Shopify.dev.
+ AUGUST 21, 2023
+ Discounts - Ability to create Automatic free shipping discount API
+ Shopify is bringing a new feature for merchants, the ability to create automatic free shipping discount.
+ As of 2023-10 API version, you can create automatic free shipping discounts via admin or using graphql api.
+ Learn more about discounts in the Shopify Help Center.
+ AUGUST 17, 2023
+ checkout_started now triggers on every checkout visit in checkout extensibility. API
+ As of August 17, 2023 4:30 pm EDT, checkout_started now triggers on every checkout visit in checkout extensibility.
+ The customer event, checkout_started, will now trigger for all checkout visits if you upgraded to checkout extensibility. Previously, it only triggered the first time you entered the checkout.
+ Additional event data will provide additional insights into the customer journey. The customer event reference can be found here.
+ AUGUST 16, 2023
+ POS UI extensions update: new components, fixes API
+ As of August 16, we added the following components to POS UI extensions:
+ DatePicker
+ TimePicker
+ DateField
+ TimeField
+ EmailField
+ NumberField
+ TextField
+ TextArea
+ The Tile component's props have been updated:
+ enabled is now optional
+ onPress is now optional
+ badgeValue added
+ All of the changes are available for POS UI extensions version 1.3.0 and POS app version 8.15.0. See the version log for all version details.
+ AUGUST 14, 2023
+ Renderable and Online Store capabilities for metaobjects API
+ As of 2023-10 we're introducing new metaobject capabilities to enable SEO attributes and make entries renderable in the Online Store. These capabilities make it possible to render landing pages from metaobject entries.
+ The renderable capability enables setting SEO metadata attributes on your metaobjects. These attributes are accessible in Liquid and via the Storefront API.
+ The Online Store capability makes your metaobjects render as web pages in the Online Store by assigning a theme template and defining a URL.
+ Both capabilities can be enabled and configured independently when creating and updating a metaobject definition.
+ Learn more about the renderable and onlineStore capabilities on Shopify.dev
+ AUGUST 10, 2023
+ Server Pixels now has order_id as part of the checkout_completed event API
+ For Server Pixels, we've added order_id to the checkout_completed event payload so that you can track it server-side.
+ AUGUST 03, 2023
+ Improvements to app review ranking Shopify App Store
+ We’ve shipped refinements to our app review ranking system and will continue to further invest in it. If you have any feedback, please submit it to this form.
+ AUGUST 01, 2023
+ Coming soon: simplified extension versioning and deployment Tools
+ Soon, you'll be able to release all your extensions at the same time, directly from Shopify CLI. New app-level extension versioning will help you to keep better track of your app's iterations, and allow you to easily revert to previous versions, if needed. You’ll also be able to preview Functions using the dev command, and delete any extension.
+ This functionality will be included in a future release of Shopify CLI. You'll be able to opt in for each app that you develop.
+ Learn more about simplified deployment.
+ JULY 28, 2023
+ [Developer Preview] Shopify Flow - Use the CLI to manage your tasks Tools
+ Flow in the Shopify CLI is available in developer preview. We welcome feedback at flow-connectors-dev@shopify.com
+ Previously, Flow actions and triggers were defined in the partner dashboard. As Shopify CLI adoption has expanded, this meant that you needed to manage and deploy your Flow extensions separately from the rest of your app.
+ Going forward, you will now create your Flow tasks and actions through the CLI. You can follow these guides for how to create both triggers and actions through the CLI. In addition, you can migrate your existing tasks to be CLI-managed, unifying your code. For more details on what is possible, you can also consult Flow’s reference guide for triggers and actions.
+ To create Flow extensions using the CLI, version 3.48 or higher is required. Please note that Flow does not currently support the app dev command.
+ JULY 28, 2023
+ [Developer Preview] Shopify Flow - Use return data in your actions Tools
+ Your Flow actions can now return data into the Flow environment, allowing your merchants to build new types of automations making use of your app and data.
+ Several Flow actions make use of return data, allowing merchants to use data from other services. For example the OpenAI connector returns AI-generated text from OpenAI's completion API. Flow's "Get data" actions, including Get order data, return a list of objects that can be used in the workflow.
+ To use return data, your action must be defined through the Shopify CLI. You must use CLI version 3.48 or higher.
+ JULY 27, 2023
+ Install custom apps on multiple Shopify Plus stores Platform
+ Starting today partner accounts can distribute a single custom app to all stores within a Shopify Plus organization. As a result, it's now much simpler to manage and maintains apps for multi-store organizations.
+ Learn more about custom app distribution in the Shopify developer docs.
+ JULY 27, 2023
+ Extension-only apps Platform
+ You can now create custom apps that contain only extensions without the need to build and host an external web application, or implement OAuth. Custom apps without a requirement for embedded admin pages can now be created from the CLI and installed on merchant stores.
+ Learn more about extensions-only apps
+ JULY 27, 2023
+ Checkout UI Extensions - API Versioning API
+ We have released API versioning for checkout UI extensions. As part of this release, we are also moving checkout UI extensions over to the new ui extension packages.
+ For information on how to adopt API versions for existing extensions, visit our versioning page
+ For more details on the what and why, see our post on github
+ JULY 27, 2023
+ [Developer Preview] Admin action and block extensions Tools
+ Developers can now create and test Admin action and block extensions in their dev stores. These new extensions enable you to seamlessly integrate your app's functionality into the Shopify admin by embedding workflows and UX on core admin pages. By giving merchants access to your app's functionality, without the need to navigate away from their current task, these extensions help merchants be more efficient and productive.
+ Admin actions and blocks can use direct API access, enabling them to use the Admin GraphQL API without having to proxy the calls through their app's backend resulting in faster and more responsive apps.
+ Learn more about Admin action and block extensions on Shopify.dev.
+ JULY 26, 2023
+ Built for Shopify badging now live in the Shopify App Store Shopify App Store
+ Apps that have achieved Built for Shopify status now have special badging and promotional placements in the Shopify App Store, helping them get in front of the right businesses at the right time.
+ Learn more
+ JULY 26, 2023
+ Cart and Checkout Validation Function are now available for custom apps API
+ The Shopify Functions API for cart and checkout validations is now available on production stores for custom apps.
+ Learn more about building cart and checkout validations in our dev docs: Cart and Checkout validations
+ JULY 26, 2023
+ Introducing the new Customer Account API in developer preview API
+ The Developer Preview of the Customer Account API is now available for exploration and experimentation. This API can be accessed through the Hydrogen and Headless channels, providing developers with early access to its powerful features. The Customer Account API offers enhanced security, authentication, and personalization capabilities for headless storefronts. It enables passwordless single sign-on across all of the Shopify platform, from Liquid to Hydrogen and non-Hydrogen custom storefronts, all the way through to checkout. The Customer Account API also empowers effortless customer-scoped management for DTC–accounts, orders, drafts, payments, fulfillment, discounts, refunds, and metafields (shop, order, customer).
+ This version of the Customer Account API is marked as unstable as there will be changes and updates to refine and improve its functionality. We encourage developers to provide feedback and share their experiences to help shape the future iterations of this API.
+ Read the developer documentation to learn more.
+ JULY 26, 2023
+ App review summaries Shopify App Store
+ We’ve added app review summaries (powered by Shopify Magic) to the Shopify App Store, helping merchants see your app’s value based on other merchants' experiences. To start, review summaries will appear for apps with at least 100 reviews and a 4.0 rating.
+ Merchants can leave feedback when viewing the summary. We ask that developers share feedback using this form, which will be shared with the product team.
+ JULY 26, 2023
+ Oxygen Log Drains now available to Shopify Plus Tools
+ Oxygen has now added support for log drains, which allows developers to forward their Hydrogen storefront’s application logs to third-party log management platforms, including DataDog, Splunk, and New Relic.
+ Log drains can be easily set up and configured through the Shopify admin, with no code required. Merchants with complex monitoring needs now have full control of log monitoring, analysis, and retention–in your observability service of choice.
+ This feature is available today for all merchants on the Shopify Plus plan. Read the developer documentation to learn more.
+ JULY 26, 2023
+ Hydrogen updates: New CLI improvements and Remix-optimized components Tools
+ Building headless stores with Hydrogen is now even faster with our latest release.
+ Starting a new Hydrogen project with the Shopify CLI now gives you more options. You can scaffold a full purchase journey with standard app routes, add your favorite styling library, and configure language and currency settings, and connect your live product inventory to your Hydrogen app with a single command.
+ Hydrogen also features pre-built components optimized for Remix for better performance, SEO, and DX – from cart, image, product form, to pagination. And enhanced type safety support with built-in GraphQL codegen ensures your build is least error-prone.
+ Learn more about our latest release in detail and what’s coming next.
+ JULY 26, 2023
+ Remove rate limits on the Storefront API API
+ Storefront API now serves all legitimate requests from both private and public clients without rate limits. Headless stores will stay protected against bot activity and never hit a throttle, no matter the size of traffic they receive. All included for free in your plan.
+ Read the developer documentation to learn more.
+ JULY 26, 2023
+ Updates to the App Design Guidelines Tools
+ We've updated the App Design Guidelines for better clarity and coverage of the trickiest parts of app design. “Mandatory” and “Unacceptable” directives are now “Must Do” and “Do Not”, to clarify that all these directives must be met to qualify for Built for Shopify status. We have also added new guidelines for Forms, Marketing, and Admin UI extensions.
+ All Built for Shopify applicants will be evaluated against the updated App Design Guidelines starting September 1, 2023.
+ See the new guidelines on Shopify.dev.
+ JULY 26, 2023
+ The Summer ’23 Edition is live! Tools
+ There are now more ways than ever to customize and extend Shopify, from storefront to checkout to admin.
+ Explore the latest updates to our suite of APIs, SDKs, and developer tools.
+ Create the best checkout experience with 17 new APIs and updates for Shopify Checkout
+ Build Hydrogen storefronts faster with Remix-optimized workflows and CLI improvements like enhanced type safety support, and scale effortlessly without rate limits on the Storefront API
+ Develop apps faster and more easily with our new Remix app template, extension-only apps, and config as code
+ Extend the Shopify admin in entirely new ways with admin UI extensions
+ Stand out from the crowd—Built for Shopify badging and promotional placements are now live in the Shopify App Store
+ Customize Shopify’s backend logic with new Function APIs, support for JavaScript now generally available, and faster development and iteration with the shopify app dev command
+ Visit the Editions website to see all the developer announcements.
+ JULY 26, 2023
+ Cart Transform Function API API
+ You can now use the Cart Transform Function API to expand or merge cart line items. The Cart Transform API is used to build customized bundles.
+ For more information on the Cart Transform Function API click here.
+ For an overview on building a custom bundle offering click here.
+ JULY 26, 2023
+ New and updated APIs to build product bundles API
+ The ProductVariantComponent API has recently been added to the GraphQL Admin API allowing for the implementation of fixed bundles.
+ To build customized bundles, use the newly launched Cart Transform Function API.
+ For more information on creating bundles click here.
+ JULY 26, 2023
+ Checkout UI Extensions - New APIs for Summer Editions API
+ Shipping address write API - Extensions can use the applyShippingAddressChange API to modify address values on behalf of a buyer.
+ B2B context APIs - Extensions can now read details about a purchasingCompany as well as checkout settings that apply to the current buyer
+ Support for new metafield types - Extensions can now read metafields on carts, companies, or companyLocations. They can also write to cart metafields
+ JULY 26, 2023
+ Polaris v12 beta now available Platform
+ The beta release of Polaris v12 is now available, providing developers with early access to resources for updating the look and feel of your apps to fit seamlessly within the newly redesigned Shopify admin.
+ Learn more about Polaris v12-beta on polaris.shopify.com.
+ JULY 26, 2023
+ App Bridge via tag Tools
+ We have released a new version of App Bridge. You can add the <script> tag to the <head> of your app pages and get the benefits immediately.
+ App Bridge has been written from the ground up to be more familiar to web standards.
+ App Bridge will keep itself up to date automatically, so you don't have to worry about version updates.
+ Learn more about App Bridge in the documentation
+ JULY 26, 2023
+ Simplified extension versioning and deployment Platform
+ As of today, extensions are packaged and deployed at the same time, directly from Shopify CLI. New app-level extension versioning will help you to keep better track of your app's iterations, and allow you to easily revert to previous versions.
+ Until September 5th, you can opt in to get access to simplified deployment. Simplified deployment is available in Shopify CLI 3.48.
+ On September 5th, all apps will automatically be opted in to simplified deployment.
+ Learn more about simplified deployment.
+ JULY 26, 2023
+ Config as Code Platform
+ Starting today, you can configure and manage your apps directly in your codebase without having to visit the Partner Dashboard. Using Shopify CLI, you can link your shopify.app.toml file to an app, modify the configuration, and push the configuration live.
+ Learn more about app configuration.
+ JULY 20, 2023
+ Smart Grid management for Point of Sale now available API
+ As of the latest unstable GraphQL API version, we have introduced the ability to utilize the Admin API for managing Smart Grid for Point of Sale. This enhancement enables the creation and naming of Smart Grid layouts that are not yet linked to any location. Once prepared, the API facilitates the assignment of a layout to single or multiple locations. Any subsequent modifications to this layout will be reflected across all assigned locations, eliminating the necessity for individual manual adjustments.
+ Just request the appropriate access scope(s) be added to your app.
+ Learn more about Smart Grid management on Shopify.dev.
+ JULY 19, 2023
+ Introduce Fulfillment Constraints built on Shopify Function API
+ As of 2023-10 version of the Shopify Functions API, you can use the Fulfillment Constraints API to have a higher degree of customization when defining fulfillment and delivery strategies. With this API, checkout won’t return any shipping rates if the configured constraints can’t be met.
+ For example, you can specify that certain products must be fulfilled from a specific location, based on buyer information, cart information or metafields.
+ Learn more about Fulfillment Constraints on Shopify.dev.
+ JULY 18, 2023
+ Storefront API Cart BXGY discount line folding API
+ As of today, the way cart lines are folded when a BXGY discount is applied to the cart is changing in the Storefront API. The lines will now be grouped by applied discount and discounted amount. This change ensures that the Storefront API behaviour matches the existing line folding functionality of the Online Store/Ajax API Cart.
+ For example, if you have a buy one get one free discount for a product variant and you add 3 of that variant to a cart. The cart lines will be; * Item with quantity of 1, no discount applied * Item with quantity of 1, BXGY discount code applied, adjusted discounted price of 0 * Item with quantity of 1, BXGY discount code applied, full price of product variant
+ This change reflects the existing line folding functionality of the Online Store/Ajax API Cart.
+ JULY 17, 2023
+ ACTION REQUIRED
+ Changes to Ajax API Cart token format API
+ Ajax API cart tokens will now be returned with a new format. The new format will include a prefix c1- however the API features and functionality remain unchanged. Apps and themes should be designed to handle cart tokens in any format and of any length. Treat the cart token as a random identifier that will change in the future.
+ Action Required: Ensure that any app and theme code is free from hard-coded assumptions (ex. Using regex to identify a cart token) on the format and structure of the cart token.
+ JULY 14, 2023
+ url available on MediaImage.originalSource GraphQL field API
+ As of API version 2023-10, url field is available on the GraphQL MediaImage's originalSource field https://shopify.dev/docs/api/admin-graphql/2023-07/objects/mediaimage#field-mediaimage-originalsource.
+ This will be a signed URL that is valid only for a short period of time. It provides access to the originally uploaded uncompressed image.
+ JULY 14, 2023
+ Shopify Protect protection status on Admin API API
+ As of the latest unstable version and upcoming 2023-10 version of the Admin GraphQL API, you can use the shopifyProtect field of Order to view the protection status of Shop Pay orders. The protection status is established asynchronous from the orders/create webhook so you can also listen to the orders/shopify_protect_eligibility_changed webhook to know when the protection status is created or updated.
+ By providing a clear view of an order’s protection status, we're empowering developers to make more informed decisions. For instance, fraud protection apps can avoid redundant costs for merchants when a Shop Pay order is already protected.
+ Learn more about Shopify Protect’s protection status on Shopify.dev.
+ JULY 12, 2023
+ Updated integrations field for app listing Shopify App Store
+ We’ve combined the “Fit seamlessly” and “Integrates with” fields on our app listing pages into one place. Apps that are built using the Checkout and Point of Sale extensions will have them automatically noted in the “Works with” field on the app listing.
+ Log into your Partner Dashboard and click on Apps > Manage Listing to view the “Integrations” field for your app to ensure the content is up to date.
+ JULY 12, 2023
+ Updated merchant notification system for apps Shopify App Store
+ We’ve updated the app settings page with a new notification system to inform merchants of notable insights on their installed apps. Merchants will be able to quickly identify apps that are unsupported, incompatible, require action, on free trial, paid (including the cost), or least used.
+ JULY 12, 2023
+ Update on admin performance for Built for Shopify Shopify App Store
+ As of July 12, we're temporarily removing the Cumulative Layout Shift (CLS) metric from our admin performance standard for Built for Shopify.
+ In order to meet our admin performance standard for Built for Shopify, apps will still need to meet performance targets for Largest Contentful Paint (LCP) and First Input Delay (FID).
+ We are making this change to improve the measurement of this metric. We expect CLS to become a part of our admin performance standard again by the end of 2023.
+ Learn more about admin performance on Shopify.dev
+ JULY 01, 2023
+ Search and predictive search are now available on Storefront API API
+ You can now use search and predictiveSearch queries in the GraphQL Storefront API to enable natural language search on your custom storefronts.
+ The search API returns the most releavant search results among product, page and article resource types. Merchants can use the Shopify Search & Discovery app to change the default value of the resource types and customize search results.
+ The predictiveSearch API helps you implement a predictive search dropdown interface where suggested results are displayed immediately as buyers type into the search bar.
+ Learn more about new search APIs on Shopify.dev.
+ JULY 01, 2023
+ Introduce new stale status to Subscription Contracts API
+ As of API version 2023-07, you can use the new Subscription Contract stale status to express a contract that has been marked as stale due to inactivity.
+ We're deprecating the SubscriptionDraftErrorCode STALE_CONTRACT and replace it by CONCURRENT_CONTRACT_UPDATE for a better description of the error.
+ We're introducing the new error code CONTRACT_STALE_STATUS to SubscriptionBillingCycleErrorCode and SubscriptionDraftErrorCode to indicate whenever we attempt to update or bill a contract that hasn't been used for 1 year.
+ Start building today
+ Sign up for a Partner account to get started.
+ Sign up
+ Updates & News
+ Developer changelog
+ Partner blog

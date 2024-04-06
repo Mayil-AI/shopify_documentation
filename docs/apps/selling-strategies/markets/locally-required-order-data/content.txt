@@ -1,0 +1,315 @@
+Overview
+ Catalogs
+ Translate content
+ Locally required order data
+ B2B
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Add locally required data to orders using localization extensions
+ Localization extensions are additional fields that are required by certain countries on international orders. For example, some countries require additional fields for customs information or tax identification numbers. You can retrieve the information from these fields using the LocalizationExtensionConnection connection.
+ This guide shows how to create and query country fields using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_orders access scope. Learn how to configure your access scopes using Shopify CLI.
+ You've created at least one draft order and order in your Shopify store.
+ Step 1: Add a country field
+ You can add a country field to a draft order or an existing order using the GraphQL Admin API, or you can collect it on checkout.
+ Note
+ In this step, you'll use a Brazilian CPF number, but the following country fields can also be collected:
+ South Korea: Personal Customs Code
+ China: Resident ID number
+ Italy: Codice Fiscale and PEC
+ Add a country field to a draft order
+ To add a country field to a DraftOrder, pass the LocalizationExtensionsInput object to the draftOrderCreate mutation.
+ The following mutation creates a draft order with a Brazilian CPF number:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation draftOrderCreate($input: DraftOrderInput!) {
+ 2
+    draftOrderCreate(input: $input) {
+ 3
+      draftOrder {
+ 4
+        id
+ 5
+        localizationExtensions(first:1) {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              key
+ 9
+              value
+ 10
+            }
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "lineItems": {
+ 4
+        "variantId": "gid://shopify/ProductVariant/38615082242",
+ 5
+        "quantity": 1
+ 6
+      },
+ 7
+      "localizationExtensions": {
+ 8
+        "key": "TAX_CREDENTIAL_BR",
+ 9
+        "value": "39053344705"
+ 10
+      },
+ 11
+      "email": "john_sally@gmail.com"
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "draftOrderCreate": {
+ 4
+        "draftOrder": {
+ 5
+          "id": "gid://shopify/DraftOrder/243906019384",
+ 6
+          "localizationExtensions": {
+ 7
+            "edges": [
+ 8
+              {
+ 9
+                "node": {
+ 10
+                  "key": "TAX_CREDENTIAL_BR",
+ 11
+                  "value": "39053344705"
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+ 15
+ 18
+    }
+ 19 }
+ Convert the draft order into an order
+ Using the id value from the response of the draftOrderCreate mutation, use the draftOrderComplete mutation to convert the draft order into an order.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation draftOrderComplete($id: ID!) {
+ 2
+    draftOrderComplete(id: $id) {
+ 3
+      draftOrder {
+ 4
+        id
+ 5
+        order {
+ 6
+          id
+ 7
+        }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/DraftOrder/243906019384"
+ 3 }
+      "draftOrderComplete": {
+ 4
+        "draftOrder": {
+ 5
+          "id": "gid:\/\/shopify\/DraftOrder\/243906019384"
+ 6
+        },
+ 7
+        "order": {
+ 8
+          "id":"gid:\/\/shopify\/Order\/1"
+ 9
+        },
+ 10
+      }
+ 11
+    }
+ 12 }
+ Add a country field to an existing order
+ To add a country field to an existing order, pass the LocalizationExtensionInput input object to the orderUpdate mutation.
+ The following mutation updates an existing order with a Brazilian CPF number:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation orderUpdate($input: OrderInput!) {
+ 2
+    orderUpdate(input: $input) {
+ 3
+      order {
+ 4
+        id
+ 5
+        localizationExtensions(first: 1) {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              key
+ 9
+              value
+ 10
+            }
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "id": "gid://shopify/Order/5464858562",
+ 4
+      "localizationExtensions": {
+ 5
+        "key": "TAX_CREDENTIAL_BR",
+ 6
+        "value": "39053344705"
+ 7
+      }
+ 2
+    "data": {
+ 3
+      "orderUpdate": {
+ 4
+        "order": {
+ 5
+          "id": "gid://shopify/Order/5464858562",
+ 6
+          "localizationExtensions": {
+ 7
+            "edges": [
+ 8
+              {
+ 9
+                "node": {
+ 10
+                  "key": "TAX_CREDENTIAL_BR",
+ 11
+                  "value": "39053344705"
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+ 15
+          }
+ 16
+        }
+ Collect a country field on checkout
+ Note
+ To test this feature, you need an order containing a localization extension field that was collected during checkout. You can create a localization extension field using a developer preview store.
+ To collect a country field on checkout, you can set the address of your store to Brazil (since Brazilian merchants are required to collect a tax ID for government invoicing) and complete a checkout from your storefront.
+ Set the address of your store to Brazil. Remember to change your address back when you've completed the tutorial.
+ From your storefront, add a product to your cart and then complete a checkout.
+ Enter a valid Brazilian CPF number into the new CPF/CNPJ localization extension field in the Additional information section. If you don’t have one, then you can use 39053344705.
+ Complete the checkout.
+ Open the order in the Shopify admin and verify that the CPF/CNPJ value is displayed inside the customer card, in the Additional information section.
+ Step 2: Retrieve the country field
+ To retrieve a country field for an order, you can use the order query. Pass the order ID to the order query and request the first five entries of the localizationExtensions connection. Check the response to make sure that the CPF/CNPJ field is returned.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    order(id: "gid://shopify/Order/1") {
+ 3
+      id
+ 4
+      localizationExtensions(first: 5) {
+            countryCode
+ 8
+            purpose
+ 9
+            title
+ 10
+            value
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "order": {
+ 4
+        "id": "gid://shopify/Order/1",
+ 5
+        "localizationExtensions": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "countryCode": "BR",
+ 10
+                "purpose": "TAX",
+ 11
+                "title": "CPF/CNPJ",
+ 12
+                "value": "39053344705"
+ 13
+              }
+ 14
+            }
+ 15
+          ]
+ 16
+        }
+ 17
+      }
+ 18
+    }
+ 19 }
+ Next steps
+ Use the GraphQL Admin API to translate an online store's content.
+ Use the Storefront API to retrieve translated content.
+ Explore an example for retrieving a list of shop locales with the GraphQL Admin API.
+ Explore examples for retrieving translatable resources with the GraphQL Admin API.
+ Learn how to support multiple currencies and languages in your theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Add a country field
+ Step 2: Retrieve the country field

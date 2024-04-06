@@ -1,0 +1,120 @@
+Scalars
+ Product Discount API
+ Shipping Discount API
+ Discounts Allocator API
+ Fulfillment Constraints API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Order Discount API reference
+ The Order Discount API enables you to create a new type of discount that is applied to all merchandise in the cart.
+ Extension targets
+ The Order Discount API exposes the following targets:
+ Target Output type Description
+ purchase.order-discount.run FunctionRunResult Outputs the order-level discount that should be applied to the cart
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Order Discount API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        id
+ 5
+        merchandise {
+ 6
+          id
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10 }
+ The following example shows the resulting input to the query:
+      "lines": [
+ 4
+        {
+ 5
+          "id": "gid://shopify/CartLine/0",
+ 6
+          "merchandise": {
+ 7
+            "id": "gid://shopify/ProductVariant/0"
+ 8
+          }
+ 9
+        },
+ 10
+        {
+ 11
+          "id": "gid://shopify/CartLine/1",
+ 12
+          "merchandise": {
+ 13
+            "id": "gid://shopify/ProductVariant/1"
+ 14
+          }
+ 15
+        }
+ 16
+      ]
+ 17
+    }
+ 18 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.order-discount.run target.
+ Example
+ The following function result includes one discount of 10% off the order subtotal amount:
+ output.json
+ 1 {
+ 2
+    "discountApplicationStrategy": "FIRST",
+ 3
+    "discounts": [
+ 4
+      {
+ 5
+        "value": {
+ 6
+          "percentage": {
+ 7
+            "value": 10
+ 8
+          }
+ 9
+        },
+ 10
+        "targets": [
+ 11
+          {
+ 12
+            "orderSubtotal": {
+ 13
+              "excludedVariantIds": []
+ 14
+            }
+ 15
+          }
+ 16
+        ],
+ 17
+        "message": "10% off"
+ 18
+      }
+ 19
+    ]
+ 20 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Updates & News

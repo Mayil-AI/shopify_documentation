@@ -1,0 +1,70 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Discount apps
+ Discount apps integrate with the Shopify admin to provide discount types for app users. This guide introduces the ways that you can extend your app code into Shopify checkout and customize the discount experience.
+ Use the GraphQL Admin API to create and manage discounts that are native to Shopify.
+ Use Shopify Functions to extend your app code into Shopify checkout and create discount functionality that isn't offered out of the box with Shopify.
+ Build with the GraphQL Admin API
+ The GraphQL Admin API enables you to create and manage Shopify discounts.
+ Discount types
+ You can create different types of discounts to offer to customers using the GraphQL Admin API. For example, an app user might want to use discounts as a way to promote sales, as special offers, or as customer loyalty rewards.
+ The following table describes the different types of discounts that you can create as part of your app:
+ Discount type Description Example use cases
+ Automatic discount A discount that's automatically applied at checkout and on a cart if prerequisites are met.
+ A Buy X Get Y or Spend X Get Y automatic discount
+ A percentage or fixed-amount automatic discount
+ Code discount A discount that customers can redeem using a specific code. Merchants can create and share discount codes individually with customers.
+ A Buy X Get Y or Spend X Get Y code discount
+ A percentage or fixed-amount code discount
+ A free shipping code discount
+ Visit the Shopify Help Center to learn about the limitations and considerations that apply to each discount type:
+ Automatic discounts
+ Code discounts
+ Access scopes
+ To use discount-related GraphQL mutations when building with the GraphQL Admin API, your app needs to request the following access scopes for a Shopify store:
+ Access scope Required or optional? Description
+ write_discounts Required Allows apps to create and update Shopify discounts
+ read_customers Optional Allows apps to query a store's customers
+ read_products Optional Allows apps to query a store's products
+ read_shipping Optional Allows apps to query the countries that a store ships to
+ Build with Shopify Functions
+ Shopify Functions enable you to create discount functionality that isn't offered out of the box with Shopify. For example, a discount function can be used to create volume discounts with different discount rates upon hitting specified volume breakpoints.
+ An app developer creates and deploys an app with a function that defines a new discount type. A user can then install the app on a Shopify store and create a new discount from a discount type provided by the app. Shopify executes the function to calculate the discount when a customer adds a product to their cart.
+ Discount classes
+ Discount classes are similar to native discount types. You can create one or more discount classes as part of your app using Shopify Functions.
+ The following table describes the different discount classes in detail:
+ Discount class Description Example use cases
+ Order discount A discount that's applied to all merchandise in the cart.
+ Money off the order subtotal. For example, $5 off the order subtotal.
+ Money off products on an order. For example, 20% off all products on the order.
+ Tiered discount by spend. For example, spend $100 to get 10% off all products.
+ Product discount A discount that's applied to a particular product or product variant in the cart
+ Money off a product. For example, 20% off shirts.
+ Money off a product variant. For example, $5 off blue shirts.
+ Buy a specific quantity of a product for a specific amount. For example, $5 off up to 2 blue shirts.
+ Buy a specific amount of a product, get a second amount at a discount. For example, buy 4 shirts and get 2 blue shirts free
+ Shipping discount A discount that's applied to one or more shipping rates at checkout
+ Free shipping.
+ A discount on shipping. For example, 20% off shipping or $5 off shipping.
+ A discount on specific shipping rates. For example, 50% off Standard shipping.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about building with Shopify Functions:
+ Shopify App Bridge
+ Build your user interface using components from Shopify App Bridge library.
+ Discount React library
+ Explore a set of React components for building a discount form page.
+ Input queries and metafields
+ Make your code reusable by replacing hard-coded variables in your function with metafield values.
+ Shopify Functions
+ Customize the backend logic that powers parts of Shopify.
+ Next steps
+ Get started with discounts by learning more about the GraphQL Admin API requests that you can make to create, update, query, and delete discounts.
+ Learn how to use Shopify Functions by building a discounts experience.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Build with the GraphQL Admin API
+ Build with Shopify Functions
+ Next steps

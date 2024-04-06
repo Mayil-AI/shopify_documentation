@@ -1,0 +1,35 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ LiquidHTMLSyntaxError
+ Identifies LiquidHTML syntax errors.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ The example below is missing a closing bracket %}.
+ 1 <a>unclosed
+ 2 {% include 'muffin'
+ 3 {% assign foo = 1 }}
+ 4 {% unknown %}
+ 5 {% if collection | size > 0 %}
+ ✓ Pass
+ 1 <a>closed</a>
+ 2 {% include 'muffin' %}
+ 3 {% assign foo  = 1 %}
+ 4 {% if collection.size > 0 %}{% endif %}
+ Disabling this check
+ Disabling this check isn't recommended.
+ Aliases
+ For backward compatibility with configuration files made for Theme Check v1.X.X, this check is also recognized in configuration files with the following names:
+ HtmlParsingError
+ SyntaxError
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Disabling this check
+ Aliases
+ Updates & News
+ Developer changelog
+ Partner blog

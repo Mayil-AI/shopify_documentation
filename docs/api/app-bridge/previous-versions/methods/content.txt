@@ -1,0 +1,155 @@
+Previous versions
+ App Bridge from npm
+ Actions
+ Methods
+ Debugging
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Methods
+ Note
+ Most of Shopify App Bridge’s functionality relies on actions. See the Actions section to learn more about how to use these.
+ Initialization methods
+ createApp(config)
+ Returns an app object. Used to initialize your app instance.
+ The config object should contain the following keys:
+ Key Type Description
+ apiKey string The client ID provided for your application in the Partner Dashboard.
+ host string The base64-encoded origin/domain of the Shopify shop, which is provided by Shopify as a query parameter on the initial load of your app in the Shopify Admin. The host is set dynamically and should be stored in the session from the initial load.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ Modular JavaScript
+ CDN-hosted
+ 1 import createApp from '@shopify/app-bridge';
+ 2 const app = createApp(config);
+ App object methods
+ app.dispatch(action)
+ Dispatches an action to Shopify App Bridge. Hosts (like Shopify Admin and Shopify Mobile) can subscribe to actions to listen for these dispatches.
+ Key Type Description
+ action Action One of Shopify App Bridge’s included actions.
+ 1 app.dispatch(
+ 2
+    Redirect.toRemote({
+ 3
+      url: 'http://example.com',
+ 4
+    }),
+ 5 );
+ app.error(callback)
+ Subscribe to all errors, including those that are caused by actions. Returns a method you can use to unsubscribe from all errors.
+ Key Type Description
+ callback function The function you want to execute when an error occurs.
+ 1 const unsubscribeFromErrors = app.error((data) => {
+ 2
+    const {
+ 3
+      type,    // the error type
+ 4
+      action,  // the original action including its id
+ 5
+      message, // additional hints on how to fix the error
+ 6
+    } = data;
+ 7
+ 8
+    // Handle all errors here
+ 9
+ 10
+    switch(type) {
+ 11
+      case Error.Action.INVALID_PAYLOAD:
+ 12
+      // Do something with the error
+ 13
+      break;
+ 14
+    }
+ 15 });
+ 16
+ 17 // Unsubscribe from all errors
+ 18 unsubscribeFromErrors();
+ app.getState()
+ Returns a Promise which, when resolved, returns information about your app’s current state, including the currently logged in staff member.
+ 1 app.getState().then((data) => {
+ 2
+    const {
+ 3
+      appInfo,
+ 4
+      loading,
+ 5
+      modal,
+ 6
+      navigation,
+ 7
+      pos,
+ 8
+      resourcePicker,
+ 9
+      staffMember,
+ 10
+      titleBar,
+ 11
+      toast
+ 12
+    } = data;
+ 13 });
+ app.subscribe(callback, id?)
+ Subscribe to all actions. Returns a method you can use to unsubscribe.
+ Arguments:
+ Key Type Description
+ callback function The function you want to execute when an action is dispatched.
+ id int The ID of a particular action set instance to subscribe to (optional).
+ 1 const unsubscribeFromAll = app.subscribe((data) => {
+ 2
+    // Handle all actions here
+ 3
+    console.log(data);
+ 4 });
+ 5
+ 6 // Unsubscribe from all actions
+ 7 unsubscribeFromAll();
+ app.subscribe(eventNameSpace, callback, id?)
+ When eventNameSpace or id are provided, this method subscribes to actions of the provided type.
+ Arguments:
+ Key Type Description
+ eventNameSpace string Include this to subscribe only to actions of a particular type: for example, Modal.Action.OPEN. (optional)
+ callback function The function you want to execute when an action is dispatched.
+ id int The ID of a particular action set instance to subscribe to (optional).
+ 1 const unsubscribeModalOpen = app.subscribe(Modal.Action.OPEN, (data) => {
+ 2
+    // Do something whenever a Modal open action is dispatched
+ 3 });
+ 4
+ 5 // Unsubscribe from Modal open actions
+ 6 unsubscribeModalOpen();
+ Platform methods
+ The following utility methods, available in the app-bridge package, return true or false depending on which platform an embedded app is running on:
+ isShopifyMobile: Returns true if the app is running on Shopify Mobile.
+ isShopifyPOS: Returns true if the app is running on Shopify POS.
+ isShopifyPing: Returns true if the app is running on Shopify Ping.
+ isMobile: Returns true if any of the conditions above are true.
+ isShopifyEmbedded: Returns true if the app is running as an embedded app.
+ 1 import {isMobile, isShopifyEmbedded} from '@shopify/app-bridge/utilities';
+ 2
+ 3 if (isShopifyEmbedded()){
+ 4
+    if (isMobile()) {
+ 5
+      // app is running as an embedded on mobile
+ 6
+    } else {
+ 7
+      // app is running as an embedded app in a desktop web browser
+ 8
+    }
+ 9 } else {
+ 10
+    // app is not running as an embedded app
+ 11 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Initialization methods
+ App object methods
+ Platform methods

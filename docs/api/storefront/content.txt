@@ -1,0 +1,335 @@
+2024-04 latest
+ 2024-01
+ 2023-10
+ 2023-07
+ 2024-01
+ Common objects
+ Customers
+ Metaobjects
+ Search
+ GraphQL Types
+ GraphQL Storefront API
+ Create unique customer experiences with the Storefront API on any platform, including the web, apps, and games. The API offers a full range of commerce options making it possible for customers to view products and collections, add products to a cart, and check out.
+ Explore Hydrogen, Shopify’s official React-based framework for building headless commerce at global scale.
+ Development frameworks and SDKs
+ Use Shopify’s officially supported libraries to build fast, reliable apps with the programming languages and frameworks you already know.
+ curl
+ enable
+ Hydrogen
+ enabled
+ A React-based framework for building custom storefronts on Shopify, Hydrogen has everything you need to build fast, and deliver personalized shopping experiences.
+ Docs
+ npm package
+ GitHub repo
+ Storefront API Client
+ enable
+ Remix (Apps)
+ enable
+ Shopify API (Apps)
+ enable
+ PHP
+ enable
+ Ruby
+ enable
+ Android
+ iOS
+ Other
+ Shopify Hydrogen storefront creation
+ 1 npm init @shopify/hydrogen
+ 2 // or
+ 3 npx @shopify/create-hydrogen
+ 4 // or
+ 5 pnpm create @shopify/create-hydrogen
+ 6 // or
+ 7 yarn create @shopify/hydrogen
+ Authentication
+ The Storefront API is unauthenticated, meaning all users have read-only access, with no username or password required.
+ Apps that enable the Storefront API must explicitly request relevant unauthenticated access scopes during OAuth, or during authentication in the Shopify admin.
+ Requests to the GraphQL Storefront API require a valid Shopify access token.
+ The Storefront API has the following types of access:
+ Public access: Used to query the API from a browser or mobile app.
+ Private access: Used to query the API from a server or other private context, like a Hydrogen backend.
+ Learn more about access tokens for the Storefront API.
+ curl
+ Hydrogen
+ Storefront API Client
+ Remix
+ Shopify API
+ PHP
+ Ruby
+ 1
+ 2
+ 3
+ 4
+ 5
+ const storefront = createStorefrontClient({
+ publicStorefrontToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+ storeDomain: `https://${env.PUBLIC_STORE_DOMAIN}`,
+ storefrontApiVersion: env.PUBLIC_STOREFRONT_API_VERSION || '2023-01',
+ });
+ Endpoints and queries
+ The Storefront API is available only in GraphQL. There's no REST API for storefronts.
+ All Storefront API queries are made on a single GraphQL endpoint, which only accepts POST requests:
+ POST
+ https://{store_name}.myshopify.com/api/2024-04/graphql.json
+ Versioning
+ The Storefront API is versioned, with new releases four times a year. To keep your app stable, make sure that you specify a supported version in the URL.
+ GraphiQL explorer
+ Explore and learn Shopify's Storefront API using the GraphiQL explorer. To build queries and mutations with shop data, install Shopify's GraphiQL app.
+ Usage limitations
+ Shopify Plus bot protection is only available for the Cart object. It isn't available for the Checkout object.
+ You can’t use Storefront API to duplicate existing Shopify functionality — be sure to check the API terms of service before you start.
+ POST
+ https://{store_name}.myshopify.com/api/2024-04/graphql.json
+ curl
+ Hydrogen
+ Storefront API Client
+ Remix
+ Shopify API
+ PHP
+ Ruby
+ 16
+ 17
+ 18
+ import {json} from '@shopify/remix-oxygen';
+ 
+ export async function loader({context}) {
+ const PRODUCTS_QUERY = `#graphql
+ query products {
+ products(first: 3) {
+ edges {
+ node {
+ id
+ title
+ }
+ }
+ }
+ }
+ `;
+ const {products} = await context.storefront.query(PRODUCTS_QUERY);
+ return json({products});
+ }
+ Directives
+ A directive provides a way for apps to describe additional options to the GraphQL executor. It lets GraphQL change the result of the query or mutation based on the additional information provided by the directive.
+ Storefront Directives
+ @inContext (Country Code)
+ In the Storefront API, the @inContext directive takes an optional country code argument and applies this to the query or mutation.
+ This example shows how to retrieve a list of available countries and their corresponding currencies for a shop that's located in France @inContext(country: FR).
+ Examples for localized pricing
+ GQL directives spec
+ @inContext (Language)
+ @inContext (Buyer Identity)
+ @defer
+ POST
+ /api/2024-04/graphql.json
+ 1 query @inContext(country: FR) {
+ 2
+    localization {
+ 3
+      availableCountries {
+ 4
+        currency {
+ 5
+          isoCode
+ 6
+          name
+ 7
+          symbol
+ 8
+        }
+ 9
+        isoCode
+ 10
+        name
+ 11
+        unitSystem
+ 12
+      }
+ 13
+      country {
+ 14
+        currency {
+ 15
+          isoCode
+ 16
+          name
+ 17
+          symbol
+ 18
+        }
+ 19
+        isoCode
+ 20
+        name
+ 21
+        unitSystem
+ {}
+ Response
+ JSON
+ 1 {
+ 2
+    "data": {
+ 3
+      "localization": {
+ 4
+        "availableCountries": [
+ 5
+          {
+ 6
+            "currency": {
+ 7
+              "isoCode": "CAD",
+ 8
+              "name": "Canadian Dollar",
+ 9
+              "symbol": "$"
+ 10
+            },
+ 11
+            "isoCode": "CA",
+ 12
+            "name": "Canada",
+ 13
+            "unitSystem": "metric"
+ 14
+          },
+ 15
+          {
+ 16
+            "currency": {
+ 17
+              "isoCode": "EUR",
+ 18
+              "name": "Euro",
+ 19
+              "symbol": "€"
+ 20
+            },
+ 21
+            "isoCode": "FR",
+ 22
+            "name": "France",
+ 23
+            "unitSystem": "metric"
+ 24
+          }
+ 25
+        ],
+ 26
+        "country": {
+ 27
+          "currency": {
+ 28
+            "isoCode": "EUR",
+ 29
+            "name": "Euro",
+ 30
+            "symbol": "€"
+ 31
+          },
+ 32
+          "isoCode": "FR",
+ 33
+          "name": "France",
+ 34
+          "unitSystem": "metric"
+    }
+ 38 }
+ Rate limits
+ The Storefront API is designed to support businesses of all sizes. The Storefront API will scale to support surges in buyer traffic or your largest flash sale. There are no rate limits applied on the number of requests that can be made to the API.
+ The Storefront API provides protection against malicious users, such as bots, from consuming a high level of capacity. If a request appears to be malicious, Shopify will respond with a 430 Shopify Security Rejection error code to indicate potential security concerns. Ensure requests to the Storefront API include the correct Buyer IP header.
+ {}
+ Response
+ JSON
+ Internal
+ 1 {
+        "message": "Internal error. Looks like something went wrong on our end.
+ 5
+          Request ID: 1b355a21-7117-44c5-8d8b-8948082f40a8 (include this in support requests).",
+ 6
+        "extensions": {
+ 7
+          "code": "INTERNAL_SERVER_ERROR"
+ 8
+        }
+ 9
+      }
+ 10
+    ]
+ 11 }
+ Status and error codes
+ All API queries return HTTP status codes that contain more information about the response.
+ 200 OK
+ The Storefront API can return a 200 OK response code in cases that would typically produce 4xx errors in REST.
+ Error handling
+ The response for the errors object contains additional detail to help you debug your operation.
+ The response for mutations contains additional detail to help debug your query. To access this, you must request userErrors.
+ Properties
+ errors
+ array
+ A list of all errors returned
+ Show error item properties
+ {}
+ Sample 200 error responses
+ Throttled
+ Internal
+ 1 {
+ 2
+    "errors": [
+ 3
+      {
+ 4
+        "message": "Throttled",
+ 5
+        "extensions": {
+ 6
+          "code": "THROTTLED"
+ 7
+        }
+ 8
+      }
+ 9
+    ]
+ 10 }
+ 4xx and 5xx status codes
+ The 4xx and 5xx errors occur infrequently. They are often related to network communications, your account, or an issue with Shopify’s services.
+ Many errors that would typically return a 4xx or 5xx status code, return an HTTP 200 errors response instead. Refer to the 200 OK section above for details.
+ 400 Bad Request
+ The server will not process the request.
+ 402 Payment Required
+ The shop is frozen. The shop owner will need to pay the outstanding balance to unfreeze the shop.
+ 403 Forbidden
+ The shop is forbidden. Returned if the store has been marked as fraudulent.
+ 404 Not Found
+ The resource isn’t available. This is often caused by querying for something that’s been deleted.
+ 423 Locked
+ The shop isn’t available. This can happen when stores repeatedly exceed API rate limits or due to fraud risk.
+ 5xx Errors
+ An internal error occurred in Shopify. Check out the Shopify Shopify status page for more information.
+ Didn’t find the status code you’re looking for? View the complete list of API status response and error codes.
+ {}
+ Sample error codes
+ 400
+ 402
+ 403
+ 404
+ 423
+ 500
+ 1 HTTP/1.1 400 Bad Request
+ 2
+    {
+ 3
+      "errors": {
+ 4
+        "query": "Required parameter missing or invalid"
+ 5
+      }
+ 6
+    }
+ Resources
+ Get started
+ Learn more about how the Storefront API works and how to get started with it.
+ Storefront Learning Kit
+ Explore a downloadable package of sample GraphQL queries for the Storefront API.
+ Release notes
+ Read about the changes currently introduced in the latest version of the Storefront API.

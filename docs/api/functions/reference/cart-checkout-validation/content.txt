@@ -1,0 +1,35 @@
+Cart Transform API
+ Pickup Point Delivery Option Generator API
+ Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Cart and Checkout Validation Function API overview
+ The Validation API allows developers to provide their own validation of a cart and checkout, including express checkouts, such as PayPal, Shop Pay, Google Pay, and Apple Pay.
+ Note
+ Errors from Validation functions are exposed to the Storefront API's Cart object, in themes using the cart template and during checkout.
+ Example use cases
+ Use tokengating or require a customer membership at checkout.
+ Verify the age or ID of a customer when they proceed through checkout.
+ Provide B2B product minimums, maximums, and multiples.
+ Provide B2B location order minimums, maximums, or credit limits.
+ Specify quantity limits in a flash sale.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Validation API reference
+ Consult the GraphQL reference for the Validation API.
+ Limitations and considerations
+ The Validation API doesn't currently support draft orders.
+ Validation functions are cached. This can result in a delay (typically, less than one minute) between changes being made and those changes being live.
+ Next steps
+ Learn how to use Validation functions by validating a cart and checkout.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Limitations and considerations

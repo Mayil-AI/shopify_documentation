@@ -1,0 +1,55 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Manage theme access
+ The Theme Access app allows you to securely create and manage passwords that developers need to use with Theme Kit, or to work on a theme using Shopify CLI 3.x. This guide explains how to install the Theme Access app, and then share credentials with developers.
+ Requirements
+ To set up the Theme Access app, you need to have access to the associated store through one of the following roles, which must have the corresponding permissions:
+ Role Permission category Permission
+ Store owner Not applicable Not applicable
+ Staff Administration permissions Edit permissions (including Add and remove staff)
+ Online store permissions Themes
+ Collaborator Online store permissions Themes
+ How the Theme Access app works
+ The Theme Access app is available as a free download from the Shopify App Store.
+ After you install the Theme Access app on your store, you can create passwords to share with developers that would like to access your themes. The app generates passwords that are scoped to grant developers with only write access to themes (write_themes).
+ After a developer receives a link to the password in their email, in order to connect to your store and begin making changes to themes, they can supply the password in different ways:
+ Tool Method
+ Shopify CLI
+ In a CI/CD pipeline, using the SHOPIFY_CLI_THEME_TOKEN environment variable.
+ In a terminal, using the --password flag.
+ Theme Kit Using a config file or environment variable.
+ Tip
+ The Theme Access app was previously called the Theme Kit Access app. Passwords generated with either version of the app are interchangeable. For example, If you have password that you use with Theme Kit, then you can reuse that password with Shopify CLI 3.x.
+ Install the Theme Access app
+ To manage access for Shopify CLI or Theme Kit, install the Theme Access app on your store.
+ Go to the Theme Access app page on the Shopify App Store.
+ On the Theme Access app page, click Add app.
+ In your Shopify admin, to authorize the use of the app, click Install app.
+ After the app is installed, you can view and use it from the Apps page in your Shopify admin.
+ Create a password
+ To grant a developer access to Shopify CLI or Theme Kit, you can create a password. The password is sent to the developer's email, which contains a link to the password. The link expires after 7 days or after the password has been viewed by the developer. The developer can view the password only once.
+ From the Theme Access app, click Create theme password.
+ Enter the contact details for the developer that is working on your theme and click Create password.
+ Resend a password
+ If the developer didn't receive the password or if their invitation expired, then you can resend the email containing the link to the password.
+ From the Passwords page in the Theme Access app, click Details next to developer that needs the password re-sent.
+ Click Resend email.
+ The password is sent to the developer's email address. The email that contains the password expires after 7 days or after the password has been viewed by the developer.
+ Delete a password
+ You can delete a developer's password if they no longer need access to your store. Deleting a password revokes access to the store's themes. If you wanted to grant access to the developer again, then you would need to create a new password.
+ From the Passwords page in the Theme Access app, click Delete next to the developer whose access you want to remove.
+ Click Delete to confirm removing the developer's password.
+ Next steps
+ Learn more about Shopify CLI.
+ Set up a CI CD pipeline with Shopify CLI.
+ Get started with Theme Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ How the Theme Access app works
+ Install the Theme Access app
+ Create a password
+ Resend a password
+ Delete a password

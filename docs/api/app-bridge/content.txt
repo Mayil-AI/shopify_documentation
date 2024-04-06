@@ -1,0 +1,30 @@
+Previous versions
+ Remix app package
+ Partner API
+ Payments Apps API
+ Function APIs
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify App Bridge
+ The App Bridge library provides APIs that enable Shopify apps to render UI in the Shopify embedded app home surface.
+ Apps built with Shopify App Bridge are more performant, flexible, and seamlessly integrate with the Shopify admin. You can use Shopify App Bridge with Polaris to provide a consistent and intuitive user experience that matches the rest of the Shopify admin.
+ On the web, your app renders in an iframe and in the Shopify mobile app it renders in a WebView.
+ Note
+ App Bridge components don't render as part of the app's component hierarchy. They are React-like wrappers around JavaScript messages that communicate with the Shopify admin. The Shopify admin does the UI rendering.
+ App Bridge enables you to do the following from your embedded app home:
+ Render a navigation menu on the left of the Shopify admin.
+ Render a contextual save bar above the top bar of the Shopify admin.
+ Render a title bar with primary and secondary actions.
+ The latest version of App Bridge is built on top of web components and APIs to provide a flexible and familiar development environment. Your app can invoke these APIs using vanilla JavaScript functions.
+ Polaris
+ Inside the app surface, we encourage you to use Polaris to create familiar and consistent user experiences between your app and the Shopify admin. Your app should import the Polaris React library, which defines the components for the Shopify admin. You can refer to the App Design Guidelines and the Polaris Guidelines to create familiar and consistent user experiences.
+ Next steps
+ Getting started with Shopify App Bridge
+ Authenticate an embedded app using session tokens
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Polaris
+ Next steps

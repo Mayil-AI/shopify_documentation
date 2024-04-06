@@ -1,0 +1,80 @@
+Ad permissions
+ Frequently asked questions
+ Security
+ Ad reporting for the Shopify App Store
+ You can view detailed reports for each of your search ads on the Ads page in your Partner Dashboard.
+ View a report
+ Log in to your Partner Dashboard.
+ Click Apps > App ads.
+ Click the ad that you want to view the report for. In the Keywords report, you can also expand the Country/region field to view detailed keyword metrics for users in each country or region.
+ Use the filter function to view only ads based on their placement.
+ Report metrics
+ Search Ad reports include the following metrics:
+ Metric Description
+ Average position The average position on the page where your ad is shown. To learn more about ad positions, refer to Average position.
+ Bid Per Click The dollar amount you pay every time a merchant clicks on your ad. Your bid price per click is entered in an auction, which determines whether your ad will be shown based on the bid prices of your competitors. The higher your bid price, the more likely it is that your ad will be shown.
+ Click through rate (CTR) The total number of clicks divided by the total number of impressions.
+ Clicks The number of times that your ad was clicked. This excludes duplicates. One impression can result in only one click.
+ Cost per click (CPC) The total cost divided by the number of times your ad was clicked.
+ Cost per install The total cost divided by the number of times your app was installed as attributed to the ad.
+ Conversion rate The number of paying installs divided by the total number of installs on your ad.
+ Customer acquisition cost The total ad spend divided by the number of customers acquired.
+ Customers The total installs that resulted in an app purchase after clicking your ad. Customers are attributed to search terms or homepage ads using a 30 day last click attribution basis. Customers are reported using the date of impression. Customers are available for impressions served on or after May 5, 2020.
+ Daily budget The amount that you spend on the ad per day while it's active.
+ Impressions The number of times that your ad was shown. Impressions are not unique to a viewer. This means that if someone searches or visits the homepage twice in a row and your ad appears twice, then 2 impressions are counted for the ad.
+ Installs The number of installs attributed to your ad, based on a 30 day post-click attribution.
+ Install rate The number of installs divided by the total number of clicks on your ad. You can compare various ads' install rates independent of their click through rate performance.
+ Match type Whether a search keyword uses broad or exact matching. To learn more, refer to Keyword match types.
+ Relevance A measure of how relevant the keyword is to the search ad. Ads are more likely to appear in searches for keywords with higher relevance. Ads are less likely to appear in searches for keywords with low relevance, and might not appear in searches at all.
+ Return on ad spend The total customer revenue divided by the total spend.
+ Revenue The total customer revenue received from your ad. Revenue is the total amount paid by the merchant and not adjusted for revenue share. Revenue is reported on the impression date. Revenue is available for impressions served on or after May 5, 2020.
+ Spend The charges incurred from clicks to your ad.
+ Visibility The percentage of impressions in which your ad appeared on the first search results page or homepage. This is a percentage of first page auctions in which your ad has participated. For example, 50% visibility means that your ad showed up on the first page for 50% of first page auctions in which it participated. An ad's visibility can be affected by factors such as overlapping bids on search terms or low relevance. Visibility is available for impressions served on or after March 11, 2020.
+ How clicks are counted
+ In some cases, the way that clicks are processed can cause a given report for a period of time to change. This can happen in the following cases:
+ Shopify has identified clicks from bots, which weren't filtered before. These clicks are removed retroactively, and the cost is credited back to advertisers.
+ An impression occurs, but the click takes place after the data processing window for clicks has closed. This click and its spend will be considered a click at the time of the impression event for reporting purposes.
+ For billing purposes, the click is billed for the cycle in which it occurs. This means that if an impression occurs in one billing cycle but the click occurs in the next billing cycle, then the click is billed in the later billing cycle.
+ How installs are counted for ads
+ App Store ads use a 30-day post-click conversion attribution window. This means that an install is counted as an install for the ad only if the merchant installed your app within 30 days of clicking on your ad. In many cases, the merchant installs your app on the same day that they clicked your ad, but in some cases they install it later.
+ Average position
+ The average position of your ad has a different meaning depending on your ad placement.
+ Search ads
+ The lower your average position, the more prominently your ad was shown in the search results for a given keyword between the selected dates. Ad positions are ordered from left to right and from the first page to the last page. For example:
+ Position 1: The leftmost ad position on the first page of search results. This is the most prominent ad position.
+ Position 2: The middle-left ad position on the first page.
+ Position 3: The middle-right ad position on the first page.
+ Position 4: The rightmost ad position on the first page.
+ Position 5: The leftmost ad position on the second page of search results. Ad positions on the second page of search results are less prominent than ad positions on the first page.
+ Homepage ads
+ The lower your average position, the more prominently your ad was shown on the homepage. Ad positions are ordered from left to right. For example:
+ Position 1: The leftmost ad position on the homepage. This is the most prominent ad position.
+ Position 2: The middle-left ad position on the homepage.
+ Position 3: The middle-right ad position on the homepage.
+ Position 4: The rightmost ad position on the homepage.
+ Caution
+ Average position metrics before January 29, 2023 were calculated based on displaying three ads per page, not four. There may be inaccurate results if the metric time period overlaps this date.
+ Keyword report
+ To view the keyword report, click an ad from the Ads page in your Partner Dashboard. From there, you can sort the data in each column to analyze the performance of individual keywords.
+ For example, you can sort by cost per install to find the keywords that are costing you the most.
+ If certain keywords are consistently costing more than others, then you might choose to pause those keywords. You might also discover high-performing keywords that have a relatively low amount in the Cost per install column. For those keywords, you might want to increase your bid so that you can increase your ad's impressions.
+ Search term report
+ You can use the Search term report to optimize your ad by finding out exactly what search terms merchants are using when they see your ad. This report lets you review the search terms that matched your keywords, which can help you find new keywords to target. It can also help you find the search terms that you don’t want to target, which helps you better define your list of negative keywords.
+ Metrics by country report
+ This report lets you review your homepages ads performance, broken down by country.
+ Metric refresh frequencies
+ Your search ads reports are not generated in real time. They're updated according to the following schedule, depending on the type of metrics they include:
+ Metrics based on impressions or clicks - updated hourly
+ Metrics based on conversions - updated every 4 hours
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ View a report
+ Report metrics
+ How clicks are counted
+ How installs are counted for ads
+ Average position
+ Keyword report
+ Search term report
+ Metrics by country report
+ Metric refresh frequencies

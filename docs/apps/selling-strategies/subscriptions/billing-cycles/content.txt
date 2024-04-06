@@ -1,0 +1,85 @@
+Billing cycles
+ Overview
+ Manage billing cycle contracts
+ Combine billing cycle contracts
+ Orders
+ App Store
+ Billing cycles
+ A subscription billing cycle is a scheduled interval in which a subscription contract attempts to bill a customer for a set of items.
+ Billing cycles are useful for when you want to make temporary changes to a subscription contract over a specific period without overwriting any of the source subscription data.
+ This guide describes what billing cycles are, the workflow for editing a billing cycle, and some considerations before you get started.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_own_subscription_contracts and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ You've created an active subscription contract with a recurring billing and delivery policy.
+ How it works
+ A billing cycle represents one period of billing and delivery information for a subscription contract. The source subscription contract is the contract to which a billing cycle belongs. Billing cycles inherit their default schedule and contract information from the source subscription contract.
+ By editing the schedule and contract information on a billing cycle, you can make changes to billing and contract information for an upcoming order without modifying the source subscription contract.
+ Billing schedule
+ Each billing cycle is indexed from when the first version of the contract is initialized. This means that the first billing cycle for a new subscription contract has an index of 1, the next billing cycle has an index of 2, and so on. The index doesn't reset when a contract is edited, so the index can be used to uniquely identify a billing cycle on a particular contract.
+ Each billing cycle has a start date and end date, and the next billing cycle starts on the day following the previous cycle's end date. Each billing cycle also has a billingAttemptExpectedDate, which represents the single date in the cycle on which the app is expected to bill the customer for their contract.
+ The following diagram shows an example billing schedule for a monthly subscription contract that is created on January 1, and is scheduled to bill and deliver on the fifteenth day of every month. Some schedule and contract changes are made to cycle 2, cycle 3, and cycle 4, but the source subscription contract hasn't changed and continues from cycle 5 onwards.
+ Contracts
+ A billing cycle belongs to a source subscription contract and inherits the contract information from that source contract by default. You can edit the contract information on a specific billing cycle multiple times, but only the most recent change is kept.
+ Editing the content of a subscription contract
+ The following diagram shows an example workflow for editing the content of a subscription contract:
+ A customer requests a temporary change to their subscription contract on a specific billing cycle.
+ The subscription app edits the contract information for the billing cycle:
+ a. The subscription app starts by retrieving a draft from the most up-to-date contract information.
+ b. Shopify returns a draft of the most up-to-date contract information.
+ c. The subscription app updates the draft with new contract information, and then commits the draft.
+ Editing a billing schedule
+ A customer requests a temporary change to their subscription on a specific billing cycle.
+ The subscription app updates the customer's billing schedule.
+ The subscription app schedules a billing attempt. This step might be skipped if the customer requested to skip the billing and delivery for a cycle. Shopify receives the billing attempt creation request and then creates the transaction and order according to the updated schedule and contract information.
+ Learn more about editing the contract information on a billing cycle.
+ Billing cycle object relationships
+ The following diagram shows the relationship between billing cycles, and contracts.
+ API object Description
+ Subscription contract Represents the agreement for a set of items delivered to a customer, on a specific billing and delivery schedule and at a specific price.
+ 
+ A subscription contract is different from an order. An order is a customer's completed request to purchase one or more products from a shop. An order is created when a customer completes the checkout process, during which time they provide an email address or phone number, billing address, and payment information.
+ Contract lines Represents the price and quantity of items in a subscription contract.
+ Pricing policy Represents the future intent to change the price after a given number of billing cycles. When the customer completes a checkout, Shopify creates a subscription contract, and the app developer is notified the policies that the customer chose.
+ 
+ The pricing policy serves as a guide for apps to modify the contract's price in accordance with the billing cycle. It's important to understand that the price of the line item does not update automatically.
+ Billing policy Represents when and how often the subscription contract should bill the customer according to the terms of the agreement.
+ Delivery policy Represents when and how often the subscription contract should create orders to be delivered or fulfilled to the customer according to the terms of the agreement.
+ Billing cycles Represents one period of billing and delivery information for a subscription contract. A subscription contract can have multiple billing cycles.
+ Billing cycle schedule Represents the schedule information for a billing cycle, including the cycle's start date, end date, index, and expected date for attempting billing.
+ 
+ The billing cycle schedule inherits the billing policy information from the source subscription contract by default. However, you can edit the expected date for attempting billing for a single cycle, or skip a cycle without affecting the source subscription contract.
+ Billing cycle contract Represents the contract information for a billing cycle, if not edited, then the billing cycle contract inherits the contract lines, delivery policy, and pricing policy information from the source subscription contract by default.
+ 
+ To learn more about editing a billing cycle contract, refer to managing billing cycle contracts.
+ Billing and delivery policies change
+ When the billing and delivery policies change for the source subscription contract, the following terms apply:
+ The current billing cycle will be adjusted to end at the new cycle time.
+ The future billing cycles will adjust to the length of the cycle.
+ The past billing cycles remain unchanged.
+ Here is an example on how it will work:
+ Current billing cycle (monthly cycle) start on 2024-03-01 and ends on 2024-03-30
+ Next billing cycle start on 2024-03-30 and ends on 2024-04-01
+ When the cycle changes to weekly:
+ Current billing cycle will change to start on 2024-03-01 and ends on 2024-03-08
+ Next billing cycle will change to start on 2024-03-08 and ends on 2024-03-15
+ Limitations
+ You can't edit billing cycles for prepaid subscriptions.
+ You can't edit billing and delivery policies for billing cycle contracts. Update the billing and delivery policies on the source subscription contract instead with a committed contract edit.
+ If the contract has a current or future billing cycle with committed edits, then you can't update the source subscription contract until you delete all of the edits.
+ Because billing cycles were introduced in October 2022, contracts that existed before 2022-10-01 will have billing cycles starting only from 2022-10-01 onwards. You can't query any billing cycles before 2022-10-01.
+ You can query up to one year of billing cycles after the last time you updated or billed the contract. For example, if the last billed on 2024-03-01, you can query up to 2025-03-01.
+ You can make edits only to the current billing cycle and any billing cycle that’s up to 1 year after the current billing cycle.
+ Next steps
+ Learn how to manage billing cycle contracts.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ How it works
+ Limitations

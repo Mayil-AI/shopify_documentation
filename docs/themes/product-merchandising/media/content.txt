@@ -1,0 +1,20 @@
+Product recommendations
+ Media and images
+ Overview
+ Support product media
+ Product media UX guidelines
+ Theme Store
+ Product media
+ In addition to images, merchants can upload 3D models and videos, and attach YouTube or Vimeo videos as product media. This gives merchants the opportunity to offer a rich and immersive product experience.
+ You can display media in a theme using the following Liquid objects and filters:
+ external_video
+ video
+ video_source
+ model
+ model_source
+ media filters
+ To learn about building a media display in your theme, refer to Support product media. In addition to a media display, you might also want to learn how to use media preview images, support AR functionality, and control video functionalty with parameters.
+ You can also learn about media UX best practices in Product media UX guidelines.
+ Tip
+ To learn about creating 3D models for a merchant, refer to Creating 3D models in the Shopify Help Center.
+ Was this page helpful?

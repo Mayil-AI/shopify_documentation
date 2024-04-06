@@ -1,0 +1,1795 @@
+B2B
+ Channels
+ Combined listings
+ Overview
+ Create a combined listing
+ Billing
+ App Store
+ Create a combined listing
+ Shopify Plus
+ Combined listings are available only to stores on a Shopify Plus plan.
+ This guide shows you how to create, query, and edit combined listings using the GraphQL Admin API's productCreate mutation.
+ Early Access
+ The GraphQL Admin API has been updated to support the creation of combined listings. To be considered for early access to these API updates, please reach out to Partner support.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Use the GraphQL Admin API to create a parent product
+ Add child products to the combined listing
+ Query all combined listings
+ Add a child product to an existing combined listing
+ Remove a child product from an existing combined listing
+ Change the option value of a child product in an existing combined listing
+ Combine adding, editing, and removing child products into one mutation
+ We're going to do that by creating a combined listing for a pair of shorts that come in four different colors. The combined listing will have a parent product that represents the shorts and four child products that represent each of the colors.
+ Requirements
+ You've created an app on your development store.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_products access scope. For more information on requesting access scopes when your app is installed, refer to Getting started with OAuth.
+ Your app uses the unstable GraphQL API for the products type, and the productCreate and combinedListingUpdate mutations.
+ The store has access to the feature. You can request early access by reaching out to Partner support.
+ You already have products in your store that you want to combine.
+ How it works
+ A combined listing is modeled on a single parent product that has variants that point to one or more child products using the CombinedListingRole type and the combinedListingUpdate mutation.
+ Step 1: Create a parent product
+ Creating a combined listing starts with creating a parent product. You'll use the productCreate mutation to create that combined listing.
+ Note
+ You should already have created the child products that you want to combine before you create the parent product.
+ For the shorts, you'll create a new product called "Shorts" with a combinedListingRole of PARENT. This creates the parent product, but does not yet associate the child products. You'll associate child products in a subsequent step.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL mutation
+ 1 mutation createCombinedListingParent($input: ProductInput!) {
+ 2
+    productCreate(input: $input) {
+ 3
+      product {
+ 4
+        id
+ 5
+        title
+ 6
+        combinedListingRole
+ 7
+        status
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "title": "Shorts",
+ 4
+      "status": "ACTIVE",
+ 5
+      "combinedListingRole": "PARENT"
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productCreate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/1800",
+ 6
+          "title": "Shorts",
+ 7
+          "combinedListingRole": "PARENT",
+ 8
+          "status": "ACTIVE"
+ 9
+        },
+ 10
+        "userErrors": []
+ 11
+      }
+ 12
+    }
+ 13 }
+ Step 2: Add child products to the combined listing
+ With the combined listing created, you'll add the child products to the combined listing using the combinedListingUpdate mutation.
+ For the child products you already have, you'll need to get their IDs to add them to the parent product that you created.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL mutation
+ 1 mutation addChildProductsToCombinedListing(
+ 2
+    $parentProductId: ID!,
+ 3
+    $productsAdded: [ChildProductRelationInput!]
+ 4 ) {
+ 5
+    combinedListingUpdate(
+ 6
+      parentProductId: $parentProductId,
+ 7
+      productsAdded: $productsAdded
+ 8
+    ) {
+ 9
+      product {
+ 10
+        combinedListingRole
+ 11
+        combinedListing {
+ 12
+          parentProduct {
+ 13
+            id
+ 14
+            title
+ 15
+            status
+ 16
+          }
+ 17
+          combinedListingChildren(first: 25) {
+ 18
+            nodes {
+ 19
+              product {
+ 20
+                id
+ 21
+                title
+ 22
+              }
+ 23
+              parentVariant {
+ 24
+                id
+ 25
+                selectedOptions {
+ 26
+                  name
+ 27
+                  value
+ 28
+                }
+ 29
+              }
+ 30
+            }
+ 31
+          }
+ 32
+        }
+ 33
+      }
+ 34
+      userErrors {
+ 35
+        code
+ 36
+        field
+ 37
+        message
+ 38
+      }
+ 39
+    }
+ 40 }
+ Variables
+ 1 {
+ 2
+    "parentProductId": "gid://shopify/Product/1800",
+ 3
+    "productsAdded": [
+ 4
+      {
+ 5
+        "childProductId": "gid://shopify/Product/1796",
+ 6
+        "selectedParentOptionValues": {
+ 7
+          "name": "Color",
+ 8
+          "value": "Blue"
+ 9
+        }
+ 10
+      },
+ 11
+      {
+ 12
+        "childProductId": "gid://shopify/Product/1797",
+ 13
+        "selectedParentOptionValues": {
+ 14
+          "name": "Color",
+ 15
+          "value": "Black"
+ 16
+        }
+ 17
+      },
+ 18
+      {
+ 19
+        "childProductId": "gid://shopify/Product/1798",
+ 20
+        "selectedParentOptionValues": {
+ 21
+          "name": "Color",
+ 22
+          "value": "Maroon"
+ 23
+        }
+ 24
+      },
+ 25
+      {
+ 26
+        "childProductId": "gid://shopify/Product/1799",
+ 27
+        "selectedParentOptionValues": {
+ 28
+          "name": "Color",
+ 29
+          "value": "Orange"
+ 30
+        }
+ 31
+      }
+ 32
+    ]
+ 33 }
+      "combinedListingUpdate": {
+ 4
+        "product": {
+ 5
+          "combinedListingRole": "PARENT",
+ 6
+          "combinedListing": {
+ 7
+            "parentProduct": {
+ 8
+              "id": "gid://shopify/Product/1",
+ 9
+              "title": "Shorts",
+ 10
+              "status": "ACTIVE"
+ 11
+            },
+ 12
+            "combinedListingChildren": {
+ 13
+              "nodes": [
+ 14
+                {
+ 15
+                  "product": {
+ 16
+                    "id": "gid://shopify/Product/2",
+ 17
+                    "title": "Shorts - Orange",
+ 18
+                    "featuredImage": null
+ 19
+                  },
+ 20
+                  "parentVariant": {
+ 21
+                    "id": "gid://shopify/ProductVariant/2",
+ 22
+                    "selectedOptions": [
+ 23
+                      {
+ 24
+                        "name": "Color",
+ 25
+                        "value": "Orange"
+ 26
+                      }
+ 27
+                    ]
+ 28
+                  }
+ 29
+                },
+ 30
+                {
+ 31
+                  "product": {
+ 32
+                    "id": "gid://shopify/Product/3",
+ 33
+                    "title": "Shorts - Black",
+ 34
+                    "featuredImage": null
+ 35
+                  },
+ 36
+                  "parentVariant": {
+ 37
+                    "id": "gid://shopify/ProductVariant/3",
+ 38
+                    "selectedOptions": [
+ 39
+                      {
+ 40
+                        "name": "Color",
+ 41
+                        "value": "Black"
+ 42
+                      }
+ 43
+                    ]
+ 44
+                  }
+ 45
+                },
+ 46
+                {
+ 47
+                  "product": {
+ 48
+                    "id": "gid://shopify/Product/4",
+ 49
+                    "title": "Shorts - Maroon",
+ 50
+                    "featuredImage": null
+ 51
+                  },
+ 52
+                  "parentVariant": {
+ 53
+                    "id": "gid://shopify/ProductVariant/4",
+ 54
+                    "selectedOptions": [
+ 55
+                      {
+ 56
+                        "name": "Color",
+ 57
+                        "value": "Maroon"
+ 58
+                      }
+ 59
+                    ]
+ 60
+                  }
+ 61
+                },
+ 62
+                {
+ 63
+                  "product": {
+ 64
+                    "id": "gid://shopify/Product/5",
+ 65
+                    "title": "Shorts - Navy",
+ 66
+                    "featuredImage": null
+ 67
+                  },
+ 68
+                  "parentVariant": {
+ 69
+                    "id": "gid://shopify/ProductVariant/5",
+ 70
+                    "selectedOptions": [
+ 71
+                      {
+ 72
+                        "name": "Color",
+ 73
+                        "value": "Navy"
+ 74
+                      }
+ 75
+                    ]
+ 76
+                  }
+ 77
+                }
+ 78
+              ]
+ 79
+            }
+ 80
+          }
+ 81
+        }
+ 82
+      }
+ 83
+    }
+ 84 }
+ Step 3: Query all combined listings
+ After creating a combined listings, you can use the products query to retrieve only combined listing parents and their children. With this, you can pull just the Shorts parent product and its children.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL query
+ 1 query combinedListingIndex($query: String) {
+ 2
+    products(first: 25, query: $query) {
+ 3
+      nodes {
+ 4
+        id
+ 5
+        combinedListingRole
+ 6
+        combinedListing {
+ 7
+          parentProduct {
+ 8
+            id
+ 9
+            title
+ 10
+            status
+ 11
+          }
+ 12
+          combinedListingChildren(first: 25){
+ 13
+            totalCount
+ 14
+            edges {
+ 15
+              node {
+ 16
+                product {
+ 17
+                  id
+ 18
+                  title
+ 19
+                  status
+ 20
+                }
+ 21
+                parentVariant {
+ 22
+                  selectedOptions {
+ 23
+                    name
+ 24
+                    value
+ 25
+                  }
+ 26
+                }
+ 27
+              }
+ 28
+            }
+ 29
+          }
+ 30
+        }
+ 31
+      }
+ 32
+    }
+ 33 }
+ Variables
+ 1 {
+ 2
+    "query": "combined_listing_role:PARENT"
+ 3 }
+      "products": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/Product/1800",
+ 7
+            "combinedListingRole": "PARENT",
+ 8
+            "combinedListing": {
+ 9
+              "parentProduct": {
+ 10
+                "id": "gid://shopify/Product/1800",
+ 11
+                "title": "Shorts",
+ 12
+                "status": "ACTIVE",
+ 13
+              },
+ 14
+              "combinedListingChildren": {
+ 15
+                "totalCount": "4",
+ 16
+                "edges": [
+ 17
+                  {
+ 18
+                    "node": {
+ 19
+                      "product": {
+ 20
+                        "id": "gid://shopify/Product/1796",
+ 21
+                        "title": "Shorts - Blue",
+ 22
+                        "status": "ACTIVE",
+ 23
+                      },
+ 24
+                      "parentVariant": {
+ 25
+                        "selectedOptions": [
+ 26
+                          {
+ 27
+                            "name": "Color",
+ 28
+                            "value": "Blue"
+ 29
+                          }
+ 30
+                        ]
+ 31
+                      }
+ 32
+                    }
+ 33
+                  },
+ 34
+                  {
+ 35
+                    "node": {
+ 36
+                      "product": {
+ 37
+                        "id": "gid://shopify/Product/1797",
+ 38
+                        "title": "Shorts - Black",
+ 39
+                        "status": "ACTIVE",
+ 40
+                      },
+ 41
+                      "parentVariant": {
+ 42
+                        "selectedOptions": [
+ 43
+                          {
+ 44
+                            "name": "Color",
+ 45
+                            "value": "Black"
+ 46
+                          }
+ 47
+                        ]
+ 48
+                      }
+ 49
+                    }
+ 50
+                  },
+ 51
+                  {
+ 52
+                    "node": {
+ 53
+                      "product": {
+ 54
+                        "id": "gid://shopify/Product/1798",
+ 55
+                        "title": "Shorts - Maroon",
+ 56
+                        "status": "ACTIVE",
+ 57
+                      },
+ 58
+                      "parentVariant": {
+ 59
+                        "selectedOptions": [
+ 60
+                          {
+ 61
+                            "name": "Color",
+ 62
+                            "value": "Maroon"
+ 63
+                          }
+ 64
+                        ]
+ 65
+                      }
+ 66
+                    }
+ 67
+                  },
+ 68
+                  {
+ 69
+                    "node": {
+ 70
+                      "product": {
+ 71
+                        "id": "gid://shopify/Product/1799",
+ 72
+                        "title": "Shorts - Orange",
+ 73
+                        "status": "ACTIVE",
+ 74
+                      },
+ 75
+                      "parentVariant": {
+ 76
+                        "selectedOptions": [
+ 77
+                          {
+ 78
+                            "name": "Color",
+ 79
+                            "value": "Orange"
+ 80
+                          }
+ 81
+                        ]
+ 82
+                      }
+ 83
+                    }
+ 84
+                  }
+ 85
+                ]
+ 86
+              }
+ 87
+            }
+ 88
+          }
+ 89
+        ]
+ 90
+      }
+ 91
+    }
+ 92 }
+ Step 4: Add a child product to an existing combined listing
+ Your team has come up with a new color of Shorts and you want to add it to the combined listing so your customers can easily buy it. You can do that by using the same mutation you used to add child products earlier and add the new child product to the productsAdded field for the combinedListingUpdate mutation.
+ By default, new colors are added to the end of the parent product's option values. Alternatively, you can supply optionsAndValues to change the order of both options and option values. We'll do that here to put your new pink shorts at the front of the color option.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL mutation
+ 1 mutation addNewChildProductsToCombinedListing(
+ 2
+    $parentProductId: ID!,
+ 3
+    $productsAdded: [ChildProductRelationInput!],
+ 4
+    $optionsAndValues: [OptionAndValueInput!]
+ 5 ) {
+ 6
+    combinedListingUpdate(
+ 7
+      parentProductId: $parentProductId,
+ 8
+      productsAdded: $productsAdded,
+ 9
+      optionsAndValues: $optionsAndValues
+ 10
+   ) {
+ 11
+      product {
+ 12
+        combinedListingRole
+ 13
+        combinedListing {
+ 14
+          parentProduct {
+ 15
+            id
+ 16
+            title
+ 17
+            status
+ 18
+          }
+ 19
+          combinedListingChildren(first: 25) {
+ 20
+            nodes {
+ 21
+              product {
+ 22
+                id
+ 23
+                title
+ 24
+              }
+ 25
+              parentVariant {
+ 26
+                selectedOptions {
+ 27
+                  name
+ 28
+                  value
+ 29
+                }
+ 30
+              }
+ 31
+            }
+ 32
+          }
+ 33
+        }
+ 34
+      }
+ 35
+      userErrors {
+ 36
+        code
+ 37
+        field
+ 38
+        message
+ 39
+      }
+ 40
+    }
+ 41 }
+ Variables
+ 1 {
+ 2
+    "parentProductId": "gid://shopify/Product/1800",
+ 3
+    "productsAdded": [
+ 4
+      {
+ 5
+        "childProductId": "gid://shopify/Product/1805",
+ 6
+        "selectedParentOptionValues": {
+ 7
+          "name": "Color",
+ 8
+          "value": "Pink"
+ 9
+        }
+ 10
+      }
+ 11
+    ],
+ 12
+    "optionsAndValues": [
+ 13
+      {
+ 14
+        "name": "Color",
+ 15
+        "values": [
+ 16
+          "Pink",
+ 17
+          "Blue",
+ 18
+          "Black",
+ 19
+          "Maroon",
+ 20
+          "Orange"
+ 21
+        ]
+ 22
+      }
+ 23
+    ]
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "combinedListingUpdate": {
+ 4
+        "product": {
+ 5
+          "combinedListingRole": "PARENT",
+ 6
+          "combinedListing": {
+ 7
+            "parentProduct": {
+ 8
+              "id": "gid://shopify/Product/1800",
+ 9
+              "title": "Shorts",
+ 10
+              "status": "ACTIVE"
+ 11
+            },
+ 12
+            "combinedListingChildren": {
+ 13
+              "nodes": [
+ 14
+                {
+ 15
+                  "product": {
+ 16
+                    "id": "gid://shopify/Product/1796",
+ 17
+                    "title": "Shorts - Blue"
+ 18
+                  },
+ 19
+                  "parentVariant": {
+ 20
+                    "selectedOptions": [
+ 21
+                      {
+ 22
+                        "name": "Color",
+ 23
+                        "value": "Blue"
+ 24
+                      }
+ 25
+                    ]
+ 26
+                  }
+ 27
+                },
+ 28
+                {
+ 29
+                  "product": {
+ 30
+                    "id": "gid://shopify/Product/1797",
+ 31
+                    "title": "Shorts - Black"
+ 32
+                  },
+ 33
+                  "parentVariant": {
+ 34
+                    "selectedOptions": [
+ 35
+                      {
+ 36
+                        "name": "Color",
+ 37
+                        "value": "Black"
+ 38
+                      }
+ 39
+                    ]
+ 40
+                  }
+ 41
+                },
+ 42
+                {
+ 43
+                  "product": {
+ 44
+                    "id": "gid://shopify/Product/1798",
+ 45
+                    "title": "Shorts - Maroon"
+ 46
+                  },
+ 47
+                  "parentVariant": {
+ 48
+                    "selectedOptions": [
+ 49
+                      {
+ 50
+                        "name": "Color",
+ 51
+                        "value": "Maroon"
+ 52
+                      }
+ 53
+                    ]
+ 54
+                  }
+ 55
+                },
+ 56
+                {
+ 57
+                  "product": {
+ 58
+                    "id": "gid://shopify/Product/1799",
+ 59
+                    "title": "Shorts - Orange"
+ 60
+                  },
+ 61
+                  "parentVariant": {
+ 62
+                    "selectedOptions": [
+ 63
+                      {
+ 64
+                        "name": "Color",
+ 65
+                        "value": "Orange"
+ 66
+                      }
+ 67
+                    ]
+ 68
+                  }
+ 69
+                },
+ 70
+                {
+ 71
+                  "product": {
+ 72
+                    "id": "gid://shopify/Product/1806",
+ 73
+                    "title": "Shorts - Pink"
+ 74
+                  },
+ 75
+                  "parentVariant": {
+ 76
+                    "selectedOptions": [
+ 77
+                      {
+ 78
+                        "name": "Color",
+ 79
+                        "value": "Pink"
+ 80
+                      }
+ 81
+                    ]
+ 82
+                  }
+ 83
+                }
+ 84
+              ]
+ 85
+            }
+ 86
+          }
+ 87
+        },
+ 88
+        "userErrors": []
+ 89
+      }
+ 90
+    }
+ 91 }
+ Step 5: Remove a child product from an existing combined listing
+ Later, you decide to stop selling the orange shorts. You can remove the orange shorts by using the productsRemovedIds argument for the combinedListingUpdate mutation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL mutation
+ 1 mutation deleteChildProductOnCombinedListing(
+ 2
+    $parentProductId: ID!,
+ 3
+    $productsRemovedIds: [ID!]
+ 4 ) {
+ 5
+    combinedListingUpdate(parentProductId: $parentProductId, productsRemovedIds: $productsRemovedIds) {
+ 6
+      product {
+ 7
+        combinedListingRole
+ 8
+        combinedListing {
+ 9
+          parentProduct {
+ 10
+            id
+ 11
+            title
+ 12
+            status
+ 13
+          }
+ 14
+          combinedListingChildren(first: 25) {
+ 15
+            nodes {
+ 16
+              product {
+ 17
+                id
+ 18
+                title
+ 19
+              }
+ 20
+              parentVariant {
+ 21
+                selectedOptions {
+ 22
+                  name
+ 23
+                  value
+ 24
+                }
+ 25
+              }
+ 26
+            }
+ 27
+          }
+ 28
+        }
+ 29
+      }
+ 30
+      userErrors {
+ 31
+        code
+ 32
+        field
+ 33
+        message
+ 34
+      }
+ 35
+    }
+ 36 }
+ Variables
+ 1 {
+ 2
+    "parentProductId": "gid://shopify/Product/1800",
+ 3
+    "productsRemovedIds": [
+ 4
+      "gid://shopify/Product/1799"
+ 5
+    ]
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "combinedListingUpdate": {
+ 4
+        "product": {
+ 5
+          "combinedListingRole": "PARENT",
+ 6
+          "combinedListing": {
+ 7
+            "parentProduct": {
+ 8
+              "id": "gid://shopify/Product/1800",
+ 9
+              "title": "Shorts",
+ 10
+              "status": "ACTIVE"
+ 11
+            },
+ 12
+            "combinedListingChildren": {
+ 13
+              "nodes": [
+ 14
+                {
+ 15
+                  "product": {
+ 16
+                    "id": "gid://shopify/Product/1796",
+ 17
+                    "title": "Shorts - Blue"
+ 18
+                  },
+ 19
+                  "parentVariant": {
+ 20
+                    "selectedOptions": [
+ 21
+                      {
+ 22
+                        "name": "Color",
+ 23
+                        "value": "Blue"
+ 24
+                      }
+ 25
+                    ]
+ 26
+                  }
+ 27
+                },
+ 28
+                {
+ 29
+                  "product": {
+ 30
+                    "id": "gid://shopify/Product/1797",
+ 31
+                    "title": "Shorts - Black"
+ 32
+                  },
+ 33
+                  "parentVariant": {
+ 34
+                    "selectedOptions": [
+ 35
+                      {
+ 36
+                        "name": "Color",
+ 37
+                        "value": "Black"
+ 38
+                      }
+ 39
+                    ]
+ 40
+                  }
+ 41
+                },
+ 42
+                {
+ 43
+                  "product": {
+ 44
+                    "id": "gid://shopify/Product/1798",
+ 45
+                    "title": "Shorts - Maroon"
+ 46
+                  },
+ 47
+                  "parentVariant": {
+ 48
+                    "selectedOptions": [
+ 49
+                      {
+ 50
+                        "name": "Color",
+ 51
+                        "value": "Maroon"
+ 52
+                      }
+ 53
+                    ]
+ 54
+                  }
+ 55
+                },
+ 56
+                {
+ 57
+                  "product": {
+ 58
+                    "id": "gid://shopify/Product/1806",
+ 59
+                    "title": "Shorts - Pink"
+ 60
+                  },
+ 61
+                  "parentVariant": {
+ 62
+                    "selectedOptions": [
+ 63
+                      {
+ 64
+                        "name": "Color",
+ 65
+                        "value": "Pink"
+ 66
+                      }
+ 67
+                    ]
+ 68
+                  }
+ 69
+                }
+ 70
+              ]
+ 71
+            }
+ 72
+          }
+ 73
+        },
+ 74
+        "userErrors": []
+ 75
+      }
+ 76
+    }
+ 77 }
+ Step 6: Change the option value of a child product in an existing combined listing
+ As part of a larger change the team decides to change the option value "Blue" to "Navy", this isn't a new product, but just a name change. In that case, we want to modify the name of the color option value while using the same product. You'll need to update the name of the child product separately, but you'll also want to modify the color option value on the parent product. You can do that by using the productsEdited argument on the combinedListingUpdate mutation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL mutation
+ 1 mutation editChildProductOnCombinedListing(
+ 2
+    $parentProductId: ID!,
+ 3
+    $productsEdited: [ChildProductRelationInput!]
+ 4 ) {
+ 5
+    combinedListingUpdate(parentProductId: $parentProductId, productsEdited: $productsEdited) {
+ 6
+      product {
+ 7
+        combinedListingRole
+ 8
+        combinedListing {
+ 9
+          parentProduct {
+ 10
+            id
+ 11
+            title
+ 12
+            status
+ 13
+          }
+ 14
+          combinedListingChildren(first: 25) {
+ 15
+            nodes {
+ 16
+              product {
+ 17
+                id
+ 18
+                title
+ 19
+              }
+ 20
+              parentVariant {
+ 21
+                selectedOptions {
+ 22
+                  name
+ 23
+                  value
+ 24
+                }
+ 25
+              }
+ 26
+            }
+ 27
+          }
+ 28
+        }
+ 29
+      }
+ 30
+      userErrors {
+ 31
+        code
+ 32
+        field
+ 33
+        message
+ 34
+      }
+ 35
+    }
+ 36 }
+ Variables
+ 1 {
+ 2
+    "parentProductId": "gid://shopify/Product/1800",
+ 3
+    "productsEdited": [
+ 4
+      {
+ 5
+        "childProductId": "gid://shopify/Product/1796",
+ 6
+        "selectedParentOptionValues": [
+ 7
+          {
+ 8
+            "name": "Color",
+ 9
+            "value": "Navy"
+ 10
+          }
+ 11
+        ]
+ 12
+      }
+ 13
+    ]
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "combinedListingUpdate": {
+ 4
+        "product": {
+ 5
+          "combinedListingRole": "PARENT",
+ 6
+          "combinedListing": {
+ 7
+            "parentProduct": {
+ 8
+              "id": "gid://shopify/Product/1800",
+ 9
+              "title": "Shorts",
+ 10
+              "status": "ACTIVE"
+ 11
+            },
+ 12
+            "combinedListingChildren": {
+ 13
+              "nodes": [
+ 14
+                {
+ 15
+                  "product": {
+ 16
+                    "id": "gid://shopify/Product/1796",
+ 17
+                    "title": "Shorts - Blue"
+ 18
+                  },
+ 19
+                  "parentVariant": {
+ 20
+                    "selectedOptions": [
+ 21
+                      {
+ 22
+                        "name": "Color",
+ 23
+                        "value": "Navy"
+ 24
+                      }
+ 25
+                    ]
+ 26
+                  }
+ 27
+                },
+ 28
+                {
+ 29
+                  "product": {
+ 30
+                    "id": "gid://shopify/Product/1797",
+ 31
+                    "title": "Shorts - Black"
+ 32
+                  },
+ 33
+                  "parentVariant": {
+ 34
+                    "selectedOptions": [
+ 35
+                      {
+ 36
+                        "name": "Color",
+ 37
+                        "value": "Black"
+ 38
+                      }
+ 39
+                    ]
+ 40
+                  }
+ 41
+                },
+ 42
+                {
+ 43
+                  "product": {
+ 44
+                    "id": "gid://shopify/Product/1798",
+ 45
+                    "title": "Shorts - Maroon"
+ 46
+                  },
+ 47
+                  "parentVariant": {
+ 48
+                    "selectedOptions": [
+ 49
+                      {
+ 50
+                        "name": "Color",
+ 51
+                        "value": "Maroon"
+ 52
+                      }
+ 53
+                    ]
+ 54
+                  }
+ 55
+                },
+ 56
+                {
+ 57
+                  "product": {
+ 58
+                    "id": "gid://shopify/Product/1806",
+ 59
+                    "title": "Shorts - Pink"
+ 60
+                  },
+ 61
+                  "parentVariant": {
+ 62
+                    "selectedOptions": [
+ 63
+                      {
+ 64
+                        "name": "Color",
+ 65
+                        "value": "Pink"
+ 66
+                      }
+ 67
+                    ]
+ 68
+                  }
+ 69
+                }
+ 70
+              ]
+ 71
+            }
+ 72
+          }
+ 73
+        },
+ 74
+        "userErrors": []
+ 75
+      }
+ 76
+    }
+ 77 }
+ Step 7: Combine adding, editing, and removing child products into one mutation
+ You can combine adding child products, changing options and option values on existing child products, and removing child products into a single mutation. With a single mutation you save time compared to sending multiple mutations.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/GraphQL.json
+ GraphQL mutation
+ 1 mutation updateCombinedListing(
+ 2
+    $parentProductId: ID!,
+ 3
+    $productsAdded: [ChildProductRelationInput!],
+ 4
+    $productsEdited: [ChildProductRelationInput!],
+ 5
+    $productsRemovedIds: [ID!],
+ 6
+    $optionsAndValues: [OptionAndValueInput!],
+ 7 ) {
+ 8
+    combinedListingUpdate(
+ 9
+      parentProductId: $parentProductId,
+ 10
+      productsAdded: $productsAdded,
+ 11
+      productsEdited: $productsEdited,
+ 12
+      productsRemovedIds: $productsRemovedIds,
+ 13
+      optionsAndValues: $optionsAndValues
+ 14
+    ) {
+ 15
+      product {
+ 16
+        combinedListingRole
+ 17
+        combinedListing {
+ 18
+          parentProduct {
+ 19
+            id
+ 20
+            title
+ 21
+            status
+ 22
+          }
+ 23
+          combinedListingChildren(first: 25) {
+ 24
+            nodes {
+ 25
+              product {
+ 26
+                id
+ 27
+                title
+ 28
+                featuredImage {
+ 29
+                  url
+ 30
+                  altText
+ 31
+                }
+ 32
+              }
+ 33
+              parentVariant {
+ 34
+                selectedOptions {
+ 35
+                  name
+ 36
+                  value
+ 37
+                }
+ 38
+              }
+ 39
+            }
+ 40
+          }
+ 41
+        }
+ 42
+      }
+ 43
+    }
+ 44 }
+ Variables
+ 1 {
+ 2
+    "parentProductId": "gid://shopify/Product/1800",
+ 3
+    "productsAdded": [
+ 4
+      {
+ 5
+        "childProductId": "gid://shopify/Product/1806",
+ 6
+        "selectedParentOptionValues": {
+ 7
+          "name": "Color",
+ 8
+          "value": "Pink"
+ 9
+        }
+ 10
+      }
+ 11
+    ],
+ 12
+    "productsRemovedIds": [
+ 13
+      "gid://shopify/Product/1799"
+ 14
+    ],
+ 15
+    "productsEdited": [
+ 16
+      {
+ 17
+        "childProductId": "gid://shopify/Product/1796",
+ 18
+        "selectedParentOptionValues": [
+ 19
+          {
+ 20
+            "name": "Color",
+ 21
+            "value": "Navy"
+ 22
+          }
+ 23
+        ]
+ 24
+      }
+ 25
+    ],
+ 26
+    "optionsAndValues": [
+ 27
+      {
+ 28
+        "name": "Color",
+ 29
+        "values": [
+ 30
+          "Pink",
+ 31
+          "Blue",
+ 32
+          "Black",
+ 33
+          "Maroon",
+ 34
+          "Orange"
+ 35
+        ]
+ 36
+      }
+ 37
+    ]
+ 38 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "combinedListingUpdate": {
+ 4
+        "product": {
+ 5
+          "combinedListingRole": "PARENT",
+ 6
+          "combinedListing": {
+ 7
+            "parentProduct": {
+ 8
+              "id": "gid://shopify/Product/1800",
+ 9
+              "title": "Shorts",
+ 10
+              "status": "ACTIVE"
+ 11
+            },
+ 12
+            "combinedListingChildren": {
+ 13
+              "nodes": [
+ 14
+                {
+ 15
+                  "product": {
+ 16
+                    "id": "gid://shopify/Product/1796",
+ 17
+                    "title": "Shorts - Blue",
+ 18
+                    "featuredImage": null
+ 19
+                  },
+ 20
+                  "parentVariant": {
+ 21
+                    "selectedOptions": [
+ 22
+                      {
+ 23
+                        "name": "Color",
+ 24
+                        "value": "Navy"
+ 25
+                      }
+ 26
+                    ]
+ 27
+                  }
+ 28
+                },
+ 29
+                {
+ 30
+                  "product": {
+ 31
+                    "id": "gid://shopify/Product/1797",
+ 32
+                    "title": "Shorts - Black",
+ 33
+                    "featuredImage": null
+ 34
+                  },
+ 35
+                  "parentVariant": {
+ 36
+                    "selectedOptions": [
+ 37
+                      {
+ 38
+                        "name": "Color",
+ 39
+                        "value": "Black"
+ 40
+                      }
+ 41
+                    ]
+ 42
+                  }
+ 43
+                },
+ 44
+                {
+ 45
+                  "product": {
+ 46
+                    "id": "gid://shopify/Product/1798",
+ 47
+                    "title": "Shorts - Maroon",
+ 48
+                    "featuredImage": null
+ 49
+                  },
+ 50
+                  "parentVariant": {
+ 51
+                    "selectedOptions": [
+ 52
+                      {
+ 53
+                        "name": "Color",
+ 54
+                        "value": "Maroon"
+ 55
+                      }
+ 56
+                    ]
+ 57
+                  }
+ 58
+                },
+ 59
+                {
+ 60
+                  "product": {
+ 61
+                    "id": "gid://shopify/Product/1806",
+ 62
+                    "title": "Shorts - Pink",
+ 63
+                    "featuredImage": null
+ 64
+                  },
+ 65
+                  "parentVariant": {
+ 66
+                    "selectedOptions": [
+ 67
+                      {
+ 68
+                        "name": "Color",
+ 69
+                        "value": "Pink"
+ 70
+                      }
+ 71
+                    ]
+ 72
+                  }
+ 73
+                }
+ 74
+              ]
+ 75
+            }
+ 76
+          }
+ 77
+        }
+ 78
+      }
+ 79
+    }
+ 80 }
+ Next Steps
+ Learn more about the combinedListingUpdate mutation.
+ How it works
+ Step 1: Create a parent product
+ Step 2: Add child products to the combined listing
+ Step 3: Query all combined listings
+ Step 4: Add a child product to an existing combined listing
+ Step 5: Remove a child product from an existing combined listing
+ Step 6: Change the option value of a child product in an existing combined listing
+ Step 7: Combine adding, editing, and removing child products into one mutation
+ Next Steps
+ Updates & News

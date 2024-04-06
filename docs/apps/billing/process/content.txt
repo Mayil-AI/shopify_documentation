@@ -1,0 +1,55 @@
+Best practices
+ App Store
+ App billing process
+ This guide describes the app billing process and the roles taken by merchants, your app, and Shopify. You'll learn about the GraphQL Admin API resources to invoke for specific billing functions, and webhook topics to subscribe to for events.
+ How it works
+ A merchant starts an action that includes a charge, such as an app installation, a service plan upgrade, or an individual purchase.
+ Your app creates a charge for the merchant, using either the appPurchaseOneTimeCreate or the appSubscriptionCreate mutation.
+ Shopify verifies the charge and returns a confirmationUrl, which is a page that Shopify hosts for the merchant to approve charges.
+ The app should redirect the merchant to the confirmationUrl, where the merchant either approves or declines the charge.
+ If the merchant accepts the charge, then they're redirected to a returnUrl that your app specified when it issued the charge. If the charge is declined, then Shopify redirects the merchant to the Shopify admin, and provides a notification message about the app charge being declined.
+ Note
+ Subscription upgrades and downgrades, for example going from a basic tier to a premium tier, or a premium tier to a basic tier, go through this flow.
+ App actions to set up purchases
+ The app billing process requires your app to perform actions that set up purchases.
+ Remix
+ Shopify provides an app package for Remix to help you configure charges for your app and make calls to the GraphQL Admin API's billing resources. If your app isn't Remix-based, then you can use the code examples in the reference as a general guide to your app's configuration.
+ Configure a pricing model
+ A pricing model is how you monetize your app. Each pricing model configuration must contain an amount, a currencyCode, and an interval. You can also set the parameters that are allowed by the GraphQL Admin API's appSubscriptionCreate and appPurchaseOneTimeCreate mutations that are used for the charges.
+ Remix apps can set up plans by passing in the billing configuration when shopifyApp is called.
+ Learn more about pricing models.
+ Gate requests
+ Gating requests require merchants to pay for the app before they can access specific routes. To gate requests, you can verify whether there's an active payment and require one if there isn't. The following is an example for the process:
+ Indicate which plans enable access to a specific route.
+ Pass a check to determine if there's a purchase for any of the plans.
+ Require a purchase if one isn't detected.
+ Remix apps can use the admin.billing.require function. The function verifies that there's an active payment and requires one if there isn't. You can send multiple plans to require. It passes if there's a purchase for any of the plans and returns information on the active purchase.
+ Tip
+ Call the function in loaders and actions to avoid ungated requests. If you want to gate multiple routes, then refer to this example in a Remix layout.
+ Request payment
+ If your billing check doesn't find a purchase, then you can decide where to take the merchant. The following are examples:
+ Request payment right away for one of the purchase configurations.
+ Redirect the merchant to a page where they can select a plan.
+ In the plan selection page, you'll need to authenticate with the GraphQL Admin API for access. Remix apps can call authenticate.admin.
+ Developer tools and resources
+ The GraphQL Admin API's webhookSubscriptionCreate mutation enables you to register webhooks for specific shop events.
+ In addition to the mandatory webhook topics, Shopify provides the following webhook topics for billing:
+ APP_PURCHASES_ONE_TIME_UPDATE: Triggered when the status of an AppPurchaseOneTime object is changed.
+ APP_SUBSCRIPTIONS_UPDATE: Triggered when the status, or capped amount, of an AppSubscription object is changed, and when a subscription's status changes.
+ APP_SUBSCRIPTIONS_APPROACHING_CAPPED_AMOUNT: Triggered when the balance used on an app subscription crosses 90% of the capped amount.
+ The @shopify/shopify-app-remix package enables Remix apps to authenticate with Shopify and make calls to the GraphQL Admin API's billing resources.
+ Get started
+ Get started monetizing your app with a recurring or one-time charge pricing model.
+ Subscriptions
+ Use Shopify's billing resources to create subscription pricing models.
+ One-time app charge
+ Use Shopify's billing resources to create a one-time app charge pricing model.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ App actions to set up purchases
+ Developer tools and resources
+ Get started
+ Updates & News
+ Developer changelog

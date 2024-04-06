@@ -1,0 +1,55 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ List
+ The list is a scrollable component in which the list rows are rendered.
+ Props
+ Name Type Description
+ title string? A large display title at the top of the List.
+ data ListRow[] The array of ListRow which will be converted into rows for this list.
+ isLoadingMore boolean? Whether or not more data is being loaded. Set this to true when paginating and fetching more data for the list.
+ imageDisplayStrategy "automatic" | "always" | "never" | The logic behind displaying an image or placeholder. automatic will display an image or placeholder if it detects that a ListItem in data has an imageUri value. never will never display images or placeholders. always will always display images or placeholders if imageUri is undefined or empty. Default: automatic
+ onEndReached (() => void)? This callback is triggered when the user has scrolled to the end of the list. This can be used to implement pagination.
+ listHeaderComponent RemoteFragment A header component to be displayed at the top of the list.
+ ListRow
+ Name Type Description Options
+ id string The unique identifier for this list item.
+ leftSide ListRowLeftSide The user interface of the left side of the row.
+ rightSide ListRowRightSide? The user interface of the right side of the row.
+ onPress (() => void)? Callback for when the user taps the row.
+ ListRowLeftSide
+ Name Type Description Options
+ label string The main label that will be displayed on the left side of the row.
+ subtitle [string, string?, string?]? The subtitles to display beneath the main label. Up to 3 subtitles can be displayed.
+ badges BadgeProps[]? Colored badges that are displayed underneath the title and subtitles.
+ image {source: string, badge: number?}? A link to an image to be displayed on the far left side of the row. The number of items can be displayed on the top right of the image.
+ ListRowRightSide
+ Name Type Description Options
+ label string The main label that will be displayed on the right side of the row.
+ showChevron boolean? Show a chevron. Set this to true if pressing on the row navigates to another screen. Default: false
+ toggleSwitch ToggleSwitch? A toggle switch that will be displayed on the right side of the row.
+ ToggleSwitch
+ Name Type Description
+ value boolean? Whether or not the toggle switch is on or off
+ disabled boolean? Whether or not the toggle switch is disabled.
+ Guidelines
+ List items have a wide variety of use cases:
+ To display and link to an object - Examples: an item in the cart, a customer in the customer list
+ To display information - Examples: the payment breakdown in an order, staff contact information
+ To display a menu item - Examples: an item on the first page of settings, an item in “More actions”
+ To display a setting
+ To display an action related to other items in the section
+ To show a selectable option - Example: one filter option
+ To display an external link
+ Content guidelines
+ Subtitles:
+ Each subtitle should have a different piece of information. Don’t use dashes to display more than one type of information on the same line.
+ Subtitles should be shown in order of relevance.
+ If you’re showing the results of the form, the label should be the form field title and the subtitle should be the information the merchant entered.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines

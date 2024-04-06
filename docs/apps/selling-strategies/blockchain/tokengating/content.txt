@@ -1,0 +1,145 @@
+Billing
+ App Store
+ Tokengating
+ Tokengating lets merchants offer eligible token holders exclusive access to products and discounts. For example, a merchant can give customers who hold their token a 25%-off discount. Customers can unlock the discount by connecting their wallet to prove that they own the token. Merchants can use tokengating to build loyalty and reward mechanisms for their communities and customers.
+ How tokengating works
+ A tokengate is a definition of token requirements that determines who can unlock it. Tokengates consist of a segment and a reaction.
+ A segment defines which tokenholders can pass the tokengate by verifying their ownership against blockchain data.
+ A reaction is the outcome of passing a gate, such as a discount for a specific product.
+ A tokengating app guides merchants through the gate configuration process, which includes defining the gate requirements and corresponding reactions. The app also evaluates the configured tokengates, and presents them to customers on the storefront alongside a wallet connection experience.
+ For example, a merchant might offer an exclusive discount to token holders of smart contract 0x1234...5678
+ The GateConfiguration is the object that stores the merchant-defined requirements and reactions. The GateSubject then binds that configuration to a Product. The same GateConfiguration can be used across multiple GateSubject objects.
+ The following diagram illustrates a high-level flow of a tokengating app that's configuring an exclusive product discount tokengate:
+ Tokengating app requirements
+ Tokengating apps on Shopify enable merchants to gate access to products, promotions, and content based on the contents of a customer’s Web3 wallet. All gated variants and all gated line items within completed orders must have a programmatic representation of their gated status using metafields.
+ All tokengating apps must have a programmatic representation of their gated status using metafields with the following specifications:
+ Tokengating order metafields
+ Any orders that contain line items that are either added or discounted as a result of a buyer successfully passing a gate-check must be identified by adding the line item IDs to the Order object through the use of the following specified metafields:
+ Tokengating order metafields GraphQL mutation
+ GraphQL mutation
+ Input
+ $ mutation($input: OrderInput!) {
+ $
+    orderUpdate(input: $input) {
+ $
+      order {
+ $
+        metafields(first: 100) {
+ $
+          edges {
+ $
+            node {
+ $
+              namespace
+ $
+              key
+ $
+              value
+ $
+            }
+ $
+          }
+ $
+        }
+ $
+      }
+ $
+    }
+ $ }
+ Tokengating product metafields
+ Any products that contain one or more gated variants must list the gated variant IDs within the Product object using product metafields as follows:
+ Tokengating product metafields GraphQL mutation
+ GraphQL mutation
+ Input
+ $ mutation($input: ProductInput!) {
+ $
+    productUpdate(input: $input) {
+ $
+      product {
+ $
+        metafields(first: 100) {
+ $
+          edges {
+ $
+            node {
+ $
+              namespace
+ $
+              key
+ $
+              value
+ $
+            }
+ $
+          }
+ $
+        }
+ $
+      }
+ $
+    }
+ $ }
+ Tokengate app responsibilities
+ A tokengating app has three main responsibilities.
+ Responsibility Description What to use
+ Configuration How the app is used to configure the merchant-defined gate and gate requirements. For example, one or more tokens from a specified NFT collection can be made a requirement for offering an exclusive discount for the subjects of the gate that's bound to a product. Your gate requirements can be for any chain or any level of granularity, such as specific traits or IDs. Your app is responsible for evaluating whether customers meet the requirements of any gate that it configures. Gates API, Polaris, App Bridge
+ Presentation How the GateConfiguration details such as state and requirements are presented to the customers. The presentation layer is also where a customer connects their wallet. Gates API, Theme App Extension or custom storefront
+ Evaluation How the app checks the customers's wallet contents against the GateConfiguration and reacts accordingly. For example, the app might react by applying a discount. To ensure your gate has server-side validation, you should use a Shopify Function. Gates API, Theme App Extension or custom storefront, Ajax API, Shopify Functions
+ Configuration
+ A tokengating app is responsible for storing the merchant's gate configuration, including the requirements and reaction, in the GateConfiguration model using the gateConfigurationCreate mutation. The configuration is then bound to a product through the GateSubject model using the gateSubjectCreate mutation.
+ A GateConfiguration can only be updated or deleted by the app that created it. This is done using the gateConfigurationUpdate and gateConfigurationDelete mutations respectively.
+ A GateSubject can only be updated by the app that created it using the gateSubjectUpdate and gateSubjectDelete mutations.
+ Presentation
+ A tokengating app is responsible for displaying the GateConfiguration data to customers. You can use a theme app extension or a custom storefront built using Hydrogen or the Headless channel.
+ The presentation layer has 3 main responsibilities on the product details page:
+ Display the gate requirements
+ Display the gate status
+ Connect and verify the wallet
+ Evaluation
+ A tokengating app is responsible for evaluating the wallet's contents against the GateConfiguration. You can enforce the evaluation results through Shopify Functions, which enables developers to write code that's triggered in the merchant's checkout process.
+ Specific Function APIs enable the exclusive discounts reaction, such as the Product Discount API or the Validation API. Shopify automatically calls these Functions when the customer reaches a certain point in their purchase journey, such as adding a product to cart or attempting to complete checkout.
+ Additional context can be written to cart attributes using the Ajax API to inform your Function on whether or not to apply the gate's reaction.
+ Custom storefronts
+ A tokengated custom storefront has the following responsibilities:
+ Responsibility Description What to use
+ Read gates on products Read gates bound to products. The gates bound to the products should have been assigned using the app you created in the build a tokengating app tutorial series. Gates API
+ Display gate reaction and requirements Parse the GateConfiguration metafields to retrieve the reaction and requirements. Provide the reaction and requirements to the <Tokengate /> component. Gates API, @shopify/tokengate package from blockchain components
+ Connect and verify customer's wallet Use the @shopify/connect-wallet package to connect a customer's wallet and store their wallet in a cookie-based session storage. @shopify/connect-wallet package from blockchain components
+ Evaluate wallet contents against the GateConfiguration Use the wallet data stored in the cookie and a third-party service such as Alchemy to validate the wallet's contents against the requirements of the GateConfiguration. Gates API, third-party service blockchain querying service
+ Display the unlocking status Use the evaluation result to display your customer's unlocking tokens in the <Tokengate /> component. @shopify/tokengate package from blockchain components
+ Update cart attributes When a gate is unlocked, update the cart attributes for the customer so the Shopify Function you created in the in the build a tokengating app tutorial series applies the automatic discount. GraphQL Storefront API
+ Get started
+ Build a tokengated storefront
+ Learn how to build a custom tokengated storefront with end-to-end gating.
+ Build a tokengating app
+ Learn how to build a functional tokengating app that demonstrates the end-to-end gating experience.
+ Developer tools and resources
+ Tokengating UX guidelines
+ Best practices for designing merchant and customer tokengating experiences.
+ Blockchain components
+ Integrate Tokengate and Wallet Connect components into your app for seamless storefront tokengating.
+ Ajax Cart API
+ Check out the Ajax Cart API reference to learn more about the cart attributes object.
+ Gates GraphQL Admin API
+ Check out the GraphQL Admin API reference to learn more about the Gate object.
+ Product discount Function
+ Use the Product Discount API if you want to build tokengated discounts.
+ Tokengating example app
+ Explore an example app that enables merchants to tokengate products.
+ Tokengated Hydrogen storefront
+ Explore an example storefront with tokengate presentation and evaluation.
+ Limitations
+ GateSubject supports only Product as the subject type.
+ Online store cart attributes can be updated only with the Ajax Cart API.
+ The gates property on the Liquid product object is available to Partners by request for testing purposes. To get access, contact Partner Support with the development .myshopify.com store domain that you'd like to test with.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How tokengating works
+ Tokengating app requirements
+ Tokengate app responsibilities
+ Custom storefronts
+ Get started
+ Developer tools and resources
+ Limitations
+ Updates & News

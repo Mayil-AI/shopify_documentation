@@ -1,0 +1,460 @@
+Search syntax
+ Response status codes
+ Idempotent requests
+ Bulk operations
+ Exports and queries
+ Imports and mutations
+ Pagination
+ GraphQL basics
+ Admin API
+ App Bridge
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Bulk import data with the GraphQL Admin API
+ Importing large volumes of data using traditional and synchronous APIs is slow, complex to run, and difficult to manage. Instead of manually running a GraphQL mutation multiple times and managing a client-side throttle, you can run a bulk mutation operation.
+ Using the GraphQL Admin API, you can bulk import large volumes of data asychronously. When the operation is complete, the results are delivered in a JSON Lines (JSONL) file that Shopify makes available at a URL.
+ This guide introduces the bulkOperationRunMutation and shows you how to use it to bulk import data into Shopify.
+ Requirements
+ You're familiar with creating products, product variants, and collections in your development store.
+ You're familiar with performing bulk operations using the GraphQL Admin API.
+ You're using API version 2021-07 or higher.
+ Limitations
+ You can run only one bulk operation of each type (bulkOperationRunMutation or bulkOperationRunQuery) at a time per shop.
+ This limit is in place because operations are asynchronous and long-running. To run a subsequent bulk mutation operation for a shop, you need to either cancel the running operation or wait for it to finish.
+ You can supply only one of the supported GraphQL API mutations to the bulkOperationRunMutation at a time:
+ collectionCreate
+ collectionUpdate
+ customerCreate
+ customerUpdate
+ customerPaymentMethodRemoteCreate
+ giftCardCreate
+ giftCardUpdate
+ marketingActivityUpsertExternal
+ marketingEngagementCreate
+ metafieldsSet
+ metaobjectUpsert
+ priceListFixedPricesAdd
+ priceListFixedPricesDelete
+ privateMetafieldUpsert
+ productCreate
+ productUpdate
+ productUpdateMedia
+ productVariantUpdate
+ publishablePublish
+ publishableUnpublish
+ publicationUpdate
+ subscriptionBillingAttemptCreate
+ subscriptionContractAtomicCreate
+ subscriptionContractProductChange
+ subscriptionContractSetNextBillingDate
+ The mutation that's passed into bulkOperationRunMutation is limited to one connection field, which is defined by the GraphQL Admin API schema.
+ The size of the JSONL file cannot exceed 20MB.
+ How bulk importing data works
+ You initiate a bulk operation by supplying a mutation string in the bulkOperationRunMutation. Shopify then executes that mutation string asynchronously as a bulk operation.
+ Most GraphQL Admin API requests that you make are subject to rate limits, but the bulkOperationRunMutation request isn't. Because you're only making low-cost requests for creating operations, polling their status, or canceling them, bulk mutation operations are an efficient way to create data compared to standard GraphQL API requests.
+ The following diagram shows the steps involved in bulk importing data into Shopify:
+ Create a JSONL file and include GraphQL variables: Include the variables for the mutation in a JSONL file format. Each line in the JSONL file represents one input unit. The mutation runs once on each line of the input file.
+ Upload the file to Shopify: Before you upload the file, you must reserve a link by running the stagedUploadsCreate mutation. After the space has been reserved, you can upload the file by making a request using the information returned from the stagedUploadsCreate response.
+ Create a bulk mutation operation: After the file has been uploaded, you can run bulkOperationRunMutation to create a bulk mutation operation. The bulkOperationRunMutation imports data in bulk by running the supplied GraphQL API mutation with the file of variables uploaded in the last step.
+ Wait for the operation to finish: To determine when the bulk mutation has finished, you can either:
+ Subscribe to a webhook topic: You can use the webhookSubscriptionCreate mutation to subscribe to the bulk_operations/finish webhook topic in order to receive a webhook when any operation finishes - in other words, it has completed, failed, or been cancelled.
+ Poll the status of the operation: While the operation is running, you can poll to see its progress using the currentBulkOperation field. The objectCount field on the bulkOperation object increments to indicate the operation's progress, and the status field returns a boolean value that states whether the operation is completed.
+ Retrieve the results: When a bulk mutation operation is completed, a JSONL output file is available for download at the URL specified in the url field.
+ Create a JSONL file and include GraphQL variables
+ When adding GraphQL variables to a new JSONL file, you need to format the variables so that they are accepted by the corresponding bulk operation GraphQL API. The format of the input variables need to match the GraphQL Admin API schema.
+ For example, you might want to import a large quantity of products. Each attribute of a product must be mapped to existing fields defined in the GraphQL input object ProductInput. In the JSONL file, each line represents one product input. The GraphQL Admin API runs once on each line of the input file. One input should take up one line only, no matter how complex the input object structure is.
+ The following example shows a sample JSONL file that is used to create 10 products in bulk:
+ 1 { "input": { "title": "Sweet new snowboard 1", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 2 { "input": { "title": "Sweet new snowboard 2", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 3 { "input": { "title": "Sweet new snowboard 3", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 4 { "input": { "title": "Sweet new snowboard 4", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 5 { "input": { "title": "Sweet new snowboard 5", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 6 { "input": { "title": "Sweet new snowboard 6", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 7 { "input": { "title": "Sweet new snowboard 7", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 8 { "input": { "title": "Sweet new snowboard 8", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 9 { "input": { "title": "Sweet new snowboard 9", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 10 { "input": { "title": "Sweet new snowboard 10", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ Note
+ The GraphQL Admin API doesn't serially process the contents of the JSONL file. Avoid relying on a particular sequence of lines and object order to achieve a desired result.
+ Upload the file to Shopify
+ After you've created the JSONL file, and included the GraphQL variables, you can upload the file to Shopify. Before uploading the file, you need to first generate the upload URL and parameters.
+ Generate the uploaded URL and parameters
+ You can use the stagedUploadsCreate mutation to generate the values that you need to authenticate the upload. The mutation returns an array of stagedMediaUploadTarget instances.
+ An instance of stagedMediaUploadTarget has the following key properties:
+ parameters: The parameters that you use to authenticate an upload request.
+ url: The signed URL where you can upload the JSONL file that includes GraphQL variables.
+ The mutation accepts an input of type stagedUploadInput, which has the following fields:
+ Field Type Description
+ resource enum Specifies the resource type to upload. To use bulkOperationRunMutation, the resource type must be BULK_MUTATION_VARIABLES.
+ filename string The name of the file to upload.
+ mimeType string The media type of the file to upload. To use bulkOperationRunMutation, the mimeType must be "text/jsonl".
+ httpMethod enum The HTTP method to be used by the staged upload. To use bulkOperationRunMutation, the httpMethod must be POST.
+ Example
+ The following example uses the stagedUploadsCreate mutation to generate the values required to upload a JSONL file and be consumed by the bulkOperationRunMutation. You must first run the stagedUploadsCreate mutation with no variables, and then separately send a POST request to the staged upload URL with the JSONL data:
+ Request
+ POST /admin/api/2021-07/graphql.json
+ 1 mutation {
+ 2
+    stagedUploadsCreate(input:{
+ 3
+      resource: BULK_MUTATION_VARIABLES,
+ 4
+      filename: "bulk_op_vars",
+ 5
+      mimeType: "text/jsonl",
+ 6
+      httpMethod: POST
+ 7
+    }){
+ 8
+      userErrors{
+ 9
+        field,
+ 10
+        message
+ 11
+      },
+ 12
+      stagedTargets{
+ 13
+        url,
+ 14
+        resourceUrl,
+ 15
+        parameters {
+ 16
+          name,
+ 17
+          value
+ 18
+ 21 }
+ View response
+ Upload the JSONL file
+ After you generate the parameters and URL for an upload, you can upload the JSONL file using a POST request. You must use a multipart form, and include all parameters as form inputs in the request body.
+ To generate the parameters for the multipart form, start with the parameters returned from the stagedUploadsCreate mutation. Then, add the file attachment.
+ Note
+ The file parameter must be the last parameter in the list. If you add the file parameter somewhere else, then you'll receive an error.
+ POST request
+ Terminal
+ $ curl --location --request POST 'https://shopify-staged-uploads.storage.googleapis.com/' \
+ $ --form 'key="tmp/21759409/bulk/2d278b12-d153-4667-a05c-a5d8181623de/bulk_op_vars"' \
+ $ --form 'x-goog-credential="merchant-assets@shopify-tiers.iam.gserviceaccount.com/20220830/auto/storage/goog4_request"' \
+ $ --form 'x-goog-algorithm="GOOG4-RSA-SHA256"' \
+ $ --form 'x-goog-date="20220830T025127Z"' \
+ $ --form 'x-goog-signature="4c0f6920cd67cbdf1faae75c112a98d49f9751e4e0c9f525c850f15f40629afa13584ab9937ec9f5292065ca8fd357ba87e98d6ab0e383e15a6e444c7e9bae06fb95dc422ad673fe77aefcb68e9d1a6d55deb478e6976b61769e20863992fffd4036898f76c7a50e92f18aa4d9e3e04aa8d04086386dc0e488f2ccb0ebcc30c17da2ba5a4d6a9cd57553b41ef6698dbefc78a9b3fe1af167ea539b70e83e5fb015f061399e952270202b769ae8f4e7e50e97dbe6679c3281ec3fc886c3a67becc7b3cee1d0e6a2d0777d09f6d7b083499c58f9c566eeb5374afd67e26c7ab2a91cfe5c5deb83a507d7e3c3ea44bb9f401afd3f2e6b09742baff2b30bc3def78a"' \
+ $ --form 'policy="zyJjb25kaXRpb25zIjpbeyJDb250ZW50LVR5cGUiOiJ0ZXh0XC9qc29ubCJ9LHsic3VjY2Vzc19hY3Rpb25fc3RhdHVzIjoiMjAxIn0seyJhY2wiOiJwcml2YXRlIn0sWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsMSwyMDk3MTUyMF0seyJidWNrZXQiOiJzaG9waWZ5LXN0YWdlZC11cGxvYWRzIn0seyJrZXkiOiJ0bXBcL2djc1wvMTQzMjMyMjEwNFwvYnVsa1wvM2QyNzhiMTItZDE1My00NjY3LWEwNWMtYTVkODE4MTYyM2RlXC9idWxrX29wX3ZhcnMifSx7IngtZ29vZy1kYXRlIjoiMjAyMjA4MzBUMDI1MTI3WiJ9LHsieC1nb29nLWNyZWRlbnRpYWwiOiJtZXJjaGFudC1hc3NldHNAc2hvcGlmeS10aWVycy5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbVwvMjAyMjA4MzBcL2F1dG9cL3N0b3JhZ2VcL2dvb2c0X3JlcXVlc3QifSx7IngtZ29vZy1hbGdvcml0aG0iOiJHT09HNC1SU0EtU0hBMjU2In1dLCJleHBpcmF0aW9uIjoiMjAyMi0wOC0zMVQwMjo1MToyN1oifQ=="' \
+ $ --form 'acl="private"' \
+ $ --form 'Content-Type="text/jsonl"' \
+ $ --form 'success_action_status="201"' \
+ $ --form 'file=@"/Users/username/Documents/bulk_mutation_tests/products_long.jsonl"'
+ GraphQL variables in JSONL file
+ 1 { "input": { "title": "Sweet new snowboard 1", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 2 { "input": { "title": "Sweet new snowboard 2", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 3 { "input": { "title": "Sweet new snowboard 3", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 4 { "input": { "title": "Sweet new snowboard 4", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 5 { "input": { "title": "Sweet new snowboard 5", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 6 { "input": { "title": "Sweet new snowboard 6", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 7 { "input": { "title": "Sweet new snowboard 7", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 8 { "input": { "title": "Sweet new snowboard 8", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 9 { "input": { "title": "Sweet new snowboard 9", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ 10 { "input": { "title": "Sweet new snowboard 10", "productType": "Snowboard", "vendor": "JadedPixel" } }
+ Create a bulk mutation operation
+ After you upload the file, you can run bulkOperationRunMutation to import data in bulk. You must supply the corresponding mutation and the URL that you obtained in the previous step.
+ The bulkOperationRunMutation mutation takes the following arguments:
+ Field Type Description
+ mutation string Specifies the GraphQL API mutation that you want to run in bulk. Valid values: productCreate, collectionCreate, productUpdate, productUpdateMedia, productVariantUpdate
+ stagedUploadPath string The path to the file of inputs in JSONL format to be consumed by stagedUploadsCreate
+ Example
+ In the following example, you want to run the following productCreate mutation in bulk:
+ 1 mutation call($input: ProductInput!) {
+ 2
+    productCreate(input: $input) {
+ 3
+      product {
+ 4
+        id
+ 5
+        title
+ 6
+        variants(first: 10) {
+ 7
+          edges {
+ 8
+            node {
+ 9
+              id
+ 10
+              title
+ 11
+              inventoryQuantity
+ 12
+            }
+ 13
+          }
+ 14
+        }
+ 15
+      }
+ 16
+      userErrors {
+ 17
+        message
+ 18
+        field
+ 19
+      }
+ 20
+    }
+ 21 }
+ To run the productCreate mutation in bulk, pass the mutation as a string into bulkOperationRunMutation:
+ Request
+ POST /admin/api/2021-07/graphql.json
+ 1 mutation {
+ 2
+    bulkOperationRunMutation(
+ 3
+      mutation: "mutation call($input: ProductInput!) { productCreate(input: $input) { product {id title variants(first: 10) {edges {node {id title inventoryQuantity }}}} userErrors { message field } } }",
+ 4
+      stagedUploadPath: "tmp/21759409/bulk/89e620e1-0252-43b0-8f3b-3b7075ba4a23/bulk_op_vars") {
+ 5
+      bulkOperation {
+ 6
+        id
+ 7
+        url
+ 8
+        status
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        message
+ 12
+        field
+ View response
+ Wait for the operation to finish
+ Tip
+ Subscribing to the webhook topic is recommended over polling as it limits the number of redundant API calls.
+ Option A. Subscribe to the bulk_operations/finish webhook topic
+ Note
+ Using webhooks with bulk operations is only available in Admin API version 2021-10 and higher.
+ You can use the webhookSubscriptionCreate mutation to subscribe to the bulk_operations/finish webhook topic in order to receive a webhook when any operation finishes - in other words, it has completed, failed, or been cancelled.
+ For full setup instructions, refer to Configuring webhooks.
+ POST /admin/api/2021-10/graphql.json
+ 1 mutation {
+ 2
+    webhookSubscriptionCreate(
+ 3
+      topic: BULK_OPERATIONS_FINISH
+ 4
+      webhookSubscription: {
+ 5
+        format: JSON,
+ 6
+        callbackUrl: "https://12345.ngrok.io/"}
+ 7
+    ) {
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+      webhookSubscription {
+ 13
+        id
+ View response
+ After you've subscribed to the webhook topic, Shopify sends a POST request to the specified URL any time a bulk operation on the store (both mutations and queries) finishes.
+ Example webhook response
+ 1 {
+ 2
+    "admin_graphql_api_id": "gid://shopify/BulkOperation/206005076024",
+ 3
+    "completed_at": "2021-01-28T19:11:09Z",
+ 4
+    "created_at": "2021-01-28T19:10:59Z",
+ 5
+    "error_code": null,
+ 6
+    "status": "completed",
+ 7
+    "type": "mutation",
+ 8 }
+ You now must retrieve the bulk operation's data URL by using the node field and passing the admin_graphql_api_id value from the webhook payload as its id:
+ POST /admin/api/2021-10/graphql.json
+ 1 query {
+ 2
+    node(id: "gid://shopify/BulkOperation/206005076024") {
+ 3
+      ... on BulkOperation {
+ 4
+        url
+ 5
+        partialDataUrl
+ 6
+      }
+ 7
+    }
+ 8 }
+ View response
+ For more information on how webhooks work, refer to Webhooks.
+ Note
+ Webhook delivery isn't always guaranteed, so you might still need to poll for the operation's status to check when it's finished.
+ Option B. Poll the status of the operation
+ While the operation is running, you can poll to see its progress using the currentBulkOperation field. The objectCount field increments to indicate the operation's progress, and the status field returns whether the operation is completed.
+ You can adjust your polling intervals based on the amount of data that you import. To learn about other possible operation statuses, refer to the BulkOperationStatus reference documentation.
+ To poll the status of the operation, use the following example request:
+ Request
+ POST /admin/api/2021-07/graphql.json
+ 1 query {
+ 2
+   currentBulkOperation(type: MUTATION) {
+ 3
+      id
+ 4
+      status
+ 5
+      errorCode
+ 6
+      createdAt
+ 7
+      completedAt
+ 8
+      objectCount
+ 9
+      fileSize
+ 10
+      url
+ 11
+      partialDataUrl
+ 12
+   }
+ 13 }
+ View response
+ Retrieve the results
+ When a bulk mutation operation is finished, you can download a result data file.
+ If an operation successfully completes, then the url field contains a URL where you can download the data file. If an operation fails, but some data was retrieved before the failure occurred, then a partially complete data file is available at the URL specified in the partialDataUrl field.
+ In either case, the returned URLs are authenticated and expire after one week.
+ After you've downloaded the data, you can parse it according to the JSONL format. Since both input and response files are in JSONL, each line in the final asset file represents the response of running the mutation on the corresponding line in the input file.
+ Operation success
+ The following example shows the response for a product that was successfully created:
+ 1 {
+ 2
+    "data": {
+ 3
+      "productCreate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/5602345320504",
+ 6
+          "title": "Monday morning snowboard 1",
+ 7
+          "variants": {
+ 8
+            "edges": [
+ 9
+              {
+ 10
+                "node": {
+ 11
+                  "id": "gid://shopify/ProductVariant/35645836853304",
+ 12
+                  "title": "First",
+ 13
+                  "inventoryQuantity": 0
+ 14
+                }
+ 15
+              },
+ 16
+              {
+ 17
+                "node": {
+ 18
+                  "id": "gid://shopify/ProductVariant/35645836886072",
+ 19
+                  "title": "Second",
+ 20
+                  "inventoryQuantity": 0
+ 21
+                }
+ 22
+              }
+ 23
+            ]
+ 24
+          }
+ 25
+        },
+ 26
+        "userErrors": []
+ 27
+      }
+ 28
+    },
+ 29
+    "__lineNumber": 0
+ 30 }
+ Operation failures
+ Bulk operations can fail for any of the reasons that a regular GraphQL API mutation would fail, such as not having permission to access certain APIs. For this reason, the best approach is to run a single GraphQL mutation first to make sure that it works before running a mutation as part of a bulk operation.
+ If a bulk operation does fail, then its status field returns FAILED and the errorCode field returns a code such as one of the following:
+ ACCESS_DENIED: There are missing access scopes. Run the mutation normally (outside of a bulk operation) to get more details on which field is causing the issue.
+ INTERNAL_SERVER_ERROR: Something went wrong on Shopify's server and we've been notified of the error. These errors might be intermittent, so you can try making your request again.
+ TIMEOUT: One or more mutation timeouts occurred during execution. Try removing some fields from your query so that it can run successfully. These timeouts might be intermittent, so you can try submitting the query again.
+ To learn about the other possible operation error codes, refer to the BulkOperationErrorCode reference documentation.
+ Note
+ When using the bulk_operations/finish webhook, the error_code and status fields in the webhook payload will be lowercase. For example, failed instead of FAILED.
+ Validation error
+ If the input has the correct format, but one or more values failed the validation of the product creation service, then the response looks like the following:
+ 1 {"data"=>{"productCreate"=>{"userErrors"=>[{"message"=>"Some error message", "field"=>["some field"]}]}}}
+ Unrecognizable field error
+ If the input has an unrecognizable field, then the response looks like the following:
+ 1 {"errors"=>[{"message"=>"Variable input of type ProductInput! was provided invalid value for myfavoriteaddress (Field is not defined on ProductInput)", "locations"=>[{"line"=>1, "column"=>13}], "extensions"=>{"value"=>{"myfavoriteaddress"=>"test1"}, "problems"=>[{"path"=>["myfavoriteaddress"], "explanation"=>"Field is not defined on ProductInput"}]}}]}
+ Note
+ This check is executed by comparing the input against the productInput object, which is specified as part of the mutation argument.
+ Cancel an operation
+ To cancel an in-progress bulk operation, run the bulkOperationCancel mutation and supply the operation ID as an input variable:
+ Request
+ POST /admin/api/2021-07/graphql.json
+ 1 mutation {
+ 2
+    bulkOperationCancel(id: "gid://shopify/BulkOperation/1") {
+ 3
+      bulkOperation {
+ 4
+        status
+ 5
+      }
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ 9
+      }
+ 10
+    }
+ 11 }
+ Next steps
+ Consult our reference documentation to learn more about creating and managing bulk operations.
+ Learn how use bulk operations to asynchronously fetch data in bulk.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Limitations
+ How bulk importing data works
+ Create a JSONL file and include GraphQL variables
+ Upload the file to Shopify
+ Create a bulk mutation operation
+ Wait for the operation to finish
+ Retrieve the results
+ Cancel an operation
+ Next steps

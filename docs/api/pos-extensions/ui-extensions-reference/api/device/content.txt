@@ -1,0 +1,80 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Device API
+ The Device API allows the UI Extension to retrieve device information including the device name and ID.
+ Example
+ JavaScript
+ React
+ 1 import { Tile, extend, Screen, Text } from "@shopify/retail-ui-extensions";
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'Device API',
+ 6
+      subtitle: 'SmartGrid Extension',
+ 7
+      enabled: true,
+ 8
+      onPress: () => {
+ 9
+        api.smartGrid.presentModal();
+ 10
+      },
+ 11
+    };
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+    root.appendChild(tile);
+ 14
+    root.mount();
+ 15 })
+ 16
+ 17 extend('pos.home.modal.render', (root, api) => {
+ 18
+    const { device } = api;
+ 19
+    const { name, getDeviceId } = device;
+ 20
+ 21
+    const screen = root.createComponent(Screen, {name: 'Screen1', title: 'Screen1 Title'});
+ 22
+    const deviceNameText = root.createComponent(Text, {}, `Device name: ${name}`);
+ 23
+    const deviceIdText = root.createComponent(Text, {}, 'Device ID: undefined');
+ 24
+ 25
+    getDeviceId().then((fetchedId) => {
+ 26
+      deviceIdText.children.forEach((child) => {
+ 27
+        deviceIdText.removeChild(child);
+ 28
+      });
+ 29
+      deviceIdText.appendChild(`Device ID: ${fetchedId}`);
+ 30
+    });
+ 31
+ 32
+    root.appendChild(screen);
+ 33
+    screen.appendChild(deviceNameText);
+ 34
+    screen.appendChild(deviceIdText);
+ 35
+ 36
+    root.mount();
+ 37 });
+ Props
+ Name Type Description
+ name string Name of the device (e.g. iPhone 14 Pro).
+ getDeviceId() Promise<string> Get the device ID.
+ isTablet() Promise<boolean> Get whether the device is a tablet.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

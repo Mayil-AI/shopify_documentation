@@ -1,0 +1,220 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Settings
+ To make it easier for merchants to customize your theme, you can use JSON to create settings that merchants can access through the theme editor.
+ You can provide settings at the theme, section, or block level. Settings can be fixed (such as informational elements) or interactive (such as a drop-down menu). Setting values can be static, or use dynamic sources to render contextually appropriate values.
+ Exposing settings makes your theme more customizable so it can better express a merchant's brand. It also can make your theme more flexible so that you can address various use cases for merchants.
+ Subtypes
+ There are two categories of settings:
+ Category Description
+ Input settings Settings that can hold a value, and are configurable by app users.
+ Sidebar settings Settings that can’t hold a value, and aren’t configurable by app users. They’re informational elements that can be used to provide detail and clarity for your input settings.
+ Input settings reference
+ Explore the interactive settings that you can add to your theme.
+ Sidebar settings reference
+ Explore the informational settings that you can add to your theme.
+ Location
+ You can create settings in the following places:
+ config > settings_schema.json
+ Section files in the sections folder, using the the section's {% schema %} tag
+ 1 └── theme
+ 2
+      ├── config
+ 3
+      |   ├── settings_schema.json
+ 4
+      |   ...
+ 5
+      ├── sections
+ 6
+      |   ├── main_product.liquid
+ 7
+      |   ├── another_section_file.liquid
+ 8
+      |   ...
+ 9
+      ...
+ settings_schema.json
+ The settings_schema.json file controls the content of the Theme settings area of the theme editor. Settings in this file translate to global theme settings, which can be accessed through the Liquid settings object.
+ Section schema
+ The section {% schema %} tag is where you can create section settings and block settings. Those settings can be accessed through the settings attribute of the section object and block object, respectively.
+ Schema
+ Settings are defined as a JSON settings attribute that's parented to the object that the settings apply to. This attribute accepts an array of settings.
+ Basic setting example
+ 1 {
+ 2
+    ...
+ 3
+    "settings": [
+ 4
+      {
+ 5
+        "type": "header",
+ 6
+        "content": "My settings"
+ 7
+      },
+ 8
+      {
+ 9
+        "type": "text",
+ 10
+        "id": "my_id",
+ 11
+        "label": "My setting label",
+ 12
+        "default": "Enter text here"
+ 13
+      },
+ 14
+      {
+ 15
+        "type": "textarea",
+ 16
+        "id": "my_second_id",
+ 17
+        "label": "Welcome message",
+ 18
+        "default": "Welcome to my shop!"
+ 19
+      }
+ 20
+    ],
+ 21
+    ...
+ 22 }
+ Usage
+ When working with settings, you should familiarize yourself with the following:
+ Translating settings
+ Accessing setting values
+ Checking the setting value format
+ Using dynamic sources for settings
+ Platform-controlled settings
+ Translate settings
+ You can translate various attributes of the settings schema depending on the online store's active language. These translations are stored in schema locale files.
+ Access settings
+ Depending on where they were created, you can access settings through the following Liquid objects:
+ The global settings object
+ The section object
+ The block object
+ Note
+ Settings from the settings object can be accessed in Liquid theme assets.
+ To access a specific setting, append the id attribute of the associated setting to the object that you want to access.
+ For example, if you had the following setting implemented in each Liquid object:
+ 1 {
+ 2
+    "type": "text",
+ 3
+    "id": "message",
+ 4
+    "label": "Message",
+ 5
+    "default": "Hello!"
+ 6 }
+ Then the following Liquid would generate the following output:
+ Input
+ 1 // Settings
+ 2 Message: {{ settings.message }}
+ 3
+ 4 // Section
+ 5 Message: {{ section.settings.message }}
+ 6
+ 7 // Block
+ 8 Message: {{ block.settings.message }}
+ Output
+ 1 // Settings
+ 2 Message: Hello!
+ 3
+ 4 // Section
+ 5 Message: Hello!
+ 6
+ 7 // Block
+ 8 Message: Hello!
+ Check the format of the setting value
+ When referencing settings, you should always check that the value is in the format that you expect. Any setting without an automatic default value could end up with no value, which translates to an empty string.
+ For example, if you have a setting with an id of message, then the following Liquid would generate the following output depending on the value:
+ Input
+ 1 // No value
+ 2 Setting: {{ settings.message }}
+ 3
+ 4 // With value
+ 5 Setting: {{ settings.message }}
+ Output
+ 1 // No value
+ 2 Setting:
+ 3
+ 4 // With value
+ 5 Setting: Message value
+ You can check whether a value is an empty string with the blank operator. For example:
+ 1 {% unless settings.message == blank %}
+ 2
+    {{ settings.message }}
+ 3 {% endunless %}
+ Resource-based settings
+ To avoid an empty string, check that the value is in the format that you expect. It's possible that no resource was selected, selected resource no longer exists, or the selected resource has been hidden.
+ For example, if you have the following page type setting:
+ 1 {
+ 2
+    "type": "page",
+ 3
+    "id": "page",
+ 4
+    "label": "Page"
+ 5 }
+ Then you can check for emptiness like the following:
+ 1 {% if settings.page != blank %}
+ 2
+    {{ settings.page.title }}
+ 3
+    {{ settings.page.content }}
+ 4 {% else %}
+ 5
+    No page, or invalid page, selected.
+ 6 {% endif %}
+ Tip
+ Resource-based settings didn't always return the resource object. To learn more, refer to Legacy resource-based settings.
+ Legacy resource-based settings
+ In the past, resource-based settings returned the handle of the associated resource, and you had to access the actual object through Liquid using that handle.
+ For example, if you had the following product setting, then you would need to access the product object like the following:
+ Setting
+ 1 {
+ 2
+    "type": "product",
+ 3
+    "id": "product",
+ 4
+    "label": "Product"
+ 5 }
+ Access setting
+ 1 {% unless settings.product == blank %}
+ 2
+    {% assign product = all_products[settings.product] %}
+ 3
+ 4
+    {% if product %}
+ 5
+      {{ product.title }} - {{ product.price }}
+ 6
+    {% else %}
+ 7
+      No product, or invalid product, selected.
+ 8
+    {% endif %}
+ 9 {% endunless %}
+ Dynamic sources
+ Settings for sections and blocks included in a JSON template have the option for merchants to connect one or more dynamic sources to the setting, depending on the setting type.
+ Learn more about dynamic sources.
+ Platform-controlled settings
+ In the theme editor, Shopify exposes a custom CSS setting at the theme and section level. You can't add or hide this setting in your settings schema.
+ Any custom CSS that merchants add using this setting is stored in a custom_css attribute, either in a JSON template's section attribute, or in the settings_data.json platform_customizations object.
+ This setting is intended to enable users to customize the look and feel of their storefront without editing theme code. As a theme developer, you shouldn't add this setting, or edit the value of this setting after it's set. Instead, you should use dedicated CSS assets and stylesheet Liquid tags, and introduce customization options for CSS in these areas using theme settings.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Subtypes
+ Location
+ Schema
+ Usage
+ Updates & News
+ Developer changelog

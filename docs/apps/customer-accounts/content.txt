@@ -1,0 +1,80 @@
+Billing
+ App Store
+ Building apps for customer accounts
+ Developer preview
+ Customer account UI extensions are included in the Checkout and Customer Accounts Extensibility developer preview.
+ Merchants use customer accounts to enable their customers to view their order history, check order statuses, edit their profile, and take actions related to their order.
+ Customer account UI extensions are only supported on new customer accounts. Classic customer accounts do not support customer account UI extensions. Learn more about customer accounts.
+ Tip
+ Determine the customer account version that a merchant's using by querying the CustomerAccountsV2 object.
+ How it works
+ Customers can navigate to their account from the online store, from order notification emails, or any custom entrypoint placed by the merchant.
+ Note
+ If you're building an app that directs customer to the pre-authenticated Order status page, then you need to obtain level 2 permission for protected customer data.
+ If the customer is not already logged in, then clicking a link from an order notification email to view their order brings them to the pre-authenticated Order status page. Customers can access their order status page from their order confirmation email for 3 weeks without logging in, when using the same browser session. When using a different browser sessions, customers can access their order status page for 2 weeks without logging in, across a maximum of 5 different browser sessions. If the limit is exceeded, then the customer needs to log in. Similarly, if the customer tries to navigate to another page in their account, or tries to take an action, then they’ll be prompted to log in.
+ Note
+ If you're sending transactional SMS on behalf of merchants then you should include the customer’s order number alongside any links to the Order Status Page.
+ After the customer logs in, they are fully authenticated and able to access all customer account pages. Using customer account UI extensions, apps can extend the functionality of existing customer account pages, as well as, create new pages (full-page extensions). Customer account UI extensions can be built using checkout components and customer account components.
+ Tip
+ You can build customer account UI extensions using checkout components and customer account components.
+ You can extend the following pages in new customer accounts at defined extension targets:
+ New customer account pages
+ Page Description Example use cases
+ Order index
+ The page that customers land on when they log in to their account. Provides a list of all the customer’s orders, including draft orders that they’ve been invoiced for.
+ Customers can take action on an order from this page, such as requesting a return.
+ Suggest products based on order history, provide loyalty discounts, and display banners such as membership level.
+ Order status
+ The status of an individual order.
+ Customers can take action on an order from this page, such as requesting a return.
+ Enable more order actions, like Request an exchange or Report a problem.
+ Profile
+ The location where customers can manage their personal information, such as name and addresses.
+ For B2B customers, this page also includes company information.
+ Display the customer's total loyalty points balance.
+ New pages Apps can create new pages using full-page extensions, to support use cases that aren't suited to native pages. Create a customer wishlist page
+ Order index
+ Order status
+ Profile
+ Get started
+ Build a customer accounts experience
+ Set up your development environment to begin developing a customer account UI extension.
+ Release timeline
+ During developer preview you will be able to build and preview extensions on your development store. When customer account UI extensions reach general availability, you will be able to publish your app with customer account UI extensions for merchant use.
+ Milestone Target
+ Developer preview for customer account UI extensions December 2023
+ General availability for customer account UI extensions TBD 2024
+ We’ll continue adding API capabilities to help you access the right functionality in extensions. We’ll also continue adding UI components that offer performant patterns on our design best practices. We release new components and APIs into the unstable API version first, and promote to the next stable release based on Shopify’s API version release schedule.
+ Upcoming features
+ Note
+ Bug fixes and improvements will be added as we hear from the community during the developer preview. Please share your feedback on what future features you’d like to see in our community discussion board
+ Feature
+ Developers can preview and manage customer account UI extensions in the checkout editor
+ Merchants can edit header navigation menus in customer accounts
+ New API in OrderStatusApi to determine the authentication state of the Order status page that an extension renders on
+ Extension API calls to the Customer Account API to retrieve order data are supported on the pre-authenticated state of the Order status page
+ API to update metafield values from the Customer Account API
+ APIs to read and manage return requests
+ APIs to read and manage subscriptions
+ Protected customer data requirements apply to customer account extensions
+ Developer tools and resources
+ Targets overview
+ Explore all extension targets available for customer accounts UI extensions.
+ Checkout UI extension components
+ Explore the checkout components you can also use to build customer account UI extensions.
+ Customer account UI extension components
+ Explore the customer account components you can use to build customer account UI extensions.
+ Figma UI kit
+ Figma components for checkout and account UI extensions.
+ Account screens
+ Figma screens with extension targets, breakpoints, and example designs.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Get started
+ Release timeline
+ Upcoming features
+ Developer tools and resources
+ Updates & News
+ Developer changelog

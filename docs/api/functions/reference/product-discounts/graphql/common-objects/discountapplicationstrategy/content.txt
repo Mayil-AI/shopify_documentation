@@ -1,0 +1,45 @@
+Delivery Customization API
+ Discounts APIs
+ Order Discount API
+ Product Discount API
+ Overview
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ Metafield
+ MoneyV2
+ Percentage
+ Product
+ ProductVariant
+ ProductVariantTarget
+ PurchasingCompany
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ Shop
+ Target
+ Value
+ INTERFACES
+ HasGates
+ DeliveryMethod
+ DiscountApplicationStrategy
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Shipping Discount API
+ Discounts Allocator API
+ DiscountApplicationStrategy enum
+ 2024-04 latest
+ The strategy that's applied to the list of discounts.
+ Values
+ ALL
+ Apply all discounts with conditions that are satisfied. This does not override discount combination or stacking rules.
+ FIRST
+ Only apply the first discount with conditions that are satisfied.
+ MAXIMUM
+ Only apply the discount that offers the maximum reduction.

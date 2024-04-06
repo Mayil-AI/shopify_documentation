@@ -1,0 +1,25 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Text
+ Text can be rendered in different sizes and colors in order to structure content.
+ Props
+ Name Type Description Options
+ children any? The text value.
+ variant TextVariant? Determines the size and font weight of the text. "sectionHeader" | "captionRegular" | "captionRegularTall" | "captionMedium" | "body" | "headingSmall" | "headingLarge" | "display" 
+ color ColorType? Determines the color of the text. "TextNeutral" | "TextSubdued" | "TextDisabled" | "TextWarning" | "TextCritical" | "TextSuccess" | "TextInteractive" | "TextHighlight" 
+ Guidelines
+ Use only one header ("headingLarge") per view, at the top of each view.
+ Content guidelines
+ Headers ("headingLarge") should orient the merchant as to where they are in the app, provide an instruction, indicate an action that’s being performed, or reflect a state (success or failure).
+ Orientation: "Customers"
+ Instruction: "Select payment option"
+ Progress: "Reading card…"
+ State: "Payment approved"
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines

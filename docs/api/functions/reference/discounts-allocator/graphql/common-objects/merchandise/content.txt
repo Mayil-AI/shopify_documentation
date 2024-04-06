@@ -1,0 +1,55 @@
+Overview
+ UNIONS
+ Merchandise
+ Value
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CartLineTarget
+ CollectionMembership
+ CustomProduct
+ DeliverableCartLine
+ Discount
+ DiscountProposal
+ FixedAmount
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ LineDiscount
+ Metafield
+ MoneyV2
+ OutputAllocations
+ Percentage
+ Product
+ ENUMS
+ CountryCode
+ CurrencyCode
+ DeliveryMethod
+ DiscountApplicationStrategy
+ DiscountClass
+ LanguageCode
+ WeightUnit
+ FunctionRunResult
+ Input
+ Scalars
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ Merchandise union
+ unstable
+ The merchandise to be purchased at checkout.
+ Possible types
+ CustomProduct
+ ProductVariant
+ Was this page helpful?
+ YesNo
+ Updates & News

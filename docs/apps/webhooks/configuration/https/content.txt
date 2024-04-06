@@ -1,0 +1,145 @@
+App Store
+ HTTPS webhook delivery
+ This tutorial explains how to configure, test, and verify webhook endpoints of type HTTPS.
+ If you need to manage large volumes of event notifications, then consider integrating your app with Amazon EventBridge or Google Cloud Pub/Sub.
+ Requirements
+ You're familiar with how webhooks work.
+ You're familiar with the webhooks best practices.
+ You're authenticated with the GraphQL Admin API or REST Admin API.
+ You're a Shopify Partner.
+ You've created a development store for testing webhooks.
+ Step 1: Register an endpoint
+ Note
+ If you're using Cloudflare on your domain, then disable Cloudflare for the registered endpoint.
+ Your endpoint must be an HTTPS webhook address with a valid SSL certificate that can correctly process event notifications.
+ Payloads contain a JSON object with the data for the webhook event. The contents and structure of each payload varies by the subscribed topic. Refer to the REST Webhook resource or the GraphQL WebhookSubscription object for more information.
+ Step 2: Subscribe to a webhook topic
+ Subscribe to a webhook topic by doing one of the following:
+ Run the webhookSubscriptionCreate mutation in GraphQL
+ Send a POST request to the Webhook resource in REST
+ You create mandatory webhooks only either via the Partner Dashboard or by updating the app config TOML.
+ For example, the following requests subscribe an app to the orders/create webhook topic.
+ Tip
+ You can learn about the available topics for webhooks in the REST Admin API reference and GraphQL Admin API reference.
+ GraphQL
+ REST
+ Request: POST /admin/api/2024-04/graphql.json
+ 1 mutation {
+ 2
+    webhookSubscriptionCreate(
+ 3
+      topic: ORDERS_CREATE
+ 4
+      webhookSubscription: {
+ 5
+        format: JSON,
+ 6
+        callbackUrl: "https://12345.ngrok.io/"}
+ 7
+    ) {
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+      webhookSubscription {
+ 13
+        id
+ 14
+      }
+ 15
+    }
+ 16 }
+ View response
+ Step 3: Test the webhook
+ Run a local server or use a publicly-available service such as Beeceptor.
+ If you're running a local server, then make it publicly available using a service like Pagekite or ngrok.
+ Trigger your webhook. You can trigger a webhook manually using the Shopify CLI webhook trigger command, or by performing the related action in a store that has your app installed. Manually triggering webhooks doesn't test your webhook subscriptions.
+ Step 4: Receive the webhook
+ After you register an endpoint, Shopify sends an HTTP POST request to the URL specified every time that event occurs. The HTTP POST request's parameters contain the JSON data relevant to the event that triggered the request.
+ Shopify verifies SSL certificates when delivering payloads to HTTPS webhook addresses. Make sure your server is correctly configured to support HTTPS with a valid SSL certificate.
+ Step 5: Verify the webhook
+ Before you respond to a webhook, you need to verify that the webhook was sent from Shopify. You can verify the webhook by calculating a digital signature.
+ Each webhook request includes a base64-encoded X-Shopify-Hmac-SHA256 header, which is generated using the app's client secret along with the data sent in the request. If you're using PHP, or a Rack-based framework such as Ruby on Rails or Sinatra, then the header is HTTP_X_SHOPIFY_HMAC_SHA256.
+ Compute the HMAC digest according to the following algorithm:
+ Ruby
+ PHP
+ Python
+ Sinatra
+ Flask
+ 1 # The following example uses Ruby and the Sinatra web framework to verify a webhook request:
+ 2
+ 3 require 'rubygems'
+ 4 require 'base64'
+ 5 require 'openssl'
+ 6 require 'sinatra'
+ 7 require 'active_support/security_utils'
+ 8
+ 9 # The Shopify app's client secret, viewable from the Partner Dashboard. In a production environment, set the client secret as an environment variable to prevent exposing it in code.
+ 10 CLIENT_SECRET = 'my_client_secret'
+ 11
+ 12 helpers do
+ 13
+    # Compare the computed HMAC digest based on the client secret and the request contents to the reported HMAC in the headers
+ 14
+    def verify_webhook(data, hmac_header)
+ 15
+      calculated_hmac = Base64.strict_encode64(OpenSSL::HMAC.digest('sha256', CLIENT_SECRET, data))
+ 16
+      ActiveSupport::SecurityUtils.secure_compare(calculated_hmac, hmac_header)
+ 17
+    end
+ 18 end
+ 19
+ 20 # Respond to HTTP POST requests sent to this web service
+ 21 post '/' do
+ 22
+    request.body.rewind
+ 23
+    data = request.body.read
+ 24
+    verified = verify_webhook(data, env["HTTP_X_SHOPIFY_HMAC_SHA256"])
+ 25
+ 26
+    halt 401 unless verified
+ 27
+ 28
+    # Process webhook payload
+ 29
+    # ...
+ 30 end
+ Compare the computed value to the value in the X-Shopify-Hmac-SHA256 or HTTP_X_SHOPIFY_HMAC_SHA256 header.
+ If the HMAC digest and header value match, then the webhook was sent from Shopify.
+ Note
+ When you rotate an app's client secret, it can take up to an hour for the HMAC digest to be generated using the new secret.
+ Step 6: Respond to the webhook
+ Your webhook acknowledges that it received data by sending a 200 OK response. Any response outside of the 200 range, including 3XX HTTP redirection codes, indicates that you didn't receive the webhook.
+ Shopify doesn't follow redirects for webhook notifications and considers them to be an error response.
+ Retry frequency
+ Shopify has implemented a five-second timeout period and a retry period for webhook subscriptions.
+ Shopify waits five seconds for a response to each request to a webhook. If there's no response, or an error is returned, then Shopify retries the connection 19 times over the next 48 hours. If there are 19 consecutive failures, then the webhook subscription is automatically deleted. A warning that the subscription will be deleted is sent to the app's emergency developer email address.
+ To avoid timeouts and errors, consider deferring app processing until after the webhook response has been successfully sent. If Shopify can't establish a connection to your server after one second, then Shopify will timeout before the expected five seconds.
+ Next steps
+ Set up the mandatory webhooks for apps distributed through the Shopify App Store.
+ Test your configuration by manually triggering a webhook delivery using the Shopify CLI webhook trigger command. Manually triggering webhooks doesn't test your webhook subscriptions.
+ Learn how to manage webhooks for different API versions.
+ Learn about the available topics for REST Admin API webhooks.
+ Learn about the available topics for GraphQL Admin API webhooks.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Register an endpoint
+ Step 2: Subscribe to a webhook topic
+ Step 3: Test the webhook
+ Step 4: Receive the webhook
+ Step 5: Verify the webhook
+ Step 6: Respond to the webhook
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

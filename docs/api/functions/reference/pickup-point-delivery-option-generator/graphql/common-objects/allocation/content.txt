@@ -1,0 +1,15 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ Allocation object
+ unstable
+ Information about the allocation for one or more line items that are to be delivered to a specific address.
+ On this page
+ Fields
+ Types that return Allocation
+ Fields
+ deliveryAddress (MailingAddress!)
+ The delivery address for the allocation.
+ Types that return Allocation
+ Input.allocations
+ Was this page helpful?
+ YesNo

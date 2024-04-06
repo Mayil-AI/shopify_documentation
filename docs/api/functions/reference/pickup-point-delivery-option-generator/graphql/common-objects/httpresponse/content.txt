@@ -1,0 +1,20 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ HttpResponse object
+ unstable
+ The attributes associated with an HTTP response.
+ On this page
+ Fields
+ Types that return HttpResponse
+ Fields
+ body (String)
+ The HTTP body.
+ headers ([HttpResponseHeader!]!)
+ The HTTP headers.
+ status (Int!)
+ The HTTP status code.
+ Types that return HttpResponse
+ Input.fetchResult
+ Was this page helpful?
+ YesNo
+ Updates & News

@@ -1,0 +1,50 @@
+Best practices
+ Overview
+ Sections and blocks
+ Performance
+ Overview
+ Platform
+ Accessibility
+ Theme editor preview inspector
+ Design
+ Merchant stores
+ Version control
+ File transformation
+ Deceptive code
+ Integrating apps
+ Product merchandising
+ The Shopify platform
+ Learn about the infrastructure that Shopify provides to make the online store, and your theme, faster.
+ Shopify CDN
+ Shopify provides merchants a world class content delivery network (CDN) backed by Cloudflare. Using a CDN means that your online store will load quickly around the globe.
+ Files delivered over the Shopify CDN are minified and compressed automatically using Brotli and gzip, reducing the size of the files the browser must download. Requests use HTTP/3 and TLS 1.3 to further enhance request performance and security.
+ Most asset URLs are rendered using the domain cdn.shopify.com. In certain cases, such as images or stylesheets loaded on a storefront, assets are loaded using the storefront domain, in the format {shop}.myshopify.com/cdn. This is done to improve performance by maximizing connection reuse in the browser.
+ Short delays for images in your store
+ Using a CDN means that all of your online store images are cached at thousands of servers around the world. When you make changes to your images, Shopify informs the CDN that the images have changed. To do this, Shopify uses the asset_url filter, which automatically appends version numbers to all of the URLs that it generates. For example, a version number appended to the end of a url might look like this: ?v=1384022871.
+ If you link to an image without using the asset_url filter and upload a new version of the same image, then the image on your online store might not change to the new version for a day or more.
+ CSS syntax to ensure automatic updates
+ If you reference an image directly in your CSS, then the url will be static and will not carry the asset version that Shopify updates automatically.
+ To make sure that your images are automatically updated, change your CSS syntax to include the asset_url filter.
+ For example, if your CSS looks like this:
+ 1 background: url(bg.gif);
+ then change it to look like this:
+ 1 background: url({{ 'bg.gif' | asset_url }});
+ Server-side rendering
+ Storefront Renderer (SFR) is a server-side renderer that handles storefront requests. SFR is dedicated to serving storefront requests as fast as possible.
+ Our storefront renderer significantly improves performance for cache misses - instances where a page or other requested data isn’t found in the cache memory and has to be retrieved from other cache levels or the main memory.
+ Minification
+ Shopify automatically minifies CSS files, as well as JavaScript files that uses valid syntax to ES5, when they're requested by the storefront. Minified JavaScript and CSS files are cached until the next time the file is updated.
+ Minification allows the browser to download less data, resulting in shorter load times.
+ Shopify delivers the original version of a JavaScript or CSS file if it meets one of the following criteria:
+ The minified file would be larger than the original file. This might happen if a file is already minified with better compression.
+ It has the extension .min.js or .min.css.
+ Tip
+ Minification might remove debugger statements from code. To debug your code, you can temporarily change your file extension to .min.js or .min.css.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Shopify CDN
+ Server-side rendering
+ Minification
+ Updates & News
+ Developer changelog

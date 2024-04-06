@@ -1,0 +1,75 @@
+Payment Customization API
+ Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ HideOperation
+ Language
+ Metafield
+ MoneyV2
+ MoveOperation
+ Operation
+ PaymentCustomization
+ PaymentCustomizationPaymentMethod
+ Product
+ ProductVariant
+ PurchasingCompany
+ RenameOperation
+ CurrencyCode
+ DeliveryMethod
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Configuration
+ Error handling
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ PaymentCustomization object
+ 2024-04 latest
+ A customization representing how payment methods will be ordered, hidden, or renamed.
+ On this page
+ Fields
+ Types that return PaymentCustomization
+ Implements
+ Fields
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ Types that return PaymentCustomization
+ Input.paymentCustomization
+ Implements
+ HasMetafields
+ Was this page helpful?
+ YesNo

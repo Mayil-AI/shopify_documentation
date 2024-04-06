@@ -1,0 +1,10 @@
+Secure tokens
+ Shortened URLs
+ Serving your app over HTTPS using a valid TLS certificate
+ All data exchanged between a client (such as a merchant's web browser) and your app server should be encrypted using Transport Layer Security (TLS) to ensure that any data transmitted can only be read by your application server. TLS certificates are used to protect the end users’ information while it's transmitting and to authenticate the website’s organization identity. Websites secured by a TLS certificate will display HTTPS and the small padlock icon in the browser address bar.
+ If we can't validate your TLS certificate when we review your app, then your app will be rejected. You'll be required to fix your certificate configuration before submitting your app for another review.
+ If you don't have a valid TLS certificate already, then you can obtain one free of charge from Let’s Encrypt, a free, automated, and open certificate authority. However, a TLS certificate issued by any trusted Certificate Authority is acceptable. You can't use a self-signed certificate.
+ After you've created your TLS certificate, you can ensure that it's correctly installed by visiting SSL Checker and entering your app's hostname.
+ Was this page helpful?
+ YesNo
+ Updates & News

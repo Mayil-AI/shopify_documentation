@@ -1,0 +1,85 @@
+Theme Store
+ Use Shopify CLI in a CI/CD pipeline
+ If you have a theme that you want to work with programmatically, then you can integrate Shopify CLI into your CI/CD pipeline to perform actions like pushing, pulling, and publishing a theme.
+ What you'll learn
+ In this tutorial, you'll learn how to set up your CI/CD pipeline to work with themes programmatically. To do so, you'll gather the credentials necessary to run the CLI commands, and then add a step to your CI/CD pipeline that installs Shopify CLI and runs CLI commands.
+ Requirements
+ Shopify CLI 3.20 or higher
+ Tip
+ Learn how to check your Shopify CLI version.
+ Step 1: Get a Theme Access password for the store
+ For each store that you want to interact with programmatically using Shopify CLI, you need to get a Theme Access password. These are generated using the Theme Access app.
+ To learn about the requirements for installing and using the Theme Access app, and instructions on how to generate a new password, refer to Manage theme access.
+ Step 2: Integrate Shopify CLI into your pipeline
+ After you get a Theme Access password for the store, you can integrate Shopify CLI into your continuous deployment pipeline using your CI/CD provider.
+ The CD pipeline step should install Shopify CLI and all of its dependencies.
+ To run Shopify CLI theme commands programmatically using your CD pipeline step, include the following:
+ Environment variables:
+ Name Required? Value
+ SHOPIFY_FLAG_STORE Yes The store that you want to interact with
+ SHOPIFY_CLI_THEME_TOKEN Yes The Theme Access password that you generated or were given by a merchant
+ SHOPIFY_CLI_TTY No Pass this variable with a value of 0 to turn off interactive prompts. You might want to use this variable if your Shopify CLI pipeline step is timing out.
+ Where possible, you should protect the Theme Access password by masking it or storing it as a secret.
+ A step that sets up Ruby and bundler.
+ A step that sets up Node.js.
+ A step that installs Shopify CLI globally.
+ A step that runs the CLI command that you want to execute.
+ Example (GitHub Actions)
+ Below is an example of a step that you might add to your GitHub Actions workflow. It pushes a theme to a Shopify store when code is pushed to the main branch.
+ .github/workflows/deploy-theme.yml
+ 1 name: Theme deploy
+ 2
+ 3 on: [push]
+ 4
+ 5 jobs:
+ 6
+    deploy:
+ 7
+      name: Deploy
+ 8
+      runs-on: ubuntu-latest
+ 9
+      steps:
+ 10
+        - uses: actions/checkout@v1
+ 11
+        - uses: actions/setup-node@v3
+ 12
+          with:
+ 13
+            node-version: 18
+ 14
+        - uses: ruby/setup-ruby@v1
+ 15
+          with:
+ 16
+            ruby-version: 3.1
+ 17
+            bundler: 'latest'
+ 18
+        - name: Install Shopify CLI
+ 19
+          run: npm install -g @shopify/cli @shopify/theme
+ 20
+        - name: Deploy
+ 21
+          env:
+ 22
+            # Store URL, like your-store.myshopify.com
+ 23
+            SHOPIFY_FLAG_STORE: '${{ secrets.SHOPIFY_STORE }}'
+ 24
+            # Password generated from Theme Access app
+ 25
+            SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+ 26
+            SHOPIFY_CLI_TTY: 0
+ 27
+          run: shopify theme push --path ./path/to/your/theme --theme your-theme-name-or-id
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Get a Theme Access password for the store
+ Step 2: Integrate Shopify CLI into your pipeline

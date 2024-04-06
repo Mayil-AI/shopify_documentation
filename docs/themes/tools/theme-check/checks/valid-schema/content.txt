@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ ValidSchema
+ Identifies invalid JSON in {% schema %} tags.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 {% schema %}
+ 2 {
+ 3
+    "comma": "trailing",
+ 4 }
+ 5 {% endschema %}
+ ✓ Pass
+ 1 {% schema %}
+ 2 {
+ 3
+    "comma": "not trailing"
+ 4 }
+ 5 {% endschema %}
+ Options
+ 1 ValidSchema:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News

@@ -1,0 +1,480 @@
+Configuring app extensions
+ When you generate an app extension, a TOML configuration file named shopify.extension.toml is automatically generated in your app's extension directory.
+ Note
+ This guide describes the TOML file structure that only applies to checkout UI, admin UI, customer account UI product configuration, Shopify Flow triggers, Shopify Flow actions, and Shopify Functions extensions.
+ The TOML file structure for other extensions follow a different pattern:
+ Post-purchase UI
+ Product subscription
+ Web pixel
+ Shopify POS UI
+ Theme app extensions
+ How it works
+ Shopify CLI builds and serves app extensions using information defined in a TOML file named shopify.extension.toml. The TOML file is located in a directory within the extensions/ directory of your app project.
+ The following example shows a shopify.extension.toml file that contains configuration settings for a checkout UI extension.
+ shopify.extension.toml
+ 1 api_version = "2023-04"
+ 2
+ 3 [[extensions]]
+ 4 name = "My UI extension"
+ 5 description = "A UI extension"
+ 6 handle = "my-ui-extension"
+ 7 type = "ui_extension"
+ 8
+ 9
+    [extensions.capabilities]
+ 10
+    api_access = true
+ 11
+    block_progress = true
+ 12
+    network_access = true
+ 13
+ 14
+    [[extensions.targeting]]
+ 15
+    module = "./src/CheckoutDynamicRender.js"
+ 16
+    target = "purchase.checkout.block.render"
+ 17
+ 18
+      [[extensions.targeting.metafields]]
+ 19
+      key = "my-key"
+ 20
+      namespace = "my-namespace"
+ 21
+ 22 [settings]
+ 23
+    [[settings.fields]]
+ 24
+    key = "banner_title"
+ 25
+    type = "single_line_text_field"
+ 26
+    name = "Banner title"
+ 27
+    description = "Enter a title for the banner"
+ Extension types
+ Some extensions require specific configurations. To accommodate this, Shopify CLI groups extensions into different types in the TOML file:
+ Extension type value in the TOML file --template flag value in the generate command
+ Checkout UI
+ developer preview ui_extension checkout_ui
+ Customer account UI
+ developer preview ui_extension customer_account_ui
+ Admin action ui_extension admin_action
+ Admin block ui_extension admin_block
+ Product configuration ui_extension product_configuration
+ Shopify Flow trigger flow_trigger flow_trigger
+ Shopify Flow action flow_action flow_action
+ Order discount function order_discounts
+ Product discount function product_discounts
+ Shipping discount
+ developer preview function shipping_discounts
+ Discounts allocator
+ developer preview function discounts_allocator
+ Delivery customization function delivery_customization
+ Payment customization function payment_customization
+ Order routing location rule
+ beta function order_routing_location_rule
+ Cart and checkout validation function cart_checkout_validation
+ Cart transform function cart_transform
+ Fulfillment constraints function fulfillment_constraints
+ Targets
+ A target is an identifier in shopify.extension.toml that specifies where you're injecting code into Shopify APIs, or other parts of the Shopify platform.
+ Each target is composed of three to four namespaces. The name begins with a broad Shopify context and ends with the behavior of the extensible element. For example, a checkout UI extension that renders a shipping address form has a target named purchase.checkout.delivery-address.render-before:
+ purchase: The broad Shopify context.
+ checkout: The targeted page.
+ delivery-address: The element that the extension will be positioned near.
+ render-before: An action verb that describes the behavior of the extensible element.
+ Supported targets
+ The following table provides links to documentation on the supported targets associated with each app extension type.
+ Note
+ Shopify Flow triggers and actions don't support configurable targets.
+ Extension type Documentation on supported targets
+ Checkout UI Checkout UI targets
+ Customer account UI Customer Account UI targets
+ Admin UI Admin UI targets
+ Product configuration Product configuration app extensions use the admin.product-details.configuration.render or admin.product-variant-details.configuration.render target.
+ Shopify Functions Shopify function APIs and targets
+ 
+ The available targets depend on the Function APIs that you're using.
+ Common properties
+ This section describes the configuration settings in shopify.extension.toml that are common to checkout UI extensions, admin UI, product configuration, Shopify Flow triggers, Shopify Flow actions, and Shopify Functions extensions.
+ Property Description
+ api_version
+ required The version of the API that's being used for the extension. If provided in the [[extensions]] array, then the specified API version is used instead of the root level api_version.
+ [[extensions]]
+ required The name of the array that contains all extensions listed in the TOML file. Contains the following properties:
+ 
+ name:required The merchant-facing name of the extension. After you generate an extension, you're prompted to provide a name for your extension.
+ 
+ The name property is translatable if it starts with a t: and uses a key defined in your translation data. For example, you might have a t:name key that matches a translation key called name. Learn more about localization.
+ 
+ Limitations:
+ Supports any characters. Shopify Flow actions and Shopify Flow triggers extensions can only include alphanumeric characters and spaces.
+ 5 characters minimum
+ 30 characters maximum
+ description:required The merchant-facing description of the extension.
+ 
+ The description property is translatable if it starts with a t: and uses a key defined in your translation data. For example, t:description and you have a matching translation key called description. Learn more about localization.
+ handle:required The unique internal identifier for the extension.
+ 
+ After you create a draft version of the extension, or deploy an extension, you can't change the handle value.
+ 
+ If not specified, the handle value is automatically populated using a transformed name value that removes any unsupported characters. For example, if you enter google maps as the extension name, then Shopify populates the handle value as google-maps.
+ 
+ Limitations:
+ Allowed characters: a-z, A-Z, 0-9, -
+ 100 characters maximum
+ Must be unique within the app
+ type:required The extension type. For more information, refer to Extension types.
+ [settings]
+ optional The name of the array that defines settings that a merchant can set values for. If provided in the [[extensions]] array, then the specified settings are used instead of the root level settings.
+ [[settings.fields]]
+ optional The name of the array that contains the settings fields.
+ [[extensions.targeting]]
+ required The name of the array that contains a target and path to the related extension code. Contains the following required properties:
+ 
+ target:required An identifier that specifies where you're injecting code into Shopify APIs, or other parts of the Shopify platform. For more information, refer to Targets.
+ module:required The file that contains the extension code.
+ Extension-specific properties
+ This section describes the configuration settings in shopify.extension.toml that are specific to the following extensions:
+ Checkout UI extensions
+ Customer account UI extensions
+ Admin UI extensions
+ Product configuration extensions
+ Shopify Flow actions
+ Shopify Flow triggers
+ Shopify Functions extensions
+ Checkout UI extensions
+ The following example TOML file contains configuration settings for a checkout UI extension:
+ shopify.extension.toml
+ 1 api_version = "2023-04"
+ 2
+ 3 [[extensions]]
+ 4 name = "My UI extension"
+ 5 description = "A UI extension"
+ 6 handle = "my-ui-extension"
+ 7 type = "ui_extension"
+ 8
+ 9
+    [extensions.capabilities]
+ 10
+    api_access = true
+ 11
+    block_progress = true
+ 12
+    network_access = true
+ 13
+ 14
+    [[extensions.targeting]]
+ 15
+    module = "./src/CheckoutDynamicRender.js"
+ 16
+    target = "purchase.checkout.block.render"
+ 17
+ 18
+      [[extensions.targeting.metafields]]
+ 19
+      key = "my-key"
+ 20
+      namespace = "my-namespace"
+ 21
+ 22 [settings]
+ 23
+    [[settings.fields]]
+ 24
+    key = "banner_title"
+ 25
+    type = "single_line_text_field"
+ 26
+    name = "Banner title"
+ 27
+    description = "Enter a title for the banner"
+ The following table describes the properties in the TOML file that are specific to checkout UI extensions:
+ Property Description
+ [extensions.capabilities]
+ optional The name of the array that contains the checkout UI extension's capabilities:
+ api_access:optional Whether your app extension can query the Storefront API.
+ block_progress:optional Whether your app extension can block the customer's progress.
+ network_access:optional Whether your app extension can make external network calls.
+ [extensions.metafields]
+ optional An array that sets the default for each [[extensions.targeting.metafields]], if [[extensions.targeting.metafields]] isn't specified.
+ [[extensions.targeting.metafields]]
+ optional The metafields that your extension target needs to read:
+ key:optional The name for the metafield.
+ namespace:optional A container for a group of metafields. Grouping metafields within a namespace prevents your metafields from conflicting with other metafields with the same key name.
+ You can specify up to five key and namespace pairs in the configuration file. When the extension is executed, Shopify looks for the metafields in each resource and returns their contents.
+ Customer account UI extensions
+ The following example TOML files contain configuration settings for a static and a full page extension. The properties in the TOML files are similar to checkout UI extensions:
+ shopify.extension.toml
+ 1 api_version = "2023-07"
+ 2
+ 3 [[extensions]]
+ 4 type = "ui_extension"
+ 5 name = "customer-account-ui"
+ 6 handle = "customer-account-ui"
+ 7
+ 8 [[extensions.targeting]]
+ 9 module = "./src/CustomerAccountOrderIndexExtension.tsx"
+ 10 target = "customer-account.order-index.block.render"
+ 11
+ 12 [[extensions.targeting]]
+ 13 module = "./src/CustomerAccountExtensionFullPage.tsx"
+ 14 target = "customer-account.page.render"
+ The following table describes the properties in the TOML file that are specific to customer account UI extensions:
+ Property Required? Description
+ [extensions.capabilities] No The name of the array that contains the checkout UI extension's capabilities:
+ api_access: Whether your app extension can query the Storefront API.
+ network_access: Whether your app extension can make external network calls.
+ [extensions.metafields] No An array that sets the default for each [[extensions.targeting.metafields]], if [[extensions.targeting.metafields]] isn't specified.
+ [[extensions.targeting.metafields]] No The metafields that your extension target needs to read:
+ key: The name for the metafield.
+ namespace: A container for a group of metafields. Grouping metafields within a namespace prevents your metafields from conflicting with other metafields with the same key name.
+ You can specify up to five key and namespace pairs in the configuration file. When the extension is executed, Shopify looks for the metafields in each resource and returns their contents.
+ Admin UI extensions
+ The following example TOML files contain configuration settings for an action and a block extension. The properties in the TOML files are similar to checkout UI extensions:
+ shopify.extension.toml
+ 1 api_version = "2023-04"
+ 2
+ 3 [[extensions]]
+ 4 name = "My feature"
+ 5 handle = "action-extension"
+ 6 type = "ui_extension"
+ 7
+ 8 [[extensions.targeting]]
+ 9 module = "actionExtension.jsx"
+ 10 target = "admin.product.item.action.render"
+ shopify.extension.toml
+ 1 api_version = "2023-04"
+ 2
+ 3 [[extensions]]
+ 4 name = "My block extension"
+ 5 handle = "block-extension"
+ 6 type = "ui_extension"
+ 7
+ 8 [[extensions.targeting]]
+ 9 module = "blockExtension.jsx"
+ 10 target = "admin.product.item.block.render"
+ Product configuration extensions
+ The following example TOML file contains configuration settings for a product configuration extension. The properties in the TOML file are similar to a checkout UI extension:
+ shopify.extension.toml
+ 1 api_version = "2023-07"
+ 2
+ 3 [[extensions]]
+ 4 name = "My product config extension"
+ 5 handle = "my-product-config-extension"
+ 6 type = "ui_extension"
+ 7
+ 8 [[extensions.targeting]]
+ 9 module = "./src/ProductDetailsConfigurationExtension.tsx"
+ 10 target = "admin.product-details.configuration.render"
+ 11
+ 12 [[extensions.targeting]]
+ 13 module = "./src/ProductVariantDetailsConfigurationExtension.tsx"
+ 14 target = "admin.product-variant-details.configuration.render"
+ Shopify Flow actions
+ The following example TOML file contains configuration settings for a Shopify Flow action:
+ shopify.extension.toml
+ 1 [[extensions]]
+ 2 name = "Send email action"
+ 3 description = "Send an email to a customer."
+ 4 handle = "send-email-action"
+ 5 type = "flow_action"
+ 6 runtime_url = "https://runtime-endpoint.com"
+ 7 schema = "./schema.graphql"
+ 8 return_type_ref = "EmailDelivered"
+ 9 validation_url = "https://validation-url"
+ 10 config_page_url = "https://url.com/config"
+ 11 config_page_preview_url = "https://url.com/config/preview"
+ 12
+ 13 [settings]
+ 14
+ 15
+    [[settings.fields]]
+ 16
+    description = "The email address to send to"
+ 17
+    key = "email_address"
+ 18
+    name = "Email address"
+ 19
+    type = "single_line_text_field"
+ 20
+    required = true
+ 21
+ 22
+    [[settings.fields]]
+ 23
+    description = "The subject of the email"
+ 24
+    key = "subject"
+ 25
+    name = "Subject"
+ 26
+    type = "single_line_text_field"
+ 27
+    required = true
+ 28
+ 29
+    [[settings.fields]]
+ 30
+    description = "The body of the email"
+ 31
+    key = "body"
+ 32
+    name = "Body"
+ 33
+    type = "multi_line_text_field"
+ 34
+    required = true
+ The following table describes the properties in the TOML file that are specific to a Shopify Flow action:
+ Property Description
+ [[extensions]]
+ required The name of the array that contains all extensions listed in the TOML file. Contains the following properties:
+ 
+ runtime_url:required The endpoint where Flow sends your action's payload when your step is being executed at runtime. The payload contains data that you can use to execute the action in your app.
+ validation_url:optional An endpoint that validates the contents of custom properties in an action payload when an action is saved. This endpoint is only required if you want to use a custom configuration page.
+ schema:optional A relative path to a GraphQL schema definition file that contains custom types that you can use as part of your action. Only required if return_type_ref is also present.
+ return_type_ref:optional The name of the type to be returned by the action. This type must be present in the referenced schema file. Only required if schema is also present.
+ config_page_url:optional A route that renders your custom configuration page.
+ config_page_preview_url:optional An endpoint that provides data about your custom configuration page to display in the automation tool. This endpoint is only required if you want to use a custom configuration page.
+ [[settings.fields]]
+ required The name of the array that contains the settings fields. Contains the following property:
+ 
+ required:required Specifies whether a field is required (true) or optional (false).
+ Shopify Flow triggers
+ The following example TOML file contains configuration settings for a Shopify Flow trigger. The properties in the TOML file are similar to a Shopify Flow action:
+ shopify.extension.toml
+ 1 [[extensions]]
+ 2 name = "Shopify Email sent"
+ 3 description = "Triggered when an email is sent from Shopify"
+ 4 handle = "shopify-email-sent"
+ 5 type = "flow_trigger"
+ 6
+ 7 [settings]
+ 8
+ 9
+    [[settings.fields]]
+ 10
+    description = "The customer who received the email."
+ 11
+    key = "customer_id"
+ 12
+    name = "Customer ID"
+ 13
+    type = "customer_reference"
+ 14
+ 15
+    [[settings.fields]]
+ 16
+    description = "The marketing campaign ID."
+ 17
+    key = "campaign_id"
+ 18
+    name = "Campaign ID"
+ 19
+    type = "single_line_text_field"
+ Shopify Functions extensions
+ The following example TOML file contains configuration settings for a Shopify Function extension:
+ shopify.extension.toml
+ 1 api_version = "2023-10"
+ 2
+ 3 [[extensions]]
+ 4 name = "Product Discount"
+ 5 handle = "product-discount"
+ 6 type = "function"
+ 7
+ 8
+    [[extensions.targeting]]
+ 9
+    target = "purchase.product-discount.run"
+ 10
+    input_query = "src/run.graphql"
+ 11
+    export = "run"
+ 12
+ 13
+    [extensions.build]
+ 14
+    command = "cargo wasi build --release"
+ 15
+    path = "target/wasm32-wasi/release/product-discount.wasm"
+ 16
+    watch = [ "src/**/*.rs" ]
+ 17
+ 18
+    [extensions.ui]
+ 19
+    enable_create = true
+ 20
+    handle = "ui-extension-handle"
+ 21
+ 22
+    [extensions.ui.paths]
+ 23
+    create = "/product-discount/:functionId/new"
+ 24
+    details = "/product-discount/:functionId/:id"
+ 25
+ 26
+    [extensions.input.variables]
+ 27
+    namespace = "my-namespace"
+ 28
+    key = "my-key"
+ The following table describes the properties in the TOML file that are specific to a Shopify Function extension:
+ Property Description
+ [[extensions.targeting]]
+ required The name of the array that contains a target and its associated WebAssembly module export. Contains the following properties:
+ 
+ target:required An identifier that specifies where you're injecting code into the Shopify backend. Refer to the Function API references for available function targets.
+ input_query:optional The path to the input query file for the target. If omitted, then the function receives no input.
+ export:optional The name of the WebAssembly export in your module that executes for the target. Functions don't use the extensions.targeting.module setting. Use export instead. Defaults to _start.
+ [extensions.build]
+ optional The settings related to the build and deployment of the function extension's WebAssembly module. Contains the following properties:
+ 
+ command:optional The command to build the function, which is invoked by the Shopify CLI build command.
+ path:optional The relative path to the function's WebAssembly module. For example, build/my-module.wasm. Defaults to dist/index.wasm.
+ watch:optional The relative paths that Shopify CLI should watch when the dev command is invoked. Changes to matched files trigger a build of the function and update it in your application drafts. This setting accepts a single file path or glob pattern, or an array of file paths and glob patterns.
+ 
+ For JavaScript and TypeScript functions, this setting defaults to ['src/**/*.js', 'src/**/*.ts'].
+ 
+ Input queries are automatically included in watch paths and don't need to be configured in build.watch.
+ [extensions.ui]
+ optional The settings related to the merchant interface for your function. Contains the following properties:
+ 
+ handle: optional Learn how to create your function merchant interface.
+ enable_create:optional Learn how to configure creation workflows for function owners.
+ [extensions.ui.paths]
+ optional The settings related to the App Bridge paths of the merchant interface for your function. Contains the following properties:
+ 
+ create:optional Refer to create your function merchant interface.
+ details:optional Refer to create your function merchant interface.
+ [extensions.input.variables]
+ optional The variables to use in your input query. Contains the following properties:
+ 
+ key: The name for the metafield.
+ namespace: A container for a group of metafields. Grouping metafields within a namespace prevents your metafields from conflicting with other metafields with the same key name.
+ Differences in TOML file names
+ TOML file names can differ, depending on when you generated an extension:
+ If you generated an extension before July 26, 2023, then your TOML file maps to one of the following names:
+ Checkout UI: shopify.ui.extension.toml
+ Bundles UI extension: shopify.ui.extension.toml (maps to a product configuration extension)
+ Post-purchase UI: shopify.ui.extension.toml
+ Product subscription: shopify.ui.extension.toml
+ Web pixel: shopify.ui.extension.toml
+ Shopify POS UI: shopify.ui.extension.toml
+ Shopify Functions: shopify.function.extension.toml
+ Theme app extensions: shopify.theme.extension.toml
+ If you generated an extension after July 26, 2023, then the TOML file is named shopify.extension.toml.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Extension types
+ Targets
+ Common properties
+ Extension-specific properties
+ Differences in TOML file names
+ Updates & News

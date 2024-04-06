@@ -1,0 +1,80 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ MatchingSchemaTranslations
+ Identifies missing or additional translations in schema locale files.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ The following locale files aren't consistent:
+ en.default.schema.json
+ 1 {
+ 2
+    "greeting": "Hello, world",
+ 3
+    "goodbye": "Bye, world"
+ 4 }
+ es.schema.json is missing greeting and goodbye translations:
+ es.schema.json
+ 1 {}
+ fr.schema.json is missing greeting and has a goodby tag that isn't present in the default locale:
+ fr.json
+ 1 {
+ 2
+    "goodby": "Au revoir, monde"
+ 3 }
+ ✓ Pass
+ The following locale files are consistent:
+ en.default.schema.json
+ 1 {
+ 2
+    "greeting": "Hello, world",
+ 3
+    "goodbye": "Bye, world",
+ 4
+    "pluralized_greeting": {
+ 5
+      "one": "Hello, you",
+ 6
+      "other": "Hello, y'all",
+ 7
+    }
+ 8 }
+ fr.schema.json
+ 1 {
+ 2
+    "greeting": "Bonjour, monde",
+ 3
+    "goodbye": "Au revoir, monde",
+ 4
+    "pluralized_greeting": {
+ 5
+      "zero": "Je suis seul :(",
+ 6
+      "few": "Salut, groupe!"
+ 7
+    }
+ 8 }
+ Options
+ The following example contains the default configuration for this check:
+ 1 MatchingSchemaTranslations:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether the check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended because it might result in an inconsistent translation experience for some users.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

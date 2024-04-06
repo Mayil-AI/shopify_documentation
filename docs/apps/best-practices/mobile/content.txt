@@ -1,0 +1,20 @@
+Billing
+ App Store
+ Mobile best practices for Shopify apps
+ When you develop a mobile-first solution, consider the following mobile app best practices.
+ Create responsive designs
+ The app UI should adjust automatically to fit a smaller mobile screen to ensure a consistent experience on any device.
+ Prioritize vertical scroll over horizontal scroll, and avoid using any horizontal scrolling elements if possible.
+ Ensure core features are available
+ The core functionality of the app or theme should be available using a mobile device.
+ Apps should notify users when features are not available on mobile.
+ Provide seamless setup
+ Apps that require theme setup should use theme app extension app blocks and app embed blocks so that the user doesn’t need to manually make changes to their theme’s code.
+ Configuration and onboarding should be easy to follow and primarily take place inside the app.
+ Minimize the number of external web properties users are redirected to post installation.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Create responsive designs
+ Ensure core features are available
+ Provide seamless setup

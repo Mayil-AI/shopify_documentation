@@ -1,0 +1,215 @@
+Shipping and delivery
+ Building your app
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Manage deferred purchase options
+ You can create purchase options using the GraphQL Admin API's sellingPlanGroupCreate mutation. This guide describes the requirements for creating deferred purchase options and shows you how to manage deferred purchase options using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the following access scopes:
+ write_products
+ read_all_orders
+ read_customer_payment_methods
+ read_purchase_options
+ write_purchase_options
+ read_payment_mandate
+ write_payment_mandate
+ Learn how to configure your access scopes using Shopify CLI.
+ You've familiarized yourself with purchase options and deferred purchase options.
+ You've created products and product variants in your development store.
+ The merchant that you're developing for meets the qualifying criteria.
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Step 1: Create deferred purchase options
+ Caution
+ Purchase options and associated records, including SellingPlanGroup, SellingPlan, policies, and associations to products and variants, are deleted 48 hours after a user uninstalls a purchase option app. Products and product variants aren't deleted. We recommend backing up purchase options records in case you need to restore them later.
+ Create pre-order and try before you buy purchase options using the sellingPlanGroupCreate mutation. The SellingPlanGroup object includes one or more SellingPlan objects. The SellingPlan object specifies how a product can be sold.
+ Learn more about GraphQL Admin API objects for purchase options. For more information on input fields and values, refer to the following resources:
+ SellingPlanGroupInput
+ SellingPlanInput
+ How deferred purchase options work
+ Note
+ SellingPlan objects are grouped together in Liquid when they are created by the same app, and when they have the same selling_plan_group.name and selling_plan_group.options values. For more information, refer to the selling_plan_group object.
+ Pre-order
+ Try before you buy
+ Create a pre-order purchase option with a selling plan (SellingPlan) that contains the following policies:
+ Billing (billingPolicy.fixed): The 20% of the total amount will be charged as a deposit at checkout. The remaining amount will be charged on 2022-07-24.
+ Delivery (deliveryPolicy.fixed): The fulfillment timeline is unknown.
+ Pricing (pricingPolicies.fixed): A 15% product reduction is applied to the variant.
+ Inventory (inventoryPolicy.reserve): The inventory will be updated when the order is fulfilled.
+ The category field should be set to PRE_ORDER.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    sellingPlanGroupCreate(
+ 3
+      input: {
+ 4
+        name: "Pre-order"
+ 5
+        merchantCode: "pre-order"
+ 6
+        options: [
+ 7
+          "Pre-order"
+ 8
+        ]
+ 9
+        sellingPlansToCreate: [
+ 10
+          {
+ 11
+            name: "July 2022 release"
+ 12
+            category: PRE_ORDER
+ 13
+            options: [
+ 14
+              "20% deposit. Balance due on July 24th 2022"
+ 15
+            ]
+ 16
+            billingPolicy: {
+ 17
+              fixed: {
+ 18
+                checkoutCharge: {type: PERCENTAGE, value: {percentage: 20.0}}
+ 19
+                remainingBalanceChargeTrigger: EXACT_TIME
+ 20
+                remainingBalanceChargeExactTime: "2022-07-24"
+ 21
+              }
+ 22
+            }
+ 23
+            pricingPolicies: [
+ 24
+              {
+ 25
+                fixed: {
+ 26
+                  adjustmentType: PERCENTAGE
+ 27
+                  adjustmentValue: { percentage: 15.0 }
+ 28
+                }
+ 29
+              }
+ 30
+            ]
+ 31
+            deliveryPolicy: {fixed: {fulfillmentTrigger: UNKNOWN}}
+ 32
+            inventoryPolicy: {reserve: ON_FULFILLMENT}
+ 33
+          }
+ 34
+        ]
+ 35
+      }
+ 36
+      resources: {productVariantIds: [], productIds: []}
+ 37
+    ) {
+ 38
+      sellingPlanGroup {
+ 39
+        id
+ 40
+        sellingPlans(first: 1) {
+ 41
+          edges {
+ 42
+            node {
+ 43
+              id
+ 44
+            }
+ 45
+          }
+ 46
+        }
+ 47
+      }
+ 48
+      userErrors {
+ 49
+        field
+ 50
+        message
+ 51
+      }
+ 52
+    }
+ 53 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "sellingPlanGroupCreate": {
+ 4
+        "sellingPlanGroup": {
+ 5
+          "id": "gid://shopify/SellingPlanGroup/71434296",
+ 6
+          "sellingPlans": {
+ 7
+            "edges": [
+ 8
+              {
+ 9
+                "node": {
+ 10
+                  "id": "gid://shopify/SellingPlan/422674488",
+ 11
+                }
+ 12
+              }
+ 13
+            ]
+ 14
+          }
+ 15
+        },
+ 16
+        "userErrors": []
+ 17
+      }
+ 18
+    },
+ 19
+    "extensions": {
+ 20
+      "cost": {
+ 21
+        "requestedQueryCost": 62,
+ 22
+        "actualQueryCost": 17
+ 23
+      }
+ 24
+    }
+ 25 }
+ Step 2 (Optional): Manage deferred purchase options
+ Associate a purchase option to a product or product variant
+ You can use the sellingPlanGroupAddProducts mutation or the sellingPlanGroupAddProductVariants mutation to make a separate request to associate a purchase option with a product or product variant, without having to delete and recreate the purchase option.
+ Associate multiple purchase options to a product or product variant
+ You can use the productJoinSellingPlanGroups mutation or the productVariantJoinSellingPlanGroups mutation to associate multiple purchase options to a product or product variant.
+ Edit a purchase option
+ You can use the sellingPlanGroupUpdate mutation to edit the attributes associated with a purchase option. For example, you can change the purchase option's name.
+ Next steps
+ Learn about shipping and delivery for deferred purchase options.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create deferred purchase options
+ Step 2 (Optional): Manage deferred purchase options
+ Next steps
+ Updates & News

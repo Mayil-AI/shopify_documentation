@@ -1,0 +1,35 @@
+Prohibited actions on the Shopify Theme Store
+ We value our theme partners and want to make the theme experience the best possible for everyone involved. Theme partners are expected to adhere to the Partner Program Agreement.
+ This page outlines some of the actions that could lead to your theme being removed from the Shopify Theme Store, or to you being removed from the Shopify Partner program. While this page presents a series of important guidelines, it's not intended to be comprehensive.
+ If you violate any of the terms in the Partner Program Agreement, then the Shopify Theme Store team will use their discretion to determine the appropriate disciplinary action, which can include the following:
+ an email requiring your prompt attention with a set time frame to take action
+ immediate removal of your theme from the Shopify Theme Store
+ removal from the Shopify Partners program
+ The terms can change at any time without notice. Any other behavior that the Shopify Theme Store team deems unacceptable, objectionable, or harmful can also result in the theme being removed from the Shopify Theme Store.
+ Merchant experience
+ Continuous failure to respond to merchant support requests. The requirements for support can be found in Supporting your theme.
+ Selling or abusing merchant data (section C-2 of the Partner Program Agreement).
+ Failing to provide consistent service, themes can experience critical errors resulting in support debt.
+ Failing to provide enough notice before you remove your theme from the Shopify Theme Store. Refer to the guidelines for removing your theme from the Theme Store.
+ Reviews that don't comply with section C-1 of the Partner Program Agreement. This includes fake or misleading reviews, and review incentivization. Refer to Managing theme reviews for best practices.
+ Unsolicited marketing
+ No spam, illegal, or invasive marketing tactics (A-2). Emails, and SMS or text messages, should only be sent to merchants who have your theme actively installed or have clearly opted-in to your marketing communications.
+ No affiliate links in your theme listing page, or within any links in the theme files.
+ Requirement violations
+ Modifying your theme or theme listing after publication, which results in the theme no longer meeting the Shopify theme requirements.
+ Fatal errors resulting in the theme failing to install from the Shopify Theme Store.
+ Copyright infringement or leveraging the code base of a third-party theme for theme builds.
+ Selling or distributing listed themes outside of the Shopify Theme Store. Themes listed on the Shopify Theme Store can only be distributed through the Shopify Theme Store.
+ Reporting violations
+ If you encounter a theme that doesn't adhere to the Partner Program Agreement, then you can report it directly by filling out the Report a Partner violation form.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Merchant experience
+ Unsolicited marketing
+ Requirement violations
+ Reporting violations
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

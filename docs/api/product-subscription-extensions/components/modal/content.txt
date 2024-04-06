@@ -1,0 +1,50 @@
+TextField
+ Thumbnail
+ Modal
+ Modals are overlays that prevent merchants from interacting with the rest of the application until a specific action is taken.
+ Modals are disruptive by design, requiring merchants to take an action before they can continue, so use them thoughtfully and sparingly.
+ JavaScript
+ React
+ 1 import {extend, Modal} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const modal = root.createComponent(Modal, {
+ 5
+      title: 'The best modal',
+ 6
+      onClose: () => console.log('modal closed!'),
+ 7
+      open: true,
+ 8
+    });
+ 9
+ 10
+    modal.appendChild('This is the content of the modal.');
+ 11
+    root.appendChild(modal);
+ 12
+ 13
+    root.mount();
+ 14 });
+ Props
+ optional = ?
+ Name Type Description
+ open boolean Whether the modal is open.
+ title string Title content for the modal, when rendered.
+ primaryAction? DestructableAction Modal's primary action, ie 'Save' or 'Accept'.
+ secondaryActions? DestructableAction[] Modal's secondary action(s), ie 'Cancel'.
+ onClose () => void Callback when the modal is closed.
+ DestructableAction
+ Name Type Description
+ content string Action label text.
+ onAction? () => void Callback for the action.
+ destructive? boolean Indicates a dangerous or potentially negative action.
+ Guidelines
+ ✅ Do 🛑 Don't
+ Use modals thoughtfully and sparingly Avoid overly complex or multi-step content
+ Use modals with a small and simple set of actions to complete
+ For more guidelines, refer to Polaris' Modal best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE

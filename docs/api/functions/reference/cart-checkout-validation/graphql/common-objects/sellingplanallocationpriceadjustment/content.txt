@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ SellingPlanAllocationPriceAdjustment object
+ 2024-04 latest
+ The resulting prices for variants when they're purchased with a specific selling plan.
+ On this page
+ Fields
+ Types that return SellingPlanAllocationPriceAdjustment
+ Fields
+ perDeliveryPrice (MoneyV2!)
+ The effective price for a single delivery. For example, for a prepaid subscription plan that includes 6 deliveries at the price of $48.00, the per delivery price is $8.00.
+ price (MoneyV2!)
+ The price of the variant when it's purchased with a selling plan For example, for a prepaid subscription plan that includes 6 deliveries of $10.00 granola, where the customer gets 20% off, the price is 6 x $10.00 x 0.80 = $48.00.
+ Types that return SellingPlanAllocationPriceAdjustment
+ SellingPlanAllocation.priceAdjustments
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

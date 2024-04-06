@@ -1,0 +1,15 @@
+Product subscription app extensions
+ ProductMinimumQuantity object
+ 2024-04 latest
+ The condition for checking the minimum quantity of a product.
+ Fields
+ ids ([ID!]!) required
+ Variant IDs with a merchandise line price that's included to calculate the minimum quantity of the product.
+ minimumQuantity (Int!) required
+ The minimum quantity of a product.
+ targetType (TargetType!) required
+ The target type of the condition.
+ The value is validated against: = "PRODUCT_VARIANT".
+ Was this page helpful?
+ YesNo
+ Updates & News

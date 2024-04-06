@@ -1,0 +1,55 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ UX guidelines for discounts
+ A great buyer-facing user experience (UX) for discounts is important to the success of app users. This guide explains important considerations for implementing discounts in user interfaces (UIs).
+ User interface guidelines
+ Apps should consider how discounted products appear in multiple places on the online store, such as product pages, collection pages, search results, featured product sections on the home page, and quick view modals on product cards. Surfacing potential savings in these areas can further encourage customers to purchase.
+ Discounts information is displayed in the following components of the online store:
+ Product forms
+ Cart items
+ Order details
+ When building your discount types, first decide if your discount will apply to specific products in an order, to the order as a whole, or to the shipping for the order. If your discount could belong to multiple categories, then you should create separate discount types for each.
+ Note
+ The class of the discount type that you create is set as a static value in a .toml file when your discount script is uploaded. The class can’t be changed later.
+ Whether a discount is a product, order, or shipping discount determines what options users have for allowing it to combine with other discounts at checkout.
+ Navigation
+ The discount details page has a breadcrumb button (the arrow ← next to the page title). The breadcrumb button must always go back to the page that the user came from. For example, when the details page is reached using the Discounts page of the Shopify admin, the breadcrumb button must return the user to the Discounts page.
+ If you choose to link to your discount details page from somewhere else, such as a page in your app, then the breadcrumb button should return the user to that page.
+ Discount page
+ Use the provided template and React component library to build the details page (create/edit page) for your discount type.
+ The discount details page has a number of standard cards:
+ Method
+ Minimum purchase requirements
+ Customer eligibility
+ Maximum uses
+ Combinations
+ Active dates
+ Best practices
+ Implement everything in the provided template, only removing elements when they don’t make logical sense for your discount type. For example, it doesn’t make sense for a Buy X Get Y discount to have the minimum purchase requirements card, because “buy x” already defines the minimums. You still need to submit data for any required fields in the Shopify API, so submit a value that makes sense for your discount.
+ The card immediately below the Method card typically contains the fields that will differ between discount types. Often this card’s title is Value, which refers to the discount amount that the customer will get. You can also choose a title that makes sense for your discount type.
+ As described in Shopify functions, store any custom data used by your discount type using metafields.
+ Always provide validations for your discount type’s custom fields that are stored as metafields. If users enter invalid data, then they’ll get helpful feedback.
+ Error validation
+ You'll get errors back from bad data passed to API calls, but validating the data client-side before firing off a network request makes for a faster UI experience.
+ If you choose to validate on the client, then take extra care with free-form entry, such as text fields. Run your validation check only after focus moves away from the field and there's at least one character in the field. This helps avoid marking the field with an error before users have committed a value.
+ You might choose not to validate client-side in some cases, such as when validation on a given field takes longer than 1000 ms and validation performance can’t be improved.
+ If you get any validation errors, then display them on the specific fields that contain the invalid data, including a message explaining what went wrong and how to fix it. Polaris form components have an error property that you can use for this purpose.
+ If there are multiple invalid fields, then provide an error banner at the top of the page, and focus the banner on submit. The banner should include a list of the fields with problems. Link each item in the banner to the corresponding field on the page, enabling the user to jump to that field.
+ If there is only a single field with an error, then move focus to that field instead.
+ Learn more about form validation.
+ Responsive layouts
+ Make any custom layout responsive, whether it’s the fields in the Value card, or any other custom UI.
+ Ensure that the layout is fluid down to 320 px wide.
+ Ensure that key functionality remains available on a touchscreen device. Avoid conveying essential information using tooltips or hover states.
+ Avoid truncating text whenever possible.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ User interface guidelines
+ Navigation
+ Discount page
+ Error validation
+ Responsive layouts
+ Updates & News

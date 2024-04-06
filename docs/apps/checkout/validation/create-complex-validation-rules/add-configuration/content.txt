@@ -1,0 +1,350 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Distribution
+ Billing
+ App Store
+ Add configuration to your validation
+ Your validation's configuration will be stored in metafields and made available to the function at runtime. Metafields are the primitive to store your app's data in Shopify.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Define what configuration settings will be surfaced to merchants.
+ Read and use the merchant-defined values in your function.
+ Requirements
+ You've completed the Getting started with building validations tutorial.
+ Step 1: Create the metafield definition
+ To make your function reusable, replace hardcoded values in your function with metafield values.
+ For security reasons, it's mandatory to create a metafield definition under a reserved namespace. Reserved namespaces require additional permissions to work in Shopify admin, so you'll need to request these permissions at app installation time.
+ To create a metafield definition and grant additional access to the Shopify admin, update your shopify.server.ts file with the following code inside the afterAuth hook:
+ shopify.server.ts
+ 1 const definition = {
+ 2
+    access: {
+ 3
+      admin: "MERCHANT_READ_WRITE"
+ 4
+    },
+ 5
+    key: "my-configuration-key",
+ 6
+    name: "Validation Configuration",
+ 7
+    namespace: "$app:my-validation-namespace",
+ 8
+    ownerType: "VALIDATION",
+ 9
+    type: "json",
+ 10 };
+ 11
+ 12 await admin.graphql(
+ 13
+    `#graphql
+ 14
+    mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 15
+      metafieldDefinitionCreate(definition: $definition) {
+ 16
+        createdDefinition {
+ 17
+          id
+ 18
+        }
+ 19
+        userErrors {
+ 20
+          field
+ 21
+          message
+ 22
+          code
+ 23
+        }
+ 24
+      }
+ 25
+    }`,
+ 26
+    {
+ 27
+      variables: {
+ 28
+        definition,
+ 29
+      }
+ 30
+    }
+ 31 );
+ Your code should look like the following example:
+ shopify.server.ts
+ 1 import "@shopify/shopify-app-remix/adapters/node";
+ 2 import {
+ 3
+    AppDistribution,
+ 4
+    DeliveryMethod,
+ 5
+    shopifyApp,
+ 6
+    LATEST_API_VERSION,
+ 7 } from "@shopify/shopify-app-remix/server";
+ 8 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
+ 9 import { restResources } from "@shopify/shopify-api/rest/admin/2023-10";
+ 10 import prisma from "./db.server";
+ 11
+ 12 const shopify = shopifyApp({
+ 13
+    apiKey: process.env.SHOPIFY_API_KEY,
+ 14
+    apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
+ 15
+    apiVersion: LATEST_API_VERSION,
+ 16
+    scopes: process.env.SCOPES?.split(","),
+ 17
+    appUrl: process.env.SHOPIFY_APP_URL || "",
+ 18
+    authPathPrefix: "/auth",
+ 19
+    sessionStorage: new PrismaSessionStorage(prisma),
+ 20
+    distribution: AppDistribution.AppStore,
+ 21
+    restResources,
+ 22
+    webhooks: {
+ 23
+      APP_UNINSTALLED: {
+ 24
+        deliveryMethod: DeliveryMethod.Http,
+ 25
+        callbackUrl: "/webhooks",
+ 26
+      },
+ 27
+    },
+ 28
+    hooks: {
+ 29
+      afterAuth: async ({ session, admin }) => {
+ 30
+        shopify.registerWebhooks({ session });
+ 31
+ 32
+        const definition = {
+ 33
+          access: {
+ 34
+            admin: "MERCHANT_READ_WRITE"
+ 35
+          },
+ 36
+          key: "my-configuration-key",
+ 37
+          name: "Validation Configuration",
+ 38
+          namespace: "$app:my-validation-namespace",
+ 39
+          ownerType: "VALIDATION",
+ 40
+          type: "json",
+ 41
+        };
+ 42
+ 43
+        await admin.graphql(
+ 44
+          `#graphql
+ 45
+          mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 46
+            metafieldDefinitionCreate(definition: $definition) {
+ 47
+              createdDefinition {
+ 48
+                id
+ 49
+              }
+ 50
+              userErrors {
+ 51
+                field
+ 52
+                message
+ 53
+                code
+ 54
+              }
+ 55
+            }
+ 56
+          }`,
+ 57
+          {
+ 58
+            variables: {
+ 59
+              definition
+ 60
+            }
+ 61
+          }
+ 62
+        );
+ 63
+      },
+ 64
+    },
+ 65
+    future: {
+ 66
+      v3_webhookAdminContext: true,
+ 67
+      v3_authenticatePublic: true,
+ 68
+    },
+ 69
+    ...(process.env.SHOP_CUSTOM_DOMAIN
+ 70
+      ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }
+ 71
+      : {}),
+ 72 });
+ 73
+ 74 export default shopify;
+ 75 export const apiVersion = LATEST_API_VERSION;
+ 76 export const addDocumentResponseHeaders = shopify.addDocumentResponseHeaders;
+ 77 export const authenticate = shopify.authenticate;
+ 78 export const unauthenticated = shopify.unauthenticated;
+ 79 export const login = shopify.login;
+ 80 export const registerWebhooks = shopify.registerWebhooks;
+ 81 export const sessionStorage = shopify.sessionStorage;
+ Caution
+ If you've already installed the app, then you'll need to uninstall and reinstall it to trigger the afterAuth hook which creates the metafield definition with your app-scoped namespace.
+ Step 2: Configure the function
+ Update your input query to request a metafield value that's owned by your validation. Then, use that value in your function logic instead of the previously hardcoded value.
+ Navigate to your function in extensions/cart-checkout-validation.
+ Terminal
+ $ cd extensions/cart-checkout-validation
+ Replace the contents of src/run.graphql file with the following code:
+ Note
+ run.graphql defines the input for the function.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ 3
+      lines {
+ 4
+        quantity
+ 5
+        merchandise {
+ 6
+          ... on ProductVariant {
+ 7
+            id
+ 8
+            product {
+ 9
+              title
+ 10
+            }
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15
+    validation {
+ 16
+      metafield(namespace: "$app:my-validation-namespace", key: "my-configuration-key") {
+ 17
+        value
+ 18
+      }
+ 19
+    }
+ 20 }
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code:
+ This update includes parsing the JSON metafield value, and using values from that JSON in the function logic instead of hardcoded values.
+ The JSON includes cart quantity limits for each product.
+ This change is automatically reflected as long as you're running dev.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 /**
+ 4 * @typedef {import("../generated/api").RunInput} RunInput
+ 5 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 6 */
+ 7
+ 8 /**
+ 9 * @param {RunInput} input
+ 10 * @returns {FunctionRunResult}
+ 11 */
+ 12 export function run({ cart, validation }) {
+ 13
+    /** @type {Array<{productVariantId: string; quantityLimit: number}>} */
+ 14
+    const configuration = JSON.parse(validation?.metafield?.value ?? "{}");
+ 15
+ 16
+    const errors = cart.lines
+ 17
+      .reduce((acc, { quantity, merchandise }) => {
+ 18
+        if ("id" in merchandise) {
+ 19
+          const limit = configuration[merchandise.id] || Infinity;
+ 20
+          const title = merchandise.product.title;
+ 21
+ 22
+          if (quantity > limit) {
+ 23
+            acc.push({
+ 24
+              localizedMessage: `Not possible to order more than ${quantity} of ${title}`,
+ 25
+              target: "cart",
+ 26
+            })
+ 27
+          }
+ 28
+        }
+ 29
+ 30
+        return acc;
+ 31
+      }, [])
+ 32
+ 33
+    return {
+ 34
+      errors,
+ 35
+    };
+ 36 }
+ Next steps
+ Build a validation user interface using Admin UI extensions.
+ Learn how to use variables in your input query.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the metafield definition
+ Step 2: Configure the function
+ Next steps

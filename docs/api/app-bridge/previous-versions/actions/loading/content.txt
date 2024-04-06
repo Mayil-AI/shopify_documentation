@@ -1,0 +1,95 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Loading
+ Note
+ This is a legacy API. Use the latest version of Loading instead.
+ Use the loading action set to indicate to users that a page is loading or an upload is processing.
+ You can use the features action in the following ways:
+ Plain JavaScript
+ React component
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the Loading from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Loading} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ 5
+ 6 const loading = Loading.create(app);
+ Start loading
+ Dispatch the START loading action when loading new pages or starting asynchronous requests if there will be a noticeable delay in loading the content.
+ 1 loading.dispatch(Loading.Action.START);
+ Stop loading
+ After the loading action is complete, dispatch the STOP loading action.
+ 1 loading.dispatch(Loading.Action.STOP);
+ Subscribe to actions
+ You can subscribe to actions from the loading action set.
+ 1 loading.subscribe(Loading.Action.START, () => {
+ 2
+    // Do something when loading starts
+ 3 });
+ 4
+ 5 loading.subscribe(Loading.Action.STOP, () => {
+ 6
+    // Do something when loading stops
+ 7 });
+ Subscribe to all actions
+ You can subscribe to all loading actions, regardless of which action sets trigger the actions:
+ 1 app.subscribe(Loading.Action.START, () => {
+ 2
+    // Do something when loading starts
+ 3 });
+ 4
+ 5 app.subscribe(Loading.Action.STOP, () => {
+ 6
+    // Do something when loading stops
+ 7 });
+ React
+ The App Bridge React library provides a Loading component to indicate to users that a page is loading or an upload is processing. Render the Loading component if there will be a noticeable delay in loading the content.
+ Example code
+ Import the Loading component from @shopify/app-bridge-react.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ Note When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import React from 'react';
+ 2 import ReactDOM from 'react-dom';
+ 3 import {Provider, Loading} from '@shopify/app-bridge-react';
+ 4
+ 5 function MyApp() {
+ 6
+    // Some app logic will decide the state of loading.
+ 7
+    const loading = true;
+ 8
+ 9
+    // Conditionally rendering the `Loading` component is a common pattern.
+ 10
+    const loadingComponent = loading ? <Loading /> : null;
+ 11
+ 12
+    return (
+ 13
+      <Provider config={config}>
+ 14
+        {loadingComponent}
+ 15
+      </Provider>
+ 16
+    );
+ 17 }
+ 18
+ 19 const root = document.createElement('div');
+ 20 document.body.appendChild(root);
+ 21 ReactDOM.createRoot(root).render(<MyApp />);
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

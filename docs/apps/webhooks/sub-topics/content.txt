@@ -1,0 +1,30 @@
+App Store
+ Webhook sub-topics
+ Webhook sub-topics are an extra level of grouping available for some webhook topics. Sub-topics work with topics to enable delivery of a more specific and relevant stream of webhooks to your app.
+ How it works
+ When you subscribe to some webhook topics, your app can specify a sub-topic. Your app will then only receive webhooks for both the topic and sub-topic it subscribed to. Each topic uses its own scheme for allocating sub-topics. The following diagram illustrates the relationship between topics, sub-topics, webhooks, and subscriptions:
+ GraphQL mutations
+ Sub-topics are available in API version 2024-01 and higher. You can use the following GraphQL Admin API mutations to subscribe to a webhook with sub-topics:
+ webhookSubscriptionCreate
+ pubSubWebhookSubscriptionCreate
+ eventBridgeWebhookSubscriptionCreate
+ Topics with sub-topics
+ The following topics support sub-topics.
+ Metaobjects
+ Topics: metaobjects/create, metaobjects/update, metaobjects/delete
+ Sub-topics: Required
+ Scheme: Sub-topics map to metaobject definitions
+ Format: type:{type}, using the type of the metaobject definition
+ Considerations:
+ For app-owned metaobject definitions, you can't use the $app:{some-namespace} shorthand when specifying a sub-topic. Use the full type value, as it appears in query responses: app--{your-app-id}--{some-namespace}
+ Limitations
+ Sub-topics aren't supported in our webhook subscription REST API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ GraphQL mutations
+ Topics with sub-topics
+ Limitations
+ Updates & News
+ Developer changelog

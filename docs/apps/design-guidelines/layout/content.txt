@@ -1,0 +1,120 @@
+Design guidelines
+ Overview
+ App structure
+ Layout
+ Overview
+ Responsive layout grid
+ App Body width
+ Layout options
+ Spacing
+ Information density
+ Containers
+ Visual design
+ Content
+ Navigation
+ User experience
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Layout
+ Layout design is the process of arranging visual elements such as text, images, and shapes on a page.
+ Apps have a variety of available layouts. These layouts adapt the app body content to every screen size and device type. Selecting the proper layout for the task at hand will benefit your app's merchant experience.
+ Responsive layout grid
+ The Polaris Layout component provides built-in responsiveness. The following breakpoints are applied in the Shopify admin. Take these into into consideration when you build your app.
+ Breakpoint Minimum viewport size Maximum viewport size
+ xs 0 489px
+ sm 490px 767px
+ md 768px 1039px
+ lg 1040px 1399px
+ xl 1440px ∞
+ Must Do
+ Design your app to be responsive and adapt to different screen sizes and devices. This ensures a seamless user experience across various platforms.
+ App body width
+ The following table shows recommended sizes for the app body width.
+ The Polaris Page component is an easy way to align the app body with the rest of the Shopify admin and make it simpler to update layouts over time.
+ Breakpoint Default app body width Behavior
+ xs 0 – 489px Flexible, always full width
+ sm 442px – 719px Flexible, always full width
+ md 480px – 751px Flexible, always full width
+ lg 752px – 950px Flexible, then fixed width at 998px
+ xl 950px fixed Fixed width
+ Tip
+ Use a full-width page when merchants are dealing with lists of data that have many columns.
+ Full-width page
+ In some cases, it’s necessary to apply full width to the Polaris Page component. This includes single-column layouts with a high density of information in your app, such as product or order lists. Full-width pages only modify how the Page component is displayed in lg and xl breakpoints.
+ The following sections explain when to use the default or full-width Page component:
+ Layout options
+ The Polaris Layout component offers various layouts to match the complexity of your app.
+ Must Do
+ Keep your app aligned with the Shopify admin by using the Polaris Patterns for common layouts such as index pages and resource detail pages.
+ Single-column layout
+ The single-column layout enables merchants to scan content from top-to-bottom and focus on a single, obvious task.
+ Most often, an app’s homepage uses the single-column layout in a default-width page. However, if your app feels more like a dashboard, then you can also use the two-column equal width or three-column layout.
+ Must Do
+ Use a full-width page when merchants are dealing with lists of data that have many columns.
+ Do Not
+ Don’t use a single-column layout with a full-width page when you’re not dealing with lists of data. This makes the app feel out of place on larger displays. Apps should feel integrated with the Shopify admin.
+ Two-column layout
+ Two-column layouts include primary/secondary and equal-width.
+ Primary/secondary: Meant for complex editors where the primary column is used for parent content, and the secondary column is used for child content.
+ Equal-width: Meant for scanning information that has the same level of importance, like in a dashboard.
+ Must Do
+ Complex editors should use the two-column primary/secondary layout in a default-width page. This offers merchants a streamlined editing experience.
+ Do Not
+ Don’t use a two-column primary/secondary layout for your app home page and other pages that don’t require a parent/child relationship between different parts of the interface.
+ Must Do
+ If your app’s page behaves as a dashboard, then use a two-column equal width layout. Use a three-column layout for higher content density.
+ Do Not
+ Don’t use two-column layouts in full-width pages, because it makes your app’s content harder to parse on larger displays.
+ Annotated layout
+ Annotated layouts are the best choice for pages that are dense with settings.
+ Learn more about this layout in the Polaris App settings pattern.
+ Do Not
+ Don’t use annotated layouts for content that isn’t editable. Use a single-column layout instead.
+ Three-column layout
+ Three-column layouts are for complex pages only, like analytics content. Similar to two-column layouts, three-column layouts are used for scanning information that has the same level of importance.
+ Three-column layouts work well when merchants need to compare across related information types.
+ Must Do
+ Set three-column layouts in a full-width page when you’re using them for interfaces like dashboards and analytics.
+ Do Not
+ Don’t use three-column layouts to display unrelated content side by side, as it can confuse merchants. Use a single-column layout instead.
+ Spacing
+ Spacing helps your app maintain a pleasant experience by keeping interface components well-positioned with consistent visual rhythm.
+ For more information on spacing, visit the Polaris spacing guidelines.
+ The 4px spacing grid
+ The Shopify admin is built on a 4px spacing grid. Following this grid is a great way to offer a seamless app experience. You can use Polaris spacing tokens to achieve this.
+ Information density
+ The density of elements in a layout can greatly impact your app’s readability and usability.
+ Make your app efficient and easy to use by providing the right density at the right moment, for the right task.
+ Must Do
+ Use looser spacing for low-density layouts. Use tighter spacing for high-density layouts.
+ Do Not
+ Don't change information density within a single page, otherwise your app can feel disjointed.
+ Containers
+ Most of an app’s content exists in containers. Containers compartmentalize content and create a natural hierarchy between parts of an interface.
+ Must Do
+ Make the majority of your app’s content live in a container, such as a card. This creates visual structure and rhythm that helps merchants find information quickly.
+ Do Not
+ Don't place paragraphs of text directly on the background. This reduces legibility and makes scanning the page difficult for merchants.
+ Using cards
+ Cards structure your app’s content so that merchants can scan information easily. Cards act as containers and can be static or interactive.
+ The Polaris Card component provides an easy way to segment content, while still respecting Shopify’s App Design Guidelines.
+ Must Do
+ Place your app’s content in a card-like container a majority of the time. Complex components or images aren’t necessarily required to be in a container.
+ Must Do
+ Cards that offer interactivity, such as calls to action (CTAs) and buttons, should have at most one primary styled action.
+ Using tables
+ Tables are helpful for summarizing many object instances. Use the Polaris Data table component for relatively simple summaries, and the Index table when you have a lot of data to show.
+ Refer also to the Polaris Pattern for Resource index layout, when you are summarizing resource objects.
+ Must Do
+ Actions in tables must use secondary action styling, such as a text button, minor icon, or dropdown menu. Don't use primary style buttons in tables.
+ Your browser doesn't support this video.
+ Tip
+ Tables can easily become visually cluttered when there are many cells in a row. Reduce clutter in your table rows by revealing actions only when that row is hovered or in focus state.
+ Previous
+ App structure
+ Next
+ Visual design
+ Was this page helpful?
+ YesNo

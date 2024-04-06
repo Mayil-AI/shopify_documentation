@@ -1,0 +1,140 @@
+Product recommendations
+ Media and images
+ Overview
+ Support product media
+ Product media UX guidelines
+ Theme Store
+ Product media UX guidelines
+ The following are the main user experience (UX), and user interface (UI), aspects to consider with product media:
+ Badges and buttons
+ 3D model viewers
+ Video players
+ Slideshows
+ Badges and buttons
+ Both video and 3D model media displays should have the following included in their display, with each associated element, respectively:
+ A play or 3D icon badge on the media thumbnail
+ A play or 3D icon button control on the featured media
+ 3D model media displays should also include a View in your space button.
+ For example:
+ When adding these badges and buttons you should consider the following:
+ The icons to use
+ Their placement and sizing
+ Their styling
+ The 'View in your space' button
+ When including the View in your space button, you should consider the following:
+ If the button is being placed on top of the media display, then you need to ensure that video and 3D controls aren't obstructed.
+ Only show the button for devices that support AR. Supporting devices will run iOS version 13 or higher, or Android version 9 or higher.
+ If a product's media includes a 3D model, and that media should be displayed, then the button should be visible regardless of the currently displayed media type. Additionally, if the product has more than one 3D model, then the button should open the currently visible model, or the first model if none are currently visible.
+ The button should include the 3D icon.
+ The button should only be placed below the featured media. For example:
+ Tip
+ To learn more about how to create a View in your space button, refer to Support product media.
+ Icons
+ Click the button below to download an asset library that includes icons for video and 3D model displays. You should use the icons from this library, rather than create custom icons as they're industry standards that will help customers more easily identify the available interaction.
+ Download product media assets
+ The icons come in two different styles:
+ Rounded
+ Angular
+ You should only use one style, and it should match your theme's style.
+ Badge placement and sizing
+ The placement, and sizing, of the display varies depending whether it's for a thumbnail badge, or a featured button control.
+ Thumbnail badge
+ Thumbnail badges should adhere to the following guidelines:
+ They shouldn't occupy more than 1/9th of the thumbnail display, or 1/6th for landscape thumbnails, and shouldn't be smaller than 20px x 20px. For example:
+ They can be aligned in any corner of the thumbnail, however should be uniformly aligned. For example:
+ Featured button control
+ Featured button controls should be a minimum of 60px x 60px, and maximum of 90px x 90px.
+ Styling
+ The styling of the badges and buttons should adhere to the following guidelines:
+ You should maintain the whitespace around the badge and button icons, as well as their proportions. For example:
+ The background of both badges, and buttons, can be modified to match your theme style. For example, a circle, rounded corners, etc. For example:
+ You should use existing colour settings to style the badges and buttons. There should be a high contrast between the background and the icon, as well as the media and the background, so settings for "Main background", "Heading", or "Text" generally give the best results. For example:
+ The opacity of the badge elements should vary depending on the element. Refer to Thumbnail badge opacity and Featured button control opacity to learn more.
+ In addition to the above, the View in your space button should either have no background color, or a very neutral color, so that it doesn't compete with primary and secondary calls to action. For example:
+ Thumbnail badge opacity
+ The thumbnail badge elements should adhere to the following opacity guidelines:
+ The icon opacity should be 60%.
+ The badge background opacity should be 100%.
+ The badge background should have a border that is at least 5% opacity of the icon's colour.
+ For example:
+ Featured button control opacity
+ The featured badge elements should adhere to the following opacity guidelines:
+ The icon opacity should be 100%.
+ The icon should persist on hover to maintain visibility.
+ The badge background opacity should be a minimum of 75%.
+ The badge background should have a border that is at least 5% opacity of the icon's colour.
+ For example:
+ 3D model viewers
+ There are the following aspects to consider with 3D model viewers:
+ The general behavior
+ Accessibility
+ The display elements
+ Focus order
+ Accessibility
+ You should consider the following accessibility guidelines:
+ 3D model content should default to inactive on page load as it can be unexpected, overwhelming, and distracting when defaulted to active.
+ 3D models should allow for panning with only the keyboard, in addition to mouse and swipe gestures.
+ Add dedicated button controls, with appropriate labels, to control the model positioning.
+ Ensure keyboard focus states are visible for sighted keyboard-only or voice dictation users.
+ Refrain from shifting keyboard focus when interacting with a button control so customers can navigate away when they're ready.
+ Allow for text descriptions of models for each stage view.
+ Announce the current state of the model via ARIA live status element when button controls are interacted with.
+ Test your implementation with a variety of assistive technologies. For example, keyboard alone, and multiple screen readers.
+ Display elements
+ 3D model viewers should have the following display elements:
+ 3D model viewer controls
+ 3D model viewer progress bar
+ 3D model viewer controls
+ These controls should follow the badge and button styling suggestions, however the icons can be set to a minimum of 55% opacity. For example:
+ These controls should be placed in the bottom right corner of the media element, either with even, or no padding:
+ You should keep visual consistency among all UI elements, so the corners of the control display shouldn't be rounded unless the icons and buttons in the theme are also rounded. For example:
+ 3D model viewer progress bar
+ The progress bar is to show the load progress of the model. Similar to the controls, the progress bar should following the badge and button styling practices, however it should have 100% opacity, and should be placed at the top of the media element.
+ For example:
+ Focus order
+ In order to facilitate keyboard interaction, 3D model viewers should have a specific focus order on the related elements. There are two main states to consider:
+ Inactive
+ Active
+ Inactive
+ When the viewer is inactive, the focus order should be as follows:
+ Viewer controls
+ Active
+ When the viewer is active, the focus order should be as follows:
+ Viewer container
+ Zoom in
+ Zoom out
+ Fullscreen
+ Video players
+ There are the following aspects to consider with video players:
+ The general behavior
+ Accessibility
+ Styling and placement
+ Accessibility
+ Video content should default to paused on page load as it can be unexpected, overwhelming, and distracting when defaulted to playing.
+ If a video plays on page load, it should be muted by default.
+ Test your implementation with a variety of assistive technologies. For example, keyboard alone, and multiple screen readers.
+ Styling and placement
+ In addition to the badge and button styling suggestions, video players should adhere to the following:
+ They should be placed at the bottom of the featured media, either with even, or no padding:
+ If the theme uses custom focus states, then you should maintain consistency. Otherwise, the default browser focus state should be used.
+ You should keep visual consistency among all UI elements, so the corners of the control display shouldn't be rounded unless the icons and buttons in the theme are also rounded. For example:
+ General behavior
+ Note
+ The following uses the terms "active" and "inactive". In the context of videos, this would be equivalent to "playing" and "paused".
+ In general, video players and 3D model viewers should be set to inactive while advancing through media galleries as videos and models that aren't visible shouldn't be active.
+ If more than one media element is displaying at a time, then all media should be inactive by default, requiring the customer to initiate activity. If only one media element is visible at once, then you should adhere to the following:
+ Desktop - The first media element on page load should be set to inactive, however as the media changes, the current media should automatically be set to active.
+ Tablet/Mobile - All media elements should default to inactive, requiring the customer to initiate activity.
+ Slideshows
+ If your theme uses a slideshow media gallery, then you shouldn't rely solely on swipe gestures for navigation as video players and 3D model viewers can interfere. For example:
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Badges and buttons
+ 3D model viewers
+ Video players
+ General behavior
+ Slideshows
+ Updates & News
+ Developer changelog
+ Partner blog

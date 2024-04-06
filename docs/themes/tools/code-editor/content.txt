@@ -1,0 +1,65 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ The code editor
+ The code editor is a page in the Shopify admin that lets merchants view and edit the code for their themes.
+ Tip
+ If you need to make significant changes to your theme code, then you should consider using a local IDE like Visual Studio Code. When you edit your theme locally, you can use tools like Shopify CLI and Theme Check to make the development process easier.
+ Accessing the code editor
+ Desktop
+ iPhone
+ Android
+ From your Shopify admin, go to Online Store > Themes.
+ Find the theme that you want to edit, and then click ... > Edit code.
+ Navigating the code editor
+ The code editor shows a directory of theme files on the left, and a space to view and edit the files on the right. When you click a file in the directory on the left, it opens in the code editor. You can open and edit multiple files at once.
+ You can also use the search bar to find specific files. Typing a keyword into the Search files... field filters the list of theme files.
+ Menu options
+ You can access options to customize your theme and request expert theme help from the overflow menu. You can also click Preview store to preview your code changes on your store.
+ Adding theme files
+ You can add theme files by opening the relevant folder, and clicking Add a new {file type}. A modal opens with different options, depending on the type of file you're creating.
+ Updating theme files
+ Any files that you update will show a dot next to the file name, which helps you to keep track of where you have made changes.
+ Tip
+ You can use the cmd + S keyboard shortcut to save changes in a file.
+ Renaming files
+ To rename a file, select the file that you want to rename and click the pencil icon.
+ Autocompletion
+ To help you code faster, the code editor includes autocompletion functionality for Liquid objects, filters, and tags.
+ The code editor also automatically closes any HTML tags that you specify, which helps you avoid syntax errors.
+ Highlighting
+ If you highlight a term in the code editor, then every instance of the same term is also automatically highlighted. This helps you identify any changes that you might need to make in the file.
+ Search and replace
+ You can use the cmd + F keyboard shortcut to search the text of an open file, and then replace text in the file.
+ Version control
+ The code editor supports version control for theme files. If you want to revert any changes to a file after you click Save, then open the file and click Current. A drop-down menu shows the date and time for each save that you've made to the file.
+ Select the version that you want to revert to, and then click Save.
+ Deleting theme files
+ To permanently delete a file, select the file that you want to remove and click the trash icon.
+ Formatting theme code
+ The code editor offers code formatting on demand or automatically on save. Powered by Prettier, we offer this feature for all files with the following extensions: liquid, json, js, css.
+ Note
+ This feature is available in the code editor to all user uploaded themes, including themes that are uploaded through the admin interface, the CLI or through the GitHub integration.
+ Formatting code on demand
+ To format your code on demand, click the format button. It will automatically show up on all files eligible for formatting and the changes will happen instantly. Formatting on demand does not save your changes.
+ Automatically formatting code on save
+ To automatically format your code on save, check the checkbox in the format dropdown. With this setting enabled, each time you save your code changes, the code editor will automatically format your contents before saving.
+ These settings are unique between each of the supported file types (liquid, json, js, css). This allows you to pick and choose when and where to automatically format your theme code.
+ Reviewing code
+ The code editor implements a limited version of the Theme Check linter for Liquid and JSON files to help identify errors and enforce Shopify theme and Liquid best practices.
+ In the code editor, Theme Check can identify the following errors in edited code:
+ Parser-blocking scripts, which can slow down storefronts
+ Inconsistencies between translation files, such as missing translation keys or translations that don't match in a locale file
+ Missing templates
+ Errors are indicated by a red line underneath the code. To view the error, hover your cursor over the highlighted line.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Accessing the code editor
+ Navigating the code editor
+ Adding theme files
+ Updating theme files
+ Deleting theme files
+ Formatting theme code
+ Reviewing code
+ Updates & News

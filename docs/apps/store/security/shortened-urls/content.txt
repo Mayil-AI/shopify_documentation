@@ -1,0 +1,10 @@
+Secure tokens
+ Shortened URLs
+ Using shortened URLs
+ URL shortening is a technique in which a long URL is shortened, usually by creating a shorter URL that will redirect to the long URL. This technique is commonly used to make a link more visually appealing or to hide the address. However, URL shortening is vulnerable to brute-force attacks. This means that attackers can programmatically enumerate on the set of possible shortened URLs, and access any valid URLs from the set.
+ To ensure the security of Shopify merchant data, you should use high-entropy, non-guessable URLs at all times whether handling confidential or non-confidential data.
+ If your app generates URLs that might hold confidential information, then you shouldn't use techniques to shorten the URL. This applies to any URLs that could pose a risk if compromised, including but not limited to:
+ Checkout URLs
+ Order URLs
+ Other URLs that might include secret tokens or PII
+ Was this page helpful?

@@ -1,0 +1,75 @@
+Delivery Customization API
+ Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ DeliveryCustomization
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ HideOperation
+ Language
+ Localization
+ LocalTime
+ MailingAddress
+ Market
+ MarketRegionCountry
+ Metafield
+ MoneyV2
+ MoveOperation
+ Operation
+ Product
+ ProductVariant
+ PurchasingCompany
+ RenameOperation
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ Shop
+ INTERFACES
+ HasGates
+ DeliveryMethod
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Operation object
+ 2024-04 latest
+ An operation to apply to the list of delivery options.
+ Fields
+ hide (HideOperation)
+ Request to hide a delivery option.
+ move (MoveOperation)
+ Request to move a delivery option to a new index.
+ rename (RenameOperation)
+ Request to rename a delivery option.
+ Was this page helpful?
+ YesNo

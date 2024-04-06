@@ -1,0 +1,105 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Banner
+ A banner informs merchants about important changes or persistent conditions. Use if you need to communicate to merchants in a prominent way, without blocking other actions.
+ Example
+ JavaScript
+ React
+ 1 import { extend, Banner, Screen, ScrollView, Tile } from "@shopify/retail-ui-extensions";
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'My app',
+ 6
+      enabled: true,
+ 7
+      onPress: () => {
+ 8
+        api.smartGrid.presentModal();
+ 9
+      },
+ 10
+    };
+ 11
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+ 14
+    root.appendChild(tile);
+ 15
+    root.mount();
+ 16 });
+ 17
+ 18 extend('pos.home.modal.render', (root) => {
+ 19
+    const screen = root.createComponent(Screen, {title: 'title', name: 'default'});
+ 20
+    const scrollView = root.createComponent(ScrollView);
+ 21
+ 22
+    scrollView.appendChild(root.createComponent(
+ 23
+      Banner,
+ 24
+      {title: 'Information Banner', variant: 'information', action: 'Ok', visible: true}
+ 25
+    ));
+ 26
+ 27
+    scrollView.appendChild(root.createComponent(
+ 28
+      Banner,
+ 29
+      {title: 'Confirmation Banner', variant: 'confirmation', visible: true}
+ 30
+    ));
+ 31
+ 32
+    scrollView.appendChild(root.createComponent(
+ 33
+      Banner,
+ 34
+      {title: 'Alert Banner', variant: 'alert', visible: true}
+ 35
+    ));
+ 36
+ 37
+    scrollView.appendChild(root.createComponent(
+ 38
+      Banner,
+ 39
+      {title: 'Error Banner', variant: 'error', visible: true}
+ 40
+    ));
+ 41
+ 42
+    screen.appendChild(scrollView);
+ 43
+    root.appendChild(screen);
+ 44
+    root.mount();
+ 45 });
+ Props
+ Name Type Description Options
+ title string The text displayed inside the banner.
+ variant BannerVariant? Determines the banner's appearance. information: Use to provide information.
+ 
+ confirmation: Use to indicate success.
+ 
+ alert: Use to indicate a warning.
+ 
+ error: Use to indicate an error.
+ action string? Overwrite the action text. Defaults to "Dismiss".
+ onPress () => void? Overwrite the default onPress. Defaults to dismissing the banner.
+ visible boolean Determines the banner's visibility.
+ Guidelines
+ Use when needing to communicate to merchants in a way that is persistent but non-interruptive.
+ Only one banner should be visible at a time.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example

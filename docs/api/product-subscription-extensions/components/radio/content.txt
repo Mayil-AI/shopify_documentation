@@ -1,0 +1,65 @@
+TextField
+ Thumbnail
+ Radio
+ Radio allows merchants to choose a single item from a list.
+ JavaScript
+ React
+ 1 import {extend, Radio} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const radio1 = root.createComponent(Radio, {
+ 5
+      label: 'Option 1',
+ 6
+      helpText: 'Help text for option 1.',
+ 7
+      checked: true,
+ 8
+      id: 'option1',
+ 9
+      name: 'greatOptions',
+ 10
+      onChange: () => console.log('Option 1 selected'),
+ 11
+    });
+ 12
+ 13
+    const radio2 = root.createComponent(Radio, {
+ 14
+      label: 'Option 2',
+ 15
+      helpText: 'Help text for option 2.',
+ 16
+      id: 'option2',
+ 17
+      name: 'greatOptions',
+ 18
+      checked: false,
+ 19
+      onChange: () => console.log('Option 2 selected'),
+ 20
+    });
+ 21
+ 22
+    root.appendChild(radio1);
+ 23
+    root.appendChild(radio2);
+ 24
+    root.mount();
+ 25 });
+ Props
+ optional = ?
+ Name Type Description
+ label? string Label for the radio button.
+ helpText? string Additional text to aid in use.
+ checked? boolean Radio button is selected.
+ id? string Unique ID for radio button.
+ name string Use name to group radio buttons together by giving them the same name.
+ value? string Value of selected input on selected
+ onChange? (newValue: string) => void Callback when the radio button is toggled.
+ ✅ Do 🛑 Don't
+ Use Radio to give merchants a single select choice Horizontally stack Radio options
+ Vertically align Radio options
+ For more guidelines, refer to Polaris' Radio button best practices.
+ Was this page helpful?

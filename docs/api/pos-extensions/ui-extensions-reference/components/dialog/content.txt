@@ -1,0 +1,55 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Dialog
+ A dialog is a high-priority, intentionally disruptive message that requires action from the merchant before they can continue using POS.
+ Props
+ Name Type Description
+ title string The text displayed in the title of the dialog.
+ content string? The text displayed in the body of the dialog.
+ actionText string The text displayed in the primary action button of the dialog.
+ secondaryActionText string? The text displayed in the secondary action section of the dialog.
+ showSecondaryAction boolean? Whether a secondary action displays.
+ type? "default" | "alert" | "error" | "destructive" Determines the dialog’s appearance and function:
+ 
+ default: The bar at top of dialog appears blue. Use for non-errors, to inform the merchant and ask for acknowledgement.
+ 
+ alert: The bar at top of dialog appears yellow. Use to notify merchants about anticipated issues or unintended consequences.
+ 
+ error: The bar at top of dialog appears red. Use to communicate critical issues that the merchant needs to resolve right away.
+ 
+ destructive: The primary button text appears red. Use for actions that will delete information, or actions that aren’t easily reversible.
+ onAction () => void A callback that performs when the action is triggered.
+ onSecondaryAction (() => void)? A callback that is executed when the secondary action is triggered.
+ isVisible boolean Whether the dialog should be presented.
+ Guidelines
+ A dialog appears on top of the view the merchant is currently looking at.
+ When a dialog appears, the merchant can only interact with the buttons in the dialog and nothing else in the view.
+ A scrim is used to dim the UI in the background, using the surfaceBackground color set to 60% transparency.
+ Dialogs always include at least one action, two actions at most.
+ Buttons in dialogs work best when stacked to accommodate for longer translated content.
+ When buttons are displayed side-by-side, the primary action is on the right. When buttons are stacked, the primary action is at the top.
+ For buttons that initiate irreversible actions, the text should be displayed in "destructive" (red) state.
+ Content guidelines
+ For confirmation dialogs, the header should be formed as a question that re-emphasizes the action being taken. Don't write: "Are you sure?"
+ ✅ Log out of Shopify POS?
+ ❌ Are you sure you want to log out of Shopify POS?
+ ❌ You’re about to log out of Shopify POS
+ For confirmation dialogs, the primary button should clearly confirm the action while the secondary button should cancel the action with "Cancel":
+ ✅ [Primary button] Log out
+ ❌ [Primary button] Yes
+ For errors, the header should clearly communicate the problem rather than the solution (use the body and button to communicate the solution):
+ ✅ [Header] Transaction declined
+ ❌ [Header] Retry transaction
+ For informational dialogs where there's no action for the merchant to take but to acknowledge the message, the sole button should be "OK":
+ ✅ [Button] OK
+ ❌ [Button] Understood
+ ❌ [Button] Dismiss
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines
+ Updates & News

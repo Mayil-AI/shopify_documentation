@@ -1,0 +1,1360 @@
+Product description
+ Cart and checkout
+ Onboard merchants
+ Overview
+ Eligibility requirements
+ Post checkout
+ Adding shop eligibility requirements
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ You have a basic channel app that you created. You want shops to meet specific requirements before merchants can sell products on your marketplace. You also want to provide merchants with feedback for how they can meet your marketplace requirements and start selling.
+ After the initial requirements check when merchants install your channel app, you want to check whether any required changes have been made. For example, if you reject a shop for not having a privacy policy, and the merchant subsequently adds one, then you should mark the shop as approved. To do so, you can subscribe to specific webhooks.
+ In this tutorial, you'll add the following requirement checks to your channel app:
+ The shop must have an online store.
+ The shop must ship to Canada.
+ The shop must support CAD.
+ The shop must have refund and privacy policies.
+ You'll also use the GraphQL Admin API's ResourceFeedback object to surface a warning banner on a merchant's homepage, indicating that the merchant doesn't meet the marketplace’s requirements.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Add handlers to retrieve requirements data
+ Check and store whether a shop meets marketplace requirements
+ Add webhook handlers for updates to shop data regarding the requirements
+ Requirements
+ You've completed the Getting started tutorials.
+ Access scopes
+ Your channel app requires the following access scopes:
+ read_shipping
+ read_legal_policies
+ write_resource_feedbacks
+ Step 1: Add handlers to interact with the Admin API
+ After you've determined the requirements to enforce, you can create various handlers to retrieve the data from the GraphQL Admin API. You'll also add the access scopes required to query the data
+ In your .env file, add the read_shipping, read_legal_policies, and write_resource_feedbacks access scopes.
+ Since the app is already installed on your development store, ensure that you visit the authentication URL that was logged when you ran the Shopify CLI serve command.
+ In server/handlers/rest, create a file called get-shop-configuration.js.
+ In server/handlers/rest/get-shop-configuration.js, query the REST Admin API's Shop resource.
+ The code requests the shop and presentment currencies and whether the shop has an online storefront. The return also provides other shop data that might be useful for your requirements checks.
+ server/handlers/rest/get-shop-configuration.js
+ 1 import {callShopifyRestAPI, HTTP_GET_METHOD} from '../client';
+ 2
+ 3 export const getShopConfiguration = async (shop, token) => {
+ 4
+    const resp = await callShopifyRestAPI(shop, token, HTTP_GET_METHOD, 'shop');
+ 5
+ 6
+    return resp.body.shop;
+ 7 };
+ In server/handlers/queries, create a file called get-shop-shipping-countries.js.
+ In server/handlers/queries/get-shop-shipping-countries.js, query the GraphQL Admin API's shop field for a list of countries that the shop ships to.
+ server/handlers/queries/get-shop-shipping-countries.js
+ 1 import {callShopifyGraphqlAPI} from '../client';
+ 2
+ 3 const SHOP_SHIPPING_COUNTRIES = `
+ 4 query {
+ 5
+      shop {
+ 6
+        shipsToCountries
+ 7
+      }
+ 8
+    }
+ 9 `;
+ 10
+ 11 export const getShopShippingCountries = async (shop, token) => {
+ 12
+    const resp = await callShopifyGraphqlAPI(shop, token, {
+ 13
+      query: SHOP_SHIPPING_COUNTRIES,
+ 14
+    });
+ 15
+    return resp.body.data.shop.shipsToCountries;
+ 16 };
+ In server/handlers/queries, create a file called get-shop-policy-types.js.
+ In server/handlers/queries/get-shop-policy-types.js, query the GraphQL Admin API's ShopPolicyType object to retrieve a list of the shop's available policy types.
+ server/handlers/queries/get-shop-policy-types.js
+ 1 import {callShopifyGraphqlAPI} from '../client';
+ 2
+ 3 const SHOP_POLICY_TYPES = `
+ 4
+    query {
+ 5
+      shop {
+ 6
+        shopPolicies {
+ 7
+          type
+ 8
+          body
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 `;
+ 13
+ 14 export const getShopPolicyTypes = async (shop, token) => {
+ 15
+    const resp = await callShopifyGraphqlAPI(shop, token, {
+ 16
+      query: SHOP_POLICY_TYPES,
+ 17
+    });
+ 18
+ 19
+    return resp.body.data.shop.shopPolicies.reduce((arr, {type, body}) => {
+ 20
+      if (body.length > 0) {
+ 21
+        arr.push(type);
+ 22
+      }
+ 23
+      return arr;
+ 24
+    }, []);
+ 25 };
+ In server/handlers/rest, create a file called post-resource-feedback.js.
+ In server/handlers/rest/post-resource-feedback.js, accept an object with the resource feedback data, and send it in a POST request to the ResourceFeedback resource.
+ server/handlers/rest/post-resource-feedback.js
+ 1 import {DataType} from '@shopify/shopify-api';
+ 2 import {callShopifyRestAPI, HTTP_POST_METHOD} from '../client';
+ 3
+ 4 export const postResourceFeedback = async (shop, token, feedbackData) => {
+ 5
+    const resp = await callShopifyRestAPI(
+ 6
+      shop,
+ 7
+      token,
+ 8
+      HTTP_POST_METHOD,
+ 9
+      'resource_feedback',
+ 10
+      {
+ 11
+        resource_feedback: {
+ 12
+          ...feedbackData,
+ 13
+          feedback_generated_at: new Date().toISOString(),
+ 14
+        },
+ 15
+      },
+ 16
+      DataType.JSON,
+ 17
+    );
+ 18
+ 19
+    return resp.body.shop;
+ 20 };
+ Update server/handlers/index.js to export the new function from the handlers module.
+ server/handlers/index.js
+ 1 // ...
+ 2 import {getShopConfiguration} from './rest/get-shop-configuration';
+ 3 import {getShopShippingCountries} from './queries/get-shop-shipping-countries';
+ 4 import {getShopPolicyTypes} from './queries/get-shop-policy-types';
+ 5 import {postResourceFeedback} from './rest/post-resource-feedback';
+ 6
+ 7 export {
+ 8
+    // ...
+ 9
+    getShopConfiguration,
+ 10
+    getShopShippingCountries,
+ 11
+    getShopPolicyTypes,
+ 12
+    postResourceFeedback,
+ 13 };
+ Step 2: Add a requirements check when the channel app is installed
+ After you've set the handlers to pull all shop data relevant to your marketplace requirements, and you've set the handler to submit resource feedback, you can add a requirements check when the merchant installs your channel app and store the shop's eligibility in your database.
+ Create a new sequelize migration that adds a new column to your Shop data model to track whether the marketplace requirements are met.
+ Terminal
+ $ npx sequelize migration:create --name add-shop-requirements
+ The command creates a new file in your channel app's /migrations folder named {TIMESTAMP}-add-shop-requirements.js.
+ Update the migration file to add a new column to your Shops data table.
+ migrations/{TIMESTAMP}-add-shop-requirements.js
+ 1 'use strict';
+ 2 module.exports = {
+ 3
+    up: async (queryInterface, Sequelize) => {
+ 4
+      await queryInterface.addColumn('Shops', 'meetsRequirements', {
+ 5
+        type: Sequelize.BOOLEAN,
+ 6
+        defaultValue: false,
+ 7
+        allowNull: false,
+ 8
+      });
+ 9
+    },
+ 10
+ 11
+    down: async (queryInterface) => {
+ 12
+      await queryInterface.removeColumn('Shops', 'meetsRequirements');
+ 13
+    },
+ 14 };
+ Add the new attribute to your Shop data model.
+ models/shop.js
+ 1 // ...
+ 2 module.exports = (sequelize, DataTypes) => {
+ 3
+    // ...
+ 4
+    Shop.init(
+ 5
+      {
+ 6
+        // ...
+ 7
+        meetsRequirements: DataTypes.BOOLEAN,
+ 8
+      },
+ 9
+      // ...
+ 10
+    );
+ 11
+    return Shop;
+ 12 };
+ Run the migration to write the changes to your database.
+ Terminal
+ $ npx sequelize db:migrate
+ In server/helpers.js, create a function that accepts all fields required for the requirements check and returns whether the shop is approved.
+ You'll also create separate functions for the more complex checks, which will be useful when adding the checklist to your channel app's UI.
+ server/helpers.js
+ 1 // ...
+ 2 export function isShopCurrencyApproved(enabledPresentmentCurrencies) {
+ 3
+    return enabledPresentmentCurrencies.includes('CAD');
+ 4 }
+ 5 export function isShopShippingApproved(shipsToCountries) {
+ 6
+    return shipsToCountries.includes('CA');
+ 7 }
+ 8 export function isShopPolicyApproved(policyTypes) {
+ 9
+    return (
+ 10
+      policyTypes.includes('REFUND_POLICY') &&
+ 11
+      policyTypes.includes('PRIVACY_POLICY')
+ 12
+    );
+ 13 }
+ 14 export function isShopApproved(
+ 15
+    hasStorefront,
+ 16
+    enabledPresentmentCurrencies,
+ 17
+    shipsToCountries,
+ 18
+    policyTypes,
+ 19 ) {
+ 20
+    return (
+ 21
+      hasStorefront &&
+ 22
+      isShopCurrencyApproved(enabledPresentmentCurrencies) &&
+ 23
+      isShopShippingApproved(shipsToCountries) &&
+ 24
+      isShopPolicyApproved(policyTypes)
+ 25
+    );
+ 26 }
+ Create a function that accepts whether the requirements are met and writes resource feedback with the appropriate state and message using the handler that you created.
+ server/helpers.js
+ 1 import {postResourceFeedback} from './handlers';
+ 2 // ...
+ 3
+ 4 export async function handleResourceFeedback(
+ 5
+    shop,
+ 6
+    accessToken,
+ 7
+    meetsRequirements,
+ 8 ) {
+ 9
+    const feedbackData = meetsRequirements
+ 10
+      ? {state: 'success'}
+ 11
+      : {
+ 12
+          state: 'requires_action',
+ 13
+          messages: [
+ 14
+            "has noticed that your store doesn't meet its requirements.",
+ 15
+          ],
+ 16
+        };
+ 17
+ 18
+    await postResourceFeedback(shop, accessToken, feedbackData);
+ 19 }
+ In server/index.js, update the /auth/callback handler to get the shop details using the handlers that you created.
+ You'll then use the helper methods that you created to write resource feedback to the shop based on whether it meets the eligibility requirements.
+ You'll also save whether the shop meets the requirements in your database using the meetsRequirements field that you created.
+ server/index.js
+ 1 import {
+ 2
+    getShopConfiguration,
+ 3
+    getShopPolicyTypes,
+ 4
+    getShopShippingCountries,
+ 5 } from './handlers';
+ 6 import {handleResourceFeedback, isShopApproved} from './helpers';
+ 7 // ...
+ 8
+ 9 async function startServer() {
+ 10
+    // ...
+ 11
+ 12
+    app.get('/auth/callback', async (req, res) => {
+ 13
+      // ...
+ 14
+ 15
+      const {accessToken, shop} = session;
+ 16
+ 17
+      const storefrontAccessToken = await getOrCreateStorefrontAccessToken(
+ 18
+        shop,
+ 19
+        accessToken,
+ 20
+      );
+ 21
+ 22
+      const {
+ 23
+        name,
+ 24
+        billingAddress: {country},
+ 25
+      } = await getShopDetails(shop, accessToken);
+ 26
+ 27
+      const {has_storefront, enabled_presentment_currencies} =
+ 28
+        await getShopConfiguration(shop, accessToken);
+ 29
+      const shipsToCountries = await getShopShippingCountries(
+ 30
+        shop,
+ 31
+        accessToken,
+ 32
+      );
+ 33
+      const policyTypes = await getShopPolicyTypes(shop, accessToken);
+ 34
+      const meetsRequirements = isShopApproved(
+ 35
+        has_storefront,
+ 36
+        enabled_presentment_currencies,
+ 37
+        shipsToCountries,
+ 38
+        policyTypes,
+ 39
+      );
+ 40
+      handleResourceFeedback(shop, accessToken, meetsRequirements);
+ 41
+ 42
+      const shopData = {
+ 43
+        domain: shop,
+ 44
+        storefrontAccessToken,
+ 45
+        name,
+ 46
+        country,
+ 47
+        meetsRequirements,
+ 48
+      };
+ 49
+      try {
+ 50
+        await db.Shop.upsert(shopData);
+ 51
+      } catch (err) {
+ 52
+        console.log('Failed to add shop to db', err);
+ 53
+      }
+ 54
+      // ...
+ 55
+    }
+ 56
+    // ...
+ 57 }
+ If the channel app is installed on a shop that doesn't meet the requirements, then the resource feedback banner should display on the shop’s admin homepage. In these cases, the shop shouldn't display on your marketplace homepage.
+ Step 3: Add shop update webhook handlers
+ Your app is already subscribed to the SHOP_UPDATE webhook topic, to ensure that the shop name stored in your database stays in sync with the shop name that merchants have in their Shopify admin. This webhook is also triggered when merchants have either added or removed their online stores, changed their presentment currencies, or updated their shop policies. You can update the handler to also run the requirements check and write resource feedback accordingly.
+ In server/handlers/webhooks/shop-update.js update the handleShopUpdate function to fetch the relevant data using the handlers that you created and write resource feedback.
+ The webhook body already contains some of the information you need, so you don’t need to fetch the shop’s configuration.
+ You can also update whether the shop meets the requirements in your database by updating the meetsRequirements field.
+ server/handlers/webhooks/shop-update.js
+ 1 import Shopify from '@shopify/shopify-api';
+ 2 import {getShopPolicyTypes, getShopShippingCountries} from '..';
+ 3 import {handleResourceFeedback, isShopApproved} from '../../helpers';
+ 4 import db from '../../../models';
+ 5
+ 6 export const handleShopUpdate = async (shop, body) => {
+ 7
+    const {name, has_storefront, enabled_presentment_currencies} =
+ 8
+      JSON.parse(body);
+ 9
+    const {accessToken} = await Shopify.Utils.loadOfflineSession(shop);
+ 10
+    const shipsToCountries = await getShopShippingCountries(shop, accessToken);
+ 11
+    const policyTypes = await getShopPolicyTypes(shop, accessToken);
+ 12
+ 13
+    const meetsRequirements = isShopApproved(
+ 14
+      has_storefront,
+ 15
+      enabled_presentment_currencies,
+ 16
+      shipsToCountries,
+ 17
+      policyTypes,
+ 18
+    );
+ 19
+ 20
+    await handleResourceFeedback(shop, accessToken, meetsRequirements);
+ 21
+ 22
+    const shopData = {
+ 23
+      name,
+ 24
+      meetsRequirements,
+ 25
+    };
+ 26
+ 27
+    try {
+ 28
+      await db.Shop.update(shopData, {where: {domain: shop}});
+ 29
+    } catch (err) {
+ 30
+      console.error('Failed to update shop in db', err);
+ 31
+    }
+ 32 };
+ Step 4: Add shipping profile webhook handlers
+ You also need to handle changes to the shop's shipping countries using webhooks, which will be triggered when a shop makes changes to their shipping profiles. Changes to shipping profiles can impact the shop's shipping countries.
+ You'll subscribe to the following profile-related webhooks:
+ PROFILES_CREATE
+ PROFILES_UPDATE
+ PROFILES_DELETE
+ Since there are a few webhooks, you'll create a new handler for shipping profile updates.
+ In the server/handlers/webhooks folder, create a shipping-profile.js file.
+ In server/handlers/webhooks/shipping-profile.js, export a function that will fetch the requirement-related shop data, and write the appropriate resource feedback.
+ You'll also update whether the shop meets the requirements in your database by updating the meetsRequirements field.
+ server/handlers/webhooks/shipping-profile.js
+ 1 import Shopify from '@shopify/shopify-api';
+ 2 import {
+ 3
+    getShopConfiguration,
+ 4
+    getShopPolicyTypes,
+ 5
+    getShopShippingCountries,
+ 6 } from '..';
+ 7 import db from '../../../models';
+ 8 import {handleResourceFeedback, isShopApproved} from '../../helpers';
+ 9
+ 10 export const handleShippingProfileUpdate = async (shop) => {
+ 11
+    const {accessToken} = await Shopify.Utils.loadOfflineSession(shop);
+ 12
+ 13
+    const {has_storefront, enabled_presentment_currencies} =
+ 14
+      await getShopConfiguration(shop, accessToken);
+ 15
+    const shipsToCountries = await getShopShippingCountries(shop, accessToken);
+ 16
+    const policyTypes = await getShopPolicyTypes(shop, accessToken);
+ 17
+ 18
+    const meetsRequirements = isShopApproved(
+ 19
+      has_storefront,
+ 20
+      enabled_presentment_currencies,
+ 21
+      shipsToCountries,
+ 22
+      policyTypes,
+ 23
+    );
+ 24
+ 25
+    await handleResourceFeedback(shop, accessToken, meetsRequirements);
+ 26
+ 27
+    try {
+ 28
+      await db.Shop.update({meetsRequirements}, {where: {domain: shop}});
+ 29
+    } catch (err) {
+ 30
+      console.error('Failed to update shop in db', err);
+ 31
+    }
+ 32 };
+ In server/handlers/webhooks/setup.js, register the profile webhooks and call the handler created above in the webhook’s callback function.
+ server/handlers/webhooks/setup.js
+ 1 // ...
+ 2 import {handleShippingProfileUpdate} from './shipping-profile';
+ 3
+ 4 // ...
+ 5 const PROFILES_CREATE = 'PROFILES_CREATE';
+ 6 const PROFILES_UPDATE = 'PROFILES_UPDATE';
+ 7 const PROFILES_DELETE = 'PROFILES_DELETE';
+ 8
+ 9 export const addWebhookHandlers = () => {
+ 10
+    // ...
+ 11
+ 12
+    Shopify.Webhooks.Registry.addHandler(PROFILES_CREATE, {
+ 13
+      path: '/webhooks',
+ 14
+      webhookHandler: async (_topic, shop) =>
+ 15
+        await handleShippingProfileUpdate(shop),
+ 16
+    });
+ 17
+ 18
+    Shopify.Webhooks.Registry.addHandler(PROFILES_UPDATE, {
+ 19
+      path: '/webhooks',
+ 20
+      webhookHandler: async (_topic, shop) =>
+ 21
+        await handleShippingProfileUpdate(shop),
+ 22
+    });
+ 23
+ 24
+    Shopify.Webhooks.Registry.addHandler(PROFILES_DELETE, {
+ 25
+      path: '/webhooks',
+ 26
+      webhookHandler: async (_topic, shop) =>
+ 27
+        await handleShippingProfileUpdate(shop),
+ 28
+    });
+ 29 }
+ The resource banner on the shop’s homepage should now dynamically update based on changes made to the shop’s payment, shipping, policy, and online store settings. The shop’s database field should also be updated accordingly.
+ Step 5: Add requirements to the channel app
+ Now that you have the handlers and helpers required to check each requirement, you can expose whether the requirements are met using your internal GraphQL API. This is necessary to build the requirements checklist.
+ In server/graphql/schema.js add a new type that returns Boolean fields for each of the marketplace requirements.
+ You'll also add a new field to the Shop type that returns the new type and a Boolean to indicate whether the shop meets requirements.
+ server/graphql/schema.js
+ 1 export const schemaString = `
+ 2 type AdminShopConfig {
+ 3
+    hasStorefront: Boolean!
+ 4
+    shipsToCanada: Boolean!
+ 5
+    cadEnabled: Boolean!
+ 6
+    hasPolicies: Boolean!
+ 7 }
+ 8 type AdminShop {
+ 9
+    // ...
+ 10
+    meetsRequirements: Boolean!
+ 11
+    config: AdminShopConfig!
+ 12 }
+ 13 // ...
+ 14 `;
+ Update server/graphql/resolvers.js with a set of resolvers for the Shop configuration fields.
+ You don't need to define an explicit resolver for the meetsRequirements field, since it can be automatically resolved from the field of that name in the database's Shop data model.
+ You can use the helpers and handlers that you created to fetch the relevant data and run the requirements checks.
+ server/graphql/resolvers.js
+ 1 // ...
+ 2 import {
+ 3
+    getShopConfiguration,
+ 4
+    getShopShippingCountries,
+ 5
+    getShopPolicyTypes,
+ 6 } from '../handlers';
+ 7 import {
+ 8
+    isShopCurrencyApproved,
+ 9
+    isShopPolicyApproved,
+ 10
+    isShopShippingApproved,
+ 11 } from '../helpers';
+ 12
+ 13 export const resolvers = {
+ 14
+    // ...
+ 15
+    AdminShop: {
+ 16
+      // ...
+ 17
+      config: async ({domain, accessToken}) => {
+ 18
+        const {has_storefront, enabled_presentment_currencies} =
+ 19
+          await getShopConfiguration(domain, accessToken);
+ 20
+        const shipsToCountries = await getShopShippingCountries(
+ 21
+          domain,
+ 22
+          accessToken,
+ 23
+        );
+ 24
+        const shopPolicies = await getShopPolicyTypes(domain, accessToken);
+ 25
+        return {
+ 26
+          hasStorefront: has_storefront,
+ 27
+          cadEnabled: isShopCurrencyApproved(enabled_presentment_currencies),
+ 28
+          shipsToCanada: isShopShippingApproved(shipsToCountries),
+ 29
+          hasPolicies: isShopPolicyApproved(shopPolicies),
+ 30
+        };
+ 31
+      },
+ 32
+    },
+ 33
+    // ...
+ 34 };
+ You can use the new fields from your internal GraphQL API to surface the requirements checklist in your channel app.
+ In app/src/sections/Onboarding/components create an OnboardingChecklistCard.jsx file.
+ In app/src/sections/Onboarding/components/OnboardingChecklistCard.jsx create a component that will render an OnboardingCard component that contains an OnboardingChecklist component.
+ The component should accept props to indicate whether each requirement is met and ensure each requirement redirects to the relevant section in the Shopify admin.
+ app/src/Sections/components/OnboardingChecklistCard.jsx
+ 1 import React from 'react';
+ 2 import {OnboardingCard, OnboardingChecklist} from '@shopify/channels-ui';
+ 3 import {useAppBridge} from '@shopify/app-bridge-react';
+ 4 import {Redirect} from '@shopify/app-bridge/actions';
+ 5
+ 6 const OnboardingChecklistCard = ({
+ 7
+    hasStorefront,
+ 8
+    shipsToCanada,
+ 9
+    cadEnabled,
+ 10
+    hasPolicies,
+ 11
+    state,
+ 12 }) => {
+ 13
+    const app = useAppBridge();
+ 14
+    const redirect = Redirect.create(app);
+ 15
+ 16
+    const handleOnlineStoreAction = () => {
+ 17
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 18
+        path: '/settings/channels',
+ 19
+      });
+ 20
+    };
+ 21
+ 22
+    const handleShippingAction = () => {
+ 23
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 24
+        path: '/settings/shipping',
+ 25
+      });
+ 26
+    };
+ 27
+ 28
+    const handleCurrencyAction = () => {
+ 29
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 30
+        path: '/settings/payments',
+ 31
+      });
+ 32
+    };
+ 33
+ 34
+    const handlePolicyAction = () => {
+ 35
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 36
+        path: '/settings/legal',
+ 37
+      });
+ 38
+    };
+ 39
+ 40
+    const items = [
+ 41
+      {
+ 42
+        label: 'Create an online store',
+ 43
+        completed: hasStorefront,
+ 44
+        action: {
+ 45
+          onAction: handleOnlineStoreAction,
+ 46
+        },
+ 47
+      },
+ 48
+      {
+ 49
+        label: 'Add a shipping rates for Canada',
+ 50
+        completed: shipsToCanada,
+ 51
+        action: {
+ 52
+          onAction: handleShippingAction,
+ 53
+        },
+ 54
+      },
+ 55
+      {
+ 56
+        label: 'Add support for CAD to you payment processor',
+ 57
+        completed: cadEnabled,
+ 58
+        action: {
+ 59
+          onAction: handleCurrencyAction,
+ 60
+        },
+ 61
+      },
+ 62
+      {
+ 63
+        label: 'Add a privacy policy and return policy',
+ 64
+        completed: hasPolicies,
+ 65
+        action: {
+ 66
+          onAction: handlePolicyAction,
+ 67
+        },
+ 68
+      },
+ 69
+    ];
+ 70
+ 71
+    return (
+ 72
+      <OnboardingCard
+ 73
+        title="Make sure your store meets Mockingbird’s requirements"
+ 74
+        state={state}
+ 75
+        footer={
+ 76
+          <p>
+ 77
+            Any changes made to these items after setup might result in your store
+ 78
+            being temporarily removed from the Mockingbird Marketplace.
+ 79
+          </p>
+ 80
+        }
+ 81
+      >
+ 82
+        <OnboardingChecklist items={items} />
+ 83
+      </OnboardingCard>
+ 84
+    );
+ 85 };
+ 86
+ 87 export default OnboardingChecklistCard;
+ In app/src/sections/Onboarding/components/index.js, export the OnboardingChecklistCard component created above from the components module.
+ app/src/sections/Onboarding/components/index.js
+ 1 // ...
+ 2 export {default as OnboardingChecklistCard} from './OnboardingChecklistCard';
+ In app/src/sections/Onboarding/Onboarding.jsx, update the Onboarding component to render the OnboardingChecklistCard created above.
+ app/src/sections/Onboarding/Onboarding.jsx
+ 1 // ...
+ 2 import {OnboardingChecklistCard} from './components';
+ 3
+ 4 const ONBOARDING_PAGE_QUERY = gql`
+ 5
+    query OnboardingPageQuery {
+ 6
+      adminShop {
+ 7
+        id
+ 8
+        onboardingInfoCompleted
+ 9
+        termsAccepted
+ 10
+        onboardingCompleted
+ 11
+        config {
+ 12
+          hasStorefront
+ 13
+          shipsToCanada
+ 14
+          cadEnabled
+ 15
+          hasPolicies
+ 16
+        }
+ 17
+      }
+ 18
+    }
+ 19 `;
+ 20 // ...
+ 21
+ 22 const Onboarding = () => {
+ 23
+    // ...
+ 24
+ 25
+    const {
+ 26
+      adminShop: {
+ 27
+        onboardingInfoCompleted,
+ 28
+        termsAccepted,
+ 29
+        config: {hasStorefront, shipsToCanada, cadEnabled, hasPolicies},
+ 30
+      },
+ 31
+    } = data;
+ 32
+    const requirementsMet =
+ 33
+      hasStorefront && shipsToCanada && cadEnabled && hasPolicies;
+ 34
+ 35
+    // ...
+ 36
+ 37
+    return (
+ 38
+      <OnboardingPage
+ 39
+        // ...
+ 40
+      >
+ 41
+        <OnboardingInfoCard
+ 42
+          state={onboardingInfoCompleted ? 'completed' : 'active'}
+ 43
+        />
+ 44
+        <OnboardingChecklistCard
+ 45
+          hasStorefront={hasStorefront}
+ 46
+          shipsToCanada={shipsToCanada}
+ 47
+          cadEnabled={cadEnabled}
+ 48
+          hasPolicies={hasPolicies}
+ 49
+          state={
+ 50
+            onboardingInfoCompleted
+ 51
+              ? requirementsMet
+ 52
+                ? 'completed'
+ 53
+                : 'active'
+ 54
+              : 'disabled'
+ 55
+          }
+ 56
+        />
+ 57
+        <OnboardingTermsCard
+ 58
+          state={
+ 59
+            onboardingInfoCompleted && requirementsMet
+ 60
+              ? termsAccepted
+ 61
+                ? 'completed'
+ 62
+                : 'active'
+ 63
+              : 'disabled'
+ 64
+          }
+ 65
+        />
+ 66
+      </OnboardingPage>
+ 67
+    );
+ 68 }
+ 69 // ...
+ The requirements checklist should now be visible on the onboarding page.
+ In app/src/sections/Settings.jsx, update the Settings component to render a Checklist component with the requirements.
+ You can also render a loading state.
+ app/src/sections/Settings.jsx
+ 1 // ...
+ 2 import {Checklist} from '@shopify/channels-ui';
+ 3 import {SkeletonBodyText} from '@shopify/polaris';
+ 4 import {Redirect} from '@shopify/app-bridge/actions';
+ 5
+ 6 const SETTINGS_PAGE_QUERY = gql`
+ 7
+    query OnboardingPageQuery {
+ 8
+      adminShop {
+ 9
+        id
+ 10
+        onboardingCompleted
+ 11
+        config {
+ 12
+          hasStorefront
+ 13
+          shipsToCanada
+ 14
+          cadEnabled
+ 15
+          hasPolicies
+ 16
+ 19 `;
+ 20
+ 21 const SettingsChecklist = ({
+ 22
+    hasStorefront,
+ 23
+    shipsToCanada,
+ 24
+    cadEnabled,
+ 25
+    hasPolicies,
+ 26 }) => {
+ 27
+    const app = useAppBridge();
+ 28
+    const redirect = Redirect.create(app);
+ 29
+ 30
+    const handleOnlineStoreAction = () => {
+ 31
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 32
+        path: '/settings/channels',
+ 33
+      });
+ 34
+    };
+ 35
+ 36
+    const handleShippingAction = () => {
+ 37
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 38
+        path: '/settings/shipping',
+ 39
+      });
+ 40
+    };
+ 41
+ 42
+    const handleCurrencyAction = () => {
+ 43
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 44
+        path: '/settings/payments',
+ 45
+      });
+ 46
+    };
+ 47
+ 48
+    const handlePolicyAction = () => {
+ 49
+      redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 50
+        path: '/settings/legal',
+ 51
+      });
+ 52
+    };
+ 53
+ 54
+    const items = [
+ 55
+      {
+ 56
+        label: 'Create an online store',
+ 57
+        completed: hasStorefront,
+ 58
+        action: {
+ 59
+          onAction: handleOnlineStoreAction,
+ 60
+        },
+ 61
+      },
+ 62
+      {
+ 63
+        label: 'Add a shipping rates for Canada',
+ 64
+        completed: shipsToCanada,
+ 65
+        action: {
+ 66
+          onAction: handleShippingAction,
+ 67
+        },
+ 68
+      },
+ 69
+      {
+ 70
+        label: 'Add support for CAD to you payment processor',
+ 71
+        completed: cadEnabled,
+ 72
+        action: {
+ 73
+          onAction: handleCurrencyAction,
+ 74
+        },
+ 75
+      },
+ 76
+      {
+ 77
+        label: 'Add a privacy policy and return policy',
+ 78
+        completed: hasPolicies,
+ 79
+        action: {
+ 80
+          onAction: handlePolicyAction,
+ 81
+        },
+ 82
+      },
+ 83
+    ];
+ 84
+ 85
+    return (
+ 86
+      <Checklist
+ 87
+        completeLabel="Your shop meets Mockingbird's requirements"
+ 88
+        items={items}
+ 89
+      />
+ 90
+    );
+ 91 };
+ 92
+ 93 const Settings = () => {
+ 94
+    // ...
+ 95
+ 96
+    const checklistCardProps = data
+ 97
+      ? {children: <SettingsChecklist {...data.adminShop.config} />}
+ 98
+      : {
+ 99
+          sectioned: true,
+ 100
+          children: <SkeletonBodyText lines={4} />,
+ 101
+        };
+ 102
+ 103
+    return (
+ 104
+      <SettingsPage title="Settings">
+ 105
+        <SettingsPage.Section
+ 106
+          title="Store requirements"
+ 107
+          description="This checklist ensures that your store meets Mockingbird requirements."
+ 108
+        >
+ 109
+          <Card {...checklistCardProps} />
+ 110
+        </SettingsPage.Section>
+ 111
+        <SettingsPage.Section
+ 112
+          title="Terms and conditions"
+ 113
+          description="You can view the Mockingbird Marketplace terms and conditions here at any time."
+ 114
+        >
+ 115
+          // ...
+ 116
+        </SettingsPage.Section>
+ 117
+      <SettingsPage>
+ 118
+    );
+ 119 }
+ 120 // ...
+ The requirements checklist should now be visible on the settings page.
+ In app/src/sections/Home.jsx, update the query to retrieve the meetsRequirements field and pass it into the Overview component.
+ app/src/sections/Home/components/Overview.jsx
+ 1 // ...
+ 2 const HOME_PAGE_QUERY = gql`
+ 3
+    query HomePageQuery {
+ 4
+      adminShop {
+ 5
+        id
+ 6
+        domain
+ 7
+        appHandle
+ 8
+        publicationId
+ 9
+        availableProductCount
+ 10
+        onboardingInfoCompleted
+ 11
+        onboardingCompleted
+ 12
+        meetsRequirements
+ 13
+      }
+ 14
+    }
+ 15 `;
+ 16
+ 17 const Home = () => {
+ 18
+    // ...
+ 19
+ 20
+    const {
+ 21
+      adminShop: {
+ 22
+        domain,
+ 23
+        appHandle,
+ 24
+        publicationId,
+ 25
+        availableProductCount,
+ 26
+        onboardingInfoCompleted,
+ 27
+        onboardingCompleted,
+ 28
+        meetsRequirements,
+ 29
+      },
+ 30
+    } = data;
+ 31
+ 32
+    if (onboardingCompleted) {
+ 33
+      return (
+ 34
+        <Overview
+ 35
+          domain={domain}
+ 36
+          availableProductCount={availableProductCount}
+ 37
+          publicationId={publicationId}
+ 38
+          appHandle={appHandle}
+ 39
+          meetsRequirements={meetsRequirements}
+ 40
+        />
+ 41
+      );
+ 42
+    }
+ 43
+    // ...
+ 44 }
+ 45 // ...
+ In app/src/sections/Home/components/Overview.jsx, update the Overview component to render a banner with a link to the settings page if the requirements are not met.
+ app/src/sections/components/Overview.jsx
+ 1 // ...
+ 2 import {Banner} from '@shopify/polaris';
+ 3
+ 4 const Overview = ({
+ 5
+    domain,
+ 6
+    availableProductCount,
+ 7
+    publicationId,
+ 8
+    appHandle,
+ 9
+    meetsRequirements,
+ 10 }) => {
+ 11
+    // ...
+ 12
+ 13
+    return (
+ 14
+      <OverviewPage title="Mockingbird channel overview">
+ 15
+        {!meetsRequirements && (
+ 16
+          <OverviewPage.Section>
+ 17
+            <Banner
+ 18
+              status="critical"
+ 19
+              title="Your shop no longer meets Mockingbird requirements"
+ 20
+              action={{
+ 21
+                content: 'View details',
+ 22
+                url: '/settings',
+ 23
+              }}
+ 24
+            >
+ 25
+              <p>
+ 26
+                Your shop has been removed from the Mockingbird Marketplace
+ 27
+                because it no longer meets the requirements. To continue selling,
+ 28
+                please ensure your store meets all requirements.
+ 29
+              </p>
+ 30
+            </Banner>
+ 31
+          </OverviewPage.Section>
+ 32
+        )}
+ 33
+        <OverviewPage.Section title="Product status on Mockingbird">
+ 34
+          // ...
+ 35
+        </OverviewPage.Section>
+ 36
+        // ...
+ 37
+      </OverviewPage>
+ 38
+    );
+ 39 }
+ 40 // ...
+ If one or more requirement is not met, then an error banner should appear on the overview page.
+ Next steps
+ Learn about creating post-checkout functionality for your marketplace, including storing order details in your database and billing merchants a fee for sales on the marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Access scopes
+ Step 1: Add handlers to interact with the Admin API
+ Step 2: Add a requirements check when the channel app is installed
+ Step 3: Add shop update webhook handlers
+ Step 4: Add shipping profile webhook handlers
+ Step 5: Add requirements to the channel app

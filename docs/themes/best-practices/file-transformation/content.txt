@@ -1,0 +1,80 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ File transformation best practices for Shopify themes
+ File transformations improve the developer experience by letting you write and maintain code using your preferred strategies and build tools, and ship compiled code that is optimized for browser runtime.
+ For example, you might want to divide your stylesheets into multiple files, each scoped to a particular UI element, which makes them easier to maintain. However, loading a large number of small stylesheets is slower than loading one or two larger stylesheets. You can use file transformations to automate the process of combining these smaller, scoped stylesheets into fewer, larger bundles.
+ You can transform files as part of a build process, and then upload your compiled code as a theme that can be accessed in the Shopify admin.
+ Below are some examples of file transformations that theme developers might want to perform:
+ File transformation Benefit
+ Custom file structure > Shopify theme file structure Code maintenance flexibility
+ SCSS > CSS Write in SCSS, output Shopify-compatible CSS
+ SVG > snippet Include SVGs inline in HTML
+ PostCSS transformations (e.g. Autoprefixer, cssnano, tailwindcss) Linting, variables, transpiling, browser compatibility
+ Section folders > section files Build sections in separate Liquid, JS, CSS, and JSON files
+ Automated calculation and inlining of critical styles Avoid load-blocking CSS resources
+ Optimized JavaScript bundles Reduced load times, smaller file sizes
+ JavaScript, CSS, and HTML minification Reduced load times, smaller file sizes
+ If you want to perform transformations on your files, then you need to decide how you want to manage both the source code and the transformed, or compiled, code. To learn about the options, and which options can be used with Shopify tools, refer to Version control best practices for Shopify themes.
+ You can also consider using just-in-time (JIT) file transformations to reduce the need to track changes to compiled code. JIT transformations can deliver optimized dependencies and resources at runtime, allowing for a unified code base that doesn't need to be backfilled.
+ Compiled code and merchant or app customizations
+ After a theme is uploaded to Shopify, merchants can customize it using the theme editor or the code editor. Apps might also change the theme code through the Asset REST Admin API resource. This can lead to situations where compiled code has been altered, but source code hasn't been updated.
+ You might need to identify changes to the compiled code, and then manually backfill those changes into your source code so the changes persist the next time the code is compiled. This is a particular risk if you are a Partner or merchant developer who performs ongoing customizations to a merchant's theme. You should consider the impact of merchant or app customizations when planning your file transformation and version control strategy.
+ Tip
+ If you perform file transformations using Just-in-time services, then you don't need to backfill changes.
+ Backfilling changes to compiled code
+ When a change is made to a compiled file and the theme is connected to GitHub, then the change is added to the theme's GitHub repo as a commit. You can use this commit to identify and backfill merchant changes.
+ The following is an example of identifying and backfilling a change to a theme that's connected to version control using the Shopify GitHub integration.
+ Step 1: The developer writes source code and compiles it
+ You create the following scoped JavaScript resources for a theme.
+ /assets/scopeA.js
+ 1 export console.log('ScopeA JS is running!');
+ /assets/scopeB.js
+ 1 export console.log('ScopeB JS is running!');
+ /assets/index.js
+ 1 import './scopeA.js'
+ 2 import './scopeB.js'
+ These three files are bundled for optimized delivery, resulting in the following file:
+ /assets/index.bundle.js
+ 1 console.log('ScopeA JS is running!');
+ 2 console.log('ScopeB JS is running!');
+ These files are all committed to the GitHub repo, and then index.bundle.js is synced with the store using the Shopify GitHub integration.
+ index.bundle.js is called inside of a Liquid template:
+ templates/index.liquid
+ 1 <script src="{{ 'index.bundle.js' | asset_url }}"></script>
+ This store or theme is handed off to the merchant.
+ Step 2: The merchant edits compiled code
+ When the merchant starts using the theme, they need to make a change to the compiled JS bundle using the code editor in the Shopify admin:
+ assets/index.bundle.js
+ 1 console.log('ScopeA JS is running!');
+ 2 console.log('ScopeB JS is running!');
+ 3 + console.log('ScopeB is way cooler than ScopeA');
+ This change is synced to the theme's associated GitHub repo as a commit.
+ Step 3: The developer identifies changes to compiled code and backfills them
+ When the merchant contacts you to add another feature to your theme, you can see the commit from the Shopify admin in the repo.
+ Because the change was made to the compiled index.bundle.js, this change will disappear when the file is recompiled, unless a corresponding change is made to the source files.
+ To make sure changes made to compiled code persist after the code is recompiled, you can manually backport the change into the source code. In this case, you can modify index.js:
+ assets/index.js
+ 1 import './scopeA.js'
+ 2 import './scopeB.js'
+ 3 + console.log('ScopeB is way cooler than ScopeA');
+ Just-in-time file transformations
+ Many transformations are one-way: you can transform source code into compiled code, but you can't transform compiled code into source code. Most code management strategies for Shopify themes involve tracking changes to compiled code and backfilling source code. This is because the code a merchant sees is often the result of a file transformation, and a merchant might edit the code or install code-injecting apps as a part of running a store.
+ You can use just-in-time (JIT) file transformations for some of your common file transformation tasks. JIT transformations move the functionality of installed developer tools to on-demand services that can generate an optimized runtime file from source code.
+ When you remove the need to perform certain types of file transformations, you can further reduce or even eliminate the number of compiled files that you need to create, track and maintain. Merchants can edit source code rather than compiled code, allowing for a unified code base that doesn't need to be backfilled.
+ Common uses for JIT transformations include JavaScript minification, CSS optimization and minification, and third-party dependency management.
+ Advantages
+ This method is compatible with the Shopify GitHub integration.
+ Maintenance is performed by service owners.
+ This method works within Shopify's supported theme file structure.
+ Merchants can work on source files, resulting in reduced backfilling.
+ Shopify minification
+ Shopify automatically minifies CSS and JavaScript files. For instance, you can include a CSS file such as main.css in your asset folder. Shopify compiles and sends a minified version of it, which updates every time the source file changes.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Compiled code and merchant or app customizations
+ Just-in-time file transformations
+ Updates & News
+ Developer changelog
+ Partner blog

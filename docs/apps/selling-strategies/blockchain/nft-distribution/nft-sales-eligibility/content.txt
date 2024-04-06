@@ -1,0 +1,210 @@
+NFT distribution
+ Overview
+ Check NFT sales eligibility
+ Merchant eligibility
+ UX guidelines
+ Tokengating
+ Online store
+ Admin
+ Flow
+ Payments
+ Billing
+ App Store
+ Check NFT sales eligibility
+ To comply with the Shopify Payments terms of service, a merchant must submit an application form to determine their eligibility to sell NFTs through Shopify Payments. If your existing app distributes NFTs or you're looking to build an NFT distribution app, you need to check this new API to confirm that the shop is approved to sell and/or gift NFTs, and if not, block the ability to mint, gift or list NFTs for sale.
+ This guide will explain:
+ how to check the merchant approval status
+ the different experiences you should provide based on the merchant's status
+ Requirements
+ Ability to make authenticated requests to the GraphQL Admin API.
+ Polling the NFT Sales Eligibility API at hourly intervals should be implemented to confirm eligibility.
+ App developers are expected to continue to abide by the blockchain app requirements.
+ Apps surface the application form as stated in the requirements for NFT distribution
+ High-level flow
+ A merchant opens a NFT distribution app
+ The application queries the nftSalesEligibility
+ Depending on the responses, the 3rd party NFT distribution app blocks the selling and/or gifting features or permits the use of its selling and/or gifting features
+ The 3rd party NFT distribution app polls the NFT Sales Eligibility API at hourly intervals to confirm eligibility
+ As soon as the NFT Sales Eligibility API replies with a reapplyDate that is the current date or in the past, the merchant is eligible to re-apply
+ Step 1: Query the API
+ Use the Shopify Admin GraphQL API to check whether or not a shop has completed the NFT sales eligibility form.
+ 1 query {
+ 2
+    nftSalesEligibility {
+ 3
+      giftingApproved
+ 4
+      sellApproved
+ 5
+      reapplyDate
+ 6
+    }
+ 7 }
+ Possible API responses
+ When you ping the API, you'll get 3 possible responses:
+ nftSalesEligibilityStatus.sellApproved: returns whether the shop is approved to list NFTs for sale with Shopify Payments enabled
+ nftSalesEligibilityStatus.reapplyDate: returns with a null value or a date when the shop can apply for approval
+ null: indicates that the shop is either approved for selling or gifting
+ {currentDate}: indicates that the shop can complete the eligibility form
+ {futureDate}: indicates that the shop is not approved. You can use this to display to the merchant when they can reapply
+ nftSalesEligibilityStatus.giftingpApproved: returns whether the store is approved to gift NFTs. Approval from Shopify is not required in most cases to gift NFT
+ Merchant outcomes
+ The API responses combine to create 5 possible outcomes for the merchant:
+ Result giftingApproved sellApproved reapplyDate
+ Application not yet completed by merchant false false {currentDate}
+ Approved for selling and gifting true true null
+ Approved for gifting only true false null
+ Not approved for sales true false {currentDate} or {futureDate}
+ Not on Shopify Payments false false null
+ Step 2: Block selling features
+ If the merchant is not approved for sales, you should block the selling features in your app to prevent merchants listing NFTs for sale.
+ Result Block selling features? Block gifting features?
+ Form not yet filled out yes yes
+ Approved for selling and gifting no no
+ Approved for gifting only (i.e. not approved for sales) yes no
+ Not on Shopify Payments no no
+ Not approved for sales
+ The following scenario indicates that the shop has not passed the application form and is not eligible to sell NFTs: The giftingApproved flag is true, but the sellApproved flag is false. The reapplyDate is also today or in the future, indicating when the merchant is eligible to reapply.
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    nftSalesEligibility {
+ 3
+      giftingApproved
+ 4
+      sellApproved
+ 5
+      reapplyDate
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    “data”: {
+ 3
+        “nftSalesEligibilityStatus”: {
+ 4
+          “giftingApproved”: true,
+ 5
+          “sellApproved”: false,
+ 6
+          “reapplyDate”: {currentDate or futureDate}
+ 7
+        }
+ 8
+    },
+ 9
+    “extensions”: {
+ 10
+        “cost”:{
+ 11
+          “requestedQueryCost”: 1,
+ 12
+          “actualQueryCost”: 1
+ Step 3: Unblock selling features when sellApproved: true
+ You should poll the NFT Sales Eligibility API hourly to get the most up-to-date approval data. As soon as a shop becomes sellApproved: true or they turn off Shopify Payments, they can list and sell NFTs using your app.
+ Approved for selling and gifting
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    nftSalesEligibility {
+ 3
+      giftingApproved
+ 4
+      sellApproved
+ 5
+      reapplyDate
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    “data”: {
+ 3
+        “nftSalesEligibilityStatus”: {
+ 4
+          “giftingApproved”: true,
+ 5
+          “sellApproved”: true,
+ 6
+          “reapplyDate”: null
+ 7
+        }
+ 8
+    },
+ 9
+    “extensions”: {
+ 10
+        “cost”:{
+ 11
+          “requestedQueryCost”: 1,
+ 12
+          “actualQueryCost”: 1
+ 13
+      }
+ 14
+    }
+ 15 }
+ Not on Shopify Payments
+ The following scenario indicates that the merchant is not required to complete the eligibility check: The giftingApproved flag and sellApproved flag are false and the reapplyDate is null.
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    nftSalesEligibility {
+ 3
+      giftingApproved
+ 4
+      sellApproved
+ 5
+      reapplyDate
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    “data”: {
+ 3
+        “nftSalesEligibilityStatus”: {
+ 4
+          “giftingApproved”: false,
+ 5
+          “sellApproved”: false,
+ 6
+          “reapplyDate”: null
+ 7
+        }
+ 8
+    },
+ 9
+    “extensions”: {
+ 10
+        “cost”:{
+ 11
+          “requestedQueryCost”: 1,
+ 12
+          “actualQueryCost”: 1
+ 13
+      }
+ 14
+    }
+ 15 }
+ Next steps
+ Make sure your app complies with all the requirements for an NFT distribution app
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ High-level flow
+ Step 1: Query the API
+ Step 2: Block selling features
+ Step 3: Unblock selling features when sellApproved: true
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

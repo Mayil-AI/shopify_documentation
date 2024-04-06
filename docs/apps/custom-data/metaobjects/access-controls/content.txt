@@ -1,0 +1,210 @@
+Overview
+ Ownership
+ Metafields
+ Metaobjects
+ Overview
+ Manage metaobjects
+ Access controls
+ Capabilities
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Access controls for metaobjects
+ You can control how metaobjects can be used by the Shopify admin and the storefront. This guide describes how to configure access scopes and controls on your metaobjects to limit who can read or write to your metaobjects.
+ How it works
+ You might want your metaobjects to be private to your app or hidden away from the user's storefront. The access input object in the metaobjectDefinitionCreate mutation enables you to specify different levels of control over these options. The following table includes all available admin and storefront access settings:
+ Admin access setting Description Requires reserved prefix?
+ PRIVATE Only the app that owns a metaobject of this type can read and write to it. Yes
+ MERCHANT_READ Apps that act on behalf of the app user (such as the admin) can read metaobjects of this type.
+ 
+ Only the owning app can write to metaobjects of this type. Yes
+ MERCHANT_READ_WRITE Both the owning app and apps that act on behalf of the appuser (such as the admin) can read or write to metaobjects of this type.
+ 
+ No other applications can read or write metaobjects. Yes
+ PUBLIC_READ All apps with the `metaobject` access scope can read metaobjects of this type.
+ 
+ Only the owning app can write to metaobjects of this type. Yes
+ Storefront access setting Description Requires reserved prefix?
+ NONE Metaobjects of this type aren't accessible in any Storefront API requests or Liquid. Yes
+ PUBLIC_READ Metaobjects of this type are accessible in the Storefront GraphQL API by any app with the `unauthenticated_metaobjects` access scope.
+ 
+ Metaobjects of this type are also accessible in online store Liquid templates. No
+ If you don't provide an access attribute to metaobjectDefinitionCreate, then the behavior is determined by whether you used a reserved prefix or not.
+ Default for With reserved prefix Without reserved prefix
+ Admin Only the app that owns a metaobject of this type can read and write to it. All apps with the `metaobjects` access scopes can read or write to metaobjects of this type.
+ Storefront Not available in Storefront API or Liquid Not available in Storefront API or Liquid
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ You're using API version 2023-01 or higher.
+ Define a metaobject that users can read and write within their admin
+ In the following example, the GraphQL Admin API's metaobjectDefinitionCreate mutation uses the MERCHANT_READ_WRITE admin access setting to enable users to read and write metaobjects of this type.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    metaobjectDefinitionCreate(definition: {
+ 3
+      name: "Testimonial"
+ 4
+      type: "$app:testimonial"
+ 5
+      access: {
+ 6
+        admin: MERCHANT_READ_WRITE
+ 7
+      }
+ 8
+      fieldDefinitions: [
+ 9
+        {
+ 10
+          key: "author"
+ 11
+          name: "Author"
+ 12
+          type: "single_line_text_field"
+ 13
+        },
+ 14
+        {
+ 15
+          key: "body"
+ 16
+          name: "Body"
+ 17
+          type: "multi_line_text_field"
+ 18
+        }
+ 19
+      ]
+ 20
+    }) {
+ 21
+      metaobjectDefinition {
+ 22
+        id
+ 23
+      }
+ 24
+      userErrors {
+ 25
+        message
+ 26
+      }
+ 27
+    }
+ 28 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectDefinitionCreate": {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://shopify/MetaobjectDefinition/1"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ Define a private metobject visible only to your app
+ In this example, the metaobjectDefinitionCreate mutation uses the PRIVATE admin access setting and NONE storefront access setting to keep metaobjects of this type visible only to the app.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    metaobjectDefinitionCreate(definition: {
+ 3
+      name: "User Role"
+ 4
+      type: "$app:user_role"
+ 5
+      access: {
+ 6
+        admin: PRIVATE
+ 7
+        storefront: NONE
+ 8
+      }
+ 9
+      fieldDefinitions: [
+ 10
+        {
+ 11
+          key: "employee_id"
+ 12
+          name: "Employee ID"
+ 13
+          type: "single_line_text_field"
+ 14
+        },
+ 15
+        {
+ 16
+          key: "permission_level"
+ 17
+          name: "Permission Level"
+ 18
+          type: "metaobject_reference"
+ 19
+          validations: [
+ 20
+            {
+ 21
+              name: "metaobject_definition_id",
+ 22
+              value: "gid://shopify/MetaobjectDefinition/1"
+ 23
+            }
+ 24
+          ]
+ 25
+        }
+ 26
+      ]
+ 27
+    }) {
+ 28
+      metaobjectDefinition {
+ 29
+        id
+ 30
+      }
+ 31
+      userErrors {
+ 32
+        message
+ 33
+      }
+ 34
+    }
+ 35 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectDefinitionCreate": {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://shopify/MetaobjectDefinition/1"
+ 6
+ 9
+    }
+ 10 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Requirements
+ Define a metaobject that users can read and write within their admin
+ Define a private metobject visible only to your app

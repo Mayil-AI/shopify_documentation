@@ -1,0 +1,40 @@
+Overview
+ Marketing
+ Overview
+ Marketing externally
+ Marketing internally
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Marketing your app
+ After your app is approved, you can market your app in many ways to promote and grow your business.
+ Marketing your app through Shopify: You can use several resources to market your app to merchants in the Shopify community.
+ Tracking your listing traffic: You can get more information about how merchants are finding your app listing in the Shopify App Store by tracking your listing traffic with Google Analytics or Facebook Pixel.
+ Marketing your app externally: There are several ways you can market your app outside of Shopify. Marketing can help you find new users and grow your business.
+ Writing a press release for your app: Although receiving positive reviews is one of the best ways to promote your app, you can also publish press releases to help get your product noticed.
+ Shopify brand assets for marketing your app: Our brand assets and guidelines can help you showcase your presence on the Shopify App Store in your marketing materials.
+ Shopify App Store advertising: Create search ads to help merchants discover your apps in the Shopify App Store.
+ Case studies
+ The following case studies feature developers that have successfully marketed their apps to build awareness, attracted traffic to their Shopify App Store listing and their own web and social channels, converted traffic to installs, and built a loyal base of customers.
+ eVouch: Learn how New Zealand-based eVouch used the Shopify App Challenge to design, develop and publish an app in just 8 weeks.
+ Yoast: With years of experience in SEO, Netherlands-based Yoast shares how they built their Shopify App and the tactics they used to successfully launch and gain their first customers.
+ Marsello: Australian developer Marsello shares how they use merchant frustrations and feedback to build and continually improve their all-in-one-marketing app.
+ Chatdesk: New York-based Chatdesk discuss their vision behind their software company and how they looked at solving problems as the basis for building their Shopify App.
+ Maestrooo: France-based developer Maestrooo outline the methods and techniques they use to manage developing apps, themes, and client work.
+ Connect with other developers
+ Share, learn, and find new opportunities with other developers around the world. Consider joining and engaging with the following digital communities:
+ Partner Slack
+ Discord
+ Shopify Community Forums
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Case studies
+ Connect with other developers
+ Updates & News
+ Developer changelog

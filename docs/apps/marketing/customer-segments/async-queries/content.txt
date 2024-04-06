@@ -1,0 +1,205 @@
+Billing
+ App Store
+ Migrate to async segmentation queries
+ Version 2023-01 of the GraphQL Admin API introduces support for asynchronous queries in customersSegmentMembers. While most queries will continue to resolve synchronously, some queries could be processed asynchronously based on query complexity and the amount of shop data. Building proper asynchronous query handling provides a better user experience for complex queries.
+ This guide shows you how to migrate your app to support asynchronous customer segment queries.
+ Caution
+ Asynchronous queries in the Segmentation API represent a breaking change. As Shopify introduces more complex filters, some queries could be returned async. Your app should properly handle customerSegmentMembers error codes and request that the query is processed async with the customerSegmentMembersQueryCreate mutation.
+ Step 1: Retrieve a list of segment members
+ If a query to customersSegmentMembers must be processed asynchronously, then the API returns a USE_CUSTOMER_SEGMENT_MEMBERS_QUERY_CREATE_MUTATION error.
+ The API can return async queries for unsaved and saved segments (query and segmentId GraphQL parameters respectively).
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    customerSegmentMembers(first: 250, query: "products_purchased(tag: 'Summer') = true") {
+          id
+ 6
+        }
+ 7
+      }
+ 2
+    "data": null,
+ 3
+    "errors": [
+ 4
+      {
+ 5
+        "message": "This query can only be run async. Create an async query using the `customerSegmentMembersQueryCreate` mutation.",
+ 6
+        "extensions": {
+ 7
+          "code": "USE_CUSTOMER_SEGMENT_MEMBERS_QUERY_CREATE_MUTATION"
+ 8
+        }
+ 9
+      }
+ 10
+    ]
+ 11 }
+ Step 2: Request an asynchronous query
+ You can use the customerSegmentMembersQueryCreate mutation to process your request asynchronously. Provide the query or segmentId as part of the input. You can optionally include the sortKey and reverse parameters.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    customerSegmentMembersQueryCreate(input: {query: "products_purchased(tag: 'Summer') = true"}) {
+ 3
+      customerSegmentMembersQuery {
+ 4
+        id
+ 5
+        done
+ 6
+        currentCount
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        code
+ 10
+        field
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerSegmentMembersQueryCreate": {
+ 4
+        "customerSegmentMembersQuery": {
+ 5
+          "id": "gid://shopify/CustomerSegmentMembersQuery/2ed6f10e-69d4-11ed-a420-422b7f2d5e38",
+ 6
+          "done": false,
+ 7
+          "currentCount": 0
+ 8
+        },
+ 9
+        "userErrors": []
+ 10
+      }
+ 11
+    }
+ 12 }
+ The response contains a id, which is a unique identifier for the request, done, which represents the query's status, and a currentCount of the number of segment members in your saved or unsaved segment.
+ Step 3: Check the request status
+ Most async queries should revolve within five seconds but some queries might take one to two minutes or even longer depending on query complexity and amount of shop data.
+ You can check the status of your async request using its unique identifier. The response contains information about the query status and current count.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    customerSegmentMembersQuery(id: "gid://shopify/CustomerSegmentMembersQuery/9b176cdb-66b2-11ed-9a62-dab485c0c64b") {
+ 3
+      id
+ 4
+      ... on CustomerSegmentMembersQuery {
+ 5
+        currentCount
+ 6
+        done
+ 7
+      }
+ 8
+    }
+ 9 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerSegmentMembersQuery": {
+ 4
+        "id": "gid://shopify/CustomerSegmentMembersQuery/0a9212fb-675c-11ed-8a67-422b7f2d5e38",
+ 5
+        "currentCount": 234,
+ 6
+        "done": false
+ 7
+      }
+ 8
+    }
+ 9 }
+ Alternatively, you can try to retrieve the list of customer segment members using the queryId parameter. If the async query is still running, then the QUERY_NOT_COMPLETE error code is returned.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    customerSegmentMembers(first: 250, queryId: "gid://shopify/CustomerSegmentMembersQuery/0a9212fb-675c-11ed-8a67-422b7f2d5e38") {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+        }
+ JSON response
+ 1 {
+ 2
+    "data": null,
+ 3
+    "errors": [
+ 4
+      {
+ 5
+        "message": "This async query is still in progress.",
+ 6
+        "extensions": {
+ 7
+          "code": "QUERY_NOT_COMPLETE"
+ 8
+        }
+ 9
+      }
+ 10
+    ]
+ 11 }
+ Step 4: Retrieve the list of customer segment members
+ After the async query completes, you can retrieve a list of segment members by querying customersSegmentMembers and passing in the queryID parameter.
+ Note
+ Async queries won't update as your customer base changes. To retrieve the latest results, you need to re-run the query.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    customerSegmentMembers(first: 250, queryId: "gid://shopify/CustomerSegmentMembersQuery/0a9212fb-675c-11ed-8a67-422b7f2d5e38") {
+          id
+ 6
+        }
+ 7
+      }
+ 2
+    "data": {
+ 3
+      "customerSegmentMembers": {
+ 4
+ 7
+              "id": "gid://shopify/CustomerSegmentMember/CUSTOMER_ID",
+ 8
+            }
+ 9
+          }
+ 10
+        ]
+ 11
+      }
+ 12
+    }
+ 13 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Retrieve a list of segment members
+ Step 2: Request an asynchronous query
+ Step 3: Check the request status
+ Step 4: Retrieve the list of customer segment members

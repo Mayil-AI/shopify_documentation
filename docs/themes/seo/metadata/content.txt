@@ -1,0 +1,55 @@
+Customer engagement
+ Markets
+ Site navigation and search
+ SEO
+ Overview
+ Metadata
+ hreflang tags
+ robots.txt
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Add SEO metadata to your theme
+ You can include search engine optimization (SEO) metadata in your theme using HTML and Liquid. There are three main aspects to consider:
+ The title tag
+ The meta description
+ Canonical URLs
+ The code for the above SEO metadata should be included in the <head> element.
+ For example:
+ layouts/theme.liquid
+ 1 <head>
+ 2
+    <title>
+ 3
+      {{ page_title -}}
+ 4
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+ 5
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+ 6
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+ 7
+    </title>
+ 8
+ 9
+    {% if page_description %}
+ 10
+      <meta name="description" content="{{ page_description | escape }}" />
+ 11
+    {% endif %}
+ 12
+ 13
+    <link rel="canonical" href="{{ canonical_url }}" />
+ 14 </head>
+ Tip
+ For another example of including metadata in a theme, you can refer to Dawn's implementation.
+ The title tag
+ You can include a <title> element for search engines to read the page title from. The title for most pages can be set in the admin, and you can access this title with the Liquid page_title object.
+ The meta description
+ You can include a <meta> element for search engines to read the page description from. The description for most pages can be set in the admin, and you can access this description with the Liquid page_description object.
+ Canonical URLs
+ You can specify a canonical URL for a given page using the global Liquid canonical_url object.
+ Was this page helpful?
+ YesNo
+ Updates & News

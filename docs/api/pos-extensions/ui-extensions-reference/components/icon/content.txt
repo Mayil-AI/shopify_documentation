@@ -1,0 +1,20 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Icon
+ A component that renders an icon from the POS asset catalog.
+ Props
+ Name Type Description Options
+ name IconName A name used to render the icon.
+ size IconSize? Size of the icon. Defaults to major. minor | major | spot | caption | badge
+ Available Icons
+ Guidelines
+ Icons in POS are used in areas where they specifically add clarity and structure to the UI, aiding in creating a deeper understanding of the product and common interaction points nested throughout the experience.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Available Icons
+ Guidelines
+ Updates & News

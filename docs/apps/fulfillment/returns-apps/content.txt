@@ -1,0 +1,85 @@
+Overview
+ Manage returns
+ Preview and refund duties
+ Manage reverse fulfillment orders
+ Manage reverse deliveries
+ Billing
+ App Store
+ Returns apps
+ Returns apps provide merchants with various ways to manage their returns. For example, a returns app can identify eligible items for a return and issue customers a refund for returned items on behalf of the merchant.
+ This guide describes what returns are, the lifecycle of a return, use cases for returns apps, and some considerations before you get started.
+ How it works
+ A return represents the intent of a buyer to ship one or more items from an order back to a merchant or a third-party fulfillment location. Return apps capture the financial, logistical, and business intent of a return.
+ You can use the GraphQL Admin API to provide a return management workflow for merchants.
+ The following diagram shows an example lifecycle of a return:
+ The customer requests to return an item that was previously fulfilled, sends the item back to the merchant, and receives a refund (if applicable).
+ The merchant manages the return. For example, a merchant might take the following actions:
+ Determining the eligibility of the return
+ Manually approving the return
+ Manually issuing a refund
+ Tip
+ A merchant can manage returns that have been created by an app. For example, a merchant can cancel or close a return that was created by an app. Your app can get notified about returns-related events by subscribing to webhooks.
+ The returns app automates the return management process by taking actions on behalf of merchants. These actions can include the following:
+ Retrieving returnable fulfillments
+ Approving or declining returns
+ Creating and optionally canceling returns
+ Send shipping and tracking information to the customer
+ Issuing refunds to the customer
+ Closing and optionally reopening returns
+ Shopify creates a reverse fulfillment order.
+ The third-party fulfillment service disposes or restocks items. If a merchant is only using a returns app, and not a third-party fulfillment service, then an alternate workflow can be for the app to manage disposing and restocking items.
+ Reverse fulfillment orders and deliveries
+ Apps can manage reverse fulfillment orders and reverse deliveries on behalf of merchants.
+ A reverse fulfillment order represents the work that's required to process a return. It includes one or more items in a return that will be processed by the merchant or third-party fulfillment service. A reverse delivery is a set of items to be packaged together and sent back to the merchant or third-party fulfillment service.
+ The following diagram shows an example workflow of managing reverse fulfillment orders and reverse deliveries:
+ Return statuses
+ Each return has a status, which indicates the state of the return. The following diagram shows how a return's status changes based on the GraphQL mutation that's executed:
+ The returnRequest mutation changes the return's status to REQUESTED.
+ The returnDeclineRequest mutation changes the return's status to DECLINED.
+ The returnCreate, returnApproveRequest, and returnReopen mutations change the return's status to OPEN.
+ The returnCancel mutation changes the return's status to CANCELED.
+ The returnClose mutation changes the return's status to CLOSED.
+ Use cases
+ Common use cases for returns apps include the following:
+ Updating orders to reflect that a merchant or third-party fulfillment service has initiated or completed a return
+ Marking items as returned, refunded, or restocked
+ Uploading app-created shipping information to Shopify
+ Getting notified if shipping information has changed
+ Webhooks
+ The following table describes the returns-related webhooks that your app can subscribe to in GraphQL Admin API version 2023-01 and higher. For more information about webhook topics, consult the GraphQL Admin API reference.
+ Note
+ Return webhooks are available only in the GraphQL Admin API. They aren't available in the REST Admin API.
+ Webhook topic Description Payload information
+ returns/request Occurs when a return is requested. This means that the return's status is REQUESTED. Webhooks
+ returns/approve Occurs when a return is approved. This means that the return's status is OPEN.
+ returns/decline Occurs when a return is declined. This means that the return's status is DECLINED.
+ refunds/create Occurs when a new refund is created without errors on an order, and includes returns data.
+ returns/cancel Occurs when a return is canceled. This means that the return's status is CANCELED.
+ returns/close Occurs when a return is closed. This means that the return's status is CLOSED.
+ returns/reopen Occurs when a return is reopened. This means that the return's status is OPEN.
+ reverse_fulfillment_orders/dispose Occurs when a disposition has been made. Reverse fulfillment orders webhook
+ reverse_deliveries/attach_deliverable Occurs when a reverse delivery is created or updated with delivery metadata, such as the delivery method, label, and tracking information that's associated with a reverse delivery. Reverse deliveries webhook
+ Limitations and considerations
+ You can return only items that have been fulfilled:
+ If you create a return on an archived order, then the order is automatically unarchived.
+ If you need to make changes to an unfulfilled item, then you can edit an order.
+ If you dispose a reverse delivery line item or dispose a reverse fulfillment order's line item, then the following behavior occurs for the MISSING and RESTOCKED disposition types:
+ MISSING: The item is disposed as missing and the item can't be returned again.
+ RESTOCKED: The item can't be returned, and the quantity of available inventory is incremented.
+ You can manage returns only using the GraphQL Admin API. Return management workflows using the REST Admin API aren't supported.
+ The GraphQL Admin API doesn't support returns that involve an exchange of items.
+ If all items in a fulfillment are returned, or are in the process of being returned, then the fulfillment card won't render on the order detail page. You can access some fulfillment information from the Timeline instead.
+ Next steps
+ Learn how to manage returns by using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Return statuses
+ Use cases
+ Webhooks
+ Limitations and considerations
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

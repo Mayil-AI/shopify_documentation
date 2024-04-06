@@ -1,0 +1,35 @@
+Product subscription app extensions
+ HeadingGroup
+ Heading groups provide the document structure that accessibility technology uses to navigate the checkout. When you use a heading, any children related to that heading should be nested in a heading group. This ensures that any nested headings will use a semantically-appropriate heading level.
+ Example
+ JS
+ React
+ 1 import {extend, HeadingGroup, Heading, View} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const headingGroup = root.createComponent(View, undefined, [
+ 5
+      root.createComponent(Heading, undefined, 'Hi John Doe! (h1)'),
+ 6
+      root.createComponent(HeadingGroup, undefined, [
+ 7
+        root.createComponent(Heading, undefined, 'Your account (h2)'),
+ 8
+        root.createComponent(HeadingGroup, undefined, [
+ 9
+          root.createComponent(Heading, undefined, 'Change Password (h3)'),
+ 10
+        ]),
+ 11
+      ]),
+ 12
+    ]);
+ 13
+ 14
+    root.appendChild(headingGroup);
+ 15 });
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

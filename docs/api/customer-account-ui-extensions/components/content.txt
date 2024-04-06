@@ -1,0 +1,40 @@
+APIs
+ Collapse sidebar
+ Customer account UI extensions
+ Unstable
+ Unstable
+ Overview
+ Scaffolding an extension
+ Extension targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Tutorials
+ Resources
+ Targets Overview
+ Targets
+ APIs
+ Components
+ Card
+ CustomerAccountAction
+ ImageGroup
+ Page
+ ResourceItem
+ Configuration
+ Error handling
+ All Customer account UI extensions components
+ Card
+ Group related content and functionality together in a familiar and consistent style, for customers to scan, read, and get things done.
+ CustomerAccountAction
+ A modal to complete an order action flow. This component can only be used to populate the customer-account.order.action.render extension target, which renders as a result of the customer clicking the order action button rendered via the extension target.
+ ImageGroup
+ Display up to 4 images in a grid or stacked layout. For example, images of products in a wishlist or subscription. When there are more than 4 images, the component indicates how many more images are not displayed.
+ Page
+ The outer wrapper of the page—including the page title, subtitle, and page-level actions—displayed in a familiar and consistent style that sets expectations about the purpose of the page.
+ ResourceItem
+ Use to represent a specific object within a collection, that a customer can take action on. For example, a list of active subscriptions or redeemable offers, in a style consistent with the order index page.
+ Updates & News
+ Developer changelog
+ Partner blog

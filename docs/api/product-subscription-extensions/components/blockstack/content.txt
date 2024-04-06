@@ -1,0 +1,55 @@
+TextField
+ Thumbnail
+ BlockStack
+ Use to achieve no-fuss vertical centering.
+ A stack is made of flexible items that wrap each of the stack’s children. Options provide control of the alignment and spacing of the items in the stack. Use StackItem to group multiple elements inside a BlockStack together.
+ JavaScript
+ React
+ 1 import {extend, BlockStack, Text} from '@shopify/admin-ui-extensions';
+ 2
+ 3 function buildStackText(root) {
+ 4
+    const text = root.createComponent(Text);
+ 5
+    text.appendChild('Items to stack');
+ 6
+    return text;
+ 7 }
+ 8
+ 9 extend('Playground', (root) => {
+ 10
+    const blockStack = root.createComponent(BlockStack, {
+ 11
+      inlineAlignment: 'center',
+ 12
+      spacing: 'loose',
+ 13
+    });
+ 14
+ 15
+    blockStack.appendChild(buildStackText(root));
+ 16
+    blockStack.appendChild(buildStackText(root));
+ 17
+    blockStack.appendChild(buildStackText(root));
+ 18
+ 19
+    root.appendChild(blockStack);
+ 20
+ 21
+    root.mount();
+ 22 });
+ Props
+ optional = ?
+ Name Type Description
+ inlineAlignment? "leading" | "center" | "trailing" Specifies the inline alignment. This affects the horizontal flow of elements. Default value: "leading"
+ spacing? Spacing Adjusts spacing between children. Default value: "base"
+ Guidelines
+ 📱 All children of BlockStack are placed in a single view object, which makes recycling the views expensive and results in poorer performance when scrolling. Consider keeping your Stacks simple.
+ By default, BlockStack alignment is 'leading’.
+ ✅ Do 🛑 Don't
+ Keep Stacks narrow. There is typically more vertical space than horizontal Use complex and deep Stack layouts
+ For more guidelines, refer to Polaris' Stack best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE

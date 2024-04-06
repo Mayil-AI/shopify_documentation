@@ -1,0 +1,45 @@
+Build fulfillment constraints
+ Build local pickup delivery option generators
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ App Store
+ Order routing apps
+ Order routing apps provide a way for merchants with complex or highly custom needs to take control over their fulfillment and delivery strategy needs. Order routing apps use Shopify Functions to customize fulfillment and delivery strategies.
+ This guide introduces functionality that you can build in your order routing app, provides common use cases for order routing apps, and offers some developer tools and resources to get you started.
+ How it works
+ When a customer places an order, Shopify selects the best possible location to fulfill it. You can use the following Function APIs to introduce your own custom logic into this process, and configure how Shopify selects an order's fulfillment locations and restricts which item can be fulfilled:
+ Order routing location rules
+ Fulfillment constraints
+ Local pickup delivery option generators
+ Order routing location rules
+ Order routing apps can provide custom rules, in addition to the default Shopify rules, for how the best possible location is selected. Merchants can then configure a complete order routing strategy by ranking rules within their store's order routing settings.
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use custom order routing location rules.
+ Fulfillment constraints
+ Fulfillment constraints offer a way for apps to restrict which products must be fulfilled or not fulfilled together.
+ If there are no valid locations that meet the requirements for fulfilling the cart, then the buyer's ability to complete checkout is blocked.
+ Local pickup delivery option generators
+ Local pickup delivery option generators allow apps to generate local pickup options, based on custom rules, available to buyers during checkout.
+ Use cases
+ Common use cases for order routing apps include the following:
+ Define custom rules for assigning order routing priority to specific locations.
+ Require specified products to be fulfilled (or not fulfilled) together.
+ Prevent buyers from completing checkout when inventory allocations cannot meet fulfillment constraints.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about building order routing apps.
+ Order routing location rules
+ Use Shopify Functions to choose a different order location during checkout.
+ Fulfillment constraints
+ Use Shopify Functions to customize fulfillment and delivery strategies.
+ Next steps
+ Learn how to create custom order routing location rules.
+ Learn how to generate fulfillment constraints to adjust how specific products are fulfilled.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Use cases
+ Developer tools and resources
+ Next steps
+ Updates & News

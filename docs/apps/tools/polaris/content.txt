@@ -1,0 +1,30 @@
+CLI
+ Polaris
+ Development stores
+ API libraries
+ GraphiQL for the Admin API
+ Best practices
+ Design guidelines
+ Checkout
+ Customer accounts
+ Selling strategies
+ App Store
+ Polaris
+ The Polaris design system includes design patterns and guidance, including a library of UI components, tokens, and icons to build apps in the Shopify admin.
+ The Shopify admin is the back office where users manage their business. Shopify apps are embedded within the admin so that they can seamlessly integrate into user workflows. The Shopify admin provides a surface for embedded apps to render their UI. On the web, the surface is an iframe and in the Shopify mobile app, the surface is a WebView.
+ Inside the app surface, we encourage you to use Polaris to create familiar and consistent user experiences. Your app should import the Polaris React library, which defines the components for the Shopify admin. Then, follow both the App Design Guidelines and the broader Polaris Guidelines to create familiar and consistent user experiences.
+ Polaris includes the following features:
+ Design guidance: Guidance on accessibility, colors, typography, spacing, naming, and actionable language to help you create experiences that feel like the rest of the admin.
+ Components: Reusable building blocks made of interface elements and styles, packaged through code.
+ Tokens: Named CSS values that represent design decisions for elements like color, spacing, and typography. Apply them to app designs to help unify user experiences.
+ Icons: Carefully designed icons that are focused on commerce and entrepreneurship. Use them as visual aids to help users complete tasks.
+ Patterns: Repeatable solutions to common UX problems in a specific user situation. Using the right pattern in the right context makes the admin familiar and easy to use.
+ App Bridge
+ To create a complete user experience, Shopify apps must also render content outside of their surface, on other parts of the admin. The App Bridge library allows Shopify apps to trigger the admin to render UI outside of the app surface on their behalf.
+ Next steps
+ Learn more about Polaris.
+ Learn more about Shopify App Bridge.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ App Bridge

@@ -1,0 +1,80 @@
+App Store
+ Troubleshooting webhooks
+ If your app uses webhooks, then you should monitor for and respond to failed webhook delivery notifications. A webhook is removed when 19 consecutive retried delivery attempts fail.
+ If your app was created in the Partner Dashboard or using Shopify CLI, then you can use the webhook delivery metrics report to troubleshoot delivery failures and get information on performance.
+ This guide shows you how to use the webhook metrics report to track any failed webhook deliveries and fix them before they affect app users.
+ Note
+ Webhook data is divided by topic. Refer to the GraphQL Admin API or REST Admin API reference for the complete list of supported webhook topics.
+ Some topics also support sub-topics.
+ Failed webhook delivery notifications
+ If a webhook has 13 or more consecutive failed deliveries, then Shopify notifies you by email. Emails are sent every two days until the issue is resolved or the webhook subscription is removed. Notifications for apps managed in the Partner Dashboard are sent to the app's API contact email address. Notifications for custom apps are sent to the app developer's email.
+ View deliveries
+ You can view a report of your app's webhook deliveries from the past 7 days in the Partner Dashboard.
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ In the sidebar, click Insights > Webhook metrics.
+ Tip
+ You can manually trigger a webhook to check delivery metrics by updating your development store. For example, update a product to trigger products/update.
+ View metrics
+ The Webhook metrics page shows failed deliveries over time. Each topic lists the following information for each of the app's webhook subscriptions:
+ Webhook metrics
+ Field Description
+ Failed delivery rate The percentage of unsuccessful delivery attempts out of the total number of delivery attempts
+ Removed webhooks The number of removed webhook subscriptions. A webhook is removed when 19 consecutive retried delivery attempts fail.
+ Response time The 90th percentile of an app's webhook response time. This means that 90% of the app's responses were equal to or faster than the listed time.
+ From the Webhook metrics page, you can view a webhook's delivery logs and delivery details.
+ View logs
+ When you click a webhook topic on the Webhook metrics page, you can view the delivery logs for that topic. The delivery logs list the following information:
+ Webhook metrics
+ Field Description
+ Response The response code that your webhook sent.
+ Retries The number of delivery attempts that were made to deliver that particular payload.
+ Shop The URL of the Shopify store that's associated with the delivery.
+ Shop ID The ID of the Shopify store that's associated with the delivery.
+ Subscription ID The unique ID of the subscription that's associated with the delivery.
+ Time The date and time that the most recent delivery attempt was made.
+ Responses and retries
+ A 200 series status response is considered successful. If your app has a high rate of successful responses, then the logs display a sample representation of successful responses.
+ If your webhook didn't respond with a 200 series status code, then the delivery failed. If the delivery fails, then it's retried up to 19 times.
+ Prioritize fixes
+ Use the response and the number of retries to help figure out which webhooks to fix first. Prioritize fixing the webhooks that have any of the following errors:
+ Removed response: Removed webhooks won't receive any deliveries unless you create them again.
+ Delivery failed response and 19 retries: After 19 failed delivery attempts, webhooks stop receiving deliveries. For webhooks with 19 failed delivery attempts, you might need to import missing data.
+ Delivery failed response and 13 to 18 retries: Webhooks that have failed multiple times in a row are likely to continue failing. You might miss data if these webhooks continue to fail.
+ View delivery details
+ When you click a delivery on the Delivery logs page, you can view additional information about the delivery, including the following:
+ Webhook metrics
+ Field Description
+ Endpoint The endpoint that the delivery was sent to.
+ HTTP headers The HTTP headers that are sent with the delivery.
+ Payload size The size of the delivery's payload.
+ Response time The time between the request and the webhook response. If your webhook doesn't respond within five seconds, then the delivery fails.
+ Retries The number of delivery attempts left. If there are no retries left and the latest response failed, then the webhook might be removed.
+ Troubleshooting failed deliveries
+ Delays in data processing that are caused by webhook failures can have an impact on users. Each time that a delivery fails, the time between retried deliveries increases. This can cause your data to become out of sync, especially if you process a lot of webhook events or time-sensitive data.
+ To identify failed deliveries, look for the following issues:
+ Webhook metrics
+ Issue Description
+ Failed delivery rates over 0.5%
+ This is considered a higher-than-average failed delivery rate, and could mean that your webhook is failing across multiple stores, or has failed multiple times in a row.
+ A high failed delivery rate on one topic might indicate a store-specific or payload-specific error.
+ Removed webhooks
+ These webhooks aren’t receiving data because they’ve been removed after multiple failed delivery attempts.
+ You’ll need to fix the issue, then recreate the webhooks.
+ Response times between four and five seconds The webhook must respond within five seconds. If your webhook doesn't respond, then the delivery fails. To resolve timeout failures, delay processing your webhook until you've sent your response.
+ Same failed delivery rates across all topics
+ If your topics all have a high failed delivery rate, then your backend might not be responding.
+ To troubleshoot, use your monitoring tools.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Failed webhook delivery notifications
+ View deliveries
+ View metrics
+ View logs
+ View delivery details
+ Troubleshooting failed deliveries
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

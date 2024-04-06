@@ -1,0 +1,15 @@
+Billing
+ App Store
+ Best practices for building Shopify apps
+ To optimize your app development experience, Shopify has established a set of best practices that you can refer to when developing your app.
+ Consider the following best practices to keep your users' stores fast, accessible, responsive, and easy to use.
+ Performance: Performance is key to the success of the app users that you support and to the experiences of their customers. Learn how to optimize and test your app for performance.
+ Accessibility: Learn how to increase the accessibility of your app to create an inclusive experience for app users and customers.
+ Internationalization: Shopify’s merchants are from all over the world and speak many different languages. Learn how to translate your app and make your app useful to more users.
+ Mobile first: With the large majority of online store traffic happening on mobile, designing for mobile devices must be at the forefront throughout the app build process.
+ Embedding: Embedding your app in the Shopify admin makes your app feel familiar, gives you access to Shopify UI elements, and makes your app easy to use on mobile devices. Learn how to optimize the design of your embedded app to reduce context switching and surface key app functionality.
+ For practical guidance on how to design UI for the Shopify admin, refer to Shopify's App Design Guidelines
+ Avoiding deceptive coding practices
+ As a Partner and a developer, you should never use deceptive coding practices, such as obfuscating code or manipulating search engines. Learn more about some of the practices that Shopify considers deceptive.
+ Was this page helpful?
+ YesNo

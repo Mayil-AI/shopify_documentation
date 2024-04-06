@@ -1,0 +1,70 @@
+customers/reset_password
+ The customers/reset_password template renders the password reset page, which hosts the form to reset the password for a customer account.
+ Tip
+ Refer to the customers/reset_password template and its main section in Dawn for an example implementation.
+ Location
+ The customers/reset_password template is located in the templates > customers directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   └── customers
+ 5
+      |     ├── reset_password.json
+ You should include the password reset form in your customers/account template or a section inside of the template.
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ The password reset form
+ The password reset form can be added with the Liquid form tag and accompanying 'reset_customer_password' parameter. Within the form tag block, you need to include the following:
+ Input type name
+ Password password customer[password]
+ Password confirmation password customer[password_confirmation]
+ For example:
+ 1 {%- form 'reset_customer_password' -%}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="password">
+ 5
+      <input
+ 6
+        type="password"
+ 7
+        name="customer[password]"
+ 8
+        id="password"
+ 9
+      >
+ 10
+      <label for="password">Password</label>
+ 11
+    </div>
+ 12
+ 13
+    <div class="password_confirm">
+ 14
+      <input
+ 15
+        type="password"
+ 16
+        name="customer[password_confirmation]"
+ 17
+        id="password_confirmation"
+ 18
+      >
+ 19
+      <label for="password_confirmation">Confirm password</label>
+ 20
+    </div>
+ 21
+ 22
+    <button>Reset password</button>
+ 23 {%- endform -%}
+ Usage
+ When working with the customers/account template, you should familiarize yourself with previewing the template. To preview the customers/reset_password template, perform the following steps:
+ Fill out the password recovery form on the login page.
+ Check your email for the "Customer account password reset" email.
+ Click the link in the email. This will take you to the customer password reset page.

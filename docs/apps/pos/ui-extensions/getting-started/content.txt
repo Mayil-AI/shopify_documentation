@@ -1,0 +1,75 @@
+Billing
+ App Store
+ Getting started with POS UI extensions
+ This tutorial shows you how to set up your development environment so that you can begin developing a POS UI extension.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Generate a POS UI extension using Shopify CLI.
+ Run the local extension in your development store.
+ Test your app in Shopify POS.
+ Requirements
+ Create a development store.
+ Install or migrate to Shopify CLI version 3.0 or higher.
+ Create an app.
+ Embed your app in Shopify POS.
+ Step 1: Generate a POS UI Extension
+ Navigate to your app directory.
+ Ensure @shopify/cli and @shopify/app packages are using the most up to date versions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify upgrade
+ Generate your POS UI extension template.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run generate extension
+ Select POS UI under the Point-of-Sale menu.
+ Give your extension a working name.
+ Select the programming language that you want to work in.
+ Step 2: Run the local extension in your development store
+ After you create your extension, you can start a local development server so that you can run your extension in your development store.
+ When you start the server, Shopify CLI uses Cloudflare to create a secure tunnel. Cloudflare gives your app extension a unique URL.
+ Install your project's dependencies using the command from your package manager of choice.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install
+ Start your local server for your extension in the app directory.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Follow the prompts to associate your extension with your app and development store. Your development server should now be running.
+ To learn more about the processes that execute when you run dev, refer to the list of Shopify CLI commands.
+ Step 3: Install your app and preview your extension
+ You can install your app and preview your extension in Shopify POS from the developer console.
+ With your server running, press p to open the developer console.
+ In the developer console page, complete the following tasks:
+ To install your app, click on the preview link for the POS UI extension.
+ To preview your extension, select the View mobile button. This generates a deep link or QR code.
+ Using a mobile device with the Shopify POS app installed, scan the QR code that was generated from your developer console. This opens Shopify POS on your device, and installs the extension. If your extension's URL changes, then you need to re-add the smart grid extension tile.
+ Tip
+ If you're using Android and your extension isn't loading, then refer to the troubleshooting guide.
+ Updating
+ You can refer to the list of the available POS UI Extension versions to see if you are using the latest one.
+ Merchants can manage their POS UI extensions across locations from the POS channel. You can direct merchants to this capability in your merchant facing communication: https://admin.shopify.com/store/{shop}/apps/point-of-sale-channel/settings/pos-ui-extensions
+ Next steps
+ Follow along with an example discount extension.
+ Explore the full reference of Shopify retail APIs and components that you can use for your POS UI extension.
+ Learn how to deploy and release an app extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Generate a POS UI Extension
+ Step 2: Run the local extension in your development store
+ Step 3: Install your app and preview your extension
+ Updating
+ Next steps
+ Updates & News

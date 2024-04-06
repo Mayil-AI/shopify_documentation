@@ -1,0 +1,340 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CurrencyCode enum
+ 2024-04 latest
+ The three-letter currency codes that represent the world currencies used in stores. These include standard ISO 4217 codes, legacy codes, and non-standard codes.
+ Values
+ AED
+ United Arab Emirates Dirham (AED).
+ AFN
+ Afghan Afghani (AFN).
+ ALL
+ Albanian Lek (ALL).
+ AMD
+ Armenian Dram (AMD).
+ ANG
+ Netherlands Antillean Guilder.
+ AOA
+ Angolan Kwanza (AOA).
+ ARS
+ Argentine Pesos (ARS).
+ AUD
+ Australian Dollars (AUD).
+ AWG
+ Aruban Florin (AWG).
+ AZN
+ Azerbaijani Manat (AZN).
+ BAM
+ Bosnia and Herzegovina Convertible Mark (BAM).
+ BBD
+ Barbadian Dollar (BBD).
+ BDT
+ Bangladesh Taka (BDT).
+ BGN
+ Bulgarian Lev (BGN).
+ BHD
+ Bahraini Dinar (BHD).
+ BIF
+ Burundian Franc (BIF).
+ BMD
+ Bermudian Dollar (BMD).
+ BND
+ Brunei Dollar (BND).
+ BOB
+ Bolivian Boliviano (BOB).
+ BRL
+ Brazilian Real (BRL).
+ BSD
+ Bahamian Dollar (BSD).
+ BTN
+ Bhutanese Ngultrum (BTN).
+ BWP
+ Botswana Pula (BWP).
+ BYN
+ Belarusian Ruble (BYN).
+ BZD
+ Belize Dollar (BZD).
+ CAD
+ Canadian Dollars (CAD).
+ CDF
+ Congolese franc (CDF).
+ CHF
+ Swiss Francs (CHF).
+ CLP
+ Chilean Peso (CLP).
+ CNY
+ Chinese Yuan Renminbi (CNY).
+ COP
+ Colombian Peso (COP).
+ CRC
+ Costa Rican Colones (CRC).
+ CVE
+ Cape Verdean escudo (CVE).
+ CZK
+ Czech Koruny (CZK).
+ DJF
+ Djiboutian Franc (DJF).
+ DKK
+ Danish Kroner (DKK).
+ DOP
+ Dominican Peso (DOP).
+ DZD
+ Algerian Dinar (DZD).
+ EGP
+ Egyptian Pound (EGP).
+ ERN
+ Eritrean Nakfa (ERN).
+ ETB
+ Ethiopian Birr (ETB).
+ EUR
+ Euro (EUR).
+ FJD
+ Fijian Dollars (FJD).
+ FKP
+ Falkland Islands Pounds (FKP).
+ GBP
+ United Kingdom Pounds (GBP).
+ GEL
+ Georgian Lari (GEL).
+ GHS
+ Ghanaian Cedi (GHS).
+ GIP
+ Gibraltar Pounds (GIP).
+ GMD
+ Gambian Dalasi (GMD).
+ GNF
+ Guinean Franc (GNF).
+ GTQ
+ Guatemalan Quetzal (GTQ).
+ GYD
+ Guyanese Dollar (GYD).
+ HKD
+ Hong Kong Dollars (HKD).
+ HNL
+ Honduran Lempira (HNL).
+ HRK
+ Croatian Kuna (HRK).
+ HTG
+ Haitian Gourde (HTG).
+ HUF
+ Hungarian Forint (HUF).
+ IDR
+ Indonesian Rupiah (IDR).
+ ILS
+ Israeli New Shekel (NIS).
+ INR
+ Indian Rupees (INR).
+ IQD
+ Iraqi Dinar (IQD).
+ IRR
+ Iranian Rial (IRR).
+ ISK
+ Icelandic Kronur (ISK).
+ JEP
+ Jersey Pound.
+ JMD
+ Jamaican Dollars (JMD).
+ JOD
+ Jordanian Dinar (JOD).
+ JPY
+ Japanese Yen (JPY).
+ KES
+ Kenyan Shilling (KES).
+ KGS
+ Kyrgyzstani Som (KGS).
+ KHR
+ Cambodian Riel.
+ KID
+ Kiribati Dollar (KID).
+ KMF
+ Comorian Franc (KMF).
+ KRW
+ South Korean Won (KRW).
+ KWD
+ Kuwaiti Dinar (KWD).
+ KYD
+ Cayman Dollars (KYD).
+ KZT
+ Kazakhstani Tenge (KZT).
+ LAK
+ Laotian Kip (LAK).
+ LBP
+ Lebanese Pounds (LBP).
+ LKR
+ Sri Lankan Rupees (LKR).
+ LRD
+ Liberian Dollar (LRD).
+ LSL
+ Lesotho Loti (LSL).
+ LTL
+ Lithuanian Litai (LTL).
+ LVL
+ Latvian Lati (LVL).
+ LYD
+ Libyan Dinar (LYD).
+ MAD
+ Moroccan Dirham.
+ MDL
+ Moldovan Leu (MDL).
+ MGA
+ Malagasy Ariary (MGA).
+ MKD
+ Macedonia Denar (MKD).
+ MMK
+ Burmese Kyat (MMK).
+ MNT
+ Mongolian Tugrik.
+ MOP
+ Macanese Pataca (MOP).
+ MRU
+ Mauritanian Ouguiya (MRU).
+ MUR
+ Mauritian Rupee (MUR).
+ MVR
+ Maldivian Rufiyaa (MVR).
+ MWK
+ Malawian Kwacha (MWK).
+ MXN
+ Mexican Pesos (MXN).
+ MYR
+ Malaysian Ringgits (MYR).
+ MZN
+ Mozambican Metical.
+ NAD
+ Namibian Dollar.
+ NGN
+ Nigerian Naira (NGN).
+ NIO
+ Nicaraguan Córdoba (NIO).
+ NOK
+ Norwegian Kroner (NOK).
+ NPR
+ Nepalese Rupee (NPR).
+ NZD
+ New Zealand Dollars (NZD).
+ OMR
+ Omani Rial (OMR).
+ PAB
+ Panamian Balboa (PAB).
+ PEN
+ Peruvian Nuevo Sol (PEN).
+ PGK
+ Papua New Guinean Kina (PGK).
+ PHP
+ Philippine Peso (PHP).
+ PKR
+ Pakistani Rupee (PKR).
+ PLN
+ Polish Zlotych (PLN).
+ PYG
+ Paraguayan Guarani (PYG).
+ QAR
+ Qatari Rial (QAR).
+ RON
+ Romanian Lei (RON).
+ RSD
+ Serbian dinar (RSD).
+ RUB
+ Russian Rubles (RUB).
+ RWF
+ Rwandan Franc (RWF).
+ SAR
+ Saudi Riyal (SAR).
+ SBD
+ Solomon Islands Dollar (SBD).
+ SCR
+ Seychellois Rupee (SCR).
+ SDG
+ Sudanese Pound (SDG).
+ SEK
+ Swedish Kronor (SEK).
+ SGD
+ Singapore Dollars (SGD).
+ SHP
+ Saint Helena Pounds (SHP).
+ SLL
+ Sierra Leonean Leone (SLL).
+ SOS
+ Somali Shilling (SOS).
+ SRD
+ Surinamese Dollar (SRD).
+ SSP
+ South Sudanese Pound (SSP).
+ STN
+ Sao Tome And Principe Dobra (STN).
+ SYP
+ Syrian Pound (SYP).
+ SZL
+ Swazi Lilangeni (SZL).
+ THB
+ Thai baht (THB).
+ TJS
+ Tajikistani Somoni (TJS).
+ TMT
+ Turkmenistani Manat (TMT).
+ TND
+ Tunisian Dinar (TND).
+ TOP
+ Tongan Pa'anga (TOP).
+ TRY
+ Turkish Lira (TRY).
+ TTD
+ Trinidad and Tobago Dollars (TTD).
+ TWD
+ Taiwan Dollars (TWD).
+ TZS
+ Tanzanian Shilling (TZS).
+ UAH
+ Ukrainian Hryvnia (UAH).
+ UGX
+ Ugandan Shilling (UGX).
+ USD
+ United States Dollars (USD).
+ UYU
+ Uruguayan Pesos (UYU).
+ UZS
+ Uzbekistan som (UZS).
+ VED
+ Venezuelan Bolivares (VED).
+ VES
+ Venezuelan Bolivares Soberanos (VES).
+ VND
+ Vietnamese đồng (VND).
+ VUV
+ Vanuatu Vatu (VUV).
+ WST
+ Samoan Tala (WST).
+ XAF
+ Central African CFA Franc (XAF).
+ XCD
+ East Caribbean Dollar (XCD).
+ XOF
+ West African CFA franc (XOF).
+ XPF
+ CFP Franc (XPF).
+ XXX
+ Unrecognized currency.
+ YER
+ Yemeni Rial (YER).
+ ZAR
+ South African Rand (ZAR).
+ ZMW
+ Zambian Kwacha (ZMW).
+ BYR deprecated
+ Belarusian Ruble (BYR).
+ Deprecation warning
+ BYR is deprecated. Use BYN available from version 2021-01 onwards instead.
+ STD deprecated
+ Sao Tome And Principe Dobra (STD).
+ Deprecation warning
+ STD is deprecated. Use STN available from version 2022-07 onwards instead.
+ VEF deprecated
+ Venezuelan Bolivares (VEF).
+ Deprecation warning
+ VEF is deprecated. Use VES available from version 2020-10 onwards instead.
+ Types that return CurrencyCode
+ MoneyV2.currencyCode
+ Was this page helpful?
+ YesNo
+ Updates & News

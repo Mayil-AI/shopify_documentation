@@ -1,0 +1,40 @@
+Functions
+ Deployment
+ Overview
+ Deploy a web app
+ App versions
+ Distribution
+ Billing
+ App Store
+ Deployment
+ After you've added features to your app, you might want to make your app code available to Shopify outside of your development environment. You might deploy parts of your app to test the app's functionality, or get the app ready for distribution.
+ How it works
+ Depending on the architecture of your app, you might do this using your own hosting solution and deployment pipeline, using the Partner Dashboard, or using a combination of the two. You might also need to deploy your app components to test them.
+ Your web app is deployed independently from app configuration and extensions, which are deployed through app versions.
+ Web app
+ After you finish developing your app, you need to deploy your web app to a hosting solution. Apps deployed to hosting solutions can always be accessed by your users and won't be interrupted by changes to your local environment.
+ You can deploy your web app to test the functionality in a different environment, or deploy your app to a production environment to get it ready for distribution.
+ Deploy your web app
+ Learn how to deploy your web app to any hosting provider.
+ Deploying to production
+ If you're planning on deploying your app for use in production, then consider creating a separate app. The app might use the same repository and code base that you use for development and testing, but has its own record and configuration in the Partner Dashboard.
+ If you use a separate app for production, then you can use your original app to test different app elements. You'll also avoid changing your production app settings, such as app URLs, during the development and testing process.
+ Note
+ You need to deploy any app extensions built using Shopify CLI to the production version of the app, and reconfigure any app extensions that were configured in the Partner Dashboard.
+ App versions
+ After you set up your app configuration or create one or more app extensions, you can deploy these components together and release a new app version to users.
+ App versions overview
+ Learn about the deployment model for app configuration and extensions.
+ Deploy and release app versions
+ Learn how to deploy app configuration and extensions to Shopify.
+ Next steps
+ After you learn how to deploy your app, learn how to distribute it to users.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Web app
+ App versions
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,415 @@
+Billing
+ App Store
+ Metafield types
+ Each metafield and metafield definition has a type, which defines the type of information that it can store. The metafield types have built-in validation and Liquid support.
+ How it works
+ For metafield definitions, the type is enforced across every instance of the resource that owns the metafield definition. For example, if you create a metafield definition called "Ingredients" with the type multi_line_text_field with an owner type of PRODUCT, then the metafield's type will be multi_line_text_field for every product resource.
+ Metafield Types
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "metafield": {
+ 5
+          "namespace": "custom",
+ 6
+          "key": "ingredients",
+ 7
+          "value": "oat milk,\nsugar,\nchia seeds",
+ 8
+          "type": "multi_line_text_field",
+ 9
+          "definition": {
+ 10
+            "name": "Ingredients",
+ 11
+            "ownerType": "PRODUCT"
+ 12
+          }
+    }
+ 16 }
+ When using the Admin API to read and write metafields, the value is always entered and stored as a string, regardless of type.
+ Supported types
+ Metafields and metafield definitions can have any of the types specified in the following table.
+ Type Description Example value Value type Translatable Market localizable
+ boolean A true or false value.
+ true
+ boolean no no
+ color The hexadecimal code for a color. String value types can store up to five million characters.
+ #fff123
+ string no no
+ date A date in ISO 8601 format without a presumed timezone. String value types can store up to five million characters.
+ 2022-02-02
+ string no no
+ date_time A date and time in ISO 8601 format without a presumed timezone. String value types can store up to five million characters.
+ 2022-01-01T12:30:00
+ string no no
+ dimension A value and a unit of length. Valid unit values: in, ft, yd, mm, cm, m
+ { 
+  "value": 25.0, 
+  "unit": "cm"
+ } 
+ JSON object no no
+ json A JSON-serializable value. This can be an object, an array, a string, a number, a boolean, or a null value. JSON data value types can store up to two million characters.
+ { 
+  "ingredient": "flour", 
+  "amount": 0.3
+ } 
+ JSON data yes no
+ money A numeric amount, with a currency code that matches the store's currency.
+ 
+ You can localize money metafields to a market, but you can't translate them to a different language or locale.
+ {
+  "amount": "5.99", 
+  "currency_code": "CAD"
+ }
+ JSON object no yes
+ multi_line_text_field A multi-line text field. String value types can store up to five million characters.
+ Ingredients
+ Flour
+ Water
+ Milk
+ Eggs
+ string yes no
+ number_decimal A number with decimal places in the range of +/-9999999999999.999999999. String value types can store up to five million characters.
+ 10.4
+ string no no
+ number_integer A whole number in the range of +/-9,007,199,254,740,991.
+ 10
+ integer no no
+ rating A rating measured on a specified scale. Validations are required for ratings.
+ { 
+  "value": "3.5", 
+  "scale_min": "1.0", 
+  "scale_max": "5.0"
+ } 
+ JSON object no
+ rich_text_field
+ A rich text field supporting headings, lists, links, bold, and italics.
+ Learn more about rich text formatting.
+ {
+  "type": "root",
+  "children": [
+   {
+    "type": "paragraph",
+    "children": [
+     {
+      "type": "text",
+      "value": "Bold text.",
+      "bold": true
+     }
+    ]
+   }
+  ]
+ }
+ JSON object yes no
+ single_line_text_field A single-line text field. String value types can store up to five million characters.
+ VIP shipping method
+ string yes no
+ url A URL with one of the allowed schemes: https, http, mailto, sms, tel. String value types can store up to five million characters.
+ https://www.shopify.com
+ string yes no
+ volume A value and a unit of volume. Valid unit values: ml, cl, l, m3 (cubic meters), us_fl_oz, us_pt, us_qt, us_gal, imp_fl_oz, imp_pt, imp_qt, imp_gal.
+ { 
+  "value": 20.0, 
+  "unit": "ml"
+ } 
+ JSON object no no
+ weight A value and a unit of weight. Valid unit values: oz, lb, g, kg
+ { 
+  "value": 2.5, 
+  "unit": "kg"
+ } 
+ JSON object no no
+ Reference types
+ Reference metafields enable you to store references to Shopify resources.
+ Type Description Example value Value type Translatable Market localizable
+ collection_reference A reference to a collection on the online store.
+ gid://shopify/
+ Collection/1
+ string no yes
+ file_reference A reference to a file on the online store. The default value is GenericFile. You can use validations to add other file types (for example, Image).
+ gid://shopify/
+ MediaImage/123
+ string yes no
+ metaobject_reference A reference to a metaobject entry. You can use validations to set which metaobject definition the metaobject must be.
+ gid://shopify/Metaobject/123
+ string no yes
+ mixed_reference A reference to one of many metaobject definitions. Unlike metaobject_reference which only allows for a single metaobject definition to be set, mixed references allow for metaobjects that belong to different definitions.
+ gid://shopify/Metaobject/123
+ string no no
+ page_reference A reference to a page on the online store.
+ gid://shopify/
+ OnlineStorePage/1
+ string no yes
+ product_reference A reference to a product on the online store.
+ gid://shopify/
+ Product/1
+ string no yes
+ variant_reference A reference to a product variant on the online store.
+ gid://shopify/
+ ProductVariant/1
+ string no yes
+ List types
+ List metafields enable you to store multiple values in a single metafield. The maximum number of values that can be stored in a metafield list is 128. The value must be provided as a JSON array.
+ You can implement list metafields on the online store using sections and blocks. The type of list determines the implementation. For example, you could add a list of product references as a dynamic source to a custom block, or you could add a list of single line text fields to a text or rich text section.
+ Note
+ If you delete a product or variant from a store, then the product or variant is automatically removed from all list metafields that reference it.
+ The following list types are supported:
+ Type Description Example value Translatable Market localizable
+ list.collection_reference A list of collection references.
+ [ 
+ "gid://shopify/Collection/1", 
+ "gid://shopify/Collection/2"
+ ] 
+ no no
+ list.color A list of hexadecimal color codes.
+ [ 
+ "#FFF123", 
+ "#E6E6FA", 
+ "#00FF00"
+ ] 
+ no no
+ list.date A list of dates in ISO 8601 format without presumed timezones.
+ [ 
+ "2022-01-01", 
+ "2022-05-05"
+ ] 
+ no no
+ list.date_time A list of dates and times in ISO 8601 format without presumed timezones.
+ [ 
+ "2022-01-01T12:30:00", 
+ "2022-05-01T12:30:00"
+ ] 
+ no no
+ list.dimension A list of values and a unit of length. Valid unit values: in, ft, yd, mm, cm, m.
+ [ 
+  { 
+  "value": 25.0, 
+  "unit": "cm"
+  },
+  { 
+  "value": 35.0, 
+  "unit": "cm"
+  } 
+ ] 
+ no no
+ list.file_reference A list reference to a file on the online store. The default value is GenericFile. You can use validations to add other file types (for example, Image)
+ [ 
+ "gid://shopify/
+ MediaImage/123
+ ",
+ "gid://shopify/
+ MediaImage/456 
+ ] 
+ yes no
+ list.metaobject_reference A list reference to one or more metaobject entries that belong to a single metaobject definition. Unlike list.mixed_reference, all metaobject entries referenced must be of the same definition.
+ [ 
+ "gid://shopify/Metaobject/123", 
+ "gid://shopify/Metaobject/456"
+ ]
+ no no
+ list.mixed_reference A list reference to one or more metaobject entries that may belong to different metaobject definitions.
+ [ 
+ "gid://shopify/Metaobject/123", 
+ "gid://shopify/Metaobject/456"
+ ] 
+ no no
+ list.number_integer A list of whole numbers in the range of +/-9,007,199,254,740,991.
+ [ 
+ "10", 
+ "20", 
+ "30"
+ ] 
+ no no
+ list.number_decimal A list of numbers with decimal places in the range of +/-9999999999999.999999999.
+ [ 
+ "10.4", 
+ "20.5",
+ "30.6" 
+ ] 
+ no no
+ list.page_reference A list of references to pages on the online store.
+ [
+ "gid://shopify/
+ OnlineStorePage/1", 
+ "gid://shopify/
+ OnlineStorePage/2"
+ ]
+ no no
+ list.product_reference A list of product references.
+ [ 
+ "gid://shopify/Product/1", 
+ "gid://shopify/Product/2"
+ ] 
+ no no
+ list.rating A list of ratings measured on a specified scale. Validations are required for ratings.
+ [
+  { 
+  "value": "3.5", 
+  "scale_min": "1.0", 
+  "scale_max": "5.0"
+  }, 
+  { 
+  "value": "4.5", 
+  "scale_min": "1.0", 
+  "scale_max": "5.0"
+  }
+ ] 
+ no no
+ list.single_line_text_field A list of single-line text fields.
+ [ 
+ "VIP shipping method", 
+ "Standard shipping method"
+ ] yes no
+ list.url A list of URLs with one of the allowed schemes: https, http, mailto, sms, tel.
+ [ 
+ "https://www.shopify.com", 
+ "https://www.shopify.dev"
+ ] 
+ yes no
+ list.variant_reference A list of references to a product variant on the online store.
+ [ 
+ "gid://shopify/ProductVariant/1",
+ "gid://shopify/ProductVariant/2"
+ ]
+ no no
+ list.volume A list of values and a unit of volume. Valid unit values: ml, cl, l, m3 (cubic meters), us_fl_oz, us_pt, us_qt, us_gal, imp_fl_oz, imp_pt, imp_qt, imp_gal.
+ [ 
+  {
+  "value": 20.0, 
+  "unit": "ml"
+  }, 
+  {
+  "value": 40.0, 
+  "unit": "ml"
+  }
+ ] 
+ no no
+ list.weight A list of values and a unit of weight. Valid unit values: oz, lb, g, kg
+ [ 
+  { 
+  "value": 2.5, 
+  "unit": "kg"
+  },
+  { 
+  "value": 4.5, 
+  "unit": "kg"
+  } 
+ ]
+ no no
+ Rich text formatting
+ The rich_text_field metafield type accepts a JSON object that uses the following general structure:
+ 1 {
+ 2
+    "type": "root",
+ 3
+    // The root holds an array of paragraphs and lists. Each paragraph represents a section of text that's separated by a line break.
+ 4
+    "children": [
+ 5
+      {
+ 6
+        "type": "paragraph",
+ 7
+        // A paragraph holds an array of formatted text objects and URL objects, where the objects are concatenated to form the text within the paragraph.
+ 8
+        "children": [
+ 9
+          // Formatted text object
+ 10
+          {
+ 11
+            "type": "text",
+ 12
+            "value": "This is italicized text and ",
+ 13
+            "italic": true
+ 14
+          },
+ 15
+          // URL object
+ 16
+          {
+ 17
+            "url": "https://example.com",
+ 18
+            "title": "Link to example.com",
+ 19
+            "type": "link",
+ 20
+            "children": [
+ 21
+              // Formatted text object that's embedded in the URL object.
+ 22
+              {
+ 23
+                "type": "text",
+ 24
+                "value": "a bolded hyperlink",
+ 25
+                "bold": true
+ 26
+              }
+ 27
+            ]
+ 28
+          }
+ 29
+        ]
+ 30
+      }
+ 31
+    ]
+ 32 }
+ Refer to the following code samples for examples of the objects that can be used to represent fragments of rich text:
+ Bold and italics
+ Heading
+ Hyperlink
+ Lists
+ 1 {
+ 2
+    "type": "root",
+ 3
+    "children": [
+ 4
+      {
+ 5
+        "type": "paragraph",
+ 6
+        "children": [
+ 7
+          {
+ 8
+            "type": "text",
+ 9
+            "value": "This text is bolded and italicized.",
+ 10
+            // To bold or italicize the text, set the "bold" or "italic" values to true. The default value is false.
+ 11
+            "bold": true,
+ 12
+            "italic": true
+ 13
+          }
+ 14
+        ]
+ 15
+      }
+ 16
+    ]
+ 17 }
+ Next steps
+ Learn how to create metafield definitions to include data validation for metafield values.
+ Learn how to migrate metafields from using value_type to type.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Supported types
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

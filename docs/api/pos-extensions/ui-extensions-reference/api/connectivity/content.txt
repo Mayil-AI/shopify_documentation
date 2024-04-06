@@ -1,0 +1,60 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Connectivity API
+ The Connectivity API enables POS UI extensions to retrieve device connectivity information, such as whether the device has an internet connection.
+ Example
+ JavaScript
+ React
+ 1 import { Tile, extend, Screen, Text } from "@shopify/retail-ui-extensions";
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    root.appendChild(root.createComponent(Tile, { title: 'Connectivity API', subtitle: 'ok', enabled: true, onPress: () => {api.smartGrid.presentModal()} }))
+ 5
+    root.mount();
+ 6 })
+ 7
+ 8 extend('pos.home.modal.render', (root, api) => {
+ 9
+    const screen = root.createComponent(Screen, {name: 'Screen1', title: 'Screen1'});
+ 10
+ 11
+    const connectivityText = root.createComponent(Text);
+ 12
+ 13
+    api.connectivity.subscribable.subscribe((connectivityData) => {
+ 14
+      connectivityText.children.forEach((child) => {
+ 15
+        connectivityText.removeChild(child);
+ 16
+      });
+ 17
+      connectivityText.appendChild(`Connectivity: ${connectivityData.internetConnected}`)
+ 18
+    });
+ 19
+ 20
+    root.appendChild(screen);
+ 21
+    screen.appendChild(connectivityText)
+ 22
+ 23
+    root.mount();
+ 24 });
+ Props
+ ConnectivityApiContent
+ Name Type Description
+ subscribable ConnectivityState The connectivity status at the time the page is loaded, and a callback to subscribe to value changes. Currently supports only one subscription. You can utilize makeStatefulSubscribable on a RemoteSubscribable to implement multiple subscriptions. Using makeStatefulSubscribable or the corresponding hooks represents a subscription.
+ ConnectivityState
+ Name Type Description Options
+ internetConnected string Whether the device is connected to the internet Connected or Disconnected
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example
+ Props
+ Updates & News
+ Developer changelog
+ Partner blog

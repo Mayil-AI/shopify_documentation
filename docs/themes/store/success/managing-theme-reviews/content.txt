@@ -1,0 +1,60 @@
+Testing
+ Review process
+ Theme success
+ Overview
+ Prohibited actions
+ Managing theme reviews
+ Brand asset guidance
+ Updating your theme
+ Removing a theme
+ Theme revenue share
+ Managing theme reviews
+ After a merchant installs your theme on their store, they can review it. Positive reviews encourage other merchants to install and use your theme.
+ When a merchant leaves a review for your theme, they choose a rating of I love it!, Neutral, or I'm not happy and enter a comment. You receive an email notification each time your theme is reviewed or a review is updated.
+ Caution
+ Reviews that don't comply with Shopify's Partner Program Agreement are prohibited, and might result in action taken against your account. This includes submitting fake or misleading reviews, and review incentivization. For more information, refer to the Partner Program Agreement terms.
+ Asking for theme reviews
+ You can ask merchants to leave reviews as long as you don't encourage them to leave a good review. You should use neutral language, and never offer anything in exchange for a review.
+ Below is an example of an appropriate review request:
+ "We value feedback! It helps us make our product better and keeps us energized. Let us know how we’re doing."
+ Below are some examples of inappropriate review requests:
+ "Like our service? Leave us a positive review!"
+ This request motivates only users who have a favorable perception of your services.
+ "Get free customizations by leaving us a review!"
+ If you’re giving something to someone for free, then you’re influencing them to leave a positive review.
+ "Positive feedback keeps us going! Help by leaving a review now!"
+ Even though you’re just asking for a review, you're suggesting that the review should be positive.
+ Replying to theme reviews
+ Replying to theme reviews can help you to engage with merchants, identify issues, and encourage merchants to improve the rating they gave to your theme. Replies can also show potential merchants how engaged you are as a developer, which can encourage them to download your theme.
+ You can reply to theme reviews if you have an Owner account, or if you have a staff account with the Manage public listings permission. You can change an account's permissions from the Partner Dashboard.
+ Steps:
+ Log into the Partner Dashboard.
+ Click Themes.
+ Click the theme you want to view.
+ On the Total reviews card, click View all reviews.
+ Your theme listing page opens in the Shopify Theme Store. The Reviews section is visible.
+ Under the review that you want to reply to, click Reply.
+ Enter your reply, and then click Submit reply.
+ When you reply to a review, your reply appears below the review on your theme listing page. You can edit your response at any time, even if the merchant hasn't updated their review. Only your latest response will be shown on the theme listing page.
+ The merchant receives a notification that you replied to their review. The merchant can decide to edit their review, including the rating. If a merchant updates their review, then it replaces the original review and rating on your theme listing page. When a merchant updates a review, you receive an email notification.
+ Tips for replying to reviews
+ Consider replying first to reviews that have the lowest star rating, or that mention an issue the merchant has experienced.
+ Reply to reviews as they come in. Prompt replies can help engage the merchant in a meaningful conversation.
+ Use language that is consistent with your brand.
+ Be clear and concise.
+ Avoid including any technical jargon, marketing language, or spam.
+ Personalize the response for the merchant instead of giving them a generic response. However, make sure to not share any personal or financial information.
+ Anyone who visits your theme listing can see your responses, so make sure every response is professional, respectful, and empathetic.
+ Managing negative reviews
+ Negative reviews can help you to identify issues with your theme. If a merchant leaves a negative review because of a bug or other issue, then you should work with the merchant to fix the issue. After the issue is fixed, you can ask the merchant to consider updating their review.
+ Sometimes, negative reviews are not helpful. In specific circumstances, you can request an investigation of a review. In these cases, Shopify might remove an offending review from a theme listing. Shopify will investigate reviews that include the following:
+ Inappropriate content - The review is verbally abusive. For example, it threatens you or Shopify, or uses vulgar language.
+ Personal information - The review contains phone numbers, email addresses, mailing addresses, or other personal information. These reviews will be deleted to protect that person’s privacy.
+ Conflict of interest - The review is written by a merchant who was offered something in exchange for a review, or the review was left by a theme developer or affiliated employee on a competing theme or on their own theme.
+ If you find a review that meets any of the criteria above, then contact Partner Support.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Asking for theme reviews
+ Replying to theme reviews
+ Managing negative reviews

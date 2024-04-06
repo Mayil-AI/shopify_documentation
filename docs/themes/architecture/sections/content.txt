@@ -1,0 +1,95 @@
+Layouts
+ Templates
+ Sections
+ Overview
+ Section schema
+ Section assets
+ Integrate with the theme editor
+ Blocks
+ Section groups
+ Config
+ Theme Store
+ Sections
+ Sections are Liquid files that allow you to create reusable modules of content that can be customized by merchants. They can also include blocks which allow merchants to add, remove, and reorder content within a section.
+ For example, you can create an Image with text section that displays an image and text side-by-side with options for merchants to choose the image, set the text, and select the display order.
+ Sections can be dynamically added to pages using JSON templates or section groups, giving merchants flexibility to easily customize page layouts. Sections that are included in JSON templates or section groups can support app blocks, which give merchants the option to include app content within a section without having to edit theme code. JSON templates and section groups can render up to 25 sections, and each section can have up to 50 blocks.
+ Sections can also be included statically, which can provide merchants with in-context customization options for static content.
+ By default, sections are available for any template or section group. You can limit which templates and section groups have access in the section schema.
+ The following diagram shows the main theme architecture components with sections highlighted in blue and blocks highlighted in red:
+ Location
+ Section files are located in the sections directory of the theme:
+ 1 └── theme
+ 2
+      ...
+ 3
+      ├── templates
+ 4
+      ├── sections
+ 5
+      ...
+ Content
+ Sections can contain three main types of content:
+ Type Description Required
+ Main content
+ Any HTML or Liquid content you might want to include in the section.
+ Sections have the same access to global objects, tags, and filters as other Liquid theme files, as well as the following section-specific objects:
+ The section object - Contains the section's properties and setting values.
+ The block object - Contains the properties and setting values of a single section block.
+ Aside from global objects, variables created outside of sections aren't accessible within sections.
+ The section and block objects, as well as variables created within sections, aren't available outside of their respective section. The only exception is when you reference section and block objects within a snippet that's rendered inside the section you're referencing.
+ No
+ Assets
+ Sections can bundle their own JavaScript and stylesheet assets with the following section-specific Liquid tags:
+ {% javascript %}
+ {% stylesheet %}
+ To learn more, refer to Section assets.
+ No
+ Schema
+ Sections support the {% schema %} Liquid tag. This tag is used to define the following section attributes and settings:
+ name
+ tag
+ class
+ limit
+ settings
+ blocks
+ app blocks
+ max_blocks
+ presets
+ defaults
+ locales
+ enabled_on
+ disabled_on
+ To learn more, refer to Section schema.
+ Yes
+ Usage
+ When working with sections, you should familiarize yourself with the following:
+ How to render a section
+ How to integrate sections with the theme editor
+ Support app blocks
+ Render a section
+ You can render sections in one of the following ways:
+ Reference the section in a JSON template, or a section group in a layout file.
+ Statically render the section with the section Liquid tag.
+ Use the Section Rendering API.
+ Tip
+ If you want to render sections inside a template, then use a JSON template. JSON templates provide more extensive customization options for merchants, and improve the theme editor's performance.
+ Statically render a section
+ Caution
+ Whenever possible, you should avoid statically rendering sections. Instead, you should reference them in a JSON template or section group. Statically rendered sections can't be removed or reordered by merchants.
+ You can statically render a section using the Liquid section tag.
+ For example, to include a section in a Liquid template, you can include it with a section tag:
+ /templates/customers/register.liquid
+ 1 {% section 'featured-product' %}
+ Note
+ You can include a statically rendered section in multiple theme files. However, only one instance of the section exists. If you change section settings in one location, then the change will be applied to all locations where the section is rendered.
+ Integrate sections with the theme editor
+ When users customize sections through the theme editor, the HTML of those sections is dynamically added, removed, or re-rendered directly onto the existing DOM, without reloading the entire page. However, any associated JavaScript that runs when the page loads won't run again.
+ Additionally, you must make sure that when a section or block is selected, that section or block becomes, and remains, visible while it’s selected. For example, a slideshow section should scroll into view when the section is selected, slide to a selected block (slide), and pause while that block is selected.
+ To help identify theme editor actions like section and block selection or reordering, you can use the JavaScript events emitted by the theme editor.
+ You might also want to prevent specific code from running in the theme editor. To do so, you can use Liquid and JavaScript variables for detecting the theme editor.
+ Tip
+ Section files must define presets in their schema to support being added to JSON templates using the theme editor. Section files without presets should be included in the JSON file manually, and can't be removed using the theme editor.
+ Support app blocks
+ App blocks allow app developers to create blocks for merchants to add app content to their theme without having to directly edit theme code.
+ To learn more about how to make your theme compatible with app blocks, refer to App blocks.
+ Was this section helpful?

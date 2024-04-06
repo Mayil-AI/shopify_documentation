@@ -1,0 +1,145 @@
+Billing
+ App Store
+ Using complex data types
+ Triggers and actions can both provide data to Flow workflows. This data can be simple, such as a string or a number, or complex, such as an object or a list of objects. This guide explains how to define complex data types in your extension's TOML and how to send and receive complex data types at runtime.
+ Defining a return type schema
+ To return data from an action or complex objects from a trigger, you must provide a schema for the return type using GraphQL's type system (SDL). This schema is used by Flow to provide the return object in the workflow editor. The schema can be defined in any file and linked to from your extension's TOML definition. For example, a file called schema.graphql which contains the SDL for the types used in your action or trigger, can be made in the same directory as the extension.
+ SDL file
+ When you're using complex types in Flow actions and triggers, consider the following:
+ Flow supports defining types using basic types (String, Int, Float, Boolean, and ID) as well as enums, objects, lists, and the non-nullable flag !.
+ Flow doesn't currently support the entire SDL spec when defining action return types. Unions, interfaces, custom scalars, and directives are currently not supported. The action HTTP payload doesn't utilize any arguments defined on types in this schema.
+ Flow derives the description of the return value from the comment on the type, which is placed in double quotes above the field. This description displays to merchants in the Flow editor when selecting the field.
+ The same schema file can be referenced by multiple extensions as long as the relative paths are defined correctly.
+ The following SDL defines two types: a Bid and an Auction which contains a list of bids. The schema can contain multiple types that reference each other but only one type can be defined as the return type for the action. In the following example we're referencing the Bid type in the Auction type.
+ File
+ 1 "Represents a bid placed on an auction"
+ 2 type Bid {
+ 3
+    "ID of the bid"
+ 4
+    id: ID!
+ 5
+    "Customer that placed the bid"
+ 6
+    customerId: ID!
+ 7
+    "Amount of the bid"
+ 8
+    amount: Float!
+ 9 }
+ 10
+ 11 enum Status {
+ 12
+    COMPLETE
+ 13
+    IN_PROGRESS
+ 14
+    CANCELLED
+ 15 }
+ 16
+ 17 "Represents an auction"
+ 18 type Auction {
+ 19
+    "ID of the auction"
+ 20
+    id: ID!
+ 21
+    "Name of the auction"
+ 22
+    name: String
+ 23
+    "Status of the auction"
+ 24
+    status: Status!
+ 25
+    "List of bids placed on the auction"
+ 26
+    bids: [Bid!]!
+ 27 }
+ For more information on SDL, refer to the GraphQL documentation.
+ Folder structure
+ /my-extension-name
+   shopify.extensions.toml
+   schema.graphql
+ shopify.extension.toml file
+ File
+ 1 [[extensions]]
+ 2 name = "Place auction bid"
+ 3 type = "flow_trigger"
+ 4 handle = "auction-bid"
+ 5 description = "My description"
+ 6 runtime_url = "https://{url}.com/api/execute"
+ 7 schema = "./schema.graphql"
+ 8 return_type_ref = "Auction"
+ Referencing the return type schema in an action extension's TOML
+ After a schema file has been defined, it can be referenced in the action extension's TOML by setting extensions.schema to the relative path of the schema file, and extension.return_type_ref to a type defined in the referenced schema file. The schema defined above can be referenced by setting the following fields:
+ Property Name Property value
+ extensions.schema ./schema.graphql
+ extensions.return_type_ref Auction
+ Referencing the return type schema in a trigger extension's TOML
+ After a schema file has been defined, it can be referenced in the trigger extension's TOML by setting extensions.schema to the relative path of the schema file, and setting the type of a field to schema.<type>. The schema defined above can be referenced by setting the following fields:
+ Property Name Property value
+ extensions.schema ./schema.graphql
+ extensions.settings.fields[0].type schema.Auction
+ Returning data from an action at runtime
+ When responding to an action request from Flow you can add the return type in the JSON response as a field called return_value. The return_value object must match the return type defined in the extension. The return type used in our example must be an auction object, like the following:
+ 1 {
+ 2
+    "return_value": {
+ 3
+      "id": "auction1",
+ 4
+      "name": "My first auction",
+ 5
+      "status": "COMPLETE",
+ 6
+      "bids": [
+ 7
+        {
+ 8
+          "id": "bid1",
+ 9
+          "customerId": "gid://shopify/Customer/1",
+ 10
+          "amount": 100
+ 11
+        },
+ 12
+        {
+ 13
+          "id": "bid2",
+ 14
+          "customerId": "gid://shopify/Customer/2",
+ 15
+          "amount": 103.11
+ 16
+        }
+ 17
+      ]
+ 18
+    }
+ 19 }
+ If a workflow is using a non-nullable field that's defined in the extension schema but is missing from the payload or there's a type mismatch between fields, then the action transiently fails.
+ The response size of the action must also be less than 50KB exceeding this limit will also result in a transient failure. Actions that transiently fail will be retried at increasing intervals for up to 24 hours.
+ Sending complex objects in a trigger at runtime
+ When you execute the flowTriggerReceive mutation with one or more complex object fields, the payload must include a JSON representation of the complex object(s) matching the schema. For example, if the trigger has a field with key Winning Bid of type Bid, then the payload should include the following structure:
+ 1 "payload": {
+ 2
+    "Winning Bid": {
+ 3
+      "id": "bid1",
+ 4
+      "customerId": "gid://shopify/Customer/1",
+ 5
+      "amount": 100.00
+ 6
+    }
+ 7 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Defining a return type schema
+ Referencing the return type schema in an action extension's TOML
+ Referencing the return type schema in a trigger extension's TOML
+ Returning data from an action at runtime
+ Sending complex objects in a trigger at runtime

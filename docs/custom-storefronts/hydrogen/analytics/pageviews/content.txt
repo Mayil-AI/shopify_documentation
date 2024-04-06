@@ -1,0 +1,240 @@
+Hydrogen CLI
+ Analytics
+ Overview
+ Track page views
+ Track cart events
+ Cart
+ Content security policy
+ Data fetching
+ Caching
+ Markets
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Track Hydrogen page views with Shopify analytics
+ This tutorial shows you how to track page view events in Hydrogen and send the data to Shopify analytics.
+ Tracking page view events relies on collecting analytics from Remix loader functions. On each page load, Remix runs all of the loader functions required to render the page. Within those functions, you can return relevant analytics data about the rendered page.
+ Requirements
+ You’ve created a Hydrogen app and connected it to your Shopify store.
+ Step 1: Create a custom hook to collect analytics data
+ To collect analytics data from all the nested routes that make up a single rendered page view, you’ll first create a custom hook for your Hydrogen app. This hook can then be called on any route.
+ The following custom hook combines analytics objects returned by all of the loaders that run for each page navigation. It uses Remix's useMatches hook to aggregate the data.
+ You can keep this function anywhere you prefer, but in this example it's in a new /app/utils.jsx file.
+ File
+ JavaScript
+ TypeScript
+ /app/utils.jsx
+ 1 import {useMatches} from '@remix-run/react';
+ 2 import {useMemo} from 'react';
+ 3
+ 4 const DEFAULT_LOCALE = {/* Empty for demonstration purposes.*/}
+ 5
+ 6 /**
+ 7
+   * Custom hook to aggregate `analytics` data returned by Remix loaders
+ 8
+   * @param hasUserConsent {Boolean}
+ 9
+   * @returns Object with aggregated analytics data
+ 10
+   */
+ 11 export function usePageAnalytics({hasUserConsent}) {
+ 12
+    // useMatches returns an array of nested routes
+ 13
+    const matches = useMatches();
+ 14
+ 15
+    // useMemo improves performance by only running when `matches` changes.
+ 16
+    const analyticsFromMatches = useMemo(() => {
+ 17
+      const data = {};
+ 18
+ 19
+      // For each nested route, get the `analytics` object returned
+ 20
+      // by its loader function and assign to `data`
+ 21
+      matches.forEach((event) => {
+ 22
+        const eventData = event?.data;
+ 23
+        if (eventData) {
+ 24
+          eventData['analytics'] && Object.assign(data, eventData['analytics']);
+ 25
+ 26
+          // This hook also allows you to optionally collect data such as
+ 27
+          // currency and language preferences.
+ 28
+          const selectedLocale = eventData['selectedLocale'] || DEFAULT_LOCALE;
+ 29
+          Object.assign(data, {
+ 30
+            currency: selectedLocale.currency,
+ 31
+            acceptedLanguage: selectedLocale.language,
+ 32
+          });
+ 33
+        }
+ 34
+      });
+ 35
+ 36
+      return { ...data, hasUserConsent };
+ 37
+    }, [matches]);
+ 38
+ 39
+    return analyticsFromMatches;
+ 40 }
+ The next step is to define analytics data to return from individual routes.
+ Step 2: Return analytics data from Remix loader functions
+ Using the usePageAnalytics hook you created in Step 1, you can now collect and aggregate analytics data from each route as it's rendered. By returning data from each nested route, you can build complete data about each page as it's rendered.
+ In the following simplified examples, two nested routes return two different analytics objects that get merged by the utility created in the previous step.
+ Each of these objects should have the same key name, analytics. Using a common key name allows data from multiple nested routes to be consolidated.
+ Root route
+ This loader function, from the root route, returns an analytics object containing the store's shop ID, since that remains constant across every page of your app:
+ Root example
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 export async function loader() {
+ 2
+    return json({
+ 3
+      analytics: {
+ 4
+        // Hard-coded for demonstration purposes.
+ 5
+        // In production, retrieve this value from the Storefront API.
+ 6
+        shopId: 'gid://shopify/Shop/000000000',
+ 7
+      },
+ 8
+    });
+ 9 }
+ Product route
+ This loader function, from the $productHandle.jsx route, returns an analytics object containing a pageType value and the product data:
+ Product route example
+ JavaScript
+ TypeScript
+ /app/routes/products.$productHandle.jsx
+ 1 // Import Hydrogen's list of supported page types
+ 2 import {AnalyticsPageType} from '@shopify/hydrogen';
+ 3
+ 4 export async function loader() {
+ 5
+    return defer({
+ 6
+      product,
+ 7
+      analytics: {
+ 8
+        pageType: AnalyticsPageType.product,
+ 9
+        products: [product],
+ 10
+      }
+ 11
+    });
+ 12 }
+ You now have analytics data being returned by loader functions, as well as a way to consolidate that data. The last step is to send the data to Shopify on each page view event.
+ Step 3: Upload analytics data on each page view
+ In your root file App() function, use React's useEffect hook to transmit the analytics data every time a page loads. Remix’s useLocation hook provides a way to tell when the user navigates to a new page.
+ In addition to the custom hook created above, this implementation uses several built-in Hydrogen utilities:
+ Utility Description
+ AnalyticsEventName The list of event types accepted by Shopify analytics.
+ getClientBrowserParameters A function that returns information about the user's browser.
+ sendShopifyAnalytics A function that handles sending data to Shopify analytics.
+ useShopifyCookies A hook to manage Shopify-related cookies. If its hasUserConsent value isn't true, then Shopify cookies are removed, and no analytics data is transmitted. It’s up to you to determine that the user has given their consent. You can also integrate the Customer Privacy API to pass consent to Shopify.
+ File
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 import {useLocation} from '@remix-run/react';
+ 2 import {
+ 3
+    AnalyticsEventName,
+ 4
+    getClientBrowserParameters,
+ 5
+    sendShopifyAnalytics,
+ 6
+    useShopifyCookies,
+ 7 } from '@shopify/hydrogen';
+ 8 import {useEffect, useRef} from 'react';
+ 9 import {usePageAnalytics} from './utils';
+ 10
+ 11 export default function App() {
+ 12
+    // IMPORTANT: It’s up to you to ensure you have tracking consent
+ 13
+    // before updating this value to true.
+ 14
+    const hasUserConsent = false;
+ 15
+    useShopifyCookies({hasUserConsent});
+ 16
+ 17
+    // The user's current location
+ 18
+    const location = useLocation();
+ 19
+    // The user's last location. Blank to start.
+ 20
+    const lastLocationKey = useRef('');
+ 21
+    // Analytics data returned by the custom hook
+ 22
+    const pageAnalytics = usePageAnalytics({hasUserConsent});
+ 23
+ 24
+    useEffect(() => {
+ 25
+      // Only continue if the user's location changed.
+ 26
+      if (lastLocationKey.current === location.key) return;
+ 27
+      lastLocationKey.current = location.key;
+ 28
+ 29
+      // Analytics data, including browser information
+ 30
+      const payload = {
+ 31
+        ...getClientBrowserParameters(),
+ 32
+        ...pageAnalytics,
+ 33
+      };
+ 34
+ 35
+      // Send analytics payload to Shopify
+ 36
+      sendShopifyAnalytics({
+ 37
+        eventName: AnalyticsEventName.PAGE_VIEW,
+ 38
+        payload,
+ 39
+      });
+ 40
+ 41
+    }, [location]);
+ Your app now collects analytics data on every page view and sends that data to Shopify analytics.
+ Next steps
+ Validate that analytics data is flowing
+ Track cart events with Shopify analytics.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a custom hook to collect analytics data
+ Step 2: Return analytics data from Remix loader functions
+ Step 3: Upload analytics data on each page view
+ Next steps

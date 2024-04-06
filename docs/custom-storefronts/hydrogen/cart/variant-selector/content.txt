@@ -1,0 +1,810 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Show available variants
+ This guide shows you how to render a product form that includes a list of available product variants.
+ Requirements
+ You've completed the quickstart guide.
+ You've set up a cart handler.
+ Selecting Variants with Links
+ Many product pages include a form where options are submitted to the server when the user adds to the cart. The most basic product form enables customers to select from available variants. For example, variants might include product size and color.
+ In Hydrogen we recommend using a Link to select each variant. This automatically updates the URL when customers select a variant, which has the following benefits:
+ Search engines can easily index each separate variant.
+ Users can share and bookmark each separate variant.
+ Variants can be prefetched on hover, which decreases the perceived load time.
+ Query the Storefront API for Product Options
+ First, your product query needs to include product options. Do this by adding options with the name and values properties:
+ File
+ routes/products.$handle.jsx
+ 1 export async function loader({ request, params }) {
+ 2
+    const { product } = await context.storefront.query(PRODUCT_QUERY, {
+ 3
+      variables: {
+ 4
+        handle: params.productHandle,
+ 5
+      },
+ 6
+    });
+ 7
+ 8
+    return json({ product });
+ 9 }
+ 10
+ 11 const PRODUCT_QUERY = `#graphql
+ 12
+    query Product(
+ 13
+      $handle: String!
+ 14
+    ) {
+ 15
+      product(handle: $handle) {
+ 16
+        id
+ 17
+        title
+ 18
+        vendor
+ 19
+        handle
+ 20
+        descriptionHtml
+ 21
+        description
+ 22
+        options {
+ 23
+          name
+ 24
+          values
+ 25
+        }
+ 26
+        media(first: 7) {
+ 27
+          nodes {
+ 28
+            ...Media
+ 29
+          }
+ 30
+        }
+ 31
+        seo {
+ 32
+          description
+ 33
+          title
+ 34
+        }
+ 35
+      }
+ 36
+    }
+ 37 `;
+ VariantSelector component
+ Now that you've queried product options, you can use the VariantSelector component to render links for all product options:
+ File
+ routes/products.$handle.jsx
+ 1 import { VariantSelector } from "@shopify/hydrogen";
+ 2
+ 3 const ProductForm = ({ product }) => {
+ 4
+    return (
+ 5
+      <VariantSelector options={product.options}>
+ 6
+        {({ option }) => (
+ 7
+          <>
+ 8
+            <div>{option.name}</div>
+ 9
+            <div>
+ 10
+              {option.values.map(({ value, to, isActive }) => (
+ 11
+                <Link
+ 12
+                  to={to}
+ 13
+                  // Including prefetch means if the user hovers over the link, then
+ 14
+                  // Remix fetches the page in the background
+ 15
+                  prefetch="intent"
+ 16
+                  className={isActive ? "active" : ""}
+ 17
+                >
+ 18
+                  {value}
+ 19
+                </Link>
+ 20
+              ))}
+ 21
+            </div>
+ 22
+          </>
+ 23
+        )}
+ 24
+      </VariantSelector>
+ 25
+    );
+ 26 };
+ Calculating the selected product
+ To calculate the selected product options based on URL parameters, update your GraphQL query to use the variantBySelectedOptions and use getSelectedProductOptions:
+ File
+ routes/products.$handle.jsx
+ 1 import { getSelectedProductOptions } from "@shopify/hydrogen";
+ 2
+ 3 export async function loader({ request, params }) {
+ 4
+    const selectedOptions = getSelectedProductOptions(request);
+ 5
+ 6
+    const { product } = await context.storefront.query(PRODUCT_QUERY, {
+ 7
+      variables: {
+ 8
+        handle: params.productHandle,
+ 9
+        selectedOptions,
+ 10
+      },
+ 11
+    });
+ 12
+ 13
+    return json({ product });
+ 14 }
+ 15
+ 16 const PRODUCT_QUERY = `#graphql
+ 17
+    query Product(
+ 18
+      $handle: String!
+ 19
+      $selectedOptions: [SelectedOptionInput!]!
+ 20
+    ) {
+ 21
+      product(handle: $handle) {
+ 22
+        id
+ 23
+        title
+ 24
+        vendor
+ 25
+        handle
+ 26
+        descriptionHtml
+ 27
+        description
+ 28
+        options {
+ 29
+          name
+ 30
+          values
+ 31
+        }
+ 32
+        selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
+ 33
+          ...ProductVariantFragment
+ 34
+        }
+ 35
+        media(first: 7) {
+ 36
+          nodes {
+ 37
+            ...Media
+ 38
+          }
+ 39
+        }
+ 40
+        seo {
+ 41
+          description
+ 42
+          title
+ 43
+        }
+ 44
+      }
+ 45
+    }
+ 46 `;
+ Product Variants by Availability
+ Sometimes you might want to render the variants differently based on product availability. You can do this by adding product variants to your Storefront API query.
+ Add variants to the product query and include the availableForSale property. Because variants is a list, you have to decide how many items to query. You can include all items, but for efficiency we recommend doing this if you only have a handful to query. For example, querying all if you have one hundred variants can have a negative impact on performance.
+ File
+ routes/products.$handle.jsx
+ 1 import {
+ 2
+    VariantSelector,
+ 3
+    getSelectedProductOptions,
+ 4 } from "@shopify/hydrogen";
+ 5
+ 6 export async function loader({ request, params }) {
+ 7
+    const selectedOptions = getSelectedProductOptions(request);
+ 8
+ 9
+    const { product } = await context.storefront.query(PRODUCT_QUERY, {
+ 10
+      variables: {
+ 11
+        handle: params.productHandle,
+ 12
+        selectedOptions,
+ 13
+      },
+ 14
+    });
+ 15
+ 16
+    return json({ product });
+ 17 }
+ 18
+ 19 const ProductForm = ({ product }) => {
+ 20
+    return (
+ 21
+      <VariantSelector options={product.options}>
+ 22
+        {({ option }) => (
+ 23
+          <>
+ 24
+            <div>{option.name}</div>
+ 25
+            <div>
+ 26
+              {option.values.map(({ value, isAvailable, to, isActive }) => (
+ 27
+                <Link
+ 28
+                  to={to}
+ 29
+                  prefetch="intent"
+ 30
+                  className={
+ 31
+                    isActive ? "active" : isAvailable ? "" : "opacity-80"
+ 32
+                  }
+ 33
+                >
+ 34
+                  {value}
+ 35
+                </Link>
+ 36
+              ))}
+ 37
+            </div>
+ 38
+          </>
+ 39
+        )}
+ 40
+      </VariantSelector>
+ 41
+    );
+ 42 };
+ 43
+ 44 const PRODUCT_QUERY = `#graphql
+ 45
+    query Product(
+ 46
+      $handle: String!
+ 47
+      $selectedOptions: [SelectedOptionInput!]!
+ 48
+    ) {
+ 49
+      product(handle: $handle) {
+ 50
+        id
+ 51
+        title
+ 52
+        vendor
+ 53
+        handle
+ 54
+        descriptionHtml
+ 55
+        description
+ 56
+        options {
+ 57
+          name
+ 58
+          values
+ 59
+        }
+ 60
+        selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
+ 61
+          ...ProductVariantFragment
+ 62
+        }
+ 63
+        variants(first: 10) {
+ 64
+          nodes {
+ 65
+            ...ProductVariantFragment
+ 66
+          }
+ 67
+        }
+ 68
+        media(first: 7) {
+ 69
+          nodes {
+ 70
+            ...Media
+ 71
+          }
+ 72
+        }
+ 73
+        seo {
+ 74
+          description
+ 75
+          title
+ 76
+        }
+ 77
+      }
+ 78
+    }
+ 79 `;
+ Add to cart
+ Use the CartForm component to add the selectedVariant to the cart. You can also disable the add to cart button if the selected variant is invalid or unavailable:
+ File
+ routes/products.$handle.jsx
+ 1 import {
+ 2
+    VariantSelector,
+ 3
+    getSelectedProductOptions,
+ 4
+    CartForm,
+ 5 } from "@shopify/hydrogen";
+ 6
+ 7 export async function loader({ request, params }) {
+ 8
+    const selectedOptions = getSelectedProductOptions(request);
+ 9
+ 10
+    const { product } = await context.storefront.query(PRODUCT_QUERY, {
+ 11
+      variables: {
+ 12
+        handle: params.productHandle,
+ 13
+        selectedOptions,
+ 14
+      },
+ 15
+    });
+ 16
+ 17
+    return json({ product });
+ 18 }
+ 19
+ 20 const ProductForm = ({ product }) => {
+ 21
+    return (
+ 22
+      <>
+ 23
+        <VariantSelector
+ 24
+          options={product.options}
+ 25
+          variants={product.variants}
+ 26
+        >
+ 27
+          {({ option }) => (
+ 28
+            <>
+ 29
+              <div>{option.name}</div>
+ 30
+              <div>
+ 31
+                {option.values.map(({ value, isAvailable, to, isActive }) => (
+ 32
+                  <Link
+ 33
+                    to={to}
+ 34
+                    prefetch="intent"
+ 35
+                    className={
+ 36
+                      isActive ? "active" : isAvailable ? "" : "opacity-80"
+ 37
+                    }
+ 38
+                  >
+ 39
+                    {value}
+ 40
+                  </Link>
+ 41
+                ))}
+ 42
+              </div>
+ 43
+            </>
+ 44
+          )}
+ 45
+        </VariantSelector>
+ 46
+        <CartForm
+ 47
+          route="/cart"
+ 48
+          action={CartForm.ACTIONS.LinesAdd}
+ 49
+          lines={[
+ 50
+            {
+ 51
+              merchandiseId: product.selectedVariant?.id,
+ 52
+            },
+ 53
+          ]}
+ 54
+        >
+ 55
+          <button
+ 56
+            disabled={
+ 57
+              !product.selectedVariant?.id ||
+ 58
+              !product.selectedVariant?.availableForSale
+ 59
+            }
+ 60
+          >
+ 61
+            Add to Cart
+ 62
+          </button>
+ 63
+        </CartForm>
+ 64
+      </>
+ 65
+    );
+ 66 };
+ 67
+ 68 const PRODUCT_QUERY = `#graphql
+ 69
+    query Product(
+ 70
+      $handle: String!
+ 71
+      $selectedOptions: [SelectedOptionInput!]!
+ 72
+    ) {
+ 73
+      product(handle: $handle) {
+ 74
+        id
+ 75
+        title
+ 76
+        vendor
+ 77
+        handle
+ 78
+        descriptionHtml
+ 79
+        description
+ 80
+        options {
+ 81
+          name
+ 82
+          values
+ 83
+        }
+ 84
+        selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
+ 85
+          ...ProductVariantFragment
+ 86
+        }
+ 87
+        variants(first: 10) {
+ 88
+          nodes {
+ 89
+            ...ProductVariantFragment
+ 90
+          }
+ 91
+        }
+ 92
+        media(first: 7) {
+ 93
+          nodes {
+ 94
+            ...Media
+ 95
+          }
+ 96
+        }
+ 97
+        seo {
+ 98
+          description
+ 99
+          title
+ 100
+        }
+ 101
+      }
+ 102
+    }
+ 103 `;
+ Automatically select a default variant
+ You may want to automatically have a variant selected when the page first loads. We recommend selecting a default variant by redirecting to a variant from the loader:
+ File
+ routes/products.$handle.jsx
+ 1 import {
+ 2
+    VariantSelector,
+ 3
+    getSelectedProductOptions,
+ 4
+    CartForm,
+ 5 } from "@shopify/hydrogen";
+ 6
+ 7 export async function loader({ request, params }) {
+ 8
+    const selectedOptions = getSelectedProductOptions(request);
+ 9
+ 10
+    const { product } = await context.storefront.query(PRODUCT_QUERY, {
+ 11
+      variables: {
+ 12
+        handle: params.productHandle,
+ 13
+        selectedOptions,
+ 14
+      },
+ 15
+    });
+ 16
+ 17
+    if (!product.selectedVariant) {
+ 18
+      const searchParams = new URLSearchParams(new URL(request.url).search);
+ 19
+      const firstVariant = product.variants.nodes[0];
+ 20
+ 21
+      for (const option of firstVariant.selectedOptions) {
+ 22
+        searchParams.set(option.name, option.value);
+ 23
+      }
+ 24
+ 25
+      throw redirect(
+ 26
+        `/products/${product!.handle}?${searchParams.toString()}`,
+ 27
+        302, // Make sure to use a 302, because the first variant is subject to change
+ 28
+      );
+ 29
+    }
+ 30
+ 31
+    return json({ product });
+ 32 }
+ 33
+ 34 const ProductForm = ({ product }) => {
+ 35
+    return (
+ 36
+      <>
+ 37
+        <VariantSelector
+ 38
+          options={product.options}
+ 39
+          variants={product.variants}
+ 40
+        >
+ 41
+          {({ option }) => (
+ 42
+            <>
+ 43
+              <div>{option.name}</div>
+ 44
+              <div>
+ 45
+                {option.values.map(({ value, isAvailable, to, isActive }) => (
+ 46
+                  <Link
+ 47
+                    to={to}
+ 48
+                    prefetch="intent"
+ 49
+                    className={
+ 50
+                      isActive ? "active" : isAvailable ? "" : "opacity-80"
+ 51
+                    }
+ 52
+                  >
+ 53
+                    {value}
+ 54
+                  </Link>
+ 55
+                ))}
+ 56
+              </div>
+ 57
+            </>
+ 58
+          )}
+ 59
+        </VariantSelector>
+ 60
+        <CartForm
+ 61
+          route="/cart"
+ 62
+          action={CartForm.ACTIONS.LinesAdd}
+ 63
+          lines={[
+ 64
+            {
+ 65
+              merchandiseId: product.selectedVariant?.id,
+ 66
+            },
+ 67
+          ]}
+ 68
+        >
+ 69
+          <button
+ 70
+            disabled={
+ 71
+              !product.selectedVariant?.id ||
+ 72
+              !product.selectedVariant?.availableForSale
+ 73
+            }
+ 74
+          >
+ 75
+            Add to Cart
+ 76
+          </button>
+ 77
+        </CartForm>
+ 78
+      </>
+ 79
+    );
+ 80 };
+ 81
+ 82 const PRODUCT_QUERY = `#graphql
+ 83
+    query Product(
+ 84
+      $handle: String!
+ 85
+      $selectedOptions: [SelectedOptionInput!]!
+ 86
+    ) {
+ 87
+      product(handle: $handle) {
+ 88
+        id
+ 89
+        title
+ 90
+        vendor
+ 91
+        handle
+ 92
+        descriptionHtml
+ 93
+        description
+ 94
+        options {
+ 95
+          name
+ 96
+          values
+ 97
+        }
+ 98
+        selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
+ 99
+          ...ProductVariantFragment
+ 100
+        }
+ 101
+        variants(first: 10) {
+ 102
+          nodes {
+ 103
+            ...ProductVariantFragment
+ 104
+          }
+ 105
+        }
+ 106
+        media(first: 7) {
+ 107
+          nodes {
+ 108
+            ...Media
+ 109
+          }
+ 110
+        }
+ 111
+        seo {
+ 112
+          description
+ 113
+          title
+ 114
+        }
+ 115
+      }
+ 116
+    }
+ 117 `;
+ Next steps
+ Learn how to update metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Selecting Variants with Links
+ Query the Storefront API for Product Options
+ VariantSelector component
+ Calculating the selected product
+ Product Variants by Availability
+ Add to cart
+ Automatically select a default variant
+ Next steps
+ Updates & News

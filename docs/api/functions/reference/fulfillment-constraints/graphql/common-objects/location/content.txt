@@ -1,0 +1,35 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Location object
+ 2024-04 latest
+ Represents the location where the inventory resides.
+ On this page
+ Fields
+ Types that return Location
+ Implements
+ Fields
+ address (LocationAddress!)
+ The address of this location.
+ handle (Handle!)
+ The location handle.
+ id (ID!)
+ The location id.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ name (String!)
+ The name of the location.
+ Types that return Location
+ Input.locations
+ Implements
+ HasMetafields
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

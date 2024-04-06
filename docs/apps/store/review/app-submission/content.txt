@@ -1,0 +1,25 @@
+App Store ads
+ Security
+ Submitting your app for review
+ After you complete the automated checks and prepared your app for submission, then you can submit your app for review.
+ Caution
+ Submitting apps with errors, beta versions of apps, apps that don’t meet requirements, or apps with incomplete submissions can delay the process or cause your app not to be approved.
+ Contact throughout the review process
+ The app submission email that you provided in the Contact information section of your listing form is where Shopify will email you during review. To ensure that you receive all emails, add app-submissions@shopify.com and noreply@shopify.com to your allowed senders list in your email service provider’s settings.
+ If you don’t have access to your Partner account email, then contact Partner support.
+ Temporary suspensions
+ Partners may be temporarily suspended from submitting their app if they do any of the following things:
+ Consecutively failing to address issues highlighted by the app reviewer after two or more exchanges.
+ Repeatedly submitting the app for review with new and growing numbers of issues.
+ Failing to respond to our app review emails after repeated attempts.
+ Continually asking questions not within the scope of our app review team.
+ Refusing to accept the outcome of exemption requests.
+ If your app is suspended, then your app moves to the Suspended state and you can resubmit your app for review on the date shown in the status banner. Suspensions affect only the app currently being reviewed. There is no impact to other apps owned by the Partner, the Partner account itself, or people from the Partner organization.
+ Repeatedly getting suspended will lead to longer suspensions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Contact throughout the review process
+ Temporary suspensions
+ Updates & News
+ Developer changelog

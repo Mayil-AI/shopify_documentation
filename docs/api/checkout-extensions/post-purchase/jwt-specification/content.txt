@@ -1,0 +1,85 @@
+Components
+ JWT specification
+ Customer account UI extensions
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ JWT specification
+ This document describes how JWTs (JSON web token) need to be structured in order to be used in post-purchase app extensions on the Shopify checkout. It describes the claims that can be used, and whether they're optional.
+ Overview
+ The data passed from Shopify to the extension point is signed with a shared secret (JWT). When you make a call to your backend server, you can use this secret to verify that the request came from Shopify. The following example displays how you can use a changeset token to request changes to an initial purchase:
+ 1 extend('Checkout::PostPurchase::Render', async (root, input) => {
+ 2
+    const buyNowButton = root.createComponent(Button, {
+ 3
+      onPress() {
+ 4
+        const changeset = await fetchChangeset(input);
+ 5
+        input.applyChangeset(changeset.token);
+ 6
+      },
+ 7
+    });
+ 8 const pagePayload = input.storage.initialData;
+ 9
+    buyNowButton.appendChild(`Buy "${pagePayload.variantTitle}" now!`);
+ 10 root.appendChild(buyNowButton);
+ 11
+    root.mount();
+ 12 });
+ 13 // this call would ideally fetch all available changesets at once, instead
+ 14 // of one at a time
+ 15 const fetchChangeset = async (input) => {
+ 16
+    const request = await fetch('https://example.com/fetch-changeset', {
+ 17
+      method: 'POST',
+ 18
+      body: JSON.stringify({ initialPurchase: input.initialPurchase.token }),
+ 19
+    });
+ 20 return request.json();
+ 21 };
+ If your app makes a return call to your extension point, then you must sign applyChangeset with the shared secret. Shopify will use the secret to verify that the request is coming from your app.
+ Encoding and decoding
+ JWTs can be encoded and decoded by using the client secret of an app as the token key, and by setting the hashing algorithm to HS256.
+ Ruby example:
+ 1 JWT.encode(payload, api_secret, 'HS256')
+ Claims
+ JWT ID (JTI)
+ Used to make sure each token is unique, and prevent potential replay attacks.
+ Shopify issued token: Not present.
+ Partner issued token: Required. It is strongly recommend to use UUIDs, to ensure each token is unique.
+ Issuer (ISS)
+ Used to identify who issued the token.
+ Shopify issued token: Always present, and statically set to "shopify".
+ Partner issued token: Required. The api_key of the app issuing the token.
+ Subject (SUB)
+ The reference ID of the initial purchase the token was issued for.
+ Shopify issued token: Always present.
+ Partner issued token: Required.
+ Issued at time (IAT)
+ Used to identify when the token was generated.
+ Shopify issued token: Always present.
+ Partner issued token: Required.
+ Note
+ As a security measure, changesets signed before the initial purchase is completed aren't accepted.
+ Expiration time (EXP)
+ Used to prevent a token from being used after a certain time.
+ Shopify issued token: Not present.
+ Partner issued token: Optional.
+ Not before time (NBF)
+ Used to prevent a token from being used before a certain time.
+ Shopify issued token: Not present.
+ Partner issued token: Optional.
+ Audience (AUD)
+ Unused.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Overview
+ Encoding and decoding
+ Claims
+ Updates & News

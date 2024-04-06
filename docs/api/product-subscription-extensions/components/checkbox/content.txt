@@ -1,0 +1,45 @@
+TextField
+ Thumbnail
+ Checkbox
+ Checkboxes are most commonly used to give merchants a way to make a range of selections (zero, one, or multiple).
+ JavaScript
+ React
+ 1 import {extend, ExtensionPoint, Checkbox} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const checkbox = root.createComponent(Checkbox, {
+ 5
+      label: 'Opt in to something cool',
+ 6
+      checked: true,
+ 7
+      onChange: () => console.log('Checked'),
+ 8
+    });
+ 9
+ 10
+    root.appendChild(checkbox);
+ 11
+ 12
+    root.mount();
+ 13 });
+ Props
+ optional = ?
+ Name Type Description
+ label? string Label for the checkbox.
+ checked? boolean Checkbox is selected.
+ value? boolean Alias for checked, to support iterating over multiple types of form fields. If both checked and value are used, checked is the source of truth.
+ onChange? (value: boolean) => void | Promise<void> Callback when checkbox is toggled.
+ Guidelines
+ ✅ Do 🛑 Don't
+ Use Checkboxes to give merchants a multi select choice Horizontally stack Checkboxes
+ Vertically align Checkboxes
+ For more guidelines, refer to Polaris' Checkbox best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Updates & News
+ Developer changelog

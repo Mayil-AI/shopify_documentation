@@ -1,0 +1,45 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify Admin API
+ As the primary way that apps interact with Shopify, the Admin API allows you to add your own features to the Shopify user experience. Considerations when using the Shopify Admin include:
+ The Admin API supports both GraphQL and REST.
+ This is a versioned API. Updates are released quarterly and supported API versions are listed in the release notes.
+ Apps must explicitly request the relevant access scopes from the user during installation.
+ Apps must authenticate to interact with the Admin API.
+ The Admin API enforces rate limits on all requests. Note that there are different rate-limiting methods for GraphQL and REST. All apps connecting to the Admin API are subject to Shopify’s API Terms of Service.
+ Getting started
+ Explore the following resources to get started with the GraphQL Admin and REST Admin APIs.
+ Getting started with the GraphQL Admin and REST Admin APIs
+ Learn how to generate a Shopify access token, authenticate with the GraphQL Admin and REST Admin APIs, and start sending requests.
+ Query root reference page
+ Access the entry point to query the GraphQL Admin API and explore the types that can be queried using the API.
+ Working with the Shopify Admin API
+ Read and write Shopify store information, including products, inventory, orders, shipping, and more.
+ Extend existing Shopify functionality with apps.
+ Connect store inventory to other marketplaces with channels.
+ Add new features to the Shopify admin or Shopify Point of Sale (POS) with app extensions.
+ Reference documentation
+ GraphQL Admin API reference
+ Access the complete reference to Shopify’s GraphQL Admin API.
+ REST Admin API reference
+ Access the complete reference to Shopify’s REST Admin API.
+ Tools
+ Shopify provides a range of software tools and libraries to speed up your development process.
+ Admin API libraries
+ Browse libraries to manage interactions with the Admin API.
+ Shopify CLI
+ Install our command-line tool for building Shopify apps.
+ Admin API GraphiQL Explorer
+ Consult our interactive reference guide to the GraphQL Admin API.
+ App Bridge
+ Use Shopify’s JavaScript library to seamlessly embed your app in the Shopify admin.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Getting started
+ Working with the Shopify Admin API
+ Reference documentation
+ Tools
+ Updates & News

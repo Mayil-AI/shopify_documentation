@@ -1,0 +1,715 @@
+Overview
+ Create a subscription contract
+ Update a subscription contract
+ Billing cycles
+ Orders
+ App Store
+ Create a subscription contract
+ A subscription contract is the agreement between a customer and a merchant over a specific term for recurring purchases over a set or undefined period of time.
+ This guide shows you how to create subscription contracts by illustrating two use cases: "Subscribe and save" subscriptions and "Prepaid" subscriptions.
+ Note
+ Shopify automatically creates subscription contracts when products with selling plans are purchased through checkout.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_own_subscription_contracts and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ You've familiarized yourself with the concept of subscription contracts.
+ Step 1: Create a new subscription draft
+ Tip
+ This guide shows you how to build a subscription contract incrementally. However, you can also create a subscription contract in one call with the subscriptionContractAtomicCreate mutation.
+ A subscription draft captures the intent to create a subscription contract. Apps can incrementally build subscription drafts and then commit the draft to create or update a subscription contract.
+ A subscription draft provides a way to get the projected state of the contract with all of the updates applied. Subscription contracts should always be up-to-date and accurate so that you can report on subscriptions and email subscribers, and build flows based on subscription changes.
+ Depending on your selling strategy, you might create a "Subscribe and save" or a "Prepaid" subscription.
+ Subscribe and save subscriptions
+ The following example shows the creation of a new subscription draft for a monthly "Subscribe and save" subscription, with a minimum commitment of three orders.
+ For error codes related to subscription contracts, refer to SubscriptionDraftErrorCode.
+ Note
+ Using the subscriptionContractCreate mutation doesn't affect existing fulfillments that have been paid for. To edit an existing order, apps should use the orderEditBegin mutation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionContractCreate(
+ 3
+      input: {
+ 4
+        customerId: "gid://shopify/Customer/3963517010085"
+ 5
+        nextBillingDate: "2022-10-15"
+ 6
+        currencyCode: USD
+ 7
+        contract: {
+ 8
+          note: "Dear John, I hope you enjoy this gift."
+ 9
+          status: ACTIVE
+ 10
+          paymentMethodId: "gid://shopify/CustomerPaymentMethod/424359b3cecf1229e56697ab1e71b3d4"
+ 11
+          billingPolicy: { interval: MONTH, intervalCount: 1, minCycles: 3 }
+ 12
+          deliveryPolicy: { interval: MONTH, intervalCount: 1 }
+ 13
+          deliveryPrice: 14.99
+ 14
+          deliveryMethod: {
+ 15
+            shipping: {
+ 16
+              address: {
+ 17
+                firstName: "John"
+ 18
+                lastName: "McDonald"
+ 19
+                address1: "33 New Montgomery St"
+ 20
+                address2: "#750"
+ 21
+                city: "San Francisco"
+ 22
+                province: "California"
+ 23
+                country: "USA"
+ 24
+                zip: "94105"
+ 25
+              }
+ 26
+            }
+ 27
+          }
+ 28
+        }
+ 29
+      }
+ 30
+    ) {
+ 31
+      draft {
+ 32
+        id
+ 33
+      }
+ 34
+      userErrors {
+ 35
+        field
+ 36
+        message
+ 37
+      }
+ 38
+    }
+ 39 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionContractCreate": {
+ 4
+        "draft": {
+ 5
+          "id": "gid://shopify/SubscriptionDraft/22"
+ 6
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10,
+ 14
+        "throttleStatus": {
+ 15
+          "maximumAvailable": 1000,
+ 16
+          "currentlyAvailable": 990,
+ 17
+          "restoreRate": 50
+ 18
+        }
+ Note
+ The minCycle and maxCycle are not actively performing any functions; rather, they serve as informational elements for apps. The nextBillingDate field primarily serves as a reminder for apps. Any changes made to this field won't affect the fulfillment date. Apps are responsible of keeping the contract status up-to-date and scheduling the orders.
+ Prepaid subscriptions
+ Prepaid contracts are created by defining a delivery policy that is more frequent than the billing policy. In the following example, the policies combine to define a prepaid subscription with three monthly deliveries.
+ For error codes related to subscription contracts, refer to SubscriptionDraftErrorCode.
+ Note
+ Using the subscriptionContractCreate mutation does not affect existing fulfillments that have been paid for. To edit an existing order, apps should use the orderEditBegin mutation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionContractCreate(
+ 3
+      input: {
+ 4
+        customerId: "gid://shopify/Customer/3963517010085"
+ 5
+        nextBillingDate: "2022-10-15"
+ 6
+        currencyCode: USD
+ 7
+        contract: {
+ 8
+          note: "Dear Sam, I hope you enjoy this gift."
+ 9
+          status: ACTIVE
+ 10
+          paymentMethodId: "gid://shopify/CustomerPaymentMethod/424359b3cecf1229e56697ab1e71b3d4"
+ 11
+          billingPolicy: { interval: MONTH, intervalCount: 3 }
+ 12
+          deliveryPolicy: { interval: MONTH, intervalCount: 1 }
+ 13
+          deliveryPrice: 14.99
+ 14
+          deliveryMethod: {
+ 15
+            shipping: {
+ 16
+              address: {
+ 17
+                firstName: "John"
+ 18
+                lastName: "McDonald"
+ 19
+                address1: "33 New Montgomery St"
+ 20
+                address2: "#750"
+ 21
+                city: "San Francisco"
+ 22
+                province: "California"
+ 23
+                country: "USA"
+ 24
+                zip: "94105"
+ 25
+              }
+ 26
+            }
+ 27
+          }
+ 28
+        }
+ 29
+      }
+ 30
+    ) {
+ 31
+      draft {
+ 32
+        id
+ 33
+      }
+ 34
+      userErrors {
+ 35
+        field
+ 36
+        message
+ 37
+      }
+ 38
+    }
+ 39 }
+      "subscriptionContractCreate": {
+ 4
+        "draft": {
+ 5
+          "id": "gid://shopify/SubscriptionDraft/22"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10,
+ 14
+        "throttleStatus": {
+ 15
+          "maximumAvailable": 1000,
+ 16
+          "currentlyAvailable": 990,
+ 17
+          "restoreRate": 50
+ 18
+ 21 }
+ Step 2: Add a line to the subscription draft
+ You can call the subscriptionDraftLineAdd mutation to add a subscription line to the subscription draft. In the following example, a subscription line is added to specify a product variant with its quantity and price:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionDraftLineAdd(
+ 3
+      draftId: "gid://shopify/SubscriptionDraft/22"
+ 4
+      input: {
+ 5
+        productVariantId: "gid://shopify/ProductVariant/2"
+ 6
+        quantity: 20
+ 7
+        currentPrice: 25.00
+ 8
+      }
+ 9
+    ) {
+ 10
+      lineAdded {
+ 11
+        id
+ 12
+        quantity
+ 13
+        productId
+ 14
+        variantId
+ 15
+        variantImage {
+ 16
+          id
+ 17
+        }
+ 18
+        title
+ 19
+        variantTitle
+ 20
+        currentPrice {
+ 21
+          amount
+ 22
+          currencyCode
+ 23
+        }
+ 24
+        requiresShipping
+ 25
+        sku
+ 26
+        taxable
+ 27
+      }
+ 28
+      draft {
+ 29
+        id
+ 30
+      }
+ 31
+      userErrors {
+ 32
+        field
+ 33
+        message
+ 34
+        code
+ 35
+      }
+ 36
+    }
+ 37 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionDraftLineAdd": {
+ 4
+        "lineAdded": {
+ 5
+          "id": "gid://shopify/SubscriptionLine/818b344f-1e7f-4b0e-9fc2-2b749d4b5494",
+ 6
+          "quantity": 20,
+ 7
+          "productId": "gid://shopify/Product/1",
+ 8
+          "variantId": "gid://shopify/ProductVariant/2",
+ 9
+          "variantImage": {
+ 10
+            "id": "gid://shopify/ImageSource/1474738389014"
+ 11
+          },
+ 12
+          "title": "Aerodynamic Wool Coat",
+ 13
+          "variantTitle": "Rustic Plastic Computer",
+ 14
+          "currentPrice": {
+ 15
+            "amount": "25.0",
+ 16
+            "currencyCode": "USD"
+ 17
+          },
+ 18
+          "requiresShipping": true,
+ 19
+          "sku": "",
+ 20
+          "taxable": true
+ 21
+        },
+ 22
+        "draft": {
+ 23
+          "id": "gid://shopify/SubscriptionDraft/22"
+ 24
+        },
+ 25
+        "userErrors": []
+ 26
+      }
+ 27
+    },
+ 28
+    "extensions": {
+ 29
+      "cost": {
+ 30
+        "requestedQueryCost": 11,
+ 31
+        "actualQueryCost": 11,
+ 32
+        "throttleStatus": {
+ 33
+          "maximumAvailable": 1000,
+ 34
+          "currentlyAvailable": 989,
+ 35
+          "restoreRate": 50
+ 36
+        }
+ 37
+      }
+ 38
+    }
+ 39 }
+ Step 3: Commit the subscription draft
+ When you're satisfied with the state of the subscription draft, you can commit it. When you commit a draft subscription, all of the changes are made active:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionDraftCommit(draftId: "gid://shopify/SubscriptionDraft/22") {
+ 3
+      contract {
+ 4
+        id
+ 2
+    "data": {
+ 3
+      "subscriptionDraftCommit": {
+ 4
+        "contract": {
+ 5
+          "id": "gid://shopify/SubscriptionContract/33"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10,
+ 14
+        "throttleStatus": {
+ 15
+          "maximumAvailable": 1000,
+ 16
+          "currentlyAvailable": 990,
+ 17
+          "restoreRate": 50
+ 18
+        }
+ 19
+      }
+ 20
+    }
+ 21 }
+ Viewing subscription contract details
+ The View subscription button on the customer subscriptions card and the order subscriptions card allows merchants to navigate to the app and view the subscription contract details.
+ Customers page in the Shopify admin
+ Order page in the Shopify admin
+ Redirecting to the subscription contract within the app
+ To redirect merchants to the relevant subscription contract, the app needs to implement a specific endpoint. After it's implemented, the endpoint redirects to the subscription contract page within the app for the subscription defined by subscription_contract_id.
+ You can customize the View subscription link by managing the Subscription link app extension in your Partner Dashboard:
+ You can modify the link target URL, save the changes, or remove the app extension if it's already present:
+ Note
+ Create and release a new app version to make this extension available to users. You need to release a new app version whenever you update the extension configuration in the Partner Dashboard.
+ If you don't customize the View subscription link, then the link is hardcoded. The hardcoded link has the following format:
+ {app_application_url}/subscriptions?customer_id={customer_id}&hmac={hmac}&id={subscription_contract_id}&shop={myshopify_domain}
+ Step 4: Create a billing attempt
+ To bill a subscription contract and create an order, apps need to create a billing attempt. A subscription is renewed when an app makes a billing attempt.
+ A billing attempt represents an attempt at executing a billing cycle and charging the customer payment method for a subscription contract. A billing attempt executes a contract based on the billing cycle at the origin time if provided. Otherwise, the billing attempt is created for the current billing cycle by default. You can also create a billing attempt on a specific billing cycle.
+ Statuses
+ A billing attempt starts in a pending status. After it has been processed, it either transitions to successful or failed, both of which are terminal states:
+ If the billing attempt is successful, then an order is created.
+ If the billing attempt fails, then it means that the transaction has failed.
+ If an action is pending on the part of the customer in regards to 3D Secure, then a 3D Secure challenge can occur before the billing attempt transitions to a terminal state.
+ Note
+ A billing attempt can fail if Shopify's fraud analysis service has flagged a subscription contract's origin order. It is strongly recommended to check the order risk level of a contract's origin order before executing a billing attempt.
+ Example call
+ To create a billing attempt, specify the following inputs in the subscriptionBillingAttemptCreate mutation:
+ subscriptionContractId: The ID of the subscription contract.
+ subscriptionBillingAttemptInput
+ idempotencyKey: A unique key generated by the client to avoid duplicate payments.
+ originTime: An optional field that changes the way fulfillment intervals are calculated. If nothing is provided, fulfillment is calculated using the date that the billing attempt was successful. Otherwise, fulfillment is calculated using the provided originTime value. The UTC offset of originTime should match the shop's timezoneOffset.
+ Billing attempts are processed asynchronously, which means the resulting order won't be available right away. You can fetch the billing attempt and inspect the ready field to find out whether the order has been created (true) or not (false).
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionBillingAttemptCreate(
+ 3
+      subscriptionContractId: "gid://shopify/SubscriptionContract/33"
+ 4
+      subscriptionBillingAttemptInput: {
+ 5
+        idempotencyKey: "abc123"
+ 6
+        originTime: "2022-10-30T04:05:02+14:00"
+ 7
+      }
+ 8
+    )
+ 9
+    {
+ 10
+      subscriptionBillingAttempt {
+ 11
+        id
+ 12
+        originTime
+ 13
+        errorMessage
+ 14
+        nextActionUrl
+ 15
+        order {
+ 16
+          id
+ 17
+        }
+ 18
+        ready
+      "subscriptionBillingAttemptCreate": {
+ 4
+        "subscriptionBillingAttempt": {
+ 5
+          "id": "gid://shopify/SubscriptionBillingAttempt/82",
+ 6
+          "originTime": "2022-10-30T04:05:02+14:00",
+ 7
+          "errorMessage": null,
+ 8
+          "nextActionUrl": null,
+ 9
+          "order": null,
+ 10
+          "ready": false
+ 11
+        }
+ 12
+      }
+ 13
+    },
+ 14
+    "extensions": {
+ 15
+      "cost": {
+ 16
+        "requestedQueryCost": 11,
+ 17
+        "actualQueryCost": 11
+ 18
+      }
+ 19
+    }
+ 20 }
+ Because the order isn't ready immediately, you can query the subscriptionBillingAttempt to get the resulting order information.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+      subscriptionBillingAttempt(
+ 3
+        id: "gid://shopify/SubscriptionBillingAttempt/524310"
+ 4
+      ) {
+ 5
+        id
+ 6
+        errorMessage
+ 7
+        nextActionUrl
+ 8
+        order {
+ 9
+          id
+ 10
+        }
+ 11
+        ready
+ 12
+      }
+ 13
+    }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionBillingAttempt": {
+ 4
+        "id": "gid://shopify/SubscriptionBillingAttempt/32933",
+ 5
+        "errorMessage": null,
+ 6
+        "nextActionUrl": null,
+ 7
+        "order": {
+ 8
+          "id": "gid://shopify/Order/2014567596054"
+ 9
+        },
+ 10
+        "ready": true
+ 11
+      }
+ 12
+    },
+ 13
+    "extensions": {
+ 14
+      "cost": {
+ 15
+        "requestedQueryCost": 2,
+ 16
+        "actualQueryCost": 2,
+ 17
+        "throttleStatus": {
+ 18
+          "maximumAvailable": 1000,
+ 19
+          "currentlyAvailable": 998,
+ 20
+          "restoreRate": 50
+ 21
+        }
+ 22
+      }
+ 23
+    }
+ 24 }
+ About 3D Secure
+ Shopify handles 3D Secure authentication by emailing the customer when the financial institution requires a challenge. This flow is demonstrated in the diagram below:
+ You can poll the subscriptionBillingAttempt object until the nextActionUrl field is available to see the URL. It's up to apps to attempt re-billing for failed payment attempts.
+ Note
+ The subscription_billing_attempts/success and subscription_billing_attempts/failure webhooks aren't triggered until the challenge is completed. If the customer doesn't complete the challenge, then your app won't be notified.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    subscriptionBillingAttempt(
+ 3
+      id: "gid://shopify/SubscriptionBillingAttempt/123"
+ 4
+    ) {
+ 5
+      id
+ 6
+      errorMessage
+ 7
+      errorCode
+ 8
+      nextActionUrl
+ 9
+      order {
+ 10
+        id
+ 11
+      }
+ 12
+      ready
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionBillingAttempt": {
+ 4
+        "id": "gid://shopify/SubscriptionBillingAttempt/123",
+ 5
+        "errorMessage": null,
+ 6
+        "errorCode": null,
+ 7
+        "nextActionUrl": "https://example.com/subscriptions/billing/959c1a7cec286e06bfe7f16ff351c101/challenge",
+ 8
+        "order": null,
+ 9
+        "ready": false
+ 10
+      }
+ 11
+    },
+ 12
+    "extensions": {
+ 13
+      "cost": {
+ 14
+        "requestedQueryCost": 2,
+ 15
+        "actualQueryCost": 2
+ 16
+      }
+ 17
+    }
+ 18 }
+ Next steps
+ Learn how to update a subscription contract with new information.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a new subscription draft
+ Step 2: Add a line to the subscription draft
+ Step 3: Commit the subscription draft
+ Step 4: Create a billing attempt
+ Next steps
+ Updates & News
+ Developer changelog

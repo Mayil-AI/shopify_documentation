@@ -1,0 +1,70 @@
+Overview
+ Getting started
+ Developer tools
+ Shop discovery
+ Overview
+ Shop search
+ Shop sort
+ Shop filter
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Adding shop filters
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ Previously, you added the ability for buyers to sort the marketplace homepage by shop name. As your marketplace grows and features more merchant shops, you want to enable buyers to narrow down high volumes of content and surface only the most relevant shops.
+ In this tutorial, you'll learn how to add filter functionality for shops. You'll set up shop filtering by country, but you can follow a similar structure to provide filtering by other shop attributes.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Save shop attributes to your database
+ Filter database queries by shop country
+ Add shop country queries to the internal GraphQL API
+ Add the filter to the marketplace homepage
+ Requirements
+ You've completed the tutorial for adding shop sort tutorial.
+ Add the filter to the marketplace homepage
+ To add shop sort, your buyer-facing app needs to make a request to the Storefront API. The following requests the shop name using the nameIsLike argument, and requests the shop's ID, domain, and a Storefront Access Token. The country argument enables filtering shops by a specific country. TheshopCountries query returns a list of all the shop's' countries.
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ pages/index.js
+ 1 const SHOPS_QUERY = gql`
+ 2
+    query Shops($name: String, $reverse: Boolean, $country: String) {
+ 3
+      shops(nameIsLike: $name, reverse: $reverse, country: $country) {
+ 4
+        id
+ 5
+        domain
+ 6
+        storefrontAccessToken
+ 7
+      }
+ 8
+    }
+ 9 `;
+ 10
+ 11 const SHOP_COUNTRIES = gql`
+ 12
+    query ShopCountries {
+ 13
+      shopCountries
+ 14
+    }
+ 15 `;
+ Your marketplace homepage might now look something the following:
+ Next steps
+ Learn how to add key details about shops and their products to a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Add the filter to the marketplace homepage
+ Next steps
+ Updates & News

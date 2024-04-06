@@ -1,0 +1,365 @@
+Online store
+ Article
+ Asset
+ Blog
+ Comment
+ Page
+ Redirect
+ ScriptTag
+ Theme
+ JSON
+ The Theme resource
+ POST
+ Creates a theme
+ GET
+ Retrieves a list of themes
+ GET
+ Retrieves a single theme by its ID
+ PUT
+ Modify an existing Theme
+ DEL
+ Remove an existing Theme
+ Orders
+ Plus
+ Products
+ Sales channels
+ Shipping and fulfillment
+ Shopify Payments
+ Store properties
+ TenderTransaction
+ Webhooks
+ Deprecated API calls
+ Theme
+ Requires themes access scope.
+ A theme controls the look and feel of a Shopify online store.
+ A store can have a maximum of 20 themes, one of which is the published theme that customers see when they visit the online store. Customers can't see unpublished themes. When you publish a theme, the previously published theme becomes unpublished.
+ To modify theme files after they're uploaded, use the Asset resource. To learn how to create your own theme, refer to Building themes
+ Was this section helpful?
+ YesNo
+ #
+ Endpoints
+ POST
+ /admin/api/2024-04/themes.json
+ Creates a theme
+ GET
+ /admin/api/2024-04/themes.json
+ Retrieves a list of themes
+ GET
+ /admin/api/2024-04/themes/{theme_id}.json
+ Retrieves a single theme by its ID
+ PUT
+ /admin/api/2024-04/themes/{theme_id}.json
+ Modify an existing Theme
+ DEL
+ /admin/api/2024-04/themes/{theme_id}.json
+ Remove an existing Theme
+ The Theme resource
+ Properties
+ created_at
+ read-only
+ The date and time when the theme was created. (format: 2014-04-25T16:15:47-04:00)
+ id
+ read-only
+ The unique numeric identifier for the theme.
+ name
+ The name of the theme.
+ previewable
+ read-only
+ Whether the theme can currently be previewed.
+ processing
+ read-only
+ Whether files are still being copied into place for this theme.
+ role
+ Specifies how the theme is being used within the shop. Valid values:
+ Show role properties
+ src
+ Specifies a public URL where Shopify can access the theme code.
+ theme_store_id
+ read-only
+ A unique identifier applied to Shopify-made themes that are installed from the Shopify Theme Store Theme Store. Not all themes available in the Theme Store are developed by Shopify. Returns null if the store's theme isn't made by Shopify, or if it wasn't installed from the Theme Store.
+ updated_at
+ read-only
+ The date and time of when the theme was last updated. (format: 2014-04-25T16:15:47-04:00)
+ Was this section helpful?
+ YesNo
+ {}
+ The Theme resource
+ 1
+ 2
+ 3
+ 4
+ 10
+ 11
+ {
+ "created_at": "2012-08-24T14:01:47-04:00",
+ "id": 828155753,
+ "name": "Comfort",
+ "previewable": true,
+ "processing": true,
+ "role": "main",
+ "src": "http://themes.shopify.com/theme.zip",
+ "theme_store_id": 775,
+ "updated_at": "2012-08-24T14:01:47-04:00"
+ }
+ POST
+ Creates a theme
+ Creates a theme by providing the public URL of a ZIP file that contains the theme.
+ A new theme is always unpublished by default. To publish a theme when you create it, include "role": "main" in the POST request. The theme will be published only after all of its files have been extracted and stored by Shopify, which might take a couple of minutes.
+ Parameters
+ api_version
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Create a theme that has a custom name and is published
+ Request body
+ theme
+ Theme resource
+ Show theme properties
+ Creating a theme without a name fails and returns an error
+ Was this section helpful?
+ YesNo
+ POST
+ /admin/api/2024-04/themes.json
+ cURL
+ 2
+ 3
+ 4
+ 5
+ curl -d '{"theme":{"name":"Lemongrass","src":"http://themes.shopify.com/theme.zip","role":"main"}}' \
+ -X POST "https://your-development-store.myshopify.com/admin/api/2024-04/themes.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 
+ {}
+ 14
+ HTTP/1.1 201 Created
+ {
+ "theme": {
+ "id": 1049083726,
+ "name": "Lemongrass",
+ "created_at": "2024-04-01T13:25:37-04:00",
+ "updated_at": "2024-04-01T13:25:37-04:00",
+ "role": "unpublished",
+ "theme_store_id": null,
+ "previewable": false,
+ "processing": true,
+ "admin_graphql_api_id": "gid://shopify/Theme/1049083726"
+ }
+ }
+ GET
+ Retrieves a list of themes
+ Retrieves a list of themes.
+ Parameters
+ api_version
+ string
+ required
+ fields
+ Show only certain fields, specified by a comma-separated list of field names.
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve a list of themes
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/themes.json
+ cURL
+ Remix
+ Ruby
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/themes.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ {}
+ Response
+ 35
+ 36
+ 37
+ 38
+ HTTP/1.1 200 OK
+ {
+ "themes": [
+ {
+ "id": 828155753,
+ "name": "Comfort",
+ "created_at": "2024-04-01T13:24:55-04:00",
+ "updated_at": "2024-04-01T13:24:55-04:00",
+ "role": "main",
+ "theme_store_id": null,
+ "previewable": true,
+ "processing": false,
+ "admin_graphql_api_id": "gid://shopify/Theme/828155753"
+ },
+ {
+ "id": 976877075,
+ "name": "Preview of Parallax",
+ "created_at": "2024-04-01T13:24:55-04:00",
+ "updated_at": "2024-04-01T13:24:55-04:00",
+ "role": "demo",
+ "theme_store_id": 688,
+ "previewable": true,
+ "processing": false,
+ "admin_graphql_api_id": "gid://shopify/Theme/976877075"
+ },
+ {
+ "id": 752253240,
+ "name": "Sandbox",
+ "created_at": "2024-04-01T13:24:55-04:00",
+ "updated_at": "2024-04-01T13:24:55-04:00",
+ "role": "unpublished",
+ "theme_store_id": null,
+ "previewable": true,
+ "processing": false,
+ "admin_graphql_api_id": "gid://shopify/Theme/752253240"
+ }
+ ]
+ }
+ GET
+ Retrieves a single theme by its ID
+ Retrieves a single theme by its ID.
+ Parameters
+ api_version
+ string
+ required
+ theme_id
+ string
+ required
+ fields
+ Show only certain fields, specified by a comma-separated list of field names.
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve a single theme
+ Path parameters
+ theme_id=828155753
+ string
+ required
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/themes/828155753.json
+ cURL
+ Remix
+ Ruby
+ Node.js
+ PHP
+ 1
+ 2
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/themes/828155753.json" \
+ 11
+ 12
+ 13
+ 14
+ HTTP/1.1 200 OK
+ {
+ "theme": {
+ "id": 828155753,
+ "name": "Comfort",
+ "created_at": "2024-04-01T13:24:55-04:00",
+ "updated_at": "2024-04-01T13:24:55-04:00",
+ "role": "main",
+ "theme_store_id": null,
+ "previewable": true,
+ "processing": false,
+ "admin_graphql_api_id": "gid://shopify/Theme/828155753"
+ }
+ }
+ PUT
+ Modify an existing Theme
+ Updates an existing theme.
+ Parameters
+ api_version
+ string
+ required
+ theme_id
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Publish an unpublished theme
+ Path parameters
+ theme_id=752253240
+ string
+ required
+ Request body
+ theme
+ Theme resource
+ Show theme properties
+ Update a theme's name
+ Was this section helpful?
+ YesNo
+ PUT
+ /admin/api/2024-04/themes/752253240.json
+ curl -d '{"theme":{"id":752253240,"role":"main"}}' \
+ -X PUT "https://your-development-store.myshopify.com/admin/api/2024-04/themes/752253240.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 
+ 13
+ 14
+ HTTP/1.1 200 OK
+ {
+ "theme": {
+ "role": "main",
+ "id": 752253240,
+ "name": "Sandbox",
+ "created_at": "2024-04-01T13:24:55-04:00",
+ "updated_at": "2024-04-01T13:25:38-04:00",
+ "theme_store_id": null,
+ "previewable": true,
+ "processing": false,
+ "admin_graphql_api_id": "gid://shopify/Theme/752253240"
+ }
+ }
+ DEL
+ Remove an existing Theme
+ Deletes a theme. A theme can't be deleted while it's uploading, updating, or if the theme is the last published theme.
+ Parameters
+ api_version
+ string
+ required
+ theme_id
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Delete a theme
+ Path parameters
+ theme_id=752253240
+ string
+ required
+ Was this section helpful?
+ YesNo
+ DEL
+ /admin/api/2024-04/themes/752253240.json
+ cURL
+ Remix
+ 3
+ curl -X DELETE "https://your-development-store.myshopify.com/admin/api/2024-04/themes/752253240.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ {}
+ 9
+ 10
+ 11
+ 12
+ HTTP/1.1 200 OK
+ {
+ "id": 752253240,
+ "name": "Sandbox",
+ "created_at": "2024-04-01T13:24:55-04:00",
+ "updated_at": "2024-04-01T13:24:55-04:00",
+ "role": "unpublished",
+ "theme_store_id": null,
+ "previewable": true,
+ "processing": false,
+ "admin_graphql_api_id": "gid://shopify/Theme/752253240"
+ }
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

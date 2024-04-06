@@ -1,0 +1,35 @@
+Options for building selling strategies
+ There are many options available that enable you to build selling strategies. This guide introduces the available technologies for building selling strategies and some common use cases that you can build.
+ Use cases
+ The following table describes the customizations and some common use cases that you can build for selling strategies:
+ Selling strategy technologies and use cases
+ Technology Customization type Use case
+ GraphQL Admin API Read and write Shopify store information
+ Create and manage discounts, including Buy X Get Y, Spend X Get Y, percentage, fixed-amount, and free shipping discounts.
+ Create fixed product bundles that group products together to be sold as a single unit. Fixed bundles include default, corresponding, and multipack bundles that fit within Shopify's variant limits.
+ Define purchase options that determine how customers can buy products from a store, including subscriptions and deferred purchase options.
+ Use catalogs to assign lists of products to specific contexts based on certain conditions.
+ Add tax IDs, customs codes, or other locally required data to orders.
+ Create and update translations of a store's content to sell in multiple languages.
+ Build B2B-specific interfaces for managing company locations, draft orders and invoicing, and catalogs.
+ Integrate a channel app with scheduled product publishing.
+ Confirm a store has authorization to sell NFTs on the Shopify platform.
+ Shopify Functions Extend or replace key parts of Shopify's backend with custom logic
+ Create custom discount functionality that isn't offered out of the box with Shopify, including volume discounts and tiered discounts by spend.
+ Create customized bundles that can handle complex product compositions or larger numbers of choices than Shopify's variant limits allow, including mix-and-match bundles.
+ Build a tokengating app that lets merchants offer eligible token holders exclusive access to products and discounts.
+ Admin app extensions Build a user interface (UI) that's embedded in the Shopify admin
+ Render a UI that enables merchants to interact with bundles on the product details page in the Shopify admin.
+ Render a UI that enables merchants to create and manage purchase options in the Shopify admin.
+ Next steps
+ Use the GraphQL Admin API to create and manage discounts.
+ Use Shopify Functions to create customized bundles.
+ Model a purchase option app.
+ Help merchants expand their business to a global audience, sell to multiple countries, and scale internationally using Shopify Markets.
+ Build B2B apps that help Shopify merchants sell directly to other businesses.
+ Use channels to connect merchants to customers on marketplaces, advertising platforms, and more.
+ Learn about building blockchain apps for Shopify, including NFT distribution and tokengated commerce.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Use cases

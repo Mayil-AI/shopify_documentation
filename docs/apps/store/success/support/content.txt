@@ -1,0 +1,55 @@
+Overview
+ Marketing
+ Managing app reviews
+ Supporting your app
+ Overview
+ Sunsetting your app
+ Tracking app usage
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Supporting your app
+ Merchants are instructed to contact the app developer about any issues that they have with a third-party app. You need to put your contact information in each app listing on the Shopify App Store. Shopify isn't responsible for handling support for your application.
+ For paid apps, you need to respond to customer support enquiries within two business days. Failure to provide adequate support for your app might result in negative reviews, low installation rate, or removal from the Shopify App Store. To make sure your merchants have consistent support, you can:
+ schedule three or four inbox check-ins during the day
+ provide a website, documentation, or a FAQ page for your app
+ use a platform like Google Hangouts or Skype to schedule conference calls to answer questions and do on-screen demonstrations or troubleshooting.
+ Developing an organized support structure
+ As your userbase grows, you'll need to deal with more and more support issues. Your support structure should be able to scale with this. You can:
+ use a support solution like Zendesk or Help Scout
+ have a single point of contact for your merchants, then triage enquiries to the proper teams
+ organize support requests by feature or section.
+ Identifying and measuring metrics
+ Growing a successful app has a lot to do with providing great customer service and getting positive merchant reviews. You’ll want to think about what feedback and data to collect so you can continue to make improvements to your app. Tracking metrics for support interactions, and choosing what type of metrics you want to measure, will impact the growth and focus of your app.
+ When you know what to improve, you can focus on giving merchants what they want. You can eventually use the data to create documentation, FAQs, demos, and webinars.
+ You can consider measuring some of the following metrics:
+ Interaction total
+ Response time
+ Quality rating
+ Measuring traffic
+ Interaction total
+ The interaction total is the total number of interactions you’ve had with your customers. You can measure this by using a ticketing system, such as Zendesk. This can help you track:
+ What kind of questions you’re getting from merchants
+ What time is the busiest for support
+ Which merchants come back often with requests.
+ Depending on this information, you could offer live support during busy times, or give live demos to merchants who ask a lot of questions. You could also see what questions are being asked often, and create help content on your website to reduce the number of repeated support interactions.
+ Response time
+ This metric will measure how much time you took to respond to a merchant's question. If you use a ticketing system, or your personal email address, it will create a timestamp to show exactly when you got a query, and when you responded to it. The amount of time it takes you to respond to your customer’s queries is crucial. If you take too long to respond to merchant requests, then they will be less likely to use your app.
+ Quality rating
+ The quality rating measures how your customers felt about the support they got for your app. You can measure this by sending out an email after every interaction with a customer. Having a quality rating for your interactions with customers is important to determining how you’re performing in the Shopify App Store.
+ Measuring traffic
+ Google Analytics allows you to track where your customers are coming from, what is attracting them, and how much time they’re spending on your app. It can also help you find out which marketing methods work best for your app.
+ Responding to user feedback
+ User feedback is often a valuable source of information and suggestions. The feedback can be found in questions that your users ask in different forums. Even if you can’t solve the user's particular issue right away, providing a response will let them know that their issue has been noted. This helps to show that your app is well-supported, and will encourage other merchants to use it as well.
+ You can use this feedback along with your reviews and conduct a sentiment analysis to understand how your users are feeling towards your app on average.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Developing an organized support structure
+ Identifying and measuring metrics
+ Responding to user feedback
+ Updates & News
+ Developer changelog
+ Partner blog

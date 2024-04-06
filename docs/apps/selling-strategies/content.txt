@@ -1,0 +1,90 @@
+Selling strategies
+ A selling strategy is a means of promoting the sales of products locally or internationally, often through applying discounts or other deals, defining alternative payment and fulfillment schedules, and providing region-specific options and experiences. Merchants might use multiple strategies at the same time to encourage conversion and drive sales.
+ Selling strategies are a key component of a merchant's marketing and conversion tactics, as they can provide additional incentives for customers to check out and become returning customers.
+ How it works
+ Apps can help merchants to create, update, and manage selling strategies, such as discounts, product bundles, purchase options, markets, B2B, channels, and blockchain.
+ Discounts
+ Discounts enable merchants to offer to their customers a certain percentage or fixed-amount off of the products, order, or shipping when the customer meets specified conditions. Discounts are often used in marketing and promotions, or during seasonal sales to drive conversion.
+ There are two main discount types:
+ Automatic discount: A discount that's automatically applied at checkout and on a cart if prerequisites are met.
+ Code discount: A discount that customers can redeem using a specific code. Merchants can create and share discount codes individually with customers.
+ Shopify's native discounts include Buy X Get Y, Spend X Get Y, percentage, fixed-amount, and free shipping discounts, but you can also create custom discount experiences using Shopify Functions.
+ Learn more about discounts.
+ Product bundles
+ Product bundles enable products to be grouped together and sold as a single unit. This selling strategy helps merchants to increase average order value, decrease marketing and distribution costs, and reduce inventory waste.
+ Merchants can create two types of bundles:
+ Fixed bundles: Shopify’s default implementation to support basic bundle use cases across Shopify’s ecosystem. These include Standard bundles and Multipack bundles that fit within Shopify’s variant limits.
+ Customized bundles: Used for more complex use cases, particularly when offering more choices to customers, or modelling a more complex composition of products, such as Mix-and-match bundles.
+ Learn more about bundles.
+ Purchase options
+ A purchase option determines how customers can buy products from a store. Purchase options can help merchants manage cash flow and inventory, have flexibility on product launches, and diversify marketing strategies.
+ Purchase options include subscriptions and deferred purchase options.
+ Subscriptions
+ Subscriptions enable customers to purchase products on a recurring basis. Subscription apps enable developers and merchants to build subscription experiences directly into Shopify's checkout, and create dashboards that enable merchants to manage their active subscriptions.
+ There are two main types of subscriptions:
+ Pay-per-delivery subscription: Pay for products for each delivery. New orders are created at regular intervals. This option is also known as "Subscribe and save".
+ Pre-paid subscription: Make a single payment upfront and receive products on a regular cadence until the order is fulfilled.
+ Learn more about subscriptions.
+ Deferred purchase options
+ Deferred purchase options enable customers to buy products with deferred payments or deliveries. This helps customers to be more flexible with their payments and fulfillment options.
+ Deferred purchase options include the following types:
+ Pre-order: Place an order for products or variants that haven't been released yet.
+ Try before you buy: Try products before completing payment, and send back the products that aren't wanted.
+ Learn more about deferred purchase options.
+ Markets
+ Shopify Markets helps merchants expand their business to a global audience, sell to multiple countries, and scale internationally. You can configure multiple languages, international pricing, market-specific domains and subfolders, and more.
+ By creating localized shopping experiences, merchants can better expand their business internationally in the following ways:
+ Using catalogs to assign lists of products to specific contexts based on certain conditions
+ Using the GraphQL Admin API to add tax IDs, customs codes, or other locally required data to orders
+ Creating and updating translations of a store's content to sell in multiple languages
+ Learn more about Shopify Markets.
+ B2B
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use apps with B2B features.
+ In business-to-business (B2B) commerce, merchants sell directly to other companies.
+ You can use the GraphQL Admin API to build apps and features that help Shopify merchants to manage their B2B commerce. For example, you can build B2B-specific interfaces for managing company locations, draft orders and invoicing, and catalogs.
+ Learn more about building B2B apps.
+ Channels
+ A channel is an app that allows merchants to reach new customers on platforms outside of their online store to make a sale. You can build sales channel apps to connect merchants to customers on marketplaces, advertising platforms, and more.
+ Learn more about building Shopify channels.
+ Blockchain
+ Blockchain apps expose merchants to blockchain assets or functionality, including but not limited to cryptocurrency, minting, tokengating, and gifting.
+ Learn more about building blockchain apps.
+ Build options
+ You can customize how merchants can merchandise their products using multiple technologies, including the GraphQL Admin API, Shopify Functions, and app extensions.
+ For a detailed breakdown of the available technologies for creating custom selling strategy experiences, refer to Options for building selling strategies.
+ Getting started
+ Consult the following resources to get started building for different selling strategies:
+ Options for building selling strategies
+ Learn about the technologies that you can use to create custom selling strategy experiences.
+ Discounts
+ Learn how to manage discounts and build a custom discounts experience.
+ Bundles
+ Learn how to build bundles that can group products together and sell them as a single unit.
+ Purchase options
+ Learn about the different types of purchase options that help merchants to expand the ways that they sell their products.
+ Markets
+ Learn how to help merchants expand their business to a global audience, sell to multiple countries, and scale internationally.
+ B2B
+ Build apps that help Shopify merchants sell directly to other businesses.
+ Channels
+ Connect merchants to customers on marketplaces, advertising platforms, and more.
+ Blockchain
+ Learn about building blockchain apps for Shopify, including NFT distribution and tokengated commerce.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about the components that can be used to build for selling strategies.
+ Shopify Function APIs reference
+ Learn about the available APIs for Shopify Functions.
+ GraphQL Admin API reference
+ Consult the GraphQL Admin API reference to learn more about the resources that you can use for different selling strategies.
+ Admin API GraphiQL Explorer
+ Consult our interactive reference guide to the GraphQL Admin API.
+ Product subscription extensions reference
+ Learn about the components that you can use to build experiences in the Shopify admin.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Build options
+ Getting started
+ Developer tools and resources

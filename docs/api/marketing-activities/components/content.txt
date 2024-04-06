@@ -1,0 +1,755 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Overview
+ Components
+ Endpoints
+ Statuses
+ Product subscription app extensions
+ Marketing activities components reference
+ The form that's associated with a marketing activity app extension is generated based on a set of components that you choose when you create it. Components are configurable pieces of UI that you can use to build out the specific functionality that your app requires. Although a form is generated based on the components that you choose, you can't customize its styling, layout, or workflows directly.
+ To learn how to create a form for your app, refer to Getting started with marketing activities.
+ How it works
+ When an app user interacts with your marketing activity, Shopify calls your marketing activity preload endpoint to render the field values that your app provides. To do this Shopify uses the components in JSON format, as defined in this document. The JSON format is also used for your app's other endpoints such as create and update.
+ Preload endpoint JSON output schema
+ Responses from your app's preload endpoint include the form_data at the top level with field_name and property key value pairs.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "<field_name>": {
+ 4
+        "<property_key>": "<property_value>"
+ 5
+      }
+ 6
+    }
+ 7 }
+ For the dynamic standalone endpoint, responses from your app include component_data at the top level. Refer to the typeahead component for more information.
+ 1 {
+ 2
+    "component_data": {
+ 3
+      "options": [
+ 4
+        {
+ 5
+          "label": "<option_label>",
+ 6
+          "value": "<option_value>"
+ 7
+        }
+ 8
+      ]
+ 9
+    }
+ 10 }
+ Create or update JSON input schema
+ When a user creates or updates a marketing activity, Shopify calls your app by sending the properties object with the included field names and corresponding values.
+ 1 {
+ 2
+    ...
+ 3
+    "properties": {
+ 4
+      "<field_name>": "<value>"
+ 5
+    }
+ 6 }
+ Single line of text
+ Use this component to let users provide text input when the expected input is short.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the component.
+ hidden Boolean Whether the component is hidden. Default: false.
+ max_length Number The maximum number of characters allowed.
+ min_length Number The minimum number of characters allowed.
+ placeholder String The hint text to display.
+ required Boolean Whether the component is marked as required. Default: true.
+ value String The value of the input.
+ Preload endpoint JSON output example
+ The example JSON below defines the help text and value of the ad_title field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "ad_title": {
+ 4
+        "help_text": "Think of something creative!",
+ 5
+        "value": "Welcome to John's apparel store."
+ 6
+      }
+ 7
+    }
+ 8 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the ad_title field.
+ 1 {
+ 2
+    ...
+ 3
+    "properties": {
+ 4
+      "ad_title": "Welcome to John's crazy apparel store."
+ 5
+    }
+ 6 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Multiple lines of text
+ Use this component when the expected input could be more than one line. The component will automatically grow to accommodate additional text.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the component.
+ hidden Boolean Whether the component is hidden. Default: false.
+ max_length Number The maximum number of characters allowed.
+ min_length Number The minimum number of characters allowed.
+ placeholder String The hint text to display.
+ required Boolean Whether the component is marked as required. Default: true.
+ value String The value of the input.
+ Preload endpoint JSON output example
+ The example JSON below defines the help text and value of the ad_body field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "ad_body": {
+ 4
+        "help_text": "Include a lot of information about your product.",
+ 5
+        "value": "This shirt is the best.\n\nIt's made with high quality materials."
+ 6
+      }
+ 7
+    }
+ 8 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the ad_body field.
+ 1 {
+ 2
+    ...
+ 3
+    "properties": {
+ 4
+      "ad_body": "These shorts are the best.\n\nThey're made with quality materials."
+ 5
+    }
+ 6 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Number
+ Use this component to let users provide number input.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the component.
+ hidden Boolean Whether the component is hidden. Default: false.
+ max Number The maximum number allowed.
+ min Number The minimum number allowed.
+ required Boolean Whether the component is marked as required. Default: true.
+ step Number The interval between valid values. Default: 1.
+ value Number The value of the input.
+ Preload endpoint JSON output example
+ The example JSON below defines the value of the quantity field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "quantity": {
+ 4
+        "value": 1
+ 5
+      }
+ 6
+    }
+ 7 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the quantity field.
+ 1 {
+      "quantity": 10
+ 5
+    }
+ 6 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Select from choice list
+ Use this component to let users select choices from a list.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ choices Object[] The list of options to choose from.
+ disabled Boolean Whether the input is disabled. Default: false.
+ required Boolean Whether the component is marked as required. Default: true.
+ selected String[] A collection of selected choices.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Preload endpoint JSON output example
+ The example JSON below defines the choices and selected values of the sizes field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "sizes": {
+ 4
+        "choices": [
+ 5
+          {
+ 6
+            "label": "Small",
+ 7
+            "value": "sm"
+ 8
+          },
+ 9
+          {
+ 10
+            "label": "Medium",
+ 11
+            "value": "md",
+ 12
+            "disabled": true
+ 13
+          },
+ 14
+          {
+ 15
+            "label": "Large",
+ 16
+            "value": "lg"
+ 17
+          }
+ 18
+        ],
+ 19
+        "selected": [
+ 20
+          "sm",
+ 21
+          "lg"
+ 22
+        ]
+ 23
+      }
+ 24
+    }
+ 25 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the sizes field.
+ 1 {
+ 2
+    ...
+ 3
+    "properties": {
+ 4
+      "sizes": ["sm"]
+ 5
+    }
+ 6 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Budget
+ Use this component to let users set budget amounts.
+ Note
+ The currency property is required on the preload API call.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ amount Numeric String The budget amount
+ currency* CurrencyCode The currency to be used for the budget (set by the preload endpoint).
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the amount.
+ max_amount Numeric String The maximum budget amount
+ min_amount Numeric String The minimum budget amount
+ required Boolean Whether the component is marked as required. Default: true.
+ type String The type of budget (daily or lifetime).
+ use_daily_budget Boolean Whether the user can enter a daily budget. Default: false.
+ use_lifetime_budget Boolean Whether the user can enter a lifetime budget. Both this and use_daily_budget can be checked, and at least one of them must be checked. Default: false.
+ use_total_budget(deprecated) Boolean Whether the user can enter a total budget. Both this and use_daily_budget can be checked, and at least one of them must be checked. Default: false.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Preload endpoint JSON output example
+ The example JSON below defines the amount, currency, help text, range start, range end and scheduling of budget the field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "budget": {
+ 4
+        "amount": 5,
+ 5
+        "currency": "CAD",
+ 6
+        "help_text": "Your shop will perform best with a $20 daily budget."
+ 7
+      }
+ 8
+    }
+ 9 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the budget field.
+ 1 {
+      "budget": {
+ 5
+        "amount": 20,
+ 6
+        "currency": "CAD",
+ 7
+        "type": "daily"
+ 8
+      }
+ 9
+    }
+ 10 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Schedule
+ Use this component to let users provide a start and end date.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the component.
+ end_time Date The user's selected end date.
+ start_time Date The user's selected start date.
+ use_end_date Boolean Whether the user can select an end date (in addition to a start date). Default: false.
+ required Boolean Whether the component is marked as required. Default: true.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Preload endpoint JSON output example
+ The example JSON below hides the end date of the start_at field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "start_at": {
+ 4
+        "range_start": "2019-01-01T00:00:00.000Z",
+ 5
+        "use_end_date": false
+ 6
+      }
+ 7
+    }
+ 8 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the start_at field.
+ 1 {
+      "start_at": {
+ 5
+        "start_time": "2019-01-01T00:00:00.000Z",
+ 6
+      }
+ 7
+    }
+ 8 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Product selection
+ Use this component to let the user select one or more products and product images.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the resource picker.
+ max_resources Number The maximum number of selected resources allowed.
+ min_resources Number The minimum number of selected resources allowed.
+ required Boolean Whether the component is marked as required. Default: true.
+ value Product[] An array of selected resources.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Product type
+ Name Type Description
+ id String The product's ID.
+ images {src: String; id?: String}[] The product's images.
+ image_url(deprecated) String The product's image. Note: Use images property to allow users to select product images.
+ Preload endpoint JSON output example
+ The example JSON below defines the help text, maximum selected resources allowed and value of the products field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "products": {
+ 4
+        "help_text": "Choose products that are featured on your home page.",
+ 5
+        "max_resources": 3,
+ 6
+        "value": [
+ 7
+          {
+ 8
+            "id": "gid://shopify/Product/5",
+ 9
+            "images": [
+ 10
+              {
+ 11
+                "src": "https://shopify.com/images/1"
+ 12
+              }
+ 13
+            ]
+ 14
+          }
+ 15
+        ]
+ 16
+      }
+ 17
+    }
+ 18 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the products field.
+ 1 {
+ 2
+    ...
+ 3
+    "properties": {
+ 4
+      "products": [
+ 5
+        {
+ 6
+          "id": "gid://shopify/Product/5",
+ 7
+          "image_url": "https://cdn.shopify.com/s/files/1",
+ 8
+          "title": "Blue swim shorts",
+ 9
+        },
+ 10
+        {
+ 11
+          "id": "gid://shopify/Product/6",
+ 12
+          "image_url": null,
+ 13
+          "title": "Straw hat",
+ 14
+        }
+ 15
+      ]
+ 16
+    }
+ 17 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Discount selection
+ Use this component to let the user select one or more discounts.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the resource picker.
+ max_resources Number The maximum number of selected resources allowed.
+ min_resources Number The minimum number of selected resources allowed.
+ required Boolean Whether the component is marked as required. Default: true.
+ value Object[] An array of selected resources.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Preload endpoint JSON output example
+ The example JSON below hides the end date of the start_at field that's defined in your Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "discount": {
+ 4
+        "help_text": "Choose a discount for this activity.",
+ 5
+        "max_resources": 1,
+ 6
+        "value": [
+ 7
+          {
+ 8
+            "id": "gid://shopify/PriceRule/1"
+ 9
+          }
+ 10
+        ]
+ 11
+      }
+ 12
+    }
+ 13 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the discount field.
+ 1 {
+      "discount": [
+ 5
+        {
+ 6
+          "id": "gid://shopify/PriceRule/1",
+ 7
+          "title": "BLACKFRIDAY10",
+ 8
+          "summary": "10% off entire order",
+ 9
+          "features": [],
+ 10
+          "status": "ACTIVE"
+ 11
+        }
+ 12
+      ]
+ 13
+    }
+ 14 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Image selection
+ Use this component to let the user either upload images to their shop or select images from their shop.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ help_text String The help text that's displayed under the resource picker.
+ max_resources Number The maximum number of selected resources allowed.
+ min_resources Number The minimum number of selected resources allowed.
+ required Boolean Whether the component is marked as required. Default: true.
+ value {src: String; id: String, altText: String, originalSrc (deprecated): String}[] An array of selected resources.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Preload endpoint JSON output example
+ The example JSON below defines the help text, maximum selected resources allowed and value of the featured_images field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "featured_images": {
+ 4
+        "help_text": "Choose an image for this activity.",
+ 5
+        "max_resources": 3,
+ 6
+        "value": [
+ 7
+          {
+ 8
+            "id": "gid://shopify/ShopImage/1",
+ 9
+            "alt_text": "Blue sweater",
+ 10
+            "src": "https://cdn.myshopify.io/s/files/1/0000/0001/files/googlee.jpg"
+ 11
+          },
+ 12
+          {
+ 13
+            "id": "4289",
+ 14
+            "alt_text": "Black friday!",
+ 15
+            "src": "https://burst.shopifycdn.com/photos/i-heart-black-friday.jpg"
+ 16
+          }
+ 17
+        ]
+ 18
+      }
+ 19
+    }
+ 20 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the featured_images field.
+ 1 {
+ 2
+    ...
+ 3
+    "properties": {
+ 4
+      "featured_images": [
+ 5
+        {
+ 6
+          "id":"gid://shopify/ShopImage/1",
+ 7
+          "src":"https://cdn.shopify.com/s/files/1/1/1/files/blue_shorts.png?v=1517010629",
+ 8
+          "alt_text":"Blue shorts"
+ 9
+        },
+ 10
+        {
+ 11
+          "id":"gid://shopify/ShopImage/2",
+ 12
+          "src":"https://cdn.shopify.com/s/files/1/1/1/files/red_shorts.png?v=1517010629",
+ 13
+          "alt_text":"Red shorts"
+ 14
+        }
+ 15
+      ]
+ 16
+    }
+ 17 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Typeahead
+ Use this component to allow users to quickly search for items from a list.
+ Note
+ The typeahead component is populated by the dynamic standalone endpoint when the user interacts with the component.
+ Dynamic standalone endpoint JSON schema
+ 1 {
+ 2
+    "field_data": {
+ 3
+      "options": [
+ 4
+        {
+ 5
+          "label": "<option_label>",
+ 6
+          "value": "<option_value>"
+ 7
+        }
+ 8
+      ]
+ 9
+    }
+ 10 }
+ To learn more about the dynamic standalone endpoint, refer to the marketing activity endpoints.
+ Component properties
+ Name Type Description
+ field_name String The name of the field, specified when you create the form.
+ disabled Boolean Whether the input is disabled. Default: false.
+ placeholder String The hint text to display.
+ required Boolean Whether the component is marked as required. Default: true.
+ value Object[] A collection of selected choices.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Preload endpoint JSON output example
+ The example JSON below defines the value of the colours field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "form_data": {
+ 3
+      "colours": {
+ 4
+        "value": [
+ 5
+          {
+ 6
+            "label": "Red",
+ 7
+            "value": "red"
+ 8
+          },
+ 9
+          {
+ 10
+            "label": "Blue",
+ 11
+            "value": "blue"
+ 12
+          },
+ 13
+          {
+ 14
+            "label": "Yellow",
+ 15
+            "value": "yellow"
+ 16
+          }
+ 17
+        ]
+ 18
+      }
+ 19
+    }
+ 20 }
+ To learn more about the preload endpoint, refer to the marketing activity endpoints.
+ Create or update JSON input example
+ The example below includes Shopify's response to your app with the user-provided value for the colours field.
+ 1 {
+      "colours": [
+ 5
+          {"label": "Red", "value": "red"},
+ 6
+          {"label": "Blue", "value": "blue"}
+ 7
+        ]
+ 8
+      }
+ 9
+    }
+ 10 }
+ To learn more about the create or update endpoint, refer to the marketing activity endpoints.
+ Dynamic standalone endpoint JSON output example
+ The example JSON below defines the options of the colours field defined using the Partner Dashboard.
+ 1 {
+ 2
+    "field_data": {
+ 3
+      "options": [
+ 4
+        {
+ 5
+          "label": "Red",
+ 6
+          "value": "red"
+ 7
+        },
+ 8
+        {
+ 9
+          "label": "Blue",
+ 10
+          "value": "blue"
+ 11
+        },
+ 12
+        {
+ 13
+          "label": "Yellow",
+ 14
+          "value": "yellow"
+ 15
+        }
+ 16
+      ]
+ 17
+    }
+ 18 }
+ To learn more about the dynamic standalone endpoint, refer to the marketing activity endpoints.
+ Title and body display text
+ Use this component to provide extra information to the user about the task that they're completing.
+ Note
+ The title and body display text component is configured using the Partner Dashboard. It can't be set on preload and is not included in form submission.
+ Component properties
+ Name Type Description
+ title String The section title.
+ body String The section body.
+ Supports relative or secure HTTPS absolute links using markdown. For example:
+ Click [here](https://example.com) to set up your account.
+ or
+ Read more about [account setup](https://example.com).
+ hidden Boolean Whether the component is hidden. Default: false.
+ Divider
+ Use this component to group related components into sections.
+ Note
+ The divider component is configured in the Partner Dashboard by hovering between components and providing a section title. It can't be set on preload and is not included in form submission.
+ Component properties
+ Name Type Description
+ title String The section title.
+ hidden Boolean Whether the component is hidden. Default: false.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Single line of text
+ Multiple lines of text
+ Number
+ Select from choice list
+ Budget
+ Schedule
+ Product selection
+ Discount selection
+ Image selection
+ Typeahead
+ Title and body display text
+ Divider
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,75 @@
+Config
+ Locales
+ Overview
+ Schema locale files
+ Storefront locale files
+ Locales
+ Locale files are JSON files that contain a set of translations for text strings used throughout the theme and theme editor.
+ In addition to giving merchants a single place to easily edit words and phrases that are repeated throughout the theme, locale files allow you translate storefront content, and theme editor settings, to multiple langages for international merchants and customers.
+ Location
+ Locale files are located in the locales directory of the theme:
+ 1 └── theme
+ 2
+      ...
+ 3
+      └── locales
+ Subtypes
+ There are two types of locale files:
+ Type Description
+ Storefront Storefront locale files have a .json file extension, and control translations for storefront content. These translations can be edited by merchants through the Shopify Language Editor.
+ Schema Schema locale files have a .schema.json file extension, and control translations for theme editor settings.
+ Schema
+ Locale files need to follow a specific naming structure. They also follow a basic organizational structure:
+ Category: The top-level category of your translations.
+ Group: The second level grouping of translations within a category.
+ Description: The third level, which represents the individual translations.
+ Example
+ 1 {
+ 2
+    "my_category": {
+ 3
+      "my_group": {
+ 4
+        "my_description": "translation text",
+ 5
+        ...
+ 6
+      },
+ 7
+      ...
+ 8
+    },
+ 9
+    ...
+ 10 }
+ Tip
+ When naming translation descriptions, try to be descriptive enough to give the translation context. For example, blogs.article_comment.submit_button_text gives more context than blogs.article_comment.submit.
+ Name locale files
+ Locale file naming must follow the standard IETF language tag nomenclature, where the first lowercase letter code represents the language, and the second uppercase letter code represents the region.
+ For example:
+ Language Storefront Schema
+ English - Great Britain en-GB.json en-GB.schema.json
+ Spanish - Spain es-ES.json es-ES.schema.json
+ French - Canada fr-CA.json fr-CA.schema.json
+ If a language isn’t region specific, you can use the 2-letter lowercase language representation.
+ For example:
+ Language Storefront Schema
+ Finnish - All regions fi.json fi.schema.json
+ Additionally, you must designate a default locale file for each type.
+ The default locale file
+ You must designate a default locale file in the format of *.default.json, where * is your selected language. This file contains the translations for the default language of the theme. Only one default file is permitted.
+ Most themes use en.default.json, which sets the default locale of the theme to English.
+ Tip
+ This also applies to schema locale files with an extension of .schema.json.
+ Requirements and limitations
+ A maximum of 3400 translations are allowed in a single locale file
+ Translation values cannot exceed 1000 characters
+ Usage
+ When working with locale files, you should familiarize yourself with referencing locale files. The code for referencing locale files varies depending on whether you're referencing a storefront locale file or a schema locale file.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Subtypes
+ Schema
+ Requirements and limitations

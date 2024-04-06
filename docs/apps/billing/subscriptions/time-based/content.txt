@@ -1,0 +1,35 @@
+Viewing charges and earnings
+ Best practices
+ App Store
+ Create a time-based subscription
+ A time-based subscription is a pricing model that charges a consistent, recurring amount for a service. Shopify offers billing intervals for every 30 days and every 365 days.
+ Merchants must approve the pricing plan. After accepting the charges, the merchant is redirected to a URL that you provide.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Step 1: Create the subscription
+ Refer to an example of creating an app subscription.
+ Make a request to the appSubscriptionCreate mutation with the following information:
+ name
+ returnURL
+ Use the appRecurringPricingDetails field on the line item's plan to provide the following information:
+ currencyCode
+ price
+ interval
+ Note
+ The interval field accepts ANNUAL or EVERY_30_DAYS. If not provided, then the default of EVERY_30_DAYS is applied.
+ Step 2: Monitor subscription updates
+ To receive a notification when a subscription status changes, such as when a charge is successful, subscribe to the GraphQL Admin API's APP_SUBSCRIPTION_UPDATE webhook topic.
+ Next steps
+ Discounts
+ Learn about offering subscription discounts.
+ Prorated and deferred charges
+ Learn how Shopify handles prorating and deferring app subscription charges.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create the subscription
+ Step 2: Monitor subscription updates
+ Next steps
+ Updates & News
+ Developer changelog

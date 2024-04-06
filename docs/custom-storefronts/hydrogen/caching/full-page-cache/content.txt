@@ -1,0 +1,60 @@
+Data fetching
+ Caching
+ Shopify API data
+ Third-party data
+ Full-page cache
+ Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Oxygen Full-page cache
+ The full-page cache feature in Oxygen can reduce the time that's required to load page content for subsequent visits, because Oxygen can quickly serve the cached content instead of having to execute the Hydrogen storefront worker to generate a response. This results in a faster and more responsive user experience, which can lead to increased conversions.
+ This guide provides an introduction to the full-page cache feature, including its benefits and how it works.
+ How it works
+ The full-page cache feature in Oxygen helps you optimize the performance of Hydrogen storefronts by caching the generated response from your Hydrogen storefront worker. This is typically an HTML page.
+ Full-page cache works by intercepting incoming requests and checking if a cached version of the requested content is available. This check for the cached version can have the following outcomes, depending on its state:
+ If a cached version is found and it's not stale, then the cached content is served to the user. No request is made to the Hydrogen storefront worker.
+ If a cached version is found and it is stale, then the cached content is served to the user. The Hydrogen storefront worker is executed in the background and Oxygen caches the response to be used for future requests.
+ If a cached version isn't found, then the Hydrogen storefront worker is executed for that request, and Oxygen caches the response to be used for future requests.
+ Caching criteria
+ For Oxygen to consider a response from a Hydrogen storefront worker execution as cacheable, the response must meet the following criteria:
+ Be a response to a GET request
+ Have a 2XX or 3XX status code.
+ Have a public Oxygen-Cache-Control header set with a non zero max-age, or s-maxage, value.
+ Have a Vary header set with a value to indicate what requests can be served using the cached response.
+ Caution
+ If a Hydrogen storefront worker's response was generated with server-side personalization, for example a serialized cart session, this might result in Oxygen serving a seemingly outdated cached response, or serving the same cart session to multiple users. It's your responsibility to ensure that pages opted into Oxygen's full-page cache can be served for requests with the same path, method, and request headers as specified by Vary.
+ Oxygen-Cache-Control response header
+ Full-page cache relies on the Oxygen-Cache-Control header that's returned in Hydrogen storefront worker responses to determine if a response can be cached and for how long.
+ Set the Oxygen-Cache-Control header to public for responses that can be cached, and include a max-age directive in the header to specify the maximum amount of time that the response can be cached. This header is sent in the client response.
+ The following table describes the supported Oxygen-Cache-Control response headers that you can use in Oxygen, and provides some examples of each header directive that can be used to control cache behavior:
+ Header directive Description Example usage
+ public Indicates that the response can be cached by any cache. Oxygen-Cache-Control: public
+ max-age Specifies the maximum amount of time, in seconds, that the response can be cached. Oxygen-Cache-Control: public, max-age=3600
+ s-maxage Specifies the maximum amount of time, in seconds, that the response can be cached by shared caches. Oxygen-Cache-Control: public, s-maxage=7200
+ stale-while-revalidate Indicates that the cache can serve stale content while it fetches a fresh version in the background. Oxygen-Cache-Control: public, max-age=3600, stale-while-revalidate=600
+ Vary response header
+ Oxygen uses the Vary response header to determine which incoming request headers should be used when looking for a cached response for the requested path.
+ When a Hydrogen storefront worker sets a Vary response header, Oxygen will respect it.
+ For example, if a Hydrogen storefront worker returns a Vary: Accept-Encoding, then Oxygen serves the same cached response for every incoming request for a particular path with the same Accept-Encoding request header value.
+ Note
+ By default, Hydrogen storefront workers don't return a Vary response header. You need to decide what's best based on your implementation. A good default is Accept-Encoding, Accept-Language.
+ Oxygen-Full-Page-Cache client response header
+ The Oxygen-Full-Page-Cache header is an informational response header that's always returned by Oxygen to clients. It's used to help developers debug and understand the cache status of a response in a full-page cache implementation. The header has the following possible values, which each indicate a different cache status:
+ Header value Description
+ Miss The requested resource wasn't found in the cache, and a new response was generated. This occurs when the cache doesn't have a matching entry for the requested path, and the response is generated by the Hydrogen storefront worker.
+ Hit The requested resource was found in the cache, and the cached response is still up to date. This occurs when the cache has a matching entry for the requested path, and the response isn't stale according to the cache's max-age, which is specified in the Oxygen-Cache-Control response header.
+ Stale The requested resource was found in the cache, but the cached response is stale. This occurs when the cache has a matching entry for the request, but the response is considered stale according to the cache's max-age, which is specified in the Oxygen-Cache-Control response header. In this case, the stale response is served, and a request is made to the Hydrogen storefront worker to asynchronously update the cache with a new response.
+ Uncacheable The requested resource can't be cached by Oxygen. This occurs in the following scenarios:
+ The request has a method other than GET.
+ The response doesn't have an Oxygen-Cache-Control header
+ The response doesn't have a public directive specified in the Oxygen-Cache-Control header.
+ The response doesn't have a 2XX or 3XX status code.
+ The response has a Set-Cookie header.
+ The response doesn't have a Vary header
+ The response has a Vary: * header
+ Limitations
+ Full-page cache is designed to work with Hydrogen storefront workers and has the following limitations:
+ You can't purge Oxygen's full page cache for the currently deployed worker. You either need to wait for the cached response to expire, or make a new deployment of your Hydrogen storefront worker to start with a fresh cache.
+ Oxygen won't be able to serve a cached response from a previous deployment on a new deployment.
+ The headers specified for Vary will use those header(s) complete values. There is no way to use only specific cookies, for example.

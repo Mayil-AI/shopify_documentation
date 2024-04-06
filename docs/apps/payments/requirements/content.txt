@@ -1,0 +1,80 @@
+Get approved
+ Build a payments app
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale
+ Payments apps requirements
+ Payment processing is a core part of Shopify merchant workflows. Our stores run 24/7 selling to customers in a variety of currencies across the globe. We rely on and trust our Payments Partners to provide a secure environment for customers to purchase and help merchants handle settlement and payouts. If you don't meet the requirements, then Shopify can remove your app from the public list of payment gateways, suspend access to the payments ecosystem, terminate participation in the payments ecosystem, or take any other action deemed necessary.
+ Payment security
+ During a customer’s purchase, payments apps are responsible for the following:
+ Securely collecting a customer’s payment information, adhering to applicable law and any PCI requirements or market regulations, including the secure storage of customer data.
+ Processing the payment according to parameters specified by Shopify.
+ Redirecting the customer to Shopify.
+ Settling transactions within five days.
+ Partners are responsible for monitoring and managing risk and fraud. If an unreasonably high percentage of a merchant's payments are fraudulent or high-risk, as determined in Shopify’s sole discretion, then Shopify may take action. Actions can include the following:
+ Removing your payments app from Shopify's public list of payment gateways
+ Restricting access to Shopify’s payments ecosystem
+ Taking any other action deemed necessary
+ Transparent pricing and flexible merchant agreements
+ Partners must have transparent, easy-to-understand pricing for merchants.
+ Partners can't offer low promotional or introductory rates for a limited time to later increase the rate.
+ Partners can't refer to any fee, expense, or other costs as Shopify fees on invoices to merchants.
+ Partners must allow merchants to terminate their merchant agreements with a 7-day notice period without penalty, fine, or other consequence.
+ Revenue share
+ All Partners must have a signed revenue share agreement with Shopify. You must sign and submit the agreement before Shopify can approve a payments app to process real, live payments. Shopify provides the agreement to you as a part of the payments platform access request process.
+ Revenue share is calculated and applied on total payments volume (total GMV) processed by the payments app for all Shopify merchants with the app installed. Each invoice represents payments that took place from 00:00:00 UTC on the first day of the month to 23:59:59 UTC on the last day of the month. Shopify converts the compensation amounts daily to US dollars to limit foreign exchange risks between the parties to the agreement. Shopify uses xe.com to perform the conversion.
+ Shopify waives invoicing and collection of revenue share owed to Shopify until the first month that total transaction volume on your Payment Apps exceeds $150,000 USD. When this threshold is met, Shopify produces the invoice and sends it to the billing email provided, alongside bank details for payment.
+ Prohibited actions
+ Payments apps aren't permitted to do any of the following:
+ Use any Shopify APIs other than the Payments Apps API and mandatory webhooks.
+ Store payment credentials for unapproved purposes. You can only use credentials for the original transaction or services approved by Shopify.
+ Redistribute, share, transfer, sell unauthorized access to Shopify’s Payments Platform without Shopify’s approval. Access to Shopify’s payments ecosystem is strictly provided to the approved Payments Partner only.
+ Create fake or fraudulent merchants, orders, or sales.
+ Process payment methods that include, but aren't limited to, Apple Pay, Google Pay, Shop Pay, PayPal, and Alipay. Shopify has a direct connection with these providers that improves performance and checkout conversion for merchants.
+ Naming restrictions
+ To make choosing additional payment methods as straightforward as possible for merchants, you should adhere to certain rules when naming your payments app:
+ The name of the payments app can't contain marketing text: For example, the name “World's Best Provider: Get 50 payment methods” isn't allowed. This is because merchants won't see the name of the payments app until they have chosen the payment method they wish to add to their store.
+ The name of the payments app can't be used by Partners to gain a higher listing: There isn't a general alphabetized directory of payments apps for merchants to navigate. Instead, merchants discover payments apps using the payment methods they want to add.
+ You should make sure that the payment methods and locations offered are accurate because this is the only information that's used to surface the app to merchants. If a name appears to have been created with the purpose of gaining a higher listing on an alphabetized list, then it won't be allowed.
+ Note
+ The name of the payments app has minimal impact on whether or not merchants add it to their store. How a merchant discovers a payments app is determined by the payment methods the app offers and the locations where they payments methods are offered.
+ Feature requirements
+ Payments apps need to have the following features:
+ Merchants can charge, refund, and process test transactions.
+ The app complies with the regulatory requirements for Strong Customer Authentication in the countries where credit card payments are processed. Being compliant might include implementing 3-D Secure authentication.
+ Technical requirements
+ Idempotency: To provide a consistent customer experience, payments apps must implement idempotency.
+ Retry policy: In case of network errors, payments apps must retry their requests according to the retry policy.
+ Mutual TLS (mTLS): Authentication must be implemented to guarantee that traffic is secure and trusted in both directions between Shopify and your payments app. This authentication allows your app to confirm if an upstream request has originated from Shopify. Payments apps must use the Shopify CA certificate for verification.
+ HMAC verification: For payments app installation, the hmac parameter is included in the redirect to your payments app URL. You need to verify the authenticity of these requests using the provided hmac. However, the HMAC verification process isn't applicable for payments operation requests that are initiated from Shopify to your payments app, such as payment, refund, capture, and void. As a result, payments requests don't include an hmac parameter.
+ Rate limiting: Your app's GraphQL requests are rate limited according to the rate limiting guidelines.
+ API versioning: Partners must implement a supported version of Shopify's Payments Apps APIs. Partners can't use the unstable version of Shopify's Payments Apps APIs in production. Partners can configure the API version that their payments app will use to receive requests from Shopify. Partners must use the same API version for sending GraphQL requests. API versions are updated in accordance with Shopify's general API versioning timelines.
+ 3-D Secure: If you offer credit card payment methods in a country where 3-D Secure authentication is mandated, then you must support 3-D Secure authentication.
+ Compliance webhooks: You need to implement compliance webhooks.
+ Payments app extension configuration change approvals: To provide a positive customer experience, your payments app extension configuration changes must be approved by Shopify. For more information on payments app extension changes and reviews, refer to the payments apps approval process.
+ Merchant experience
+ Payments apps must, at a minimum, be operational and available on a 24-hour, 7 days a week basis at least 99.95% of the time in any measurement period.
+ In the event of outages or issues, Partners must respond within 2 hours.
+ Payments apps must provide servicing support to all merchants.
+ Limitations for payments apps
+ Line items, order ID, and checkout ID aren't available through the Payments Apps APIs.
+ Payments apps aren't visible nor installable in the Shopify App Store.
+ As part of the payment processing flow, customers must enter their payment information on a page hosted by the payments developer.
+ Next steps
+ Learn about the payments app review process
+ Build an offsite payments app, and learn how to version and publish your app
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Payment security
+ Transparent pricing and flexible merchant agreements
+ Revenue share
+ Prohibited actions
+ Naming restrictions
+ Feature requirements
+ Technical requirements
+ Merchant experience
+ Limitations for payments apps
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,50 @@
+Overview
+ Getting started
+ Manage marketing activities
+ Connect a marketing app
+ Marketing automations
+ Manage marketing activities app extensions
+ You can manage a marketing activities app extension from your Partner Dashboard.
+ This guide describes how to update a marketing activities app extension. It also shows you how to unpublish a marketing activities app extension, if you no longer want merchants to use it.
+ Requirements
+ You've completed the Getting started with marketing activities tutorial.
+ You've created a Partner account and a development store.
+ You can use the development store for testing while you are working on your marketing activity extension.
+ You understand how apps fit into Shopify and the different ways of distributing your app.
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ Step 1: Update a marketing activities app extension
+ You can update a marketing activities app extension from your Partner Dashboard. You can modify your app extension by adding, removing, setting, and ordering components. To learn more about the marketing activity components, see the Marketing activities components reference.
+ Tip
+ We recommend that you limit modifications to cosmetic changes, such as the following types of updates:
+ Updating the extension's description
+ Changing the components' ordering
+ Updating a field's label or placeholder text
+ Adding a new title and body display text component
+ From your Partner Dashboard, click Apps.
+ Click the name of the app that you want to change.
+ From the app's page, click Extensions.
+ Select the marketing activities app extension that you want to update.
+ Click Edit draft and enter the new information in the field you want to update.
+ Optional: If you want to add new title and body display text component to the form, then click Create field and choose the component.
+ Optional: If you want to reorder fields in marketing activity form, then click and drag the fields to your desired location.
+ Click Save.
+ Caution
+ Your latest draft is released the next time you create and release an app version. This includes running the deploy command from Shopify CLI.
+ Note
+ Any modifications to your marketing activity form that require you to alter your existing API are breaking changes. In this case, we recommend that you do the following:
+ Create a new marketing activities app extension.
+ Create a new set of marketing activities endpoints for the new extension.
+ Remove the old extension.
+ Step 2: Remove a marketing activities app extension (optional)
+ For details, refer to Remove an app extension.
+ Note
+ After you remove an app's marketing activities extension, merchants can't use it to create new marketing activities from their Shopify admin. Any marketing activities that merchants created by using your app extension before you removed it still appear on the Marketing page in the Shopify admin. Merchants can still view and edit those activities.
+ Next steps
+ Consult the reference documentation for marketing activities app extensions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Update a marketing activities app extension
+ Step 2: Remove a marketing activities app extension (optional)
+ Next steps

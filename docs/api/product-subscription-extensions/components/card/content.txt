@@ -1,0 +1,45 @@
+TextField
+ Thumbnail
+ Card
+ Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
+ The action API should be used to create actionable components for the card. Cards should be contained, independent, and individual.
+ JavaScript
+ React
+ 1 import {extend, Card} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const card = root.createComponent(Card, {});
+ 5
+ 6
+    card.appendChild('This is the best extension.');
+ 7
+    root.appendChild(card);
+ 8
+ 9
+    root.mount();
+ 10 });
+ Props
+ optional = ?
+ Name Type Description
+ title? string Title content for the card
+ sectioned? boolean Automatically wrap each child component in a Card.Section
+ primaryFooterAction? DestructableAction Primary action for the card footer
+ secondaryFooterActions? DestructableAction[] Secondary actions for the card footer
+ actions? DisableableAction[] Card header action
+ DisableableAction
+ Name Type Description
+ content string Action label text.
+ onAction? () => void Callback for the action.
+ disabled? boolean
+ DestructableAction
+ Name Type Description
+ content string Action label text.
+ onAction? () => void Callback for the action.
+ destructive? boolean Indicates a dangerous or potentially negative action.
+ Guidelines
+ 📱 Do not nest Cards within another component. This will result in unintended behavior, and will not render correctly
+ ✅ Do 🛑 Don't
+ Cards should be at the top level of the component hierarchy Use too many secondary actions
+ For more guidelines, refer to Polaris' Card best practices.
+ Was this section helpful?

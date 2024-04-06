@@ -1,0 +1,80 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Overview
+ Getting started
+ Using Customer Account API with Hydrogen
+ Customers
+ Customer Account API reference
+ Additional SDKs
+ Getting started with the Customer Account API
+ The Customer Account API is a GraphQL API that requires an access token associated with a specific customer. You can call the API from any HTTP client. This guide shows you how to get started building unique customer experiences with the Customer Account API.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Enable Customer Account API access on the Headless and Hydrogen sales channels
+ Manage permissions
+ Set up your client application settings
+ Perform authorization requests
+ Make queries
+ Rotate credentials
+ Requirements
+ You have Apps and channels permissions on the Shopify store that you're working with.
+ You have installed the Headless or Hydrogen sales channel from the Shopify App Store.
+ Step 1: Enable Customer Account API access
+ To use the Customer Account API, you first need to enable it and get your access credentials.
+ From your Shopify admin, under Sales channels, click Headless or Hydrogen.
+ Select your storefront.
+ Complete one of the following steps:
+ If you selected Headless, then navigate to Customer Account API settings.
+ If you selected, Hydrogen, then navigate to Storefront settings.
+ Optional: Modify the client type.
+ Public clients: For applications that are strictly client-side, or that don't have a server-side session where to store the refresh token safely (for example, SPA, mobile applications, or Hydrogen).
+ Confidential clients: For applications that have a back-end to perform the authorization request and a server-side session to hold the refresh token (for example, Express.js, ASP.NET, or Rails).
+ From the Credentials section, copy the client ID (and client secret, if applicable) to use in your requests.
+ Step 2: Manage permissions
+ Managing permissions controls what your custom storefront can display from your Shopify store.
+ From the Permissions section, click Edit.
+ Select the permissions for the storefront.
+ Click Save.
+ Step 3: Enable the new customer account experience
+ Shopify's new customer account experience is required to use the Customer Account API. New customer accounts allow you to seamlessly persist customer logins across online store, Hydrogen, and checkout.
+ From your Shopify admin, click Settings.
+ Click Customer accounts
+ Under Accounts in online store and checkout section, click on Edit
+ Choose New customer accounts
+ Click Save.
+ Step 4: Set up client application settings
+ You can specify the following client application settings:
+ Callback URL(s): The allowable list of URLs to redirect to after logging in.
+ Javascript origin(s): Specifies the origins that are allowed to use a client's OAuth credentials in a JavaScript application. Applies to public client types.
+ Logout URL (Optional): The URL to redirect to after logging out.
+ Note
+ Shopify doesn't support the use of localhost or any http based URL due to security concerns. For development purposes, we recommend using a tunnelling service, such as ngrok.
+ Step 5: Perform authorization requests
+ Before you make requests to the Customer Account API, you need to set up the following, depending on your client type:
+ Public clients: Implement the code challenge and verifier.
+ Confidential clients: Specify an Authorization Header.
+ To learn more about how to set up request headers for your development framework, refer to the Customer Account API reference.
+ Step 6: Make queries
+ After you've completed the authorization flow for the Customer Account API and you have a token from a logged-in customer, you can make queries using the Customer Account API.
+ For an example of how to use the Customer Account API with a Hydrogen storefront, refer to the Using Customer Account API with Hydrogen tutorial and consult the Customer Account API reference for available objects, queries, and mutations.
+ Rotate credentials
+ Caution
+ After you revoke your old credentials, you need to update any applications or scripts that use these credentials, or else you won't be able to access the Customer Account API. Revoking credentials can't be undone.
+ In the Credentials section, under Rotate credentials, click Generate new credentials.
+ Update any applications or scripts with the new credentials. The old credentials remain valid until you revoke them.
+ When all applications or scripts have been updated, click Revoke next to the old credentials.
+ When prompted, click Revoke credentials.
+ Next steps
+ Follow the Using Customer Account API with Hydrogen tutorial.
+ Learn more about the Customer Account API.
+ Step 1: Enable Customer Account API access
+ Step 2: Manage permissions
+ Step 3: Enable the new customer account experience
+ Step 4: Set up client application settings
+ Step 5: Perform authorization requests
+ Step 6: Make queries
+ Rotate credentials
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,95 @@
+Overview
+ Common objects
+ FunctionFetchResult
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Cart Transform API
+ Pickup Point Delivery Option Generator API
+ Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ Cart and Checkout Validation API reference
+ The Validation API enables you to provide your own validation of a cart and checkout.
+ Extension targets
+ The Validation API exposes the following targets:
+ Target Output type Description
+ purchase.validation.fetch FunctionFetchResult See Network access for Shopify Function
+ purchase.validation.run FunctionRunResult Outputs the list of validation errors
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Validation API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        quantity
+ 5
+      }
+ 6
+    }
+ 7 }
+ The following example shows the resulting input to the query:
+ input.json
+ 1 {
+ 2
+    "cart": {
+ 3
+      "lines": {
+ 4
+        "quantity": 2
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.validation.run target.
+ Example
+ The following function result shows errors that block a customer from proceeding through checkout.
+ output.json
+ 1 {
+ 2
+    "errors": [
+ 3
+      {
+ 4
+        "localized_message": "Not possible to order more than one of each",
+ 5
+        "target": "$.cart"
+ 6
+      }
+ 7
+    ]
+ 8 }
+ Supported checkout field targets
+ The following checkout UI fields can be targeted with an error message. The target property follows the input query's data structure.
+ List of checkout field targets
+ Field Target value
+ email $.cart.buyerIdentity.email
+ phone $.cart.buyerIdentity.phone
+ address1 $.cart.deliveryGroups[0].deliveryAddress.address1
+ address2 $.cart.deliveryGroups[0].deliveryAddress.address2
+ city $.cart.deliveryGroups[0].deliveryAddress.city
+ company $.cart.deliveryGroups[0].deliveryAddress.company
+ countryCode $.cart.deliveryGroups[0].deliveryAddress.countryCode
+ firstName $.cart.deliveryGroups[0].deliveryAddress.firstName
+ lastName $.cart.deliveryGroups[0].deliveryAddress.lastName
+ phone $.cart.deliveryGroups[0].deliveryAddress.phone
+ provinceCode $.cart.deliveryGroups[0].deliveryAddress.provinceCode
+ zip $.cart.deliveryGroups[0].deliveryAddress.zip
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

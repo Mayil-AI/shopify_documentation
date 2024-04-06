@@ -1,0 +1,10 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Image
+ The image component displays an image to a merchant in Shopify POS.
+ Props
+ Name Type Description
+ src string? The source of the image to be displayed.
+ Was this page helpful?

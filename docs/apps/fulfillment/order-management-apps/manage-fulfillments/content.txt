@@ -1,0 +1,2235 @@
+Billing
+ App Store
+ Manage fulfillments as an order management app
+ Order management apps can automate the fulfillment process in Shopify on behalf of merchants.
+ This guide describes how to use the REST and GraphQL Admin APIs to query orders and inventory levels, and manage orders using fulfillment order actions.
+ Requirements
+ Your app can make authenticated requests to the REST Admin API or GraphQL Admin API.
+ Your app has the merchant_managed_fulfillment_orders and third_party_fulfillment_orders access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Your store has existing orders that are unfulfilled.
+ If you want to create test orders, then refer to Manage test orders.
+ If you need to make changes to an unfulfilled item, then you can edit an order.
+ You're familiar with the API objects that pertain to fulfillment orders.
+ You've met Shopify's protected customer data requirements.
+ Step 1: Retrieve an order
+ You can use the REST Admin API's GET fulfillment_orders endpoint or the GraphQL Admin API's order query to retrieve an order and its associated fulfillment orders. To retrieve fulfillment orders, provide the ID of the order in the request.
+ The response returns information about the associated fulfillment orders, including the fulfillment order ID, fulfillment order line items, supported actions, and assigned locations. Make note of the inventory item ID, as you'll use it to query inventory levels in the next step.
+ Retrieve an order
+ Endpoint
+ REST
+ GraphQL
+ 1 GET https://{shop}.myshopify.com/admin/api/{api_version}/orders/{order_id}/fulfillment_orders.json
+ Request
+ REST
+ GraphQL
+ 1 {empty request body}
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_orders": [
+ 3
+      {
+ 4
+        "id": 5862182256662,
+ 5
+        "shop_id": 20978040854,
+ 6
+        "order_id": 4807783546902,
+ 7
+        "assigned_location_id": 67794436118,
+ 8
+        "request_status": "submitted",
+ 9
+        "status": "closed",
+ 10
+        "supported_actions": [],
+ 11
+        "destination": {
+ 12
+          "id": 5482111664150,
+ 13
+          "address1": "23 Ferny Avenue",
+ 14
+          "address2": null,
+ 15
+          "city": "Surfers Paradise",
+ 16
+          "company": null,
+ 17
+          "country": "Australia",
+ 18
+          "email": "fake@example.com",
+ 19
+          "first_name": "Tyler",
+ 20
+          "last_name": "Kelleher",
+ 21
+          "phone": null,
+ 22
+          "province": "Queensland",
+ 23
+          "zip": "4217"
+ 24
+        },
+ 25
+        "line_items": [],
+ 26
+        "fulfill_at": "2022-10-17T15:00:00-04:00",
+ 27
+        "fulfill_by": null,
+ 28
+        "international_duties": {
+ 29
+          "incoterm": "DAP"
+ 30
+        },
+ 31
+        "fulfillment_holds": [],
+ 32
+        "delivery_method": {
+ 33
+          "id": 143626010646,
+ 34
+          "method_type": "shipping",
+ 35
+          "min_delivery_date_time": null,
+ 36
+          "max_delivery_date_time": null
+ 37
+        },
+ 38
+        "assigned_location": {
+ 39
+          "address1": null,
+ 40
+          "address2": null,
+ 41
+          "city": null,
+ 42
+          "country_code": "CA",
+ 43
+          "location_id": 67794436118,
+ 44
+          "name": "test-created-via-api-2",
+ 45
+          "phone": null,
+ 46
+          "province": null,
+ 47
+          "zip": null
+ 48
+        },
+ 49
+        "merchant_requests": [
+ 50
+          {
+ 51
+            "message": null,
+ 52
+            "request_options": {
+ 53
+              "notify_customer": false
+ 54
+            },
+ 55
+            "sent_at": "2022-10-17T15:55:29-04:00",
+ 56
+            "kind": "fulfillment_request"
+ 57
+          }
+ 58
+        ]
+ 59
+      },
+ 60
+      {
+ 61
+        "id": 5862310150166,
+ 62
+        "shop_id": 20978040854,
+ 63
+        "order_id": 4807783546902,
+ 64
+        "assigned_location_id": 67794436118,
+ 65
+        "request_status": "unsubmitted",
+ 66
+        "status": "open",
+ 67
+        "supported_actions": [
+ 68
+          "request_fulfillment",
+ 69
+          "hold",
+ 70
+          "move"
+ 71
+        ],
+ 72
+        "destination": {
+ 73
+          "id": 5482189881366,
+ 74
+          "address1": "23 Ferny Avenue",
+ 75
+          "address2": null,
+ 76
+          "city": "Surfers Paradise",
+ 77
+          "company": null,
+ 78
+          "country": "Australia",
+ 79
+          "email": "fake@example.com",
+ 80
+          "first_name": "Tyler",
+ 81
+          "last_name": "Kelleher",
+ 82
+          "phone": null,
+ 83
+          "province": "Queensland",
+ 84
+          "zip": "4217"
+ 85
+        },
+ 86
+        "line_items": [
+ 87
+          {
+ 88
+            "id": 12680896348182,
+ 89
+            "shop_id": 20978040854,
+ 90
+            "fulfillment_order_id": 5862310150166,
+ 91
+            "quantity": 1,
+ 92
+            "line_item_id": 12559203336214,
+ 93
+            "inventory_item_id": 44276125368342,
+ 94
+            "fulfillable_quantity": 1,
+ 95
+            "variant_id": 42182036422678
+ 96
+          },
+ 97
+          {
+ 98
+            "id": 12680896380950,
+ 99
+            "shop_id": 20978040854,
+ 100
+            "fulfillment_order_id": 5862310150166,
+ 101
+            "quantity": 1,
+ 102
+            "line_item_id": 12559203368982,
+ 103
+            "inventory_item_id": 32884276494358,
+ 104
+            "fulfillable_quantity": 1,
+ 105
+            "variant_id": 31360689504278
+ 106
+          }
+ 107
+        ],
+ 108
+        "fulfill_at": "2022-10-17T15:00:00-04:00",
+ 109
+        "fulfill_by": null,
+ 110
+        "international_duties": {
+ 111
+          "incoterm": "DAP"
+ 112
+        },
+ 113
+        "fulfillment_holds": [],
+ 114
+        "delivery_method": {
+ 115
+          "id": 143738765334,
+ 116
+          "method_type": "shipping",
+ 117
+          "min_delivery_date_time": null,
+ 118
+          "max_delivery_date_time": null
+ 119
+        },
+ 120
+        "assigned_location": {
+ 121
+          "address1": null,
+ 122
+          "address2": null,
+ 123
+          "city": null,
+ 124
+          "country_code": "CA",
+ 125
+          "location_id": 67794436118,
+ 126
+          "name": "test-created-via-api-2",
+ 127
+          "phone": null,
+ 128
+          "province": null,
+ 129
+          "zip": null
+ 130
+        },
+ 131
+        "merchant_requests": []
+ 132
+      }
+ 133
+    ]
+ 134 }
+ Step 2: Retrieve inventory levels
+ You can use the REST Admin API's GET inventory_items endpoint or the GraphQL Admin API's inventoryItem query to retrieve the inventory levels for items and the locations where the items are stocked.
+ To retrieve inventory levels, provide the ID of the inventory item in your request:
+ Retrieve inventory levels
+ Endpoint
+ REST
+ GraphQL
+ 1 GET https://{shop}.myshopify.com/admin/api/{api_version}/inventory_items/{inventory_item_id}.json
+ Request
+ REST
+ GraphQL
+ 1 {empty request body}
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "inventory_item": {
+ 3
+      "id": 32884276494358,
+ 4
+      "sku": "123456",
+ 5
+      "created_at": "2020-04-19T15:35:48-04:00",
+ 6
+      "updated_at": "2022-04-28T13:29:30-04:00",
+ 7
+      "requires_shipping": true,
+ 8
+      "cost": null,
+ 9
+      "country_code_of_origin": "US",
+ 10
+      "province_code_of_origin": null,
+ 11
+      "harmonized_system_code": null,
+ 12
+      "tracked": true,
+ 13
+      "country_harmonized_system_codes": [],
+ 14
+      "admin_graphql_api_id": "gid://shopify/InventoryItem/32884276494358"
+ 15
+    }
+ 16 }
+ Step 3: Query supported fulfillment order actions
+ Each fulfillment order object includes a list of supported fulfillment order actions to determine which actions the app can take. This information is available in the JSON response received in the first step in this guide.
+ If you're using the GraphQL Admin API, then you can use the order query to independently request information about fulfillment order actions. Provide the order ID to retrieve supported actions:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 query getOrderByID {
+ 2
+    order(id: "gid://shopify/Order/4057210552342") {
+ 3
+      id
+ 4
+      name
+ 5
+      fulfillmentOrders(first: 10) {
+ 6
+        edges {
+ 7
+          node {
+ 8
+            id
+ 9
+            status
+ 10
+            requestStatus
+ 11
+            supportedActions {
+ 12
+              action
+ 13
+            }
+ 14
+          }
+ 15
+        }
+ 16
+      }
+ 2
+    "data": {
+ 3
+      "order": {
+ 4
+        "id": "gid://shopify/Order/4057210552342",
+ 5
+        "name": "#1007",
+ 6
+        "fulfillmentOrders": {
+ 7
+          "edges": [
+ 8
+            {
+ 9
+              "node": {
+ 10
+                "id": "gid://shopify/FulfillmentOrder/5012074758166",
+ 11
+                "status": "OPEN",
+ 12
+                "requestStatus": "UNSUBMITTED",
+ 13
+                "supportedActions": [
+ 14
+                  {
+ 15
+                    "action": "CREATE_FULFILLMENT"
+ 16
+                  },
+ 17
+                  {
+ 18
+                    "action": "MOVE"
+ 19
+                  }
+ 20
+                ]
+ 21
+              }
+ 22
+            }
+ 23
+          ]
+ 24
+        }
+ 25
+      }
+ 26
+    }
+ 27 }
+ Step 4: Determine which actions to take
+ If a fulfillment order is open, then apps can inspect the list of supported actions and decide what to action to take.
+ The following table describes the list of supported fulfillment order actions. Each action is used at a different stage in the fulfillment process.
+ Fulfillment order action Description
+ MOVE Moves a fulfillment order between merchant-managed locations.
+ CREATE_FULFILLMENT Creates a fulfillment for an order that a merchant or third-party fulfillment service can manage.
+ REQUEST_FULFILLMENT Sends a request to a third-party fulfillment service to fulfill an order.
+ CANCEL_FULFILLMENT_ORDER Immediately cancels a fulfillment that's being managed by a third-party fulfillment service.
+ REQUEST_CANCELLATION Sends a request to a third-party fulfillment service to cancel a fulfillment order.
+ EXTERNAL Indicates fulfillment orders that are assigned to an external fulfillment service.
+ Note
+ Apps should filter out closed fulfillment orders. Closed fulfillment orders have no supported actions, and can't be changed.
+ Move a fulfillment order
+ You can use the REST Admin API's POST fulfillment_orders/move endpoint or the GraphQL Admin API's fulfillmentOrderMove mutation to move a fulfillment order from one location to another.
+ Only fulfillment orders assigned to merchant-managed locations can be moved between locations, and moving a fulfillment order has no impact on the shipping rate that the customer has already paid.
+ Move a fulfillment order
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fufillment_order_id}/move.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order_id": "5859333242902",
+ 3
+    "fulfillment_order": {
+ 4
+      "new_location_id": "67794436118"
+ 5
+    }
+ 6 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    // The original `fulfillment_order` that was requested to be moved.
+ 3
+     "original_fulfillment_order":{
+ 4
+        "id":5859333242902,
+ 5
+        "shop_id":20978040854,
+ 6
+        "order_id":4804938989590,
+ 7
+        "assigned_location_id":67794436118,
+ 8
+        "request_status":"unsubmitted",
+ 9
+        "status":"open",
+ 10
+        "supported_actions":[
+ 11
+           "request_fulfillment",
+ 12
+           "hold",
+ 13
+           "move"
+ 14
+        ],
+ 15
+        "destination":{
+ 16
+           "id":5479404371990,
+ 17
+           "address1":"23 Hassall Street",
+ 18
+           "address2":"",
+ 19
+           "city":"Parramatta",
+ 20
+           "company":null,
+ 21
+           "country":"Australia",
+ 22
+           "email":"",
+ 23
+           "first_name":"Tyler",
+ 24
+           "last_name":"Kelleher",
+ 25
+           "phone":null,
+ 26
+           "province":"New South Wales",
+ 27
+           "zip":"2150"
+ 28
+        },
+ 29
+        "line_items":[
+ 30
+           {
+ 31
+              "id":12675478814742,
+ 32
+              "shop_id":20978040854,
+ 33
+              "fulfillment_order_id":5859333242902,
+ 34
+              "quantity":1,
+ 35
+              "line_item_id":12553770336278,
+ 36
+              "inventory_item_id":44276125368342,
+ 37
+              "fulfillable_quantity":1,
+ 38
+              "variant_id":42182036422678
+ 39
+           }
+ 40
+        ],
+ 41
+        "fulfill_at":"2022-10-13T13:00:00-04:00",
+ 42
+        "fulfill_by":null,
+ 43
+        "international_duties":{
+ 44
+           "incoterm":"DAP"
+ 45
+        },
+ 46
+        "fulfillment_holds":[
+ 47
+ 48
+        ],
+ 49
+        "delivery_method":{
+ 50
+           "id":140816351254,
+ 51
+           "method_type":"shipping",
+ 52
+           "min_delivery_date_time":null,
+ 53
+           "max_delivery_date_time":null
+ 54
+        },
+ 55
+        "assigned_location":{
+ 56
+           "address1":null,
+ 57
+           "address2":null,
+ 58
+           "city":null,
+ 59
+           "country_code":"CA",
+ 60
+           "location_id":67794436118,
+ 61
+           "name":"test-created-via-api-2",
+ 62
+           "phone":null,
+ 63
+           "province":null,
+ 64
+           "zip":null
+ 65
+        },
+ 66
+        "merchant_requests":[
+ 67
+ 68
+        ]
+ 69
+     },
+ 70
+     // The new `fulfillment_order` assigned to the new location, which includes all line items. The status of this `fulfillment_order` is `open`.
+ 71
+     "moved_fulfillment_order":{
+ 72
+        "id":5859333242902,
+ 73
+        "shop_id":20978040854,
+ 74
+        "order_id":4804938989590,
+ 75
+        "assigned_location_id":67794436118,
+ 76
+        "request_status":"unsubmitted",
+ 77
+        "status":"open",
+ 78
+        "supported_actions":[
+ 79
+           "request_fulfillment",
+ 80
+           "hold",
+ 81
+           "move"
+ 82
+        ],
+ 83
+        "destination":{
+ 84
+           "id":5479404371990,
+ 85
+           "address1":"23 Hassall Street",
+ 86
+           "address2":"",
+ 87
+           "city":"Parramatta",
+ 88
+           "company":null,
+ 89
+           "country":"Australia",
+ 90
+           "email":"",
+ 91
+           "first_name":"Tyler",
+ 92
+           "last_name":"Kelleher",
+ 93
+           "phone":null,
+ 94
+           "province":"New South Wales",
+ 95
+           "zip":"2150"
+ 96
+        },
+ 97
+        "line_items":[
+ 98
+           {
+ 99
+              "id":12675478814742,
+ 100
+              "shop_id":20978040854,
+ 101
+              "fulfillment_order_id":5859333242902,
+ 102
+              "quantity":1,
+ 103
+              "line_item_id":12553770336278,
+ 104
+              "inventory_item_id":44276125368342,
+ 105
+              "fulfillable_quantity":1,
+ 106
+              "variant_id":42182036422678
+ 107
+           }
+ 108
+        ],
+ 109
+        "fulfill_at":"2022-10-13T13:00:00-04:00",
+ 110
+        "fulfill_by":null,
+ 111
+        "international_duties":{
+ 112
+           "incoterm":"DAP"
+ 113
+        },
+ 114
+        "fulfillment_holds":[
+ 115
+ 116
+        ],
+ 117
+        "delivery_method":{
+ 118
+           "id":140816351254,
+ 119
+           "method_type":"shipping",
+ 120
+           "min_delivery_date_time":null,
+ 121
+           "max_delivery_date_time":null
+ 122
+        },
+ 123
+        "assigned_location":{
+ 124
+           "address1":null,
+ 125
+           "address2":null,
+ 126
+           "city":null,
+ 127
+           "country_code":"CA",
+ 128
+           "location_id":67794436118,
+ 129
+           "name":"test-created-via-api-2",
+ 130
+           "phone":null,
+ 131
+           "province":null,
+ 132
+           "zip":null
+ 133
+        },
+ 134
+        "merchant_requests":[
+ 135
+ 136
+        ]
+ 137
+     },
+ 138
+     // In this case, `remaining_fulfillment_order` is `null` because there are no remaining items at location one that need to be fulfilled.
+ 139
+     // If a fulfillment order has multiple items and only some of them can be moved, then `remaining_fulfillment_order` includes a new `fulfillment_order` assigned to the original location, consisting of only the remaining items that couldn't be moved. The status of this `fulfillment_order` is `open`.
+ 140
+     "remaining_fulfillment_order":null
+ 141 }
+ Create a fulfillment
+ You can use the REST Admin API's POST fulfillments endpoint or the GraphQL Admin API's fulfillmentCreateV2 mutation to create a fulfillment.
+ In the request, provide the line items, destination, and order information you retrieved in the first step of this guide.
+ Create a fulfillment
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillments.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment":{
+ 3
+      // The array of `line_items_by_fulfillment_order` lets apps create a single fulfillment with one or many fulfillment orders.
+ 4
+      // All of the fulfillment orders need to be on the same order, and assigned to the same location.
+ 5
+      "line_items_by_fulfillment_order":[
+ 6
+      {
+ 7
+        "fulfillment_order_id":"5859341008918",
+ 8
+        // The array of `fulfillment_order_line_items` lets apps partially fulfill fulfillment orders.
+ 9
+        // If `fulfillment_order_line_items` aren't provided, then the app creates a fulfillment for all remaining line items.
+ 10
+        "fulfillment_order_line_items":[
+ 11
+        {
+ 12
+          "id":"12675478814742",
+ 13
+          "quantity":"1"
+ 14
+        }]
+ 15
+      }],
+ 16
+      "tracking_info":{
+ 17
+        "number":"1234",
+ 18
+        "url":"www.usps.com",
+ 19
+        "company":"Fake Company"
+ 20
+        },
+ 21
+        "notify_customer":false,
+ 22
+        "origin_address":null,
+ 23
+        "message":"test message"
+ 24
+      }
+ 25 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment": {
+ 3
+      "id": 3849429450774,
+ 4
+      "order_id": 4804938989590,
+ 5
+      // If successful, then the fulfillment order transitions to a `closed` status because there's no more remaining work. If this is a partial fulfillment (for example, only fulfilling `fulfillment_order_line_item` with a `quantity` of 1), then the fulfillment order moves to an `in_progress` status.
+ 6
+      "status": "success",
+ 7
+      "created_at": "2022-10-13T15:11:16-04:00",
+ 8
+      "service": "test-created-via-api-2",
+ 9
+      "updated_at": "2022-10-13T15:11:16-04:00",
+ 10
+      "tracking_company": "Fake Company",
+ 11
+      "shipment_status": null,
+ 12
+      "location_id": 67794436118,
+ 13
+      "origin_address": null,
+ 14
+      "line_items": [
+ 15
+      {
+ 16
+        "id": 12553770336278,
+ 17
+        "variant_id": 42182036422678,
+ 18
+        "title": "Cool Bag",
+ 19
+        "quantity": 1,
+ 20
+        "sku": "5432122",
+ 21
+        "variant_title": "",
+ 22
+        "vendor": "tkelleher-usa-store",
+ 23
+        "fulfillment_service": "test-created-via-api-2",
+ 24
+        "product_id": 7499901009942,
+ 25
+        "requires_shipping": true,
+ 26
+        "taxable": true,
+ 27
+        "gift_card": false,
+ 28
+        "name": "Cool Bag",
+ 29
+        "variant_inventory_management": "shopify",
+ 30
+        "properties": [],
+ 31
+        "product_exists": true,
+ 32
+        "fulfillable_quantity": 0,
+ 33
+        "grams": 0,
+ 34
+        "price": "10.00",
+ 35
+        "total_discount": "0.00",
+ 36
+        "fulfillment_status": "fulfilled",
+ 37
+        "price_set": {
+ 38
+          "shop_money": {
+ 39
+            "amount": "10.00",
+ 40
+            "currency_code": "CAD"
+ 41
+            },
+ 42
+            "presentment_money": {
+ 43
+              "amount": "10.00",
+ 44
+              "currency_code": "CAD"
+ 45
+              }
+ 46
+            },
+ 47
+            "total_discount_set": {
+ 48
+              "shop_money": {
+ 49
+                "amount": "0.00",
+ 50
+                "currency_code": "CAD"
+ 51
+                },
+ 52
+              "presentment_money": {
+ 53
+                "amount": "0.00",
+ 54
+                "currency_code": "CAD"
+ 55
+              }
+ 56
+            },
+ 57
+            "discount_allocations": [],
+ 58
+            "duties": [],
+ 59
+            "admin_graphql_api_id": "gid:\/\/shopify\/LineItem\/12553770336278",
+ 60
+            "tax_lines": [],
+ 61
+            "origin_location": {
+ 62
+              "id": 2851029516310,
+ 63
+              "country_code": "US",
+ 64
+              "province_code": "CT",
+ 65
+              "name": "tkelleher-usa-store",
+ 66
+              "address1": "12 Runway Road",
+ 67
+              "address2": "",
+ 68
+              "city": "East Hartford",
+ 69
+              "zip": "06118"
+ 70
+              },
+ 71
+              "destination_location": {
+ 72
+                "id": 3436470665238,
+ 73
+                "country_code": "AU",
+ 74
+                "province_code": "NSW",
+ 75
+                "name": "Tyler Kelleher",
+ 76
+                "address1": "23 Hassall Street",
+ 77
+                "address2": "",
+ 78
+                "city": "Parramatta",
+ 79
+                "zip": "2150"
+ 80
+              }
+ 81
+            }
+ 82
+          ],
+ 83
+          "tracking_number": "1234",
+ 84
+          "tracking_numbers": [
+ 85
+          "1234"
+ 86
+          ],
+ 87
+          "tracking_url": "http:\/\/www.usps.com",
+ 88
+          "tracking_urls": [
+ 89
+          "http:\/\/www.usps.com"
+ 90
+          ],
+ 91
+          "receipt": {},
+ 92
+            "name": "#6547.1",
+ 93
+            "admin_graphql_api_id": "gid:\/\/shopify\/Fulfillment\/3849429450774"
+ 94
+        }
+ 95 }
+ Request a fulfillment
+ If a merchant is using a third-party fulfillment service, then the service can support the REQUEST_FULFILLMENT action.
+ You can use the REST Admin API's POST fulfillment_request endpoint or the GraphQL Admin API's fulfillmentOrderSubmitFulfillmentRequest mutation to request a fulfillment with the assigned fulfillment service. Apps can also provide an optional message to facilitate communication with the fulfillment service.
+ To request a fulfillment for all the line items, you only need to pass the fulfillment order ID in the request:
+ Request a fulfillment
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/fulfillment_request.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order_id": "5859333242902",
+ 3
+    "message": "Fragile"
+ 4 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+      "original_fulfillment_order": {
+ 3
+          "id": 5859333242902,
+ 4
+          "shop_id": 20978040854,
+ 5
+          "order_id": 4804938989590,
+ 6
+          "assigned_location_id": 67794436118,
+ 7
+          "request_status": "submitted",
+ 8
+          "status": "open",
+ 9
+          "supported_actions": [
+ 10
+              "cancel_fulfillment_order"
+ 11
+          ],
+ 12
+          "destination": {
+ 13
+              "id": 5479404371990,
+ 14
+              "address1": "23 Hassall Street",
+ 15
+              "address2": "",
+ 16
+              "city": "Parramatta",
+ 17
+              "company": null,
+ 18
+              "country": "Australia",
+ 19
+              "email": "",
+ 20
+              "first_name": "Tyler",
+ 21
+              "last_name": "Kelleher",
+ 22
+              "phone": null,
+ 23
+              "province": "New South Wales",
+ 24
+              "zip": "2150"
+ 25
+          },
+ 26
+          "origin": {
+ 27
+              "address1": null,
+ 28
+              "address2": null,
+ 29
+              "city": null,
+ 30
+              "country_code": "CA",
+ 31
+              "location_id": 67794436118,
+ 32
+              "name": "test-created-via-api-2",
+ 33
+              "phone": null,
+ 34
+              "province": null,
+ 35
+              "zip": null
+ 36
+          },
+ 37
+          "line_items": [
+ 38
+              {
+ 39
+                  "id": 12675478814742,
+ 40
+                  "shop_id": 20978040854,
+ 41
+                  "fulfillment_order_id": 5859333242902,
+ 42
+                  "quantity": 1,
+ 43
+                  "line_item_id": 12553770336278,
+ 44
+                  "inventory_item_id": 44276125368342,
+ 45
+                  "fulfillable_quantity": 1,
+ 46
+                  "variant_id": 42182036422678
+ 47
+              }
+ 48
+          ],
+ 49
+          "outgoing_requests": [
+ 50
+              {
+ 51
+                  "message": null,
+ 52
+                  "request_options": {
+ 53
+                      "notify_customer": false
+ 54
+                  },
+ 55
+                  "sent_at": "2022-10-13T14:20:56-04:00",
+ 56
+                  "kind": "fulfillment_request"
+ 57
+              }
+ 58
+          ],
+ 59
+          "fulfill_at": "2022-10-13T13:00:00-04:00",
+ 60
+          "fulfill_by": null,
+ 61
+          "international_duties": {
+ 62
+              "incoterm": "DAP"
+ 63
+          },
+ 64
+          "fulfillment_holds": [],
+ 65
+          "delivery_method": {
+ 66
+              "id": 140816351254,
+ 67
+              "method_type": "shipping",
+ 68
+              "min_delivery_date_time": null,
+ 69
+              "max_delivery_date_time": null
+ 70
+          }
+ 71
+      },
+ 72
+    // The submitted fulfillment order is always returned in the `submitted_fulfillment_order` field. In this case, the `request_status` is `submitted`, and the status is `open`.
+ 73
+      "submitted_fulfillment_order": {
+ 74
+          "id": 5859333242902,
+ 75
+          "shop_id": 20978040854,
+ 76
+          "order_id": 4804938989590,
+ 77
+          "assigned_location_id": 67794436118,
+ 78
+          "request_status": "submitted",
+ 79
+          "status": "open",
+ 80
+          "supported_actions": [
+ 81
+              "cancel_fulfillment_order"
+ 82
+          ],
+ 83
+          "destination": {
+ 84
+              "id": 5479404371990,
+ 85
+              "address1": "23 Hassall Street",
+ 86
+              "address2": "",
+ 87
+              "city": "Parramatta",
+ 88
+              "company": null,
+ 89
+              "country": "Australia",
+ 90
+              "email": "",
+ 91
+              "first_name": "Tyler",
+ 92
+              "last_name": "Kelleher",
+ 93
+              "phone": null,
+ 94
+              "province": "New South Wales",
+ 95
+              "zip": "2150"
+ 96
+          },
+ 97
+          "origin": {
+ 98
+              "address1": null,
+ 99
+              "address2": null,
+ 100
+              "city": null,
+ 101
+              "country_code": "CA",
+ 102
+              "location_id": 67794436118,
+ 103
+              "name": "test-created-via-api-2",
+ 104
+              "phone": null,
+ 105
+              "province": null,
+ 106
+              "zip": null
+ 107
+          },
+ 108
+          "line_items": [
+ 109
+              {
+ 110
+                  "id": 12675478814742,
+ 111
+                  "shop_id": 20978040854,
+ 112
+                  "fulfillment_order_id": 5859333242902,
+ 113
+                  "quantity": 1,
+ 114
+                  "line_item_id": 12553770336278,
+ 115
+                  "inventory_item_id": 44276125368342,
+ 116
+                  "fulfillable_quantity": 1,
+ 117
+                  "variant_id": 42182036422678
+ 118
+              }
+ 119
+          ],
+ 120
+          "outgoing_requests": [
+ 121
+              {
+ 122
+                  "message": null,
+ 123
+                  "request_options": {
+ 124
+                      "notify_customer": false
+ 125
+                  },
+ 126
+                  "sent_at": "2022-10-13T14:20:56-04:00",
+ 127
+                  "kind": "fulfillment_request"
+ 128
+              }
+ 129
+          ],
+ 130
+          "fulfill_at": "2022-10-13T13:00:00-04:00",
+ 131
+          "fulfill_by": null,
+ 132
+          "international_duties": {
+ 133
+              "incoterm": "DAP"
+ 134
+          },
+ 135
+          "fulfillment_holds": [],
+ 136
+          "delivery_method": {
+ 137
+              "id": 140816351254,
+ 138
+              "method_type": "shipping",
+ 139
+              "min_delivery_date_time": null,
+ 140
+              "max_delivery_date_time": null
+ 141
+          }
+ 142
+      },
+ 143
+      "unsubmitted_fulfillment_order": null
+ 144 }
+ Request a partial fulfillment
+ You can also use the REST Admin API's POST fulfillment_request endpoint or the GraphQL Admin API's fulfillmentOrderSubmitFulfillmentRequest mutation to submit only one of the line items on the fulfillmentOrder for fulfillment.
+ The following example shows a request to fulfill one fulfillment order line item:
+ Request a fulfillment
+ Endpoint
+ REST
+ GraphQL
+ 1 https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/fulfillment_request.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order_id": "5862695829526",
+ 3
+    "fulfillment_request": {
+ 4
+      "fulfillment_order_line_items": [
+ 5
+      {
+ 6
+        "id": 12680896380950,
+ 7
+        "quantity": 1
+ 8
+      }
+ 9
+      ],
+ 10
+      "message": "Fragile",
+ 11
+      "notify_customer": false
+ 12
+    }
+ 13 }
+ 14 "notify_customer": false
+ 15 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "original_fulfillment_order": {
+ 3
+      "id": 5862695829526,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4807783546902,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "submitted",
+ 8
+      "status": "open",
+ 9
+      "supported_actions": [
+ 10
+        "cancel_fulfillment_order"
+ 11
+      ],
+ 12
+      "destination": {
+ 13
+        "id": 5482546888726,
+ 14
+        "address1": "23 Ferny Avenue",
+ 15
+        "address2": null,
+ 16
+        "city": "Surfers Paradise",
+ 17
+        "company": null,
+ 18
+        "country": "Australia",
+ 19
+        "email": "fake@example.com",
+ 20
+        "first_name": "Tyler",
+ 21
+        "last_name": "Kelleher",
+ 22
+        "phone": null,
+ 23
+        "province": "Queensland",
+ 24
+        "zip": "4217"
+ 25
+      },
+ 26
+      "origin": {
+ 27
+        "address1": null,
+ 28
+        "address2": null,
+ 29
+        "city": null,
+ 30
+        "country_code": "CA",
+ 31
+        "location_id": 67794436118,
+ 32
+        "name": "test-created-via-api-2",
+ 33
+        "phone": null,
+ 34
+        "province": null,
+ 35
+        "zip": null
+ 36
+      },
+ 37
+      "line_items": [
+ 38
+        {
+ 39
+          "id": 12680896380950,
+ 40
+          "shop_id": 20978040854,
+ 41
+          "fulfillment_order_id": 5862695829526,
+ 42
+          "quantity": 1,
+ 43
+          "line_item_id": 12559203368982,
+ 44
+          "inventory_item_id": 32884276494358,
+ 45
+          "fulfillable_quantity": 1,
+ 46
+          "variant_id": 31360689504278
+ 47
+        }
+ 48
+      ],
+ 49
+      "outgoing_requests": [
+ 50
+        {
+ 51
+          "message": "Fragile",
+ 52
+          "request_options": {
+ 53
+            "notify_customer": false
+ 54
+          },
+ 55
+          "sent_at": "2022-10-19T11:37:07-04:00",
+ 56
+          "kind": "fulfillment_request"
+ 57
+        }
+ 58
+      ],
+ 59
+      "fulfill_at": "2022-10-17T15:00:00-04:00",
+ 60
+      "fulfill_by": null,
+ 61
+      "international_duties": {
+ 62
+        "incoterm": "DAP"
+ 63
+      },
+ 64
+      "fulfillment_holds": [],
+ 65
+      "delivery_method": {
+ 66
+        "id": 144118644758,
+ 67
+        "method_type": "shipping",
+ 68
+        "min_delivery_date_time": null,
+ 69
+        "max_delivery_date_time": null
+ 70
+      }
+ 71
+    },
+ 72
+    "submitted_fulfillment_order": {
+ 73
+      "id": 5862695829526,
+ 74
+      "shop_id": 20978040854,
+ 75
+      "order_id": 4807783546902,
+ 76
+      "assigned_location_id": 67794436118,
+ 77
+      "request_status": "submitted",
+ 78
+      "status": "open",
+ 79
+      "supported_actions": [
+ 80
+        "cancel_fulfillment_order"
+ 81
+      ],
+ 82
+      "destination": {
+ 83
+        "id": 5482546888726,
+ 84
+        "address1": "23 Ferny Avenue",
+ 85
+        "address2": null,
+ 86
+        "city": "Surfers Paradise",
+ 87
+        "company": null,
+ 88
+        "country": "Australia",
+ 89
+        "email": "fake@example.com",
+ 90
+        "first_name": "Tyler",
+ 91
+        "last_name": "Kelleher",
+ 92
+        "phone": null,
+ 93
+        "province": "Queensland",
+ 94
+        "zip": "4217"
+ 95
+      },
+ 96
+      "origin": {
+ 97
+        "address1": null,
+ 98
+        "address2": null,
+ 99
+        "city": null,
+ 100
+        "country_code": "CA",
+ 101
+        "location_id": 67794436118,
+ 102
+        "name": "test-created-via-api-2",
+ 103
+        "phone": null,
+ 104
+        "province": null,
+ 105
+        "zip": null
+ 106
+      },
+ 107
+      "line_items": [
+ 108
+        {
+ 109
+          "id": 12680896380950,
+ 110
+          "shop_id": 20978040854,
+ 111
+          "fulfillment_order_id": 5862695829526,
+ 112
+          "quantity": 1,
+ 113
+          "line_item_id": 12559203368982,
+ 114
+          "inventory_item_id": 32884276494358,
+ 115
+          "fulfillable_quantity": 1,
+ 116
+          "variant_id": 31360689504278
+ 117
+        }
+ 118
+      ],
+ 119
+      "outgoing_requests": [
+ 120
+        {
+ 121
+          "message": "Fragile",
+ 122
+          "request_options": {
+ 123
+            "notify_customer": false
+ 124
+          },
+ 125
+          "sent_at": "2022-10-19T11:37:07-04:00",
+ 126
+          "kind": "fulfillment_request"
+ 127
+        }
+ 128
+      ],
+ 129
+      "fulfill_at": "2022-10-17T15:00:00-04:00",
+ 130
+      "fulfill_by": null,
+ 131
+      "international_duties": {
+ 132
+        "incoterm": "DAP"
+ 133
+      },
+ 134
+      "fulfillment_holds": [],
+ 135
+      "delivery_method": {
+ 136
+        "id": 144118644758,
+ 137
+        "method_type": "shipping",
+ 138
+        "min_delivery_date_time": null,
+ 139
+        "max_delivery_date_time": null
+ 140
+      }
+ 141
+    },
+ 142
+    "unsubmitted_fulfillment_order": {
+ 143
+      "id": 5862696386582,
+ 144
+      "shop_id": 20978040854,
+ 145
+      "order_id": 4807783546902,
+ 146
+      "assigned_location_id": 67794436118,
+ 147
+      "request_status": "unsubmitted",
+ 148
+      "status": "open",
+ 149
+      "supported_actions": [
+ 150
+        "request_fulfillment",
+ 151
+        "hold",
+ 152
+        "move"
+ 153
+      ],
+ 154
+      "destination": {
+ 155
+        "id": 5482547019798,
+ 156
+        "address1": "23 Ferny Avenue",
+ 157
+        "address2": null,
+ 158
+        "city": "Surfers Paradise",
+ 159
+        "company": null,
+ 160
+        "country": "Australia",
+ 161
+        "email": "fake@example.com",
+ 162
+        "first_name": "Tyler",
+ 163
+        "last_name": "Kelleher",
+ 164
+        "phone": null,
+ 165
+        "province": "Queensland",
+ 166
+        "zip": "4217"
+ 167
+      },
+ 168
+      "origin": {
+ 169
+        "address1": null,
+ 170
+        "address2": null,
+ 171
+        "city": null,
+ 172
+        "country_code": "CA",
+ 173
+        "location_id": 67794436118,
+ 174
+        "name": "test-created-via-api-2",
+ 175
+        "phone": null,
+ 176
+        "province": null,
+ 177
+        "zip": null
+ 178
+      },
+ 179
+      "line_items": [
+ 180
+        {
+ 181
+          "id": 12680896348182,
+ 182
+          "shop_id": 20978040854,
+ 183
+          "fulfillment_order_id": 5862696386582,
+ 184
+          "quantity": 1,
+ 185
+          "line_item_id": 12559203336214,
+ 186
+          "inventory_item_id": 44276125368342,
+ 187
+          "fulfillable_quantity": 1,
+ 188
+          "variant_id": 42182036422678
+ 189
+        }
+ 190
+      ],
+ 191
+      "outgoing_requests": [],
+ 192
+      "fulfill_at": "2022-10-17T15:00:00-04:00",
+ 193
+      "fulfill_by": null,
+ 194
+      "international_duties": {
+ 195
+        "incoterm": "DAP"
+ 196
+      },
+ 197
+      "fulfillment_holds": [],
+ 198
+      "delivery_method": null
+ 199
+    }
+ 200 }
+ Cancel a fulfillment order
+ If a merchant is using a third-party fulfillment service, then the service can support the CANCEL_FULFILLMENT_ORDER action.
+ You can use the REST Admin API's POST fulfillment_orders/cancel endpoint or the GraphQL Admin API's fulfillmentOrderCancel mutation to immediately cancel the fulfillment order.
+ Fulfillment orders that return the CANCEL_FULFILLMENT_ORDER action have one of the following request statuses:
+ Request status Description Behavior
+ GraphQL: SUBMITTED
+ REST: submitted
+ A request for fulfillment has been sent to the third-party fulfillment service, but it hasn't been acknowledged. The fulfillment order is immediately cancelled because the fulfillment service hasn't yet accepted the fulfillment request.
+ GraphQL: CANCELLATION_REQUESTED
+ REST: cancellation_requested
+ A request to cancel the fulfillment order has been submitted to the third-party fulfillment service. If an app cancels the fulfillment order and doesn't wait for the third-party fulfillment service to respond, then the fulfillment service might still complete the assigned work, and the order might still succeed.
+ Example
+ A merchant might submit a fulfillment request for a fulfillment order. They then receive an email from the customer, who wants to confirm the size of an item. To stop the third-party fulfillment service from accepting the fulfillment order request, the app can cancel the fulfillment order request until the customer confirms the size.
+ The following example shows how to cancel a fulfillment that's being managed by a third-party fulfillment service:
+ Cancel a fulfillment
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/cancel.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order_id": "5859333242902"
+ 3 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    // The original fulfillment order, which now has a `closed` status.
+ 3
+      "fulfillment_order": {
+ 4
+          "id": 5859333242902,
+ 5
+          "shop_id": 20978040854,
+ 6
+          "order_id": 4804938989590,
+ 7
+          "assigned_location_id": 67794436118,
+ 8
+          "request_status": "submitted",
+ 9
+          "status": "closed",
+ 10
+          "supported_actions": [],
+ 11
+          "destination": {
+ 12
+              "id": 5479404371990,
+ 13
+              "address1": "23 Hassall Street",
+ 14
+              "address2": "",
+ 15
+              "city": "Parramatta",
+ 16
+              "company": null,
+ 17
+              "country": "Australia",
+ 18
+              "email": "",
+ 19
+              "first_name": "Tyler",
+ 20
+              "last_name": "Kelleher",
+ 21
+              "phone": null,
+ 22
+              "province": "New South Wales",
+ 23
+              "zip": "2150"
+ 24
+          },
+ 25
+          "line_items": [],
+ 26
+          "fulfill_at": "2022-10-13T13:00:00-04:00",
+ 27
+          "fulfill_by": null,
+ 28
+          "international_duties": {
+ 29
+              "incoterm": "DAP"
+ 30
+          },
+ 31
+          "fulfillment_holds": [],
+ 32
+          "delivery_method": {
+ 33
+              "id": 140816351254,
+ 34
+              "method_type": "shipping",
+ 35
+              "min_delivery_date_time": null,
+ 36
+              "max_delivery_date_time": null
+ 37
+          },
+ 38
+          "assigned_location": {
+ 39
+              "address1": null,
+ 40
+              "address2": null,
+ 41
+              "city": null,
+ 42
+              "country_code": "CA",
+ 43
+              "location_id": 67794436118,
+ 44
+              "name": "test-created-via-api-2",
+ 45
+              "phone": null,
+ 46
+              "province": null,
+ 47
+              "zip": null
+ 48
+          },
+ 49
+          "merchant_requests": [
+ 50
+              {
+ 51
+                  "message": null,
+ 52
+                  "request_options": {
+ 53
+                      "notify_customer": false
+ 54
+                  },
+ 55
+                  "sent_at": "2022-10-13T14:20:56-04:00",
+ 56
+                  "kind": "fulfillment_request"
+ 57
+              }
+ 58
+          ]
+ 59
+      },
+ 60
+    // The new fulfillment order, which is assigned to the same fulfillment service. This fulfillment order will be in an `open` status, with a `request_status` of `unsubmitted`.
+ 61
+      "replacement_fulfillment_order": {
+ 62
+          "id": 5859337732118,
+ 63
+          "shop_id": 20978040854,
+ 64
+          "order_id": 4804938989590,
+ 65
+          "assigned_location_id": 67794436118,
+ 66
+          "request_status": "unsubmitted",
+ 67
+          "status": "open",
+ 68
+          "supported_actions": [
+ 69
+              "request_fulfillment",
+ 70
+              "hold",
+ 71
+              "move"
+ 72
+          ],
+ 73
+          "destination": {
+ 74
+              "id": 5479406731286,
+ 75
+              "address1": "23 Hassall Street",
+ 76
+              "address2": "",
+ 77
+              "city": "Parramatta",
+ 78
+              "company": null,
+ 79
+              "country": "Australia",
+ 80
+              "email": "",
+ 81
+              "first_name": "Tyler",
+ 82
+              "last_name": "Kelleher",
+ 83
+              "phone": null,
+ 84
+              "province": "New South Wales",
+ 85
+              "zip": "2150"
+ 86
+          },
+ 87
+          "line_items": [
+ 88
+              {
+ 89
+                  "id": 12675478814742,
+ 90
+                  "shop_id": 20978040854,
+ 91
+                  "fulfillment_order_id": 5859337732118,
+ 92
+                  "quantity": 1,
+ 93
+                  "line_item_id": 12553770336278,
+ 94
+                  "inventory_item_id": 44276125368342,
+ 95
+                  "fulfillable_quantity": 1,
+ 96
+                  "variant_id": 42182036422678
+ 97
+              }
+ 98
+          ],
+ 99
+          "fulfill_at": "2022-10-13T13:00:00-04:00",
+ 100
+          "fulfill_by": null,
+ 101
+          "international_duties": {
+ 102
+              "incoterm": "DAP"
+ 103
+          },
+ 104
+          "fulfillment_holds": [],
+ 105
+          "delivery_method": {
+ 106
+              "id": 140820774934,
+ 107
+              "method_type": "shipping",
+ 108
+              "min_delivery_date_time": null,
+ 109
+              "max_delivery_date_time": null
+ 110
+          },
+ 111
+          "assigned_location": {
+ 112
+              "address1": null,
+ 113
+              "address2": null,
+ 114
+              "city": null,
+ 115
+              "country_code": "CA",
+ 116
+              "location_id": 67794436118,
+ 117
+              "name": "test-created-via-api-2",
+ 118
+              "phone": null,
+ 119
+              "province": null,
+ 120
+              "zip": null
+ 121
+          },
+ 122
+          "merchant_requests": []
+ 123
+      }
+ 124 }
+ Caution
+ If you use the REST Admin API's POST fulfillment_orders/cancel endpoint or the GraphQL Admin API's fulfillmentOrderCancel mutation on a fulfillment order assigned to a legacy fulfillment service that hasn't opted into FulfillmentOrder-based fulfillment, then the request will fail. For more information, refer to Migrate to fulfillment orders.
+ Request to cancel a fulfillment order
+ If a merchant is using a third-party fulfillment service, then the service can support the REQUEST_CANCELLATION action.
+ You can use the REST Admin API's POST fulfillment_orders/cancellation_request endpoint or the GraphQL Admin API's fulfillmentOrderSubmitCancellationRequest mutation to send a request to the third-party fulfillment service to cancel the fulfillment order.
+ The following example shows how to send a request to the third-party fulfillment service to cancel the fulfillment order. The response returns that the cancellation request is in progress.
+ Tip
+ Even after a fulfillment request is accepted for a fulfillment order, apps can also submit cancellation requests for the fulfillment order.
+ Request to cancel a fulfillment order
+ Endpoint
+ REST
+ GraphQL
+ 1 POST https://{shop_name}.com/admin/api/{api_version}/fulfillment_orders/{fulfillment_order_id}/cancellation_request.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order_id": "5859337961494",
+ 3
+    "message": "Test Message"
+ 4 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_order": {
+ 3
+      "id": 5859337961494,
+ 4
+      "shop_id": 20978040854,
+ 5
+      "order_id": 4804938989590,
+ 6
+      "assigned_location_id": 67794436118,
+ 7
+      "request_status": "cancellation_requested",
+ 8
+      "status": "in_progress",
+ 9
+      "supported_actions": [
+ 10
+        "cancel_fulfillment_order"
+ 11
+      ],
+ 12
+      "destination": {
+ 13
+        "id": 5479406895126,
+ 14
+        "address1": "23 Hassall Street",
+ 15
+        "address2": "",
+ 16
+        "city": "Parramatta",
+ 17
+        "company": null,
+ 18
+        "country": "Australia",
+ 19
+        "email": "",
+ 20
+        "first_name": "Tyler",
+ 21
+        "last_name": "Kelleher",
+ 22
+        "phone": null,
+ 23
+        "province": "New South Wales",
+ 24
+        "zip": "2150"
+ 25
+      },
+ 26
+      "origin": {
+ 27
+        "address1": null,
+ 28
+        "address2": null,
+ 29
+        "city": null,
+ 30
+        "country_code": "CA",
+ 31
+        "location_id": 67794436118,
+ 32
+        "name": "test-created-via-api-2",
+ 33
+        "phone": null,
+ 34
+        "province": null,
+ 35
+        "zip": null
+ 36
+      },
+ 37
+      "line_items": [
+ 38
+        {
+ 39
+          "id": 12675478814742,
+ 40
+          "shop_id": 20978040854,
+ 41
+          "fulfillment_order_id": 5859337961494,
+ 42
+          "quantity": 1,
+ 43
+          "line_item_id": 12553770336278,
+ 44
+          "inventory_item_id": 44276125368342,
+ 45
+          "fulfillable_quantity": 1,
+ 46
+          "variant_id": 42182036422678
+ 47
+        }
+ 48
+      ],
+ 49
+      "outgoing_requests": [
+ 50
+        {
+ 51
+          "message": "",
+ 52
+          "request_options": {
+ 53
+            "notify_customer": false
+ 54
+          },
+ 55
+          "sent_at": "2022-10-13T14:31:20-04:00",
+ 56
+          "kind": "fulfillment_request"
+ 57
+        },
+ 58
+        {
+ 59
+          "message": null,
+ 60
+          "request_options": {},
+ 61
+          "sent_at": "2022-10-13T14:32:45-04:00",
+ 62
+          "kind": "cancellation_request"
+ 63
+        }
+ 64
+      ],
+ 65
+      "fulfill_at": "2022-10-13T13:00:00-04:00",
+ 66
+      "fulfill_by": null,
+ 67
+      "international_duties": {
+ 68
+        "incoterm": "DAP"
+ 69
+      },
+ 70
+      "fulfillment_holds": [],
+ 71
+      "delivery_method": {
+ 72
+        "id": 140821004310,
+ 73
+        "method_type": "shipping",
+ 74
+        "min_delivery_date_time": null,
+ 75
+        "max_delivery_date_time": null
+ 76
+      }
+ 77
+    }
+ 78 }
+ Caution
+ If you use the REST Admin API's POST fulfillment_orders/cancellation_request endpoint or the GraphQL Admin API's fulfillmentOrderSubmitCancellationRequest mutation on a fulfillment order assigned to a legacy fulfillment service that hasn't opted into FulfillmentOrder-based fulfillment, then the request will fail. For more information, refer to Migrate to fulfillment orders.
+ Fulfillment outside of Shopify
+ Fulfillment orders that are assigned to an external fulfillment service return EXTERNAL as a supported action.
+ When dealing with a fulfillment order that's assigned to an external fulfillment service, your app should redirect the merchant to the URL in the externalUrl field to initiate the fulfillment process outside of Shopify.
+ Webhooks
+ In API version 2023-01 and higher, your app can subscribe to webhooks for event notifications related to fulfillment orders. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration overview.
+ Example webhook responses
+ fulfillment_orders/order_routing_complete
+ fulfillment_orders/fulfillment_request_submitted
+ fulfillment_orders/fulfillment_request_accepted
+ fulfillment_orders/fulfillment_request_rejected
+ fulfillment_orders/placed_on_hold
+ fulfillment_orders/hold_released
+ fulfillment_orders/scheduled_fulfillment_order_ready
+ fulfilment_orders/rescheduled
+ fulfillment_orders/cancellation_request_submitted
+ fulfillment_orders/cancellation_request_accepted
+ fulfillment_orders/cancellation_request_rejected
+ fulfillment_orders/cancelled
+ fulfillment_orders/fulfillment_service_failed_to_complete
+ 1 // Occurs when a fulfillment order is created and the order routing has been completed for the order
+ 2 {
+ 3
+   "fulfillment_order": {
+ 4
+     "id": "gid://shopify/FulfillmentOrder/1",
+ 5
+     "status": "open",
+ 6
+   }
+ 7 }
+ Next steps
+ Learn about the recommended workflow for using Shopify APIs to track orders placed through third-party marketplaces.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve an order
+ Step 2: Retrieve inventory levels
+ Step 3: Query supported fulfillment order actions
+ Step 4: Determine which actions to take
+ Webhooks
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

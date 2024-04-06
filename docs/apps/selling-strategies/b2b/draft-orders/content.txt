@@ -1,0 +1,375 @@
+Billing
+ App Store
+ Manage draft orders
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use apps with B2B features.
+ Merchants often need to create draft orders for company approval when selling business-to-business (B2B). After creating a company, you can use the GraphQL Admin API to create draft orders for a purchasing entity. A purchasing entity is a combination of the company, company contact, and company location.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Calculate a draft order for a purchasing entity
+ Create a draft order for a purchasing entity
+ Send an invoice for a draft order
+ Mark a draft order as complete
+ Requirements
+ Your app has the write_products access scope. Learn how to configure your access scopes using Shopify CLI.
+ You've added products to your development store.
+ You've created a company.
+ Step 1: Calculate a draft order for a purchasing entity
+ Before creating a draft order for a purchasing entity, you can preview information such as total taxes and prices using the draftOrderCalculate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation{
+ 2
+    draftOrderCalculate(
+ 3
+      input: {
+ 4
+        purchasingEntity: {
+ 5
+           purchasingCompany: {
+ 6
+             companyId: "gid://shopify/Company/1"
+ 7
+             companyLocationId: "gid://shopify/CompanyLocation/1"
+ 8
+             companyContactId: "gid://shopify/CompanyContact/1"
+ 9
+           }
+ 10
+        }
+ 11
+        billingAddress: {
+ 12
+          address1: "273 Lenore Stravenue",
+ 13
+          address2: "Suite 573",
+ 14
+          city: "Laketown",
+ 15
+          company: "Alfredo Group",
+ 16
+          firstName: "Avery",
+ 17
+          lastName: "Brown",
+ 18
+          phone: "(800) 555 0100",
+ 19
+          provinceCode: "TN",
+ 20
+          zip: "38103"
+ 21
+        },
+ 22
+        customAttributes: null,
+ 23
+        lineItems: [
+ 24
+          {
+ 25
+            appliedDiscount: null,
+ 26
+            originalUnitPrice: "132.99",
+ 27
+            quantity: 1,
+ 28
+            sku: "",
+ 29
+            title: "Aerodynamic Bronze Car",
+ 30
+            variantId: "gid://shopify/ProductVariant/349",
+ 31
+            taxable: true,
+ 32
+            requiresShipping: true,
+ 33
+            customAttributes: [],
+ 34
+          }
+ 35
+        ],
+ 36
+        note: null,
+ 37
+        shippingAddress: {
+ 38
+          address1: "273 Lenore Stravenue",
+ 39
+          address2: "Suite 573",
+ 40
+          city: "Laketown",
+ 41
+          company: "Alfredo Group",
+ 42
+          firstName: "Avery",
+ 43
+          lastName: "Brown",
+ 44
+          phone: "(800) 555 0100",
+ 45
+          provinceCode: "TN",
+ 46
+          zip: "38103"
+ 47
+        },
+ 48
+        tags: [],
+ 49
+        email: "averybrown@example.com",
+ 50
+        phone: null,
+ 51
+        taxExempt: false,
+ 52
+        reserveInventoryUntil: null,
+ 53
+        appliedDiscount: null,
+ 54
+        shippingLine: null,
+ 55
+        localizationExtensions: []
+ 56
+      }
+ 57
+    ) {
+ 58
+      calculatedDraftOrder{
+ 59
+        totalPrice
+ 60
+      }
+ 61
+    }
+ 62 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "calculatedDraftOrder": {
+ 4
+        "totalPrice": 132.99
+ Step 2: Create a draft order for a purchasing entity
+ When you're satisfied with the calculated draft order, you can create the draft order by passing the same input from your calculated draft order to the draftOrderCreate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation{
+ 2
+    draftOrderCreate(
+ 3
+      input: {
+ 4
+        purchasingEntity: {
+ 5
+           purchasingCompany: {
+ 6
+             companyId: "gid://shopify/Company/1"
+ 7
+             companyLocationId: "gid://shopify/CompanyLocation/1"
+ 8
+             companyContactId: "gid://shopify/CompanyContact/1"
+ 9
+           }
+ 10
+        }
+ 11
+        billingAddress: {
+ 12
+          address1: "273 Lenore Stravenue",
+ 13
+          address2: "Suite 573",
+ 14
+          city: "Laketown",
+ 15
+          company: "Alfredo Group",
+ 16
+          firstName: "Avery",
+ 17
+          lastName: "Brown",
+ 18
+          phone: "(800) 555 0100",
+ 19
+          provinceCode: "TN",
+ 20
+          zip: "38103"
+ 21
+        },
+ 22
+        customAttributes: null,
+ 23
+        lineItems: [
+ 24
+          {
+ 25
+            appliedDiscount: null,
+ 26
+            originalUnitPrice: "132.99",
+ 27
+            quantity: 1,
+ 28
+            sku: "",
+ 29
+            title: "Aerodynamic Bronze Car",
+ 30
+            variantId: "gid://shopify/ProductVariant/349",
+ 31
+            taxable: true,
+ 32
+            requiresShipping: true,
+ 33
+            customAttributes: [],
+ 34
+          }
+ 35
+        ],
+ 36
+        note: null,
+ 37
+        shippingAddress: {
+ 38
+          address1: "273 Lenore Stravenue",
+ 39
+          address2: "Suite 573",
+ 40
+          city: "Laketown",
+ 41
+          company: "Alfredo Group",
+ 42
+          firstName: "Avery",
+ 43
+          lastName: "Brown",
+ 44
+          phone: "(800) 555 0100",
+ 45
+          provinceCode: "TN",
+ 46
+          zip: "38103"
+ 47
+        },
+ 48
+        tags: [],
+ 49
+        email: "averybrown@example.com",
+ 50
+        phone: null,
+ 51
+        taxExempt: false,
+ 52
+        reserveInventoryUntil: null,
+ 53
+        appliedDiscount: null,
+ 54
+        shippingLine: null,
+ 55
+        localizationExtensions: []
+ 56
+      }
+ 57
+    ) {
+ 58
+      draftOrder{
+ 59
+        id
+ 60
+        totalPrice
+ 61
+      }
+ 62
+    }
+ 63 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "draftOrder": {
+ 4
+        "id": "gid://shopify/DraftOrder/10"
+ 5
+        "totalPrice": 132.99
+ 6
+      }
+ 7
+    }
+ 8 }
+ Step 3: Send an invoice for a draft order
+ Sending an invoice for a B2B draft order is identical to sending an invoice for a consumer draft order. After creating a draft order, you can pass the draft order ID to the draftOrderInvoiceSend mutation to send the invoice to the company contact:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation{
+ 2
+    draftOrderInvoiceSend(
+ 3
+      id: "gid://shopify/DraftOrder/10"
+ 4
+    ) {
+ 5
+      draftOrder{
+ 6
+        id
+ 7
+      }
+ 2
+    "data": {
+ 3
+      "draftOrder": {
+ 4
+        "id": "gid://shopify/DraftOrder/10"
+ 5
+      }
+ 6
+    }
+ 7 }
+ Step 4: Mark a draft order as complete
+ Marking a B2B draft order as complete is identical to marking a consumer draft order as complete. After creating a draft order, you can pass the draft order ID to the draftOrderComplete mutation to mark the draft order as complete and create a corresponding order:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation{
+ 2
+    draftOrderComplete(
+ 3
+      id: "gid://shopify/DraftOrder/10"
+ 4
+    ) {
+ 5
+      draftOrder{
+ 6
+        id
+ 7
+        order {
+ 8
+          id
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "draftOrder": {
+ 4
+        "id": "gid://shopify/DraftOrder/10",
+ 5
+        "order": {
+ 6
+          "id": "gid://shopify/Order/1"
+ 7
+ 10 }
+ Next steps
+ Learn how to import B2B orders with the REST Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Calculate a draft order for a purchasing entity
+ Step 2: Create a draft order for a purchasing entity
+ Step 3: Send an invoice for a draft order
+ Step 4: Mark a draft order as complete
+ Next steps
+ Updates & News
+ Developer changelog

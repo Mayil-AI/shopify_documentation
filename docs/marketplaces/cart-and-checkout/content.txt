@@ -1,0 +1,30 @@
+Product description
+ Cart and checkout
+ Overview
+ Marketplace-level cart
+ Cart pages
+ Onboard merchants
+ Post checkout
+ Cart and checkout
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ A cart contains the merchandise that a customer intends to purchase, and the estimated costs associated with the cart.
+ This guide introduces you to the tutorials for building cart and checkout experiences on a marketplace.
+ Marketplace-level carts
+ In a marketplace, carts need to be at the marketplace level. A marketplace-level cart is one that can contain products from different shops.
+ Multi-shop cart pages
+ A marketplace-level cart page displays all products in the cart, across all shops, and the estimated costs associated with the cart.
+ Next steps
+ Learn how to create a marketplace-level cart to contain products from multiple shops.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Marketplace-level carts
+ Multi-shop cart pages
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

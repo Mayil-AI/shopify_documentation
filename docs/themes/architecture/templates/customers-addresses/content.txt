@@ -1,0 +1,90 @@
+customers/addresses
+ The customers/addresses template renders the customer addresses page, which allows customers to view and manage their current addresses, as well as add new ones.
+ Tip
+ Refer to the customers/addresses template and its main section in Dawn for an example implementation.
+ Location
+ The customers/addresses template is located in the templates > customers directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   └── customers
+ 5
+      |     ├── addresses.json
+ You should include the following in your customers/account template or a section inside of the template:
+ The customer object
+ Standard form inputs
+ The customer object
+ You can access the Liquid customer object to display the customer account details.
+ Standard form inputs
+ Inside forms for adding or editing an address, there are standard form inputs for each address detail. The table below shows each, with their associated type and name attributes.
+ Tip
+ If you want to limit your form to accept submissions for only the places that you ship to, then you can use country_option_tags to build your country selector.
+ If you want to return all countries, then you can use all_country_option_tags. For an example of using all_country_option_tags as a data source to build a selector in a form, refer to the main-addresses.liquid file in the Dawn GitHub repository.
+ Input type name
+ First name text address[first_name]
+ Last name text address[last_name]
+ Company text address[company]
+ Address 1 text address[address1]
+ Address 2 text address[address2]
+ City text address[city]
+ Country select address[country]
+ Province select address[province]
+ ZIP/Postal Code text address[zip]
+ Phone Number tel address[phone]
+ Caution
+ The form inputs for each address detail must have the name attributes from this table, or the form won't submit successfully.
+ Usage
+ When working with the customers/account template, you should familiarize yourself with the following:
+ How to add a new address
+ How to edit an existing address
+ How to delete an address
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Add a new address
+ You can allow customers to add a new address with the Liquid form tag and accompanying 'customer_address', customer.new_address parameters:
+ Example
+ 1 {% form 'customer_address', customer.new_address %}
+ 2
+    <!-- form content -->
+ 3 {% endform %}
+ Inside the form, you need to include the standard form inputs for capturing the various address details.
+ Edit an existing address
+ With each existing address, you should include a form to edit it. You can add this form with the Liquid form tag and accompanying 'customer_address', address parameters:
+ Example
+ 1 {% for address in customer.addresses %}
+ 2
+    <!-- address details -->
+ 3
+ 4
+    {% form 'customer_address', address %}
+ 5
+      <!-- form content -->
+ 6
+    {% endform %}
+ 7 {% endfor %}
+ Inside the form, you need to include the standard form inputs for capturing the various address details.
+ Delete an address
+ With each existing address, you should include the option to delete it. You can add this option by including the following form:
+ 1 <form class="address-delete-form"
+ 2
+      method="post"
+ 3
+      action="/account/addresses/{{ address.id }}"
+ 4 >
+ 5
+    <input type="hidden" name="_method" value="delete">
+ 6
+    <button type="submit">{{ 'customer.addresses.delete' | t }}</button>
+ 7 </form>
+ Tip
+ You should couple the above form with JavaScript to prompt customers to confirm that they'd like to delete an address before actually performing the deletion.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Content
+ Usage
+ Updates & News

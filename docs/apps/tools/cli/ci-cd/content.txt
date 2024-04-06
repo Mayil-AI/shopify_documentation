@@ -1,0 +1,190 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Deploy app components in a CD pipeline
+ If you have app configuration and extensions that you want to deploy to Shopify regularly, then you can integrate Shopify CLI into your CI/CD pipeline to programmatically deploy your app components using the deploy command.
+ Note that the deploy command deploys everything in your project at once. You can't deploy only some extensions. You also can't deploy your app configuration on its own.
+ Caution
+ The shopify app config push Shopify CLI command is no longer supported. If you're using this command in your workflow, follow these steps to update app configuration with the deploy command.
+ What you'll learn
+ In this tutorial, you'll learn how to set up your CI/CD pipeline to deploy your app programmatically. To do so, you'll gather the information necessary to run the CLI commands, and then add a step to your CI/CD pipeline that installs Shopify CLI and deploys your app components.
+ How it works
+ Caution
+ When you run the deploy command, the app version includes the latest drafts of all dashboard-managed extensions.
+ Any CLI-managed extensions that aren't present in the environment you're deploying from are removed.
+ Your app configuration and all extensions, including extensions created in the Partner Dashboard, are versioned together as a single app version.
+ When you run the deploy command using Shopify CLI, an app version is created and released. You can revert to a previous app version at any time.
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ If you want to create a version without releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Requirements
+ Create an app that uses Shopify CLI 3.0 or higher.
+ Step 1: Generate variables for deployment
+ To target the app that you want to deploy to, you need to gather your app's client ID.
+ Navigate to your app directory.
+ Run the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ An env file is generated at the root of your project. It contains the client ID (API key) for your app and the ID of each of the extensions in your app.
+ Step 2: Generate a CLI authentication token
+ You can create a new CLI authentication token through the Partner Dashboard.
+ Tokens are managed at the Partner organization level. You can have only two CLI authentication tokens for your Partner organization. If you want to create more than two authentication tokens, then you need to delete an existing authentication token.
+ Generate a CLI authentication token in the Partner Dashboard
+ From your Partner Dashboard, navigate to Settings > CLI token, and then click Manage tokens.
+ From the Token expiration drop-down list, select an expiration for the token.
+ Click Generate token.
+ In the Tokens section, click the Copy button to copy the access token to your clipboard.
+ This token value will be passed as a parameter in your Shopify CLI automation.
+ For security reasons, the token is only visible immediately after it's created. If you lose your token, then you need to delete your existing token and then generate a new token.
+ Step 3: Integrate Shopify CLI into your pipeline
+ After you retrieve your deployment variables and CLI authentication token, you can integrate Shopify CLI into your continuous deployment pipeline using your CI/CD provider.
+ The CD pipeline step should install Shopify CLI and all of its dependencies.
+ To deploy to Shopify programmatically using your CD pipeline step, include the following:
+ An environment variable that contains the authentication token that you generated in the Partner Dashboard.
+ The client ID for your app (SHOPIFY_API_KEY), which you generated in step 1.
+ A step that sets up Node.js and installs your project's Node dependencies. The package manager that you use should match your project's lockfile.
+ If you're using GitHub Actions, then you can use actions/setup-node.
+ If you're using CircleCI, then you can use circleci/node.
+ Steps that install the other dependencies for your project.
+ A step that runs the CLI deploy command with the --force flag set.
+ Where possible, you should protect the authentication token and client ID values by masking them or storing them as secrets.
+ Link commits to app versions
+ You can link a source control commit to an app version by adding the --source-control-url=<url> flag to the deploy command. The link that you provide appears in the details page for the app version in the Partner Dashboard. This information allows team members to easily view the corresponding source commit or revision for an app version.
+ To learn how to use this flag to provide a GitHub commit URL for an app version in your CI/CD workflow, refer to examples.
+ Additional project dependencies
+ The dependencies that are required to deploy your app extension depend on the technologies that you use to build the extension. Below are examples of common additional dependencies you'll need:
+ App extension type Additional dependencies
+ Extensions that use Shopify Functions, including product, order, and shipping discount extensions Your function language
+ Examples
+ The sections below provide examples of common CI/CD pipeline tools: GitHub Actions and CircleCI.
+ GitHub Actions
+ Below is an example of a step that you might add to your GitHub Actions workflow. It deploys app components to Shopify when code is pushed to the main branch.
+ The package manager that you use in your GitHub Action should match your project's lockfile.
+ .github/workflows/deploy-extensions.yml
+ npm
+ Yarn
+ pnpm
+ 1 name: Deploy app
+ 2 on:
+ 3
+    push:
+ 4
+      branches:
+ 5
+        - main
+ 6 jobs:
+ 7
+    deploy:
+ 8
+      name: Deploy
+ 9
+      runs-on: ubuntu-latest
+ 10
+      steps:
+ 11
+        - uses: actions/checkout@v1
+ 12
+        - uses: actions/setup-node@v3
+ 13
+          with:
+ 14
+            node-version: 18
+ 15
+            cache: 'npm'
+ 16
+        - name: Install npm dependencies
+ 17
+          run: npm install
+ 18
+        - name: Deploy
+ 19
+          env:
+ 20
+            # Token from the Partner Dashboard
+ 21
+            SHOPIFY_CLI_PARTNERS_TOKEN: ${{ secrets.SHOPIFY_CLI_PARTNERS_TOKEN }}
+ 22
+            COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+ 23
+            # .env content after a deploy
+ 24
+            SHOPIFY_API_KEY: xxxx
+ 25
+          run: npm run deploy -- -f --source-control-url "$COMMIT_URL"
+ CircleCI
+ The following config file defines a job that's triggered by a CircleCI workflow.
+ The package manager that you use in your job should match your project's lockfile.
+ .circleci/config.yml
+ npm
+ Yarn
+ 1 version: 2.1
+ 2 orbs:
+ 3
+    node: circleci/node@5.0.2
+ 4 jobs:
+ 5
+    deploy:
+ 6
+      docker:
+ 7
+        - image: cimg/node:20.5.0
+ 8
+      environment:
+ 9
+        COMMIT_URL: << pipeline.project.git_url >>/commit/<<pipeline.git.revision>>
+ 10
+      steps:
+ 11
+        - checkout
+ 12
+        - node/install-packages:
+ 13
+            with-cache: true
+ 14
+        - run:
+ 15
+            name: Deploy
+ 16
+            environment:
+ 17
+              # SHOPIFY_CLI_PARTNERS_TOKEN should be present as a secret
+ 18
+              # .env content after a deploy
+ 19
+              SHOPIFY_API_KEY: xxxx
+ 20
+            command: |
+ 21
+              npm run deploy -- -f --source-control-url $COMMIT_URL
+ 22 workflows:
+ 23
+    version: 2
+ 24
+    deploy:
+ 25
+      jobs:
+ 26
+        - deploy:
+ 27
+            filters:
+ 28
+              branches:
+ 29
+                only: main
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ How it works
+ Requirements
+ Step 1: Generate variables for deployment
+ Step 2: Generate a CLI authentication token
+ Step 3: Integrate Shopify CLI into your pipeline
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

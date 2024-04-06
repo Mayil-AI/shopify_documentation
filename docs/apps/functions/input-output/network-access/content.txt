@@ -1,0 +1,55 @@
+Variables in input queries
+ Network access
+ Overview
+ Using network access
+ GraphQL reference
+ Performance and resilience
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Network access for Shopify Functions
+ Network access for Shopify Functions is now available in early access. Primarily for merchants on Shopify for enterprise, this powerful new capability allows you to configure HTTP requests for your functions to use data from an external service as an input to your function logic.
+ This guide introduces how Network access for Shopify Functions works and provides examples.
+ Availability of network access for functions
+ Function Availability
+ Cart and Checkout Validation Early access for Shopify for enterprises with custom apps
+ Local Pickup Delivery Option Generator Early access for Shopify for enterprises with custom apps
+ Pickup Point Delivery Option Generator Early access for Plus merchants with custom apps
+ Contact our support team or the Merchant Success Manager team for more information about the available Shopify Functions that support network access.
+ How it works
+ Network Access for Shopify Functions enables you to define your HTTP request using the fetch target of the function. When your function is executed, Shopify performs the HTTP request and includes the response in the input of the run target.
+ The following diagram shows the different requests that occur with a function that has network access:
+ The fetch function target defines an HTTP request based on the existing function input query.
+ The outcome of FunctionFetchResult conveys an HttpRequest to be executed.
+ Shopify schedules the request with optimizations.
+ Read more about network request caching in the Performance page.
+ Shopify executes network calls to the external service.
+ The run function target contains the main logic and has access to the HTTP response through the input query.
+ The outcome of FunctionRunResult conveys the function’s final output.
+ Alternatives to network access
+ Instead of fetching data with an external network call, consider retrieving the data from a metafield in your functions. Most objects support metafields, including products, locations, and customers.
+ Fetching data from metafields during checkout is more efficient as it doesn't involve an external network call. This lets you to depend on Shopify for the uptime, scalability, and durability of the data storage.
+ Use the GraphQL Admin or Storefront APIs to write metafields on the store before a buyer reaches checkout.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about network access for Shopify Functions.
+ Using network access
+ Learn how to create and handle a network request.
+ GraphQL reference
+ Consult the network access GraphQL schema reference for Functions.
+ Performance and resilience
+ Learn how how to optimize your app with timeouts, caches and error management.
+ Next steps
+ Learn how to use network access.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Availability of network access for functions
+ How it works
+ Alternatives to network access
+ Developer tools and resources
+ Next steps
+ Updates & News

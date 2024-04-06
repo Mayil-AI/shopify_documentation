@@ -1,0 +1,55 @@
+Admin
+ Overview
+ Embedded app home
+ Admin action and block extensions
+ Overview
+ Build an action extension
+ Build a block extension
+ Connect action and block extensions
+ Connect your app's backend
+ Admin links
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Admin action and block extensions
+ Admin action and admin block extensions enable you to seamlessly integrate your app's functionality into the Shopify admin. These extensions enable your app to embed workflows and UX on core admin pages while automatically matching the Shopify admin's look and feel. By giving merchants access to your app's functionality, without the need to navigate away from their current task, these extensions help merchants be more efficient and productive.
+ You can create actions and blocks by writing extensions with UI Extensions and targeting the appropriate extension target. For the full list of admin pages that you can extend, refer to the extension target reference.
+ Admin actions
+ Admin action extensions enable you to create transactional workflows within existing pages of the Shopify admin. Merchants can launch these extensions from the More actions menus on resource pages or from an index table's bulk action menu when one or more resources are selected. After the extensions are launched, they display as modals. After they're closed, the page updates with the changes from the action.
+ Admin blocks
+ Admin block extensions enable your app to embed contextual information and inputs directly on resource pages in the Shopify admin. When a merchant has added them to their pages, these extensions display as cards inline with the other resource information. Merchants need to manually add and pin the extension to their page in the Shopify admin before they can use it.
+ With admin block extensions, merchants can view and modify information from your app and other data on the page simultaneously. To facilitate complex interactions and transactional changes, you can launch admin actions directly from an admin block.
+ Getting started
+ Follow the getting started tutorials to learn how to build admin action and block extensions. These tutorials are designed to be completed together to illustrate how admin action and block extensions complement each other and can be used together to build features for your app.
+ Learn how to build an admin action extension
+ Build an action extension that enables merchants to create tracked issues for their products.
+ Learn how to build an admin block extension
+ Build a block extension that enables merchants to see and manage tracked issues for their products.
+ Learn to connect admin block extensions
+ Modify the action and block extensions for issue tracking so merchants can edit existing tracked issues for their products.
+ Learn to connect extensions to your backend
+ Enable the action extension to fetch data from an app's backend when creating new issues.
+ Developer tools and resources
+ Admin UI extensions API reference
+ Consult the API reference for admin UI extension targets and their respective types.
+ Components for admin UI extensions
+ Learn about the components that are available in admin UI extensions.
+ Admin UI extension targets
+ Learn about the locations where you can create admin UI extensions.
+ Extension configuration
+ Learn about how to configure your extension from its .toml file.
+ Design guidelines for admin apps
+ Learn the design guidelines for building apps in the Shopify admin.
+ Admin extensions UI kit
+ The Figma UI kit contains components, screens, and examples to help you build and understand admin UI extensions.
+ Next steps
+ Learn how to build an admin action extension that enables merchants to create a QR code for a product directly from the product details page.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Admin actions
+ Admin blocks
+ Getting started
+ Developer tools and resources
+ Next steps

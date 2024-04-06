@@ -1,0 +1,145 @@
+Overview
+ Banners
+ Overview
+ Add a banner
+ Fields
+ Add a banner to checkout
+ A custom banner is a notice that you can display to customers. For example, you might want to show a banner that indicates that items are final sale and can't be returned or exchanged.
+ In this tutorial, you'll use checkout UI extensions to add a customizable banner.
+ Follow along with this tutorial to build a sample app, or clone the completed sample app.
+ Shopify Plus
+ Checkout UI extensions are available only to Shopify Plus merchants.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following:
+ Generate a checkout UI extension that appears in the checkout flow using Shopify CLI.
+ Set up a banner to display to customers.
+ Configure settings that enable app users to control the banner content.
+ Support multiple targets that enable app users to choose where to render the banner.
+ Deploy your extension code to Shopify.
+ Requirements
+ Create a Partner account
+ Create a development store
+ The development store must use the Checkout and Customer Accounts Extensibility developer preview, and should be pre-populated with test data.
+ Create an app
+ Create an app that uses Shopify CLI. This tutorial is compatible with the extension-only template.
+ Project
+ Extension:
+ React
+ JavaScript
+ React
+ View on GitHub
+ Create a Checkout UI extension
+ To create a checkout UI extension, use Shopify CLI, which generates starter code for building your extension.
+ Create the extension
+ Navigate to your app directory.
+ Run one of the following commands to create a new extension:
+ npm
+ Yarn
+ pnpm
+ >
+ npm run shopify app generate extension
+ Select Checkout UI as the extension type, and then provide a name for your extension.
+ Select a language for your extension. The example code in this tutorial uses JavaScript React.
+ You now have a new directory for your app under <app-name> > extensions. The extension directory includes the extension script at src > Checkout.jsx.
+ Set up a target for your extension
+ Set up a target for your checkout UI extension. Targets control where your extension renders in the checkout flow.
+ Export the targets from your script file
+ In your Checkout.jsx file, set the entrypoints for the checkout extension, and then export them so they can be referenced in your configuration.
+ For each target that you want to use, create a reactExtension function that references your target, and export it using a named export.
+ purchase.checkout.block.render
+ purchase.checkout.delivery-address.render-before
+ Reference the targets in your configuration file
+ In your checkout UI extension's configuration file, for each of your targets, create an [[extensions.targeting]] section with the following information:
+ target - An identifier that specifies where you're injecting code into Shopify. This needs to match the target that you exported from your Checkout.jsx file.
+ module - The path to the file that contains the extension code.
+ export - The name of the exported function that contains the extension code.
+ shopify.extension.toml is the configuration file for your extension. It contains basic information and settings.
+ Whenever you edit your extension configuration file, you need to restart your server for the changes to take effect.
+ You can define more than one target so that app users can add the extension to multiple locations in the checkout. You can do this by adding multiple [[extensions.targeting]] sections.
+ Configure the settings
+ The settings for a checkout UI extension define fields that the app user can set from the checkout editor.
+ You can use validation options to apply additional constraints to the data that the setting can store, such as a minimum or maximum value.
+ Define the required properties for the settings
+ Define the settings that you want to expose to app users in shopify.extension.toml. For each setting, define the required properties: key, type, and name.
+ The key property defines a string that's used to access the setting values from your extension code.
+ The type property determines the type of information that the setting can store. Each setting types has built-in validation on the setting input.
+ The name property defines the name for the setting that's displayed to the app user in the checkout editor.
+ Define the optional properties for the settings
+ For each setting, define the optional properties: description and validations.
+ The description property is displayed to the app user in the checkout editor.
+ The validations property defines constraints on the setting input that Shopify validates.
+ Use the configured settings in the UI extension
+ Use the values that have been configured by the app user in the checkout UI extension.
+ Access app user settings
+ Retrieve the settings values within your extension. Set default settings so the app can be previewed without being deployed.
+ In React, the useSettings hook re-renders your extension with the latest values.
+ When an extension is being installed in the checkout editor, the settings are empty until an app user sets a value. This object is updated in real time as the app user fills in the settings.
+ useSettings
+ Render the banner
+ Render the Checkout UI extension Banner component with the content from the settings that you configured.
+ Add the Banner component
+ Using the Banner component, create the custom banner.
+ Banner
+ Preview the extension
+ Preview your extension to make sure that it works as expected.
+ Start your server
+ Run the Shopify CLI dev command to build your app and preview it on your development store.
+ In a terminal, navigate to your app directory.
+ Either start or restart your server to build and preview your app:
+ npm
+ Yarn
+ pnpm
+ >
+ npm run dev
+ Make sure that you select a development store that has the Checkout and Customer Accounts Extensibility developer preview enabled.
+ Press p to open the developer console.
+ In the developer console page, click on the preview link for the custom banner extension.
+ The checkout opens.
+ View the banner on the checkout with the default settings.
+ Troubleshooting
+ Deploy the extension
+ When you're ready, you can deploy your extension to Shopify.
+ Deploy and release your extension
+ To release your changes to users, create and release an app version. You can have up to 50 checkout UI extensions in an app version.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ npm
+ Yarn
+ pnpm
+ >
+ npm run deploy
+ An app version created using Shopify CLI contains the following:
+ The app configuration from the local configuration file. If the include_config_on_deploy flag is omittted or false, the configuration from the active app version is used instead.
+ The local version of the app's CLI-managed extensions. If you have an extension in your deployed app, but the extension code doesn't exist locally, then the extension isn't included in your app version.
+ The latest drafts of dashboard-managed extensions.
+ Releasing an app version replaces the current active version that's served to stores with your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but want to avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Test the banner settings
+ After the extension has been deployed, app users can edit the banner settings in the checkout editor. Test the banner settings so that you can see how they appear to app users.
+ Test the the banner settings in the checkout editor
+ In the development store where your app is installed, open the checkout editor: in the Shopify admin for the development store, navigate to Settings > Checkout > Customize.
+ In the checkout editor, select Add an app block, and then select your extension.
+ In the App block settings section, update the banner title, description, and status.
+ To preview your changes, do the following:
+ From your development store's storefront, add products to your cart.
+ Click Check out.
+ View the banner on the first page of the checkout. The banner reflects the settings that you set in the checkout editor.
+ Was this page helpful?
+ YesNo
+ 1
+ 
+ Tutorial complete!
+ Nice work - what you just built could be used by Shopify merchants around the world! Keep the momentum going with these related tutorials and resources.
+ Next steps
+ Localize your extension
+ Learn how to localize the text and number formats in your extension.
+ Explore the checkout UI extension component reference
+ Learn about all of the components that you can use in your checkout UI extension.
+ Explore the checkout UI extension targets API reference
+ Learn about the extension targets offered in the checkout.
+ Updates & News
+ Developer changelog
+ Partner blog

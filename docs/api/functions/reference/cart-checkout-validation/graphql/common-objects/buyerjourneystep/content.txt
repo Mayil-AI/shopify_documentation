@@ -1,0 +1,15 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ BuyerJourneyStep enum
+ 2024-04 latest
+ Different steps in the buyer journey.
+ Values
+ CART_INTERACTION
+ Buyer is interacting with the cart.
+ CHECKOUT_COMPLETION
+ Buyer is completing the checkout.
+ CHECKOUT_INTERACTION
+ Buyer is interacting with the checkout.
+ Types that return BuyerJourneyStep
+ BuyerJourney.step

@@ -1,0 +1,30 @@
+Distribution
+ Billing
+ App Store
+ Metafield definitions
+ Metafield definitions enable you to include data validation for metafields, and enable merchants to add metafield values for resources in the Shopify admin.
+ We also provide standard metafield definitions for common use cases. Using standard definitions means that your app can access information that merchants might have already stored in these metafields and provides interoperability across the Shopify platform. Learn about the standard metafield definitions we offer.
+ Tip
+ By default, values for metafields aren't accessible to custom storefronts. To enable custom storefronts to display your metafields, you can use the GraphQL Admin API to give the Storefront API access to metafield definitions.
+ How it works
+ A metafield definition includes the following information:
+ Namespace: A container for a group of metafields. Grouping metafields within a namespace prevents your metafields from conflicting with other metafields with the same key name.
+ Key: The name for the metafield.
+ Type: The type of data that the metafield stores.
+ Name: A human-readable name for the metafield definition. The name is displayed in the Shopify admin.
+ Description (optional): A description of the metafield definition. The description is displayed in the Shopify admin.
+ Owner type: The resource that the metafield is attached to.
+ Validation options (optional): An array of validation options for the metafield value. For example, for a metafield with the type date, you can set a minimum date validation, so that the metafield can store only dates after a specific date.
+ Next steps
+ Learn how to manage metafield definitions using the GraphQL Admin API.
+ Learn about the supported validation options for metafields.
+ Learn about the standard metafield definitions that are available for common use cases.
+ Learn how to create and manage metafields using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

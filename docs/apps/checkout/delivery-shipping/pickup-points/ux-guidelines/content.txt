@@ -1,0 +1,40 @@
+Delivery and shipping
+ Overview
+ Enhance delivery methods
+ Reorder delivery options
+ Pickup points
+ Overview
+ Generate options
+ App requirements and UX guidelines
+ Create local pickup charges
+ Product offers
+ Distribution
+ Billing
+ App Store
+ App requirements and UX guidelines
+ Shopify Plus
+ Only custom apps that are built for stores on the Shopify Plus plan have access to the Pickup Point Delivery Option Generator API. Public apps in the Shopify App Store and custom apps built for stores on non-Plus plans don't have access.
+ Pickup points is a delivery method where customers have their purchase shipped to a location that works in partnership with different shipping providers.
+ This guide describes how to seamlessly integrate your own providers into the existing pickup points experience in checkout and the Shopify admin.
+ Visual assets
+ Every provider must have a graphic identifier. This image is used in checkout and the Shopify admin to offer a quick visual indicator of the pickup point provider. This graphic must be easily identifiable, because users will see it at various sizes and in different contexts.
+ Using a highly recognized brand color and logo results in optimal identification across all touchpoints. The following are some guidelines:
+ Enclose the asset in a circle with padding around the logo.
+ Include a desired background color. Don't use a transparent file.
+ Content and naming
+ Aligning your content with the existing checkout and Shopify admin experiences results in a better user experience. Adhere to the following guidance for content elements to successfully integrate your pickup points:
+ Location name: Use the exact location name. This name is used to reference the pickup point location at checkout and in the Shopify admin.
+ Location address: Format the pickup point's address correctly for the region that it's in.
+ Shipping provider name: Use the exact provider's name, so that it's familiar to all users. The name displays with and without the icon, so don't rely only on an icon to signify the provider.
+ Opening hours: Define a location’s hours with either a single window or with multiple windows. If you don't set a window, then the hours display as Closed. You can also choose to not define any opening hours for a location.
+ Format the time for the market that the location is in. For example, use a 12-hour clock for addresses in North America.
+ Next steps
+ Learn how to localize the text and number formats in your extension.
+ Learn how to create a function that enables merchants to rename a delivery option that's offered at checkout.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Visual assets
+ Content and naming
+ Next steps
+ Updates & News

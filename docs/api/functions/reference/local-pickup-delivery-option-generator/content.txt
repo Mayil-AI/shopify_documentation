@@ -1,0 +1,35 @@
+Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Overview
+ GraphQL reference
+ Order Routing Location Rule API
+ Payment Customization API
+ Configuration
+ Error handling
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Local Pickup Delivery Option Generator API overview
+ Beta
+ The local pickup delivery option generator API is a new feature that is available by request. To request access, contact local-pickup-generator-early-access@shopify.com.
+ The Local Pickup Option Generator API enables you to generate custom local pickup options available to buyers during checkout.
+ Example use cases
+ Generate local pickup options based on custom rules.
+ Shopify Plus
+ Only custom apps on the Shopify Plus plan can use the Local Pickup Option Generator API.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Local Pickup Option Generator API reference
+ Consult the GraphQL reference for the Local Pickup Option Generator API.
+ Next steps
+ Learn how to use Shopify Functions by building local pickup delivery option generators.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Next steps

@@ -1,0 +1,50 @@
+CLI
+ Polaris
+ Development stores
+ API libraries
+ GraphiQL for the Admin API
+ Best practices
+ Design guidelines
+ Checkout
+ Customer accounts
+ Selling strategies
+ App Store
+ API libraries
+ Shopify provides several official libraries for interacting with the Admin API. Members of the Shopify developer community have created similar libraries covering other languages and technology stacks.
+ Official Shopify Admin API libraries
+ Shopify/shopify-api-ruby
+ Shopify’s official Ruby gem for interacting with the Admin API
+ Shopify/shopify_app
+ A Rails engine for building Shopify Apps
+ Shopify/shopify-api
+ Shopify’s official Node library for interacting with the Storefront and Admin APIs, handling OAuth, webhooks, and billing
+ Shopify/admin-api-client
+ Shopify’s official lightweight Node library for interacting with the Admin API
+ Shopify/shopify-api-php
+ Shopify’s official PHP library for interacting with the Admin API
+ Third-party Admin API libraries
+ Tip
+ These libraries are created and maintained by members of the Shopify community. They aren’t official Shopify API libraries.
+ Node
+ Shopify-api-node
+ Node Shopify connector
+ shopify-node-api
+ OAuth2 Module for Shopify API
+ PHP
+ php-shopify
+ PHP SDK for Shopify API
+ shopify-php-sdk
+ PHP SDK for development with the Shopify API
+ Basic-Shopify-API
+ A simple, tested, API wrapper for Shopify using Guzzle for REST and GraphQL
+ Go
+ go-shopify
+ A Go library that helps developers easily authenticate with and manage Shopify stores.
+ .NET
+ ShopifySharp
+ A .NET core library that helps developers easily authenticate with and manage Shopify stores.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Official Shopify Admin API libraries
+ Third-party Admin API libraries

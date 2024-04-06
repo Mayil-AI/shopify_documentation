@@ -1,0 +1,400 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Customer Privacy API
+ The Customer Privacy API is a browser-based, JavaScript API that you can use to verify data processing permissions or build a cookie consent banner.
+ This API is used to apply consent decisions to Shopify-managed surfaces, like pixels, audiences, and checkout.
+ Refer to the full list of cookies that Shopify uses.
+ What you'll learn
+ Check what processing is allowed
+ Using API calls
+ Using an event listener
+ To build a cookie banner
+ Load the Customer Privacy API
+ Collect and set consent
+ Custom storefront installation
+ Loading the Customer Privacy API
+ To use the Customer Privacy API, you must load it using loadFeatures as follows:
+ 1 window.Shopify.loadFeatures(
+ 2
+   [
+ 3
+     {
+ 4
+       name: 'consent-tracking-api',
+ 5
+       version: '0.1',
+ 6
+     },
+ 7
+   ],
+ 8
+   error => {
+ 9
+     if (error) {
+ 10
+       // Rescue error
+ 11
+     }
+ 12
+     // If error is false, the API has loaded and ready to use!
+ 13
+   },
+ 14 );
+ The second argument to loadFeatures is a callback that indicates that the API has loaded. When invoked without an error, the API is globally available at window.Shopify.customerPrivacy.
+ Check data processing permissions
+ Caution
+ Collecting data without consent might not comply with applicable laws. Consult legal counsel to discuss the requirements that apply to your business.
+ To check what processing is allowed, use the Allowed methods. These methods combine the following factors to determine what processing is allowed:
+ The current merchant settings: Is consent required in this region?
+ User location: Is the customer in a region where consent is required?
+ User consent given: Did the customer give consent for a specific purpose?
+ You can check for permission by calling the API or with an event listener.
+ Call the API
+ The Customer Privacy API offers the following methods to check if data can be processed:
+ 1 window.Shopify.customerPrivacy.preferencesProcessingAllowed();
+ 2 window.Shopify.customerPrivacy.analyticsProcessingAllowed();
+ 3 window.Shopify.customerPrivacy.marketingAllowed();
+ 4 window.Shopify.customerPrivacy.saleOfDataAllowed();
+ These methods return true / false if permission is given for the following:
+ preferencesProcessingAllowed: customer preferences such as language, currency, size, and more.
+ analyticsProcessingAllowed: customer analytics about how the storefront was used and interactions made on the storefront.
+ marketingAllowed: Marketing, attribution and targeted advertising from the merchant.
+ saleOfDataAllowed: Sharing data with third parties, usually for behaviorial advertising.
+ Use an event listener
+ The Customer Privacy API publishes the document event visitorConsentCollected when consent changes.
+ 1 document.addEventListener("visitorConsentCollected", (event) => console.log(event.detail));
+ Output
+ 1 > {
+ 2 >    marketingAllowed: true,
+ 3 >    saleOfDataAllowed: true,
+ 4 >    analyticsAllowed: false,
+ 5 >    preferencesAllowed: true,
+ 6 >  }
+ Updates are published only when consent changes, not when the listener is added.
+ Collect and register consent
+ To record customer consent, use the setTrackingConsent method:
+ 1 window.Shopify.customerPrivacy.setTrackingConsent(
+ 2
+    {
+ 3
+      "analytics":    true | false,
+ 4
+      "marketing":    true | false,
+ 5
+      "preferences":  true | false
+ 6
+      "sale_of_data": true | false,
+ 7
+    },
+ 8
+    () => console.log("Consent captured")
+ 9 );
+ The following consent purposes are supported:
+ Preferences: Cookies that remember customer preferences, such as country or language, to personalize visits to the website.
+ Analytics: Cookies to understand how customers interact with the site.
+ Marketing: Cookies to provide ads and marketing communications based on customer interests.
+ Sale_of_data: Opts the customer out of data sharing / sales.
+ The GPC signal is automatically collected and honored in configured data sale opt-out regions and cannot be set through setTrackingConsent.
+ See the Shopify Cookie Policy for the full list of cookies used by Shopify.
+ You can set one or more consent signals at once:
+ 1 // A visitor visits our shop for the first time.
+ 2 // We have no consent information about them as it's their first visit
+ 3 window.Shopify.customerPrivacy.currentVisitorConsent();
+ Output
+ 1 > {marketing: '', analytics: '', preferences: '', sale_of_data: '', gpc: ''}
+ 1 // The visitor is shown a banner that asks for analytics consent.
+ 2 // They grant analytics consent.
+ 3 window.Shopify.customerPrivacy.setTrackingConsent({"analytics": true}, () => {});
+ 4
+ 5 // This is now reflected in the registered consent
+ 6 window.Shopify.customerPrivacy.currentVisitorConsent();
+ Output
+ 1 > {marketing: '', analytics: 'yes', preferences: '', sale_of_data: '', gpc: ''}
+ 1 // The visitor navigates to a CCPA opt-out page and clicks to opt out.
+ 2 window.Shopify.customerPrivacy.setTrackingConsent({"sale_of_data": false}, () => {});
+ 3
+ 4 // The `sale_of_data` opt out is saved and `analytics` consent isn't affected.
+ 5 window.Shopify.customerPrivacy.currentVisitorConsent();
+ Output
+ 1 > {marketing: '', analytics: 'yes', preferences: '', sale_of_data: 'no', gpc: ''}
+ Custom storefronts
+ For custom storefronts, pass the following additional parameters to the setTrackingConsent method:
+ headlessStorefront: true,
+ checkoutRootDomain: Your checkout domain
+ storefrontRootDomain: Your storefront domain
+ storefrontAccessToken: Your Storefront API access token
+ Learn more about installing the Customer Privacy API into a custom storefront.
+ Check consent given
+ Check users' consent decisions by calling the currentVisitorConsent method. This returns the preferences selected by the users and doesn't include critical information like location and merchant configuration.
+ Note
+ Use the Allowed methods to check what processing is allowed. They combine several factors missing from the currentVisitorConsent method.
+ 1 window.Shopify.customerPrivacy.currentVisitorConsent();
+ Output
+ 1 > {marketing: 'yes', analytics: 'no', preferences: 'yes', sale_of_data: '', gpc: ''}
+ 'yes' - the current visitor has actively granted consent.
+ 'no' - the current visitor has actively denied consent.
+ '' (empty string) - the current visitor has not yet granted or denied consent.
+ Check if a consent banner should be displayed
+ To check if a cookie consent banner should be displayed to the current customer, use shouldShowBanner. This method indicates if the current customers is in a region that's configured to show a cookie banner.
+ Note
+ The method doesn't indicate if consent has already been given.
+ 1 window.Shopify.customerPrivacy.shouldShowBanner();
+ Output
+ 1 > true | false
+ This is true if consent isn't already set and the visitor is in a region showing consent.
+ Check if data sale opt out is available
+ To check if the current customer is eligible for data sale opt-out, use the saleOfDataRegion method. This method indicates whether the current customers is in a region configured for data sale opt outs.
+ 1 window.Shopify.customerPrivacy.saleOfDataRegion();
+ Output
+ 1 > true | false
+ This is true if the visitor is from a region that requires data sale opt-outs.
+ Regions showing consent banners
+ When the Shopify cookie banner is enabled, it displays in the configured regions and automatically passes consent to this API.
+ If you're using an app to provide cookie banners, then contact the app's developer to understand where the consent banner is rendered.
+ Learn more about configuring a cookie banner.
+ Regions showing data sale opt out
+ When the data sale opt out page is enabled, the opt out form is available to visitors from the configured regions, which is usually US states. In these regions, the Global Privacy Control (GPC) is honored automatically, sale_of_data will be set to false, refer above for details.
+ Installation on a custom storefront
+ To integrate into a custom storefront, you need to load the correct JavaScript asset, pass additional parameters, and update the storefront's content security policy.
+ Assets
+ Include the Customer Privacy JavaScript asset, either by itself or bundled with a consent banner using one of the following:
+ Customer Privacy API
+ Customer Privacy API bundled with the Shopify Cookie Banner
+ When using an app, the developers might provide a different bundled asset.
+ Domains
+ In the Shopify admin, at Settings -> Domains, identify the following domains:
+ Storefront: This is the domain of your storefront. For example, hydrogen.shop.
+ Checkout: The domain where customers check out. For example, checkout.hydrogen.shop.
+ Your checkout should be within the same root domain as the storefront so that it can read cookies set on the storefront domain - otherwise checkout will not be able to read and respect visitor consent given on your storefront.
+ For example, in the following scenarios, checkout honours consent that's given on the storefront:
+ If your storefront is hosted on hydrogen.shop and the checkout is on checkout.hydrogen.shop, consent will be honored on checkout.
+ If your storefront is hosted on landing.hydrogen.shop and the checkout is on hydrogen.shop, consent will be honored on checkout.
+ If your storefront is hosted on hydrogen.shop and the checkout is on example.com, consent management will not be honored on checkout, as cookies cannot be read across domains.
+ Storefront API token
+ Our consent API will contact Shopify servers to manage consent via the Storefront API which needs a Storefront API token.
+ Updating your Content Security Policy
+ The Customer Privacy API (and the Shopify Cookie banner if used) will POST to the Storefront API at the checkout domain.
+ This domain needs to be allowed in your Content Security Policy. This can be done manually in your server, or configured for Oxygen.
+ Setting Consent
+ To pass consent to the Customer Privacy API, load the Customer Privacy API and pass the additional arguments to setTrackingConsent:
+ 1 window.Shopify.customerPrivacy.setTrackingConsent(
+ 2
+    {
+ 3
+    "marketing": false,
+ 4
+    "analytics": true,
+ 5
+    "preferences": false,
+ 6
+    "headlessStorefront": true,
+ 7
+    "checkoutRootDomain": "checkout.hydrogen.shop",
+ 8
+    "storefrontRootDomain": "hydrogen.shop",
+ 9
+    "storefrontAccessToken": "YOUR_STOREFRONT_API_TOKEN_HERE"
+ 10
+    }, () => console.log('consent was submitted')
+ 11 )
+ Refer to setTrackingConsent for details on this method.
+ Setting consent with Shopify Cookie Banner
+ When using the Shopify Cookie banner or data sale opt out pages, initialize the cookie banner with the following configurations:
+ 1 <script src="https://cdn.shopify.com/shopifycloud/privacy-banner/storefront-banner.js"></script>
+ 2 <script>
+ 3
+   // Change with your shop details
+ 4
+   const STOREFRONT_DOMAIN = 'hydrogen.shop';
+ 5
+   const CHECKOUT_DOMAIN = 'checkout.hydrogen.shop';
+ 6
+   const SF_API_TOKEN = 'YOUR_STOREFRONT_API_TOKEN_HERE'; // Obtained in the previous section
+ 7
+ 8
+   // Run banner if needed for the current visitor:
+ 9
+   privacyBanner.loadBanner({
+ 10
+    storefrontAccessToken: SF_API_TOKEN,
+ 11
+    checkoutRootDomain: CHECKOUT_DOMAIN,
+ 12
+    storefrontRootDomain: STOREFRONT_DOMAIN
+ 13 });
+ 14 </script>
+ This will automatically pass consent to the Customer Privacy API.
+ Data sale / sharing opt outs
+ To set data sale / sharing opt outs, integrate as above, but pass sale_of_data instead of marketing, analytics, and preferences arguments to setTrackingConsent(), with the desired preference (usually false after the visitor opts out in the form):
+ 1 window.Shopify.customerPrivacy.setTrackingConsent(
+ 2
+    {
+ 3
+    "sale_of_data": false,
+ 4
+    "headlessStorefront": true,
+ 5
+    "checkoutRootDomain": "checkout.hydrogen.shop",
+ 6
+    "storefrontRootDomain": "hydrogen.shop",
+ 7
+    "storefrontAccessToken": "39c829a9106f6e9a9759e83a6ad963a4"
+ 8
+    }, () => console.log('The visitor opted out of Data Sale')
+ 9 )
+ Upgrading the Customer Privacy API
+ The Customer Privacy API is backwards compatible.
+ Collecting Consent
+ You must decide how to map the consent you collect in your banner to the four consent signals used by Shopify. The following snippet shows the backwards compatibility between the legacy Boolean argument and the new granular argument.
+ 1 const callback = () => {}
+ 2 // legacy boolean true maps to setting analytics and marketing to true.
+ 3 window.Shopify.customerPrivacy.setTrackingConsent(true, callback);
+ 4 window.Shopify.customerPrivacy.setTrackingConsent(
+ 5
+    {
+ 6
+      "analytics": true,
+ 7
+      "marketing": true,
+ 8
+    },
+ 9
+    callback
+ 10 );
+ 11
+ 12 // legacy boolean false maps to setting analytics and marketing to false.
+ 13 window.Shopify.customerPrivacy.setTrackingConsent(false, callback);
+ 14 window.Shopify.customerPrivacy.setTrackingConsent(
+ 15
+    {
+ 16
+      "analytics": false,
+ 17
+      "marketing": false,
+ 18
+    },
+ 19
+    callback
+ 20 );
+ Migrating consent banners
+ Two methods have been renamed to generalize their use:
+ 1 // Legacy method for GDPR
+ 2 window.Shopify.customerPrivacy.shouldShowGDPRBanner();
+ 3 // is now
+ 4 window.Shopify.customerPrivacy.shouldShowBanner();
+ 5
+ 6 // Legacy method for US States Laws
+ 7 window.Shopify.customerPrivacy.shouldShowCCPABanner();
+ 8 // is now
+ 9 window.Shopify.customerPrivacy.saleOfDataRegion();
+ Migrating data processing permission checks
+ Data processing has been separated into granular use. You must decide how to map your processing needs to one of the data processing purposes provided by Shopify.
+ userCanBeTracked and userDataCanBeSold use the following consent signals to determine if consent has been granted:
+ userCanBeTracked: Analytics and marketing both must be accepted (when required)
+ userDataCanBeSold: Sale of data must not be rejected
+ Legacy documentation
+ Caution
+ This documentation is here for historical reference. Do not begin any new integrations with the methods in this section. You should begin migrating away from these methods using the document in Upgrading the Customer Privacy API
+ shouldShowGDPRBanner(): boolean
+ You can use this method to determine if you should show a GDPR banner.
+ Request data
+ window.Shopify.customerPrivacy.shouldShowGDPRBanner();
+ Response
+ This method returns a boolean value that indicates if you should show a GDPR banner.
+ The response aggregates the visitor’s location, the app user's preference, and whether the visitor has already provided a consent value in the past year.
+ Visitor consent provided in past year Visitor in EU App user limits tracking for customers in Europe Boolean value
+ Not applicable Not applicable ✘ false
+ ✘ ✔ ✔ true
+ ✘ ✘ ✔ false
+ ✔ ✔ ✔ false
+ ✔ ✘ ✔ false
+ setTrackingConsent(consent: boolean, callback: function)
+ You can use this method to set a buyer's response to a tracking consent request.
+ Request data
+ window.Shopify.customerPrivacy.setTrackingConsent(consent: boolean, callback: function);
+ Request parameters:
+ Name Type Description
+ consent boolean Indicates the buyer's response to the tracking consent request. You can obtain the response using a banner UI element or other similar mechanism. If set to true, then the API returns a custom event called trackingConsentAccepted. If set to false, then no custom event is returned but the callback function is still executed.
+ callback function A function that executes after the API has set tracking consent. You can use this function to hide the UI banner element or execute a similar task.
+ Example request:
+ The following example request shows a JavaScript function that sets consent to true and executes another function to hide the banner.
+ 1 function handleAccept(e) {
+ 2
+    window.Shopify.customerPrivacy.setTrackingConsent(true, hideBanner);
+ 3
+    document.addEventListener("trackingConsentAccepted", function () {
+ 4
+      console.log("trackingConsentAccepted event fired");
+ 5
+    });
+ 6 }
+ Response
+ The API executes the callback function and optionally emits a custom event called trackingConsentAccepted.
+ Example response:
+ A successful request returns an empty object:
+ 1 {}
+ If there is an error with the request, then an error object is returned:
+ 1 {error:[string]}
+ Visitor tracking
+ Caution
+ This documentation is here for historical reference. Do not begin any new integrations with the methods in this section. You should begin migrating away from these methods using the document in Upgrading the Customer Privacy API
+ You can use the Customer Privacy API to check if customers have consented to be tracked and if app users have decided to disallow the sale of visitor data. Your implementation must include a loading pattern to ensure that the API is available. For visitor tracking consent, you should implement a mechanism for listening to consent collection events that can fire asynchronously on the page, to ensure that you don't miss any tracking opportunities.
+ You can use the following methods for consent collection:
+ userCanBeTracked(): boolean - Covers the scenario of tracking a visitor (GDPR).
+ userDataCanBeSold(): boolean - Covers the scenario of selling visitor data (CCPA).
+ If userCanBeTracked is set to false, then the following behaviour must be observed:
+ No persistent, non-essential cookies should be set
+ No data should be emitted to third-party platforms
+ If userDataCanBeSold is set to false, then the following behaviour must be observed:
+ Data can be emitted (if tracking isn't blocked)
+ Data can't be sold to third-parties
+ If the Customer Privacy API isn't available, then tracking and data emission can proceed. All methods should be preceded with a check that the API is available before checking that tracking or sale of data is blocked.
+ Example API check:
+ if (!window.Shopify.customerPrivacy || window.Shopify.customerPrivacy.userCanBeTracked()) { startTracking() }
+ userCanBeTracked(): boolean
+ You can use this method to return whether the storefront visitor has consented to be tracked.
+ Request data
+ window.Shopify.customerPrivacy.userCanBeTracked();
+ Response
+ The API returns a boolean value that indicates whether a user can be tracked.
+ The response aggregates the visitor’s consent and location, as well as the app user's preference.
+ Visitor consent Visitor in EU App user limits tracking for customers in Europe Boolean value
+ Not applicable Not applicable ✘ true
+ ✔ ✔ ✔ true
+ ✔ ✘ ✔ true
+ ✘ ✔ ✔ false
+ ✘ ✘ ✔ false
+ Undeclared ✔ ✔ false
+ Undeclared ✘ ✔ true
+ Listening for consent collection
+ A trackingConsentAccepted event fires when positive tracking consent is collected on the page.
+ By listening for this event and calling your custom start tracking method when it fires, you avoid any possible data loss due to missing asynchronous consent collection.
+ 1 document.addEventListener('trackingConsentAccepted', () => {
+ 2
+    // fire custom method to start tracking
+ 3 });
+ userDataCanBeSold(): boolean
+ Use this method to determine if the app user has explicitly disallowed selling data to third parties for visitors located in California or Virginia. This enables compliance with the CCPA and VCDPA.
+ Request Data
+ window.Shopify.customerPrivacy.userDataCanBeSold();
+ Response
+ The API returns a Boolean value indicating whether data can be sold to third parties for visitors located in California (CA) or Virginia (VA).
+ The API response aggregates the app user's preferences and the visitor’s location. However, you can't use the API to enable visitors to opt-out of the sale of their data.
+ User consent Visitor in CA or VA App user limits the third-party sale of CA or VA customers’ data Boolean value
+ Not applicable ✔ ✔ false
+ Not applicable ✘ ✔ true
+ Not applicable ✔ ✘ true
+ Not applicable ✘ ✘ true
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Loading the Customer Privacy API
+ Check data processing permissions
+ Collect and register consent
+ Installation on a custom storefront
+ Upgrading the Customer Privacy API
+ Legacy documentation
+ Updates & News

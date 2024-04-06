@@ -1,0 +1,85 @@
+Delivery Customization API
+ Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ DeliveryCustomization
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ HideOperation
+ Language
+ Localization
+ LocalTime
+ MailingAddress
+ Market
+ MarketRegionCountry
+ Metafield
+ MoneyV2
+ MoveOperation
+ Operation
+ Product
+ ProductVariant
+ PurchasingCompany
+ RenameOperation
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ Shop
+ INTERFACES
+ HasGates
+ DeliveryMethod
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ DeliveryCustomization object
+ 2024-04 latest
+ A customization representing how delivery options will be ordered, hidden, or renamed.
+ On this page
+ Fields
+ Types that return DeliveryCustomization
+ Implements
+ Fields
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ Types that return DeliveryCustomization
+ Input.deliveryCustomization
+ Implements
+ HasMetafields
+ Was this page helpful?
+ YesNo
+ Updates & News

@@ -1,0 +1,120 @@
+Product subscription app extensions
+ Usage Limits Card
+ The component UsageLimitsCard enables users to limit how many times a discount can be used.
+ Example code
+ The following example sets usage limits for a shop without selling plans:
+ 1 import React, { useState } from "react";
+ 2 import { UsageLimitsCard } from "@shopify/discount-app-components";
+ 3
+ 4 function MyApp() {
+ 5
+    const [totalUsageLimit, setTotalUsageLimit] = useState(null);
+ 6
+    const [oncePerCustomer, setOncePerCustomer] = useState(false);
+ 7
+ 8
+    return (
+ 9
+      <UsageLimitsCard
+ 10
+        totalUsageLimit={{
+ 11
+          value: totalUsageLimit,
+ 12
+          onChange: setTotalUsageLimit,
+ 13
+        }}
+ 14
+        oncePerCustomer={{
+ 15
+          value: oncePerCustomer,
+ 16
+          onChange: setOncePerCustomer,
+ 17
+        }}
+ 18
+      />
+ 19
+    );
+ 20 }
+ The following example sets usage limits for a shop with selling plans:
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    UsageLimitsCard,
+ 4
+    RecurringPaymentType,
+ 5 } from "@shopify/discount-app-components";
+ 6
+ 7 function MyApp() {
+ 8
+    const [totalUsageLimit, setTotalUsageLimit] = useState(null);
+ 9
+    const [oncePerCustomer, setOncePerCustomer] = useState(false);
+ 10
+    const [recurringPaymentType, setRecurringPaymentType] = useState(
+ 11
+      RecurringPaymentType.AllPayments
+ 12
+    );
+ 13
+    const [recurringPaymentsLimit, setRecurringPaymentsLimit] = useState("");
+ 14
+ 15
+    return (
+ 16
+      <UsageLimitsCard
+ 17
+        totalUsageLimit={{
+ 18
+          value: totalUsageLimit,
+ 19
+          onChange: setTotalUsageLimit,
+ 20
+        }}
+ 21
+        oncePerCustomer={{
+ 22
+          value: oncePerCustomer,
+ 23
+          onChange: setOncePerCustomer,
+ 24
+        }}
+ 25
+        isRecurring
+ 26
+        recurringPaymentType={{
+ 27
+          value: recurringPaymentType,
+ 28
+          onChange: setRecurringPaymentType,
+ 29
+        }}
+ 30
+        recurringPaymentLimit={{
+ 31
+          value: recurringPaymentsLimit,
+ 32
+          onChange: setRecurringPaymentsLimit,
+ 33
+        }}
+ 34
+      />
+ 35
+    );
+ 36 }
+ Properties
+ Name Type Description Required
+ totalUsageLimit Field<PositiveNumericString> The total number of times that the discount can be used. Yes
+ oncePerCustomer Field<boolean> Whether a discount can only be used once per customer. Yes
+ isRecurring boolean Whether the Recurring payments section is displayed. No
+ recurringPaymentType Field<RecurringPaymentType> The recurring payment type (FIRST_PAYMENT, MULTIPLE_PAYMENTS, or ALL_PAYMENTS). No
+ recurringPaymentLimit Field<PositiveNumericString> The number of times that the discount can be used for a recurring payment. No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ Updates & News
+ Developer changelog
+ Partner blog

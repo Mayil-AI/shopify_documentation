@@ -1,0 +1,40 @@
+Subscription discounts
+ Refunds
+ Offering free trials
+ Viewing charges and earnings
+ Best practices
+ App Store
+ Award app credits
+ You can use the Partner API to give credits to merchants who've installed your app. Merchants can use these app credits to get discounts on future app purchases, monthly subscription fees, and usage charges.
+ How it works
+ The amount of app credits that you give to a merchant is based on your revenue share, and is withdrawn from your Partner account.
+ To use the Partner API, you'll need to implement triggers for the charge, such as when a merchant installs an app, upgrades their service plan, or makes an individual purchase.
+ Award app credits using the Partner API
+ To award store credits for your app, you can use the Partner API's appCreditCreate mutation.
+ Award app credits from the Partner Dashboard
+ Log in to your Partner Dashboard.
+ In the search bar of the Partner Dashboard, enter the name of the store that you want to award app credits to.
+ In the search results, select the store.
+ On the right side of the store page, next to the App credits card, click Send.
+ On the App credits page, select the associated app name.
+ Specify the currency and amount to credit.
+ Optional: Add a note with the reason for awarding credits.
+ Click Send.
+ If the app credit was successfully awarded, a new event displays on the store's page in your Partner Dashboard, and the merchant receiving the app credit can view the sent amount in the Billing section of their Shopify admin.
+ Required permissions
+ Owners can issue app credits by default. Staff members can issue app credits if they have the Manage credits and refunds permission.
+ Learn more about managing staff member permissions.
+ Limitations
+ The total amount of credits can't exceed the total amount of pending payouts in your Partner account.
+ Note
+ To view pending payouts, refer to the Payments page on your Partner Dashboard.
+ Next steps
+ Best practices
+ Learn best practices for app billing.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Award app credits using the Partner API
+ Award app credits from the Partner Dashboard
+ Limitations

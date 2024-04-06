@@ -1,0 +1,1690 @@
+Resources & tools
+ Basics
+ Tags
+ Filters
+ Array
+ Cart
+ Collection
+ Color
+ Customer
+ Default
+ Font
+ Format
+ HTML
+ Hosted File
+ Localization
+ Math
+ Media
+ article_img_url
+ collection_img_url
+ external_video_tag
+ external_video_url
+ image_tag
+ image_url
+ img_tag
+ img_url
+ media_tag
+ model_viewer_tag
+ product_img_url
+ video_tag
+ Metafield
+ Money
+ Payment
+ String
+ Tag
+ Objects
+ Filters
+ Liquid filters are used to modify Liquid output.
+ Jump to
+ Array filters
+ Jump to
+ Hosted file filters
+ Jump to
+ Media filters
+ Jump to
+ String filters
+ Usage
+ To apply filters to an output, add the filter and any filter parameters within the output's curly brace delimiters {{ }}, preceded by a pipe character |. In the example below, product is the object, title is its property, and upcase is the filter being applied.
+ Filters with parameters
+ Many filters accept parameters that let you specify how the filter should be applied. Some filters might require parameters to be valid.
+ Using multiple filters
+ Multiple filters can be used on one output. They're applied from left to right.
+ Built-in filters
+ Array filters
+ Array filters modify arrays.
+ compact
+ array | compact
+ Removes any nil items from an array.
+ Was this section helpful?
+ YesNo
+ concat
+ array | concat: array
+ Concatenates (combines) two arrays.
+ Note
+ The concat filter won't filter out duplicates. If you want to remove duplicates, then you need to use the uniq filter.
+ Was this section helpful?
+ YesNo
+ first
+ array | first
+ Returns the first item in an array.
+ Dot notation
+ You can use the first filter with dot notation when you need to use it inside a tag or object output.
+ Was this section helpful?
+ YesNo
+ join
+ array | join
+ returns string
+ Combines all of the items in an array into a single string, separated by a space.
+ Custom separator
+ array | join: string
+ You can specify a custom separator for the joined items.
+ Was this section helpful?
+ YesNo
+ last
+ array | last
+ Returns the last item in an array.
+ Dot notation
+ You can use the last filter with dot notation when you need to use it inside a tag or object output.
+ Was this section helpful?
+ YesNo
+ map
+ array | map: string
+ Creates an array of values from a specific property of the items in an array.
+ Was this section helpful?
+ YesNo
+ reverse
+ array | reverse
+ Reverses the order of the items in an array.
+ Reversing strings
+ You can't use the reverse filter on strings directly. However, you can use the split filter to create an array of characters in the string, reverse that array, and then use the join filter to combine them again.
+ Was this section helpful?
+ YesNo
+ size
+ variable | size
+ returns number
+ Returns the size of a string or array.
+ The size of a string is the number of characters that the string includes. The size of an array is the number of items in the array.
+ Dot notation
+ You can use the size filter with dot notation when you need to use it inside a tag or object output.
+ Was this section helpful?
+ YesNo
+ sort
+ array | sort
+ Sorts the items in an array in case-sensitive alphabetical, or numerical, order.
+ Sort by an array item property
+ array | sort: string
+ You can specify an array item property to sort the array items by. You can sort by any property of the object that you're sorting.
+ Was this section helpful?
+ YesNo
+ sort_natural
+ array | sort_natural
+ Sorts the items in an array in case-insensitive alphabetical order.
+ Caution
+ You shouldn't use the sort_natural filter to sort numerical values. When comparing items an array, each item is converted to a string, so sorting on numerical values can lead to unexpected results.
+ Sort by an array item property
+ array | sort_natural: string
+ You can specify an array item property to sort the array items by.
+ Was this section helpful?
+ YesNo
+ sum
+ array | sum
+ returns number
+ Returns the sum of all elements in an array.
+ Sum object property values
+ array | sum: string
+ For an array of Liquid objects, you can specify a property to sum.
+ Was this section helpful?
+ YesNo
+ uniq
+ array | uniq
+ Removes any duplicate items in an array.
+ Was this section helpful?
+ YesNo
+ where
+ array | where: string, string
+ Filters an array to include only items with a specific property value.
+ This requires you to provide both the property name and the associated value.
+ Filter for boolean properties with a true value
+ You can filter for items that have a true value for a boolean property. This requires you to provide only the property name.
+ Was this section helpful?
+ YesNo
+ Cart filters
+ SHOPIFY
+ Cart filters output or modify content specific to the cart object and its properties.
+ item_count_for_variant
+ cart | item_count_for_variant: {variant_id}
+ returns number
+ Returns the total item count for a specified variant in the cart.
+ Was this section helpful?
+ YesNo
+ line_items_for
+ cart | line_items_for: object
+ returns array of line_item
+ Returns the subset of cart line items that include a specified product or variant.
+ Accepts the following object types:
+ product
+ variant
+ Was this section helpful?
+ YesNo
+ Collection filters
+ SHOPIFY
+ Collection filters output or modify content specific to the collection object and its properties.
+ highlight_active_tag
+ string | highlight_active_tag
+ returns string
+ Wraps a given tag in an HTML <span> tag, with a class attribute of active, if the tag is currently active. Only applies to collection tags.
+ Was this section helpful?
+ YesNo
+ link_to_type
+ string | link_to_type
+ returns string
+ Generates an HTML <a> tag with an href attribute linking to a collection page that lists all products of the given product type.
+ HTML attributes
+ string | link_to_type: attribute: string
+ You can specify HTML attributes by including a parameter that matches the attribute name, and the desired value.
+ Was this section helpful?
+ YesNo
+ link_to_vendor
+ string | link_to_vendor
+ returns string
+ Generates an HTML <a> tag with an href attribute linking to a collection page that lists all products of a given product vendor.
+ HTML attributes
+ string | link_to_vendor: attribute: string
+ You can specify HTML attributes by including a parameter that matches the attribute name, and the desired value.
+ Was this section helpful?
+ YesNo
+ sort_by
+ string | sort_by: string
+ returns string
+ Generates a collection URL with the provided sort_by parameter appended. This filter must be applied to a collection URL.
+ Accepts the following values:
+ manual (as defined in the collection settings)
+ best-selling
+ title-ascending
+ title-descending
+ price-ascending
+ price-descending
+ created-ascending
+ created-descending
+ Tip
+ You can append the sort_by filter to the url_for_type and url_for_vendor filters.
+ Was this section helpful?
+ YesNo
+ url_for_type
+ string | url_for_type
+ returns string
+ Generates a URL for a collection page that lists all products of the given product type.
+ Was this section helpful?
+ YesNo
+ url_for_vendor
+ string | url_for_vendor
+ returns string
+ Generates a URL for a collection page that lists all products from the given product vendor.
+ Was this section helpful?
+ YesNo
+ within
+ string | within: collection
+ returns string
+ Generates a product URL within the context of the provided collection.
+ When the collection context is included, you can access the associated collection object in the product template.
+ Caution
+ Because a standard product page and a product page in the context of a collection have the same content on separate URLs, you should consider the SEO implications of using the within filter.
+ Was this section helpful?
+ YesNo
+ Color filters
+ SHOPIFY
+ Color filters modify or extract properties from CSS color strings. These filters are commonly used with color theme settings.
+ To learn how to access theme settings, refer to Settings.
+ brightness_difference
+ string | brightness_difference: string
+ returns number
+ Calculates the perceived brightness difference between two colors.
+ Tip
+ For accessibility best practices, it's recommended to have a minimum brightness difference of 125.
+ Was this section helpful?
+ YesNo
+ color_brightness
+ string | color_brightness
+ returns number
+ Calculates the perceived brightness of a given color.
+ Was this section helpful?
+ YesNo
+ color_contrast
+ string | color_contrast: string
+ returns number
+ Calculates the contrast ratio between two colors and returns the ratio's numerator. The ratio's denominator, which isn't returned, is always 1. For example, with a contrast ratio of 3.5:1, this filter returns 3.5.
+ The order in which you specify the colors doesn't matter.
+ Tip
+ For accessibility best practices, the WCAG 2.0 level AA requires a minimum contrast ratio of 4.5:1 for normal text, and 3:1 for large text. Level AAA requires a minimum contrast ratio of 7:1 for normal text, and 4.5:1 for large text.
+ Was this section helpful?
+ YesNo
+ color_darken
+ string | color_darken: number
+ returns string
+ Darkens a given color by a specific percentage. The percentage must be between 0 and 100.
+ Was this section helpful?
+ YesNo
+ color_desaturate
+ string | color_desaturate: number
+ returns string
+ Desaturates a given color by a specific percentage. The percentage must be between 0 and 100.
+ Was this section helpful?
+ YesNo
+ color_difference
+ string | color_difference: string
+ returns number
+ Calculates the color difference between two colors.
+ Tip
+ For accessibility best practices, it's recommended to have a minimum color difference of 500.
+ Was this section helpful?
+ YesNo
+ color_extract
+ string | color_extract: string
+ returns number
+ Extracts a specific color component from a given color.
+ Accepts the following color components:
+ alpha
+ red
+ green
+ blue
+ hue
+ saturation
+ lightness
+ Was this section helpful?
+ YesNo
+ color_lighten
+ string | color_lighten: number
+ returns string
+ Lightens a given color by a specific percentage. The percentage must be between 0 and 100.
+ Was this section helpful?
+ YesNo
+ color_mix
+ string | color_mix: string, number
+ returns string
+ Blends two colors together by a specific percentage factor. The percentage must be between 0 and 100.
+ Tip
+ A percentage factor of 100 returns the color being filtered. A percentage factor of 0 returns the color supplied to the filter.
+ If one input has an alpha component, but the other does not, an alpha component of 1.0 will be assumed for the input without an alpha component.
+ Was this section helpful?
+ YesNo
+ color_modify
+ string | color_modify: string, number
+ returns string
+ Modifies a specific color component of a given color by a specific amount.
+ The following table outlines valid color components, and the value range for their modifications:
+ Component Value range
+ red
+ green
+ blue
+ An integer between 0 and 255
+ alpha A decimal between 0 and 1
+ hue An integer between 0 and 360
+ saturation
+ lightness
+ An integer between 0 and 100
+ The format of the modified color depends on the component being modified. For example, if you modify the alpha component of a color in hexadecimal format, then the modified color will be in rgba() format.
+ Was this section helpful?
+ YesNo
+ color_saturate
+ string | color_saturate: number
+ returns string
+ Saturates a given color by a specific percentage. The percentage must be between 0 and 100.
+ Was this section helpful?
+ YesNo
+ color_to_hex
+ string | color_to_hex
+ returns string
+ Converts a CSS color string to hexadecimal format (hex6).
+ Because colors are converted to hex6 format, if a color with an alpha component is provided, then the alpha component is excluded from the output.
+ Was this section helpful?
+ YesNo
+ color_to_hsl
+ string | color_to_hsl
+ returns string
+ Converts a CSS color string to HSL format.
+ If a color with an alpha component is provided, the color is converted to HSLA format.
+ Was this section helpful?
+ YesNo
+ color_to_rgb
+ string | color_to_rgb
+ returns string
+ Converts a CSS color string to RGB format.
+ If a color with an alpha component is provided, then the color is converted to RGBA format.
+ Was this section helpful?
+ YesNo
+ hex_to_rgba
+ deprecated
+ string | hex_to_rgba
+ returns string
+ Converts a CSS color string from hexadecimal format to RGBA format. Shorthand hexadecimal formatting (hex3) is also accepted.
+ Deprecated
+ The hex_to_rgba filter has been replaced by color_to_rgb and color_modify.
+ alpha
+ string | hex_to_rgba: number
+ The default alpha value is 1.0. However, you can specify a decimal value between 0.0 and 1.0.
+ Was this section helpful?
+ YesNo
+ Customer filters
+ SHOPIFY
+ Customer filters output URLs that enable customers to interact with their account in the store.
+ customer_login_link
+ string | customer_login_link
+ returns string
+ Generates an HTML link to the customer login page.
+ Was this section helpful?
+ YesNo
+ customer_logout_link
+ string | customer_logout_link
+ returns string
+ Generates an HTML link to log the customer out of their account and redirect to the homepage.
+ Was this section helpful?
+ YesNo
+ customer_register_link
+ string | customer_register_link
+ returns string
+ Generates an HTML link to the customer registration page.
+ Was this section helpful?
+ YesNo
+ login_button
+ shop | login_button: action: 'follow'
+ returns string
+ Generates an HTML Button that enables a customer to follow the Shop in the Shop App
+ Configure the storefront for Follow on Shop. Learn more
+ Note
+ The presence of the Shop object is required for validation purposes only.
+ Note
+ The action specified is always 'follow'. If this parameter is not supplied the button will not render.
+ 1 {{ shop | login_button: action: 'follow' }}
+ Was this section helpful?
+ YesNo
+ Default filters
+ SHOPIFY
+ Default filters enable you to use or set default values for certain contexts.
+ default
+ variable | default: variable
+ Sets a default value for any variable whose value is one of the following:
+ empty
+ false
+ nil
+ allow_false
+ variable | default: variable, allow_false: boolean
+ By default, the default filter's value will be used in place of false values. You can use the allow_false parameter to allow variables to return false instead of the default value.
+ Was this section helpful?
+ YesNo
+ default_errors
+ string | default_errors
+ returns string
+ Generates default error messages for each possible value of form.errors.
+ Was this section helpful?
+ YesNo
+ default_pagination
+ paginate | default_pagination
+ returns string
+ Generates HTML for a set of links for paginated results. Must be applied to the paginate object.
+ Was this section helpful?
+ YesNo
+ Font filters
+ SHOPIFY
+ Font filters modify font objects, which are defined in font theme settings. You can use font filters to load fonts or to obtain font variants.
+ To learn how to access theme settings, refer to Settings.
+ Refer to Shopify's font library for a list of all fonts and their variants.
+ font_face
+ font | font_face
+ returns string
+ Generates a CSS @font_face declaration to load the provided font.
+ font_display
+ font | font_face: font_display: string
+ You can include an optional parameter to specify the font_display property of the @font_face declaration.
+ Was this section helpful?
+ YesNo
+ font_modify
+ font | font_modify: string, string
+ returns font
+ Modifies a specific property of a given font.
+ The font_modify filter requires two parameters. The first indicates which property should be modified and the second is either the new value, or modification amount, for that property.
+ Tip
+ You can access every variant of the chosen font's family by using font.variants. However, you can more easily access specific styles and weights by using the font_modify filter.
+ The following table outlines the valid font properties and modification values:
+ Property Modification value Output
+ style normal Returns the normal variant of the same weight, if it exists.
+ italic Returns the italic variant of the same weight, if it exists.
+ oblique
+ Returns the oblique variant of the same weight, if it exists.
+ Oblique variants are similar to italic variants in appearance. All Shopify fonts have only oblique or italic variants, not both.
+ weight 100 → 900 Returns a variant of the same style with the given weight, if it exists.
+ normal Returns a variant of the same style with a weight of 400, if it exists.
+ bold Returns a variant of the same style with a weight of 700, if it exists.
+ +100 → +900
+ Returns a variant of the same style with a weight incremented by the given value, if it exists.
+ For example, if a font has a weight of 400, then using +100 would return the font with a weight of 500.
+ -100 → -900
+ Returns a variant of the same style with a weight decremented by the given value, if it exists.
+ For example, if a font has a weight of 400, then using -100 would return the font with a weight of 300.
+ lighter Returns a lighter variant of the same style by applying the rules used by the CSS font-weight property and browser fallback weights, if it exists.
+ bolder Returns a bolder variant of the same style by applying the rules used by the CSS font-weight property and browser fallback weights, if it exists.
+ Non-existent font variants
+ If the font_modify filter tries to create a font variant that doesn't exist, then it returns nil. To handle this, you can either assign a fallback value with the default filter, or check for nil before using the variant.
+ Was this section helpful?
+ YesNo
+ font_url
+ font | font_url
+ returns string
+ Returns the CDN URL for the provided font in woff2 format.
+ woff format
+ font | font_url: string
+ By default, the font_url filter returns the CDN URL for the font in woff2 format. However, you can also choose woff format.
+ Was this section helpful?
+ YesNo
+ Format filters
+ SHOPIFY
+ Format filters apply formats to specific data types.
+ date
+ string | date: string
+ returns string
+ Converts a timestamp into another date format.
+ The date filter accepts the same parameters as Ruby's strftime method for formatting the date. For a list of shorthand formats, refer to the Ruby documentation or strftime reference and sandbox.
+ The current date
+ You can apply the date filter to the keywords 'now' and 'today' to output the current timestamp.
+ Note
+ The timestamp will reflect the time that the Liquid was last rendered. Because of this, the timestamp might not be updated for every page view, depending on the context and caching.
+ format
+ string | date: format: string
+ Specify a locale-aware date format. You can use the following formats:
+ abbreviated_date
+ basic
+ date
+ date_at_time
+ default
+ on_date
+ short (deprecated)
+ long (deprecated)
+ Note
+ You can also define custom formats in your theme's locale files.
+ Setting format options in locale files
+ You can define custom date formats in your theme's storefront locale files. These custom formats should be included in a date_formats category:
+ 1 "date_formats": {
+ 2
+    "month_day_year": "%B %d, %Y"
+ 3 }
+ Was this section helpful?
+ YesNo
+ json
+ variable | json
+ returns string
+ Converts a string, or object, into JSON format.
+ Tip
+ When using the JSON output in JavaScript, you don't need to wrap it in quotes because the json filter includes them. The json filter also escapes any quotes inside the output.
+ Product inventory
+ When applied to a product object on any Shopify store created after December 5, 2017, the json filter doesn't output values for the inventory_quantity and inventory_policy properties of any associated variants. These properties are excluded to help prevent bots and crawlers from retrieving inventory quantities for stores to which they aren't granted access.
+ If you need inventory information, you can access it through individual variants.
+ Was this section helpful?
+ YesNo
+ weight_with_unit
+ number | weight_with_unit
+ returns string
+ Generates a formatted weight for a variant object. The weight unit is set in the general settings in the Shopify admin.
+ Override the default unit
+ number | weight_with_unit: variable
+ You can specify a unit to override the default from the general settings.
+ Was this section helpful?
+ YesNo
+ HTML filters
+ SHOPIFY
+ HTML filters create HTML elements based on Liquid properties or a store’s assets.
+ highlight
+ string | highlight: string
+ returns string
+ Wraps all instances of a specific string, within a given string, with an HTML <strong> tag with a class attribute of highlight.
+ Was this section helpful?
+ YesNo
+ link_to
+ string | link_to: string
+ returns string
+ Generates an HTML <a> tag.
+ HTML attributes
+ string | link_to_type: attribute: string
+ You can specify HTML attributes by including a parameter that matches the attribute name, and the desired value.
+ Was this section helpful?
+ YesNo
+ placeholder_svg_tag
+ string | placeholder_svg_tag
+ returns string
+ Generates an HTML <svg> tag for a given placeholder name.
+ Accepts the following placeholder names:
+ Outline illustrations Color illustrations
+ product-1
+ product-2
+ product-3
+ product-4
+ product-5
+ product-6
+ collection-1
+ collection-2
+ collection-3
+ collection-4
+ collection-5
+ collection-6
+ lifestyle-1
+ lifestyle-2
+ image
+ product-apparel-1
+ product-apparel-2
+ product-apparel-3
+ product-apparel-4
+ collection-apparel-1
+ collection-apparel-2
+ collection-apparel-3
+ collection-apparel-4
+ hero-apparel-1
+ hero-apparel-2
+ hero-apparel-3
+ blog-apparel-1
+ blog-apparel-2
+ blog-apparel-3
+ detailed-apparel-1
+ class
+ string | placeholder_svg_tag: string
+ Specify the class attribute for the <svg> tag.
+ Was this section helpful?
+ YesNo
+ preload_tag
+ string | preload_tag: as: string
+ returns string
+ Generates an HTML <link> tag with a rel attribute of preload to prioritize loading a given Shopify-hosted asset. The asset URL is also added to the Link header with a rel attribute of preload.
+ You should use this filter sparingly. For example, consider preloading only resources necessary for rendering above-the-fold content. To learn more about preloading resources, refer to Performance best practices for Shopify themes.
+ Tip
+ If you want to preload a stylesheet, then use stylesheet_tag. If you want to preload an image, then use image_tag.
+ The input to this filter must be a URL from one of the following filters:
+ asset_url
+ global_asset_url
+ shopify_asset_url
+ The preload_tag filter also requires an as parameter based on the kind of resource being preloaded.
+ HTML attributes
+ string | preload_tag: as: string, attribute: string
+ You can specify HTML attributes by adding a parameter that matches the attribute name, and the desired value.
+ Was this section helpful?
+ YesNo
+ script_tag
+ string | script_tag
+ returns string
+ Generates an HTML <script> tag for a given resource URL. The tag has a type attribute of text/javascript.
+ Was this section helpful?
+ YesNo
+ stylesheet_tag
+ string | stylesheet_tag
+ returns string
+ Generates an HTML <link> tag for a given resource URL. The tag has the following parameters:
+ Attribute Value
+ rel stylesheet
+ type text/css
+ media all
+ preload
+ stylesheet_url | stylesheet_tag: preload: boolean
+ Specify whether the stylesheet should be preloaded.
+ When preload is set to true, a resource hint is sent as a Link header with a rel value of preload.
+ 1 Link: <STYLESHEET_URL>; rel=preload; as=style
+ This option doesn't affect the HTML link tag directly.
+ You should use the preload parameter sparingly. For example, consider preloading only render-blocking stylesheets that are needed for initial functionality of the page, such as above-the-fold content. To learn more about resource hints in Shopify themes, refer to Performance best practices for Shopify themes.
+ Was this section helpful?
+ YesNo
+ time_tag
+ string | time_tag: string
+ returns string
+ Converts a timestamp into an HTML <time> tag.
+ The time_tag filter accepts the same parameters as Ruby's strftime method for formatting the date. For a list of shorthand formats, refer to the Ruby documentation or strftime reference and sandbox.
+ format
+ string | time_tag: format: string
+ Specify a locale-aware date format. Accepts the following values:
+ abbreviated_date
+ basic
+ date
+ date_at_time
+ default
+ on_date
+ short (deprecated)
+ long (deprecated)
+ Note
+ You can also define custom formats in your theme's locale files.
+ datetime
+ string | time_tag: datetime: string
+ By default, the value of the datetime attribute of the <time> tag is formatted as YYYY-MM-DDThh:mm:ssTZD. However, you can specify a custom format with strftime shorthand formats.
+ Setting format options in locale files
+ You can define custom date formats in your theme's storefront locale files. These custom formats should be included in a date_formats category:
+ 1 "date_formats": {
+ 2
+    "month_day_year": "%B %d, %Y"
+ 3 }
+ Was this section helpful?
+ YesNo
+ Hosted file filters
+ SHOPIFY
+ Hosted file filters return URLs for assets hosted on the Shopify CDN, including files uploaded in the Shopify admin.
+ asset_img_url
+ string | asset_img_url
+ returns string
+ Returns the CDN URL for an image in the assets directory of a theme.
+ size
+ image | asset_img_url: string
+ By default, the asset_img_url filter returns the small version of the image (100 x 100 px). However, you can specify a size.
+ Was this section helpful?
+ YesNo
+ asset_url
+ string | asset_url
+ returns string
+ Returns the CDN URL for a file in the assets directory of a theme.
+ Was this section helpful?
+ YesNo
+ file_img_url
+ string | file_img_url
+ returns string
+ Returns the CDN URL for an image from the Files page of the Shopify admin.
+ The size parameter
+ image | file_img_url: string
+ By default, the file_img_url filter returns the small version of the image (100 x 100 px). However, you can specify a size.
+ Was this section helpful?
+ YesNo
+ file_url
+ string | file_url
+ returns string
+ Returns the CDN URL for a file from the Files page of the Shopify admin.
+ Was this section helpful?
+ YesNo
+ global_asset_url
+ string | global_asset_url
+ returns string
+ Returns the CDN URL for a global asset.
+ Global assets are kept in a directory on Shopify's server. Using global assets can be faster than loading the resource directly.
+ Depending on the resource type, you might need to use an additional filter to load the resource. The following table outlines which filter to use for specific resource types.
+ Resource type Additional filter
+ JavaScript (.js) script_tag
+ CSS (.css) stylesheet_tag
+ The following table outlines the available global assets:
+ Category Assets
+ Firebug - firebug/firebug.css
+ - firebug/firebug.html
+ - firebug/firebug.js
+ - firebug/firebugx.js
+ - firebug/errorIcon.png
+ - firebug/infoIcon.png
+ - firebug/warningIcon.png
+ JavaScript libraries - controls.js
+ - dragdrop.js
+ - effects.js
+ - ga.js
+ - mootools.js
+ Lightbox - lightbox.css
+ - lightbox.js
+ 
+ - lightbox/v1/lightbox.css
+ - lightbox/v1/lightbox.js
+ 
+ - lightbox/v2/lightbox.css
+ - lightbox/v2/lightbox.js
+ - lightbox/v2/close.gif
+ - lightbox/v2/loading.gif
+ - lightbox/v2/overlay.png
+ - lightbox/v2/zoom-lg.gif
+ 
+ - lightbox/v204/lightbox.css
+ - lightbox/v204/lightbox.js
+ - lightbox/v204/bullet.gif
+ - lightbox/v204/close.gif
+ - lightbox/v204/closelabel.gif
+ - lightbox/v204/donatebutton.gif
+ - lightbox/v204/downloadicon.gif
+ - lightbox/v204/loading.gif
+ - lightbox/v204/nextlabel.png
+ - lightbox/v204/prevlabel.gif
+ Prototype - prototype.js
+ - prototype/1.5/prototype.js
+ - prototype/1.6/prototype.js
+ script.aculo.us - scriptaculous/1.8.2/scriptaculous.js
+ - scriptaculous/1.8.2/builder.js
+ - scriptaculous/1.8.2/controls.js
+ - scriptaculous/1.8.2/dragdrop.js
+ - scriptaculous/1.8.2/effects.js
+ - scriptaculous/1.8.2/slider.js
+ - scriptaculous/1.8.2/sound.js
+ - scriptaculous/1.8.2/unittest.js
+ Shopify - list-collection.css
+ - textile.css
+ Was this section helpful?
+ YesNo
+ shopify_asset_url
+ string | shopify_asset_url
+ returns string
+ Returns the CDN URL for a globally accessible Shopify asset.
+ The following are the globally accessible Shopify assets:
+ option_selection.js
+ api.jquery.js
+ shopify_common.js
+ customer_area.js
+ currencies.js
+ customer.css
+ Was this section helpful?
+ YesNo
+ Localization filters
+ SHOPIFY
+ Localization filters enable you to customize the language and format of elements according to the customer’s locale.
+ currency_selector
+ deprecated
+ form | currency_selector
+ returns string
+ Generates an HTML <select> element with an option for each currency available on the store.
+ The currency_selector filter must be applied to the form object within a currency form.
+ Deprecated
+ Deprecated without a direct replacement because the currency form has also been deprecated. The currency form was replaced by the localization form. Refer to this guide which explains how to create a country selector using the localization form.
+ class
+ form | currency_selector: class: string
+ Specify the class attribute of the <select> element.
+ id
+ form | currency_selector: id: string
+ Specify the id attribute of the <select> element.
+ Was this section helpful?
+ YesNo
+ format_address
+ address | format_address
+ returns string
+ Generates an HTML address display, with each address component ordered according to the address's locale.
+ Was this section helpful?
+ YesNo
+ translate
+ string | t
+ returns string
+ Returns a string of translated text for a given translation key from a locale file.
+ The translate filter has an alias of t, which is more commonly used.
+ Tip
+ To learn more about using the t filter, refer to storefront locale file usage or schema locale file usage.
+ Section locales vs. theme locales
+ The t filter can also reference keys defined in the locales object of section file's schema tag. Content that you put in the schema under the locales object is only accessible to that section. This is useful if you need to make a standalone section that you want to share between themes.
+ Content that is global to a theme should be placed in the theme's locales directory. For example, you could include the expression "See more" in your locales directory to create a single translation. You could then use the translation in a blog post and on the product details page.
+ Note
+ Translations in the section's schema tag that aren't part of the locales object are used for merchant-facing text shown in the theme editor. These translations don't use the t filter.
+ Was this section helpful?
+ YesNo
+ Built-in filters
+ Math filters
+ Math filters perform mathematical operations on numbers. You can apply math filters to numbers, or variables or metafields that return a number.
+ As with any other filters, you can use multiple math filters on a single input. They’re applied from left to right. In the example below, minus is applied first, then times, and finally divided_by.
+ 1 You save {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price }}%
+ abs
+ number | abs
+ returns number
+ Returns the absolute value of a number.
+ Was this section helpful?
+ YesNo
+ at_least
+ number | at_least
+ returns number
+ Limits a number to a minimum value.
+ Was this section helpful?
+ YesNo
+ at_most
+ number | at_most
+ returns number
+ Limits a number to a maximum value.
+ Was this section helpful?
+ YesNo
+ ceil
+ number | ceil
+ returns number
+ Rounds a number up to the nearest integer.
+ Was this section helpful?
+ YesNo
+ divided_by
+ number | divided_by: number
+ returns number
+ Divides a number by a given number. The divided_by filter produces a result of the same type as the divisor. This means if you divide by an integer, the result will be an integer, and if you divide by a float, the result will be a float.
+ Was this section helpful?
+ YesNo
+ floor
+ number | floor
+ returns number
+ Rounds a number down to the nearest integer.
+ Was this section helpful?
+ YesNo
+ minus
+ number | minus: number
+ returns number
+ Subtracts a given number from another number.
+ Was this section helpful?
+ YesNo
+ modulo
+ number | modulo: number
+ returns number
+ Returns the remainder of dividing a number by a given number.
+ Was this section helpful?
+ YesNo
+ plus
+ number | plus: number
+ returns number
+ Adds two numbers.
+ Was this section helpful?
+ YesNo
+ round
+ number | round
+ returns number
+ Rounds a number to the nearest integer.
+ Round to a specific number of decimal places
+ You can specify a number of decimal places to round to. If you don't specify a number, then the round filter rounds to the nearest integer.
+ Was this section helpful?
+ YesNo
+ times
+ number | times: number
+ returns number
+ Multiplies a number by a given number.
+ Was this section helpful?
+ YesNo
+ Media filters
+ SHOPIFY
+ Media filters enable you to render media associated with various store resources, such as products and collections.
+ article_img_url
+ deprecated
+ variable | article_img_url
+ returns string
+ Returns the CDN URL for an article's image.
+ Deprecated
+ The article_img_url filter has been replaced by image_url.
+ size
+ image | article_img_url: string
+ By default, the article_img_url filter returns the small version of the image (100 x 100 px). However, you can specify a size.
+ Was this section helpful?
+ YesNo
+ collection_img_url
+ deprecated
+ variable | collection_img_url
+ returns string
+ Returns the CDN URL for a collection's image.
+ Deprecated
+ The collection_img_url filter has been replaced by image_url.
+ The size parameter
+ image | collection_img_url: string
+ By default, the collection_img_url filter returns the small version of the image (100 x 100 px). However, you can specify a size.
+ Was this section helpful?
+ YesNo
+ external_video_tag
+ variable | external_video_tag
+ returns string
+ Generates an HTML <iframe> tag containing the player for a given external video. The input for the external_video_tag filter can be either a media object or external_video_url.
+ If alt text is set on the video, then it's included in the title attribute of the <iframe>. If no alt text is set, then the title attribute is set to the product title.
+ HTML attributes
+ variable | external_video_tag: attribute: string
+ You can specify HTML attributes by adding a parameter that matches the attribute name, and the desired value.
+ Was this section helpful?
+ YesNo
+ external_video_url
+ media | external_video_url: attribute: string
+ returns string
+ Returns the URL for a given external video. Use this filter to specify parameters for the external video player generated by the external_video_tag filter.
+ You can specify YouTube and Vimeo video parameters by adding a parameter that matches the parameter name, and the desired value.
+ Was this section helpful?
+ YesNo
+ image_tag
+ string | image_tag
+ returns string
+ Generates an HTML <img> tag for a given image_url.
+ By default, width and height attributes are added to the <img> tag based on the dimensions and aspect ratio from the image URL. However, you can override these attributes with the width and height parameters. If only one parameter is provided, then only that attribute is added.
+ Lazy loading
+ If you don't apply the preload attribute to image_tag, then loading is automatically set to lazy for images in sections further down the page. You shouldn't lazy load images above the fold. If the default value doesn't work for your theme, then consider writing your own logic using the section.index and section.location properties. For more information, refer to the section object.
+ image_tag and focal points
+ This filter automatically applies a focal point to the image using the object-position CSS style, if focal point coordinates are available. You can also access an image's focal point coordinates directly through the focal_point object. Learn how to set a focal point.
+ width
+ image_url | image_tag: width: number
+ Specify the width attribute of the <img> tag. You can set the parameter to nil to prevent the attribute from being added.
+ height
+ image_url | image_tag: height: number
+ Specify the height attribute of the <img> tag. You can set the parameter to nil to prevent the attribute from being added.
+ sizes
+ image_url | image_tag: sizes: string
+ Specify source sizes with the HTML sizes attribute.
+ widths
+ image_url | image_tag: widths: string
+ By default, Shopify generates a srcset with a smart set of default widths up to the maximum defined in the image URL. However, you can create your own set of widths.
+ srcset
+ image_url | image_tag: srcset: string
+ By default, Shopify generates a srcset. However, you can create your own srcset. The srcset parameter takes precedence over the width parameter. You shouldn't to use the srcset parameter unless you want to remove the attribute by setting the parameter to nil.
+ preload
+ image_url | image_tag: preload: boolean
+ Specify whether the image should be preloaded.
+ When preload is set to true, a resource hint is sent as a Link HTTP header with a rel value of preload. The Link header also includes imagesrcset and imagesizes that match the srcset and sizes attribute of the tag, where present:
+ 1 Link: <IMAGE_URL>; rel=preload; as=image
+ 2 Link: <IMAGE_URL>; rel=preload; as=image; imagesrcset=ADDITIONAL_IMAGE_URL 352w; imagesizes=40vw
+ This option doesn't affect the HTML img tag directly.
+ You should use the preload parameter sparingly. For example, consider preloading only above-the-fold images. To learn more about resource hints in Shopify themes, refer to Performance best practices for Shopify themes.
+ alt
+ image_url | image_tag: alt: string
+ By default, the alt attribute of the <img> tag is set to the media alt text, or the resource title for article, collection, line item, product, and variant images. However, you can override this default, or set the value if there's no default.
+ HTML attributes
+ image_url | image_tag: attribute: string
+ You can specify HTML attributes by adding a parameter that matches the attribute name, and the desired value.
+ Was this section helpful?
+ YesNo
+ image_url
+ variable | image_url: width: number, height: number
+ returns string
+ Returns the CDN URL for an image.
+ You can use the image_url filter on the following objects, as well as their src property:
+ article
+ collection
+ image
+ line_item
+ product
+ variant
+ country
+ Caution
+ You need to specify either a width or height parameter. If neither are specified, then an error is returned.
+ Note
+ Regardless of the specified dimensions, an image can never be resized to be larger than its original dimensions.
+ Code
+ 1
+ {{ product | image_url: width: 450 }}
+ Output
+ 1 //polinas-potent-potions.myshopify.com/cdn/shop/files/science-beakers-blue-light-new.jpg?v=1683744744&width=450
+ width
+ variable | image_url: width: number
+ Specify the width of the image up to a maximum of 5760px. If only the width is specified, then the height is automatically calculated based on the image's dimensions.
+ height
+ variable | image_url: height: number
+ Specify the height of the image up to a maximum of 5760px. If only the height is specified, then the width is automatically calculated based on the image's dimensions.
+ crop
+ variable | image_url: crop: string
+ Specify which part of the image to show if the specified dimensions result in an aspect ratio that differs from the original. You can use the following values:
+ top
+ center
+ bottom
+ left
+ right
+ region
+ The default value is center.
+ When using the region crop mode, the starting point for the crop is defined by crop_left and crop_top and extends to the crop_width and crop_height. Optionally, to resize the region extracted by the crop, use the width and height parameters.
+ Note
+ Country flags are SVG images and can only be cropped if a value for format is also provided.
+ format
+ variable | image_url: format: string
+ Specify which file format to use for the image. The valid formats are pjpg and jpg.
+ It's not practical to convert a lossy image format, like jpg, to a lossless image format, like png, so Shopify can do only the following conversions:
+ png to jpg
+ png to pjpg
+ jpg to pjpg
+ Note
+ Shopify automatically detects which image formats are supported by the client (e.g. WebP, AVIF, etc.) and selects a file format for optimal quality and file size. When a format is specified, Shopify takes into account the features (e.g. progressive, alpha channel) of the specified file format when making the final automatic format selection. To learn more, visit https://cdn.shopify.com/.
+ pad_color
+ variable | image_url: pad_color: string
+ Specify a color to pad the image if the specified dimensions result in an aspect ratio that differs from the original. The color must be in hexadecimal format (hex3 or hex6).
+ Was this section helpful?
+ YesNo
+ img_tag
+ deprecated
+ string | img_tag
+ returns string
+ Generates an HTML <img> tag for a given image URL.
+ You can also use the img_tag filter on the following objects:
+ article
+ collection
+ image
+ line_item
+ product
+ variant
+ Deprecated
+ The img_tag filter has been replaced by image_tag.
+ Optional parameters
+ variable | img_tag: string, string, string
+ The img_tag filter accepts 3 unnamed parameters, separated by commas, to specify the alt and class attributes, and the size of the image. Because the parameters are read in that order, you must include a value for each parameter before the last parameter you want to specify. If you don't want to include a parameter that precedes one that you do want to include, then you can set the value to an empty string.
+ Note
+ The size attribute of the img_tag filter can't be used in conjunction with the img_url filter. If both are used, then the img_url filter will override the size parameter of the img_tag filter.
+ Was this section helpful?
+ YesNo
+ img_url
+ deprecated
+ variable | img_url
+ returns string
+ Returns the CDN URL for an image.
+ You can use the img_url filter on the following objects:
+ article
+ collection
+ image
+ line_item
+ product
+ variant
+ Deprecated
+ The img_url filter has been replaced by image_url.
+ size
+ variable | img_url: string
+ The size parameter allows you to specify the dimensions of the image up to a maximum of 5760 x 5760 px. You can specify only the width, only the height, or both, and you can also use the following named sizes:
+ Name Dimensions
+ pico 16x16 px
+ icon 32x32 px
+ thumb 50x50 px
+ small 100x100 px
+ compact 160x160 px
+ medium 240x240 px
+ large 480x480 px
+ grande 600x600 px
+ original
+ master 1024x1024 px
+ crop
+ variable | img_url: crop: string
+ The crop parameter allows you to specify which part of the image to show if the specified dimensions result in an aspect ratio that differs from the original. You can use the following values:
+ top
+ center
+ bottom
+ left
+ right
+ The default value is center.
+ format
+ variable | img_url: format: string
+ Specify which file format to use for the image. The valid formats are pjpg and jpg.
+ It's not practical to convert a lossy image format, like jpg, to a lossless image format, like png, so this filter does only the following conversions:
+ png to jpg
+ png to pjpg
+ jpg to pjpg
+ Note
+ Shopify automatically detects which image formats are supported by the client (e.g. WebP, AVIF, etc.) and selects a file format for optimal quality and file size. When a format is specified, Shopify takes into account the features (e.g. progressive, alpha channel) of the specified file format when making the final automatic format selection. To learn more, visit https://cdn.shopify.com/.
+ scale
+ variable | img_url: scale: number
+ Specify the pixel density of the image. The valid densities are 2 and 3.
+ Was this section helpful?
+ YesNo
+ media_tag
+ media | media_tag
+ returns string
+ Generates an appropriate HTML tag for a given media object.
+ image_size
+ media | media_tag: image_size: string
+ Specify the dimensions of the media's poster image in pixels.
+ Was this section helpful?
+ YesNo
+ model_viewer_tag
+ media | model_viewer_tag
+ returns string
+ Generates a Google model viewer component for a given 3D model.
+ Model viewer attributes
+ media | model_viewer_tag: attribute: string
+ By default, the model viewer component has the following attributes:
+ Attribute Value
+ alt [alt-text] - The media's alt text.
+ poster [preview-image-url] - The media's preview image URL.
+ camera-controls N/A - Allows for controls via mouse/touch.
+ You can override these attributes, or any supported model viewer component attributes by adding a parameter that matches the attribute name, and the desired value.
+ image_size
+ media | model_viewer_tag: image_size: string
+ Specify the dimensions of the model's poster image in pixels.
+ Was this section helpful?
+ YesNo
+ product_img_url
+ deprecated
+ variable | product_img_url
+ returns string
+ Returns the CDN URL for a product image.
+ This can be the product's featured_image or any image from the images array.
+ Deprecated
+ The product_img_url filter has been replaced by image_url.
+ The size parameter
+ image | product_img_url: string
+ By default, the product_img_url filter returns the small version of the image (100 x 100 px). However, you can specify a size.
+ Was this section helpful?
+ YesNo
+ video_tag
+ media | video_tag
+ returns string
+ Generates an HTML <video> tag for a given video.
+ Note
+ When mp4 videos are uploaded, Shopify generates an m3u8 file as an additional video_source. An m3u8 file enables video players to leverage HTTP live streaming (HLS), resulting in an optimized video experience based on the user's internet connection. If loop is enabled, the HLS source is not used in order to allow progessive download to cache the video.
+ If the m3u8 source isn't supported, then the player falls back to the mp4 source.
+ image_size
+ media | video_tag: image_size: string
+ Specify the dimensions of the video's poster image in pixels.
+ Optional supported HTML5 attributes
+ media | video_tag: attribute: boolean
+ video_tag supports all HTML5 video attributes. For example:
+ Attribute Value
+ autoplay Whether to automatically play the video after it’s loaded. Accepted values:true,false
+ loop Whether to loop the video. Accepted values:true,false
+ muted Whether to mute the video’s audio. Accepted values:true,false
+ controls Whether a user can control the video playback. Accepted values:true,false
+ Was this section helpful?
+ YesNo
+ Metafield filters
+ SHOPIFY
+ Metafield filters output metafield data from a metafield object within a relevant HTML element, or as a plain string.
+ metafield_tag
+ metafield | metafield_tag
+ returns string
+ Generates an HTML element to host the metafield data. The type of element that's generated differs depending on the type of metafield.
+ Note
+ The metafield_tag filter doesn't currently support list metafields other than list.single_line_text_field and list.metaobject_reference.
+ Basic types
+ Most metafield types return a simple HTML element:
+ Type Element Attributes
+ boolean <span> class="metafield-boolean"
+ collection_reference <a> class="metafield-collection_reference"
+ color <span> class="metafield-color"
+ date <time> datetime="<the metafield value>"
+ 
+ class="metafield-date"
+ 
+ Value is localized to the customer
+ date_time <time> datetime="<the metafield value>"
+ 
+ class="metafield-date"
+ 
+ Value is localized to the customer
+ json <script> type="application/json"
+ 
+ class="metafield-json"
+ money <span> class="metafield-money"
+ 
+ Value is formatted using the store's HTML with currency setting
+ multi_line_text_field <span> class="metafield-multi_line_text_field"
+ number_decimal <span> class="metafield-number_decimal"
+ number_integer <span> class="metafield-number_integer"
+ page_reference <a> class="metafield-page_reference"
+ product_reference <a> class="metafield-page_reference"
+ rating <span> class="metafield-rating"
+ single_line_text_field <span> class="metafield-single_line_text_field"
+ url <a> class="metafield-url"
+ variant_reference <a> class="metafield-variant_reference"
+ rich_text_field <div> class="metafield-rich_text_field"
+ Complex types
+ The following metafield types return nested elements, or different elements depending on the metafield contents:
+ dimension
+ file_reference
+ list.metaobject_reference
+ list.single_line_text_field
+ metaobject_reference
+ volume
+ weight
+ dimension
+ Outputs a <span> element with the following attribute:
+ Attribute Value
+ class metafield-dimension
+ The <span> element contains the following child elements:
+ Child element HTML element Attributes
+ The dimension value.
+ 
+ If it's a decimal with more than two places, then it'll be formatted to have a precision of two with trailing zeros removed. <span> class="metafield-dimension_value"
+ The dimension unit. <span> class="metafield-dimension_unit"
+ file_reference
+ The output varies depending on the type of file. There are the following categories of file type:
+ File type Description
+ Image Images in the format of jpg, png, gif, heic, and webp.
+ Video Videos in the format of mov, and mp4.
+ Other Any other file type.
+ IMAGE
+ Outputs an <img> element with the following attributes:
+ Attribute Value
+ src The image's URL.
+ alt The image's alt text.
+ class metafield-file_reference
+ VIDEO
+ Outputs a <video> element with the following attributes:
+ Attribute Value
+ src The video's URL.
+ poster The video's preview image (poster) URL.
+ playsinline N/A - Indicates the video will be played "inline" within the element's playback area.
+ preload metadata - Only metadata is pre-fetched before the video is played.
+ The <video> element contains the following child elements:
+ Child element HTML element Attributes
+ The video's multimedia playlist source, for HTTP live streaming (HLS) <source> src="<the video's m3u8 source URL>"
+ 
+ type="application/x-mpegURL"
+ The video's original source <source> src="<the video's source URL>"
+ 
+ type="<the video's original source MIME type>"
+ The video's preview (poster) image <img> src="<the video's preview image URL>"
+ OTHER
+ Outputs an <a> element with a link to the file and the following attribute:
+ Attribute Value
+ class metafield-file_reference
+ The <a> element contains an <img> element for the file's preview image with the following attributes:
+ Attribute Value
+ src The file's preview image URL.
+ loading lazy - The image isn't loaded until it's almost in view.
+ list.metaobject_reference
+ metafield | metafield_tag: field: string
+ Outputs a <ul> element by default with the following attribute:
+ Attribute Value
+ class metafield-single_line_text_field-array
+ The <ul> element contains an <li> element for each metaobject in the list with a class of metafield-single_line_text_field. The required field parameter specifies which field should be rendered for each metaobject. The field parameter can reference only metafields of type single_line_text_field.
+ To output an <ol> element, pass the list_format parameter with a value of ordered.
+ list.single_line_text_field
+ Outputs a <ul> element by default with the following attribute:
+ Attribute Value
+ class metafield-single_line_text_field-array
+ The <ul> element contains an <li> element for each item in the list with a class of metafield-single_line_text_field.
+ To output an <ol> element, pass the list_format parameter with a value of ordered.
+ metaobject_reference
+ metafield | metafield_tag: field: string
+ Outputs an HTML element for the metaobject field specified by the required field parameter. The field parameter can reference only metafields of type single_line_text_field.
+ volume
+ Outputs a <span> element with the following attribute:
+ Attribute Value
+ class metafield-volume
+ The <span> element contains the following child elements:
+ Child element HTML element Attributes
+ The volume value.
+ 
+ If it's a decimal with more than two places, then it'll be formatted to have a precision of two with trailing zeros removed. <span> class="metafield-volume_value"
+ The volume unit. <span> class="metafield-volume_unit"
+ weight
+ Outputs a <span> element with the following attribute:
+ Attribute Value
+ class metafield-weight
+ The <span> element contains the following child elements:
+ Child element HTML element Attributes
+ The weight value.
+ 
+ If it's a decimal with more than two places, then it'll be formatted to have a precision of two with trailing zeros removed. <span> class="metafield-weight_value"
+ The weight unit. <span> class="metafield-weight_unit"
+ Was this section helpful?
+ YesNo
+ metafield_text
+ metafield | metafield_text
+ returns string
+ Generates a text version of the metafield data.
+ Note
+ The metafield_text filter doesn't currently support list metafields other than list.single_line_text_field and list.metaobject_reference.
+ Basic types
+ The following outlines the output for each metafield type:
+ Metafield type Output
+ single_line_text_field The metafield text.
+ multi_line_text_field The metafield text.
+ page_reference The page title.
+ product_reference The product title.
+ collection_reference The collection title.
+ variant_reference The variant title.
+ file_reference The file URL.
+ number_integer The number.
+ number_decimal The number.
+ date The date.
+ date-time The date and time.
+ url The URL.
+ json The JSON.
+ boolean The boolean value.
+ color The color value.
+ weight The weight value and unit.
+ 
+ If the value is a decimal with more than two places, then it'll be formatted to have a precision of two with trailing zeros removed.
+ volume The volume value and unit.
+ 
+ If the value is a decimal with more than two places, then it'll be formatted to have a precision of two with trailing zeros removed.
+ dimension The dimension value and unit.
+ 
+ If the value is a decimal with more than two places, then it'll be formatted to have a precision of two with trailing zeros removed.
+ rating The rating value.
+ list.single_line_text_field The metafield values in sentence format.
+ 
+ For example, if you had the values Toronto, Ottawa, and Vancouver, then the output would be:
+ 
+ Toronto, Ottawa, and Vancouver
+ money The money value, formatted using the store's HTML with currency setting.
+ rich_text_field The rich text value as simple text.
+ Complex types
+ The following metafield types produce different output depending on the provided field parameter:
+ list.metaobject_reference
+ metaobject_reference
+ list.metaobject_reference
+ metafield | metafield_text: field: string
+ Outputs the list of metaobjects in sentence format. The required field parameter specifies which field should be rendered for each metaobject. The field parameter can reference only metafields of type single_line_text_field.
+ metaobject_reference
+ metafield | metafield_text: field: string
+ Outputs the metafield text for the metaobject field specified by the required field parameter. The field parameter can reference only metafields of type single_line_text_field.
+ Was this section helpful?
+ YesNo
+ Money filters
+ SHOPIFY
+ Money filters format prices based on the currency formatting that's defined in the Shopify admin.
+ money
+ number | money
+ returns string
+ Formats a given price based on the store's HTML without currency setting.
+ Was this section helpful?
+ YesNo
+ money_with_currency
+ number | money_with_currency
+ returns string
+ Formats a given price based on the store's HTML with currency setting.
+ Was this section helpful?
+ YesNo
+ money_without_currency
+ number | money_without_currency
+ returns string
+ Formats a given price based on the store's HTML without currency setting, without the currency symbol.
+ Was this section helpful?
+ YesNo
+ money_without_trailing_zeros
+ number | money_without_trailing_zeros
+ returns string
+ Formats a given price based on the store's HTML without currency setting, excluding the decimal separator (either . or ,) and trailing zeros.
+ If the price has a non-zero decimal value, then the output is the same as the money filter.
+ Was this section helpful?
+ YesNo
+ Payment filters
+ SHOPIFY
+ Payment filters output content related to the store’s payment options.
+ payment_button
+ form | payment_button
+ returns string
+ Generates an HTML container to host dynamic checkout buttons for a product. The payment_button filter must be used on the form object within a product form.
+ Note
+ You can't render dynamic checkout buttons through AJAX requests, including those through the Section Rendering API. The dynamic checkout buttons are added by JavaScript included by Shopify through the content_for_header object, which only runs on the initial page load.
+ Was this section helpful?
+ YesNo
+ payment_terms
+ form | payment_terms
+ returns string
+ Generates the HTML for the Shop Pay Installments banner.
+ The payment_terms filter must be used on the form object within a product form or cart form.
+ 1 {% form 'product', product %}
+ 2
+    {{ form | payment_terms }}
+ 3 {% endform %}
+ 1 {% form 'cart', cart %}
+ 2
+    {{ form | payment_terms }}
+ 3 {% endform %}
+ Was this section helpful?
+ YesNo
+ payment_type_img_url
+ string | payment_type_img_url
+ returns string
+ Returns the URL for an SVG image of a given payment type.
+ Was this section helpful?
+ YesNo
+ payment_type_svg_tag
+ string | payment_type_svg_tag
+ returns string
+ Generates an HTML <svg> tag for a given payment type.
+ class
+ type | payment_type_svg_tag: class: string
+ Specify the class attribute of the <svg> tag.
+ Was this section helpful?
+ YesNo
+ Built-in filters
+ String filters
+ String filters modify strings.
+ append
+ string | append: string
+ returns string
+ Adds a given string to the end of a string.
+ Was this section helpful?
+ YesNo
+ base64_decode
+ string | base64_decode
+ returns string
+ Decodes a string in Base64 format.
+ Was this section helpful?
+ YesNo
+ base64_encode
+ string | base64_encode
+ returns string
+ Encodes a string to Base64 format.
+ Was this section helpful?
+ YesNo
+ base64_url_safe_decode
+ string | base64_url_safe_decode
+ returns string
+ Decodes a string in URL-safe Base64 format.
+ Was this section helpful?
+ YesNo
+ base64_url_safe_encode
+ string | base64_url_safe_encode
+ returns string
+ Encodes a string to URL-safe Base64 format.
+ To produce URL-safe Base64, this filter uses - and _ in place of + and /.
+ Was this section helpful?
+ YesNo
+ camelize
+ string | camelize
+ returns string
+ Converts a string to CamelCase.
+ Was this section helpful?
+ YesNo
+ capitalize
+ string | capitalize
+ returns string
+ Capitalizes the first word in a string and downcases the remaining characters.
+ Was this section helpful?
+ YesNo
+ downcase
+ string | downcase
+ returns string
+ Converts a string to all lowercase characters.
+ Was this section helpful?
+ YesNo
+ escape
+ string | escape
+ returns string
+ Escapes special characters in HTML, such as <>, ', and &, and converts characters into escape sequences. The filter doesn't effect characters within the string that don’t have a corresponding escape sequence.".
+ Was this section helpful?
+ YesNo
+ escape_once
+ string | escape_once
+ returns string
+ Escapes a string without changing characters that have already been escaped.
+ Was this section helpful?
+ YesNo
+ handleize
+ string | handleize
+ returns string
+ Converts a string into a handle.
+ Note
+ The handleize filter has an alias of handle.
+ Was this section helpful?
+ YesNo
+ hmac_sha1
+ string | hmac_sha1: string
+ returns string
+ Converts a string into an SHA-1 hash using a hash message authentication code (HMAC).
+ The secret key for the message is supplied as a parameter to the filter.
+ Was this section helpful?
+ YesNo
+ hmac_sha256
+ string | hmac_sha256: string
+ returns string
+ Converts a string into an SHA-256 hash using a hash message authentication code (HMAC).
+ The secret key for the message is supplied as a parameter to the filter.
+ Was this section helpful?
+ YesNo
+ lstrip
+ string | lstrip
+ returns string
+ Strips all whitespace from the left of a string.
+ Was this section helpful?
+ YesNo
+ md5
+ string | md5
+ returns string
+ Converts a string into an MD5 hash.
+ Was this section helpful?
+ YesNo
+ newline_to_br
+ string | newline_to_br
+ returns string
+ Converts newlines (\n) in a string to HTML line breaks (<br>).
+ Was this section helpful?
+ YesNo
+ pluralize
+ number | pluralize: string, string
+ returns string
+ Outputs the singular or plural version of a string based on a given number.
+ Caution
+ The pluralize filter applies English pluralization rules to determine which string to output. You shouldn't use this filter on non-English strings because it could lead to incorrect pluralizations.
+ Was this section helpful?
+ YesNo
+ prepend
+ string | prepend: string
+ returns string
+ Adds a given string to the beginning of a string.
+ Was this section helpful?
+ YesNo
+ remove
+ string | remove: string
+ returns string
+ Removes any instance of a substring inside a string.
+ Was this section helpful?
+ YesNo
+ remove_first
+ string | remove_first: string
+ returns string
+ Removes the first instance of a substring inside a string.
+ Was this section helpful?
+ YesNo
+ remove_last
+ string | remove_last: string
+ returns string
+ Removes the last instance of a substring inside a string.
+ Was this section helpful?
+ YesNo
+ replace
+ string | replace: string, string
+ returns string
+ Replaces any instance of a substring inside a string with a given string.
+ Was this section helpful?
+ YesNo
+ replace_first
+ string | replace_first: string, string
+ returns string
+ Replaces the first instance of a substring inside a string with a given string.
+ Was this section helpful?
+ YesNo
+ replace_last
+ string | replace_last: string, string
+ returns string
+ Replaces the last instance of a substring inside a string with a given string.
+ Was this section helpful?
+ YesNo
+ rstrip
+ string | rstrip
+ returns string
+ Strips all whitespace from the right of a string.
+ Was this section helpful?
+ YesNo
+ sha1
+ string | sha1: string
+ returns string
+ Converts a string into an SHA-1 hash.
+ Was this section helpful?
+ YesNo
+ sha256
+ string | sha256: string
+ returns string
+ Converts a string into an SHA-256 hash.
+ Was this section helpful?
+ YesNo
+ slice
+ string | slice
+ returns string
+ Returns a substring or series of array items, starting at a given 0-based index.
+ By default, the substring has a length of one character, and the array series has one array item. However, you can provide a second parameter to specify the number of characters or array items.
+ Negative index
+ You can supply a negative index which will count from the end of the string.
+ Was this section helpful?
+ YesNo
+ split
+ string | split: string
+ returns array of string
+ Splits a string into an array of substrings based on a given separator.
+ Was this section helpful?
+ YesNo
+ strip
+ string | strip
+ returns string
+ Strips all whitespace from the left and right of a string.
+ Was this section helpful?
+ YesNo
+ strip_html
+ string | strip_html
+ returns string
+ Strips all HTML tags from a string.
+ Was this section helpful?
+ YesNo
+ strip_newlines
+ string | strip_newlines
+ returns string
+ Strips all newline characters (line breaks) from a string.
+ Was this section helpful?
+ YesNo
+ truncate
+ string | truncate: number
+ returns string
+ Truncates a string down to a given number of characters.
+ If the specified number of characters is less than the length of the string, then an ellipsis (...) is appended to the truncated string. The ellipsis is included in the character count of the truncated string.
+ Specify a custom ellipsis
+ string | truncate: number, string
+ You can provide a second parameter to specify a custom ellipsis. If you don't want an ellipsis, then you can supply an empty string.
+ Was this section helpful?
+ YesNo
+ truncatewords
+ string | truncatewords: number
+ returns string
+ Truncates a string down to a given number of words.
+ If the specified number of words is less than the number of words in the string, then an ellipsis (...) is appended to the truncated string.
+ Caution
+ HTML tags are treated as words, so you should strip any HTML from truncated content. If you don't strip HTML, then closing HTML tags can be removed, which can result in unexpected behavior.
+ Specify a custom ellipsis
+ string | truncatewords: number, string
+ You can provide a second parameter to specify a custom ellipsis. If you don't want an ellipsis, then you can supply an empty string.
+ Was this section helpful?
+ YesNo
+ upcase
+ string | upcase
+ returns string
+ Converts a string to all uppercase characters.
+ Was this section helpful?
+ YesNo
+ url_decode
+ string | url_decode
+ returns string
+ Decodes any percent-encoded characters in a string.
+ Was this section helpful?
+ YesNo
+ url_encode
+ string | url_encode
+ returns string
+ Converts any URL-unsafe characters in a string to the percent-encoded equivalent.
+ Note
+ Spaces are converted to a + character, instead of a percent-encoded character.
+ Was this section helpful?
+ YesNo
+ url_escape
+ string | url_escape
+ returns string
+ Escapes any URL-unsafe characters in a string.
+ Was this section helpful?
+ YesNo
+ url_param_escape
+ string | url_param_escape
+ returns string
+ Escapes any characters in a string that are unsafe for URL parameters.
+ The url_param_escape filter escapes the same characters as url_escape, with the addition of &.
+ Was this section helpful?
+ YesNo
+ Tag filters
+ SHOPIFY
+ Tag filters output URLs that enable customers to view, add, and remove tags in the context of collections, products, blogs, articles, customers, and orders.
+ link_to_add_tag
+ string | link_to_add_tag
+ returns string
+ Generates an HTML <a> tag with an href attribute linking to the current blog or collection, filtered to show only articles or products that have a given tag, as well as any currently active tags.
+ Tip
+ To learn more about filtering by tag, refer to Filter articles by tag or Filter collections by tag.
+ Was this section helpful?
+ YesNo
+ link_to_remove_tag
+ string | link_to_remove_tag
+ returns string
+ Generates an HTML <a> tag with an href attribute linking to the current blog or collection, filtered to show only articles or products that have any currently active tags, except the provided tag.
+ Tip
+ To learn more about filtering by tag, refer to Filter articles by tag or Filter collections by tag.
+ Was this section helpful?
+ YesNo
+ link_to_tag
+ string | link_to_tag
+ returns string
+ Generates an HTML <a> tag with an href attribute linking to the current blog or collection, filtered to show only articles or products that have a given tag.
+ Tip
+ To learn more about filtering by tag, refer to Filter articles by tag or Filter collections by tag.
+ Was this section helpful?
+ YesNo
+ Updates & News

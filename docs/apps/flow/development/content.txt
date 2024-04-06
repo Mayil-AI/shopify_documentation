@@ -1,0 +1,45 @@
+Billing
+ App Store
+ Development for Shopify Flow
+ Note
+ Building new extensions in the Partner Dashboard is being deprecated. If you are creating new extensions, then please use the Shopify CLI.
+ Flow in the Shopify CLI
+ Development for Flow is done in the Shopify CLI. Our guides for creating triggers and actions assume basic knowledge of the Shopify CLI.
+ What you can create
+ You can create triggers and actions for users.
+ To use the triggers and actions that you create, users need to have both your app and Shopify Flow installed. Users can create workflows with any combination of triggers and actions from Shopify or apps that they have installed that also have Flow tasks.
+ Test a Flow extension
+ You have two options for testing a Flow extension, depending on your needs. You can test the draft version of your tasks by running the dev command. Draft versions of your task can be identified by the "draft" badge. See the guide for triggers or actions for more on testing with drafts. You can also test the Flow extension by deploying it to a test app.
+ Making changes to triggers and actions
+ Changes to triggers or actions can be breaking or non-breaking. If the change that you want to make is a breaking change, then you should create a new trigger or action. Otherwise, you can make changes directly to your existing trigger or action.
+ Non-breaking changes
+ You can make the following changes to a trigger or action and save it without affecting merchant workflows:
+ Change a trigger or action title or description.
+ Change the URL that Shopify Flow uses to send the contents of the action to your app. This change won’t break the action but you'll need to support both the previous and the updated URL because existing activated workflows will still use the previous version.
+ Change an action's label or help text.
+ Change an action's required field to optional.
+ Handling breaking changes
+ The following changes are considered breaking:
+ Rename or delete a field.
+ Change an action field from optional to required, or add a new required action field.
+ Delete a trigger or action.
+ When you make a breaking change to a trigger, workflows that use the changed trigger will fail. In the case of the trigger being deleted*, any workflows that use the trigger won't initiate (the flowTriggerReceive mutation will fail). When you make a breaking change to an action, workflows that use the changed action run, but the action fails.
+ Update a task to avoid breaking changes
+ Before you introduce a breaking change to your trigger or action, follow these steps to avoid disrupting merchant workflows:
+ Create a new trigger or action.
+ If your trigger or action is used in a workflow template, then notify flow-connectors-dev@shopify.com about the change.
+ Notify your existing merchants and help them migrate to the new trigger or action.
+ After your merchants have stopped using the old trigger or action, you can delete it.
+ Next steps
+ Connect your app to Shopify Flow so that events that occur in your app can trigger workflows.
+ Connect your app to Shopify Flow so that your app receives data and information when a workflow action runs.
+ Learn how to receive lifecycle events from Shopify Flow about the stores that are using your triggers in enabled workflows.
+ Learn how to use app extensions to surface the functionality of your app where and when users need it most.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Flow in the Shopify CLI
+ What you can create
+ Test a Flow extension
+ Making changes to triggers and actions
+ Next steps

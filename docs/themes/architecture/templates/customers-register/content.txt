@@ -1,0 +1,90 @@
+customers/register
+ The customers/register template renders the customer register page, which hosts the form for customer account creation.
+ Tip
+ Refer to the customers/register template and its main section in Dawn for an example implementation.
+ Location
+ The customers/register template is located in the templates > customers directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   └── customers
+ 5
+      |     ├── register.json
+ You should include the customer register form in your customers/register template or a section inside of the template.
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ The customer register form
+ The customer register form can be added with the Liquid form tag and accompanying 'create_customer' parameter. Within the form tag block, you need to include the following:
+ Input type name
+ First name text customer[first_name]
+ Last name text customer[last_name]
+ Email email customer[email]
+ Password password customer[password]
+ For example:
+ 1 {% form 'create_customer' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="first-name">
+ 5
+      <label for="first-name">First name</label>
+ 6
+      <input type="text" name="customer[first_name]">
+ 7
+    </div>
+ 8
+ 9
+    <div class="last-name">
+ 10
+      <label for="last-name">Last name</label>
+ 11
+      <input type="text" name="customer[last_name]">
+ 12
+    </div>
+ 13
+ 14
+    <div class="email">
+ 15
+      <label for="email">Email</label>
+ 16
+      <input type="email" name="customer[email]">
+ 17
+    </div>
+ 18
+ 19
+    <div class="password">
+ 20
+      <label for="password">Password</label>
+ 21
+      <input type="password" name="customer[password]">
+ 22
+    </div>
+ 23
+ 24
+    <div class="submit">
+ 25
+      <input type="submit" value="Create">
+ 26
+    </div>
+ 27 {% endform %}
+ Usage
+ When working with the customers/register template, you should familiarize yourself with redirecting customers on account creation.
+ Redirect customers on account creation
+ By default, when a customer creates an account, they're directed to the home page. However, you can specify a page to direct customers to using the return_to parameter of the Liquid form tag.
+ For example, the following directs customers to the all-products collection page:
+ 1 {% form 'create_customer', return_to: routes.all_products_collection_url %}
+ 2
+    <!-- form content -->
+ 3 {% endform %}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Content
+ Usage
+ Updates & News
+ Developer changelog

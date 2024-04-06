@@ -1,0 +1,80 @@
+Get approved
+ Build a payments app
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale
+ Payments apps
+ Payments apps are apps that integrate with the Shopify admin to provide customized payment processing services for merchants. Only approved Partners can build payments apps on Shopify's Payments Platform.
+ Payments apps provide merchant stores with the following features:
+ provide additional payment methods
+ perform specific operations on payment methods
+ control payment security for buyers
+ automate payment services, such as reoccurring payments
+ decide if they want to capture funds at the time of purchase or at the time of fulfillment. For more information, refer to Payment authorization
+ Note
+ If you're a Shopify Plus merchant who is interested in building a custom payment app for your store, then contact your Merchant Success Manager.
+ How it works
+ You can create a payments app to provide customized payment processing services for merchants, and install your payments app on a development store to test your app. Only approved Partners can build payments apps on Shopify's Payments Platform.
+ When you publish your payments app, your app becomes available, and merchants can install and use the app in their Shopify stores.
+ How a merchant installs a payments app
+ The following diagram describes the different phases of the onboarding cycle for payments apps:
+ The payments app is installed by merchants directly through an installation link that's shared by the payments developer, or through Shopify’s public list of payment gateways in the Shopify admin.
+ The merchant installs the app on the OAuth grant page.
+ The merchant is redirected to the payments app page to configure the payments app settings. Until configuration is complete, a banner indicates that the provider isn't ready to process payments.
+ The merchant configures the payments app.
+ The app marks itself as ready by calling the Shopify API.
+ Shopify enables the app to be activated by the merchant in the Shopify admin.
+ The merchant activates the app.
+ The merchant deactivates the legacy payment gateway to avoid duplicate payment methods during checkout, if applicable.
+ Build options
+ There are two types of Payments apps:
+ Offsite payment apps: Redirect customers to an app-hosted website to complete the payment process. These types of apps allow the merchant to offer additional payment methods for their store.
+ Credit card payment apps: Allow customers to complete the payment process directly on the merchant's website. These types of apps allow you to introduce additional features into the payments process, such as 3-D Secure authentication.
+ The choice between the two types of payment apps depends on the specific needs and preferences of the merchant and their customers. Some merchants might choose to use both types of payment apps to offer their customers a wider range of payment options.
+ Considerations
+ The following table introduces the key considerations for Partners that are building payments apps.
+ Consideration Description
+ Minimum product requirements All payments apps must adhere to technical requirements and provide a high-quality merchant experience.
+ Approval process To make sure merchants can present a positive buyer experience, any app extension configurations must be approved by Shopify. You need to have an approved and published configuration before your payments app can be installed on a Shopify store.
+ 
+ For more information on requirements for payments apps, refer to the Payment Apps requirements.
+ Making your app discoverable For a payments app to appear on Shopify’s public list of payment gateways, the payments app must meet certain criteria.
+ 
+ After the criteria are met, Payments Partners can apply to Shopify to have their payments app included in the list of payment gateways in the Shopify admin. Shopify reviews and determines whether the payments app is approved for public listing.
+ Payments Partner requirements Payments apps must adhere to all Payments Partner requirements, including revenue share agreements.
+ Supported features
+ Payments apps support the following payments methods and operations.
+ Supported payment methods
+ Merchants can use payments apps to redirect customers to an app-hosted page for payment processing. The following payment methods are supported:
+ Wallets (refer to Prohibited actions for current limitations)
+ Buy now pay later, installments, and buyer financing
+ Cards
+ Bank transfers and online banking
+ Cryptocurrency
+ Cash and ATM
+ Supported payment operations
+ The payment methods support the following operations:
+ Charge: Partners can collect a buyer’s payment information and charge them for their purchase.
+ Refund: Merchants can trigger a refund from their Shopify admin.
+ Authorize: Merchants can place a hold that can be charged at a later time.
+ Capture: Merchants can charge the amount previously specified using an authorization.
+ Void: Merchants can cancel a previously authorized amount.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about payments apps.
+ Payments Apps API
+ Consult the Payments Apps API reference to learn more about accessing your payments app's configuration data.
+ Requirements for payments apps
+ Learn about the requirements for payments apps in the Shopify App Store.
+ Next steps
+ Learn about the payments app requirements
+ Learn about the payments app review process
+ Build an offsite payments app
+ Build a credit card payments app
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Build options
+ Considerations
+ Supported features
+ Developer tools and resources

@@ -1,0 +1,175 @@
+Product subscription app extensions
+ Shopify API search syntax
+ This page provides information on the syntax for searching text fields.
+ The same search query syntax is used across Shopify as an interface to search functionality. This includes the storefront, admin, mobile apps, customer group queries, Admin API, and Storefront API. For the APIs, the specific resources that can be queried are defined in the reference documentation.
+ Note
+ The Admin API supports a /search.json path for the Customer and GiftCard resources.
+ Search query grammar overview
+ A string query is a text search made up of terms, connectives, modifiers, and comparators. The search grammar rules defined here can be built into larger structures as defined by the search query syntax.
+ The search grammar is expressed similarly to EBNF and uses the following baseline terminal symbols:
+ Item Description
+ whitespace Any sequence of space, tab, or newline characters.
+ name Any sequence of non-whitespace, non-special characters. For more information, refer to Special characters.
+ value Any name, or any quoted string (single or double quotes are both permitted). Date values must be a string surrounded by quotes.
+ Query
+ Query = Term { [ whitespace Connective ] whitespace Term }
+ A query is one or more terms separated by whitespace and optionally by single connectives. A query may have optional leading and trailing whitespace.
+ query=John Smith
+ Connectives
+ Connective = "AND" | "OR"
+ When a connective is not specified between two terms, AND is implied.
+ query=state:enabled OR state:disabled
+ Terms
+ Term = [ Modifier ] ( "(" Query ")" | [ name Comparator ] value )
+ A term consists of an optional modifier, followed either by a subquery (enclosed in parentheses) or a value with an optional name-and-comparator.
+ query=-first_name:Bob AND orders_count:>3 orders_count:<=4
+ Modifiers
+ Modifier = "-" | "NOT" whitespace
+ Supported modifiers are - with no following whitespace, or NOT followed by whitespace. Both mean the same thing.
+ query=-first_name:Bob
+ query=NOT first_name:Bob
+ Comparators
+ Comparator = ":" | ":<" | ":>" | ":<=" | ":>="
+ The following comparators are supported for search queries:
+ :: equality
+ :<: less-than
+ :>: greater-than
+ :<=: less-than-or-equal-to
+ :>=: greater-than-or-equal-to
+ Note
+ Equality (:) depends on how a field is indexed.
+ For numeric fields, : represents equality.
+ For tokenized fields, equality exists if the term is found anywhere in the field.
+ For non-tokenized fields, the search query string must match the searched field exactly.
+ Special characters
+ Special characters serve specific functions in search query syntax and need to be escaped with a backslash. For example, : \ ( ).
+ Names can include the characters -, ', and " but can't start with them. Names can include escaped characters using backslash escaping.
+ Search query syntax
+ Shopify search query syntax is based on the defined grammar and enables the following search behavior. The following table describes the different types of search queries and their syntax:
+ Type Description Example syntax Example explained
+ Term search A case-insensitive search of all the fields in a document. query=Bob Norman A case-insensitive search for both "bob" AND "norman".
+ Field search A search that applies to terms in specific fields.
+ 
+ If you specify an invalid field, then the query is ignored and all results are returned. query=first_name:Bob age:27 A search for "Bob" in the first_name field AND "27" in the age field.
+ 
+ The value must immediately follow the field with no whitespace. first_name: Bob searches for the terms "first_name" and "Bob".
+ Range search A search that specifies a range of values to search against. Supported operators: >, >=, < and <=. query=orders_count:>16 orders_count:<=30 A search that matches documents where the orders_count field is greater than 16 and less than or equal to 30.
+ 
+ Equality (:) is specified by orders_count:16, not orders_count:=16. orders_count:=16 searches for the term "=16" in the orders_count field.
+ NOT query A search that excludes documents that include the specified value.
+ 
+ The NOT operator must be capitalized to execute a NOT query, and only applies to the specified space-separated term or query.
+ 
+ - must precede the field, value, or subquery. For example, -field:value -value -(subquery).
+ query=-bob
+ query=NOT bob
+ Searches that exclude documents that include the term "bob".
+ Boolean operators A search that allow terms to be combined through logic operators.
+ query=bob OR norman AND Shopify
+ query=bob OR norman Shopify
+ query=bob OR norman AND Shopify: Searches for documents that must have the term "Shopify" and have at least one of the terms "bob" or "norman".
+ query=bob OR norman Shopify: Equivalent to the query above, since OR has a higher operator precedence than AND.
+ An explicit AND operator isn't needed between "bob OR norman" and "Shopify" because the AND is the default boolean operator between terms or queries.
+ Grouping A search using parentheses to group clauses to form subqueries. query=state:disabled AND ("sale shopper" OR VIP) A search for disabled customers with "sale shopper" or "VIP" tags.
+ Phrase query A search for a group of words surrounded by double quotes. query=first_name:"Bob Norman" A search for the term "bob" followed immediately by the term "norman" in the first_name field. Phrase queries can be used without the query field. For example, "Bob Norman".
+ Prefix query A search that matches documents containing terms that begin with a specified set of characters. Shopify supports * for wildcard matching. query=norm* A search for all the terms that begin with the prefix "norm", such as "norman".
+ Exists query A search that matches documents with a non-null value in the specified field. Shopify supports * for wildcard matching. query=published_at:* A search for non-null values in the published_at field.
+ 
+ The query can be combined with a NOT query to find fields missing a value. For example, -published_at:*.
+ Examples
+ This section provides examples of how you can use the Shopify API search syntax.
+ Note
+ The examples below use function arguments that don't exist for your store. You need to edit the function arguments used in the examples below.
+ Using created_at
+ List 5 products that were added to a store on October 21st, 2020.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 {
+ 2
+    products(first: 5, query: "created_at:'2020-10-21T23:39:20Z'" ) {
+ 3
+      edges {
+          title
+ 7
+          createdAt
+ 8
+        }
+ Using title
+ List 5 products with the name "Caramel Apple".
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 {
+ 2
+    products(first: 5, query: "title:Caramel Apple") {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+          title
+ 7
+          createdAt
+ 8
+        }
+ 9
+      }
+ 10
+    }
+ 11 }
+ Note
+ query: "title:Caramel Apple" is equivalent to query: "title: \"Caramel Apple\"" (phrase query).
+ List 10 products that include terms that begin with the prefix head, such as headphones.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 {
+ 2
+    shop {
+ 3
+      id
+ 4
+      name
+ 5
+    }
+ 6
+    products(first: 10, query:"title:head*") {
+ 7
+      edges {
+ 8
+        node {
+ 9
+          productType
+ 10
+          title
+ 11
+        }
+ 12
+      }
+ 13
+    }
+ 14 }
+ Using OR and a range
+ List 5 products with the name "Caramel Apple", or products that have an inventory of over 500 items and less than or equal to 1000 items.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 {
+ 2
+    products(first: 5, query: "(title:Caramel Apple) OR (inventory_total:>500 inventory_total:<=1000)" ) {
+ 3
+ 6
+          title
+ 7
+          createdAt
+ 8
+          totalInventory
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Search query grammar overview
+ Search query syntax
+ Examples
+ Updates & News

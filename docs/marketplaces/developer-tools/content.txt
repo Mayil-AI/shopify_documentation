@@ -1,0 +1,25 @@
+Overview
+ Getting started
+ Developer tools
+ Overview
+ Channels UI
+ Shop discovery
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Marketplace developer tools
+ Marketplace developer tools exist in the Partner Dashboard to support developers configuring a marketplace. The Marketplace tools in the Partner Dashboard offer a streamlined workflow and overview of resources, and the Channels UI provides components allowing developers to create a channel for onboarding merchants to the marketplace in the Shopify admin.
+ Requirements
+ You've created a Partner account and a development store.
+ You understand how apps fit into Shopify.
+ Channels UI
+ Shopify Channels UI offers a set of React components for use in your app in addition to those provided by Shopify Polaris. This is a great option if you are building your app in React and want to follow Shopify's channel best practices.
+ Refer to the Getting started guide in GitHub for more information on how to build a simple marketplace channel app experience.
+ Marketplace reports
+ From your marketplace's app overview, you can view the Merchant Growth report to follow merchant growth and understand your marketplace's performance. The report shows the number of merchants that have onboarded to the marketplace.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

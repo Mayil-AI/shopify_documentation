@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ WeightUnit enum
+ 2024-04 latest
+ Units of measurement for weight.
+ Values
+ GRAMS
+ Metric system unit of mass.
+ KILOGRAMS
+ 1 kilogram equals 1000 grams.
+ OUNCES
+ Imperial system unit of mass.
+ POUNDS
+ 1 pound equals 16 ounces.
+ Types that return WeightUnit
+ CustomProduct.weightUnit
+ ProductVariant.weightUnit
+ Was this page helpful?
+ YesNo

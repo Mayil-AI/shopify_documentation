@@ -1,0 +1,285 @@
+Customer engagement
+ Markets
+ Overview
+ Support multiple currencies and languages
+ Detect and set a visitor’s optimal localization
+ Country and language selector UX guidelines
+ Site navigation and search
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Support multiple currencies and languages
+ Merchants can enable selling in multiple currencies with Shopify Payments, and multiple languages. This means that customers can browse the shop, and checkout, in their preferred currency and/or language.
+ In this tutorial, you'll learn how to support multiple currencies and languages in your theme through country and language selectors.
+ You should also consider the following when dealing with multiple currencies and languages:
+ Locale-aware URLs
+ Search engine optimization
+ Resources
+ To support multiple currencies and languages in your theme, you'll use the following:
+ The form object
+ The localization object
+ Implementing country and language selectors
+ If a merchant has enabled multiple currencies and/or languages, then you should give customers the ability to select their preference. You can build the following components to give customers this ability:
+ A country selector
+ A language selector
+ Shopify Plus
+ For merchants on the Shopify Plus plan, Shopify will use geolocation to detect where customers are located and automatically select the most relevant country from the options that the merchant has enabled.
+ You might include a country and/or language selector in your header or footer, or inside of a navigation drawer. For more detailed placement recommendations, and to learn about best practices for styling country and language selectors, refer to the UX guidelines.
+ The country selector
+ You can build a country selector to allow customers to manually choose their preferred currency. If the currently selected language is not supported by the selected country, it will be updated to the default language for that country.
+ Tip
+ For accessibility purposes, you should create a custom component for your selector. Native select elements can make navigation difficult for screen readers, and can lead to unexpected behavior for the user.
+ The selector needs to be placed inside a localization form. This form can be created using the Liquid form tag and the 'localization' parameter. The selector also needs to contain an input with the attribute name="country_code", whose value will be the selected country.
+ The shop's enabled countries are accessible through the available_countries attribute of the localization object, and the currently selected country is accessible through the country attribute.
+ Note
+ You should only output a country selector if there's more than one available country.
+ The following example includes a button and a popover containing each country option:
+ Country selector
+ 1 {% if localization.available_countries.size > 1 %}
+ 2
+    <localization-form>
+ 3
+      {% form 'localization' %}
+ 4
+        <div class="disclosure">
+ 5
+          <button type="button" class="disclosure__button" aria-expanded="false" aria-controls="CountryList">
+ 6
+            {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})
+ 7
+ 8
+            <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+ 9
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+ 10
+            </svg>
+ 11
+          </button>
+ 12
+ 13
+          <ul id="CountryList" role="list" class="disclosure__list" hidden>
+ 14
+            {% for country in localization.available_countries %}
+ 15
+              <li class="disclosure__item" tabindex="-1">
+ 16
+                <a href="#"{% if country.iso_code == localization.country.iso_code %} aria-current="true"{% endif %} data-value="{{ country.iso_code }}">
+ 17
+                  {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+ 18
+                </a>
+ 19
+              </li>
+ 20
+            {% endfor %}
+ 21
+          </ul>
+ 22
+ 23
+          <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}">
+ 24
+        </div>
+ 25
+      {% endform %}
+ 26
+    </localization-form>
+ 27 {% endif %}
+ For an example of JavaScript that manages the visibility of the option list and submits the form on selection, refer to JavaScript submission of the localization form.
+ Note
+ For a more in-depth example, you can refer to Dawn's implementation in the footer.liquid section.
+ The language selector
+ You can build a language selector to allow customers to manually choose their preferred language.
+ Tip
+ For accessibility purposes, you should create a custom component for your selector. Native select elements can make navigation difficult for screen readers, and can lead to unexpected behavior for the user.
+ The selector needs to be placed inside a localization form. This form can be created using the Liquid form tag and the 'localization' parameter. The selector also needs to contain an input with the attribute name="language_code", whose value will be the selected language.
+ The available languages are accessible through the available_languages attribute of the localization object, and the currently selected language is accessible through the language attribute.
+ Note
+ You should only output a country selector if there's more than one available language.
+ The following example includes a button and a popover containing each language option:
+ Language selector
+ 1 {% if localization.available_languages.size > 1 %}
+ 2
+    <localization-form>
+ 3
+      {% form 'localization' %}
+ 4
+        <div class="disclosure">
+ 5
+          <button type="button" class="disclosure__button" aria-expanded="false" aria-controls="LanguageList">
+ 6
+            {{ localization.language.endonym_name | capitalize }}
+ 7
+ 8
+            <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+ 9
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+ 10
+            </svg>
+ 11
+          </button>
+ 12
+ 13
+          <ul id="LanguageList" role="list" class="disclosure__list" hidden>
+ 14
+            {% for language in localization.available_languages %}
+ 15
+              <li class="disclosure__item" tabindex="-1">
+ 16
+                <a href="#"{% if language.iso_code == localization.language.iso_code %} aria-current="true"{% endif %} hreflang="{{ language.iso_code }}" lang="{{ language.iso_code }}" data-value="{{ language.iso_code }}">
+ 17
+                  {{ language.endonym_name | capitalize }}
+ 18
+                </a>
+ 19
+              </li>
+ 20
+            {% endfor %}
+ 21
+          </ul>
+ 22
+ 23
+          <input type="hidden" name="language_code" value="{{ localization.language.iso_code }}">
+ 24
+        </div>
+ 25
+      {% endform %}
+ 26
+    </localization-form>
+ 27 {% endif %}
+ For an example of JavaScript that manages the visibility of the option list and submits the form on selection, refer to JavaScript submission of the localization form.
+ Note
+ For a more in-depth example, you can refer to Dawn's implementation in the footer.liquid section.
+ JavaScript submission of the localization form
+ Because your country or language selector is a custom element and there's no submit button included in the form, you need to submit the form through JavaScript.
+ The following example is based on the previous country and language selector examples:
+ Localization form JavaScript
+ 1 class LocalizationForm extends HTMLElement {
+ 2
+    constructor() {
+ 3
+      super();
+ 4
+      this.elements = {
+ 5
+        input: this.querySelector('input[name="language_code"], input[name="country_code"]'),
+ 6
+        button: this.querySelector('button'),
+ 7
+        panel: this.querySelector('ul'),
+ 8
+      };
+ 9
+      this.elements.button.addEventListener('click', this.openSelector.bind(this));
+ 10
+      this.elements.button.addEventListener('focusout', this.closeSelector.bind(this));
+ 11
+      this.addEventListener('keyup', this.onContainerKeyUp.bind(this));
+ 12
+ 13
+      this.querySelectorAll('a').forEach(item => item.addEventListener('click', this.onItemClick.bind(this)));
+ 14
+    }
+ 15
+ 16
+    hidePanel() {
+ 17
+      this.elements.button.setAttribute('aria-expanded', 'false');
+ 18
+      this.elements.panel.setAttribute('hidden', true);
+ 19
+    }
+ 20
+ 21
+    onContainerKeyUp(event) {
+ 22
+      if (event.code.toUpperCase() !== 'ESCAPE') return;
+ 23
+ 24
+      this.hidePanel();
+ 25
+      this.elements.button.focus();
+ 26
+    }
+ 27
+ 28
+    onItemClick(event) {
+ 29
+      event.preventDefault();
+ 30
+      const form = this.querySelector('form');
+ 31
+      this.elements.input.value = event.currentTarget.dataset.value;
+ 32
+      if (form) form.submit();
+ 33
+    }
+ 34
+ 35
+    openSelector() {
+ 36
+      this.elements.button.focus();
+ 37
+      this.elements.panel.toggleAttribute('hidden');
+ 38
+      this.elements.button.setAttribute('aria-expanded', (this.elements.button.getAttribute('aria-expanded') === 'false').toString());
+ 39
+    }
+ 40
+ 41
+    closeSelector(event) {
+ 42
+      const shouldClose = event.relatedTarget && event.relatedTarget.nodeName === 'BUTTON';
+ 43
+      if (event.relatedTarget === null || shouldClose) {
+ 44
+        this.hidePanel();
+ 45
+      }
+ 46
+    }
+ 47 }
+ 48
+ 49 customElements.define('localization-form', LocalizationForm);
+ Note
+ Your default solution should be a custom element that uses JavaScript to help with accessibility, however, you should also include a fallback in case JavaScript is disabled.
+ Locale-aware URLs
+ Stores can have dynamic URLs generated for them when they sell internationally or in multiple languages.
+ When an additional locale (language) is published on a domain, Shopify automatically creates a URL path for it. For example, if a shop's primary URL is shop.com, and a french (fr) locale is published on that domain, then the URL shop.com/fr is automatically created.
+ When a merchant creates a new market, Shopify creates a URL path for that market. For example, if a shop's primary market is the United States and primary locale is English on shop.com, when a Canada market is created, then the URL shop.com/en-ca is created.
+ Given these possible dynamic changes in URL structure, you should avoid hardcoding URLs. If you’ve hardcoded a URL like /cart in a link or Ajax request, then visitors browsing in another language or market context will be forced back to the domain defaults. This means they may see the wrong language or currency. Instead, use the following instructions to build dynamic URLs in Liquid or in JavaScript.
+ In Liquid
+ Use one of the following approaches to build dynamic URLs with Liquid:
+ The url attribute of any applicable Liquid objects
+ The routes object
+ If a merchant has English and French locales, then the cart URL could be /cart or /fr/cart, respectively. The following example shows how to link to the cart page in the currently selected locale.
+ 1 <a href="{{ routes.cart_url }}">{{ "templates.cart.go_to_cart" | t }}</a>
+ In JavaScript
+ You can build dynamic URLs in JavaScript by basing them off of the dynamic root route accessible on the window object, window.Shopify.routes.root. This value will always end in a /. For instance, if a merchant has a Canadian market in addition to their primary, window.Shopify.routes.root could return "/en-ca/" when a visitor is accessing that market’s subfolder.
+ The following example shows how to make an Ajax request to the cart while preserving the current market’s pricing:
+ 1 fetch(window.Shopify.routes.root + 'cart.js')
+ 2
+    .then(response => response.json())
+ 3
+    .then(data => showCartContents(data));
+ Search engine optimization
+ In addition to providing options for customers to select a country and/or language, you also need to ensure that search engines return localized content and prices for customers.
+ Shopify automatically includes hreflang tags through the content_for_header object. You can also return localized prices by including, or extending, structured data in your theme.
+ Note
+ Any information on this page around search engines and SEO is for general information only. If you have issues related to search results and currency, then contact an SEO expert. You can find Partners with SEO expertise in Shopify's Partner Directory.
+ Considerations for structured data
+ When outputting structured data for products, you need to ensure that the priceCurrency property is set to reflect the cart currency, rather than the shop's currency.
+ For example:
+ 1 priceCurrency: {{ cart.currency.iso_code }},
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing country and language selectors
+ The country selector
+ The language selector
+ JavaScript submission of the localization form
+ Locale-aware URLs
+ Search engine optimization
+ Updates & News

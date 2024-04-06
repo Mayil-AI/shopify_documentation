@@ -1,0 +1,65 @@
+Product subscription app extensions
+ FormLayout
+ Use a form layout to arrange fields within a form using standard spacing. Every nested field or group will stack along the block axis. If you want visually group fields nested in a form layout, use a form layout group.
+ Example
+ JS
+ React
+ 1 import {
+ 2
+    extend,
+ 3
+    FormLayout,
+ 4
+    FormLayoutGroup,
+ 5
+    TextField,
+ 6 } from '@shopify/post-purchase-ui-extensions';
+ 7
+ 8 extend('Checkout::PostPurchase::Render', (root) => {
+ 9
+    const formLayout = root.createComponent(FormLayout, undefined, [
+ 10
+      root.createComponent(TextField, {
+ 11
+        label: 'Address',
+ 12
+        name: 'address',
+ 13
+        id: 'address',
+ 14
+      }),
+ 15
+      root.createComponent(FormLayoutGroup, undefined, [
+ 16
+        root.createComponent(TextField, {
+ 17
+          label: 'City',
+ 18
+          name: 'city',
+ 19
+          id: 'city',
+ 20
+        }),
+ 21
+        root.createComponent(TextField, {
+ 22
+          label: 'Postal code',
+ 23
+          name: 'postal',
+ 24
+          id: 'postal',
+ 25
+        }),
+ 26
+      ]),
+ 27
+    ]);
+ 28
+ 29
+    root.appendChild(formLayout);
+ 30 });
+ FormLayoutGroup
+ Use a form layout group to group fields within a form layout. Grouped fields will appear inline with one another when possible, with each field taking up equal spacing.
+ Was this page helpful?
+ YesNo
+ Updates & News

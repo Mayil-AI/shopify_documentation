@@ -1,0 +1,1010 @@
+NFT distribution
+ Tokengating
+ Overview
+ Build a tokengating app
+ Overview
+ Create gates
+ Show gates
+ Apply discount
+ Build a tokengated storefront
+ UX guidelines
+ App Store
+ Show gates on the storefront using a theme app extension
+ This is the second part of a tutorial series to build a tokengating app. You need to complete Create gates in admin using Gates API before starting this tutorial.
+ Now that you've created the admin app to configure gates, you need to show the gates in the online store, verify that the customer is the owner of the wallet, and pass the gate context to checkout to inform a function whether the gate has been unlocked.
+ Note
+ If you're using a custom storefront built using [Hydrogen]((/docs/custom-storefronts/hydrogen) or the Headless channel, then you need to follow the build a tokengated storefront tutorial series instead of this tutorial.
+ What you'll learn
+ Show gates in the Online Store using a theme app extension, which includes a React app to wrap the tokengate and connect wallet components, and includes a Liquid object to load the gate information
+ Enable wallet connection on the storefront and validate the wallet signature
+ Create and store an HMAC that we'll need later to inform our Shopify Function
+ Step 1: Create the theme app extension
+ Theme app extensions allow merchants to add custom elements to their themes without having to interact with Liquid templates or code.
+ Navigate to the root directory of the app.
+ Run the following command to start creating the extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template theme_app_extension --name tokengate
+ For more details on finishing this process, review Getting started with theme app extensions.
+ After this step is complete, you should have a new extensions directory.
+ Step 2: Set up the theme app extension app block to host the React app
+ To use the blockchain components, you'll need a React app. Create a root container for the app in an app-block.liquid file. This will host the React app.
+ To be compatible with this build method, you need to use an inline script tag with type=module.
+ Developer early access
+ The gated field is available to Partners by request for testing purposes. To get access, contact Partner Support with the development .myshopify.com store domain that you'd like to test with.
+ In the /extensions/tokengate/blocks directory, create a new file named app-block.liquid.
+ Add the following code:
+ /extensions/tokengate/blocks/app-block.liquid
+ 1 <div
+ 2
+    id="tokengating-example-app"
+ 3
+    data-product_id="{{ product.id }}"
+ 4
+    data-product_gated="{{ product.gated? }}">
+ 5
+    Tokengating example app block placeholder
+ 6 </div>
+ 7 <script async type="module" src="{{ "index.js" | asset_url }}"></script>
+ 8 <link rel="stylesheet" href="{{ "index.css" | asset_url }}">
+ 9
+ 10 {% schema %}
+ 11
+    {
+ 12
+      "name": "Tokengate",
+ 13
+      "target": "section",
+ 14
+      "templates": ["product"],
+ 15
+      "settings": []
+ 16
+    }
+ 17 {% endschema %}
+ Step 3: Create a React app
+ Set up a source directory. Code in the source directory is bundled to be used with the theme app extension.
+ Create a new directory at /extensions/tokengate-src.
+ In the /extensions/tokengate-src directory, create a new file named package.json.
+ Add the following code:
+ /extensions/tokengate-src/package.json
+ 1 {
+ 2
+    "name": "tokengate",
+ 3
+    "version": "0.0.0",
+ 4
+    "description": "",
+ 5
+    "scripts": {
+ 6
+      "build": "vite build"
+ 7
+    },
+ 8
+    "dependencies": {
+ 9
+      "@shopify/connect-wallet": "^3.0.1",
+ 10
+      "@shopify/gate-context-client": "^1.0.1",
+ 11
+      "@shopify/tokengate": "^1.1.2",
+ 12
+      "react": "^18.2.0",
+ 13
+      "react-dom": "^18.2.0",
+ 14
+      "viem": "^1.3.0",
+ 15
+      "wagmi": "^1.3.9"
+ 16
+    },
+ 17
+    "devDependencies": {
+ 18
+      "vite": "^3.2.3",
+ 19
+      "vite-plugin-node-stdlib-browser": "^0.1.1",
+ 20
+      "@vitejs/plugin-react": "^2.2.0"
+ 21
+    },
+ 22
+    "author": "",
+ 23
+    "license": "ISC"
+ 24 }
+ Run your package manager's install command to install the dependencies:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm --prefix extensions/tokengate-src install
+ Create a React entrypoint
+ Create a React app to set the root container, and configure a component to render in that container. In this step, you'll write a React app using a component placeholder.
+ In the /extensions/tokengate-src/folder, create a new src directory.
+ In the /extensions/tokengate-src/src directory, create a new file named index.jsx.
+ Add the following code:
+ /extensions/tokengate-src/src/index.jsx
+ 1 import ReactDOM from "react-dom";
+ 2 import React from "react";
+ 3
+ 4 import "@shopify/connect-wallet/styles.css";
+ 5 import "@shopify/tokengate/styles.css";
+ 6
+ 7 // The element ID is defined in app-block.liquid
+ 8 const container = document.getElementById("tokengating-example-app");
+ 9 if (container.dataset.product_gated === 'true') {
+ 10
+    ReactDOM.createRoot(container).render(<p>Hello from React</p>);
+ 11 } else {
+ 12
+    container.innerHTML = 'This product is not gated.';
+ 13 }
+ Bundle the application
+ Use Vite as the React bundler.
+ In the /extensions/tokengate-src directory, create a new file named vite.config.js.
+ Add the following code:
+ /extensions/tokengate-src/vite.config.js
+ 1 import react from '@vitejs/plugin-react';
+ 2 import {defineConfig} from 'vite';
+ 3 import nodePolyfills from 'vite-plugin-node-stdlib-browser';
+ 4
+ 5 export default defineConfig({
+ 6
+    plugins: [nodePolyfills(), react()],
+ 7
+    define: {
+ 8
+      global: 'globalThis',
+ 9
+    },
+ 10
+    build: {
+ 11
+      assetsDir: '',
+ 12
+      commonjsOptions: {
+ 13
+        transformMixedEsModules: true,
+ 14
+      },
+ 15
+      minify: false,
+ 16
+      emptyOutDir: true,
+ 17
+      rollupOptions: {
+ 18
+        input: './src/index.jsx',
+ 19
+        output: {
+ 20
+          inlineDynamicImports: true,
+ 21
+          dir: '../tokengate/assets',
+ 22
+          entryFileNames: 'index.js',
+ 23
+          assetFileNames: 'index.[ext]',
+ 24
+        },
+ 25
+      },
+ 26
+    },
+ 27 });
+ Build the bundle by running the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm --prefix extensions/tokengate-src run build
+ Install the theme app extension
+ Install the theme app extension into your development store. For more information, refer to Getting started with theme app extensions.
+ Start or restart your dev server by running the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Follow the instructions in the CLI output to preview the theme app extension. This includes the following steps:
+ Opening the host theme in the theme editor
+ Adding your app block to the theme
+ Saving the theme
+ Set up your theme app extension in the host theme by adding it to a product page.
+ Preview your theme app extension on a gated product page.
+ You should see "Hello from React" in your theme app extension preview:
+ Step 4: Add the Blockchain components in the React app
+ Create an App.jsx component for the app. You'll add the Blockchain components and required context providers.
+ Retrieve the projectId for your WalletConnect app by opening the WalletConnect dashboard and navigating to your project.
+ In the /extensions/tokengate-src/src directory, create a new file named App.jsx.
+ Add the following code:
+ /extensions/tokengate-src/src/App.jsx
+ 1 import { useEffect, useState } from "react";
+ 2 import { Tokengate } from "@shopify/tokengate";
+ 3 import {
+ 4
+    buildConnectors,
+ 5
+    ConnectButton,
+ 6
+    ConnectWalletProvider,
+ 7
+    useConnectWallet,
+ 8 } from "@shopify/connect-wallet";
+ 9 import { configureChains, createConfig, mainnet, WagmiConfig } from "wagmi";
+ 10 import { publicProvider } from "wagmi/providers/public";
+ 11
+ 12 const _App = () => {
+ 13
+    const { wallet } = useConnectWallet();
+ 14
+    const { requirements, reaction } = getGate();
+ 15
+ 16
+    return (
+ 17
+      <Tokengate
+ 18
+        isConnected={Boolean(wallet)}
+ 19
+        connectButton={<ConnectButton />}
+ 20
+        isLoading={false}
+ 21
+        requirements={requirements}
+ 22
+        reaction={reaction}
+ 23
+        isLocked={true}
+ 24
+        unlockingTokens={[]}
+ 25
+      />
+ 26
+    );
+ 27 };
+ 28
+ 29 export const App = () => {
+ 30
+    return (
+ 31
+      <WagmiConfig config={config}>
+ 32
+        <ConnectWalletProvider chains={chains} connectors={connectors}>
+ 33
+          <_App />
+ 34
+        </ConnectWalletProvider>
+ 35
+      </WagmiConfig>
+ 36
+    );
+ 37 };
+ 38
+ 39 const getGate = () => ({});
+ 40
+ 41 const { chains, publicClient, webSocketPublicClient } = configureChains(
+ 42
+    [mainnet],
+ 43
+    [publicProvider()],
+ 44 );
+ 45
+ 46 const { connectors, wagmiConnectors } = buildConnectors({
+ 47
+    chains,
+ 48
+    projectId: 'YOUR_WALLET_CONNECT_PROJECT_ID',
+ 49 });
+ 50
+ 51 const config = createConfig({
+ 52
+    autoConnect: true,
+ 53
+    connectors: wagmiConnectors,
+ 54
+    publicClient,
+ 55
+    webSocketPublicClient,
+ 56 });
+ Open the /extensions/tokengate-src/src/index.jsx file.
+ Import the App component that you created by adding the following code:
+ /extensions/tokengate-src/src/index.jsx
+ 1 import {App} from './App';
+ Change the root component to the new App component that you created.
+ Code to remove
+ 1 ReactDOM.createRoot(container).render(<p>Hello from React</p>);
+ Code to add
+ 1 ReactDOM.createRoot(container).render(<App />);
+ Build your extension.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm --prefix extensions/tokengate-src run build
+ When the new bundle uploads, your extension should look something like the following:
+ At this point, you can connect your wallet using MetaMask or other apps that support WalletConnect.
+ Step 5: Load the gate information into your component using Liquid
+ Use the new gates object on the Liquid product object to deliver the gate requirements that you've configured using the admin app. Write that data from Liquid into a global JavaScript variable that the React app will reference.
+ Developer early access
+ The gates field is available to Partners by request for testing purposes. To get access, contact Partner Support with the development .myshopify.com store domain that you'd like to test with.
+ Write the gate data from Liquid as a global JavaScript variable
+ Open /extensions/tokengate/app-block.liquid
+ Add the following code to the end of the file:
+ /extensions/tokengate/app-block.liquid
+ 1 <script>
+ 2
+    window.myAppGates = [
+ 3
+      {%- for gate in product.gates -%}
+ 4
+        {%- if gate.configuration.handle == 'tokengating-example-app' -%}
+ 5
+          {%- assign configuration = gate.configuration -%}
+ 6
+          {
+ 7
+            id: "{{ configuration.id }}",
+ 8
+            name: "{{ configuration.name | escape }}",
+ 9
+            requirements: {{ gate.configuration.metafields.tokengating-example-app.requirements }},
+ 10
+            reaction: {{ gate.configuration.metafields.tokengating-example-app.reaction }}
+ 11
+          },
+ 12
+        {%- endif -%}
+ 13
+      {%- endfor -%}
+ 14
+    ];
+ 15 </script>
+ When the theme app extension reloads, you can see an object written to the page if you view its source:
+ JavaScript global written via Liquid
+ 1 <script>
+ 2
+    window.myAppGates = [{
+ 3
+      id: "42",
+ 4
+      name: "My Gate",
+ 5
+      requirements: {"logic":"ANY","conditions":[{"name":"Gate for 0x01","conditionsDescription":"Any token","contractAddress":"0x01","imageUrl":"https://placekitten.com/g/200/200"}]},
+ 6
+      reaction: {"name":"Gate for 0x01","type":"discount","discount":{"type":"percentage","value":"10"}}
+ 7
+      },
+ 8
+    ];
+ 9 </script>
+ Read the gate data from the global JavaScript variable into our React app
+ For ease of implementation and understanding, this step shows you how to read the gate data into your React app for the first available gate, but ignores any other gates.
+ Open /extensions/tokengate-src/src/App.jsx
+ Delete the temporary gate retrieval code and replace it with the following code:
+ Code to remove
+ 1 const getGate = () => ({});
+ Code to add
+ 1 const getGate = () => window.myAppGates?.[0] || {};
+ Build the extension
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm --prefix extensions/tokengate-src run build
+ The theme app extension should load the gate that you created in the Create gates admin tutorial:
+ After you sign the message, you'll see an error regarding a missing required token.
+ Step 6: Create an API to validate the signature and create an HMAC
+ Submit the address, signature, and signature message to the backend for verification. At the same time, you'll check whether the user has unlocking tokens.
+ Install web3 dependencies
+ Install the web3 package for use on the backend by running npm install --prefix web web3:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install --prefix web web3
+ Create the validation API
+ Create public backend API endpoints for the theme app extension to validate addresses against gate configurations.
+ In the /web directory, create a new file named public-api.js.
+ Add the following code:
+ /web/public-api.js
+ 1 import { createHmac } from "crypto";
+ 2 import cors from "cors";
+ 3 import Web3 from "web3";
+ 4
+ 5 import { getContractAddressesFromGate } from "./api/gates.js";
+ 6
+ 7 const web3 = new Web3();
+ 8
+ 9 export function configurePublicApi(app) {
+ 10
+    // this should be limited to app domains that have your app installed
+ 11
+    const corsOptions = {
+ 12
+      origin: "*",
+ 13
+    };
+ 14
+ 15
+    // Configure CORS to allow requests to /public from any origin
+ 16
+    // enables pre-flight requests
+ 17
+    app.options("/public/*", cors(corsOptions));
+ 18
+ 19
+    app.post("/public/gateEvaluation", cors(corsOptions), async (req, res) => {
+ 20
+      // evaluate the gate, message, and signature
+ 21
+      const { shopDomain, productGid, address, message, signature, gateConfigurationGid } = req.body;
+ 22
+ 23
+      // not shown: verify the content of the message
+ 24
+ 25
+      // verify signature
+ 26
+      const recoveredAddress = web3.eth.accounts.recover(message, signature);
+ 27
+      if (recoveredAddress !== address) {
+ 28
+        res.status(403).send("Invalid signature");
+ 29
+        return;
+ 30
+      }
+ 31
+ 32
+      // retrieve relevant contract addresses from gates
+ 33
+      const requiredContractAddresses = await getContractAddressesFromGate({shopDomain, productGid});
+ 34
+ 35
+      // now lookup nfts
+ 36
+      const unlockingTokens = await retrieveUnlockingTokens(
+ 37
+        address,
+ 38
+        requiredContractAddresses
+ 39
+      );
+ 40
+      if (unlockingTokens.length === 0) {
+ 41
+        res.status(403).send("No unlocking tokens");
+ 42
+        return;
+ 43
+      }
+ 44
+ 45
+      const payload = {
+ 46
+        id: gateConfigurationGid
+ 47
+      };
+ 48
+ 49
+      const response = {gateContext: [getHmac(payload)], unlockingTokens};
+ 50
+      res.status(200).send(response);
+ 51
+    });
+ 52 }
+ 53
+ 54 function getHmac(payload) {
+ 55
+    const hmacMessage = payload.id;
+ 56
+    const hmac = createHmac("sha256", "secret-key");
+ 57
+    hmac.update(hmacMessage);
+ 58
+    const hmacDigest = hmac.digest("hex");
+ 59
+    return {
+ 60
+      id: payload.id,
+ 61
+      hmac: hmacDigest,
+ 62
+    };
+ 63 }
+ 64
+ 65 function retrieveUnlockingTokens(address, contractAddresses) {
+ 66
+    // this could be some lookup against some node or a 3rd party service like Alchemy
+ 67
+    return Promise.resolve([
+ 68
+      {
+ 69
+        name: "CryptoPunk #1719",
+ 70
+        imageUrl:
+ 71
+          "https://storage.cloud.google.com/shopify-blockchain-development/images/punk1719.png",
+ 72
+        collectionName: "CryptoPunks",
+ 73
+        contractAddress: "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB",
+ 74
+      },
+ 75
+    ]);
+ 76 }
+ Caution
+ This code creates an HMAC using the secret key createHmac("sha256", "secret-key");. This key has been embedded in the code, but should not be included in your file to avoid leaking the secret. You can reference an environment variable for this purpose instead.
+ Set up helper functions to inspect gates
+ Retrieve the contract addresses that are embedded in the gates. You can use these contract addresses to validate against a customer's wallet to determine whether the customer owns unlocking NFTs.
+ In the /web/api directory, create a new file gates.js.
+ Add the following code:
+ /web/api/gates.js
+ 1 import shopify from "../shopify.js";
+ 2 import {myAppMetafieldNamespace} from "./constants.js";
+ 3
+ 4 export async function getContractAddressesFromGate({ shopDomain, productGid }) {
+ 5
+    const response = await getGatesByShopDomain({ shopDomain, productGid });
+ 6
+    try {
+ 7
+      const requirements = JSON.parse(response.product.gates?.[0]?.configuration?.requirements?.value);
+ 8
+      const contractAddresses = requirements?.conditions.map(condition => condition.contractAddress);
+ 9
+      return contractAddresses;
+ 10
+    }
+ 11
+    catch(e) {
+ 12
+      console.error('error parsing gate requirements', e);
+ 13
+      return [];
+ 14
+    }
+ 15 }
+ 16
+ 17 async function getSessionByShopDomain({ shopDomain }) {
+ 18
+    try {
+ 19
+      const sessions = await shopify.config.sessionStorage.findSessionsByShop(
+ 20
+        shopDomain
+ 21
+      );
+ 22
+      if (!sessions || sessions.length === 0) return null;
+ 23
+ 24
+      return sessions[0];
+ 25
+    }
+ 26
+    catch(error) {
+ 27
+      console.error('error finding session for shop', shopDomain, error);
+ 28
+      return null;
+ 29
+    }
+ 30 }
+ 31
+ 32 export async function getGatesByShopDomain({ shopDomain, productGid }) {
+ 33
+    const client = new shopify.api.clients.Graphql({
+ 34
+      session: await getSessionByShopDomain({ shopDomain }),
+ 35
+      apiVersion: "unstable",
+ 36
+    });
+ 37
+    const data = {
+ 38
+      query,
+ 39
+      variables: {
+ 40
+        productGid,
+ 41
+      },
+ 42
+    };
+ 43
+ 44
+    try {
+ 45
+      const response = await client.query({
+ 46
+        data,
+ 47
+      });
+ 48
+ 49
+      return response.body.data;
+ 50
+    } catch (error) {
+ 51
+      console.error("error executing gates query", error.message, error.response);
+ 52
+      return null;
+ 53
+    }
+ 54 }
+ 55
+ 56 const query = `
+ 57
+    query FetchProductGates($productGid: ID!) {
+ 58
+      product(id: $productGid) {
+ 59
+        gates {
+ 60
+          id
+ 61
+          active
+ 62
+          configuration {
+ 63
+            id
+ 64
+            name
+ 65
+            requirements: metafield(namespace: "${myAppMetafieldNamespace}",
+ 66
+              key: "requirements") {
+ 67
+                value
+ 68
+            }
+ 69
+            reaction: metafield(namespace: "${myAppMetafieldNamespace}",
+ 70
+              key: "reaction") {
+ 71
+                value
+ 72
+            }
+ 73
+            createdAt
+ 74
+            updatedAt
+ 75
+          }
+ 76
+          createdAt
+ 77
+          updatedAt
+ 78
+        }
+ 79
+      }
+ 80
+    }
+ 81 `;
+ Wire up the public API
+ Wire up the public API by passing an express app instance to the configurePublicApi method.
+ Open /web/index.js.
+ Import the public API configuration method that you created.
+ /web/index.js
+ 1 import { configurePublicApi } from "./public-api.js";
+ Call the method configurePublicApi to wire up the API endpoints.
+ Code to remove
+ Code to remove
+ 1 app.use(express.json());
+ Code to add
+ 1 app.use(express.json());
+ 2 configurePublicApi(app);
+ Configure Vite dev server
+ Allow Vite dev server to proxy public API endpoints.
+ Open /web/frontend/vite.config.js.
+ Change the following code:
+ Code to remove
+ 1 proxy: {
+ 2
+    "^/(\\?.*)?$": proxyOptions,
+ 3
+    "^/api(/|(\\?.*)?$)": proxyOptions,
+ 4 },
+ Code to add
+ 1 proxy: {
+ 2
+    "^/(\\?.*)?$": proxyOptions,
+ 3
+    "^/api(/|(\\?.*)?$)": proxyOptions,
+ 4
+    "^/public(/|(\\?.*)?$)": proxyOptions,
+ 5 },
+ Restart your server:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Note
+ The Cloudflare URL is randomly generated and temporary.
+ Step 7: Create a hook to run gate evaluation
+ Wrap the API call with a custom hook.
+ In the /extensions/tokengate-src/src/directory, create a new file named useEvaluateGate.js.
+ Add the following code to the file:
+ /extensions/tokengate-src/src/useEvaluateGate.js
+ 1 import { useMemo, useState, useCallback } from "react";
+ 2
+ 3 // Set this to the cloudflare url that is generated when you run the server
+ 4 // The url will be something like https://12345678.ngrok.io (no trailing slash or query params)
+ 5 export const host = "YOUR_TUNNEL_URL";
+ 6 if (host == "YOUR_TUNNEL_URL") {
+ 7
+    console.error(`
+ 8
+      ************************************************************
+ 9
+      You must set the host to your Cloudflare URL in useEvaluateGate.js.
+ 10
+      Run \`npm run dev\` and replace the YOUR_TUNNEL_URL with the URL found in the terminal
+ 11
+      ************************************************************
+ 12
+    `);
+ 13 }
+ 14
+ 15 export const useEvaluateGate = () => {
+ 16
+    const gate = getGate();
+ 17
+    const [gateEvaluation, setGateEvaluation] = useState();
+ 18
+    const productId = getProductId();
+ 19
+    const evaluateGate = useCallback(
+ 20
+      async ({ address, message, signature }) => {
+ 21
+        const response = await fetch(`${host}/public/gateEvaluation`, {
+ 22
+          method: "POST",
+ 23
+          headers: {
+ 24
+            "Content-Type": "application/json",
+ 25
+          },
+ 26
+          body: JSON.stringify({
+ 27
+            productId,
+ 28
+            productGid: `gid://shopify/Product/${productId}`,
+ 29
+            gateConfigurationGid: `gid://shopify/GateConfiguration/${gate.id}`,
+ 30
+            shopDomain: getShopDomain(),
+ 31
+            address,
+ 32
+            message,
+ 33
+            signature,
+ 34
+          }),
+ 35
+        });
+ 36
+        const json = await response.json();
+ 37
+        setGateEvaluation(json);
+ 38
+      },
+ 39
+      [setGateEvaluation, gate]
+ 40
+    );
+ 41
+ 42
+    const {unlockingTokens, isLocked} = useMemo(() => {
+ 43
+      const {unlockingTokens} = gateEvaluation || {};
+ 44
+      const isLocked = !Boolean(unlockingTokens?.length);
+ 45
+ 46
+      return {
+ 47
+        unlockingTokens,
+ 48
+        isLocked,
+ 49
+      }
+ 50
+    }, [gateEvaluation])
+ 51
+ 52
+    return {
+ 53
+      evaluateGate,
+ 54
+      gateEvaluation,
+ 55
+      unlockingTokens,
+ 56
+      isLocked,
+ 57
+    };
+ 58 };
+ 59
+ 60 // This function also present in App.jsx
+ 61 const getGate = () => window.myAppGates?.[0] || {}
+ 62
+ 63 function getShopDomain() {
+ 64
+    return window.Shopify.shop;
+ 65 }
+ 66
+ 67 function getProductId() {
+ 68
+    return document.getElementById("tokengating-example-app").dataset.product_id;
+ 69 }
+ Setting the host
+ The code in /extensions/tokengate-src/src/useEvaluateGate.js contains a constant that you'll need to modify to match your local dev server's settings. This port will change every time that you run your server.
+ Find the port that your server is running on.
+ Open the file /extensions/tokengate-src/src/useEvaluateGate.js
+ Edit the code and replace YOUR_TUNNEL_URL with the Cloudflare URL that you found in the earlier step.
+ /extensions/tokengate-src/src/useEvaluateGate.js
+ 1 export const host = 'YOUR_TUNNEL_URL';
+ Caution
+ The dev server's Cloudflare URL is randomly generated and temporary.
+ Step 8: Call the gate evaluation hook
+ Call the useEvaluateGate hook to get an evaluateGate function. Then, use evaluateGate in an onConnect callback.
+ Open /extensions/tokengate-src/src/App.jsx
+ Import the useEvaluateGate hook:
+ /extensions/tokengate-src/src/App.jsx
+ 1 import { useEvaluateGate } from './useEvaluateGate';
+ Add a call to the useEvaluateGate hook and add an onConnect callback to the useConnectWallet props.
+ Code to remove
+ 1 const { wallet } = useConnectWallet();
+ Code to add
+ 1 const { isLocked, unlockingTokens, evaluateGate, gateEvaluation } = useEvaluateGate();
+ 2 const { wallet } = useConnectWallet({
+ 3
+    onConnect: (wallet) => {
+ 4
+      evaluateGate(wallet);
+ 5
+    },
+ 6 });
+ Modify the Tokengate component props to use the unlockingTokens that's retrieved from the useEvaluateGate call.
+ Code to remove
+ 1 isLocked={true}
+ 2 unlockingTokens={[]}
+ Code to add
+ 1 isLocked={isLocked}
+ 2 unlockingTokens={unlockingTokens}
+ Result
+ 1 <Tokengate
+ 2
+    // some properties not shown
+ 3
+    isLocked={isLocked}
+ 4
+    unlockingTokens={unlockingTokens}
+ 5 />
+ Build your theme app extension by running one of the following commands:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm --prefix extensions/tokengate-src run build
+ Test the extension. The unlocking tokens should appear after you've signed.
+ Step 9: Write the HMAC to the gate context for later consumption
+ Write the HMAC to the gate context right after you get the response from the gate evaluation endpoint. The HMAC will be available to Shopify Functions.
+ Open /extensions/tokengate-src/src/useEvaluateGate.js
+ Import the gate context client by adding this import:
+ /extensions/tokengate-src/src/useEvaluateGate.js
+ 1 import {
+ 2
+    getGateContextClient,
+ 3 } from "@shopify/gate-context-client";
+ The client may be module scoped, so you can add this near the top of the file, after the import.
+ /extensions/tokengate-src/src/useEvaluateGate.js
+ 1 const gateContextClient =
+ 2
+    getGateContextClient({
+ 3
+      backingStore: "ajaxApi",
+ 4
+      shopifyGateContextGenerator: async (data) => {
+ 5
+        try {
+ 6
+          const existing = await gateContextClient.read();
+ 7
+          return mergeGateContext(existing, data);
+ 8
+        } catch(e) {
+ 9
+          return data;
+ 10
+        }
+ 11
+ 12
+        // merges existing gate context entries
+ 13
+        function mergeGateContext(existing, add) {
+ 14
+          const entriesById = existing.reduce((acc, item) => {
+ 15
+            acc[item.id] = item;
+ 16
+            return acc;
+ 17
+          }, {});
+ 18
+          add.forEach(item => entriesById[item.id] = item);
+ 19
+          return Object.keys(entriesById).map(id => entriesById[id]);
+ 20
+        }
+ 21
+      },
+ 22
+    });
+ Write the gate context after setting the JSON response.
+ Code to remove
+ 1 setGateEvaluation(json);
+ Code to add
+ 1 setGateEvaluation(json);
+ 2 gateContextClient.write(json.gateContext)
+ 3
+    .catch(e => console.error('failed to write to gate context'));
+ Build the extension by running one of the following commands:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm --prefix extensions/tokengate-src run build
+ When you reload the page, you should notice an additional call to update.js which is used to write the gate context. The gate context is a cart attribute, which you can see by visiting your-shop-domain.myshopify.com/cart.json.
+ When you visit cart.json, you should see something like the following:
+ 1 {
+ 2
+    "token": "80ff4ae2dfb31ab5d87a1f97d454147e",
+ 3
+    "attributes": {
+ 4
+      "Wallet Address": "0x8Be1Eee36cB0e2a0fECa76Ce63d16021fC9dc",
+ 5
+      "_shopify_gate_context": "[{\"id\":\"gid://shopify/GateConfiguration/123\",\"hmac\":\"f4c71402894318e4bdd39b66f79e4fc3362aee4596b4322e5237aaef84c\"}]"
+ 6
+    },
+ 7
+    ...
+ 8 }
+ Step 10: Testing it out
+ You're ready to test the theme app extension. Open a gated product that you created previously. After you sign the message, a network request checks for unlocking tokens and computes an HMAC. Unlocking tokens are displayed, and the gate context is written. When you reload the page after unlocking, the product stays unlocked.
+ Next steps
+ Create a Shopify Function to apply the exclusive discount to eligible buyers.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Step 1: Create the theme app extension
+ Step 2: Set up the theme app extension app block to host the React app
+ Step 3: Create a React app
+ Step 4: Add the Blockchain components in the React app
+ Step 5: Load the gate information into your component using Liquid
+ Step 6: Create an API to validate the signature and create an HMAC
+ Step 7: Create a hook to run gate evaluation
+ Step 8: Call the gate evaluation hook
+ Step 9: Write the HMAC to the gate context for later consumption
+ Step 10: Testing it out
+ Next steps
+ Updates & News

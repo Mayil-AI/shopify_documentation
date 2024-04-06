@@ -1,0 +1,30 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Theme editor preview inspector best practices
+ The theme editor preview inspector allows you to navigate sections and blocks directly in the preview, and makes finding corresponding settings more intuitive.
+ The theme editor preview inspector draws outlines around sections and blocks to differentiate them. However, the preview inspector relies on coordinates returned by the browser's Element.getBoundingClientRect() method to draw these outlines, which can highlight aspects of a theme's foundation that aren't normally visible.
+ Consider the following design guidelines to ensure that the outline of the section or block displays properly in the preview inspector:
+ Avoid using negative margins
+ You should avoid using negative margins to position blocks inside a section because the blocks can show outside of the section outline.
+ Avoid using padding for block spacing
+ To add space between blocks, you should use margin or gap, instead of padding. If you use padding, then the block outline might not display as expected.
+ Avoid using visually hidden elements
+ To hide an element, you should remove it from the DOM or use display: none, instead of visually hiding it. Visually hiding an element might result in an element outline with no element to interact with.
+ Disable fixed-position elements
+ You should disable fixed-position elements, such as sticky headers, when the preview inspector is enabled. Leaving these elements enabled can lead to a confusing experience.
+ Tip
+ To learn more about detecting the theme editor preview inspector, refer to Integrate sections with the theme editor.
+ Section and block duplication
+ If you need to duplicate a section or block, then you should ensure that the element that you want the theme editor to recognize is the only one that includes a data-shopify-editor attribute. The theme editor relies on the data-shopify-editor attributes to identify sections and blocks, so duplicating them can lead to conflicts in identifying the correct element.
+ Note
+ Sections use the data-shopify-editor-section attribute, and blocks use the data-shopify-editor-blocks attribute.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Avoid using negative margins
+ Avoid using padding for block spacing
+ Avoid using visually hidden elements
+ Disable fixed-position elements
+ Section and block duplication
+ Updates & News

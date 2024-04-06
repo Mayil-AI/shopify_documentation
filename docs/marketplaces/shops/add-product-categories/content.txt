@@ -1,0 +1,95 @@
+Adding product categories to shop pages
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You've added dedicated pages for the shops in your marketplace. Now you want buyers to get a sense of what types of products a shop sells.
+ In this tutorial, you'll use the Storefront API to retrieve a list of product types from merchant storefronts. You'll display these product types as categories in a tabbed list. This way, what's available for purchase is more immediately apparent to the buyer, and that directs them more quickly to a sale. Because categories are not the same as collections, and not all merchants use product categories, the code in this tutorial provides a default.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Retrieve product types from a storefront
+ Display product categories in tabs on a shop's page
+ Filter shop products to display products in a specific category
+ Requirements
+ You've completed the tutorial for adding shop pages.
+ Step 1: Retrieve product categories from the Storefront API
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ Merchants can categorize the products in their store by type. Retrieve product types by updating the Storefront API shop details query with productTypes. You can now use this information to add product category tabs to shop pages.
+ pages/shops/[id].js
+ 1 const SHOP_DETAILS_QUERY = gql`
+ 2
+    query ShopDetails {
+ 3
+      shop {
+ 4
+        name
+ 5
+        description
+ 6
+        primaryDomain {
+ 7
+          url
+ 8
+          host
+ 9
+        }
+ 10
+      }
+ 11
+      productTypes(first: 250) {
+ 12
+        edges {
+ 13
+          node
+ 14
+ 17 `;
+ Your shop page might now look something like the following:
+ Step 2: Filter products from the Storefront API
+ You'll use the query argument on the Storefront API's Product object to fetch products from a given category.
+ Update the shop products query to accept a query variable and pass it as an argument on the products field.
+ pages/shops/[id].js
+ 1 const SHOP_PRODUCTS_QUERY = gql`
+ 2
+    query ShopProducts(
+ 3
+      $first: Int
+ 4
+      $last: Int
+ 5
+      $before: String
+ 6
+      $after: String
+ 7
+      $query: String
+ 8
+    ) {
+ 9
+      products(
+ 10
+        first: $first
+ 11
+        last: $last
+ 12
+        before: $before
+ 13
+        after: $after
+ 14
+        query: $query
+ 15
+      ) {
+ 16
+        // ...
+ 17
+      }
+ 18
+    }
+ 19 `;
+ Next steps
+ Learn how to add sort options to the shop pages in a marketplace.
+ Share feedback on Marketplace Kit.
+ Step 1: Retrieve product categories from the Storefront API
+ Step 2: Filter products from the Storefront API
+ Next steps
+ Updates & News
+ Developer changelog

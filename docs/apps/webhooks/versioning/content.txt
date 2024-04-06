@@ -1,0 +1,40 @@
+App Store
+ Managing webhook API versions
+ Like the majority of Shopify’s APIs, webhook resources are versioned. Make sure your code is updated regularly to use a supported webhook version.
+ This tutorial shows you how to manage webhook API versions in your app.
+ Requirements
+ You're familiar with how webhooks work.
+ You're familiar with the webhooks best practices.
+ You're authenticated with the GraphQL Admin API or REST Admin API.
+ Step 1: Update your code
+ Before you select a newer webhook API version, you need to test it against your code.
+ Add logic to your code so that it handles webhooks differently depending on their API versions. To check the API version, your app can use the X-Shopify-Api-Version request header in every webhook POST request.
+ Step 2: Test the newer API version
+ From your store's notification settings, add some webhooks that use the newer version, and then send some test payloads. Your existing webhooks will continue to use the older API version. Check that your code correctly handles the test webhooks, and make any necessary adjustments.
+ From the Shopify admin, go to Settings > Notifications.
+ Click Create webhook, or click an existing webhook.
+ If this is a new webhook, then provide the event, format, and URL.
+ Select an API version from the Webhook API version drop-down list.
+ Step 3: Select the newer API version
+ Select the newer API version for your app. Your updated webhook uses that version.
+ Select a webhook API version for a public or custom app by following the steps below:
+ From your Partner Dashboard, go to Apps.
+ Click the app that you want to update.
+ Click Configuration.
+ In the Event version section, from the Event version drop-down list, select an API version.
+ Click Save and release.
+ Step 4: Test webhooks and remove references to the older API version
+ Make sure that your code handles the updated webhook payloads correctly. After you've verified that everything is working, update your code to remove the following:
+ The logic that you added
+ References to the old webhook API version
+ Next steps
+ View a report of your app’s webhook deliveries, track failed deliveries, and fix issues before they affect app users.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Update your code
+ Step 2: Test the newer API version
+ Step 3: Select the newer API version
+ Step 4: Test webhooks and remove references to the older API version
+ Next steps

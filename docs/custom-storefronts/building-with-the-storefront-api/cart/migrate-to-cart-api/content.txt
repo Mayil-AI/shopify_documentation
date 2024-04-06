@@ -1,0 +1,65 @@
+Overview
+ Create and update a cart
+ Migrate to the Cart API
+ Overview
+ Migrate your app
+ Additional SDKs
+ Migrate to the Storefront Cart API
+ In API version 2024-04, Checkout APIs on the REST Admin and Storefront API are deprecated, with the exception of the REST Admin API's Abandoned checkouts resource. In version 2025-04, the Checkout APIs will be sunset and no longer function. To maintain continuity and unlock new capabilities, you need to migrate your app to one of the following technologies:
+ Storefront Cart API
+ Checkout Sheet Kit for Native Mobile Apps
+ This guide will help you migrate from the Checkout API to the Storefront API's Cart. We strongly recommend that you plan your migration and begin the process as soon as possible to avoid any disruptions.
+ Key benefits of the Storefront Cart API
+ Migrating from Shopify's Checkout APIs to the Storefront API's Cart object and related types brings a host of benefits and new features that can enhance your application.
+ The following table outlines some of the key benefits of using the Cart API:
+ Benefit Description
+ Query optimization The Storefront Cart API is offered exclusively in GraphQL, which is a powerful query language that enables more efficient data fetching than can be done in REST.
+ Cross-platform compatibility The Storefront Cart API functions on both the client-side and server-side, which provides more flexibility in what experiences you can build.
+ Unlimited access and bot protection The Storefront Cart API has no rate limits for legitimate traffic, and it comes with built-in bot protection to help safeguard your app.
+ Comprehensive feature access The Storefront Cart API gives you access to a full suite of Shopify features, including contextual pricing, discounts, product bundles, subscriptions, and more.
+ Unified functionality The Storefront Cart API redirects to Shopify's Web Checkout, which enables seamless integration with Shopify Functions and UI extensions.
+ Enhanced promotions The Storefront Cart API supports stackable discount codes, which provides more options for promotional campaigns. Refer to an example.
+ Shopify Functions execution Shopify Functions such as Validation and Cart Transform execute on the Storefront Cart API.
+ Learn more about the benefits of building with the Storefront Cart API, and how you can extend a cart's functionality.
+ Get started
+ Get started migrating to the Storefront Cart API
+ Compare requests and responses for common use cases so you can learn how to migrate your app's API calls.
+ Developer tools and resources
+ Refer to the following developer tools and resources to familiarize yourself with GraphQL, the Storefront API, and building experiences using Cart:
+ Introduction to GraphQL
+ When you begin using GraphQL after using REST, you need to change how you think about retrieving and working with data. This section includes guides and resources to help you familiarize yourself with GraphQL. The following resources describe some of the key considerations when migrating from REST to GraphQL. It's meant for app developers who are primarily using REST in their apps.
+ Migrate to GraphQL from REST
+ Learn about the things that you need to consider when migrating your app from REST to GraphQL.
+ Explore GraphQL basics
+ Learn about the fundamentals of GraphQL.
+ Introduction to the Storefront Cart API
+ Learn more about building with the Storefront Cart API and the benefits of migration:
+ Cart API reference
+ Consult the Storefront API reference documentation to learn more about the Cart object.
+ mock.shop
+ Use the Storefront API's LLM-powered operations generator.
+ Checkout Sheet Kit
+ Learn about Checkout Sheet Kit and how you can use it to build experiences for mobile.
+ Storefront API
+ Explore the following developer tools and resources to learn more about the Storefront API:
+ GraphQL Storefront API reference
+ Consult the complete reference for Shopify’s GraphQL Storefront API.
+ Shopify Storefront API GraphiQL explorer
+ Browse Shopify’s Storefront API schema and documentation.
+ Shopify GraphiQL app
+ Explore your store's data, and test queries and mutations, using the Storefront API.
+ Important notes
+ No webhooks are fired for cart/create or cart/update for the Storefront Cart API.
+ The Storefront Cart API doesn't currently support appending a gift card to the cart or querying for Carrier Calculated Shipping rates. Refer to the product roadmap for more information on when we plan to deliver these features.
+ Completed carts are deleted upon order creation. Unlike the Checkout API, you can't query a completed cart for order information or completion status. You can subscribe to webhooks to receive information about the created order.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Key benefits of the Storefront Cart API
+ Get started
+ Developer tools and resources
+ Important notes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,105 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Session API
+ Session API contains the information about the current user session, and allows to fetch a fresh session token for communication with your app's backend service.
+ JavaScript
+ React
+ 1 import { extend, Screen, Text, Tile } from '@shopify/retail-ui-extensions';
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'Session API',
+ 6
+      subtitle: 'SmartGrid Extension',
+ 7
+      enabled: true,
+ 8
+      onPress: () => {
+ 9
+        api.smartGrid.presentModal();
+ 10
+      },
+ 11
+    };
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+    root.appendChild(tile);
+ 14
+    root.mount();
+ 15 });
+ 16
+ 17 extend('pos.home.modal.render', (root, api) => {
+ 18
+    const { session } = api;
+ 19
+    const { currentSession, getSessionToken } = session;
+ 20
+    const { shopId, userId, locationId, staffMemberId } = currentSession;
+ 21
+ 22
+    const screen = root.createComponent(Screen, { name: 'Screen One', title: 'Screen One Title' });
+ 23
+ 24
+    const currentSessionText = root.createComponent(
+ 25
+      Text,
+ 26
+      {},
+ 27
+      `shopId: ${shopId}, userId: ${userId}, locationId: ${locationId}, staffId: ${staffMemberId}`
+ 28
+    );
+ 29
+    const sessionTokenText = root.createComponent(
+ 30
+      Text,
+ 31
+      {},
+ 32
+      'sessionToken: undefined'
+ 33
+    );
+ 34
+ 35
+    getSessionToken().then((newToken) => {
+ 36
+      sessionTokenText.children.forEach((child) => {
+ 37
+        sessionTokenText.removeChild(child);
+ 38
+      });
+ 39
+      sessionTokenText.appendChild(`sessionToken: ${newToken}`);
+ 40
+    });
+ 41
+ 42
+    root.appendChild(screen);
+ 43
+    screen.appendChild(currentSessionText);
+ 44
+    screen.appendChild(sessionTokenText);
+ 45
+ 46
+    root.mount();
+ 47 });
+ Props
+ Name Type Description
+ currentSession Session The information about the current user session.
+ getSessionToken () => Promise<string | undefined> Get a fresh session token.
+ Note
+ For security reasons, Shopify's backend validates that the store making the request for a session token has the requesting app installed. If you're encountering a null session token while developing your extension, then you should install the app on your development store.
+ Session
+ Name Type Description
+ shopId number The shop ID associated with the shop currently logged into POS.
+ userId number The user ID associated with the Shopify account currently authenticated on POS.
+ shopDomain string The shop domain associated with the shop currently logged into POS.
+ locationId number The location ID associated with the POS' current location.
+ staffMemberId number? The staff ID who is currently pinned into the POS.
+ Was this page helpful?
+ YesNo
+ Updates & News

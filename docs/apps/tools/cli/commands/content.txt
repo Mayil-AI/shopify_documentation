@@ -1,0 +1,520 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Shopify CLI commands for apps
+ This reference lists the commands that you can use to build apps with Shopify CLI.
+ Command overview
+ Topic Command Description
+ app dev Builds the app and lets you preview it on a development store or Plus sandbox store.
+ info Displays information about your app.
+ generate extension Creates a new app extension for your app.
+ function build Compiles the function in your current directory to WebAssembly (Wasm) for testing purposes.
+ function run Runs the function from your current directory for testing purposes.
+ function schema Generates the latest GraphQL schema for a function in your app.
+ function typegen Creates GraphQL types based on your input query for a function written in JavaScript.
+ build Builds the app, including extensions.
+ config link Pulls the active configuration of an app, and creates or overwrites a configuration file.
+ config use Sets a particular configuration file as your project's default when you run app-related CLI commands.
+ deploy Builds the app, then deploys app configuration and all extensions to Shopify.
+ release Releases an existing app version.
+ versions list Lists the deployed app versions.
+ env Stores or displays environment variables required for app deployment.
+ update-url Updates the app URL and allowed redirection URLs for your app.
+ config autocorrect Enables or disables command autocorrection.
+ auth logout Logs you out of your Shopify Partner account.
+ webhook trigger Triggers the delivery of a sample event topic payload to a designated address.
+ none help Lists the available commands and describes what they do.
+ version Lists the version of Shopify CLI included in the project.
+ upgrade Upgrades the @shopify/cli and @shopify/app packages to their latest versions.
+ search Starts a search on Shopify.dev.
+ Command syntax
+ Shopify CLI commands should only be run in a project where Shopify CLI is installed.
+ You can run all Shopify CLI commands using the run command:
+ Terminal
+ generic
+ npm
+ Yarn
+ pnpm
+ $ [PACKAGE MANAGER] run shopify [TOPIC] [COMMAND]
+ 
+ You can also run some commands as scripts, which use an abbreviated syntax:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ # is the same as
+ $ npm run shopify app dev
+ 
+ Some package managers require a separator to pass flags to the script:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify [TOPIC] [COMMAND] -- [FLAGS]
+ $
+ $ npm run [COMMAND ALIAS] -- [FLAGS]
+ $
+ # Examples
+ $
+ $ npm run shopify webhook trigger -- --help
+ $
+ $ npm run dev -- --reset
+ dev
+ Builds the app and lets you preview it on a development store or Plus sandbox store.
+ To preview your app on a development store or Plus sandbox store, Shopify CLI walks you through the following steps. If you've run dev before, then your settings are saved and some of these steps are skipped. You can reset these configurations using dev --reset to go through all of them again:
+ Associating your project with an app associated with your Partner account or organization, or creating a new app.
+ Selecting a development store or Plus sandbox store to use for testing. If you have only one store, then it's selected automatically.
+ Installing your app on the store using the provided install link.
+ Creating a tunnel between your local environment and the store using Cloudflare.
+ You can use your own tunneling software instead, by passing your tunnel URL with the --tunnel-url flag.
+ Updating the app URLs that are set in the Partner Dashboard.
+ To avoid overwriting any URLs that are already set, select the No, never option. If you select this option, then you're provided with URLs that you can manually add in the Partner Dashboard so you can preview your app.
+ Enabling development store preview for extensions.
+ Serving GraphiQL for the Admin API using your app's credentials and access scopes.
+ Building and serving your app and app extensions.
+ If you're using the PHP or Ruby app template, then you need to complete the following steps before you can preview your app for the first time:
+ PHP: Set up your Laravel app
+ Ruby: Set up your Rails app
+ Note
+ dev is an alias for shopify app dev.
+ Caution
+ To use a development store or Plus sandbox store with Shopify CLI, you need to be the store owner, or have a staff account on the store. Staff accounts are created automatically the first time you access a development store with your Partner staff account through the Partner Dashboard.
+ dev flags
+ Flag Alias Description Environment variable
+ --tunnel-url The URL of a tunnel that you've started using your own local tunneling software. Shopify recommends Cloudflare tunnel for use with Shopify CLI.
+ 
+ Expected format: https://my-tunnel-url:port SHOPIFY_FLAG_TUNNEL_URL
+ --store <store> -s <store> The development store or Plus sandbox store that you want to use to preview your app.
+ 
+ The --store flag accepts the following inputs:
+ 
+ The store prefix (johns-apparel)
+ The myshopify.com URL (johns-apparel.myshopify.com, https://johns-apparel.myshopify.com)
+ SHOPIFY_FLAG_STORE
+ --client-id <id> The client ID of your app. Use this flag to specify the app that you want to connect your project with. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --no-update Skip the prompt to update the app URLs that are set in the Partner Dashboard. Your URLs won't be updated. SHOPIFY_FLAG_NO_UPDATE
+ --skip-dependencies-installation Skip checking and installing missing dependencies for your app. SHOPIFY_FLAG_SKIP_DEPENDENCIES_INSTALLATION
+ --reset Reset all of your dev settings and send an uninstall request for the store to the default webhook endpoint (/api/webhooks), or the endpoint defined in shopify.web.toml. SHOPIFY_FLAG_RESET
+ --checkout-cart-url A partial link with a product variant ID and quantity to be used to create a test checkout for checkout UI extensions. If the flag isn't passed, then Shopify CLI auto-populates this value. To test with a specific product variant ID and quantity, you can provide the flag as --checkout-cart-url "/cart/12345:1", where 12345 is the product variant ID and :1 is the quantity. SHOPIFY_FLAG_CHECKOUT_CART_URL
+ --subscription-product-url A partial link with a product ID. Use this flag to specify the product to use when testing a purchase option extension. If the flag isn't passed, then Shopify CLI auto-populates this value. To test with a specific product ID, you can provide the flag as --subscription-product-url "/products/12345", where 12345 is the product ID. SHOPIFY_FLAG_SUBSCRIPTION_PRODUCT_URL
+ --theme-app-extension-port <port> The local port to be used to test a theme app extension. SHOPIFY_FLAG_THEME_APP_EXTENSION_PORT
+ --theme <ID or name> -t The ID or name of the theme to be used to test a theme app extension.
+ 
+ If no theme is specified, then the command will use Dawn, Shopify's example theme, when testing your theme app extension. SHOPIFY_FLAG_THEME
+ --graphiql-port <port> The local port to be used to serve GraphiQL. SHOPIFY_FLAG_GRAPHIQL_PORT
+ --graphiql-key <key> The key used to authenticate GraphiQL requests. A key should be specified if you're exposing GraphiQL on a publicly accessible URL. By default, no key is required. SHOPIFY_FLAG_GRAPHIQL_KEY
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ info
+ Displays information about your app.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run info
+ The information returned includes the following:
+ The app and development store or Plus sandbox store that's used when you run the dev command. You can reset these configurations using dev --reset.
+ The structure of your app project.
+ The access scopes your app has requested.
+ System information, including the package manager and version of Shopify CLI used in the project.
+ info flags
+ Flag Alias Description Environment variable
+ --json Output the app info in JSON format. SHOPIFY_FLAG_JSON
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ generate extension
+ Generates a new app extension. For a list of app extensions that you can generate using this command, refer to Supported extensions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension
+ Each new app extension is created in a folder under extensions/. To learn more about the extensions file structure, refer to App structure and the documentation for your extension.
+ generate extension flags
+ Flag Alias Description Environment variable
+ --name <name> -n <name> The name of your extension. SHOPIFY_FLAG_NAME
+ --template <template> -t <template> The extension template. Refer to supported extensions. SHOPIFY_FLAG_EXTENSION_TEMPLATE
+ --client-id The client ID of your app. SHOPIFY_FLAG_CLIENT_ID
+ --reset Resets all of your settings. SHOPIFY_FLAG_RESET
+ --flavor Choose the flavor of the template that you want to start with.
+ 
+ The flavors that are available depend on the extension you're generating. For example:
+ 
+ UI extensions support react, vanilla-js, typescript-react, and typescript.
+ Shopify Functions support vanilla-js, typescript, wasm, and rust.
+ Some extensions, such as Shopify Flow actions and triggers, don't have flavor options.
+ SHOPIFY_FLAG_FLAVOR
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ Supported extensions
+ Extension type value in the TOML file --template flag value in the generate command
+ Checkout UI
+ developer preview ui_extension checkout_ui
+ Customer account UI
+ developer preview ui_extension customer_account_ui
+ Admin action ui_extension admin_action
+ Admin block ui_extension admin_block
+ Product configuration ui_extension product_configuration
+ Shopify Flow trigger flow_trigger flow_trigger
+ Shopify Flow action flow_action flow_action
+ Order discount function order_discounts
+ Product discount function product_discounts
+ Shipping discount
+ developer preview function shipping_discounts
+ Discounts allocator
+ developer preview function discounts_allocator
+ Delivery customization function delivery_customization
+ Payment customization function payment_customization
+ Order routing location rule
+ beta function order_routing_location_rule
+ Cart and checkout validation function cart_checkout_validation
+ Cart transform function cart_transform
+ Fulfillment constraints function fulfillment_constraints
+ Post-purchase UI
+ beta post_purchase_ui post_purchase_ui
+ Product subscription subscription_ui subscription_ui
+ Web pixel web_pixel web_pixel
+ Shopify POS UI pos_ui_extension pos_ui
+ Theme app extensions theme_app_extension theme_app_extension
+ function build
+ Compiles the function in your current directory to WebAssembly (Wasm) for testing purposes.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function build
+ function build flags
+ Flag Alias Description Environment variables
+ --path <path> The path to your function directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Increase the verbosity of the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ function run
+ Runs the function from your current directory for testing purposes. To learn how you can monitor and debug functions when errors occur, refer to Shopify Functions error handling.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function run
+ function run flags
+ Flag Alias Description Environment variable
+ --json -j Output the function result in JSON format. SHOPIFY_FLAG_JSON
+ --export -e The name of the WASM export to invoke. Default value: _start SHOPIFY_FLAG_EXPORT
+ --input -i The input JSON to pass to the function. If omitted, standard input is used. SHOPIFY_FLAG_INPUT
+ --path <path> The path to your function directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Increase the verbosity of the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ function schema
+ Note
+ This command replaces the shopify app generate schema command.
+ Generates the latest GraphQL schema for a function in your app. Run this command from the function directory.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function schema
+ This command uses the API type and version of your function, as defined in your extension TOML file, to generate the latest GraphQL schema. The schema is written to the schema.graphql file.
+ function schema flags
+ Flag Alias Description Environment variable
+ --client-id The client ID of your app. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --path <path> The path to your function directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --stdout Output the schema to STDOUT instead of schema.graphql. SHOPIFY_FLAG_STDOUT
+ --verbose Increase the verbosity of the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ function typegen
+ Creates GraphQL types based on your input query for a function written in JavaScript.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ function typegen flags
+ Flag Alias Description Environment variable
+ --path <path> The path to your function directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Increase the verbosity of the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ config link
+ Pulls the active configuration of an app, and creates or overwrites a configuration file. You can create a new app with this command to start with a default configuration file.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app config link
+ For more information on the format of the created TOML configuration file, refer to the App configuration page.
+ config link flags
+ Flag Alias Description Environment variable
+ --client-id The client ID of your app. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ config use
+ Sets default configuration when you run app-related CLI commands. If you omit the config-name parameter, then you'll be prompted to choose from the configuration files in your project.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app config use <config-name>
+ config use flags
+ Flag Description Environment variable
+ --reset Reset the current configuration. SHOPIFY_FLAG_RESET
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --verbose Increase the verbosity of the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ build
+ Builds the app, including extensions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run build
+ This command executes the build script specified in the element's TOML file. You can specify a custom script in the file. To learn about configuration files in Shopify apps, refer to App configuration.
+ If you're building a theme app extension, then running the build command runs Theme Check against your extension to ensure that it's valid.
+ Note
+ build is an alias for shopify app build.
+ build flags
+ Flag Alias Description Environment variable
+ --client-id Specify the client ID to use when building the app. This client ID is set as an environment variable, which is used by App Bridge. This flag is only required when building your app for production.
+ 
+ This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --skip-dependencies-installation Skip checking and installing missing dependencies for your app. SHOPIFY_FLAG_SKIP_DEPENDENCIES_INSTALLATION
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ deploy
+ Builds the app, then deploys your app configuration and extensions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ This command creates an app version, which is a snapshot of your app configuration and all extensions, including the app extensions that you manage in the Partner Dashboard. This version is then released to users.
+ This command doesn't deploy your web app. You need to deploy your web app to your own hosting solution.
+ Note
+ deploy is an alias for shopify app deploy.
+ deploy flags
+ Flag Alias Description Environment variable
+ --version <name> Overrides the auto-generated app version name. Valid version names are unique to the app, have up to 100 characters, and can contain alphanumeric characters, periods, hyphens, and underscores. This name can't be changed later. SHOPIFY_FLAG_VERSION
+ --message <message> Adds a message to the app version. Recommended for describing changes, like a commit message. App users won't see this. SHOPIFY_FLAG_MESSAGE
+ --source-control-url <url> Adds a source control commit URL to the app version. This link is displayed in the app version page in the Partner Dashboard. Recommended when deploying using a CI/CD pipeline. SHOPIFY_FLAG_SOURCE_CONTROL_URL
+ --no-release Creates an app version but doesn't release it to users. The app version can later be released manually. SHOPIFY_FLAG_NO_RELEASE
+ --client-id <id> Specifies the client ID of your app. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --reset Resets all of your deploy settings. SHOPIFY_FLAG_RESET
+ --force -f Skips the deploy summary confirmation prompt. SHOPIFY_FLAG_FORCE
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ release
+ Releases an existing app version. Pass the name of the version that you want to release using the --version flag.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app release -- --version=VERSION_NAME
+ release flags
+ Flag Alias Description Environment variable
+ --version <name> Required. The name of the app version that you want to release. SHOPIFY_FLAG_VERSION
+ --client-id <id> The client ID of your app. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --reset Reset all of your release settings. SHOPIFY_FLAG_RESET
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ versions list
+ Lists the deployed app versions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app versions list
+ versions list flags
+ Flag Alias Description Environment variable
+ --client-id <id> The client ID of your app. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --json Outputs the versions list in JSON format. SHOPIFY_FLAG_JSON
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ env pull
+ Creates or updates an .env files that contains app and app extension environment variables.
+ When an existing .env file is updated, changes to the variables are displayed in the terminal output. Existing variables and commented variables are preserved.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app env pull
+ env pull flags
+ Flag Alias Description Environment variable
+ --env-file Specify the file where environment variables are saved. If the file doesn't exist, then it will be created. SHOPIFY_FLAG_ENV_FILE
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ env show
+ Displays environment variables that can be used to deploy apps and app extensions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app env show
+ env show flags
+ Flag Alias Description Environment variable
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ update-url
+ Updates the app URL and allowed redirection URLs for your app. When you specify URLs using this command, the current URLs are overwritten.
+ Your current app URLs are provided as placeholder responses. To keep either your app URL or redirect URLs the same, submit the placeholder content. Alternatively, use the --app-url or --redirect-urls flag to update only one of these settings.
+ update-url flags
+ Flag Alias Description Environment variable
+ --client-id The client ID of your app. Use this flag to specify the app that you want to update. This flag replaces the deprecated --api-key flag. SHOPIFY_FLAG_CLIENT_ID
+ --app-url The new app URL for the app. SHOPIFY_FLAG_APP_URL
+ --redirect-urls A comma-separated list of the new allowed redirection URL or URLs for the app. SHOPIFY_FLAG_REDIRECT_URLS
+ --path <path> The path to your app directory. SHOPIFY_FLAG_PATH
+ --config <name> -c The name of the config to use. SHOPIFY_FLAG_APP_CONFIG
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ --no-color Disables color output in the logs. SHOPIFY_FLAG_NO_COLOR
+ config autocorrect
+ Enables or disables command autocorrection. By default, autocorrect is off.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify config autocorrect COMMAND
+ When autocorrection is enabled, Shopify CLI automatically runs a corrected version of your command if a correction is available.
+ When autocorrection is disabled, you need to confirm that you want to run corrections for mistyped commands.
+ Command Description
+ on Enable autocorrect.
+ off Disable autocorrect.
+ status Check whether autocorrect is enabled or disabled.
+ auth logout
+ Logs you out of the Shopify account or Partner account and store.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify auth logout
+ webhook trigger
+ Triggers the delivery of a sample Admin API event topic payload to a designated address.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify webhook trigger
+ You should use this command to experiment with webhooks, to initially test your webhook configuration, or for unit testing. However, to test your webhook configuration from end to end, you should always trigger webhooks by performing the related action in Shopify.
+ Because most webhook deliveries use remote endpoints, you can trigger the command from any directory where you can use Shopify CLI, and send the webhook to any of the supported endpoint types. For example, you can run the command from your app's local directory, but send the webhook to a staging environment endpoint.
+ To learn more about using webhooks in a Shopify app, refer to Webhooks overview.
+ Limitations
+ Webhooks triggered using this method always have the same payload, so they can't be used to test scenarios that differ based on the payload contents.
+ Webhooks triggered using this method aren't retried when they fail.
+ Trigger requests are rate-limited using the Partner API rate limit.
+ You can't use this method to validate your API webhook subscriptions.
+ webhook trigger flags
+ Flag Description
+ --topic <topic> The requested event topic. You can pass the webhook topic using the GraphQL enum value or the webhook topic name. For example, you can request the orders/create webhook topic by passing ORDERS_CREATE (GraphQL API style) or orders/create (REST API style).
+ 
+ For a complete list of topics, refer to the GraphQL Admin API reference, the REST Admin API reference, and the Mandatory webhooks guide.
+ --api-version <version> API version of the event topic, in the format YYYY-MM or unstable. If the topic isn't available in the specified version, then the webhook payload isn't sent.
+ --client-secret <value> Your app's client secret. This secret is used to generate and return a X-Shopify-Hmac-SHA256 header, which lets you validate the origin of the response that you receive.
+ --delivery-method <option> The method chosen to deliver the topic payload. Options: http, google-pub-sub, event-bridge
+ --address <address> The URL where the webhook payload should be sent.
+ 
+ For each delivery method, you need to provide a different address type:
+ 
+ http: For remote delivery, use an https:// address. For local delivery, use http://localhost:{port}/{url-path}.
+ google-pub-sub: A pubsub URL, in the format pubsub://{project-id}:{topic-id}
+ event-bridge: An Amazon Resource Name (ARN) starting with arn:aws:events:
+ help
+ Lists the available commands and describes what they do.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify help
+ 
+ You can add a help flag to any command to learn more about it. Use --help or -h.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run [COMMAND] -- --help
+ $ npm run shopify [COMMAND] -- --help
+ version
+ Lists the version of Shopify CLI included in the project.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify version
+ If nothing is returned from this command, then your project isn't using Shopify CLI 3.0 or higher, and you might need to migrate.
+ upgrade
+ Shopify CLI acts as a dependency of your app. This command upgrades the @shopify/cli and @shopify/app dependencies to their latest versions.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify upgrade
+ upgrade flags
+ Flag Description
+ --path <path> The path to your app directory.
+ search
+ Starts a search on Shopify.dev.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ # open the search modal on Shopify.dev
+ $ npm run shopify search
+ $
+ # search for a term on Shopify.dev
+ $ npm run shopify search <query>
+ $
+ # search for a phrase on Shopify.dev
+ $ npm run shopify search "<a search query separated by spaces>"
+ Search the Shopify.dev docs by optionally passing a query argument to the command.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Command overview
+ Command syntax
+ dev
+ info
+ generate extension
+ function build
+ function run
+ function schema
+ function typegen
+ config link
+ config use
+ build
+ deploy
+ release
+ versions list
+ env pull
+ env show
+ update-url
+ config autocorrect
+ auth logout
+ webhook trigger
+ help
+ version
+ upgrade
+ search
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

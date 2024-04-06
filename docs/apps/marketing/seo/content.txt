@@ -1,0 +1,285 @@
+Marketing automations
+ SEO
+ Authentication
+ Webhooks
+ App extensions
+ App Store
+ Manage meta tags for SEO
+ You can change the way a product, page, collection, blog, or article appears in search engine results by updating the resource's meta tags. The meta tags are the page title and the meta description, which are part of the resource's search engine listing.
+ For example, when you create a product, the page title and meta description for the product page defaults to the product title and description. This guide shows you how to change these default values by managing metafields with the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ You've added resources, such as products or collections, to your store.
+ You're familiar with how metafields work.
+ Step 1: Update a resource's search engine listing
+ If the resource's search engine listing has never been updated, then you can update the page title and meta description by creating the title_tag and description_tag metafields. If the resource's search engine listing has already been updated, then you can update the title_tag and description_tag metafields by specifying the ID of the metafield you want to update.
+ After you've updated the page title and meta description, the values are stored in the title_tag and description_tag metafields. These metafields are both in the global namepsace have the single_line_text_field type.
+ The following example changes the title for a product's search engine listing:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(
+ 3
+      input: {
+ 4
+        id: "gid://shopify/Product/5591484858390"
+ 5
+        metafields: [
+ 6
+          {
+ 7
+            namespace: "global",
+ 8
+            key: "title_tag",
+ 9
+            value: "Matte black sunglasses",
+ 10
+            type: "single_line_text_field"
+ 11
+          }
+ 12
+        ]
+ 13
+      }
+ 14
+    ) {
+ 15
+      product {
+ 16
+        metafields(first: 10) {
+ 17
+          edges {
+ 18
+            node {
+ 19
+              key
+ 20
+              value
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "metafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "key": "title_tag",
+ 10
+                  "value": "Matte black sunglasses"
+ 11
+                }
+ 12
+              }
+ 13
+            ]
+      }
+ 17
+    }
+ 18 }
+ If the metafield already exists because it was created through the API or because the search listing was updated in the Shopify admin, then you need to supply the metafield ID to update the metafield:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(
+ 3
+      input: {
+ 4
+        id: "gid://shopify/Product/5591484858390"
+ 5
+        metafields: [
+ 6
+          {
+ 7
+            id: "gid://shopify/Metafield/21111411048611",
+ 8
+            value: "Matte black sunglasses"
+ 9
+          }
+ 10
+        ]
+ 11
+      }
+ 12
+    ) {
+ 13
+      product {
+ 14
+        metafields(first: 10) {
+ 15
+          edges {
+ 16
+            node {
+ 17
+              key
+ 18
+              value
+ 19
+            }
+ 20
+          }
+ 21
+        }
+ 22
+      }
+ 23
+    }
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "metafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "key": "title_tag",
+ 10
+                  "value": "Matte black sunglasses"
+ 11
+                }
+ 12
+              }
+ 13
+            ]
+ 14
+          }
+ 15
+        }
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 2: Hide a resource from search engines and sitemaps
+ If you want to hide a resource from search engines and sitemaps, then you can use a metafield to automatically add noindex and nofollow meta tags to the resource's pages. To add noindex and nofollow meta tags to a resource's pages, create a new metafield for the resource with the following attributes:
+ 1 "namespace": "seo",
+ 2 "key": "hidden",
+ 3 "value": 1,
+ 4 "type": "number_integer"
+ Note
+ If you hide resources from the sitemap, then they won't appear in search results when customers use storefront search. If you delete the metafield using the GraphQL Admin, then the noindex and nofollow meta tags are removed.
+ The following example hides a product from search engines and sitemaps:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(
+ 3
+      input: {
+ 4
+        id: "gid://shopify/Product/5591484858390"
+ 5
+        metafields: [
+ 6
+          {
+ 7
+            namespace: "seo",
+ 8
+            key: "hidden",
+ 9
+            value: "1",
+ 10
+            type: "number_integer",
+ 11
+          }
+ 12
+        ]
+ 13
+      }
+ 14
+    ) {
+ 15
+      product {
+ 16
+        metafields(first: 10) {
+ 17
+          edges {
+ 18
+            node {
+ 19
+              key
+ 20
+              value
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "metafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "key": "hidden",
+ 10
+                  "value": "1"
+ 11
+                }
+ 12
+              }
+ 13
+            ]
+      }
+ 17
+    }
+ 18 }
+ Next steps
+ Consult the metafield reference for the GraphQL Admin and REST Admin APIs.
+ Create marketing events for your app to help merchants market products, collections, discounts, and more.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Update a resource's search engine listing
+ Step 2: Hide a resource from search engines and sitemaps
+ Next steps
+ Updates & News

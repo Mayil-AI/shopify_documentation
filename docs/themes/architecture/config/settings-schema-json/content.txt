@@ -1,0 +1,95 @@
+Config
+ Overview
+ settings_schema.json
+ settings_data.json
+ Locales
+ settings_schema.json
+ The settings_schema.json file controls the organization and content of the Theme settings area of the theme editor. All setting selections in the theme editor are saved in settings_data.json.
+ Location
+ The settings_schema.json file is located in the config directory of the theme:
+ 1 └── theme
+ 2
+      ...
+ 3
+      ├── config
+ 4
+          ├── settings_data.json
+ 5
+          └── settings_schema.json
+ 6
+      └── locales
+ Schema
+ The settings_schema.json file is an array of objects that represent setting categories. Each object needs to have the following attributes:
+ Attribute Description Required
+ name The name of the category of settings. Yes
+ settings An array of associated settings. Yes
+ The settings_schema.json file should follow the following basic format:
+ 1 [
+ 2
+    {
+ 3
+      "name": "Category",
+ 4
+      "settings": [
+ 5
+        ...
+ 6
+      ]
+ 7
+    },
+ 8
+    ...
+ 9 ]
+ The settings_schema.json file is a JSON file, so all content must be valid JSON. Additionally, make sure you follow the appropriate syntax for your desired setting.
+ Usage
+ When working with the settings_schema.json file, familiarize yourself with the following:
+ setting types
+ accessing settings
+ adding theme metadata
+ Setting types
+ There are two categories of settings:
+ Category Description
+ Input settings Settings that can hold a value, and are configurable by app users.
+ Sidebar settings Settings that can’t hold a value, and aren’t configurable by app users. They’re informational elements that can be used to provide detail and clarity for your input settings.
+ Access settings
+ Theme settings can be accessed through the settings object. To learn more about the syntax and considerations, refer to Access settings.
+ Add theme metadata
+ As a theme author, you can include additional metadata for your theme in the Theme actions menu of the theme editor. This menu appears at the left of the theme editor top bar:
+ To add this metadata, you can include a theme_info object in the settings_schema.json file. This object must include the following attributes:
+ Attribute Description Required
+ name The value of this attribute must be theme_info. Yes
+ theme_name The name of the theme. Yes
+ theme_author The author of the theme. Yes
+ theme_version The version number of the theme. Yes
+ theme_documentation_url A URL where merchants can find documentation for the theme. Yes
+ theme_support_email An email address that merchants can contact for support for the theme. See note
+ theme_support_url A URL where merchants can find support for the theme. See note
+ Caution
+ All of the above attributes are required. However, you need to specify only theme_support_email or theme_support_url, not both. Including both of these attributes, or excluding any other attributes, will result in an error.
+ For example:
+ settings_schema.json
+ 1 [
+ 2
+    {
+ 3
+      "name": "theme_info",
+ 4
+      "theme_name": "Dawn",
+ 5
+      "theme_author": "Shopify",
+ 6
+      "theme_version": "1.0.0",
+ 7
+      "theme_documentation_url": "https:\/\/help.shopify.com\/manual\/online-store\/themes\/os20\/themes-by-shopify\/dawn",
+ 8
+      "theme_support_url": "https:\/\/support.shopify.com\/",
+ 9
+    },
+ 10
+    ...
+ 11 ]
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Schema

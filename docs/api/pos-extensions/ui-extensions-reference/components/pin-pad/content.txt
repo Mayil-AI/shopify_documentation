@@ -1,0 +1,65 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ PinPad
+ A component used to authenticate or identify individuals through a standarized number pad.
+ Validating a PIN Example
+ This code defines a function onPinSubmit that simulates the validation of a Personal Identification Number (PIN). The function takes an array of numbers as input, representing the PIN entered by a user.
+ The function returns a Promise that resolves with a PinValidationResult, which can be either 'accept' or 'reject'. The Promise simulates an asynchronous operation using setTimeout with a delay of 1 second.
+ This code simulates an asynchronous operation using the setTimeout callback. The code checks if the entered PIN matches the sequence [1, 2, 3, 4, 5, 6]. If the entered PIN matches this sequence, the Promise resolves with 'accept'; otherwise, it resolves with 'reject'.
+ This function can be used to simulate PIN validation in a system where the correct PIN is [1, 2, 3, 4, 5, 6].
+ 1 const onPinSubmit = (pin: number[]): Promise<PinValidationResult> => {
+ 2
+      return new Promise((resolve) => {
+ 3
+        setTimeout(() => {
+ 4
+          const isPinValid = pin.length === 6 && pin.every((digit, index) => digit === index + 1);
+ 5
+          const result: PinValidationResult = isPinValid ? 'accept' : 'reject';
+ 6
+          resolve(result);
+ 7
+        }, 1000);
+ 8
+      });
+ 9
+    };
+ Props
+ Name Type Description Options
+ masked boolean? Whether the entered PIN should be masked.
+ minPinLength PinLength? The minimum length of the PIN. 4 | 5 | 6 | 7 | 8 | 9 | 10
+ maxPinLength PinLength? The maximum length of the PIN. 4 | 5 | 6 | 7 | 8 | 9 | 10
+ label string? The placeholder text displayed in the PIN entry view.
+ pinPadAction PinPadActionType? The call to action between the PIN field and the keypad buttons, consisting of a label and function that returns the PIN.
+ onSubmit (number[] => Promise<PinValidationResult>) A callback that performs when the PIN is submitted. accept | reject
+ onPinEntry (number[] => void)? A callback that performs when the PIN changes.
+ PinPadActionType
+ Name Type Description
+ label string? The label displayed on the call to action.
+ onPress (() => Promise)? A callback that performs when the call to action is pressed.
+ Guidelines
+ Due to the nature of this component and the intended UX for this type of action, we recommend surfacing this in a full screen modal.
+ Please be advised that when utilizing the onSubmit callback, it is your responsibility to manage the navigation to the subsequent screen or dismissal of the modal. The component will only handle rejection of invalid PIN cases.
+ Content guidelines
+ When referring to a personal identification number, refer to it as a PIN, with all capital letters.
+ Also when writing the PIN title or PinPadAction label:
+ Be concise
+ Never go over 4 words
+ Do not use punctuation
+ Start with a capital letter
+ Title (Enter PIN)
+ ✅ [PIN pad title] Enter PIN
+ ✅ [PIN pad title] Enter staff PIN
+ ✅ [PIN pad title] Create PIN
+ ❌ [PIN pad title] Please put in a PIN
+ ❌ [PIN pad title] Create a PIN
+ PinPadAction (Generate random PIN, Clear)
+ For PIN Pad actions, the action label should clearly communicate the action.
+ ✅ [PIN pad action label] Generate random PIN
+ ❌ [PIN pad action label] Please create a new random PIN
+ You can use just [verb], if it’s obvious from the surrounding context what the [item] is:
+ ✅ [PIN pad action label] Clear
+ ❌ [PIN pad action label] Clear PIN
+ Was this page helpful?

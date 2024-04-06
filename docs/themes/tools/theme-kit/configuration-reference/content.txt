@@ -1,0 +1,170 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Theme Kit configuration reference
+ This reference lists the configuration variables available for Theme Kit and their accepted values.
+ How it works
+ You can configure Theme Kit using a config file, environment variables, and command line flags. Each configuration method has an order of precedence:
+ Environment variables can override config file values.
+ Command line flags can override config file and environment values.
+ Tip
+ When you're debugging your config, consider the order of precedence for the different configuration methods.
+ Global parameters
+ The following table lists the parameters that you can configure for all Theme Kit actions:
+ Parameter Description
+ config A custom path to your config file. Defaults to the current path where the command is executed.
+ directory The project root directory. Allows you to run the command from another directory.
+ ignore_files A list of patterns to ignore when executing commands.
+ ignores A list of paths to files that contain patterns to ignore.
+ password The Theme password used to connect Theme Kit to your store.
+ proxy A full URL to proxy your requests through. The URL supports only the http protocol.
+ readonly Makes all actions read-only. You can download from this environment but you can't update the theme in the connected Shopify store.
+ store Your store’s Shopify domain with the .myshopify.com postfix.
+ theme_id The ID of the theme.
+ timeout Allows you to change the request timeout. If you have large files in your project that take longer than the default 30 seconds to upload, then you can increase this value. You can set this value to 60s for seconds or 1m for one minute.
+ Config file
+ The configuration file can be set up per environment.
+ In the following example, the config.yml file specifies configurations for three different environments: development, production, and test.
+ 1 development:
+ 2
+    password: 16ef663594568325d64408ebcdeef528
+ 3
+    theme_id: "123"
+ 4
+    store: can-i-buy-a-feeling.myshopify.com
+ 5
+    proxy: http://localhost:3000
+ 6
+    ignore_files:
+ 7
+      - "*.gif"
+ 8
+      - "*.jpg"
+ 9
+      - config/settings_data.json
+ 10 production:
+ 11
+    password: 16ef663594568325d64408ebcdeef528
+ 12
+    theme_id: "456"
+ 13
+    store: can-i-buy-a-feeling.myshopify.com
+ 14
+    timeout: 60s
+ 15
+    readonly: true
+ 16 test:
+ 17
+    password: 16ef663594568325d64408ebcdeef528
+ 18
+    theme_id: "789"
+ 19
+    store: can-i-buy-a-feeling.myshopify.com
+ 20
+    ignores: ignore.txt
+ Environment variables
+ To avoid storing your private secrets in your repository, you can use environment variables. You can interpolate variables in your config.yml file or use environment variables for global parameters.
+ Note
+ Setting up environment variables differs depending on your operating system.
+ Interpolate variables
+ You can interpolate variables into your config.yml file using the ${} notation:
+ 1 development:
+ 2
+    password: ${DEV_PASSWD}
+ 3
+    theme_id: ${DEV_THEMEID}
+ 4
+    store: ${DEV_SHOP}
+ To help you interpolate variables, there are special files that can be used to automatically load environment variables for Theme Kit. The following table lists the file paths for each operating system:
+ Operating system File path
+ MacOSX ${HOME}/Library/Application Support/Shopify/Themekit/variables
+ Linux/BSDs ${XDG_CONFIG_HOME}/Shopify/Themekit/variables
+ Windows %APPDATA%\Shopify\Themekit\variables
+ Any Use the --vars flag in any command to provide a path to a file for loading variables.
+ Variables file
+ The variables file has the same format as most .env type files. The following example shows what the variables file looks like for the previous config file example.
+ Setting up a variables file allows you to commit your config.yml to your repository, but keeps your private secrets out of the repository.
+ DEV_PASSWD=0bwef09hn23048sdkl2345n2k3
+ DEV_THEMEID=123
+ DEV_SHOP=can-i-buy-a-feeling.myshopify.com
+ Environment variables for global parameters
+ Most of the global parameters have a corresponding environment variable. All of the environment variables are prefixed with THEMEKIT_.
+ The following table shows the environment variables associated with each parameter. THEMEKIT_IGNORE_FILES must use : as a pattern separator and THEMEKIT_IGNORES must use : as a file path separator.
+ Parameter Environment variable
+ directory THEMEKIT_DIRECTORY
+ ignore_files THEMEKIT_IGNORE_FILES
+ ignores THEMEKIT_IGNORES
+ password THEMEKIT_PASSWORD
+ proxy THEMEKIT_PROXY
+ store THEMEKIT_STORE
+ theme_id THEMEKIT_THEME_ID
+ timeout THEMEKIT_TIMEOUT
+ Command line flags
+ You can enforce any setting manually using a command line flag. This is useful for debugging settings or scripting calls to Theme Kit from job schedulers, like cron.
+ The following table lists the global parameters and their associated command line flags:
+ Parameter Flag Short version
+ config --config -c
+ directory --dir -d
+ ignore_files --ignored-file Not applicable
+ ignores --ignores Not applicable
+ password --password Not applicable
+ proxy --proxy Not applicable
+ store --store -s
+ theme_id --themeid Not applicable
+ timeout --timeout Not applicable
+ Ignore patterns
+ Theme Kit has a couple of ways to ignore files from your commands. You can provide a list of ignore patterns to your ignore_files value. You can also provide a list of file paths to your ignores value.
+ Ignore pattern rules
+ The following tables shows the rules associated with specifying ignore patterns and some examples:
+ Rule Example
+ Patterns are trimmed of whitespace at the beginning and end of the pattern.
+ Any plain file name (without a * character in it) is matched within the project directory. The pattern no.txt will match both $PROJECT_DIR/no.txt and $PROJECT_DIR/templates/no.txt.
+ Any file pattern has a / at the end will be matched with a glob. The pattern config/ will match config/*.
+ Any pattern containing a glob * is scoped to the project directory. The pattern *.gif will match $PROJECT_DIR/*.gif.
+ Any glob pattern that doesn't start with a glob is matched with a prefixed glob. The pattern build/* will match $PROJECT_DIR/*build/*.
+ Any pattern that starts with a / and ends with a / is considered a regular expression and will match the whole path. The pattern /\.(txt|gif|bat)$/ will match any file with the txt, gif, or bat extensions.
+ On Windows, you must use a backslash (\) as the path separator.
+ Example ignore values in config.yml
+ The following example shows a config.yml file that specifies a list of ignore patterns in the ignore_files value, and a single themekit_ignores file in the ignores value:
+ 1 development:
+ 2
+    ... # Other content
+ 3
+    ignore_files:
+ 4
+    - config/settings_data.json
+ 5
+    - "*.png" # Patterns that start with * need to be quoted to have vaild yaml
+ 6
+    - /\.(txt|gif|bat)$/
+ 7
+    ignores:
+ 8
+    - themekit_ignores # A file to load ignore patterns. Check out the example ignore file.
+ Example ignore file
+ Ignore files must adhere to specific formatting rules to be valid.
+ The following example shows a valid ignore file. One pattern is specified per line, and lines for comments are prefixed with a # value:
+ # $PROJECT_DIR/themekit_ignores
+ # plain file names
+ config/settings_data.json
+ 
+ # globs
+ *.png
+ 
+ # regex
+ /\.(txt|gif|bat)$/
+ Next steps
+ Learn about the different commands that you can use in Theme Kit to execute key operations.
+ Learn how to identify and resolve common issues in Theme Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Global parameters
+ Config file
+ Environment variables
+ Command line flags
+ Ignore patterns
+ Next steps
+ Updates & News
+ Developer changelog

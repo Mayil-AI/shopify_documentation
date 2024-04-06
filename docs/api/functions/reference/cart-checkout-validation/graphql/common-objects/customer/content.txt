@@ -1,0 +1,60 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Customer object
+ 2024-04 latest
+ 
+ 
+ 
+ 
+ Represents a customer with the shop.
+ On this page
+ Fields
+ Types that return Customer
+ Implements
+ Fields
+ amountSpent (MoneyV2!)
+ The total amount of money spent by the customer. Converted from the shop's currency to the currency of the cart using a market rate.
+ displayName (String!)
+ The customer’s name, email or phone number.
+ email (String)
+ The customer’s email address.
+ firstName (String)
+ The customer's first name.
+ hasAnyTag (Boolean!)
+ Whether the customer has any of the given tags.
+ Argument Description
+ tags ( [String!]! ) required
+ The tags to search for.
+ Default value: []
+ hasTags ([HasTagResponse!]!)
+ Whether the customer has the given tags.
+ Argument Description
+ tags ( [String!]! ) required
+ The tags to check.
+ Default value: []
+ id (ID!)
+ A unique identifier for the customer.
+ lastName (String)
+ The customer's last name.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ numberOfOrders (Int!)
+ The number of orders made by the customer.
+ Types that return Customer
+ BuyerIdentity.customer
+ Implements
+ HasMetafields
+ 
+ 
+ 
+ 
+ 
+ 
+ Was this page helpful?
+ YesNo

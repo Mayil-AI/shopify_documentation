@@ -1,0 +1,870 @@
+Overview
+ Ownership
+ Metafields
+ Metaobjects
+ Overview
+ Manage metaobjects
+ Access controls
+ Capabilities
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Capabilities
+ Capabilities provide a way to mix in behaviors and logic with your metaobjects. When you create a metaobject definition, you can enable capabilities that provide additional behavior. You can enable the following capabilities:
+ publishable: Enable drafting of metaobjects using a status column either set to DRAFT or ACTIVE.
+ translatable: Make your metaobjects translatable through Shopify's translation APIs.
+ renderable: Enable setting SEO metadata attributes on your metaobjects.
+ onlineStore: Make your metaobjects render web pages in the Online Store by assigning a theme template and defining a URL.
+ Draft custom content
+ The publishable capability enables users of your metaobject to set its status to either DRAFT or ACTIVE. This can be useful for providing users a way to stage their content before making it available to their storefronts - even if you defined it to be available to storefronts using access controls.
+ In the following example, the metaobjectDefinitionCreate mutation is called with publishable set to true to enable this capability:
+ Creating a new metaobject definition with publishable enabled
+ GraphQL Mutation
+ 1 mutation($input: MetaobjectDefinitionCreateInput!) {
+ 2
+    metaobjectDefinitionCreate(definition: $input) {
+ 3
+      metaobjectDefinition {
+ 4
+        id
+ 5
+        type
+ 6
+        capabilities {
+ 7
+          publishable {
+ 8
+            enabled
+ 9
+          }
+ 10
+        }
+ 11
+        fieldDefinitions {
+ 12
+          key
+ 13
+          name
+ 14
+          type {
+ 15
+            name
+ 16
+          }
+ 17
+        }
+ 18
+      }
+ 19
+    }
+ 20 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "name": "Custom Article",
+ 4
+      "type": "$app:custom_article",
+ 5
+      "access": {
+ 6
+        "admin": "MERCHANT_READ_WRITE",
+ 7
+        "storefront": "PUBLIC_READ"
+ 8
+      },
+ 9
+      "capabilities": {
+ 10
+        "publishable": {
+ 11
+          "enabled": true
+ 12
+        }
+ 13
+      },
+ 14
+      "fieldDefinitions": [
+ 15
+        {
+ 16
+          "key": "title",
+ 17
+          "name": "Title",
+ 18
+          "type": "single_line_text_field"
+ 19
+        },
+ 20
+        {
+ 21
+          "key": "body",
+ 22
+          "name": "Body",
+ 23
+          "type": "rich_text_field"
+ 24
+        },
+ 25
+        {
+ 26
+          "key": "author",
+ 27
+          "name": "Author",
+ 28
+          "type": "single_line_text_field"
+ 29
+        }
+ 30
+      ]
+ 31
+    }
+ 32 }
+      "metaobjectDefinitionCreate": {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://shopify/MetaobjectDefinition/1",
+ 6
+          "type": "app--12345--custom_article",
+ 7
+          "capabilities": {
+ 8
+            "publishable": {
+ 9
+              "enabled": true
+ 10
+            }
+ 11
+          },
+ 12
+          "fieldDefinitions": [
+ 13
+            {
+ 14
+              "key": "title",
+ 15
+              "name": "Title",
+ 16
+              "type": {
+ 17
+                "name": "single_line_text_field"
+ 18
+              }
+ 19
+            },
+ 20
+            {
+ 21
+              "key": "body",
+ 22
+              "name": "Body",
+ 23
+              "type": {
+ 24
+                "name": "rich_text_field"
+ 25
+              }
+ 26
+            },
+ 27
+            {
+ 28
+              "key": "author",
+ 29
+              "name": "Author",
+ 30
+              "type": {
+ 31
+                "name": "single_line_text_field"
+ 32
+              }
+ 33
+            }
+ 34
+          ]
+ 35
+        }
+ 36
+      }
+ 37
+    }
+ 38 }
+ Next, using the metaobjectCreate mutation, you'll notice that the default status for a created "Custom Article" metaobject is DRAFT.
+ Creating a Custom Article metaobject
+ GraphQL Mutation
+ 1 mutation($input: MetaobjectCreateInput!) {
+ 2
+    metaobjectCreate(metaobject: $input) {
+ 3
+      metaobject {
+ 4
+        handle
+ 5
+        type
+ 6
+        capabilities {
+ 7
+          publishable {
+ 8
+            status
+ 9
+          }
+ 10
+        }
+ 11
+        title: field(key: "title") { value }
+ 12
+        body: field(key: "body") { value },
+ 13
+        author: field(key: "author") { value },
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "input" : {
+ 3
+      "type": "$app:product_highlight",
+ 4
+      "fields": [
+ 5
+        {
+ 6
+          "key": "title",
+ 7
+          "value": "Our fall guide"
+ 8
+        }
+ 9
+        {
+ 10
+          "key": "body",
+ 11
+          "value": "Here are some quick tips to starting fall off right."
+ 12
+        }
+ 13
+        {
+ 14
+          "key": "author",
+ 15
+          "value": "Jane Doe"
+ 16
+        }
+ 17
+      ]
+ 18
+    }
+ 19 }
+      "metaobjectCreate": {
+ 4
+        "metaobject": {
+ 5
+          "handle": "our-fall-guide",
+ 6
+          "type": "app--12345--custom_article",
+ 7
+          "capabilities": {
+ 8
+            "publishable": {
+ 9
+              "status": "DRAFT",
+ 10
+            }
+ 11
+          },
+ 12
+          "title": {
+ 13
+            "value": "Our fall guide"
+ 14
+          },
+ 15
+          "body": {
+ 16
+            "value": "Here are some quick tips to starting fall off right."
+ 17
+          },
+ 18
+          "author": {
+ 19
+            "value": "Jane Doe"
+ 20
+          }
+    }
+ 24 }
+ To publish the custom article metaobject, you can use the metaobjectUpdate mutation and set the status to ACTIVE.
+ Publishing the custom article
+ GraphQL Mutation
+ 1 mutation($input: MetaobjectCreateInput!) {
+ 2
+    metaobjectUpdate(id: $id, metaobject: $metaobject) {
+ 3
+      metaobject {
+ 4
+        capabilities {
+ 5
+          publishable {
+ 6
+            status
+ 7
+          }
+ 8
+        }
+ Variables
+ 1 {
+ 2
+    "input" : {
+ 3
+      "id": "gid://shopify/Metaobject/123",
+ 4
+      "metaobject": {
+ 5
+        "capabilities": {
+ 6
+          "publishable": {
+ 7
+            "status": "ACTIVE"
+ 8
+          },
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectUpdate": {
+ 4
+        "metaobject": {
+ 5
+          "capabilities": {
+ 6
+            "publishable": {
+ 7
+              "status": "ACTIVE"
+ 8
+            }
+ 9
+          }
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 }
+ Make your metaobjects translatable
+ The translatable capability allows the fields of a metaobject to be translated. You can be enable this capability by setting translatable to true when performing a metaobjectDefinitionCreate or metaobjectDefinitionUpdate mutation.
+ Update a Custom Article metaobject to be translatable
+ GraphQL mutation
+ 1 mutation($definition: MetaobjectDefinitionUpdate!, $id: ID!) {
+ 2
+    metaobjectDefinitionUpdate(definition: $definition, id: $id) {
+ 3
+      metaobjectDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+        capabilities {
+ 7
+          translatable {
+ 8
+            enabled
+ 9
+          }
+ 10
+ 13 }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/MetaobjectDefinition/1234567",
+ 3
+    "definition": {
+ 4
+      "capabilities": {
+ 5
+        "translatable": {
+ 6
+          "enabled": true
+ 7
+        }
+      "metaobjectDefinitionUpdate" {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://shopify/MetaobjectDefinition/1234567",
+ 6
+          "name": "Custom Article",
+ 7
+          "capabilities": {
+ 8
+            "translatable": {
+ 9
+              "enabled": true
+ 10
+            }
+      }
+ 14
+    }
+ 15 }
+ Once translatable has been enabled, you can use Shopify's translation APIs to register translations for fields on your metaobjects. For the "Custom Article" metaobject, you'll first need to retrieve the fields that can be translated through the translatableResources query:
+ Query for translatable metaobjects
+ GraphQL query
+ 1 {
+ 2
+    translatableResources(first: 1, resourceType: METAOBJECT) {
+          resourceId
+ 6
+          translatableContent {
+ 7
+            key
+ 8
+            value
+ 9
+            digest
+ 10
+            locale
+ 11
+          }
+ 12
+        }
+      "translatableResources": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "resourceId": "gid://shopify/Metaobject/123467",
+ 8
+              "translatableContent": [
+ 9
+                {
+ 10
+                  "key": "title",
+ 11
+                  "value": "Learn about hemming",
+ 12
+                  "digest": "dcf8d211f6633dac78dbd15c219a81b8931e4141204d18fba8c477afd19b75f9",
+ 13
+                  "locale": "en"
+ 14
+                },
+ 15
+                {
+ 16
+                  "key": "author",
+ 17
+                  "value": "Jane Doe",
+ 18
+                  "digest": "8e48350042b4ca04a7a4568774af71f921e7c9b561d9fac7860041e566218d25",
+ 19
+                  "locale": "en"
+ 20
+                },
+ 21
+                {
+ 22
+                  "key": "body",
+ 23
+                  "value": "Learn about hemming today!",
+ 24
+                  "digest": "7918dfe48350042b4ca04a7a4568774af71f921e7c9b561d9fac7860041e5662",
+ 25
+                  "locale": "en"
+ 26
+                }
+ 27
+              ]
+ 28
+            }
+ 29
+          }
+ 30
+        ]
+ 31
+      }
+ 32
+    }
+ 33 }
+ Then, you can register translations for any of the fields on the metaobject. For example, you can translate the title field by passing in the metaobject ID and using the digest for the title field:
+ Register a translation for the title field on the Custom Article metaobject
+ GraphQL mutation
+ 1 mutation CreateTranslation($id: ID!, $translations: [TranslationInput!]!) {
+ 2
+    translationsRegister(resourceId: $id, translations: $translations) {
+ 3
+      userErrors {
+ 4
+        message
+ 5
+        field
+ 6
+      }
+ 7
+      translations {
+ 8
+        locale
+ 9
+        key
+ 10
+        value
+ 11
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/Metaobject/1234567",
+ 3
+    "translations": [
+ 4
+      {
+ 5
+        "key": "title",
+ 6
+        "value": "Initiez-vous aux ourlets",
+ 7
+        "locale": "fr",
+ 8
+        "translatableContentDigest": "dcf8d211f6633dac78dbd15c219a81b8931e4141204d18fba8c477afd19b75f9"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "translationsRegister": {
+ 4
+        "userErrors": [],
+ 5
+        "translations": [
+ 6
+          {
+ 7
+            "locale": "fr",
+ 8
+            "key": "title",
+ 9
+            "value": "Initiez-vous aux ourlets"
+ 10
+          }
+ 11
+        ]
+ Render metaobjects as web pages
+ The renderable capability exposes metaobject SEO fields to Liquid and the Storefront API. You can enable this capability by setting renderable to true when you perform a metaobjectDefinitionCreate or metaobjectDefinitionUpdate mutation.
+ In the following example, the metaobjectDefinitionCreate mutation is called with renderable set to true to enable this capability and sets the meta title and description attributes to the title and body fields respectively:
+ Creating a new metaobject definition with the renderable capability
+ GraphQL Mutation
+ 1 mutation($definition: MetaobjectDefinitionCreateInput!) {
+ 2
+    metaobjectDefinitionCreate(definition: $definition) {
+ 3
+      metaobjectDefinition {
+        capabilities {
+ 7
+          renderable {
+ 8
+            enabled
+ 9
+            data {
+ 10
+              metaTitleKey
+ 11
+              metaDescriptionKey
+ 12
+            }
+ 13
+          }
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Renderable Content",
+ 4
+      "type": "$app:renderable_content",
+ 5
+      "access": {
+ 6
+        "admin": "MERCHANT_READ_WRITE",
+ 7
+        "storefront": "PUBLIC_READ"
+ 8
+      },
+ 9
+      "capabilities": {
+ 10
+        "renderable": {
+ 11
+          "enabled": true,
+ 12
+          "data": {
+ 13
+            "metaTitleKey": "title",
+ 14
+            "metaDescriptionKey": "body"
+      },
+ 18
+      "fieldDefinitions": [
+ 19
+        {
+ 20
+          "key": "title",
+ 21
+          "name": "Title",
+ 22
+          "type": "single_line_text_field"
+ 23
+        },
+ 24
+        {
+ 25
+          "key": "body",
+ 26
+          "name": "Body",
+ 27
+          "type": "rich_text_field"
+ 28
+        }
+ 29
+      ]
+ 30
+    }
+ 31 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectDefinitionCreate": {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://shopify/MetaobjectDefinition/54321",
+ 6
+          "name": "app--12345--renderable_content",
+ 7
+          "capabilities": {
+ 8
+            "renderable": {
+ 9
+              "enabled": true,
+ 10
+              "data": {
+ 11
+                "metaTitleKey": "title",
+ 12
+                "metaDescriptionKey": "body"
+ 13
+              }
+ 14
+            }
+ 15
+          }
+ 16
+        }
+ Make your metaobjects render web pages in the Online Store
+ The onlineStore capability enables a metaobject to have an Online Store template and URL assigned to a metaobject definition. You can enable this capability by setting onlineStore to true when you perform a metaobjectDefinitionCreate or metaobjectDefinitionUpdate mutation.
+ In the following example, the metaobjectDefinitionCreate mutation is called with renderable set to true and onlineStore set to true to enable the web pages feature for the definition. The urlHandle is set to content resulting in the following URL for metaobject entries: /pages/content/{entry-handle}.
+ Creating a new metaobject definition with the web pages feature
+ GraphQL Mutation
+ 1 mutation($definition: MetaobjectDefinitionCreateInput!) {
+ 2
+    metaobjectDefinitionCreate(definition: $definition) {
+ 3
+      metaobjectDefinition {
+        capabilities {
+ 7
+          renderable {
+ 8
+            enabled
+ 9
+            data {
+ 10
+              metaTitleKey
+ 11
+              metaDescriptionKey
+ 12
+            }
+ 13
+          }
+ 14
+          onlineStore {
+ 15
+            enabled
+ 16
+            data {
+ 17
+              urlHandle
+ 18
+            }
+ 19
+          }
+ 20
+        }
+ 21
+      }
+ 22
+    }
+ 23 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Online Store Content",
+ 4
+      "type": "$app:online_store_content",
+ 5
+      "access": {
+ 6
+        "admin": "MERCHANT_READ_WRITE",
+ 7
+        "storefront": "PUBLIC_READ"
+ 8
+      },
+ 9
+      "capabilities": {
+ 10
+        "renderable": {
+ 11
+          "enabled": true,
+ 12
+          "data": {
+ 13
+            "metaTitleKey": "title",
+ 14
+            "metaDescriptionKey": "body"
+ 15
+          }
+ 16
+        },
+ 17
+        "onlineStore": {
+ 18
+          "enabled": true,
+ 19
+          "data": {
+ 20
+            "urlHandle": "content"
+ 21
+          }
+ 22
+        }
+ 23
+      },
+ 24
+      "fieldDefinitions": [
+ 25
+        {
+ 26
+          "key": "title",
+ 27
+          "name": "Title",
+ 28
+          "type": "single_line_text_field"
+ 29
+        },
+ 30
+        {
+ 31
+          "key": "body",
+ 32
+          "name": "Body",
+ 33
+          "type": "rich_text_field"
+ 34
+        }
+ 35
+      ]
+ 36
+    }
+ 37 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectDefinitionCreate": {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://shopify/MetaobjectDefinition/54321",
+ 6
+          "name": "app--12345--online_store_content",
+ 7
+          "capabilities": {
+ 8
+            "renderable": {
+ 9
+              "enabled": true,
+ 10
+              "data": {
+ 11
+                "metaTitleKey": "title",
+ 12
+                "metaDescriptionKey": "body"
+ 13
+              }
+ 14
+            },
+ 15
+            "onlineStore": {
+ 16
+              "enabled": true,
+ 17
+              "data": {
+ 18
+                "urlHandle": "content"
+ 19
+              }
+ 20
+            }
+ 21
+          }
+ 22
+        }
+ 23
+      }
+ 24
+    }
+ 25 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Draft custom content
+ Make your metaobjects translatable
+ Render metaobjects as web pages
+ Make your metaobjects render web pages in the Online Store
+ Updates & News
+ Developer changelog

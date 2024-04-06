@@ -1,0 +1,150 @@
+Billing
+ App Store
+ Manage company locations
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use apps with B2B features.
+ When a Shopify merchant conducts business-to-business (B2B) transactions, they sell their goods and services directly to other companies. You can use the GraphQL Admin API to create companies that represent those business customers and contain information about them.
+ A company can be associated with one or more company locations. Each company location contains information that can be used to change how orders are calculated and charged for a specific company context. For example, a company might have multinational branches that need to follow different billing and taxation rules.
+ This tutorial shows you how to add a location to a company and make updates to the location information.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Add a company location to a company
+ Set up tax exemptions for a company location
+ Associate payment terms with a company location
+ Requirements
+ You've created a company.
+ You're familiar with the concept of company locations.
+ Step 1: Add a company location to a company
+ You can use the companyLocationCreate mutation to create and add a company location to a company:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    companyLocationCreate(companyId: "gid://shopify/Company/1", input: { name: "Second location"}) {
+ 3
+      companyLocation {
+      }
+ 7
+      userErrors { field message }
+ 8
+    }
+ 3
+      "companyLocationCreate": {
+ 4
+        "companyLocation": {
+ 5
+          "id": "gid://shopify/CompanyLocation/2",
+ 6
+          "name": "Second location"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    }
+ 11 }
+ Step 2: Set up tax exemptions for a company location
+ If a company is exempt from sales tax at a location, then you should set up their tax exemption before they process any orders at that location.
+ Use the companyLocationAssignTaxExemptions mutation to override the relevant taxes on the company's account.
+ The following example sets multiple tax exemptions on one company location. For details on all possible tax exemptions, reference the TaxExemption documentation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    companyLocationAssignTaxExemptions(companyLocationId: "gid://shopify/CompanyLocation/1", taxExemptions: [CA_BC_RESELLER_EXEMPTION, CA_STATUS_CARD_EXEMPTION] ) {
+ 3
+      companyLocation {
+ 4
+        id
+ 5
+        taxExemptions
+ 6
+      }
+ 7
+      userErrors { field message }
+ 8
+    }
+ 9 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "companyLocationAssignTaxExemptions": {
+ 4
+        "companyLocation": {
+ 5
+          "id": "gid://shopify/CompanyLocation/1",
+ 6
+          "taxExemptions": [
+ 7
+            "CA_BC_RESELLER_EXEMPTION",
+ 8
+            "CA_STATUS_CARD_EXEMPTION"
+ 9
+          ]
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 }
+ Step 3: Associate payment terms with a company location
+ Payment terms determine when a company needs to pay for an order. This could be in advance of the order, at the time of order, or within a given amount of time that the merchant decides upon with the company.
+ To attach payment terms to a company, pass the buyerExperienceConfiguration input including a paymentTermsTemplateId to the companyLocationUpdate mutation.
+ Refer to the paymentTermsCreate mutation documentation for information on creating payment terms.
+ The following example assigns payment terms with the ID gid://shopify/PaymentTermsTemplate/2 to a company location:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    companyLocationUpdate(companyLocationId: "gid://shopify/CompanyLocation/22", input: {buyerExperienceConfiguration: {paymentTermsTemplateId: "gid://shopify/PaymentTermsTemplate/2"}}) {
+ 3
+      companyLocation {
+ 4
+        id
+ 5
+        buyerExperienceConfiguration {
+ 6
+          paymentTermsTemplate {
+ 7
+            id
+ 8
+            description
+ 9
+          }
+ 10
+        }
+      "companyLocationUpdate": {
+ 4
+        "companyLocation": {
+ 5
+          "id": "gid://shopify/CompanyLocation/22",
+ 6
+          "buyerExperienceConfiguration": {
+ 7
+            "paymentTermsTemplate": {
+ 8
+              "id": "gid://shopify/PaymentTermsTemplate/2",
+ 9
+              "description": "Within 7 days"
+ 10
+            }
+      }
+ 14
+    }
+ 15 }
+ Next steps
+ Learn how to associate a price list and publication to a B2B catalog to determine the available products and prices for customers ordering for a specific B2B company location.
+ Learn how to manage draft orders for B2B clients by calculating and sending invoices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Add a company location to a company
+ Step 2: Set up tax exemptions for a company location
+ Step 3: Associate payment terms with a company location

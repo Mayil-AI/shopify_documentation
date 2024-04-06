@@ -1,0 +1,60 @@
+Cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Payments
+ Thank you and Order status
+ Localized UI extensions
+ Test UI extensions
+ Best practices
+ Customer accounts
+ Selling strategies
+ Online store
+ Admin
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Validation
+ Validation is the process of checking data against specified requirements. This guide introduces client-side validations, and server-side validations, and describes the available resources that you can use to build them in Shopify checkout.
+ How it works
+ You can build functionality in your app that enables merchants to provide the following experiences:
+ Client-side validation using a checkout UI extension
+ Server-side validation using a validation function
+ Client-side validation
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ You can use a checkout UI extension to perform client-side validation at checkout.
+ By validating checkout information in the browser, merchants can prevent customers from proceeding in the checkout when they haven't met certain conditions. For example, you can prevent customers from shipping to a PO box, or block customers under the age of 18 from making a purchase.
+ A benefit of client-side validation is that it provides immediate feedback, eliminating the need for a server round-trip. As a result, customers can correct issues sooner, leading to a more efficient and streamlined user experience.
+ However, it's important to note that client-side validation can be bypassed. Therefore, any validation that can affect your business should be enforced through a validation function on the server-side, such as verifying that the customer isn't attempting to exceed purchase limits or ensuring that loyalty program points are properly redeemed.
+ Server-side validation
+ You can use Shopify Functions to implement validation on the server-side.
+ By validating cart and checkout information on the server, merchants can ensure that purchases meet certain criteria before a customer can check out or complete an order. For example, you can enforce an order maximum for customers with insufficient order history, and prevent them from proceeding through checkout.
+ Using Shopify Functions for server-side validation is the recommended approach to ensure that a merchant's business logic is enforced. Server-side validation is available for online store carts, carts built for custom storefronts, and at checkout.
+ Getting started
+ Follow these tutorials to get started with validating checkout on the client, or validating an entire cart and checkout on the server.
+ Getting started with client-side validation
+ Use a checkout UI extension to validate fields at checkout and block customer progress.
+ Getting started with server-side validation
+ Use Shopify Functions to block progress on a checkout when the cart line quantities exceed a limit.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building validations in checkout.
+ Checkout UI extensions API reference
+ Consult the API reference for checkout UI targets and their respective types.
+ Components for checkout UI extensions
+ Learn about the components that are available in checkout UI extensions.
+ Checkout extension configuration
+ Learn about the properties that you can configure in your checkout UI extension.
+ Shopify Function APIs reference
+ Learn about the available APIs for Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Getting started
+ Developer tools and resources
+ Updates & News
+ Developer changelog

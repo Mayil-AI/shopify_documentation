@@ -1,0 +1,225 @@
+Variables in input queries
+ Network access
+ Overview
+ Using network access
+ GraphQL reference
+ Performance and resilience
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Network access GraphQL schema reference
+ This guide describes the additional fields in the Function schemas that relate to network access. To retrieve the latest GraphQL schema, you can use a CLI command. Other Functions follow the same pattern.
+ Function return types
+ Function return types are specific to their associated target:
+ FunctionFetchResult: The associated target is purchase.[function-name].fetch.
+ FunctionRunResult: The associated target is purchase.[function-name].run.
+ FunctionFetchResult
+ The outcome of the purchase.[function-name].fetch target mutation is similar to other Function APIs and conveys an HttpRequest to be executed. The HttpRequest input contains traditional HTTP request fields.
+ The HttpRequestPolicy field allows you to specify how Shopify should handle the request. Currently, you can only control the timeout execution. For more information, refer to Timeouts.
+ schema.graphql
+ 1 """
+ 2 The result of a `FunctionFetchResult` mutation.
+ 3 """
+ 4 input FunctionFetchResult {
+ 5
+    """
+ 6
+    Request.
+ 7
+    """
+ 8
+    request: HttpRequest
+ 9 }
+ 10
+ 11 """
+ 12 The attributes associated with an HTTP request.
+ 13 """
+ 14 input HttpRequest {
+ 15
+    """
+ 16
+    The HTTP body.
+ 17
+    """
+ 18
+    body: String
+ 19
+ 20
+    """
+ 21
+    The HTTP headers.
+ 22
+    """
+ 23
+    headers: [HttpRequestHeader!]!
+ 24
+ 25
+    """
+ 26
+    The HTTP method.
+ 27
+    """
+ 28
+    method: HttpRequestMethod!
+ 29
+ 30
+    """
+ 31
+    The policy attached to the HTTP request.
+ 32
+    """
+ 33
+    policy: HttpRequestPolicy!
+ 34
+ 35
+    """
+ 36
+    The HTTP URL. For example, https://example.com. The scheme needs to be HTTPS.
+ 37
+    """
+ 38
+    url: URL!
+ 39 }
+ 40
+ 41 """
+ 42 The attributes associated with an HTTP request header.
+ 43 """
+ 44 input HttpRequestHeader {
+ 45
+    """
+ 46
+    The header name.
+ 47
+    """
+ 48
+    name: String!
+ 49
+ 50
+    """
+ 51
+    The header value.
+ 52
+    """
+ 53
+    value: String!
+ 54 }
+ 55
+ 56 """
+ 57 The HTTP request available methods.
+ 58 """
+ 59 enum HttpRequestMethod {
+ 60
+    """
+ 61
+    An HTTP GET request.
+ 62
+    """
+ 63
+    GET
+ 64
+ 65
+    """
+ 66
+    An HTTP POST request.
+ 67
+    """
+ 68
+    POST
+ 69 }
+ 70
+ 71 """
+ 72 The attributes associated with an HTTP request policy.
+ 73 """
+ 74 input HttpRequestPolicy {
+ 75
+    """
+ 76
+    The read timeout in milliseconds.
+ 77
+    """
+ 78
+    readTimeoutMs: Int!
+ 79 }
+ FunctionRunResult
+ The outcome of the purchase.[function-name].run target mutation. Refer to the API documentation for domain specific details.
+ Input fetchResult
+ The fetchResult input field is only available to the input query of the purchase.[function-name].run target and isn't available for the purchase.[function-name].fetch target. fetchResult represents the HttpResponse that derives from the HttpRequest.
+ schema.graphql
+ 1 type Input {
+ 2
+    """
+ 3
+    The HTTP response of the HTTP request.
+ 4
+    """
+ 5
+    fetchResult: HttpResponse
+ 6 }
+ 7
+ 8 """
+ 9 The attributes associated with an HTTP response.
+ 10 """
+ 11 type HttpResponse {
+ 12
+    """
+ 13
+    The HTTP body.
+ 14
+    """
+ 15
+    body: String
+ 16
+ 17
+    """
+ 18
+    The HTTP headers.
+ 19
+    """
+ 20
+    headers: [HttpResponseHeader!]!
+ 21
+ 22
+    """
+ 23
+    The HTTP status code.
+ 24
+    """
+ 25
+    status: Int!
+ 26 }
+ 27
+ 28 """
+ 29 The attributes associated with an HTTP response header.
+ 30 """
+ 31 type HttpResponseHeader {
+ 32
+    """
+ 33
+    The header name.
+ 34
+    """
+ 35
+    name: String!
+ 36
+ 37
+    """
+ 38
+    The header value.
+ 39
+    """
+ 40
+    value: String!
+ 41 }
+ Next step
+ Review the performance and resilience of using network access with Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Function return types
+ Input fetchResult
+ Next step
+ Updates & News

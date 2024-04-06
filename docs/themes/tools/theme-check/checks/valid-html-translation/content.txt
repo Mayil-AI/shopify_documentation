@@ -1,0 +1,45 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ ValidHTMLTranslation
+ Identifies invalid HTML inside translations.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 {
+ 2
+    "hello_html": "<h2>Hello, world</h1>",
+ 3
+    "image_html": "<a href='/cat'>Unclosed"
+ 4 }
+ ✓ Pass
+ 1 {
+ 2
+    "hello_html": "<h1>Hello, world</h1>",
+ 3
+    "image_html": "<img src='cat.png'>",
+ 4
+    "line_break_html": "<br>",
+ 5
+    "self_closing_svg_html": "<svg />"
+ 6 }
+ Options
+ 1 ValidHTMLTranslation
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog

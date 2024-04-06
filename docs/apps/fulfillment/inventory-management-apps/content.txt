@@ -1,0 +1,95 @@
+Inventory management apps
+ Overview
+ Quantities and states
+ Order management apps
+ Order routing apps
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ Point of Sale
+ Marketing
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Inventory management apps
+ Inventory management apps provide merchants with various ways to manage their inventory. For example, an inventory management app might query and adjust inventory quantities on behalf of a merchant.
+ This guide describes the inventory management lifecycle, provides use cases for inventory management apps, and offers some developer tools and resources to get you started.
+ How it works
+ Inventory is the set of items that a merchant tracks and uses to conduct their business. This can include items that are physically at a location and ready to be sold, items that are incoming to a merchant's location, and items that are set aside for holds or inspection.
+ Merchants track inventory to avoid selling products that have run out of stock, and determine when they need to order or make more of a product. Apps and third-party logistics providers can automate the inventory management process by querying and adjusting inventory quantities on behalf of merchants.
+ The following diagram shows some of the inventory management activities that an app or third-party logistics provider can perform in the context of an order lifecycle:
+ Customers place and receive orders that contain product variants.
+ Shopify decrements the available inventory quantity for product variants that are included in an order, and increments the committed inventory quantity for the order. After the order is fulfilled, Shopify decrements the committed inventory quantity.
+ Apps or third-party logistics providers automate the inventory management process by querying inventory quantities at one or more locations, managing inventory quantities, and moving inventory quantities between states.
+ Merchants or third-party fulfillment services track inventory in the Shopify admin and fulfill orders.
+ Inventory states
+ An inventory state represents the quantities of a product at a specific location or quantities that have been committed to orders. Inventory is grouped into different states:
+ Inventory state Description
+ incoming The inventory that’s on its way to a merchant's location. For example, the inventory might be in an incoming shipment. Incoming inventory isn’t available to sell until it has been received and its state has been changed to available.
+ 
+ The incoming state is the only state that represents quantities that aren't physically present at a location. Incoming inventory is surfaced at its destination location.
+ on_hand The total number of units that are physically at a location.
+ 
+ The on_hand state equals the sum of inventory quantities that are in the available, committed, reserved, damaged, safety_stock, and quality_control states.
+ available The inventory that a merchant can sell. Available inventory isn’t committed to any orders and isn’t part of incoming transfers.
+ committed The number of units that are part of a placed order but aren't fulfilled. When a draft order is created, the inventory isn't committed until the draft order is completed and an order is created.
+ reserved The on-hand units that are temporarily set aside. For example, a merchant might want to set on-hand units aside for holds or inspection.
+ 
+ Inventory quantities in a reserved state display as Unavailable to merchants that are tracking inventory in the Shopify admin. When a draft order is created, merchants can optionally reserve the units for a limited period of time.
+ damaged The on-hand units that aren't sellable or usable due to damage.
+ 
+ Inventory quantities in a damaged state display as Unavailable to merchants that are tracking inventory in the Shopify admin.
+ safety_stock The on-hand units that are set aside to help guard against overselling.
+ 
+ Inventory quantities in a safety_stock state display as Unavailable to merchants that are tracking inventory in the Shopify admin.
+ quality_control The on-hand units that aren't sellable because they're currently in inspection for quality purposes.
+ 
+ Inventory quantities in a quality_control state display as Unavailable to merchants that are tracking inventory in the Shopify admin.
+ Note
+ The incoming, available, committed, reserved, damaged, safety_stock, and quality_control states are mutually exclusive.
+ GraphQL queries and mutations
+ The following diagram shows the relationships between inventory states and the GraphQL Admin API query or mutation that's executed:
+ The inventoryLevel and inventoryItem queries retrieve inventory quantities in the incoming, on_hand, available, committed, reserved, damaged, safety_stock, and quality_control states.
+ The inventoryAdjustQuantities mutation adjusts the inventory quantity for a given product, state, or location combination by the given delta. For example, if the previous inventory count in the available state is 100, and you want to change it to 102, then the given delta (difference) is 2.
+ The inventorySetOnHandQuantities mutation explicitly sets the quantity of inventory in the on_hand state to the given value.
+ The inventoryMoveQuantities mutation moves a quantity of inventory between the available state and the reserved, damaged, safety_stock, and quality_control states, or between unavailable states (reserved, damaged, safety_stock, and quality_control). For example, 100 units of inventory can be moved from the reserved state to the available state.
+ Use cases
+ Common use cases for managing inventory include the following:
+ Manage what customers can purchase on the merchant's sales channels
+ Organize and manage goods throughout the supply chain
+ Determine when to make a purchase order to increase product quantities
+ Centralize inventory and order data so that merchants can sell across multiple online and offline channels, and use multiple warehouses
+ Webhooks
+ Your app can subscribe to the following inventory-related webhooks. For more information on webhook payloads, refer to the InventoryItem and InventoryLevel reference topics.
+ Note
+ Changes to committed, reserved, damaged, safety_stock, and quality_control inventory states don't trigger webhooks.
+ Webhook topic Description
+ inventory_items/create Occurs when an inventory item is created.
+ inventory_items/update Occurs when an inventory item is updated.
+ inventory_items/delete Occurs when an inventory item is deleted.
+ inventory_levels/connect Occurs when an inventory level is connected.
+ inventory_levels/disconnect Occurs when an inventory level is disconnected.
+ inventory_levels/update Occurs when an inventory level is updated.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about managing inventory.
+ InventoryLevel object
+ Consult the GraphQL Admin API reference to learn more about the InventoryLevel object.
+ InventoryItem object
+ Consult the GraphQL Admin API reference to learn more about the InventoryItem object.
+ InventoryLevel resource
+ Consult the REST Admin API reference to learn more about the InventoryLevel resource.
+ InventoryItem resource
+ Consult the REST Admin API reference to learn more about the InventoryItem resource.
+ Limitations
+ You can't use the Admin API to adjust or move inventory quantities in the committed state. Inventory quantities in the committed state are only affected by the creation and fulfillment of a merchant's orders.
+ Next steps
+ Learn how to sync and maintain accurate inventory quantities, and transition products to different inventory states.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Inventory states
+ Use cases
+ Webhooks
+ Developer tools and resources

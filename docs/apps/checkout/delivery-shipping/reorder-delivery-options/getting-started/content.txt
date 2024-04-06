@@ -1,0 +1,260 @@
+Getting started with reordering delivery customizations
+ You can use delivery customizations to hide, reorder, and rename the delivery options that are available to buyers during checkout. In this tutorial, you'll use Shopify Functions to rename a delivery option offered to customers at checkout, based on the shipping destination.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Generate starter code for Shopify Functions.
+ Use GraphQL to define the input of your function.
+ Deploy functions to the Shopify platform.
+ Review logs for your function.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Create the delivery customization function
+ To create your delivery customization function, you can use Shopify CLI to generate a starter function, specify the inputs for your function using an input query, and implement your function logic using JavaScript or Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new delivery customization extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template delivery_customization --name delivery-customization
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ $
+    (3) Rust
+ $
+    (4) Wasm
+ Navigate to extensions/delivery-customization:
+ Terminal
+ $ cd extensions/delivery-customization
+ Replace the contents of src/run.graphql file with the following code.
+ run.graphql defines the input for the function. You need the cart delivery groups, with the delivery state/province code and available delivery options.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      deliveryGroups {
+ 4
+        deliveryAddress {
+ 5
+          provinceCode
+ 6
+        }
+ 7
+        deliveryOptions {
+ 8
+          handle
+ 9
+          title
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 }
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ This function logic appends a message to all delivery options if the shipping address state or province code is NC. You can adjust this to the state or province of your choice.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 // Use JSDoc annotations for type safety
+ 4 /**
+ 5 * @typedef {import("../generated/api").RunInput} RunInput
+ 6 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 7 * @typedef {import("../generated/api").Operation} Operation
+ 8 */
+ 9
+ 10 // The configured entrypoint for the 'purchase.delivery-customization.run' extension target
+ 11 /**
+ 12 * @param {RunInput} input
+ 13 * @returns {FunctionRunResult}
+ 14 */
+ 15 export function run(input) {
+ 16
+    // The message to be added to the delivery option
+ 17
+    const message = "May be delayed due to weather conditions";
+ 18
+ 19
+    let toRename = input.cart.deliveryGroups
+ 20
+      // Filter for delivery groups with a shipping address containing the affected state or province
+ 21
+      .filter(group => group.deliveryAddress?.provinceCode &&
+ 22
+        group.deliveryAddress.provinceCode == "NC")
+ 23
+      // Collect the delivery options from these groups
+ 24
+      .flatMap(group => group.deliveryOptions)
+ 25
+      // Construct a rename operation for each, adding the message to the option title
+ 26
+      .map(option => /** @type {Operation} */({
+ 27
+        rename: {
+ 28
+          deliveryOptionHandle: option.handle,
+ 29
+          title: option.title ? `${option.title} - ${message}` : message
+ 30
+        }
+ 31
+      }));
+ 32
+ 33
+    // The @shopify/shopify_function package applies JSON.stringify() to your function result
+ 34
+    // and writes it to STDOUT
+ 35
+    return {
+ 36
+      operations: toRename
+ 37
+    };
+ 38 };
+ Step 2: Preview the function on a development store
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 3: Create the delivery customization with GraphiQL
+ To activate your function, you must create a delivery customization on the store where you installed your app. You can do this using the deliveryCustomizationCreate GraphQL mutation.
+ In subsequent tutorials, you'll use metafields on this delivery customization to configure your function, and create a user interface so merchants can configure the function themselves.
+ Install the Shopify GraphiQL app on your store. If you've already installed GraphiQL, then you should do so again to select the necessary access scopes for delivery customizations.
+ Note
+ Make sure to select the read_delivery_customizations and write_delivery_customizations access scopes for the Admin API.
+ In the GraphiQL app, in the API Version field, select the 2023-07 version.
+ Find the ID of your function by executing the following query:
+ find-function-query.graphql
+ 1 query {
+ 2
+    shopifyFunctions(first: 25) {
+ 3
+      nodes {
+ 4
+        app {
+ 5
+          title
+ 6
+        }
+ 7
+        apiType
+ 8
+        title
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ The result contains a node with your function's ID:
+ find-function-result.json
+ 1 {
+ 2
+    "app": {
+ 3
+      "title": "your-app-name-here"
+ 4
+    },
+ 5
+    "apiType": "delivery_customization",
+ 6
+    "title": "delivery-customization",
+ 7
+    "id": "YOUR_FUNCTION_ID_HERE"
+ 8 }
+ Execute the following mutation and replace YOUR_FUNCTION_ID_HERE with the ID of your function:
+ mutation.graphql
+ 1 mutation {
+ 2
+    deliveryCustomizationCreate(deliveryCustomization: {
+ 3
+      functionId: "YOUR_FUNCTION_ID_HERE"
+ 4
+      title: "Add message to delivery options for state/province"
+ 5
+      enabled: true
+ 6
+    }) {
+ 7
+      deliveryCustomization {
+ 8
+        id
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ You should receive a GraphQL response that includes the ID of the created delivery customization. If the response includes any messages under userErrors, then review the errors, check that your mutation and functionId are correct, and try the request again.
+ Tip
+ If you receive a Could not find Function error, then confirm the following:
+ The function ID is correct.
+ You've installed the app on your development store.
+ Development store preview is enabled.
+ Step 4: Test the delivery customization
+ From the Shopify admin, go to Settings > Shipping and delivery.
+ Check the Delivery customizations section. You should find the Add message to delivery options for state/province delivery customization that you created with GraphiQL.
+ Open your development store, build a cart, and proceed to checkout.
+ Enter a delivery address that doesn't use the specified state/province code. You shouldn't see any additional messaging on the delivery options.
+ Change your shipping address to use your chosen state/province code. Your delivery options should now have the additional messaging.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > delivery-customization.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Add configuration to your delivery customization using metafields.
+ Step 1: Create the delivery customization function
+ Step 2: Preview the function on a development store
+ Step 3: Create the delivery customization with GraphiQL
+ Step 4: Test the delivery customization
+ Next steps

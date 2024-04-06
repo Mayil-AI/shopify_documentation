@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ DeprecateLazysizes
+ Discourages use of the lazysizes JavaScript library for lazy loading images, iframes, and scripts.
+ You should avoid using third-party libraries over native browser features to avoid large JavaScript bundle sizes and slow load times. Learn more about theme performance.
+ This check identifies uses of the lazyload class, data-srcset and data-sizes attributes, and data-sizes="auto".
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ The following example includes a lazyload class:
+ 1 <img src="a.jpg" class="lazyload">
+ The following example includes a lazyload class, a data-srcset attribute, a data-sizes attribute, and data-sizes="auto":
+ 1 <img
+ 2
+    alt="House by the lake"
+ 3
+    data-sizes="auto"
+ 4
+    data-srcset="small.jpg 500w,
+ 5
+    medium.jpg 640w,
+ 6
+    big.jpg 1024w"
+ 7
+    data-src="medium.jpg"
+ 8
+    class="lazyload"
+ 9 />
+ ✓ Pass
+ The following example uses the native loading attribute instead of the lazysizes library:
+ 1 <img src="a.jpg" loading="lazy">
+ Disabling this check
+ You should disable this check only if you want to support lazy loading of images in browsers that don't support the loading="lazy" attribute.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Disabling this check

@@ -1,0 +1,75 @@
+Overview
+ Getting started
+ Overview
+ Get started
+ Channel app
+ Marketplace homepage
+ Developer tools
+ Shop discovery
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Shopify Marketplace Kit overview
+ Caution
+ Marketplace Kit tutorials provide you with code that uses API version 2024-04. You're responsible for keeping your apps up to date with Shopify's API versioning and release schedule. For more information, refer to Shopify API versioning.
+ Commerce doesn't apply just to websites. You can add commerce features to any platform with Shopify Marketplace Kit. Marketplace Kit enables you to leverage Shopify's commerce features and connects your platform to millions of merchants and their products.
+ This guide describes what marketplaces are, how they fit into Shopify using Marketplace Kit, and how to get started.
+ What's a marketplace?
+ A marketplace is a purchasing surface on a platform, featuring products from different shops and directing buyers towards a sale. For example, a streaming app where users can buy merchandise from different artists constitutes a marketplace.
+ A marketplace includes the following apps:
+ Merchant-facing channel app: A sales channel app that merchants install in their online store. Merchants use this channel to publish their products to the marketplace.
+ Buyer-facing app: An app determining where and how products are displayed on the marketplace and how buyers are directed towards a sale.
+ Marketplace participants
+ Shopify: E-commerce platform for online stores and retail point-of-sale systems.
+ Merchants: People who sell goods or services through the Shopify platform.
+ Partners: Developers who help Shopify's mission. Marketplace Kit tutorials are for Partners who want to get started quickly using a ready-to-go kit.
+ Buyers: People who make purchases from Shopify merchants in the marketplace.
+ What's Shopify Marketplace Kit?
+ Shopify Marketplace Kit uses Shopify's foundational tech stack and commerce expertise to provide a set of APIs, webhooks, and UI components to accelerate your marketplace development process. Marketplace Kit connects your platform and its users to millions of Shopify merchants and their products.
+ Storefront data
+ Marketplace Kit uses the Storefront API for efficient data-fetching. The Storefront API powers the set of actions that buyers can perform in a marketplace, such as viewing products and collections, adding products to a cart, and checking out.
+ Marketplace Kit is built and optimized to use data coming from the Storefront API. The shape of the data passed to components and webhooks corresponds and conforms to structures based on the Storefront API's GraphQL types.
+ How does Marketplace Kit work?
+ Marketplace Kit uses a channel app to connect Shopify merchants to a platform. Partners create a channel app, and merchants install the channel app in the Shopify admin. In the Shopify admin, merchants publish products from their store to the channel app. The channel app surfaces these products on the platform.
+ When your platform has multiple merchants publishing products to the channel app, with buyers purchasing those products on the platform, you've got a basic marketplace.
+ The following diagram illustrates the marketplace workflow:
+ Shopify approves your channel app.
+ Merchants install your channel app using the OAuth grant screen and are granted data access.
+ Your channel app creates and saves access tokens and registers required webhooks.
+ Your channel app includes an onboarding flow, which checks a shop against marketplace requirements to approve merchants to publish their products to the app.
+ Merchants onboard to the marketplace, which includes accepting terms and conditions, and publish products on the channel app.
+ The marketplace displays and manages published products.
+ Buyers purchase products by completing their checkout on the merchant's store.
+ Shopify listens for orders/create webhook events and attributes orders to marketplaces.
+ Merchants fulfill orders.
+  Your channel app bills merchants for sales made on the marketplace.
+ Build requirements
+ All Shopify channel apps need to be submitted for approval to the Shopify app review team. For more information, refer to the sales channel app requirements.
+ Channel apps should also adhere to the following criteria:
+ Apps are kept up to date with the latest API and component changes.
+ Apps communicate important information to merchants early, such as changes to the requirements for publishing products to the app.
+ UX guidelines
+ You can use the frontend code included in the Marketplace Kit tutorials to create responsive interfaces that support desktop and mobile experiences.
+ Each channel app exists as an iframe in the Shopify admin. The pages and components that make up channel apps need to feel consistent with the overall user experience that the Shopify admin provides.
+ The Channels UI provides a set of React components for designing a merchant-facing channel app that's consistent with the design principles in Shopify Polaris.
+ Note
+ We don't recommend using components from the Channels UI and Shopify Polaris libraries to build a marketplace's buyer-facing pages.
+ Next steps
+ Learn how to get started with Shopify Marketplace Kit.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What's a marketplace?
+ Marketplace participants
+ What's Shopify Marketplace Kit?
+ Storefront data
+ How does Marketplace Kit work?
+ Build requirements
+ UX guidelines
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

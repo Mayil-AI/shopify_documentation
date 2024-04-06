@@ -1,0 +1,45 @@
+Theme editor preview inspector
+ Design
+ Overview
+ Color system
+ Merchant stores
+ Version control
+ File transformation
+ Deceptive code
+ Integrating apps
+ Product merchandising
+ Color system best practices
+ One of the most important components of designing a visually appealing, functional, and accessible theme is color. Not only does a well-designed color system reinforce a merchant’s branding, it has the power to enhance and direct the user’s experience.
+ When designing the color system for your theme, consider both the overall look and feel, and the interplay or relationship between elements. There should be an established hierarchy between elements. For example, emphasize a call-to-action, and provide adequate color contrast between foreground and background elements. This sets merchants up for success by providing seamless and accessible experiences for their customers.
+ To help make your theme’s color system more robust and intuitive for merchants to use, you can use color schemes.
+ Color schemes
+ Color schemes are a theme setting that let you group together elements and their respective colors, in a visually representative way to merchants. You can create an infinite amount of color schemes to offer merchants more flexibility and variety for their storefronts.
+ When designing color schemes for your themes, include elements that are used throughout the theme. Consider areas where merchants would benefit from being able to change colors in one shared place.
+ Example: Your color scheme includes text, background, link and button text. You have a specific section where users can add a grid of icons to represent product features. You can allow merchants to use a bespoke color for these icons if you so choose.
+ Number of colors
+ While you could be tempted to convey that your theme is highly customizable to merchants, we recommend not offering unnecessary granular colors to avoid overwhelming your color system and merchants’ experience. Prioritize optimizing for when multiple objects can wear the same color reference of a scheme or a bespoke color.
+ Color scheme diversity
+ Create color schemes that are distinct enough to provide variety, but similar enough to maintain a good visual balance throughout the design.
+ Color scheme roles
+ A color role is a designated purpose or function assigned to a specific color within a design system. While there are specific roles that can be associated with certain colors, such as background, text, and buttons, remember that a color scheme isn't limited to these roles. Other important parts of the theme, such as other accent colors, could also be considered when defining a color scheme.
+ There are 10 required roles that can be reliably used by apps and other parts of the Shopify ecosystem. They are used to:
+ Provide a predictable mapping to represent the scheme preview. This is what provides users the visual cue of what color scheme they are selecting.
+ Provide a predictable mapping so that other parts of the Shopify ecosystem, such as apps, can understand what colors are in a given theme in a predictable way.
+ These roles are the most commonly used color relationships we observe in themes and apps. While auditing our ecosystem, we found that links are used more often than dividers. Dividers are often derived from other existing colors, and don't necessarily warrant their own role.
+ Naming conventions
+ Use the following naming conventions for color schemes:
+ Roles: Use semantically predictable roles. For example, an app shouldn't rely on guesswork to understand the intended application of a color.
+ Scheme’s color: Color scheme labels can be named however works best for your theme. The labels should be clear and descriptive, making it easy for users to understand the purpose of each color picker.
+ Additional colors outside color schemes
+ Color schemes can be used in conjunction with the existing color setting type. If you want to add more colors for the design of your theme, then you can create new color groups. If the colors don't impact elements that require an accessible contrast ratio, then you aren't required to include them in the color scheme definition.
+ Hardcoded colors
+ You can use hardcoded colors, but you shouldn't apply hardcoded colors to elements that require an accessible contrast ratio.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Color schemes
+ Color scheme roles
+ Naming conventions
+ Additional colors outside color schemes
+ Hardcoded colors
+ Updates & News

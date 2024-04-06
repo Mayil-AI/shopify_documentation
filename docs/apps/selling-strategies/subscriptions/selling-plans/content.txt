@@ -1,0 +1,210 @@
+Subscriptions
+ Overview
+ Modeling apps
+ Selling plans
+ Overview
+ Manage selling plans
+ Contracts
+ Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Selling plans
+ Selling plans represent how products can be sold and purchased. For example, a product can be configured to enable it to be billed and delivered on a monthly basis at a 15% discount.
+ Two common selling plan types include the "Subscribe and save" and "Prepaid" options. "Subscribe and save", also known as "pay per delivery", is a selling method where a customer pays for goods or services per delivery. "Prepaid" is a selling method where a customer makes a single payment upfront.
+ Learn more about purchase option types and associated policies.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_products, read_customer_payment_methods, read_own_subscription_contracts, and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ To be eligible to use Shopify subscriptions, users need to meet the qualifying criteria.
+ Selling plans
+ Selling plans are organized into selling plan groups, which represent a selling method or purchase option. The following diagram shows the object relationships between selling plan groups, products, variants, selling plans, and policies.
+ API object Description
+ Selling plan group Represents a selling method. For example, "Subscribe and save" or "Prepaid" subscriptions.
+ Products Represents the products that are associated to the selling plan group.
+ Variants Represents the product variants that are associated to the selling plan group.
+ Selling plans Represents an alternative way to buy a product or variant. Selling plans are organized into a selling plan group. For example, individual selling plans might be named "Deliver weekly" or "Deliver monthly".
+ Policies Each selling plan is associated with the following policies:
+ 
+ Billing policy: The billing frequency associated with the subscription. For example, bill every week, or bill every three months.
+ Delivery policy: The delivery frequency associated with the subscription. For example, deliver every month, or deliver every other week.
+ Inventory policy: The inventory behavior associated with the subscription. Inventory can be committed when the order is created, or when the order is fulfilled.
+ Pricing policy: The type of pricing associated with the subscription. For example, a $10 or 20% discount that recurs for a limited period or that is fixed for the duration of the subscription. The two types of pricing policies are:
+ 
+ Fixed pricing policy: A single pricing policy. For example, all billing cycles might have a flat 15% discount. An initial pricing policy is applied until a defined recurring policy kicks in.
+ Recurring pricing policy: A follow up pricing policy that applies if the initial pricing policy expires. For example, the first billing cycle might have a 20% discount and the recurring cycles after might be discounted by 15%.
+ Selling plans-related webhooks
+ Your app can subscribe to webhooks that are related to selling plans. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to the Webhook configuration overview.
+ Example webhook responses
+ selling_plan_groups/create
+ selling_plan_groups/update
+ selling_plan_groups/delete
+ 1 // Occurs when a selling plan group is created. Requires the read_own_subscription_contracts scope.
+ 2 {
+ 3
+    "admin_graphql_api_id": "gid:\/\/shopify\/SellingPlanGroup\/1039518903",
+ 4
+    "id": 1039518903,
+ 5
+    "name": "Subscribe & Save",
+ 6
+    "merchant_code": "sub-n-save",
+ 7
+    "admin_graphql_api_app": "gid:\/\/shopify\/App\/2525000003",
+ 8
+    "app_id": null,
+ 9
+    "description": null,
+ 10
+    "options": [
+ 11
+      "Delivery every"
+ 12
+    ],
+ 13
+    "position": null,
+ 14
+    "summary": "1 delivery frequency,  discount",
+ 15
+    "selling_plans": [
+ 16
+      {
+ 17
+        "name": "Pay every month deliver every month",
+ 18
+        "options": [
+ 19
+          "month"
+ 20
+        ],
+ 21
+        "position": null,
+ 22
+        "description": null,
+ 23
+        "billing_policy": {
+ 24
+          "interval": "month",
+ 25
+          "interval_count": 1,
+ 26
+          "min_cycles": null,
+ 27
+          "max_cycles": null
+ 28
+        },
+ 29
+        "delivery_policy": {
+ 30
+          "interval": "month",
+ 31
+          "interval_count": 1,
+ 32
+          "anchors": [
+ 33
+ 34
+          ],
+ 35
+          "cutoff": null,
+ 36
+          "pre_anchor_behavior": "asap"
+ 37
+        },
+ 38
+        "pricing_policies": [
+ 39
+ 40
+        ]
+ 41
+      }
+ 42
+    ],
+ 43
+    "product_variants": [
+ 44
+ 45
+    ],
+ 46
+    "products": [
+ 47
+ 48
+    ]
+ 49 }
+ Subscription shipping and delivery
+ Note
+ To manage delivery profiles on your selling plans, your app needs the read_shipping and write_shipping access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Customers can buy one-time purchases and subscriptions when both are offered by a merchant. Some merchants might want to offer custom shipping rules for subscription purchases. You can use the DeliveryProfile object to create shipping profiles and associate them with selling plan groups. Here are some example scenarios where delivery profiles can be useful to implement custom shipping rules for subscription purchases:
+ A merchant wants to offer free or discounted shipping on subscriptions.
+ A merchant wants to limit subscription purchases to certain shipping destinations.
+ A merchant wants to offer local pickup for one-time purchases of a product, but requires shipping for subscription purchases.
+ Delivery profiles
+ By default, a product has the same shipping rate whether it's bought as a one-time purchase or as part of a subscription. To calculate subscription shipping separately from one-time purchases, you can associate a DeliveryProfile object with the selling plan group using the deliveryProfileCreate or deliveryProfileUpdate mutation.
+ When one-time purchases and subscriptions are in the same delivery profile, coming from the same location, shipping for one-time purchases is calculated and combined with the subscription purchases. Subsequent subscription shipping rates are calculated separately.
+ Shipping rates that are specific to a selling plan group don't display in the Shipping and delivery settings in the Shopify admin. You need to configure shipping rates for selling plan groups in your app.
+ Delivery method display at checkout
+ When multiple subscriptions are in the cart, shipping rates are consolidated if they share the same selling plan billing and delivery policies.
+ Customers can select a shipping rate for one-time purchase products in the cart if more than one rate is available. They can also view the total cost of shipping for their subscriptions and the total cost of shipping for one-time purchases:
+ Local delivery and local pickup
+ Note
+ Local delivery and local pickup options might not be supported on subscriptions for some merchants on the Shopify Plus plan with custom checkouts.
+ When choosing local delivery or pickup methods, the chosen method applies to the entire order. Mixed delivery methods aren't supported.
+ For example, if the customer has a one-time purchase and subscription on the same cart, and they select local pickup at checkout, then they can't choose shipping or local delivery for the subscription. All items would be fulfilled as local pickup.
+ Updating shipping and delivery for contracts
+ Shopify automatically creates subscription contracts when products with selling plans are purchased through checkout. Subscription contracts are detached from the original selling plan. Updates to the original selling plan don't modify pre-existing subscription contracts.
+ To make changes to those contracts, you can update their delivery prices and delivery methods with the subscriptionDraftUpdate mutation.
+ When querying a shipping rate for a subscription draft, the returned shipping rate depends on whether the subscription contract has a selling plan ID and variant ID:
+ If the subscription contract doesn't have a selling plan ID, then the shipping rates from the delivery profile associated with the variant ID are displayed.
+ If the subscription contract doesn't have a selling plan or variant ID, then the shipping rates from the shop's general delivery profile are displayed.
+ For more information on contracts, refer to Subscription contracts.
+ Anchors
+ Anchors define the date when fulfillment is completed by a merchant or when delivery occurs for the customer for a given time cycle. You can also define a cutoff for which customers are eligible to enter this cycle and the desired behavior for customers who start their subscription inside the cutoff period.
+ If you need to define more advanced delivery behaviors for subscriptions, then you should use anchors. Here are some example scenarios where anchors can be useful to implement advanced delivery behavior:
+ A merchant starts fulfillment on a specific date every month.
+ A merchant wants to bill the 1st of every quarter.
+ A customer expects their delivery every Tuesday.
+ Billing anchor behaviors
+ If something occurs that delays a billing attempt past an anchor date, then fulfillment is also delayed to the next anchor date. You can prevent this by providing an appropriate originTime value when you create a new billing attempt.
+ An example is a subscription with anchor billing and fulfillment dates for the 15th of every month. If a customer's payment fails and doesn't go through until the 16th, then their order won't be fulfilled until the 15th of the next month. Providing an originTime value on or before the 15th allows the fulfillment to take place on schedule, regardless of whether the billing attempt was successful past the anchor date.
+ Delivery cutoff behaviors
+ You can use the anchors, cutoff, and preAnchorBehavior properties of the recurring delivery policy on a selling plan to define the behavior for when customers are eligible to enter a delivery or fulfillment cycle:
+ Property Description
+ anchors Specifies the date when delivery or fulfillment is completed by a merchant.
+ cutoff Specifies a buffer period before the anchor date for orders to be included in a delivery or fulfillment cycle.
+ preAnchorBehavior Defines whether an order that is placed can be delivered or fulfilled immediately, or at the next anchor date. Valid values are ASAP or NEXT.
+ 
+ When the preAnchorBehavior is ASAP, an order that is placed can be delivered or fulfilled immediately. Orders that are placed within a cutoff period can be delivered or fulfilled at the next anchor date.
+ 
+ When the preAnchorBehavior is NEXT, an order that is placed can be delivered or fulfilled at the next anchor date. Orders that are placed within a cutoff period skip the next anchor date and can be delivered or fulfilled at the following anchor date.
+ The following table shows some example scenarios of what the expected next billing and delivery dates are for a subscription with billing and delivery anchor dates at the 15th of each month, given different first billing dates (when a subscription starts), cutoff, and preAnchorBehavior values:
+ First billing date cutoff preAnchorBehavior First delivery date Next billing and delivery date
+ On the anchor date: 2023-01-15 0 ASAP 2023-01-15 2023-02-15
+ NEXT 2023-01-15 2023-02-15
+ Before the anchor date, and before the cutoff period: 2023-01-12 0 ASAP 2023-01-12 2023-01-15
+ NEXT 2023-01-15 2023-02-15
+ Before the anchor date, and within the cutoff period: 2023-01-12 5 ASAP 2023-01-15 2023-02-15
+ NEXT 2023-02-15 2023-03-15
+ For an example implementation of anchors, refer to the "Subscribe and save" example in the Create and manage selling plans guide.
+ Next steps
+ Learn how to create and manage selling plans to determine the policies under which products can be sold.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Selling plans
+ Selling plans-related webhooks
+ Subscription shipping and delivery
+ Anchors
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

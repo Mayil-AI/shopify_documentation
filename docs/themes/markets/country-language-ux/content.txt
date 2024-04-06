@@ -1,0 +1,50 @@
+Customer engagement
+ Markets
+ Overview
+ Support multiple currencies and languages
+ Detect and set a visitor’s optimal localization
+ Country and language selector UX guidelines
+ Site navigation and search
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Country and language selector UX guidelines
+ There are two main considerations for including country and language selectors in your theme:
+ Where to place the selectors
+ How to style the selectors
+ Selector placement
+ The following are the main locations you should place country and language selectors:
+ The footer
+ Near the customer account links
+ Near the cart
+ Inside a navigation drawer
+ Regardless of placement, if you have both country and language selectors, then they should always be placed together.
+ Note
+ The example images below only show a country selector, however the same guidelines apply to the language selector.
+ The footer
+ If you place the selector in the footer, then it should be placed at the top of the sub-footer content, separate from the footer navigation links:
+ Near the customer account links
+ If the customer account links are placed near the cart, then the selector should also be placed near the cart. The style of the selector should be similar to the style of the customer account links. The following shows examples with customer accounts enabled, and disabled:
+ Customer accounts enabled
+ Customer accounts disabled
+ Near the cart
+ If the customer account links are widely separate from the cart, then the selector should be placed near the cart for better visibility:
+ The selector should complement, not compete with, the cart element on a page. If the cart element is on the right-hand side of the page, then the selector should be placed to the left of the cart to maintain ease of access for customers:
+ Do this
+ Don't do this
+ Inside a navigation drawer
+ If the selector is inside a navigation drawer, then it should be treated as a utility or footer link, as opposed to a navigation link:
+ Selector styling
+ For accessibility purposes, you should create a custom component for your selectors. Native select elements can make navigation difficult for screen readers, and can lead to unexpected behavior for the user. Custom selectors should borrow the theme's styling for dropdown selectors as much as possible, including typography, colors, height, and hover states.
+ The menu component of your selector should be a popover, as opposed to a modal, as a modal can be excessive for cases where only a few options are enabled:
+ The menu's default hover, focused, selected, and pressed states should match your theme's link patterns. The menu's width should expand to fit its content so that longer strings don't wrap, however, the menu display shouldn't extend beyond the viewport.
+ Country and currency format
+ Your selector should include the full country name and include the currency code beside the currency symbol. For example, United States (USD $) and United Kingdom (GBP £).
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Selector placement
+ Selector styling
+ Updates & News

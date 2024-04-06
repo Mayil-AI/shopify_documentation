@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ PurchasingCompany object
+ 2024-04 latest
+ Represents information about the buyer that is interacting with the cart.
+ On this page
+ Fields
+ Types that return PurchasingCompany
+ Fields
+ company (Company!)
+ The company associated to the order or draft order.
+ contact (CompanyContact)
+ The company contact associated to the order or draft order.
+ location (CompanyLocation!)
+ The company location associated to the order or draft order.
+ Types that return PurchasingCompany
+ BuyerIdentity.purchasingCompany
+ Was this page helpful?
+ YesNo

@@ -1,0 +1,30 @@
+Product subscription app extensions
+ BlockStack
+ BlockStack is used to vertically stack elements
+ Example
+ JS
+ React
+ 1 import {extend, BlockStack, View} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const blockStack = root.createComponent(BlockStack, undefined, [
+ 5
+      root.createComponent(View, {border: 'base', padding: 'base'}, 'View'),
+ 6
+      root.createComponent(View, {border: 'base', padding: 'base'}, 'View'),
+ 7
+      root.createComponent(View, {border: 'base', padding: 'base'}, 'View'),
+ 8
+    ]);
+ 9
+ 10
+    root.appendChild(blockStack);
+ 11 });
+ Props
+ optional = ?
+ Name Type Description
+ alignment? "leading" | "center" | "trailing" Position children along the cross axis
+ spacing? "xtight" | "tight" | "loose" | "xloose" Adjust spacing between children
+ Was this page helpful?
+ YesNo

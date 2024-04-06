@@ -1,0 +1,15 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Selectable
+ The selectable component allows you to wrap any non-interactive UI component to make it selectable.
+ Props
+ Name Type Description
+ onPress () => void A callback to be performed when the selectable component is pressed.
+ disabled boolean? Whether the selectable component is disabled.
+ Guidelines
+ Selectable is intended to be used along with non-interactive components like <Text>.
+ Interactive components like <TextField>, or any other component that accepts onPress callbacks, have their own built-in interactions. Wrapping these components in selectable might potentially break their intended behavior.
+ It is recommended to provide a visual clue to the non-interactive component so it appears as interactive. For example, you could set a color prop on <Text> component to "TextInteractive" value so that the users can identify this element as being interactive.
+ Was this section helpful?

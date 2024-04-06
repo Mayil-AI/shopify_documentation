@@ -1,0 +1,85 @@
+Overview
+ Create and update a cart
+ Migrate to the Cart API
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Cart
+ Carts are smart buyer assistants that contain the merchandise that a buyer intends to purchase and information about the buyer.
+ This guide introduces carts within the context of the buying journey, ways that you can extend a cart's functionality, and some considerations before you get started with building carts.
+ How it works
+ The following components form a part of every buying journey:
+ A storefront is where merchants tell their brand story, and where customers browse available products.
+ A cart is where customers add products that they're interested in buying, and remove products that they no longer want to buy. A customer might visit their cart multiple times to renegotiate with themselves before they make a final purchase.
+ A checkout is where a customer makes their final decision to purchase products, and completes a transaction.
+ Benefits
+ The carts that most buyers encounter are simple baskets that are only used to collect products. They lack functionality and context, and typically lead to buyer frustration at checkout.
+ Shopify-powered carts provide the following benefits:
+ Display accurate and personalized discounts, tax, and shipping estimates.
+ Provide price transparency in real time, and at each new step of the purchase journey.
+ Run brand-provided custom business logic.
+ Shortcut buyers through checkout by providing known buyer preferences, such as payment methods or shipping details.
+ Offer fast and predictable performance no matter the size of the store or the sale.
+ Extensibility options
+ Many merchants have unique business requirements. You can extend the functionality of a cart, while ensuring it's performant, reliable, and scalable in checkout, in the following ways:
+ Feature Description Example use cases
+ Shopify Functions Extend and customize Shopify's default logic and provide consistency throughout the buyer journey. Create a custom validation function that can be executed by Shopify on every cart update to do the following:
+ 
+ Validate or limit the number of items a buyer can add to their cart.
+ Validate an address or check for a PO box.
+ Metafields Create metafields to extend the cart schema with custom values and logic at checkout. Attach custom structured metadata on a cart, and read it from a checkout extension to deliver a customized end-to-end buyer experience.
+ Preferences Set customer preferences to provide a personalized cart and checkout experience. Provide a list of preferred delivery addresses to accelerate the checkout flow, and best optimize conversion.
+ International pricing
+ Carts offer contextual experiences based on location, language, and pricing. You can query international prices for products and orders, and explicitly set the context of a cart.
+ Users can configure the prices of products on a per country basis in their Shopify admin. For example, a storefront might have default prices for products set in USD, and price adjustments configured for Canada (CAD), Australia (AUD), and France (EUR).
+ The following diagram shows the different prices of the same product based on customer location:
+ Speed and scale
+ Shopify's cart functionality is built on the same infrastructure as our storefronts. Carts are deployed globally and deliver a low-latency experience to buyers around the world.
+ Carts don't have any global API rate limits. This means that merchants can confidently launch their biggest flash sale, or absorb an unexpected wave of buyers.
+ Note
+ Shopify continues to optimize every aspect of cart execution, including delivering reliable sub-100 millisecond response times for every cart operation.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about working with carts.
+ Create and update a cart with the Storefront API
+ Learn how to manage a cart in Shopify with the Storefront API.
+ Support international pricing on storefronts
+ Learn how to create a cart or checkout in the context of a specific country.
+ Cart object
+ Consult the GraphQL Storefront API reference to learn more about the Cart object.
+ CartBuyerIdentity object
+ Consult the GraphQL Storefront API reference to learn more about the CartBuyerIdentity object.
+ Product Roadmap
+ Note
+ This roadmap is being shared for informational purposes and is subject to change. Share your feedback on what future features you’d like to see in our community discussion board.
+ Feature Release Target
+ Cart API Migration Guide 2024-04
+ Append Gift Card to Cart 2024-07
+ Query and Set Carrier Calculated Shipping Rates 2024-07
+ Support Asynchronous Calls with @defer Directive 2024-07
+ Cart.buyerIdentity Authentication Carried Through to Checkout 2024-07
+ Support for Native Wallets (Apple Pay, Google Pay) in Mobile Apps on Cart 2024-07
+ Limitations and considerations
+ The cart is subject to the same throttling restrictions as the Storefront API.
+ The cart supports a maximum of 500 line items.
+ A shop or customer can create an unlimited number of carts.
+ Unused and abandoned carts automatically expire within 10 days of creation.
+ Shopify automatically deletes the cart when the customer completes their checkout.
+ Shopify Plus bot protection is available for cart.
+ Next steps
+ Learn how to create and update a cart in Shopify with the Storefront API.
+ Learn how to migrate to the Cart API
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Benefits
+ Extensibility options
+ International pricing
+ Speed and scale
+ Developer tools and resources
+ Product Roadmap
+ Limitations and considerations
+ Next steps

@@ -1,0 +1,70 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify API reference docs
+ Explore Shopify’s API reference and templating documentation. You have access to everything from the Admin API and app extensions to templating tools.
+ Check out your options to see which one is right for you.
+ Build apps
+ Extend Shopify’s core functionality by building apps that integrate into Shopify’s admin, online store, checkout and more.
+ Admin API
+ At the core of Shopify is the Admin API, available through GraphQL and REST. It provides data on products, customers, orders, inventory, fulfillment, and more.
+ Partner API
+ Scale your business with the Partner API. When you use the Partner API, you can access the data found in your Partner Dashboard to automate front and back-office operations.
+ App Bridge
+ Use App Bridge to build embedded apps integrated with the Shopify admin.
+ Remix app package
+ Build your app's web experiences with Remix, integrate with Shopify APIs, and embed into the Shopify admin.
+ Payments Apps API
+ Use the Payments Apps API to manage user account data including payments, refunds, and more.
+ Shopify Function APIs
+ Use Shopify Function APIs to customize the backend logic that powers parts of Shopify.
+ Multipass
+ Use the REST Admin API Multipass resource to manage the authentication of customers across multiple applications to provide a single login experience.
+ Component libraries, references, and app extensions
+ Explore the available component libraries and references for building apps. Seamlessly add your app’s functionality to Shopify user interfaces using app extensions.
+ Discounts
+ Use Shopify's discount React library to build a discount form page.
+ ShopifyQL
+ Use ShopifyQL to write analytical queries and find insights in user store data.
+ Admin UI extensions
+ Use Admin UI extensions to create a deeper integration into the Shopify admin.
+ Product subscription app extensions
+ Use Product subscriptions extensions to help merchants manage selling plans in the Shopify admin.
+ Checkout app extensions
+ Use checkout app extensions to extend your app code into checkout and customize many aspects of the checkout experience.
+ Shopify POS app extensions
+ Use Shopify POS app extensions to build custom POS UI Extensions, loyalty programs and discounts in Point of Sale shopping carts, as well as product recommendations.
+ Web pixel app extensions
+ Use web pixel app extensions to collect behavioral data for marketing campaign optimization and analytics.
+ Marketing activities app extensions
+ Use marketing activities app extensions to enable users to manage promotional campaigns and marketing automations from the Marketing page in the Shopify admin.
+ Build themes
+ Help users express their unique brand in their storefront by building a custom theme.
+ Liquid
+ Use Liquid to build or customize Shopify themes using the Liquid template language.
+ Ajax API
+ Use the Ajax API to add dynamic elements to Shopify online stores with a lightweight JSON API for product data, recommendations, and shopping cart management.
+ Section Rendering API
+ Use the Section Rendering API to update page content by fetching only partial elements of a page instead of reloading it entirely.
+ Customer Privacy API
+ Use the Customer Privacy API to integrate buyer consent and opt-outs.
+ Build custom storefronts
+ Build commerce experiences and branded custom storefronts using the Storefront API and Hydrogen.
+ Storefront API
+ Build custom shopping experiences for any platform. Render product and inventory details and initiate checkouts from any surface, such as web, mobile, gaming, and more.
+ Customer Account API
+ Securely manage and personalize customer data such as orders, payments, discounts, refunds, and more, with a single sign-on experience across multiple surfaces.
+ Hydrogen and Oxygen
+ Use Shopify’s recommended full-stack solution for building headless commerce experiences, with off-the-shelf components, hooks, utilities, and hosting built in.
+ Hydrogen React
+ Explore an unopinionated and performant library of Shopify-specific React components, reusable functions, and utilities for interacting with the Storefront API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Build apps
+ Build themes
+ Build custom storefronts
+ Updates & News
+ Developer changelog
+ Partner blog

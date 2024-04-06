@@ -1,0 +1,35 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Search bar
+ The search bar lets merchants enter search queries for objects throughout the app.
+ Props
+ Name Type Description
+ initialValue string? The initial text value in the search bar. This is different from placeHolder, which is displayed in the search bar when the search bar doesn't have a populated string.
+ onTextChange ((value: string) => void)? A callback containing the new text value of the search bar.
+ onSearch (value: string) => void  A callback that you can execute when the search button is tapped.
+ onFocus (() => void)? A callback when the input is focused.
+ editable boolean? Whether the text can be changed.
+ placeholder string? The placeholder value to display in the search bar when no text is entered.
+ Guidelines
+ The global search bar should appear at the very top of a view, above the header. This is because it searches for things beyond the scope of that page.
+ The inline search bar should appear at the top of a list, but under the header.
+ The search bar should be sticky and remain at the top of the page when the merchant scrolls.
+ When a merchant selects the search bar, the bar enters the focused state.
+ When entering the focused state, the border turns blue and the search icon changes to a back arrow icon. Selecting the back arrow lets merchants return to the default state.
+ If it’s an inline search bar, entering focused state should also move the search bar to the top of the screen.
+ When a merchant starts entering a search query, the bar enters the filled state.
+ Selecting the X deletes the merchant’s search query, but keeps them in the focused state so that they can immediately enter a new search query.
+ Content guidelines
+ For the placeholder text, use the pattern: "Search {items}"
+ ✅ Search staff
+ ❌ Search
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines
+ Updates & News
+ Developer changelog

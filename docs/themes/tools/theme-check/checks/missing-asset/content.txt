@@ -1,0 +1,35 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ MissingAsset
+ Makes sure that all asset files referenced by the asset_url filter exist.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ In the following example, there is no corresponding picture-does-not-exist.png file in the assets directory of the theme:
+ 1 {% assign logo_url = 'picture-does-not-exist.png' | asset_url %}
+ 2 <img src="{{ logo_url }}" alt="Logo" />
+ ✓ Pass
+ In the following example, picture-in-asset-dir.png exists in the assets directory of the theme:
+ 1 {% assign logo_url = 'picture-in-asset-dir.png' | asset_url %}
+ 2 <img src="{{ logo_url }}" alt="Logo" />
+ Options
+ The following example contains the default configuration for this check:
+ 1 MissingAsset:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News

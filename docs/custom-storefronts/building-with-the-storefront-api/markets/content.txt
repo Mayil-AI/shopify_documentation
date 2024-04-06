@@ -1,0 +1,60 @@
+API exploration
+ Products and collections
+ Search and discovery
+ Markets
+ Overview
+ International pricing
+ Multiple languages
+ Cart
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Building localized experiences with the Storefront API and Shopify Markets
+ Shopify helps merchants expand their business to a global audience, sell to multiple countries, and scale internationally. This means that many merchants need to sell in multiple languages and currencies.
+ This guide introduces the ways that you can configure localized experiences for merchants and customers using the GraphQL Storefront API.
+ How it works
+ You can use the Storefront API to complete the following tasks related to internationalization:
+ Query international prices for products and orders, and explicitly set the context of a cart and checkout.
+ Support multiple languages on a storefront.
+ International pricing
+ Users can configure the prices of products on a per country basis in their Shopify admin. For example, a storefront might have default prices for products set in USD, and price adjustments configured for Canada (CAD), Australia (AUD), and France (EUR).
+ To learn how to query international prices for products and orders, and explicitly set the context of a cart and checkout, refer to Support international pricing on storefronts.
+ The following diagram shows the different prices of the same product based on customer location:
+ Multiple languages
+ You can use the Storefront API to support multiple languages on a storefront. For example, you might want to retrieve the available languages for a Shopify store, retrieve translations, and create a checkout in the customer's language.
+ Translatable resources
+ The following resources include translatable properties that can be retrieved by using the Storefront API:
+ Type Description Fields
+ Collection A grouping of products that a shop owner can create to organize them or make their shops easier to browse. title, descriptionHtml, description
+ Metafield Custom metadata attached to a resource. Metafields can be sorted into namespaces and are comprised of keys, values, and value types. value
+ Article An article in an online store blog. title, content, contentHtml, excerpt, excerptHtml
+ Blog An online store blog. title
+ Page A custom page on the online store. title, body
+ Product An individual item for sale in a Shopify store. title, descriptionHtml, description
+ ProductOption Product property names like "Size", "Color", and "Material" that the customers can select. Variants are selected based on permutations of these options. 255 characters limit each. name, values
+ ProductVariant A different version of a product, such as differing sizes or differing colors. title, selectedOptions
+ ShopPolicy A policy that a merchant has configured for their store, such as their refund or privacy policy. body
+ Developer resources
+ Get familiar with the Storefront API by exploring guides that cover common use cases, and the complete reference for the GraphQL Storefront API.
+ Support international pricing on storefronts
+ Learn how to support international pricing with the Storefront API.
+ Support multiple languages on storefronts
+ Learn how to support multiple languages with the Storefront API.
+ GraphQL Storefront API reference
+ Consult the complete reference for the GraphQL Storefront API.
+ Next steps
+ Learn how to query international prices for products and orders, and explicitly set the context of a cart and checkout.
+ Support multiple languages on a storefront with the Storefront API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ International pricing
+ Multiple languages
+ Developer resources
+ Next steps
+ Updates & News
+ Developer changelog

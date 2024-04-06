@@ -1,0 +1,30 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Tile
+ Tiles are customizable buttons that allow staff to complete actions quickly. Think of them as shortcuts--adding a 10% discount to an order, for example. Tiles provide contextual information and let merchants quickly access workflows, actions, and information from the smart grid and the top of detail pages. They’re dynamic and can change based on surrounding context, such as what’s in the cart.
+ Props
+ Name Type Description
+ title string The text displayed as the tile title.
+ subtitle string? The text displayed as the tile subtitle.
+ enabled boolean? Whether the tile appears as enabled or disabled.
+ destructive boolean? Whether the tile appears as destructive or not. If the tile is destructive and enabled, the tile will appear as red. If the tile is destructive and disabled, the tile will appear as yellow.
+ badgeValue number? The number to display inside the badge, which renders in the upper right corner of the tile. The value updates dynamically when badgeValue changes.
+ onPress () => void? The callback when a user clicks on the tile.
+ Guidelines
+ When to use it - For any actions or links within the smart grid - For actions at the top of detail pages. These actions should be the primary actions for the object. - To show analytics summaries that link into deeper information.
+ When not to use it - For actions in the middle of flows. Use a button instead. - For actions on detail pages that are not critical. - Example: adding a note.
+ Content guidelines
+ A tile has a title and an optional subtitle - Only use the subtitle if there’s additional specific context that’s helpful to the merchant. Don’t use the subtitle to explain the action in more detail. ✅ Winter2021 | 20% off - ❌ Add customer | Select a new or existing customer. |-|
+ Cart shortcuts should follow the verb + noun pattern. However, you don’t need to specify that the action will affect the cart. ✅ Add customer - ❌ Add customer to cart - ✅ Add custom sale - ❌ Custom sale
+ Keep in mind that content can expand when translated (plan for at least 50% text expansion). If your primary action is long, consider removing the subtitle.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,90 @@
+Layouts
+ Overview
+ checkout.liquid
+ Overview
+ Customize checkout.liquid
+ Checkout CSS
+ Templates
+ Sections
+ Blocks
+ Section groups
+ Config
+ Locales
+ Settings
+ Developer tools
+ Best practices
+ Integrating apps
+ Product merchandising
+ Pricing and payments
+ Delivery and fulfillment
+ Customer engagement
+ Troubleshooting
+ Theme Store
+ CSS styling in checkout.liquid
+ Deprecated
+ checkout.liquid is deprecated. It will be sunset for the Information, Shipping, and Payment checkout steps on August 13, 2024, and for the Thank you and Order status pages on August 28, 2025. Additional scripts and script tags will also be sunset for the Order status page on August 28, 2025.
+ Stores that currently use checkout.liquid need to upgrade to Checkout Extensibility before these dates. Access to checkout.liquid won't be provided to new stores, with the exception of expansion stores. Shopify Scripts will continue to work alongside Checkout Extensibility until August 28, 2025.
+ Learn how to build checkout extensions that extend the functionality of Shopify checkout.
+ You can make style enhancements to your checkout pages by adding CSS to the checkout.liquid file of your theme. Consider the following best practices when adding CSS to your checkout.liquid file.
+ Shopify Plus
+ The checkout.liquid layout is available to Shopify Plus merchants only.
+ Checkout pages
+ When you're styling your checkout, remember to consider its component pages. Depending on checkout settings, there are at least four checkout pages, and at most six.
+ BEM Syntax
+ Checkout uses the BEM syntax to minimize nesting. You should avoid deep nesting of selectors, and use the simplest selector that meets your needs.
+ For example, to style the name of the products inside the order summary:
+ Use this Instead of this
+ 1 .product__info__name {
+ 2
+      color: green;
+ 3
+    }
+ 1 .order-summary .order-summary__section .product_list .product_info .product__info__name {
+ 2
+      color: red;
+ 3
+    }
+ Avoid using !important
+ Your checkout stylesheet is loaded after the base stylesheet, so you don't need to add !important to every property. Reserve the use of !important for cases where it's absolutely necessary.
+ Button examples
+ Consider designing buttons for all states: disabled, normal, and hover.
+ Customize your classes to provide button styles that match your theme.
+ Main breakpoints
+ The default stylesheet has four breakpoints, which you can use in your stylesheet:
+ Small: 0px and up – doesn't require a media query
+ Medium: 750px and up
+ Large: 1000px and up
+ Large Desktop: 1300px and up.
+ Custom webfonts and additional scripts
+ You can load your self-hosted webfonts directly from the CSS style tags in the checkout.liquid using an @font-face declaration.
+ External assets
+ Checkout uses SSL encryption to ensure a safe buying experience for your customers. If you do load images or additional content, then these assets need to be served over https:// to be rendered on the page. When possible, you should use the Shopify CDN to host all your assets.
+ Feature detection
+ A few utility classes are included on the <html> element:
+ Javascript: js/no-js lets you know whether the browser supports javascript or not.
+ Browser and OS: For example, a user running Chrome on OS X would have the classes mac chrome.
+ Modernizr: Modernizr is used to detect if the browser supports certain CSS properties like RGBA, multiple background images, box-shadows, pseudo-elements, and inline SVG.
+ You can use these classes to provide an improved checkout experience on older browsers.
+ Fields, modals, and notices
+ Some other components you can customize in the CSS of the checkout.liquid are fields, modals, warnings, and error messages
+ Field states and classes
+ Use the classes in your tables to style the three field states to fit your theme.
+ Field state CSS class
+ Default No class required
+ Focus field--focus
+ Error field--error
+ Modals
+ Policies (refund, privacy, and terms of service) and processing/forwarding pages are presented in a full-screen modal.
+ Warnings
+ Use warnings to notify the user that the total cost of their order changed before they completed their purchase. For example, you might add a warning if inventory is automatically adjusted.
+ Error messages
+ Use clear error messages to communicate errors to the user.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ External assets
+ Feature detection
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

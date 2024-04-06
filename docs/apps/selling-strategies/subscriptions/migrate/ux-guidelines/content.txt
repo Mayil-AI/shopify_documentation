@@ -1,0 +1,115 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Overview
+ Migrate customer information
+ Migrate existing subscription
+ UX guidelines
+ Deferred purchase options
+ Build a user interface
+ Billing
+ App Store
+ UX guidelines for building migration experiences
+ This guide provides user experience (UX) guidelines for Partners that want to migrate existing merchant subscription data into Shopify. You can reference this guide to ensure that the experience you build aligns with the technical steps and APIs described in our Subscriptions API migration guide.
+ You can use Polaris or your own visual language to build the components displayed in this guide.
+ Requirements
+ To be eligible to use Shopify subscriptions, merchants need to meet the qualifying criteria.
+ Recommended migration process
+ The migration process is divided into two steps:
+ Step Tasks
+ Step 1: Migrate your settings
+ Create selling plans and selling plan groups
+ Create checkout discount codes
+ Manage discount errors (if applicable)
+ Create delivery profiles for shipping
+ Inform merchants that taxes will be exclusively computed by their settings in Shopify
+ Update theme code
+ Step 2: Migrate legacy subscribers and data
+ Connect Stripe as a secondary payment gateway
+ Create new payment methods for customers
+ Import subscription contracts
+ Create billing attempts
+ Migration strategy
+ Before you begin helping merchants migrate to use subscriptions in Shopify, consider a migration strategy that includes the following:
+ Creating a clear mental model for merchants so they understand what is migrated, in which order, and how it changes their process.
+ Giving merchants a time estimate for how long the migration process will take, and which jobs are being done in the background.
+ Communicating how migrating will help merchants run their subscription business by being better integrated in Shopify.
+ Offering links to further documentation for more information about how migrations affect subscriptions and about the customer experience. If the merchant isn’t eligible to migrate, then link to documentation that outlines the steps to be eligible.
+ Note
+ It's important to communicate to merchants what is no longer supported. Consult our help documentation to ensure that merchants have all information they need to confidently onboard to the migration process.
+ Onboarding banner
+ You can use an onboarding banner to offer merchants that are eligible to migrate to subscriptions. Don't show the onboarding banner if the merchant isn't eligible to migrate.
+ Viewing migration progress
+ To help merchants better understand the migration process, there needs to be a progress page that allows merchants to do the following:
+ Learn more about the impact of migration.
+ Understand upcoming milestones.
+ Access information to understand what completion looks like for each step of the migration process.
+ See where there are errors, if any, and a way to fix them.
+ It’s also important that there’s a way for the merchant to leave the page and know how they can access it again.
+ Showing updates on the app homepage
+ Merchants might want to leave the progress page during migration to focus on running their businesses. You can show updates on the app homepage to ensure that merchants have the right information at the right time.
+ Migration still in progress
+ Show a banner on the app that reflects the migration progress. Always include a way to access the progress page in addition to the overview of the status.
+ Action required: errors need to be fixed
+ If there are errors, then show how many errors there are and what area is affected:
+ Action required: next steps
+ If there are any next steps that the merchant should follow, then show the following information:
+ Errors that need attention
+ The next action to take to complete the migration
+ Viewing and managing errors
+ During the migration of data, certain errors can occur due to incorrect settings or duplicated information. It’s important that merchants understand why an error has occurred. They also need to be informed about how to resolve the error.
+ You can help merchants view and manage errors by doing the following:
+ Provide a link to a page where a setting needs to be changed.
+ Provide a link to a page where the error can be managed. For example, if there are duplicate discount codes that can’t be migrated, then the link should take the merchant to the Discounts page, where they can replace, rename, or delete codes.
+ Display an error banner in the right context and link to where error can be resolved:
+ Emailing updates
+ As the migration process runs in the background, merchants should receive a notification in their email about any required actions. This allows merchants to focus on other important tasks without needing to check the app homepage for updates.
+ Example email informing merchants about errors
+ Hi merchant name,
+ There is an error migrating some of your subscription data. Visit the app for more details and next steps.
+ [Go to app]
+ Example email informing merchants about a required action
+ Hi merchant name,
+ You can now finish migrating your subscription setup by updating your theme code.
+ [Update theme code]
+ Canceling or pausing migration
+ Merchants who are in the middle of migrations need to have a way to cancel or pause the migration should something unexpected happen. It’s important to make sure that merchants feel in control of this process, as it can hurt their trust in Shopify when they find themselves stuck in a process without a way out.
+ To help merchants feel in control of the migration process, show a cancel button and either assure merchants that this won’t impact their business, or explain any consequences for cancelling the process.
+ If no cancel button is available, then offer merchants other steps, such as calling Support.
+ Step 1: Migrate your settings
+ The first step in the migration process allows merchants to process new subscriptions and manage new subscribers through Shopify.
+ As part of the first step, merchants might need to manage discount errors and update their theme code.
+ Managing discount errors
+ Merchants will likely have created discounts in the Shopify admin and in the app using the same discount code. When these codes are now migrated to the Shopify admin, an error occurs, as discount codes need to be unique.
+ Merchants need to be able to resolve this error themselves and choose what to do with the discounts.
+ Make the following actions available to merchants during this process and ensure that merchants are aware of the consequences of their actions:
+ Replace the discount in the Shopify admin with the one from the app. This results in deleting the discount in the Shopify admin.
+ Rename the discount in the app to a unique code.
+ Delete the discount that exists in the app.
+ Updating theme code
+ When the subscription data has been migrated, merchants might need to update the theme code from the app to make sure that selling plans are displayed correctly on the store.
+ Do the following to help merchants complete the first step of migration:
+ Show that the previous steps are done, to assure merchants of their progress.
+ Prompt merchants to update the theme code.
+ Communicate that when their theme code is updated, they can process new subscriptions through Shopify, and that their subscription settings will be fully integrated with Shopify admin and checkout.
+ Step 2: Migrate legacy subscribers and data
+ When the first step of migration is finished, merchants can start migrating over their legacy subscribers and data. Depending on the data that needs to be migrated, this step might take longer than merchants expect.
+ As part of the second step, you should display an estimated migration time to inform merchants how long the migration will take.
+ Pausing billing
+ We strongly recommend pausing billing within the app during the migration. This helps to avoid double billing contracts. If you choose to not pause billing during this step, then merchants need to be informed of any issues they might experience (such as double billing).
+ If you pause billing during the migration, then you should clearly inform merchants that billing will be paused before they start the migration, and that it will resume after migrating is finished. The merchant's store checkout won't be affected.
+ Displaying an estimated migration time
+ Display an estimate for how long the migration will take. This is especially important if billing is paused during migration, and if it's a large merchant with a lot of data. Displaying an estimated migration time helps merchants decide when to begin the migration to avoid interfering with their business.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Recommended migration process
+ Migration strategy
+ Step 1: Migrate your settings
+ Step 2: Migrate legacy subscribers and data
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

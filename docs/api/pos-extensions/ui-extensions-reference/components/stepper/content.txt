@@ -1,0 +1,25 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Stepper
+ A component used for increasing or decreasing quantities.
+ Props
+ Name Type Description
+ initialValue number The initial value of the stepper.
+ onValueChanged (value: number) => void A callback to be performed when the stepper value changes.
+ minimumValue number? Use to set the minimum value of the stepper. Defaults to 1.
+ maximumValue number? Use to set the maximum value of the stepper.
+ value number? Only use this field if you wish to override the internal state of this component.
+ disabled boolean? Whether the stepper is disabled.
+ Guidelines
+ Used to adjust the quantity of something, like the quantity of an item in the return flow or the quantity of a coin/bill in the register counting tool.
+ Quantity steppers can only be used in combination with a quantity field.
+ Example: When selecting items to return in the return flow, steppers and quantity fields are used. They allow the merchant to increase or decrease the quantity of the items being returned.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Updates & News
+ Developer changelog

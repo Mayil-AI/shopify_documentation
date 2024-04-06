@@ -1,0 +1,580 @@
+Ajax API
+ Overview
+ Reference
+ Cart
+ Product
+ Product recommendations
+ Predictive search
+ Section Rendering API
+ Customer Privacy API
+ Storefront API
+ Predictive Search API reference
+ The Predictive Search API can be used to display predictive search results for queries, products, collections, pages, and articles.
+ To learn how to use predictive search in a theme, refer to Add predictive search to your theme.
+ All Ajax API requests should use locale-aware URLs to give visitors a consistent experience.
+ GET /{locale}/search/suggest.json
+ The following example request retrieves predictive results for a specified search query:
+ 1 GET /{locale}/search/suggest.json?q={query}
+ Query parameters
+ Query parameter Required Description
+ q Yes The search query.
+ resources[type] No
+ Specifies the type of results requested.
+ The following are the accepted values, which can be combined in a comma-separated list:
+ product
+ page
+ article
+ collection
+ query
+ The default value is query,product,collection,page.
+ To change the default value, you can use Search Settings in the Search & Discovery app.
+ resources[limit] No
+ Limits the number of results based on limit_scope.
+ The value can range from 1 to 10, and the default is 10.
+ resources[limit_scope] No
+ Decides the distribution of results.
+ The following are the accepted values:
+ all: Return results up to limit across all types.
+ each: Return results up to limit per type.
+ The default value is all.
+ resources[options][unavailable_products] No
+ Specifies whether to display results for unavailable products.
+ The following are the accepted values:
+ show: Show unavailable products.
+ hide: Hide unavailable products.
+ last: Show unavailable products below other matching results.
+ The default value is last.
+ To change the default value, you can use Search Settings in the Search & Discovery app.
+ This parameter is only applicable to type product.
+ resources[options][fields] No
+ Specifies the list of resource fields to search.
+ The following are the accepted values:
+ author
+ body
+ product_type
+ tag
+ title
+ variants.barcode
+ variants.sku
+ variants.title
+ vendor
+ The default fields searched on are title, product_type, variants.title, and vendor. For the best search experience, you should search on the default field set.
+ Example request object
+ 1 {
+ 2
+    "q": "bag",
+ 3
+    "resources": {
+ 4
+      "type": "product",
+ 5
+      "options": {
+ 6
+        "unavailable_products": "hide",
+ 7
+        "fields": "title,product_type,variants.title"
+ Example request using Fetch
+ 1 fetch(window.Shopify.routes.root + "search/suggest.json?q=bag&resources[type]=product&resources[options][unavailable_products]=hide&resources[options][fields]=title,product_type,variants.title")
+ 2
+    .then((response) => response.json())
+ 3
+    .then((suggestions) => {
+ 4
+      const productSuggestions = suggestions.resources.results.products;
+ 5
+ 6
+      if (productSuggestions.length > 0) {
+ 7
+        const firstProductSuggestion = productSuggestions[0];
+ 8
+ 9
+        alert(`The title of the first product suggestion is: ${
+ 10
+          firstProductSuggestion.title}`
+ 11
+        );
+ 12
+      }
+ 13
+    }
+ 14 );
+ Resources response
+ The following example is a response to a successful request to the /{locale}/search/suggest.json endpoint, which contains resource objects associated with the specified query:
+ Example resources response
+ 1 {
+ 2
+    "resources": {
+ 3
+      "results": {
+ 4
+        "queries" : ARRAY OF RELEVANT search queries,
+ 5
+        "products": ARRAY OF MATCHING product_object,
+ 6
+        "collections": ARRAY OF MATCHING collection_object,
+ 7
+        "pages": ARRAY OF MATCHING page_object,
+ 8
+        "articles": ARRAY OF MATCHING article_object
+ 9
+      }
+ 10
+    }
+ 11 }
+ Caution
+ You shouldn't output the body content of resource objects for stores that support multiple languages. When a store supports multiple languages, the body content contains a combination of the content translated in each language.
+ Example product_object
+ 1 {
+ 2
+    "available": BOOLEAN,
+ 3
+    "body": STRING w/HTML,
+ 4
+    "compare_at_price_max": DECIMAL ("0.00" when the product has no variants with a "compare_at_price"),
+ 5
+    "compare_at_price_min": DECIMAL ("0.00" when the product has no variants with a "compare_at_price"),
+ 6
+    "handle": STRING,
+ 7
+    "id": INTEGER,
+ 8
+    "image": STRING e.g, "https://cdn.shopify.com/s/...",
+ 9
+    "price": DECIMAL,
+ 10
+    "price_max": DECIMAL,
+ 11
+    "price_min": DECIMAL,
+ 12
+    "tags" : ARRAY OF STRING,
+ 13
+    "title": STRING,
+ 14
+    "type" : STRING,
+ 15
+    "url": STRING e.g, "/products/fast-snowboard?_pos=1&_psq=snowb&_ss=e&_v=1.0",
+ 16
+    "variants": [{
+ 17
+      "available": BOOLEAN,
+ 18
+      "compare_at_price": DECIMAL (nullable),
+ 19
+      "id": INTEGER,
+ 20
+      "image": STRING e.g, "https://cdn.shopify.com/s/...",
+ 21
+      "price": DECIMAL,
+ 22
+      "title": STRING,
+ 23
+      "url": STRING e.g, "/products/fast-snowboard?_pos=1&_psq=snowb&_ss=e&_v=1.0",
+ 24
+      "featured_image": { // (If a variant doesn't have an associated featured_image, then all of the properties of featured_image are set to null.)
+ 25
+        "alt": STRING,
+ 26
+        "aspect_ratio": DECIMAL,
+ 27
+        "height": INTEGER,
+ 28
+        "url": STRING e.g, "https://cdn.shopify.com/s/...",
+ 29
+        "width": INTEGER
+ 30
+      }
+ 31
+    }],
+ 32
+    "vendor": STRING,
+ 33
+    "featured_image": { // (If a product doesn't have an associated featured_image, then all of the properties of featured_image are set to null.)
+ 34
+      "alt": STRING,
+ 35
+      "aspect_ratio": DECIMAL,
+ 36
+      "height": INTEGER,
+ 37
+      "url": STRING e.g, "https://cdn.shopify.com/s/...",
+ 38
+      "width": INTEGER
+ 39
+    }
+ 40 }
+ Note
+ A product variant is returned only when the query matches terms specific to the variant title. Only the variant with the most matching terms is returned. When a variant is returned, the following product_object fields will match those of the variant:
+ featured_image
+ image
+ url
+ For example, a store has a snowboard with a blue variant and a light blue variant. If you search for snowbo, then only the snowboard product is returned. However, if you search for light blue snowbo, then the snowboard product is returned with the light blue variant.
+ Example collection_object
+ 1 {
+ 2
+    "body": STRING w/HTML,
+ 3
+    "handle": STRING,
+ 4
+    "id": INTEGER,
+ 5
+    "featured_image": { // (If a collection doesn't have an associated featured_image, then all of the properties of featured_image are set to null.)
+ 6
+      "alt": STRING,
+ 7
+      "width": INTEGER,
+ 8
+      "height": INTEGER,
+ 9
+      "aspect_ratio": DECIMAL,
+ 10
+      "url": STRING e.g, "https://cdn.shopify.com/s/..."
+ 11
+    },
+ 12
+    "published_at": STRING DATE,
+ 13
+    "title": STRING,
+ 14
+    "url": STRING e.g, "/collections/snowboards?_pos=1&_psq=sno&_ss=e&_v=1.0"
+ 15 }
+ Example query_object
+ 1 {
+ 2
+    "url": STRING e.g, "/search?_pos=1&_psq=cos&_ss=e&_v=1.0&q=costume",
+ 3
+    "text":STRING,
+ 4
+    "styled_text": STRING e.g, "<mark>cos</mark><span>tume</span>",
+ 5 }
+ Example page_object
+ 1 {
+ 2
+    "author": STRING,
+ 3
+    "body": STRING w/HTML,
+ 4
+    "handle":STRING,
+ 5
+    "id": INTEGER,
+ 6
+    "published_at": STRING DATE,
+ 7
+    "title": STRING,
+ 8
+    "url": STRING e.g, "/pages/my-page?_pos=1&_psq=my&_ss=e&_v=1.0"
+ 9 }
+ Example article_object
+ 1 {
+ 2
+    "author": STRING,
+ 3
+    "body": STRING w/HTML,
+ 4
+    "handle": STRING,
+ 5
+    "id": INTEGER,
+ 6
+    "image": STRING e.g, "https://cdn.shopify.com/s/...",
+ 7
+    "published_at": STRING DATE,
+ 8
+    "summary_html": STRING w/HTML,
+ 9
+    "tags": ARRAY OF STRING,
+ 10
+    "title": STRING,
+ 11
+    "url": STRING e.g, "/blogs/news/my-article?_pos=1&_psq=my&_ss=e&_v=1.0"
+ 12 }
+ Error responses
+ When a request to the /{locale}/search/suggest.json endpoint is unsuccessful, one of the following error responses is returned:
+ Invalid parameter error
+ Expectation failed
+ Too many requests
+ Any other errors not listed will return a 5xx status code.
+ Invalid parameter error
+ All errors related to the request parameters are returned with a 422 status code and a relevant error message. The description field describes the request error.
+ Invalid parameter example
+ 1 {
+ 2
+    "status": "422",
+ 3
+    "message": "Invalid parameter error",
+ 4
+    "description": "Invalid option for `unavailable_products` parameter"
+ 5 }
+ Expectation failed
+ If your theme isn't using one of the supported languages, then the API returns the following error:
+ Expectation failed example
+ 1 {
+ 2
+    "status": "417",
+ 3
+    "message": "Expectation Failed",
+ 4
+    "description": "Unsupported shop primary locale"
+ 5 }
+ Too many requests
+ Exceeding the request throttle limit will return a 429 status code with a relevant error message.
+ Example
+ 1 {
+ 2
+    "status": "429",
+ 3
+    "message": "Too many requests",
+ 4
+    "description": "Throttled"
+ 5 }
+ In this case, the response will also contain an HTTP header with the Retry-After value in seconds.
+ Retry-After example
+ Retry-After: 1
+ GET /{locale}/search/suggest
+ The following example request retrieves the HTML from a section rendered with the predictive results for a specified search query.
+ 1 GET /{locale}/search/suggest?q={query}&resources[type]=product&section_id={section_id}
+ Query parameters
+ The /search/suggest endpoint supports the same query parameters as the /search/suggest.json endpoint, in addition to the following:
+ Query parameter Required Description
+ section_id Yes The unique section ID of the section file that you want render with the predictive search query.
+ Example request object
+ 1 {
+ 2
+    "q": "bag",
+ 3
+    "resources": {
+ 4
+      "type": "product",
+ 5
+      "options": {
+ 6
+        "unavailable_products": "hide",
+ 7
+        "fields": "title, product_type, variants.title"
+ 8
+      }
+ 9
+    },
+ 10
+    "section_id": "predictive-search"
+ 11 }
+ Example request using Fetch
+ 1 const predictiveSearchSection = document.querySelector('.predictive-search-results');
+ 2 var requestResponse;
+ 3
+ 4 fetch(window.Shopify.routes.root + "search/suggest?q=bag&resources[type]=product&resources[options][unavailable_products]=hide&resources[options][fields]=title,product_type,variants.title&section_id=predictive-search")
+ 5
+    .then((response) => {
+ 6
+      requestResponse = response;
+ 7
+      return response.text();
+ 8
+     })
+ 9
+    .then((text) => {
+ 10
+      if (!requestResponse.ok) {
+ 11
+        throw new Error(`${requestResponse.status}: ${text}`);
+ 12
+      }
+ 13
+ 14
+      const resultsMarkup = new DOMParser()
+ 15
+        .parseFromString(text, 'text/html')
+ 16
+        .querySelector('#shopify-section-predictive-search').innerHTML;
+ 17
+ 18
+      predictiveSearchSection.innerHTML = resultsMarkup;
+ 19
+    })
+ 20
+    .catch((error) => {
+ 21
+      console.error(error);
+ 22
+    });
+ Section response
+ The response to a successful request to the /{locale}/search/suggest endpoint.
+ The section response contains the HTML of the provided section rendered with the predictive_search object containing the results of the specified query.
+ For example, the following section would generate the following section response:
+ Example section
+ 1 {%- if predictive_search.performed -%}
+ 2
+    <div id="predictive-search-results">
+ 3
+      {%- if predictive_search.resources.products.size > 0 -%}
+ 4
+        <h3>Products</h3>
+ 5
+        <ul>
+ 6
+          {%- for product in predictive_search.resources.products -%}
+ 7
+            <li><a href="{{ product.url }}">{{ product.title }}</a></li>
+ 8
+          {%- endfor -%}
+ 9
+        </ul>
+ 10
+      {%- endif -%}
+ 11
+    </div>
+ 12 {%- endif -%}
+ Example section response
+ 1 <div id="shopify-section-predictive-search">
+ 2
+    <div id="predictive-search-results">
+ 3
+      <h3>Products</h3>
+ 4
+      <ul>
+ 5
+        <li><a href="/products/running-shoes">Running Shoes</a></li>
+ 6
+        <li><a href="/products/tennis-shoes">Tennis Shoes</a></li>
+ 7
+      </ul>
+ 8
+    </div>
+ 9 </div>
+ Note
+ For the product resources type, if the query matches terms specific to a variant's title, the following product object fields will match those of the variant:
+ featured_media
+ url
+ For example, a store has a snowboard with a blue variant and a light blue variant. If you search for snowbo, then the snowboard product is returned showing the featured media and URL for the snowboard product. However, if you search for light blue snowbo, then the snowboard product is returned showing the featured media and URL for the light blue variant.
+ Error responses
+ When a request to the /{locale}/search/suggest endpoint is unsuccessful, one of the following error status codes is returned:
+ Status code Description
+ 404 Section not found - The provided section ID wasn't found in the theme.
+ 417 Expectation failed - The theme isn't using one of the supported languages.
+ 422 Invalid parameter error - The value used for a query parameter was invalid.
+ 429 Too many requests - The request throttle limit has been exceeded.
+ You can output the response text to get more details about an error. Refer to the example request using Fetch to learn more.
+ Note
+ Any other errors not listed will return a 5xx status code.
+ Searchable properties
+ Search results are based on different searchable properties, depending on the resource type that you include in your query.
+ Resource type Searchable properties
+ Products
+ body
+ product_type
+ tag
+ title
+ variants.barcode
+ variants.sku
+ variants.title
+ vendor
+ Pages
+ author
+ body
+ title
+ Articles
+ author
+ body
+ tag
+ title
+ Collections
+ title
+ Searchable translations
+ When searching a translated storefront, you can search the following properties:
+ Resource type Searchable translations
+ Products
+ body
+ title
+ variants.title
+ Pages
+ body
+ title
+ Articles
+ body
+ title
+ Typo tolerance
+ Predictive search includes typo tolerance, which lets search terms containing typos return the correct matching search results.
+ Typo tolerance is set to 1, which means that search displays results that differ from the search term by 1 letter, or results that have 2 letters in a different order. The first 4 letters of a search term need to be entered correctly for typo tolerance to take effect.
+ The following fields support typo tolerance:
+ Resource type Fields supporting typo tolerance
+ Products
+ title
+ product_type
+ variants.title
+ vendor
+ Pages
+ author
+ title
+ Articles
+ author
+ title
+ Collections
+ title
+ Partial word matches
+ Predictive search supports partial word matches. This means that it suggests results even if the word you've entered is still incomplete. For example, if you enter sweate, then you might see a suggested search result for sweater.
+ Predictive search has the following limitations when it applies partial word matches:
+ If a search query has more than one term, then partial word matches are applied only to the last term in the query.
+ Partial word matches are applied only to the end of a search term. For example, if you enter book, then you won't see a suggested search result for ebook.
+ Partial word matches are supported only for themes using specific languages. For more details, refer to Requirements and limitations.
+ Predictive search uses a different search engine than storefront search. Because of this, it doesn't handle partial word matches in the same way. Although predictive search supports partial word matches, storefront search supports them only if the prefix option parameter is set to last.
+ Requirements and limitations
+ This section contains information about how predictive search is supported, and any current limitations.
+ Supported languages
+ Predictive search is supported only for themes that use the following theme languages:
+ English
+ French
+ Spanish
+ Portuguese (Brazil)
+ German
+ Dutch
+ Italian
+ Danish
+ Swedish
+ Portuguese (Portugal)
+ Finnish
+ Norwegian (Bokmål)
+ Turkish
+ Romanian
+ Hungarian
+ Russian
+ Polish
+ Czech
+ Greek
+ Icelandic
+ Lithuanian
+ Slovenian
+ Slovak
+ Bulgarian
+ Vietnamese
+ Croatian
+ Indonesian
+ Latvian
+ Estonian
+ Serbian
+ Ukrainian
+ Catalan
+ Norwegian (Nynorsk)
+ Faroese
+ Portuguese
+ Albanian
+ Bosnian
+ Afrikaans
+ Macedonian
+ Armenian
+ Serbo-Croatian
+ Latin
+ Welsh
+ Gaelic
+ Moldovan
+ A script tag in the <head> section indicates whether predictive search is supported for the theme language: <script id="shopify-features"></script>. This script tag includes a JSON-encoded predictiveSearch key with a boolean value. When it's set to true, the theme language is supported, and predictive search is enabled. Otherwise, it's set to false.
+ Limitations
+ Individual products can't be excluded from predictive search results. If a product is hidden from search engines and sitemaps with the metafield seo.hidden, then it won't appear in predictive search results. Learn more about hiding resources with this metafield.
+ The API returns no more than 10 predictive suggestions per request type.
+ Collection suggestions are based on the store's primary language. A customer's search won't be compared to a collection's translated content.
+ Query suggestions are available in English only, and require the store's primary language (shop primary locale) and the customer's online store session (buyer locale) to be in English.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ GET /{locale}/search/suggest.json
+ GET /{locale}/search/suggest
+ Searchable properties
+ Typo tolerance
+ Requirements and limitations

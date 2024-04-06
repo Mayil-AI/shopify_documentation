@@ -1,0 +1,710 @@
+Billing
+ App Store
+ Manage customer segments
+ You can use the GraphQL Admin API to manage customer segments. This guide shows you how to create, retrieve, update, and delete customer segments.
+ Requirements
+ The store you're working with has customer saved searches and customers.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_customers and write_customers access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Step 1: Create a segment
+ To create a new segment, use the segmentCreate mutation, and specify the name and query of the segment as arguments. In the following example, the query specifies customers that have subscribed to email marketing:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    segmentCreate(name: "Email Subscribers", query: "email_subscription_status = 'SUBSCRIBED'") {
+ 3
+      segment {
+ 4
+        id
+ 5
+        name
+ 6
+        query
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        message
+ 10
+        field
+ 11
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "segmentCreate": {
+ 4
+        "segment": {
+ 5
+          "id": "gid://shopify/Segment/SEGMENT_ID",
+ 6
+          "name": "Email Subscribers",
+ 7
+          "query": "email_subscription_status = 'SUBSCRIBED'"
+ 8
+        },
+ 9
+        "userErrors": []
+ 10
+      }
+ 11
+    }
+ 12 }
+ Step 2: Retrieve customer segments
+ You can retrieve a list of customer segments from a shop by querying segments. In the following example, the response body returns the first segment, including the segment’s ID and name, and whether the segment is a default that was created by Shopify. The query also includes cursor and pagination information.
+ The query in the response body includes a combination of conditions on facts about the segment. In this case, the segment query specifies customers that have subscribed to email marketing.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    segments(first: 1) {
+ 3
+      edges {
+ 4
+        cursor
+ 5
+        node {
+ 6
+          id
+ 7
+          name
+ 8
+          default
+ 9
+          query
+ 10
+        }
+ 11
+      }
+ 12
+      pageInfo {
+ 13
+        hasNextPage
+ 14
+        hasPreviousPage
+ 15
+      }
+ 16
+    }
+ 17 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "segments": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "cursor": "SEGMENT_CURSOR",
+ 7
+            "node": {
+ 8
+              "id": "gid://shopify/Segment/SEGMENT_ID",
+ 9
+              "name": "Email subscribers",
+ 10
+              "default": false,
+ 11
+              "query": "email_subscription_status = 'SUBSCRIBED'"
+ 12
+            }
+ 13
+          }
+ 14
+        ],
+ 15
+        "pageInfo": {
+ 16
+          "hasNextPage": true,
+ 17
+          "hasPreviousPage": false
+ 18
+        }
+ 19
+      }
+ 20
+    }
+ 21 }
+ Query an individual segment
+ To query an individual segment, query the segment object and pass the segment ID as an argument:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    segment(id: "gid://shopify/Segment/123") {
+ 3
+      id
+ 4
+      name
+ 5
+      query
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "segment": {
+ 4
+        "id": "gid://shopify/Segment/SEGMENT_ID",
+ 5
+        "name": "Email Subscribers",
+ 6
+        "query": "email_subscription_status = 'SUBSCRIBED'"
+ Query a list of segment members
+ To retrieve a list of members associated with an individual segment, use the customerSegmentMembers query, and pass in the segment attribute and conditions. You can query a maximum of 250 segments. The maximum value that first and last arguments accept is 250.
+ The following example shows how to retrieve a list of segment members that aren't subscribed to email communications. The first member of the segment is returned, including their customer ID, first name, last name, and default email address. Additional attribute statistics are also returned, including the member's total number of orders from the store and the average amount spent.
+ As of version 2023-01 of the GraphQL Admin API, the most complex queries might be processed asynchronously. You can migrate your app to support async queries.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    customerSegmentMembers(first: 1, query: "email_subscription_status = 'NOT_SUBSCRIBED'") {
+ 3
+      statistics {
+ 4
+        totalCount
+ 5
+        attributeStatistics(attributeName: "amount_spent") {
+ 6
+          average
+ 7
+        }
+ 8
+      }
+ 9
+      edges {
+ 10
+        node {
+ 11
+          id
+ 12
+          firstName
+ 13
+          lastName
+ 14
+          defaultEmailAddress {
+ 15
+            CustomerEmailAddress
+ 16
+          }
+ 17
+        }
+ 18
+      }
+ 19
+    }
+ 20 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerSegmentMembers": {
+ 4
+        "statistics": {
+ 5
+          "totalCount": 394,
+ 6
+          "attributeStatistics": {
+ 7
+            "average": 2807.767106598985
+ 8
+          }
+ 9
+        },
+ 10
+        "edges": [
+ 11
+          {
+ 12
+            "node": {
+ 13
+              "id": "gid://shopify/CustomerSegmentMember/CUSTOMER_ID",
+ 14
+              "firstName": "Alex",
+ 15
+              "lastName": "Doe",
+ 16
+              "defaultEmailAddress": {
+ 17
+                "CustomerEmailAddress": "alexdoe@example.com"
+ 18
+              }
+ 19
+            }
+ 20
+          }
+ 21
+        ]
+ 22
+      }
+ 23
+    }
+ 24 }
+ Step 3: Retrieve segment filters
+ You can use the segmentFilters query to retrieve a list of filters (attributes) added to segment queries. In the following example, the first two segment filters are returned, including a human-readable, localized name for the filter and the filter name in ShopifyQL.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    segmentFilters(first: 2) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          __typename
+ 6
+          # Shopify is supported in multiple languages. The `Accept-Language` header determines the translation returned by Shopify. If the header isn't supplied or the locale is unsupported, then the `localizedName` field returns values in English.
+ 7
+          localizedName
+ 8
+          queryName
+ 9
+          ... on EnumSegmentFilter {
+ 10
+            values(first: 2) {
+ 11
+              edges {
+ 12
+                node {
+ 13
+                  localizedName
+ 14
+                  queryName
+ 15
+                }
+ 16
+              }
+ 17
+            }
+ 18
+          }
+ 19
+        }
+ 20
+      }
+ 21
+    }
+ 22 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "segmentFilters": {
+ 4
+        "edges": [
+              "__typename": "FloatSegmentFilter",
+ 8
+              "localizedName": "Amount Spent",
+ 9
+              "queryName": "amount_spent"
+ 10
+            }
+ 11
+          },
+ 12
+          {
+ 13
+            "node": {
+ 14
+              "__typename": "EnumSegmentFilter",
+ 15
+              "localizedName": "City",
+ 16
+              "queryName": "city",
+ 17
+              "values": {
+ 18
+                "edges": [
+ 19
+                  {
+ 20
+                    "node": {
+ 21
+                      "localizedName": "New York City",
+ 22
+                      "queryName": "US-NY-NewYorkCity"
+ 23
+                    }
+ 24
+                  },
+ 25
+                  {
+ 26
+                    "node": {
+ 27
+                      "localizedName": "Los Angeles",
+ 28
+                      "queryName": "US-CA-LosAngeles"
+ 29
+                    }
+ 30
+                  }
+ 31
+                ]
+ 32
+              }
+ 33
+            }
+ 34
+          }
+ 35
+        ]
+ 36
+      }
+ 37
+    }
+ 38 }
+ Query segment filter suggestions
+ You can use the segmentFilterSuggestions query to retrieve a list of filter suggestions associated with a segment:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    segmentFilterSuggestions(first: 1, search: "email") {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          # Shopify is supported in multiple languages. The `Accept-Language` header determines the translation returned by Shopify. If the header isn't supplied or the locale is unsupported, then the `localizedName` field returns values in English.
+ 6
+          localizedName
+ 7
+          queryName
+ 8
+        }
+ 9
+      }
+ 10
+    }
+ 11 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "segmentFilterSuggestions": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "localizedName": "Email Domain",
+ 8
+              "queryName": "email_domain"
+ 9
+            }
+ 10
+ 13
+    }
+ 14 }
+ Query segment value suggestions
+ You can use the segmentValueSuggestions query to retrieve a list of value suggestions associated with a segment:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    segmentValueSuggestions(first: 2, filterQueryName: "email_subscription_status", search: "subs") {
+          # Shopify is supported in multiple languages. The `Accept-Language` header determines the translation returned by Shopify. If the header isn't supplied or the locale is unsupported, then the `localizedName` field returns values in English.
+ 6
+          localizedValue
+ 7
+          queryName
+    "data": {
+ 3
+      "segmentValueSuggestions": {
+ 4
+        "edges": [
+              "localizedValue": "Subscribed",
+ 8
+              "queryName": "SUBSCRIBED"
+ 9
+            }
+ 10
+          },
+ 11
+          {
+ 12
+            "node": {
+ 13
+              "localizedValue": "Not subscribed",
+ 14
+              "queryName": "NOT_SUBSCRIBED"
+        ]
+ 18
+      }
+ 19
+    }
+ 20 }
+ Step 4: Apply a discount to a customer segment
+ After you've retrieved a list of segments from the store, you can use a code discount mutation to specify which segmentId you want to apply a discount to.
+ The following example shows how to use the discountCodeBasicCreate mutation to apply a 10%-off all items discount, named "Discount", to two customer segments:
+ POST https://{store-name}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL Mutation
+ 1 mutation createBasicDiscount {
+ 2
+    discountCodeBasicCreate(basicCodeDiscount: {
+ 3
+      title: "Discount"
+ 4
+      code: "Discount"
+ 5
+      customerGets: {
+ 6
+        value: {
+ 7
+          percentage: 0.1
+ 8
+        }
+ 9
+        items: {
+ 10
+          all: true
+ 11
+        }
+ 12
+      }
+ 13
+      customerSelection: {
+ 14
+        all: false
+ 15
+        customerSegments: {
+ 16
+          add: [
+ 17
+            "gid:\/\/shopify\/Segment\/429383024662",
+ 18
+            "gid:\/\/shopify\/Segment\/429383057430",
+ 19
+          ]
+ 20
+        }
+ 21
+      }
+ 22
+      startsAt: "20200202T020202"
+ 23
+    }) {
+ 24
+      codeDiscountNode {
+ 25
+        id
+ 26
+        codeDiscount {
+ 27
+          __typename
+ 28
+          ... on DiscountCodeBasic {
+ 29
+            title
+ 30
+            customerSelection {
+ 31
+              ... on DiscountCustomerSegments {
+ 32
+                segments {
+ 33
+                  id
+ 34
+                  query
+ 35
+                }
+ 36
+              }
+ 37
+            }
+ 38
+          }
+ 39
+        }
+ 40
+      }
+ 41
+      userErrors {
+ 42
+        code
+ 43
+        field
+ 44
+        message
+ 45
+        extraInfo
+ 46
+      }
+ 47
+    }
+ 48 }
+      "segments": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/Segment/429383024662"
+ 8
+            }
+ 9
+          },
+ 10
+          {
+ 11
+            "node": {
+ 12
+              "id": "gid://shopify/Segment/429383057430"
+ 13
+            }
+ 14
+          },
+ 15
+          {
+ 16
+            "node": {
+ 17
+              "id": "gid://shopify/Segment/429383090198"
+ 18
+            }
+ 19
+          },
+ 20
+          {
+ 21
+            "node": {
+ 22
+              "id": "gid://shopify/Segment/429383122966"
+ 23
+            }
+ 24
+          }
+ 25
+        ]
+ 26
+      }
+ 27
+    },
+ 28
+    "extensions": {
+ 29
+      "cost": {
+ 30
+        "requestedQueryCost": 252,
+ 31
+        "actualQueryCost": 6,
+ 32
+        "throttleStatus": {
+ 33
+          "maximumAvailable": 1000,
+ 34
+          "currentlyAvailable": 994,
+ 35
+          "restoreRate": 50
+ 36
+        }
+ 37
+      }
+ 38
+    }
+ 39 }
+ Step 5: Update a segment
+ To update an existing segment, use the segmentUpdate mutation, and specify the id of the segment you that you want to update:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    segmentUpdate(id: "gid://shopify/Segment/SEGMENT_ID", name: "Updated Segment Name") {
+ 3
+      segment {
+ 4
+        id
+ 5
+        name
+ 6
+        query
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        message
+ 10
+        field
+      "segmentUpdate": {
+ 4
+        "segment": {
+ 5
+          "id": "gid://shopify/Segment/SEGMENT_ID",
+ 6
+          "name": "Updated Segment Name",
+ 7
+          "query": "email_subscription_status = 'SUBSCRIBED'"
+ 8
+        },
+ 9
+        "userErrors": []
+ 10
+      }
+ 11
+    }
+ 12 }
+ Step 6 (Optional): Delete a segment
+ To permanently remove a segment from a shop, use the segmentDelete mutation, and specify the id of the segment that you want to delete:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    segmentDelete(id: "gid://shopify/Segment/456") {
+ 3
+      deletedSegmentId
+ 4
+      userErrors {
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 2
+    "data": {
+ 3
+      "segmentDelete": {
+ 4
+        "deletedSegmentId": "gid://shopify/Segment/456",
+ 5
+        "userErrors": []
+ 6
+      }
+ 7
+    }
+ 8 }
+ Next steps
+ Migrate from saved searches to customer segments.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a segment
+ Step 2: Retrieve customer segments
+ Step 3: Retrieve segment filters
+ Step 4: Apply a discount to a customer segment
+ Step 5: Update a segment
+ Step 6 (Optional): Delete a segment

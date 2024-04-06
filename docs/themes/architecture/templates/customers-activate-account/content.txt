@@ -1,0 +1,65 @@
+customers/activate_account
+ The customers/activate_account template renders the customer account activation page, which hosts the form for activating a customer account.
+ Tip
+ Refer to the customers/activate_account template and its main section in Dawn for an example implementation.
+ Location
+ The customers/activate_account template is located in the templates > customers directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   └── customers
+ 5
+      |     ├── activate_account.json
+ You should include the customer account activation form in your customers/activate_account template or a section inside of the template.
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ The customer account activation form
+ The customer account activation form can be added with the Liquid form tag and accompanying 'activate_customer_password' parameter. Within the form tag block, you need to include the following:
+ Input type name
+ Password password customer[password]
+ Password confirmation password customer[password_confirmation]
+ For example:
+ 1 {% form 'activate_customer_password' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="password">
+ 5
+      <label for="password">Password</label>
+ 6
+      <input type="password" name="customer[password]">
+ 7
+    </div>
+ 8
+ 9
+    <div class="password_confirm">
+ 10
+      <label for="password_confirmation">Password Confirmation</label>
+ 11
+      <input type="password" name="customer[password_confirmation]">
+ 12
+    </div>
+ 13
+ 14
+    <div class="submit">
+ 15
+      <input type="submit" value="Activate account">
+ 16
+      <span>or</span>
+ 17
+      <input type="submit" name="decline" value="Decline invitation">
+ 18
+    </div>
+ 19 {% endform %}
+ Usage
+ When working with the customers/activate_account template, you should familiarize yourself with previewing the template.
+ Preview the template
+ To preview the customers/activate_account template, perform the following steps:
+ From your Shopify admin, add a fake customer on the Customers page using your own email.
+ Click the ... button at the top right of the page for your newly created customer, and then click Send account invite.
+ Check your email inbox for the Customer account invite email.
+ Click the link in the email. This will take you to the customer account activation page.

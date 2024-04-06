@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ DeprecatedFilter
+ Discourages using deprecated filters in themes.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 .site-footer p {
+ 2
+    color: {{ settings.color_name | hex_to_rgba: 0.5 }};
+ 3 }
+ ✓ Pass
+ 1 .site-footer p {
+ 2
+    color: {{ settings.color_name | color_modify: 'alpha', 0.5 }};
+ 3 }
+ Auto-correction
+ Theme Check can correct usage of the deprecated img_url filter using the --auto-correct flag. When the flag is specified, Theme Check automatically replaces instances of img_url with image_url where possible.
+ Options
+ The following example contains the default configuration for this check:
+ 1 DeprecatedFilter:
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether the check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Auto-correction
+ Options
+ Disabling this check
+ Updates & News

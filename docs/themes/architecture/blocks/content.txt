@@ -1,0 +1,30 @@
+Section blocks
+ Theme blocks
+ App blocks
+ Section groups
+ Config
+ Theme Store
+ Blocks
+ Blocks are reusable modules for structuring content within sections. Blocks can represent a variety of content types such as text, images, products, collections and videos. They can be added, removed, and reordered within a section, providing merchants with a high degree of flexibility and customization in the theme editor.
+ Blocks can also be used to create structure and hierarchy by accepting other nested blocks as children. Blocks can opt-in to accept other theme blocks and or app blocks as children. This allows creating both generic and specialized blocks designed to contain other blocks.
+ Theme blocks can accept other nested blocks as children.
+ Types of blocks
+ You can use the following blocks in themes:
+ Blocks that are defined within a section and are specific to that section
+ Blocks defined at the theme level and are available to many sections within the theme (in Developer preview)
+ App-defined blocks where the Liquid code for the blocks is provided by apps and not within the theme
+ Section-defined blocks
+ Section-defined blocks are blocks that are defined within a specific section Liquid file. They are created and configured directly in the section's {% schema %} Liquid tag. These blocks are unique to the section they are defined in and can't be nested or reused in other sections.
+ Learn more about how to define blocks locally within sections.
+ Theme-defined blocks
+ Theme-defined blocks are defined at the theme level. They are reusable across different sections within the same theme. Use theme-defined blocks to create consistent elements that appear in multiple sections of your theme, such as creating a Button block that is defined once and re-used across all of the different sections in the theme. Theme blocks also support nesting other theme blocks.
+ Learn more about how to use theme blocks in your theme.
+ Developer preview
+ Theme blocks are currently only available as part of the Theme blocks developer preview.
+ App-defined blocks
+ App-defined blocks are blocks that are defined by a Shopify app. These blocks can be added to any section within any theme that supports app blocks. App-defined blocks allow merchants to add app-specific functionality to your theme, such as reviews, ratings, or custom forms.
+ Learn more about how to make your theme compatible with app blocks.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

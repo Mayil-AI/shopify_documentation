@@ -1,0 +1,105 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ B2B
+ Channels
+ Distribution
+ Billing
+ App Store
+ Modeling subscriptions
+ This guide provides an overview of how subscriptions work in Shopify and explains our approach to building support for subscriptions.
+ Lifecycle of a subscription app
+ The following diagram illustrates the lifecycle of a subscription based on the actions of the merchant, customer, Shopify, and your app:
+ Merchants create and manage how they want to sell their products.
+ Customers purchase subscriptions and update their subscriptions (such as changing their payment method).
+ When a customer purchases a subscription, Shopify first creates a transaction and then an order. After the transaction and order are created, Shopify generates a subscription contract and creates a billing attempt on the initial purchase.
+ Subsequent customer orders are automated by the app. The app creates a billing attempt based on the existing subscription contract using the API. When the app creates a billing attempt, a transaction and an order are created.
+ Your app receives webhooks when subscription-related events occur, handles billing failures and scheduling, and provides a subscription management user interface for both customers and merchants.
+ Building subscriptions in your app
+ Subscription apps need to have end-to-end workflows implemented for the following areas:
+ Plan setup
+ Plan purchase and checkout
+ Plan post-purchase and subscription management
+ Area Task
+ Plan setup Save purchase options
+ 
+ You can use the SellingPlanGroup and SellingPlan objects to store purchase options and associate them with products or variants. Regardless of whether your app has an internal representation of purchase options, you need to save the purchase options in Shopify using the SellingPlanGroup and SellingPlan objects.
+ 
+ Learn more about GraphQL Admin API objects for purchase options.
+ Set up app extensions
+ 
+ Your app should provide the experience for users to manage their purchase options. The app should implement an embedded UX that enables the user to set up purchase options directly from the product page, using an app extension.
+ 
+ If there aren't any app extensions to modify purchase options that are associated with a given product or variant, then the purchase options are listed in a read-only state on the product page in the Shopify admin.
+ Plan purchase and checkout Display purchase options in the purchase flow
+ 
+ Shopify provides Liquid objects and the Ajax API to enable theme developers to display the purchase options for a given product in the purchase flow. To purchase a product with a purchase option, a variant ID and a selling plan ID need to be submitted through the Cart API.
+ 
+ Learn more about how to implement subscriptions in a theme.
+ Display purchase options in the checkout
+ 
+ The Shopify checkout handles carts containing line items that have plans associated with them. It also handles pricing, messaging, payment method vaulting, and customer consent, which the user should customize to their needs.
+ Create subscription contracts
+ 
+ The subscription contract describes the agreement between merchant and customer. The agreement includes key information, like the variant, plan, payment method to be used for subsequent billing, and the billing and shipping addresses.
+ 
+ Shopify automatically creates subscription contracts when products with selling plans are purchased through checkout. The contract is detached from the original plan. Updating the original plan doesn't modify pre-existing subscription contracts.
+ Plan post-purchase and subscription management Keep contracts updated
+ 
+ The app should update contracts as necessary to make sure that it reflects the true current state of the agreement between the merchant and customer.
+ Provide a subscription management interface
+ 
+ The app should provide the customer-facing and merchant-facing UX for managing subscriptions, such as upgrades and downgrades, pauses, cancellations, and product changes.
+ Automate billing
+ 
+ The app should provide the automation for billing and renewing subscriptions.
+ Prohibited actions
+ Note
+ Any failure to avoid these prohibited actions constitutes a breach of the Shopify API License and Terms of Use.
+ The prohibited actions list isn't exhaustive and might be updated at any time.
+ The following are prohibited actions for all purchase options:
+ Vaulting payment methods: Don't vault payment methods for any purpose other than processing recurring or deferred payments.
+ Overbilling: A purchase option specifies how to bill a customer. Don't overbill a customer.
+ Unsupported usage: APIs are built to support only authorized purchase options, such as pre-orders, try before you buys, and subscriptions. Don't use the APIs to solve for other business use cases, such as installments, layaways, and crowdfunding campaigns.
+ The following are prohibited actions for subscriptions:
+ Inappropriate contract updates: Subscription contracts only need to be updated to reflect what the customer has agreed to.
+ Unclear contracts: The customer needs to understand what they're agreeing to. The storefront needs to clearly state the conditions of the contract.
+ Stale contracts: Don't let contracts become stale in Shopify. As soon as a customer agrees to a contract change, the updates need to be reflected in Shopify. This helps to ensure that merchants are never locked into a particular subscription provider.
+ Division of responsibilities between Shopify and apps
+ The division of responsibilities enables Shopify to provide a fully integrated purchase option experience and enables apps to provide innovative user-facing workflows and purchase option management automation.
+ The following table describes the division of responsibilities between Shopify and subscription apps:
+ Division of responsibilities between Shopify and apps
+ Responsibility Shopify App
+ Modeling and storing purchase option business data ✔
+ Billing and processing purchase payments (both initial purchase and renewals) ✔
+ Labeling the purchase option as a subscription ✔
+ Scheduling and automating payments, authorizing capture through the Shopify APIs and handles billing failures ✔
+ Providing customer & merchant UX for managing purchase options, both pre-purchase and post-purchase ✔
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about building subscriptions.
+ SellingPlanGroup object
+ Consult the GraphQL Admin API reference to learn more about the SellingPlanGroup object.
+ SellingPlan object
+ Consult the GraphQL Admin API reference to learn more about the SellingPlan object.
+ SubscriptionContract object
+ Consult the GraphQL Admin API reference to learn more about the SubscriptionContract object.
+ SubscriptionBillingCycle object
+ Consult the GraphQL Admin API reference to learn more about the SubscriptionBillingCycle object.
+ Next steps
+ Learn how to use selling plans to control the methods through which products or variants can be sold and purchased.
+ Learn how to use contracts to create and manage the agreements between a merchant and a customer.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Lifecycle of a subscription app
+ Building subscriptions in your app
+ Prohibited actions
+ Division of responsibilities between Shopify and apps
+ Developer tools and resources
+ Next steps
+ Updates & News

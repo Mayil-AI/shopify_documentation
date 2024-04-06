@@ -1,0 +1,35 @@
+Additional SDKs
+ Storefronts
+ The Hydrogen channel allows you to create multiple storefronts. Each storefront is linked to a single Hydrogen app, connected through a GitHub repository.
+ Storefronts can have multiple environments, which contain deployments.
+ Create a new storefront by connecting an existing GitHub repository
+ If you already created a Hydrogen app and pushed it to GitHub, then you can connect that repo to a new Hydrogen storefront.
+ In the Hydrogen channel, click Create storefront.
+ Click Connect existing repository.
+ Under Account, select the GitHub account or organization that contains the Hydrogen repo.
+ Under Repository, select the repo.
+ Click Connect.
+ After connecting the repo, Shopify automatically opens a pull request to add an Oxygen deployment workflow file. Merge the PR to start continuous deployment to Oxygen.
+ Create a new storefront by creating a new GitHub repository
+ In the Hydrogen channel, click Create storefront.
+ Select the Hydrogen template to start with.
+ Select whether to create the app as JavaScript or TypeScript.
+ Under Account, select the GitHub account or organization where you want to create the new app repository.
+ Under Repository, type a name for the new repo.
+ Optional: Check Create as a public repository.
+ Click Create.
+ Delete a Hydrogen storefront
+ Deleting a storefront deletes all its environments, environment variables, and deployments.
+ In the Hydrogen channel, click the storefront to delete.
+ Click Storefront settings.
+ Click Delete storefront.
+ Next steps
+ Learn how to create custom environments and use them to preview changes without affecting other environments.
+ Learn how to create environment variables and use them to store reusable data for use in Hydrogen storefront code.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Create a new storefront by connecting an existing GitHub repository
+ Create a new storefront by creating a new GitHub repository
+ Delete a Hydrogen storefront
+ Next steps

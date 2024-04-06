@@ -1,0 +1,45 @@
+Adding product filtering
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You've got shop pages featuring products, categories, and sort options. You want buyers to be able to filter the shop's products. Product filtering allows buyers to narrow down the products a merchant has published to the channel, based on specific attributes. This can help buyers discover products that are relevant to their preferences.
+ In this tutorial, you'll add filtering functionality to products. You'll set up filters by price range and availability. Price range options will be in intervals of $49 and availability options will be "In stock" and "Out of stock". However, you can follow a similar structure to provide filtering by other product attributes.
+ What you'll learn
+ After finishing this tutorial, you'll know how to add product filtering functionality to shop pages.
+ Requirements
+ You've completed the tutorial for adding product sort.
+ Update shop page queries
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ Update the shop query to retrieve the shop's currencyCode. Because the data returned from the query is already being added to the Shop component's state, you'll use it to pass the currencyCode parameter into the ProductSection component.
+ pages/shops/[id].js
+ 1 const SHOP_DETAILS_QUERY = gql`
+ 2
+    query ShopDetails {
+ 3
+      shop {
+ 4
+        // ...
+ 5
+        paymentSettings {
+ 6
+          currencyCode
+ 7
+        }
+ 8
+      }
+ 9
+      // ...
+ 10
+    }
+ 11 `;
+ Your merchant shop page might now look something the following:
+ Next steps
+ Learn how to add a product description page to enable buyers to view product details on your marketplace.
+ Share feedback on Marketplace Kit.
+ Update shop page queries
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

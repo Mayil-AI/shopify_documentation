@@ -1,0 +1,770 @@
+Building with the Customer Account API
+ Additional SDKs
+ Manage subscription products on storefronts
+ You can use the Storefront API to retrieve subscription products on a storefront. Subscription products can be accessed from the sellingPlan object.
+ This guide shows you how to use the Storefront API to retrieve information about selling plans, including price adjustments and selling plan allocations. It also shows how to create a cart with a subscription line item.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You're familiar with querying products and collections.
+ You've created products, variants, and selling plan groups in your store.
+ Your Headless channel or custom app has the unauthenticated_read_selling_plans access scopes. Learn how to request permissions for Headless channels.
+ Note
+ You must use the cart workflow to retrieve subscription products.
+ Step 1: Query selling plans for a product
+ To retrieve information about selling plans, query a product by its handle (handle). The sellingPlanGroups object associated with the product contains the individual selling plans, which include information such as delivery frequencies.
+ Individual selling plans
+ Within the sellingPlans object, you can query the selling plan ID. This ID is used to identify which selling plan a customer has picked when they add a subscription product to their cart. You can also query whether purchasing the selling plan will result in multiple deliveries (recurringDeliveries).
+ The options field represents the selling plan options available in the drop-down list in the storefront.
+ Example
+ The following example shows how to query a selling plan group associated with a product, and its individual selling plans. The requiresSellingPlan field is true, which means that the product can be purchased only as part of a selling plan.
+ Individual selling plans contribute their options to the associated selling plan group. In the following example, a selling plan group has an option called Delivery every. Each individual selling plan that belongs to the group contributes an option (1 week, 2 weeks, and 3 weeks) to the selling plan group.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    product(handle:"granola") {
+ 3
+      requiresSellingPlan
+ 4
+      sellingPlanGroups(first:1) {
+ 5
+        edges {
+ 6
+          node {
+ 7
+            name
+ 8
+            options {
+ 9
+              name
+ 10
+              values
+ 11
+            }
+ 12
+            sellingPlans(first: 3) {
+ 13
+              edges {
+ 14
+                node {
+ 15
+                  id
+ 16
+                  name
+ 17
+                  description
+ 18
+                  recurringDeliveries
+ 19
+                  options {
+ 20
+                    name
+ 21
+                    value
+ 22
+                  }
+ 23
+                }
+ 24
+              }
+ 25
+            }
+ 26
+          }
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+      "product": {
+ 4
+        "requiresSellingPlan": true,
+ 5
+        "sellingPlanGroups": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "name": "Prepaid 6 weeks of granola",
+ 10
+                "options": [
+ 11
+                  {
+ 12
+                    "name": "Delivery every",
+ 13
+                    "values": [
+ 14
+                      "1 week",
+ 15
+                      "2 weeks",
+ 16
+                      "3 weeks"
+ 17
+                    ]
+ 18
+                  }
+ 19
+                ],
+ 20
+                "sellingPlans": {
+ 21
+                  "edges": [
+ 22
+                    {
+ 23
+                      "node": {
+ 24
+                        "id": "gid://shopify/SellingPlan/1",
+ 25
+                        "name": "6 weeks of prepaid granola, delivered weekly",
+ 26
+                        "description": null,
+ 27
+                        "recurringDeliveries": true,
+ 28
+                        "options": [
+ 29
+                          {
+ 30
+                            "name": "Delivery every",
+ 31
+                            "value": "1 week"
+ 32
+                          }
+ 33
+                        ]
+ 34
+                      },
+ 35
+                    }
+ 36
+                    {
+ 37
+                      "node": {
+ 38
+                        "id": "gid://shopify/SellingPlan/2",
+ 39
+                        "name": "6 weeks of prepaid granola, delivered every two weeks",
+ 40
+                        "description": null,
+ 41
+                        "recurringDeliveries": true,
+ 42
+                        "options": [
+ 43
+                          {
+ 44
+                            "name": "Delivery every",
+ 45
+                            "value": "2 weeks"
+ 46
+                          }
+ 47
+                        ]
+ 48
+                      },
+ 49
+                    }
+ 50
+                    {
+ 51
+                      "node": {
+ 52
+                        "id": "gid://shopify/SellingPlan/3",
+ 53
+                        "name": "6 weeks of prepaid granola, delivered every three weeks",
+ 54
+                        "description": null,
+ 55
+                        "recurringDeliveries": true,
+ 56
+                        "options": [
+ 57
+                          {
+ 58
+                            "name": "Delivery every",
+ 59
+                            "value": "3 weeks"
+ 60
+                          }
+ 61
+                        ]
+ 62
+                      }
+ 63
+                    }
+ 64
+                  ]
+ 65
+                }
+ 66
+              }
+ 67
+            }
+ 68
+          ]
+ 69
+        }
+ 70
+      }
+ 71
+    }
+ 72 }
+ Step 2: Query price adjustments on variants
+ A product can have multiple variants and each variant can have up to two price adjustments. The priceAdjustments field represents how a selling plan affects pricing when a variant is purchased with a selling plan.
+ If a variant has multiple price adjustments, then the first price adjustment applies when the variant is initially purchased. The second price adjustment applies after a certain number of orders (specified by the orderCount field) are made.
+ If a selling plan doesn't have any price adjustments, then the unadjusted price of the variant is the effective price.
+ Price adjustment values
+ The adjustmentValue field represents the type of price adjustment.
+ A variant can have the following types of price adjustment values:
+ SellingPlanPercentagePriceAdjustment: A percentage amount deducted from the original variant price when it's purchased with a selling plan. For example, 10% off.
+ SellingPlanFixedAmountPriceAdjustment: A specific amount deducted from the original variant price when it's purchased with a selling plan. For example, 10.00 USD off.
+ SellingPlanFixedPriceAdjustment: A fixed price adjustment for a variant that's purchased with a selling plan. For example, if the selling plan offers a 10% discount on a variant that's regularly priced at 60.00 USD, then the price is 54.00 USD (60.00 USD x 0.90).
+ Example
+ The following example retrieves the price adjustment value types on a variant. The response shows a variant that has a 20% discount when it's purchased with a selling plan.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    product(handle:"granola") {
+ 3
+    sellingPlanGroups(first: 1) {
+ 4
+      edges {
+ 5
+        node {
+ 6
+          name
+ 7
+          sellingPlans(first: 1) {
+ 8
+            edges {
+ 9
+              node {
+ 10
+                id
+ 11
+                name
+ 12
+                description
+ 13
+                recurringDeliveries
+ 14
+                priceAdjustments {
+ 15
+                  orderCount
+ 16
+                  adjustmentValue {
+ 17
+                    __typename
+ 18
+                    ... on SellingPlanPercentagePriceAdjustment {
+ 19
+                      adjustmentPercentage
+ 20
+                    }
+ 21
+                    ... on SellingPlanFixedAmountPriceAdjustment {
+ 22
+                      adjustmentAmount {
+ 23
+                        amount
+ 24
+                        currencyCode
+ 25
+                      }
+ 26
+                    }
+ 27
+                    ... on SellingPlanFixedPriceAdjustment {
+ 28
+                      price {
+ 29
+                        amount
+ 30
+                        currencyCode
+ 31
+                        }
+ 32
+                      }
+ 33
+                    }
+ 34
+                  }
+ 35
+                }
+ 36
+              }
+ 37
+            }
+ 38
+          }
+ 39
+        }
+ 40
+      }
+ 41
+    }
+ 42 }
+ JSON response
+ 4
+        "requiresSellingPlan": true,
+ 5
+        "sellingPlanGroups": {
+ 6
+ 9
+                "name": "Prepaid 6 weeks of granola",
+ 10
+                "sellingPlans": {
+ 11
+                  "edges": [
+ 12
+                    {
+ 13
+                      "node": {
+ 14
+                        "id": "gid://shopify/SellingPlan/1",
+ 15
+                        "name": "6 weeks of prepaid granola, delivered weekly",
+ 16
+                        "description": null,
+ 17
+                        "recurringDeliveries": true,
+ 18
+                        "priceAdjustments": [
+ 19
+                          {
+ 20
+                            "orderCount": null,
+ 21
+                            "adjustmentValue": {
+ 22
+                              "__typename": "SellingPlanPercentagePriceAdjustment",
+ 23
+                              "adjustmentPercentage": 20
+ 24
+                            }
+ 25
+                          }
+ 26
+                        ]
+ 27
+                      }
+ 28
+                    }
+ 29
+                  ]
+ 30
+                }
+ 31
+              }
+ 32
+            }
+ 33
+          ]
+ 34
+        }
+ 35
+      }
+ 36
+    }
+ 37 }
+ Step 3: Query selling plan allocations and variant prices
+ A selling plan allocation describes the effect that each selling plan has on variants when they're purchased. It other words, it represents the combination of a variant and a selling plan.
+ Prices
+ Selling plan allocations contain the resulting prices for variants when they're purchased with a specific selling plan:
+ price: The price that's paid when the purchase is made. For example, for a prepaid plan for 6 deliveries of 10.00 USD granola, where the customer gets 20% off, the price is 6 x 10 USD x 0.80 = 48.00 USD.
+ compareAtPrice: The price of the variant when it's purchased without a selling plan for the same number of deliveries. For example, 6 deliveries x 10 USD granola = 60.00 USD.
+ perDeliveryPrice: The effective price for a single delivery. For example, for a prepaid plan for 6 deliveries, where the price is 48.00 USD, the per delivery price is 8.00 USD.
+ unitPrice: The unit price of the variant associated with the selling plan. For example, a merchant might sell a subscription product in quantities or measurements. If the variant has no unit price, then this field returns null.
+ Prices display in the customer's currency if the shop is configured for it. For example, if a customer in Canada tries to pay for a product on a storefront based in the United States, then prices display in CAD.
+ Example
+ The following query shows how to retrieve information about a variant associated with a selling plan. The response shows the prices of the variant.
+ Without the selling plan, the variant price is 60.00 CAD (compareAtPrice). If the variant is purchased with a selling plan that provides a 20% discount, then the price is 48.00 CAD. The perDeliveryPrice is determined the price (48.00 CAD) divided by the number of deliveries (6), which equals 8.00 CAD per delivery.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    product(handle: "granola") {
+ 3
+      variants(first: 1) {
+ 4
+        edges {
+ 5
+          node {
+ 6
+            id
+ 7
+            title
+ 8
+            price {
+ 9
+              amount
+ 10
+              currencyCode
+ 11
+            }
+ 12
+            sellingPlanAllocations(first:1) {
+ 13
+              edges {
+ 14
+                node {
+ 15
+                  sellingPlan {
+ 16
+                    id
+ 17
+                    name
+ 18
+                    options {
+ 19
+                      name
+ 20
+                      value
+ 21
+                    }
+ 22
+                  }
+ 23
+                  priceAdjustments {
+ 24
+                    price {
+ 25
+                      amount
+ 26
+                      currencyCode
+ 27
+                    }
+ 28
+                    compareAtPrice {
+ 29
+                      amount
+ 30
+                      currencyCode
+ 31
+                    }
+ 32
+                    perDeliveryPrice {
+ 33
+                      amount
+ 34
+                      currencyCode
+ 35
+                    }
+ 36
+                    unitPrice {
+ 37
+                      amount
+ 38
+                      currencyCode
+ 39
+                    }
+ 40
+                  }
+ 41
+                }
+ 42
+              }
+ 43
+            }
+ 44
+          }
+ 45
+        }
+ 46
+      }
+ 47
+    }
+ 48 }
+      "product": {
+ 4
+        "variants": {
+ 5
+          "edges": [
+ 6
+            {
+ 7
+              "node": {
+ 8
+                "id": "gid://shopify/ProductVariant/1",
+ 9
+                "title": "Yummy granola!",
+ 10
+                "price": {
+ 11
+                  "amount": "10.0",
+ 12
+                  "currencyCode": "CAD"
+ 13
+                },
+ 14
+                "sellingPlanAllocations": {
+ 15
+                  "edges": [
+ 16
+                    {
+ 17
+                      "node": {
+ 18
+                        "sellingPlan": {
+ 19
+                          "id": "gid://shopify/SellingPlan/1",
+ 20
+                          "name": "6 weeks of prepaid granola, delivered weekly",
+ 21
+                          "options": [
+ 22
+                            {
+ 23
+                              "name": "Delivery weekly",
+ 24
+                              "value": "Week"
+ 25
+                            }
+ 26
+                          ]
+ 27
+                        },
+ 28
+                        "priceAdjustments": [
+ 29
+                          {
+ 30
+                            "price": {
+ 31
+                              "amount": "48.00",
+ 32
+                              "currencyCode": "CAD"
+ 33
+                            },
+ 34
+                            "compareAtPrice": {
+ 35
+                              "amount": "60.00",
+ 36
+                              "currencyCode": "CAD"
+ 37
+                            },
+ 38
+                            "perDeliveryPrice": {
+ 39
+                              "amount": "8.00",
+ 40
+                              "currencyCode": "CAD"
+ 41
+                            },
+ 42
+                            "unitPrice": null
+ 43
+                          }
+ 44
+                        ]
+ 45
+                      }
+ 46
+                    }
+ 47
+                  ]
+ 48
+                }
+ 49
+              }
+ 50
+            }
+ 51
+          ]
+ 52
+        }
+ 53
+      }
+ 54
+    }
+ 55 }
+ Step 4: Create a cart and a subscription line item
+ You can use the cartCreate mutation to create a cart that contains the purchase of a variant with a selling plan. In your input to the mutation, provide the line item quantity, variant ID, and selling plan ID.
+ In the following example, the response returns each cart line with the quantity, the variant (merchandise) purchased, and the selling plan that's associated with the variant. The resulting prices for the variant when it's purchased with the selling plan are also returned.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation cartCreateMutation($cartInput: CartInput) {
+ 2
+    cartCreate(input: $cartInput) {
+ 3
+      cart {
+ 4
+        id
+ 5
+        lines(first: 250) {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              quantity
+ 9
+              merchandise {
+ 10
+                __typename
+ 11
+                ... on ProductVariant {
+ 12
+                  id
+ 13
+                }
+ 14
+              }
+ 15
+              sellingPlanAllocation {
+ 16
+                sellingPlan {
+ 17
+                  id
+ 18
+                  name
+ 19
+                }
+ 20
+                priceAdjustments {
+ 21
+                  price {
+ 22
+                    amount
+ 23
+                  }
+ 24
+                  compareAtPrice {
+ 25
+                    amount
+ 26
+                  }
+ 27
+                  perDeliveryPrice {
+ 28
+                    amount
+ 29
+                  }
+ 30
+                }
+ 31
+              }
+ 32
+            }
+ 33
+          }
+ 34
+        }
+ 35
+      }
+ 36
+    }
+ 37 }
+ Variables
+ 1 {
+ 2
+    "cartInput": {
+ 3
+      "lines": [
+ 4
+        {
+ 5
+          "quantity": 1,
+ 6
+          "merchandiseId": "gid://shopify/ProductVariant/3",
+ 7
+          "sellingPlanId": "gid://shopify/SellingPlan/2"
+ 8
+        }
+ 9
+      ]
+ 10
+    "data": {
+ 3
+      "cartCreate": {
+ 4
+        "cart": {
+ 5
+          "id": "8a9des87d7f8s76a7s6d66f7s6",
+ 6
+          "lines": [
+ 7
+            {
+ 8
+              "quantity": 1,
+ 9
+              "merchandise": {
+ 10
+                "__typename": "ProductVariant",
+ 11
+                "id": "gid://shopify/ProductVariant/3"
+ 12
+              },
+ 13
+              "sellingPlanAllocation": {
+ 14
+                "sellingPlan": {
+ 15
+                  "id": "gid://shopify/SellingPlan/2",
+ 16
+                  "name": "12 weeks of prepaid granola, delivered weekly"
+ 17
+                },
+ 18
+                "priceAdjustments": [
+ 19
+                  {
+ 20
+                    "price": {
+ 21
+                      "amount": "79.92"
+ 22
+                    },
+ 23
+                    "compareAtPrice": {
+ 24
+                      "amount": "120.0"
+ 25
+                    },
+ 26
+                    "perDeliveryPrice": {
+ 27
+                      "amount": "6.66"
+ 28
+                    }
+ 29
+                  }
+ 30
+                ]
+ 31
+              }
+ 32
+            }
+ 33
+          ]
+ 34
+        }
+ 35
+      }
+ 36
+    }
+ 37 }
+ Next steps
+ Learn how to create and update a cart in Shopify with the Storefront API.
+ Learn how to query international prices for products and orders, and explicitly set the context of a cart and checkout.
+ Learn how to manage customer accounts with the Storefront API.
+ Retrieve metafields with the Storefront API to access additional information from different types of resources.
+ Support multiple languages on a storefront with the Storefront API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Query selling plans for a product
+ Step 2: Query price adjustments on variants
+ Step 3: Query selling plan allocations and variant prices
+ Step 4: Create a cart and a subscription line item
+ Next steps

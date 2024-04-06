@@ -1,0 +1,25 @@
+Overview
+ Theme app extensions
+ Other integration methods
+ ScriptTag resource
+ App proxies
+ Asset resource
+ Verify theme support
+ Manage media
+ Admin
+ Flow
+ Distribution
+ Billing
+ App Store
+ The ScriptTag resource
+ Deprecated
+ Script tags will be sunset for the Order status checkout page on August 28, 2025. Upgrade to Checkout Extensibility before this date. Shopify Scripts will continue to work alongside Checkout Extensibility until August 28, 2025.
+ You can use the ScriptTag resource alongside theme app extensions to provide specific types of support for vintage themes.
+ If you're creating a new app that integrates with a theme, and you're submitting the app to the Shopify App Store, then you need to use theme app extensions.
+ You don't need to update apps that are using ScriptTag and are already published on the Shopify App Store to use theme app extensions. However, all of the apps in the Shopify App Store need to be compatible with Online Store 2.0 themes, and you might want to use theme app extensions to achieve this.
+ If your app adds app blocks for themes, which aren't compatible with vintage themes, then you can use the ScriptTag REST Admin API or GraphQL Admin API resource as an alternate installation path for the functionality introduced by the app block. If you're submitting a new app to the Shopify App Store, then you still need to provide app blocks for Online Store 2.0 themes. Learn how to verify support for app blocks.
+ A script tag represents some JavaScript code running on a remote server. You can use the ScriptTag resource to load the JavaScript from a remote server into a theme section at the time the section's page is viewed. Script tags are scoped to the app that created them. When an app is uninstalled from a shop, all of the script tags that it created are also removed.
+ You can do the following with the ScriptTag resource:
+ Add functionality to a shop's page without having to manually edit a theme's template.
+ Let merchants uninstall your app without needing to edit a theme's template to revert any changes the app made.
+ To get started, take a look at the ScriptTag REST Admin API or GraphQL Admin API resource.

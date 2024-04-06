@@ -1,0 +1,5 @@
+Implementation considerations
+ Request reference
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale

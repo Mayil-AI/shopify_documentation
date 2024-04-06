@@ -1,0 +1,210 @@
+APIs
+ Collapse sidebar
+ Customer account UI extensions
+ Unstable
+ Unstable
+ Overview
+ Scaffolding an extension
+ Extension targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Tutorials
+ Resources
+ Targets Overview
+ Targets
+ APIs
+ Components
+ Configuration
+ Error handling
+ Customer account UI extensions
+ Developer preview
+ Customer accounts extensibility is in developer preview.
+ Customer account UI extensions let app developers build custom functionality that merchants can install at defined points on the order index, order status, and profile pages in customer accounts.
+ Shopify Plus
+ Customer account UI extensions that render in the B2B customer account experience are available only to stores on a Shopify Plus plan.
+ Scaffolding an extension
+ Use Shopify CLI to generate a new extension in the directory of your app.
+ Navigate to
+ Customer account
+ Scaffolding
+ npm
+ yarn
+ pnpm
+ 1 npm init @shopify/app@latest
+ 2 cd your-app
+ 3 npm run shopify app generate extension
+ Extension targets
+ Extension targets provide locations where merchants can insert custom content. Static extension targets are tied to core customer account features like different delivery order statuses, customer information, and company details. Block extension targets can be displayed at any point in the customer account pages and will always render regardless of which customer account features are available. An example is a referral banner shown in the order summary.
+ Extension UIs are rendered using remote UI, a fast and secure environment for custom (non-DOM) UIs.
+ Overview
+ Extension targets
+ Extension targets
+ React
+ JavaScript
+ 1 import {
+ 2
+    reactExtension,
+ 3
+    Banner,
+ 4
+    useTranslate,
+ 5 } from '@shopify/ui-extensions-react/customer-account';
+ 6
+ 7 reactExtension('customer-account.order-index.block.render', () => (
+ 8
+    <App />
+ 9 ));
+ 10
+ 11 function App() {
+ 12
+    const translate = useTranslate();
+ 13
+    return <Banner>{translate('welcomeMessage')}</Banner>;
+ 14 }
+ Configuration file
+ When you create a customer account UI extension, the shopify.extension.toml file is automatically generated in your customer account UI extension directory. It contains the extension's configuration, which includes the extension name, extension targets, metafields, capabilities and settings definition.
+ Navigate to
+ Configuration guide
+ Shopify.ui.extension.example.toml
+ toml
+ 1 api_version = "unstable"
+ 2
+ 3 [[extensions]]
+ 4 name = "My customer account ui extension"
+ 5 handle = "customer-account-ui"
+ 6 type = "ui_extension"
+ 7
+ 8 [[extensions.targeting]]
+ 9 target = "customer-account.order-status.block.render"
+ 10 module = "./Extension.jsx"
+ Extension APIs
+ APIs enable customer account UI extensions to get information about the customer or related objects and to perform actions. For example, you can use APIs to retrieve previous orders of the customer so that you can offer related products as upsells.
+ Extensions use JavaScript to read and write data and call external services, and natively render UIs built using Shopify's checkout and customer account components.
+ Navigate to
+ Customer account UI extensions API
+ Extension APIs
+ React
+ JavaScript
+ 1 import {
+ 2
+    reactExtension,
+ 3
+    Banner,
+ 4
+    useTranslate,
+ 5 } from '@shopify/ui-extensions-react/customer-account';
+ 6
+ 7 reactExtension(
+ 8
+    'customer-account.order-status.block.render',
+ 9
+    () => <App />,
+ 10 );
+ 11
+ 12 function App() {
+ 13
+    const translate = useTranslate();
+ 14
+    return <Banner>{translate('welcomeMessage')}</Banner>;
+ 15 }
+ UI components
+ Customer account UI extensions declare their interface using supported UI components. Shopify renders the UI natively so it's performant, accessible, and works in all of customer account supported browsers.
+ Components are designed to be flexible, enabling you to layer and mix them to create highly-customized app extensions that feel seamless within the customer account experience. All components that will inherit a merchant's brand settings and the CSS cannot be altered or overridden.
+ To build customer account UI extensions, you can use checkout components, and customer account components.
+ API Reference
+ Checkout components
+ API Reference
+ Customer account components
+ UI Reference
+ Figma UI kit
+ UI components
+ React
+ JavaScript
+ 1 import {
+ 2
+    reactExtension,
+ 3
+    BlockStack,
+ 4
+    InlineStack,
+ 5
+    Button,
+ 6
+    Image,
+ 7
+    Text,
+ 8 } from '@shopify/ui-extensions-react/customer-account';
+ 9
+ 10 reactExtension(
+ 11
+    'customer-account.order-status.block.render',
+ 12
+    () => <App />,
+ 13 );
+ 14
+ 15 function App() {
+ 16
+    return (
+ 17
+      <InlineStack>
+ 18
+        <Image source="/url/for/image" />
+ 19
+        <BlockStack>
+ 20
+          <Text size="large">Heading</Text>
+ 21
+          <Text size="small">Description</Text>
+ 22
+        </BlockStack>
+ 23
+        <Button
+ 24
+          onPress={() => {
+ 25
+            console.log('button was pressed');
+ 26
+          }}
+ 27
+        >
+ 28
+          Button
+ 29
+        </Button>
+ 30
+      </InlineStack>
+ 31
+    );
+ 32 }
+ Security
+ Customer account UI extensions are a safe and secure way to customize the appearance and functionality of the customer account pages without compromising the security of customer data.
+ They run in an isolated sandbox, separate from the customer account page and other UI extensions.
+ They don't have access to sensitive payment information or the customer account page itself (HTML or other assets).
+ They are limited to specific UI components and APIs that are exposed by the platform.
+ They have limited access to global web APIs.
+ Apps that wish to access protected customer data, must submit an application and are subject to strict security guidelines and review proccesses by Shopify.
+ Constraints
+ You can't override the CSS for UI components. The Customer account UI will always render the merchant's own branding as shown in the image in the UI components section above.
+ Customer account UI extensions don't have access to the DOM and can't return DOM nodes. They can't return <div> elements, for example. Building an arbitrary tree of HTML and loading additional scripts using script tags are also not supported.
+ Learn more
+ Rendering extensions
+ Troubleshooting
+ Find an end-to-end guide to testing your extensions in Testing Customer account UI extensions.
+ Tutorials
+ You can learn how to use customer account extensibility APIs and UI components to build extensions by following these tutorials.
+ Tutorial
+ Inline extensions
+ Tutorial
+ Order action menu extensions
+ Tutorial
+ Full-page extensions
+ Resources
+ Customer account UX guidelines
+ Learn how to deliver a consistent and satisfying user experience while by following our UX guidelines for customer account.
+ Tutorials
+ Check out how to build inline, full-page, or order action extensions into our customer account experience.
+ Localizing UI Extensions
+ Learn about localizing your customer account UI extension for international merchants and customers.

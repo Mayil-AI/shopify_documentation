@@ -1,0 +1,175 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Product Search API
+ The Product Search API gives the UI Extension access to the native product search and fetching functionality of Shopify POS. The interface provides numerous functions to search for products by query, or to fetch the details of one or more products or product variants.
+ Searching for products
+ The following example shows how a UI Extension can use the searchProducts method to easily access search results based on a queryString passed in the ProductSearchParams object.
+ TypeScript
+ TypeScript React
+ 1 extend('pos.home.modal.render', (root, api) => {
+ 2
+ 3
+    async function searchProducts(query: string) {
+ 4
+      const searchResults = await api.productSearch.searchProducts({queryString: query})
+ 5
+      console.log(searchResults);
+ 6
+    }
+ 7
+ 8
+    const searchBarProps: SearchBarProps = {
+ 9
+      placeholder: 'Search products',
+ 10
+      onSearch: searchProducts,
+ 11
+      onTextChange: searchProducts,
+ 12
+    }
+ 13
+ 14
+    const searchBar = root.createComponent(SearchBar, searchBarProps);
+ 15
+    const screen = root.createComponent(Screen, {name: 'Home', title: 'Home'});
+ 16
+    screen.appendChild(searchBar);
+ 17
+ 18
+    root.appendChild(screen);
+ 19
+    root.mount();
+ 20 });
+ Product search and fetch methods
+ The following functions allow your UI Extension to fetch products and variants using various input types.
+ Search for products using a query
+ 1 searchProducts(
+ 2
+      searchParams: ProductSearchParams,
+ 3
+    ): Promise<PaginatedResult<Product>>;
+ Params
+ Name Type Description
+ searchParams ProductSearchParams The search parameters for the search query.
+ Fetch a product's details
+ 1 fetchProductWithId(productId: number): Promise<Product | undefined>;
+ Params
+ Name Type Description
+ productId number The ID for the product details to fetch.
+ Fetch multiple products' details
+ 1 fetchProductsWithIds(
+ 2
+    productIds: number[],
+ 3 ): Promise<MultipleResourceResult<Product>>;
+ Params
+ Name Type Description
+ productIds number[] The IDs belonging to the products to fetch. This function returns a maximum of 50 products, so any IDs after the 50th in the array will be ignored.
+ Fetch a product variant's details
+ 1 fetchProductVariantWithId(
+ 2
+    productVariantId: number,
+ 3 ): Promise<ProductVariant | undefined>;
+ Params
+ Name Type Description
+ productVariantId number The ID for the product variant details to fetch.
+ Fetch multiple product variants' details
+ 1 fetchProductVariantsWithIds(
+ 2
+    productVariantIds: number[],
+ 3 ): Promise<MultipleResourceResult<ProductVariant>>;
+ Params
+ Name Type Description
+ productVariantIds number[] The IDs belonging to the product variants to fetch. This function returns a maximum of 50 product variants, so any IDs after the 50th in the array will be ignored.
+ Fetch all product variants belonging to a product
+ 1 fetchProductVariantsWithProductId(
+ 2
+    productId: number,
+ 3 ): Promise<ProductVariant[]>;
+ Params
+ Name Type Description
+ productId number The product ID for whose product variants should be fetched.
+ Fetch a page of variants belonging to a product
+ 1 fetchPaginatedProductVariantsWithProductId(
+ 2
+    productId: number,
+ 3
+    paginationParams: PaginationParams,
+ 4 ): Promise<PaginatedResult<ProductVariant>>;
+ Params
+ Name Type Description
+ productId number The product ID for whose product variants should be fetched.
+ paginationParams PaginationParams The pagination parameters
+ PaginationParams
+ Name Type Description
+ first number? Specifies the number of results to be returned in this page of items. The maximum number of items that will be returned is 50.
+ afterCursor string? Specifies the page cursor. Items after this cursor will be returned.
+ ProductSearchParams
+ Name Type Description
+ queryString string? The search term to be used to search for POS products.
+ first number? Specifies the number of results to be returned in this page of products. The maximum number of products that will be returned is 50.
+ afterCursor string? Specifies the page cursor. Products after this cursor will be returned.
+ sortType 'RECENTLY_ADDED' 'RECENTLY_ADDED_ASCENDING' 'ALPHABETICAL_A_TO_Z' 'ALPHABETICAL_Z_TO_A' Specifies the order in which products should be sorted. When a queryString is provided, sortType will not have any effect, as the results will be returned in order by relevance to the queryString.
+ Product
+ Name Type Description
+ id number The unique Shopify ID for the product.
+ createdAt string The date that the product was created.
+ updatedAt string The date that the product was last updated.
+ title string The title of the product.
+ description string The description of the product.
+ descriptionHtml string? The description of the product with HTML formatting.
+ featuredImage string? The URL where the product image can be found.
+ isGiftCard boolean Whether the product is a giftcard.
+ tracksInventory boolean Whether the product's inventory is tracked.
+ vendor string The name of the product vendor.
+ minVariantPrice string The price of the least expensive variant belonging to the product.
+ maxVariantPrice string The price of the most expensive variant belonging to the product.
+ productType string The type of product.
+ productCategory string The product's category.
+ tags string[] The tags associated with the product.
+ numVariants number The total number of variants tied to this product.
+ totalAvailableInventory number? The total inventory available for this product at the current location.
+ totalInventory number The total inventory available for this product across all locations.
+ variants ProductVariant[] The variants associated with this product.
+ options ProductOption[] The different options for this product.
+ hasOnlyDefaultVariant boolean Whether the product has only a single default variant.
+ hasInStockVariants boolean Whether any variants are in stock at the current location.
+ ProductVariant
+ Name Type Description
+ id number The unique Shopify ID for the variant.
+ createdAt string The date that the variant was created.
+ updatedAt string The date that the variant was last updated.
+ title string The title of the variant.
+ compareAtPrice string The comparison price point.
+ taxable boolean Whether the variant is taxed.
+ sku string The SKU belonging to the variant.
+ barcode string? The barcode belonging to the variant.
+ displayName string A combination of the product and variant's names.
+ image string? The variant image's URL.
+ inventoryIsTracked boolean Whether the variant's inventory is tracked.
+ inventoryAtLocation number The number of variants stocked at the current location.
+ inventoryAtAllLocations number The number of variants stocked at all the locations.
+ inventoryPolicy 'DENY' 'CONTINUE'
+ hasInStockVariants boolean Whether any other variants belonging to the product are in stock.
+ options ProductVariantOption[] The options associated with the variant.
+ product Product The product associated with the variant.
+ productId number The product ID associated with the variant.
+ position number The variant's position in the list of variants associated with the product.
+ ProductOption
+ Name Type Description
+ id number The unique Shopify ID for the product option.
+ name string The name of the product option.
+ optionValues string[] The possible options.
+ productId number The ID of the product associated with the option.
+ ProductVariantOption
+ Name Type Description
+ name string The name of the variant option.
+ value string The value of the option.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Searching for products
+ Product search and fetch methods
+ Updates & News
+ Developer changelog
+ Partner blog

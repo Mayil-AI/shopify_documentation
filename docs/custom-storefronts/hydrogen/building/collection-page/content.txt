@@ -1,0 +1,1075 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Build a Collection Page with Hydrogen
+ Previously, you began developing a Hydrogen storefront. You have a minimal Hydrogen storefront running locally. You’re now ready to fetch data from your storefront and build a collection page.
+ Scenario
+ You want to present a grouping of products on your storefront. For example, you might have a collection for a specific type of product that you sell, such as snowboards. Collections help you organize your products and make it easier for customers to browse your store.
+ What you’ll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Fetch data from the Storefront API
+ Display collections on the home page
+ Create a collections route
+ Query collections by their handle
+ Generate SEO tags for collection pages
+ Render products that belong to a collection
+ Implement pagination
+ Requirements
+ You’ve completed Begin developing a Hydrogen storefront.
+ You're using API version 2023-07 or higher.
+ Step 1: Visit the GraphQL playground
+ When you're running the Hydrogen local development server, you can load an interactive GraphQL Playground where you can explore the Storefront API and run test queries.
+ With your development server running, visit the following URL: http://localhost:3000/graphiql
+ Run the preset query (press the play button) to fetch the Shop name.
+ Update the query to fetch the first three collections and run the query again.
+ GraphQL query
+ 1 query FeaturedCollections {
+ 2
+    collections(first: 3, query: "collection_type:smart") {
+ 3
+      nodes {
+ 4
+        id
+ 5
+        title
+ 6
+        handle
+ 7
+      }
+ 8
+    }
+ 9 }
+ Step 2: Move the query into your Hydrogen App
+ To load data into your Hydrogen app, use a Remix loader and copy over your GraphQL query. Loaders are functions that retrieve the data that's required to render the page. Loaders always run on the server and pass the returned data to your JSX component using the useLoaderData() hook. Hydrogen also provides a special storefront param to make queries against your Shopify storefront.
+ Remix
+ Learn more about Remix’s data loading.
+ Log the data to make sure everything’s working. You should see the first three collections in the console when you visit the home page.
+ app/routes/_index.jsx
+ 1 import {useLoaderData} from '@remix-run/react';
+ 2
+ 3 export function meta() {
+ 4
+    return [
+ 5
+      {title: 'Hydrogen'},
+ 6
+      {description: 'A custom storefront powered by Hydrogen'},
+ 7
+    ];
+ 8 }
+ 9
+ 10 export async function loader({context}) {
+ 11
+    return await context.storefront.query(COLLECTIONS_QUERY);
+ 12 }
+ 13
+ 14 export default function Index() {
+ 15
+    const {collections} = useLoaderData();
+ 16
+    console.log(collections);
+ 17
+    return <h1>Hello from the home page!</h1>;
+ 18 }
+ 19
+ 20 const COLLECTIONS_QUERY = `#graphql
+ 21
+    query FeaturedCollections {
+ 22
+      collections(first: 3, query: "collection_type:smart") {
+ 23
+        nodes {
+ 24
+          id
+ 25
+          title
+ 26
+          handle
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 `;
+ Step 3: Display collections on the home page
+ Update the component to display collection titles and use the Link component to link to each collection.
+ Remix loads a full page when you navigate to it. By using the Link component (instead of a traditional <a href="...">, React Router will handle page updates and unlock the performance benefits of client-side routing.
+ app/routes/_index.jsx
+ 1 import {useLoaderData, Link} from '@remix-run/react';
+ 2
+ 3 export function meta() {
+ 4
+    return [
+ 5
+      {title: 'Hydrogen'},
+ 6
+      {description: 'A custom storefront powered by Hydrogen'},
+ 7
+    ];
+ 8 }
+ 9
+ 10 export async function loader({context}) {
+ 11
+    return await context.storefront.query(COLLECTIONS_QUERY);
+ 12 }
+ 13
+ 14 export default function Index() {
+ 15
+    const {collections} = useLoaderData();
+ 16
+    return (
+ 17
+      <section className="w-full gap-4">
+ 18
+        <h2 className="whitespace-pre-wrap max-w-prose font-bold text-lead">
+ 19
+          Collections
+ 20
+        </h2>
+ 21
+        <div className="grid-flow-row grid gap-2 gap-y-6 md:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-3">
+ 22
+          {collections.nodes.map((collection) => {
+ 23
+            return (
+ 24
+              <Link to={`/collections/${collection.handle}`} key={collection.id}>
+ 25
+                {collection.title}
+ 26
+              </Link>
+ 27
+            );
+ 28
+          })}
+ 29
+        </div>
+ 30
+      </section>
+ 31
+    );
+ 32 }
+ 33
+ 34 const COLLECTIONS_QUERY = `#graphql
+ 35
+    query FeaturedCollections {
+ 36
+      collections(first: 3, query: "collection_type:smart") {
+ 37
+        nodes {
+ 38
+          id
+ 39
+          title
+ 40
+          handle
+ 41
+        }
+ 42
+      }
+ 43
+    }
+ 44 `;
+ Step 4: Display collection images
+ Update the GraphQL query to fetch collection images and render them using Hydrogen React's Image component.
+ app/routes/_index.jsx
+ 1 import {useLoaderData, Link} from '@remix-run/react';
+ 2 import {Image} from '@shopify/hydrogen';
+ 3
+ 4 export function meta() {
+ 5
+    return [
+ 6
+      {title: 'Hydrogen'},
+ 7
+      {description: 'A custom storefront powered by Hydrogen'},
+ 8
+    ];
+ 9 }
+ 10
+ 11 export async function loader({context}) {
+ 12
+    return await context.storefront.query(COLLECTIONS_QUERY);
+ 13 }
+ 14
+ 15 export default function Index() {
+ 16
+    const {collections} = useLoaderData();
+ 17
+    return (
+ 18
+      <section className="w-full gap-4">
+ 19
+        <h2 className="whitespace-pre-wrap max-w-prose font-bold text-lead">
+ 20
+          Collections
+ 21
+        </h2>
+ 22
+        <div className="grid-flow-row grid gap-2 gap-y-6 md:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-3">
+ 23
+          {collections.nodes.map((collection) => {
+ 24
+            return (
+ 25
+              <Link to={`/collections/${collection.handle}`} key={collection.id}>
+ 26
+                <div className="grid gap-4">
+ 27
+                  {collection?.image && (
+ 28
+                    <Image
+ 29
+                      alt={`Image of ${collection.title}`}
+ 30
+                      data={collection.image}
+ 31
+                      key={collection.id}
+ 32
+                      sizes="(max-width: 32em) 100vw, 33vw"
+ 33
+                      crop="center"
+ 34
+                    />
+ 35
+                  )}
+ 36
+                  <h2 className="whitespace-pre-wrap max-w-prose font-medium text-copy">
+ 37
+                    {collection.title}
+ 38
+                  </h2>
+ 39
+                </div>
+ 40
+              </Link>
+ 41
+            );
+ 42
+          })}
+ 43
+        </div>
+ 44
+      </section>
+ 45
+    );
+ 46 }
+ 47
+ 48 const COLLECTIONS_QUERY = `#graphql
+ 49
+    query FeaturedCollections {
+ 50
+      collections(first: 3, query: "collection_type:smart") {
+ 51
+        nodes {
+ 52
+          id
+ 53
+          title
+ 54
+          handle
+ 55
+          image {
+ 56
+            altText
+ 57
+            width
+ 58
+            height
+ 59
+            url
+ 60
+          }
+ 61
+        }
+ 62
+      }
+ 63
+    }
+ 64 `;
+ Step 5: Create a collections route
+ You’re listing collections on the home page but the links are broken! In this step, we’ll create a collections route.
+ Create a route to catch requests to /collections/[some-collection-handle]. To do this, create a app/routes/collections.$handle.jsx file. Learn more about routing in Remix.
+ app/routes/collections.$handle.jsx
+ 1 export default function Collection() {
+ 2
+    return <p>Hello from the collection page!</p>;
+ 3 }
+ Click through to the Unisex collection from the home page and you’ll be taken to your new collection page:
+ To look up collection details, you'll use a loader to destructure the collection handle from the URL parameters and pass it to the Storefront API:
+ app/routes/collections.$handle.jsx
+ 1 import {useLoaderData} from '@remix-run/react';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3
+ 4 export async function loader({params, context}) {
+ 5
+    const {handle} = params;
+ 6
+    const {collection} = await context.storefront.query(COLLECTION_QUERY, {
+ 7
+      variables: {
+ 8
+        handle,
+ 9
+      },
+ 10
+    });
+ 11
+ 12
+    // Handle 404s
+ 13
+    if (!collection) {
+ 14
+      throw new Response(null, {status: 404});
+ 15
+    }
+ 16
+ 17
+    // json is a Remix utility for creating application/json responses
+ 18
+    // https://remix.run/docs/en/v1/utils/json
+ 19
+    return json({
+ 20
+      collection,
+ 21
+    });
+ 22 }
+ 23
+ 24 export default function Collection() {
+ 25
+    const {collection} = useLoaderData();
+ 26
+    return (
+ 27
+      <>
+ 28
+        <header className="grid w-full gap-8 py-8 justify-items-start">
+ 29
+          <h1 className="text-4xl whitespace-pre-wrap font-bold inline-block">
+ 30
+            {collection.title}
+ 31
+          </h1>
+ 32
+ 33
+          {collection.description && (
+ 34
+            <div className="flex items-baseline justify-between w-full">
+ 35
+              <div>
+ 36
+                <p className="max-w-md whitespace-pre-wrap inherit text-copy inline-block">
+ 37
+                  {collection.description}
+ 38
+                </p>
+ 39
+              </div>
+ 40
+            </div>
+ 41
+          )}
+ 42
+        </header>
+ 43
+      </>
+ 44
+    );
+ 45 }
+ 46
+ 47 const COLLECTION_QUERY = `#graphql
+ 48
+    query CollectionDetails($handle: String!) {
+ 49
+      collection(handle: $handle) {
+ 50
+        title
+ 51
+        description
+ 52
+        handle
+ 53
+      }
+ 54
+    }
+ 55 `;
+ Step 6: SEO
+ Traditionally, Remix looks for a meta export to set tags like title and description. Hydrogen offers a convenient Seo component to automatically generate additional tags and allow for more granular metadata. This component will use the handle > seo export instead and infer the correct meta tags for you.
+ Import and render the Seo component in the root component:
+ app/root.jsx
+ 1 import {Seo} from '@shopify/hydrogen';
+ 2
+ 3 ...
+ 4
+ 5 return (
+ 6
+    <html lang="en">
+ 7
+      <head>
+ 8
+        <meta charSet="utf-8" />
+ 9
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 10
+        <Seo />
+ 11
+        <Meta />
+ 12
+        <Links />
+ 13
+      </head>
+ 14
+      ...
+ Export a handle with an seo function from the collections page:
+ Remix
+ Remix's handle export shouldn't be confused with a Shopify collection handle.
+ app/routes/collections.$handle.jsx
+ 1 const seo = ({data}) => ({
+ 2
+    title: data?.collection?.title,
+ 3
+    description: data?.collection?.description.substr(0, 154),
+ 4 });
+ 5
+ 6 export const handle = {
+ 7
+    seo,
+ 8 };
+ Using developer tools, you can see examples of the metadata that Hydrogen's generated. Learn more about the Seo component.
+ Note
+ In this example, you truncated the description to 155 characters. This is because Shopify's SEO description is limited to 155 characters. For production stores, you should curate your SEO descriptions for length.
+ Step 7: Render products
+ Create a ProductCard component that displays a product's title, image, and price:
+ app/components/ProductCard.jsx
+ 1 import {Link} from '@remix-run/react';
+ 2 import {Image, Money} from '@shopify/hydrogen';
+ 3
+ 4 export default function ProductCard({product}) {
+ 5
+    const {price, compareAtPrice} = product.variants?.nodes[0] || {};
+ 6
+    const isDiscounted = compareAtPrice?.amount > price?.amount;
+ 7
+ 8
+    return (
+ 9
+      <Link to={`/products/${product.handle}`}>
+ 10
+        <div className="grid gap-6">
+ 11
+          <div className="shadow-sm rounded relative">
+ 12
+            {isDiscounted && (
+ 13
+              <label className="subpixel-antialiased absolute top-0 right-0 m-4 text-right text-notice text-red-600 text-xs">
+ 14
+                Sale
+ 15
+              </label>
+ 16
+            )}
+ 17
+            <Image
+ 18
+              data={product.variants.nodes[0].image}
+ 19
+              alt={product.title}
+ 20
+            />
+ 21
+          </div>
+ 22
+          <div className="grid gap-1">
+ 23
+            <h3 className="max-w-prose text-copy w-full overflow-hidden whitespace-nowrap text-ellipsis ">
+ 24
+              {product.title}
+ 25
+            </h3>
+ 26
+            <div className="flex gap-4">
+ 27
+              <span className="max-w-prose whitespace-pre-wrap inherit text-copy flex gap-4">
+ 28
+                <Money withoutTrailingZeros data={price} />
+ 29
+                {isDiscounted && (
+ 30
+                  <Money
+ 31
+                    className="line-through opacity-50"
+ 32
+                    withoutTrailingZeros
+ 33
+                    data={compareAtPrice}
+ 34
+                  />
+ 35
+                )}
+ 36
+              </span>
+ 37
+            </div>
+ 38
+          </div>
+ 39
+        </div>
+ 40
+      </Link>
+ 41
+    );
+ 42 }
+ Create a ProductGrid component to render a ProductCard for each product:
+ app/components/ProductGrid.jsx
+ 1 import ProductCard from './ProductCard';
+ 2
+ 3 export default function ProductGrid({collection, url}) {
+ 4
+ 5
+    return (
+ 6
+      <section className="w-full gap-4 md:gap-8 grid">
+ 7
+        <div className="grid-flow-row grid gap-2 gap-y-6 md:gap-4 lg:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+ 8
+          {collection.products.nodes.map((product) => (
+ 9
+            <ProductCard key={product.id} product={product} />
+ 10
+          ))}
+ 11
+        </div>
+ 12
+      </section>
+ 13
+    );
+ 14 }
+ Add the ProductGrid to the collection page and pass the collection's products and URL as props.
+ You'll require the props in a subsequent step.
+ app/routes/collections.$handle.jsx
+ 1 import {useLoaderData} from '@remix-run/react';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3 import ProductGrid from '../components/ProductGrid';
+ 4
+ 5 const seo = ({data}) => ({
+ 6
+    title: data?.collection?.title,
+ 7
+    description: data?.collection?.description.substr(0, 154),
+ 8 });
+ 9
+ 10 export const handle = {
+ 11
+    seo,
+ 12 };
+ 13
+ 14 export async function loader({params, context}) {
+ 15
+    const {handle} = params;
+ 16
+    const {collection} = await context.storefront.query(COLLECTION_QUERY, {
+ 17
+      variables: {
+ 18
+        handle,
+ 19
+      },
+ 20
+    });
+ 21
+ 22
+    // Handle 404s
+ 23
+    if (!collection) {
+ 24
+      throw new Response(null, {status: 404});
+ 25
+    }
+ 26
+ 27
+    // json is a Remix utility for creating application/json responses
+ 28
+    // https://remix.run/docs/en/v1/utils/json
+ 29
+    return json({
+ 30
+      collection,
+ 31
+    });
+ 32 }
+ 33
+ 34 export function meta({data}){
+ 35
+    return [
+ 36
+      {title: data?.collection?.title ?? 'Collection'},
+ 37
+      {description: data?.collection?.description},
+ 38
+    ];
+ 39 };
+ 40
+ 41 export default function Collection() {
+ 42
+    const {collection} = useLoaderData();
+ 43
+    return (
+ 44
+      <>
+ 45
+        <header className="grid w-full gap-8 py-8 justify-items-start">
+ 46
+          <h1 className="text-4xl whitespace-pre-wrap font-bold inline-block">
+ 47
+            {collection.title}
+ 48
+          </h1>
+ 49
+ 50
+          {collection.description && (
+ 51
+            <div className="flex items-baseline justify-between w-full">
+ 52
+              <div>
+ 53
+                <p className="max-w-md whitespace-pre-wrap inherit text-copy inline-block">
+ 54
+                  {collection.description}
+ 55
+                </p>
+ 56
+              </div>
+ 57
+            </div>
+ 58
+          )}
+ 59
+        </header>
+ 60
+        <ProductGrid
+ 61
+          collection={collection}
+ 62
+          url={`/collections/${collection.handle}`}
+ 63
+        />
+ 64
+      </>
+ 65
+    );
+ 66 }
+ 67
+ 68 const COLLECTION_QUERY = `#graphql
+ 69
+    query CollectionDetails($handle: String!) {
+ 70
+      collection(handle: $handle) {
+ 71
+        id
+ 72
+        title
+ 73
+        description
+ 74
+        handle
+ 75
+        products(first: 4) {
+ 76
+          nodes {
+ 77
+            id
+ 78
+            title
+ 79
+            publishedAt
+ 80
+            handle
+ 81
+            variants(first: 1) {
+ 82
+              nodes {
+ 83
+                id
+ 84
+                image {
+ 85
+                  url
+ 86
+                  altText
+ 87
+                  width
+ 88
+                  height
+ 89
+                }
+ 90
+                price {
+ 91
+                  amount
+ 92
+                  currencyCode
+ 93
+                }
+ 94
+                compareAtPrice {
+ 95
+                  amount
+ 96
+                  currencyCode
+ 97
+                }
+ 98
+              }
+ 99
+            }
+ 100
+          }
+ 101
+        }
+ 102
+      }
+ 103
+    }
+ 104 `;
+ Step 8: Pagination
+ In this step, you'll add a Load more products button to the bottom of the collection page.
+ You're currently fetching the first four products, but your collections are likely to have more than that. You can query up to 250 products, but doing so wouldn't be as performant.
+ Instead, the Storefront API uses cursors to query just one page at a time. Because cursors can be a bit tricky, we provide the Pagination component. This implementation maintains the pagination state in the URL, so that users can navigate to a product and return back to the same scrolled position in a list.
+ Update the loader to use getPaginationVariables. This generates an object with the keys first, last, startCursor, and endCursor. Pass those values into your Storefront API COLLECTION_QUERY. Make sure to also update the collection query to include pageInfo.
+ app/routes/collections.$handle.jsx
+ 1 import {useLoaderData} from '@remix-run/react';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3 import ProductGrid from '../components/ProductGrid';
+ 4 import {getPaginationVariables} from '@shopify/hydrogen';
+ 5 const seo = ({data}) => ({
+ 6
+    title: data?.collection?.title,
+ 7
+    description: data?.collection?.description.substr(0, 154),
+ 8 });
+ 9
+ 10 export const handle = {
+ 11
+    seo,
+ 12 };
+ 13
+ 14 export async function loader({params, context, request}) {
+ 15
+    const paginationVariables = getPaginationVariables(request, {
+ 16
+      pageBy: 4,
+ 17
+    });
+ 18
+    const {handle} = params;
+ 19
+    const {collection} = await context.storefront.query(COLLECTION_QUERY, {
+ 20
+      variables: {
+ 21
+        ...paginationVariables,
+ 22
+        handle,
+ 23
+      },
+ 24
+    });
+ 25
+ 26
+    // Handle 404s
+ 27
+    if (!collection) {
+ 28
+      throw new Response(null, {status: 404});
+ 29
+    }
+ 30
+ 31
+    // json is a Remix utility for creating application/json responses
+ 32
+    // https://remix.run/docs/en/v1/utils/json
+ 33
+    return json({
+ 34
+      collection,
+ 35
+    });
+ 36 }
+ 37
+ 38 export function meta({data}) {
+ 39
+    return [
+ 40
+      {title: data?.collection?.title ?? 'Collection'},
+ 41
+      {description: data?.collection?.description},
+ 42
+    ];
+ 43 }
+ 44
+ 45 export default function Collection() {
+ 46
+    const {collection} = useLoaderData();
+ 47
+    return (
+ 48
+      <>
+ 49
+        <header className="grid w-full gap-8 py-8 justify-items-start">
+ 50
+          <h1 className="text-4xl whitespace-pre-wrap font-bold inline-block">
+ 51
+            {collection.title}
+ 52
+          </h1>
+ 53
+ 54
+          {collection.description && (
+ 55
+            <div className="flex items-baseline justify-between w-full">
+ 56
+              <div>
+ 57
+                <p className="max-w-md whitespace-pre-wrap inherit text-copy inline-block">
+ 58
+                  {collection.description}
+ 59
+                </p>
+ 60
+              </div>
+ 61
+            </div>
+ 62
+          )}
+ 63
+        </header>
+ 64
+        <ProductGrid
+ 65
+          collection={collection}
+ 66
+          url={`/collections/${collection.handle}`}
+ 67
+        />
+ 68
+      </>
+ 69
+    );
+ 70 }
+ 71
+ 72 const COLLECTION_QUERY = `#graphql
+ 73
+    query CollectionDetails(
+ 74
+      $handle: String!
+ 75
+      $first: Int
+ 76
+      $last: Int
+ 77
+      $startCursor: String
+ 78
+      $endCursor: String
+ 79
+    ) {
+ 80
+      collection(handle: $handle) {
+ 81
+        id
+ 82
+        title
+ 83
+        description
+ 84
+        handle
+ 85
+        products(
+ 86
+          first: $first,
+ 87
+          last: $last,
+ 88
+          before: $startCursor,
+ 89
+          after: $endCursor,
+ 90
+        ) {
+ 91
+          nodes {
+ 92
+            id
+ 93
+            title
+ 94
+            publishedAt
+ 95
+            handle
+ 96
+            variants(first: 1) {
+ 97
+              nodes {
+ 98
+                id
+ 99
+                image {
+ 100
+                  url
+ 101
+                  altText
+ 102
+                  width
+ 103
+                  height
+ 104
+                }
+ 105
+                price {
+ 106
+                  amount
+ 107
+                  currencyCode
+ 108
+                }
+ 109
+                compareAtPrice {
+ 110
+                  amount
+ 111
+                  currencyCode
+ 112
+                }
+ 113
+              }
+ 114
+            }
+ 115
+          }
+ 116
+          pageInfo {
+ 117
+            hasPreviousPage
+ 118
+            hasNextPage
+ 119
+            startCursor
+ 120
+            endCursor
+ 121
+          }
+ 122
+        }
+ 123
+      }
+ 124
+    }
+ 125
+ 126
+    `;
+ Update the ProductGrid component to use the Pagination component.
+ app/components/ProductGrid.jsx
+ 1 import {Pagination} from '@shopify/hydrogen';
+ 2 import ProductCard from './ProductCard';
+ 3
+ 4 export default function ProductGrid({collection}) {
+ 5
+    return (
+ 6
+      <section className="w-full gap-4 md:gap-8 grid">
+ 7
+        <div className="grid-flow-row grid gap-2 gap-y-6 md:gap-4 lg:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+ 8
+          <Pagination connection={collection.products}>
+ 9
+            {({nodes}) => {
+ 10
+              return nodes.map((product) => (
+ 11
+                <ProductCard key={product.id} product={product} />
+ 12
+              ));
+ 13
+            }}
+ 14
+          </Pagination>
+ 15
+        </div>
+ 16
+      </section>
+ 17
+    );
+ 18 }
+ Add both Load more products and Load previous products to the ProductGrid.
+ app/components/ProductGrid.jsx
+ 1 import {Pagination} from '@shopify/hydrogen';
+ 2 import ProductCard from './ProductCard';
+ 3
+ 4 export default function ProductGrid({collection}) {
+ 5
+    return (
+ 6
+      <section className="w-full gap-4 md:gap-8 grid">
+ 7
+        <Pagination connection={collection.products}>
+ 8
+          {({nodes, NextLink, PreviousLink, isLoading}) => (
+ 9
+            <>
+ 10
+              <div className="flex items-center justify-center mt-6">
+ 11
+                <PreviousLink className="inline-block rounded font-medium text-center py-3 px-6 border w-full cursor-pointer">
+ 12
+                  {isLoading ? 'Loading...' : 'Load previous products'}
+ 13
+                </PreviousLink>
+ 14
+              </div>
+ 15
+              <div className="grid-flow-row grid gap-2 gap-y-6 md:gap-4 lg:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+ 16
+                {nodes.map((product) => (
+ 17
+                  <ProductCard key={product.id} product={product} />
+ 18
+                ))}
+ 19
+              </div>
+ 20
+              <div className="flex items-center justify-center mt-6">
+ 21
+                <NextLink className="inline-block rounded font-medium text-center py-3 px-6 border w-full cursor-pointer">
+ 22
+                  {isLoading ? 'Loading...' : 'Load more products'}
+ 23
+                </NextLink>
+ 24
+              </div>
+ 25
+            </>
+ 26
+          )}
+ 27
+        </Pagination>
+ 28
+      </section>
+ 29
+    );
+ 30 }
+ Next steps
+ Learn how to build a product page.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Scenario
+ What you’ll learn
+ Requirements
+ Step 1: Visit the GraphQL playground
+ Step 2: Move the query into your Hydrogen App
+ Step 3: Display collections on the home page
+ Step 4: Display collection images
+ Step 5: Create a collections route
+ Step 6: SEO
+ Step 7: Render products
+ Step 8: Pagination

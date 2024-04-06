@@ -1,0 +1,430 @@
+Billing
+ App Store
+ Migrate private metafields
+ Caution
+ Private metafields will be removed from our APIs in an upcoming release so apps still using them should switch over as soon as possible.
+ Before access controls and ownership for metafields, the only way developers could create metafields that were private to their app was through private metafields. However, they have the following limitations:
+ Only accessible from the Admin GraphQL API
+ Limitation of 10 private metafields per resource
+ Do not support metafield definitions
+ The following queries and mutations have been deprecated from the GraphQL Admin API:
+ Creating a private metafield
+ Deleting a private metafield
+ Querying for private metafields
+ Starting with the 2023-01 API release, developers now have more options for storing their data privately.
+ App-owned metafields
+ Regular metafields are “app-owned” if the metafield’s namespace contains your app's reserved namespace. An app reserved namespace is a metafield namespace that's prefixed with your app’s API client ID. This looks like:
+ app-{your-app-id}--{some-namespace}
+ Instead of requiring knowledge of your API client ID in the request, your app can use the $app: shorthand in front of the desired namespace to add the prefix. For example, if your app wanted to declare a private metafield with the namespace client_name, you would pass in $app:client_name as the namespace when creating the metafield through the metafieldsSet mutation. As a result, when reading this metafield back, the namespace looks like the following example:
+ app-12345–client_name
+ A metafield that uses a reserved prefix will be private by default and not accessible to anyone but your app. However, you may want to specify some granularity to how accessible your metafield can be.
+ Updating your GraphQL queries
+ As of the 2023-01 API version, private metafields have been migrated to app-owned metafields with reserved namespaces. The following sections show you how to migrate your app to use the new metafields system.
+ Querying app-owned metafields
+ In API version 2023-10 and lower, you could retrieve private metafields using the following queries:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL queries
+ 1 query privateMetafields{
+ 2
+    privateMetafields(owner: "gid://shopify/Order/148977776", namespace: "some_namespace", first: 2) {
+ 3
+ 6
+          key
+ 7
+          namespace
+ 8
+          value
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ 13
+ 14 query privateMetafieldsFromResource{
+ 15
+    product(id: "gid://shopify/Product/108828309") {
+ 16
+      title
+ 17
+      privateMetafields(namespace: "some_namespace", first: 5) {
+ 18
+        edges {
+ 19
+          node {
+ 20
+            namespace
+ 21
+            key
+ 22
+            value
+ 23
+          }
+ 24
+        }
+ 25
+      }
+ 26
+    }
+ 27 }
+ 28
+ 29 query privateMetafieldFromResource{
+ 30
+    product(id: "gid://shopify/Product/108828309") {
+ 31
+      title
+ 32
+      privateMetafield(namespace: "some_namespace", key: "some_key") {
+ 33
+        namespace
+ 34
+        key
+ 35
+        value
+ 36
+      }
+ 37
+    }
+ 38 }
+ As of the 2023-01 API version, you can use the following queries (for types implementing hasMetafields) with the $app: shorthand followed by your private metafield's namespace:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL queries
+ 1 query metafieldsFromResource{
+ 2
+    product(id: "gid://shopify/Product/108828309") {
+ 3
+      title
+ 4
+      metafields(namespace: "$app:some_namespace", first: 5) {
+ 5
+        edges {
+ 6
+          node {
+ 7
+            namespace
+ 8
+            key
+ 9
+            value
+ 10
+ 13
+    }
+ 14 }
+ 15
+ 16 query metafieldFromResource{
+ 17
+    product(id: "gid://shopify/Product/108828309") {
+ 18
+      title
+ 19
+      metafield(namespace: "$app:some_namespace", key: "some_key") {
+ 20
+        namespace
+ 21
+        key
+ 22
+        value
+ 23
+      }
+ 24
+    }
+ 25 }
+ Both the metafield and metafields query above under product (or other resource implementing hasMetafields) will filter through your app-owned metafields matching the specified namespace: app-{your-app-id}--some_namespace for that product. The metafields query returns a paginated list of metafields whilst metafield returns a single metafield by also matching against a specified key.
+ As of the unstable API version, you can also use the metafields query with the $app: shorthand:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 query metafields{
+ 2
+    metafields(owner: "gid://shopify/Order/148977776", namespace: "$app:some_namespace", first: 2) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          key
+ 6
+          namespace
+ 7
+          value
+ 8
+        }
+ 9
+      }
+ 10
+    }
+ 11 }
+ Creating and updating app-owned metafields
+ In API version 2023-10 and lower, you could create or update private metafields using the following mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation privateMetafieldUpsert($input: PrivateMetafieldInput!) {
+ 2
+    privateMetafieldUpsert(input: $input) {
+ 3
+      privateMetafield {
+ 4
+        id
+ 5
+        namespace
+ 6
+        key
+ 7
+        value
+ 8
+        valueType
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "key": "some_key",
+ 4
+      "namespace": "some_namespace",
+ 5
+      "owner": "gid://shopify/Product/1",
+ 6
+      "valueInput": {
+ 7
+        "value": "some_value",
+ 8
+        "valueType": "STRING"
+ 9
+      }
+ 10
+    }
+ 11 }
+ As of the 2023-01 API version, you can create or update an app-owned metafield with the metafieldsSet mutation and use the $app: shorthand followed by the desired namespace:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation metafieldsSet($metafields: [MetafieldsSetInput!]!) {
+ 2
+    metafieldsSet(metafields: $metafields) {
+ 3
+      metafields {
+ 4
+        id
+ 5
+        namespace
+ 6
+        key
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "metafields": [
+ 3
+      {
+ 4
+        "key": "some_key",
+ 5
+        "namespace": "$app:some_namespace",
+ 6
+        "ownerId": "gid://shopify/Product/7886147092734",
+ 7
+        "type": "single_line_text_field",
+ 8
+        "value": "some_value"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ The metafieldsSet mutation takes an array of MetafieldsSetInput allowing you to create or update more than one app-owned metafield.
+ Deleting app-owned metafields
+ In API version 2023-10 and lower, you could delete private metafields using the following mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation privateMetafieldDelete($input: PrivateMetafieldDeleteInput!) {
+ 2
+    privateMetafieldDelete(input: $input) {
+ 3
+      deletedPrivateMetafieldId
+ 4
+      userErrors {
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+    }
+ 9 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "key": "some_key",
+ 4
+      "namespace": "some_namespace",
+ 5
+      "owner": "gid://shopify/Product/7886147092734"
+ 6
+    }
+ 7 }
+ As of the 2023-01 API version, you can use the id of your app-owned metafield to delete it using the metafieldDelete mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation metafieldDelete($input: MetafieldDeleteInput!) {
+ 2
+    metafieldDelete(input: $input) {
+ 3
+      deletedId
+ 4
+      userErrors {
+ 5
+        field
+ 6
+        message
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "id": "gid://shopify/Metafield/9936147092734"
+ 4
+    }
+ 5 }
+ Webhook subscription payloads with app-owned metafields
+ If you previously had webhook subscriptions that returned the associated private metafields by namespace, then you can create new ones to return your app-owned metafields.
+ The following mutations are available to create webhook subscriptions:
+ webhookSubscriptionCreate
+ eventBridgeWebhookSubscriptionCreate
+ pubSubWebhookSubscriptionCreate
+ In API version 2023-10 and lower, you could use the privateMetafieldNamespaces to filter by the private metafield namespace:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $webhookSubscription: WebhookSubscriptionInput!) {
+ 2
+    webhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {
+ 3
+      userErrors {
+ 4
+        field
+ 5
+        message
+ 6
+      }
+ 7
+      webhookSubscription {
+ 8
+        id
+ 9
+        topic
+ Variables
+ 1 {
+ 2
+    "topic": "PRODUCTS_UPDATE",
+ 3
+    "webhookSubscription": {
+ 4
+      "callbackUrl": "https://some-url.com",
+ 5
+      "format": "JSON",
+ 6
+      "includeFields": [
+ 7
+        ""
+ 8
+      ],
+ 9
+      "privateMetafieldNamespaces": [
+ 10
+        "some_namespace"
+ 11
+      ]
+ 12
+    }
+ 13 }
+ As of the 2023-01 API version, you can use the $app: shorthand followed by the namespace under metafieldNamespaces:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $webhookSubscription: WebhookSubscriptionInput!) {
+ 2
+    webhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {
+ 3
+      userErrors {
+ 4
+        field
+ 5
+        message
+ 6
+      }
+ 7
+      webhookSubscription {
+ 8
+        id
+ 9
+        topic
+ Variables
+ 1 {
+ 2
+    "topic": "PRODUCTS_UPDATE",
+ 3
+    "webhookSubscription": {
+ 4
+      "callbackUrl": "https://some-url.com",
+ 5
+      "format": "JSON",
+ 6
+      "includeFields": [
+ 7
+        ""
+ 8
+      ],
+ 9
+      "metafieldNamespaces": [
+ 10
+        "$app:some_namespace"
+ 11
+      ]
+ 12
+    }
+ 13 }
+ Metafield access controls
+ Since the 2021-10 API release, developers can define the metafields they want to use on a resource by creating a metafield definition. Metafield definitions provide developers with validation options on the data stored, the ability to reserve a namespace/key on the resource it’s defined on and metadata about the field such as name and description.
+ In the 2023-01 API release, metafield definitions now offer a new input field named access that allows developers to specify the granularity in which the data stored in the metafield is exposed. There are three levels of access:
+ Access Setting Description
+ PRIVATE Only the app that owns a metaobject of this type can read and write to it.
+ MERCHANT_READ Apps that act on behalf of the app user (such as the admin) can read metaobjects of this type.
+ 
+ Only the owning app can write to metaobjects of this type.
+ MERCHANT_READ_WRITE Both the owning app and apps that act on behalf of the appuser (such as the admin) can read or write to metaobjects of this type.
+ 
+ No other applications can read or write metaobjects.
+ By default, metafields defined by apps under namespaces that they own (meaning that the namespace contains the app's reserved prefix) will be private to the app. Similar to app-data metafields, after a metafield is defined, reading and writing to it is the same as other regular metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ App-owned metafields
+ Updating your GraphQL queries
+ Webhook subscription payloads with app-owned metafields
+ Metafield access controls
+ Updates & News

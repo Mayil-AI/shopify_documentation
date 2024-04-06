@@ -1,0 +1,250 @@
+Extension points
+ You've generated a product subscription app extension, and you now have a project folder with the extension script (either ./index.ts(x) or ./index.js). This guide describes the extension points in the script and how the script renders data and UI components.
+ Extension points
+ Each extension point is triggered by a different merchant action, receives different data, and is responsible for handling a distinct part of the subscription experience.
+ The product subscription app extension uses the following extension points:
+ Note
+ The extension points must be rendered separately.
+ Extension points
+ Extension point Mode Description
+ Admin::Product::SubscriptionPlan::Add Add Add an existing purchase option to a product or variant.
+ Admin::Product::SubscriptionPlan::Create Create Create a new purchase option
+ Admin::Product::SubscriptionPlan::Edit Edit Edit an existing purchase option
+ Admin::Product::SubscriptionPlan::Remove Remove Remove an existing purchase option from a product or variant
+ Example
+ The following example shows how to render the extension points in JavaScript and React:
+ src/index.js
+ JavaScript
+ React
+ 1 import {extend} from '@shopify/admin-ui-extensions';
+ 2
+ 3 function Add(root, api) {
+ 4
+    root.appendChild(root.createText('Hello, world'));
+ 5
+    root.mount();
+ 6 }
+ 7 function Create() {
+ 8
+    /* ... */
+ 9 }
+ 10 function Edit() {
+ 11
+    /* ... */
+ 12 }
+ 13 function Remove() {
+ 14
+    /* ... */
+ 15 }
+ 16
+ 17 extend(
+ 18
+    'Admin::Product::SubscriptionPlan::Add',
+ 19
+    Add,
+ 20 );
+ 21 extend(
+ 22
+    'Admin::Product::SubscriptionPlan::Create',
+ 23
+    Create,
+ 24 );
+ 25 extend(
+ 26
+    'Admin::Product::SubscriptionPlan::Edit',
+ 27
+    Edit,
+ 28 );
+ 29 extend(
+ 30
+    'Admin::Product::SubscriptionPlan::Remove',
+ 31
+    Remove,
+ 32 );
+ Expected responses
+ The response of an extension point will depend on the context in which it was triggered. Here are the expected responses:
+ Product details page
+ Extension point expected responses in the Shopify admin product details page
+ Extension point Expected reponse
+ Admin::Product::SubscriptionPlan::Add
+ productId: The id of the current product
+ variantId: null
+ Admin::Product::SubscriptionPlan::Create
+ productId: The id of the current product
+ variantId: null
+ Admin::Product::SubscriptionPlan::Edit
+ sellingPlanGroupId: The id of the selling plan group being edited
+ productId: The id of the current product
+ variantId: null
+ Admin::Product::SubscriptionPlan::Remove
+ sellingPlanGroupId: The id of the selling plan group being edited
+ productId: The id of the current product
+ variantId: null
+ variantIds: An array of the current product's child variant ids for which you should also remove the selling plan group association
+ Variant details page
+ Extension point expected responses in the Shopify admin variant details page
+ Extension point Expected reponse
+ Admin::Product::SubscriptionPlan::Add
+ productId: The id of the current variant's parent product
+ variantId: The id of the current variant
+ Admin::Product::SubscriptionPlan::Create
+ productId: The id of the current variant's parent product
+ variantId: The id of the current variant
+ Admin::Product::SubscriptionPlan::Edit
+ sellingPlanGroupId: The id of the selling plan group being edited
+ productId: The id of the current variant's parent product
+ variantId: The id of the current variant
+ Admin::Product::SubscriptionPlan::Remove
+ sellingPlanGroupId: The id of the selling plan group being edited
+ productId: The id of the current variant's parent product
+ variantId: The id of the current variant
+ variantIds: An empty array because the variant has no child variants
+ Data rendering
+ Your extension receives data from the host page. The Create callback function includes the data passed into the host page.
+ Example
+ In the following example, the current product is being rendered inside the extension as (Product 1):
+ In the first line of the Create callback function, the data variable is assigned to the input data that's passed into the extension from the host page.
+ In vanilla JavaScript, input data is passed into the Create callback function. Refer to the JavaScript product subscription app extension template.
+ In React, input data is passed using the useData hook. Refer to the React product subscription app extension template.
+ src/index.js
+ JavaScript
+ React
+ 1 import {extend, Card} from '@shopify/admin-ui-extensions';
+ 2
+ 3 function Create(root, api) {
+ 4
+    const data = api.data;
+ 5
+ 6
+    // ...
+ 7
+ 8
+    const planTitleCard = root.createComponent(Card, {
+ 9
+      sectioned: true,
+ 10
+      title: `Create subscription plan for Product id ${data.productId}`,
+ 11
+    });
+ 12
+    root.appendChild(planTitleCard);
+ 13
+ 14
+    root.mount();
+ 15 }
+ 16
+ 17 extend('Admin::Product::SubscriptionPlan::Create', Create);
+ UI components
+ The Create callback function renders the UI components that appear in the canvas of the app overlay.
+ Example
+ The example renders the following UI components:
+ Card
+ Text
+ TextField
+ InlineStack
+ src/index.js
+ JavaScript
+ React
+ 1 import {extend, Card, Text, TextField, InlineStack} from '@shopify/admin-ui-extensions';
+ 2
+ 3 function Create(api, root) {
+ 4
+    // ...
+ 5
+ 6
+    const planDetailsCard = root.createComponent(Card, {
+ 7
+      sectioned: true,
+ 8
+      title: 'Delivery and discount',
+ 9
+    });
+ 10
+    root.appendChild(planDetailsCard);
+ 11
+ 12
+    const inlineStack = root.createComponent(InlineStack);
+ 13
+    planDetailsCard.appendChild(inlineStack);
+ 14
+ 15
+    const deliveryFrequencyField = root.createComponent(TextField, {
+ 16
+      type: 'number',
+ 17
+      label: 'Delivery frequency (in weeks)',
+ 18
+      value: undefined,
+ 19
+      onChange(value) {
+ 20
+        deliveryFrequencyField.updateProps({
+ 21
+          value,
+ 22
+        });
+ 23
+      },
+ 24
+    });
+ 25
+    inlineStack.appendChild(deliveryFrequencyField);
+ 26
+ 27
+    const percentageOffField = root.createComponent(TextField, {
+ 28
+      type: 'number',
+ 29
+      label: 'Percentage off (%)',
+ 30
+      value: undefined,
+ 31
+      onChange(value) {
+ 32
+        percentageOffField.updateProps({
+ 33
+          value,
+ 34
+        });
+ 35
+      },
+ 36
+    });
+ 37
+    inlineStack.appendChild(percentageOffField);
+ 38
+ 39
+    const actionsElement = root.createComponent(InlineStack, {distribution: 'fill'});
+ 40
+    root.appendChild(actionsElement);
+ 41
+    actionsElement.appendChild(secondaryButton);
+ 42
+ 43
+    const primaryButtonStack = root.createComponent(InlineStack, {
+ 44
+      distribution: 'trailing',
+ 45
+    });
+ 46
+    actionsElement.appendChild(primaryButtonStack);
+ 47
+    primaryButtonStack.appendChild(primaryButton);
+ 48
+ 49
+    root.mount();
+ 50 }
+ 51
+ 52 extend('Admin::Product::SubscriptionPlan::Create', Create);
+ For more information, refer to the following resources:
+ UI components for the product subscription app extension
+ JavaScript product subscription app extension template
+ React product subscription app extension template
+ Next steps
+ Authenticate requests between your extension and app server
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension points
+ Data rendering
+ UI components

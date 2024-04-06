@@ -1,0 +1,350 @@
+Overview
+ GraphQL reference
+ Overview
+ Common objects
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Payment Customization API
+ Configuration
+ Order Routing Location Rule API reference
+ Order routing is the process of determining the location that's used to fulfill each cart line item. The Order Routing Location Rule API allows developers to provide their own ranking of location, for each item, during order routing.
+ Beta
+ Location rules is a new feature that's only available by request. To develop location rules, you need to contact order-routing-early-access@shopify.com.
+ Extension targets
+ The Order Routing Location Rule API exposes the following targets:
+ Target Output type Description
+ purchase.order-routing-location-rule.run FunctionRunResult Outputs the list of ranked locations
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Order Routing Location Rule API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      cost {
+ 4
+        subtotalAmount {
+ 5
+          amount
+ 6
+          currencyCode
+    }
+ 10
+    fulfillmentGroups {
+ 11
+      id
+ 12
+      deliveryGroup {
+ 13
+        deliveryAddress {
+ 14
+          latitude
+ 15
+          longitude
+ 16
+          market {
+ 17
+            regions {
+ 18
+              ... on MarketRegionCountry {
+ 19
+                code
+ 20
+              }
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+      inventoryLocations {
+ 26
+        location {
+ 27
+          id
+ 28
+        }
+ 29
+      }
+ 30
+    }
+ 31
+    locations {
+ 32
+      id
+ 33
+      address {
+ 34
+        latitude
+ 35
+        longitude
+ 36
+      }
+ 37
+      someMetafield: metafield(namespace: "some-namespace", key: "some-key") {
+ 38
+        value
+ 39
+      }
+ 40
+    }
+ 41
+    locationRule {
+ 42
+      someSetting: metafield(namespace: "some-namespace", key: "some-key") {
+ 43
+        value
+ 44
+      }
+ 45
+    }
+ 46 }
+ The following example shows the resulting input to the query:
+      "cost": {
+ 4
+        "subtotalAmount": {
+ 5
+          "amount": 200,
+ 6
+          "currencyCode": "CAD"
+ 7
+        }
+ 8
+      }
+ 9
+    },
+ 10
+    "fulfillmentGroups": [
+ 11
+      {
+ 12
+        "id": "gid://shopify/FulfillmentGroup/1",
+ 13
+        "deliveryGroup": {
+ 14
+          "deliveryAddress": {
+ 15
+            "latitude": 45.41908745615358,
+ 16
+            "longitude": -75.69657368666721,
+ 17
+            "market": {
+ 18
+              "regions": [
+ 19
+                {
+ 20
+                  "code": "CA"
+ 21
+                },
+ 22
+                {
+ 23
+                  "code": "US"
+ 24
+                },
+ 25
+                {
+ 26
+                  "code": "MX"
+ 27
+                }
+ 28
+              ]
+ 29
+            }
+ 30
+          }
+ 31
+        },
+ 32
+        "inventoryLocations": [
+ 33
+          {
+ 34
+            "location": {
+ 35
+              "id": "gid://shopify/Location/1"
+ 36
+            }
+ 37
+          },
+ 38
+          {
+ 39
+            "location": {
+ 40
+              "id": "gid://shopify/Location/2"
+ 41
+            }
+ 42
+          },
+ 43
+          {
+ 44
+            "location": {
+ 45
+              "id": "gid://shopify/Location/3"
+ 46
+            }
+ 47
+          },
+ 48
+          {
+ 49
+            "location": {
+ 50
+              "id": "gid://shopify/Location/4"
+ 51
+            }
+ 52
+          },
+ 53
+          {
+ 54
+            "location": {
+ 55
+              "id": "gid://shopify/Location/5"
+ 56
+            }
+ 57
+          }
+ 58
+        ]
+ 59
+      }
+ 60
+    ],
+ 61
+    "locations": [
+ 62
+      {
+ 63
+        "id": "gid://shopify/Location/1",
+ 64
+        "address": {
+ 65
+          "latitude": 45.41908745615358,
+ 66
+          "longitude": -75.69657368666721
+ 67
+        },
+ 68
+        "someMetafield": {
+ 69
+          "value": "some-value"
+ 70
+        }
+ 71
+      }
+ 72
+    ],
+ 73
+    "locationRule": {
+ 74
+      "someSetting": {
+ 75
+        "value": "some-value"
+ 76
+      }
+ 77
+    }
+ 78 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.order-routing-location-rule.run target.
+ Example
+ The following function result ranks locations:
+ output.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "rank": {
+ 5
+          "fulfillmentGroupId": "gid://shopify/FulfillmentGroup/1",
+ 6
+          "rankings": [
+ 7
+            {
+ 8
+              "locationId": "gid://shopify/Location/1",
+ 9
+              "rank": 0
+ 10
+            },
+ 11
+            {
+ 12
+              "locationId": "gid://shopify/Location/2",
+ 13
+              "rank": 0
+ 14
+            },
+ 15
+            {
+ 16
+              "locationId": "gid://shopify/Location/3",
+ 17
+              "rank": 1
+ 18
+            }
+ 19
+          ]
+ 20
+        }
+ 21
+      },
+ 22
+      {
+ 23
+        "rank": [
+ 24
+          "fulfillmentGroupId": "gid://shopify/FulfillmentGroup/2",
+ 25
+          "rankings": [
+ 26
+            {
+ 27
+              "locationId": "gid://shopify/Location/1",
+ 28
+              "rank": 1
+ 29
+            },
+ 30
+            {
+ 31
+              "locationId": "gid://shopify/Location/2",
+ 32
+              "rank": 0
+ 33
+            }
+ 34
+          ]
+ 35
+        }
+ 36
+      }
+ 37
+    ]
+ 38 }
+ Combining fulfillment groups ranked locations from multiple functions
+ For each fulfillment group, Shopify first sorts the output of each function based on the locationRule priority. Shopify then takes the first output, and sorts the locations of the fulfillment group based on the rank. If there are ties between the rankings, then Shopify breaks them using the ranks from the second output, and so on. If there are no ties, then only the output of the first locationRule is considered.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Updates & News
+ Developer changelog
+ Partner blog

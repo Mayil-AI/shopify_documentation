@@ -1,0 +1,240 @@
+Overview
+ Getting started
+ Get access tokens
+ Access token types
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ Custom data
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Getting started with session token authentication
+ This tutorial explains how to set up session token authentication for your embedded app.
+ Note
+ If you want to set up session token authentication for a multi-page server-side rendered (SSR) app, then you need to instead set your app to use Turbolinks. For an example, refer to the Turbolinks and JWT sample app.
+ Many of the topics discussed in this tutorial are covered in the following video:
+ Outcomes
+ After you've finished this tutorial, you'll know how to set up session token authentication for your app.
+ Requirements
+ You've created an app from your Partner Dashboard or Shopify CLI.
+ The app is embedded in the Shopify admin.
+ You've learned about how session tokens work.
+ The app uses App Bridge version 2.0.
+ You've created an App Bridge instance.
+ Tip
+ You can use Shopify CLI to generate a starter app with boilerplate code that handles authentication and authorization. The starter app includes code for an embedded app that uses session tokens and token exchange.
+ Recommendations
+ We recommend using the Shopify App gem, Shopify Node API library, or Shopify PHP API library to decode and verify the authenticity of the session token.
+ Step 1: Get a session token
+ The getSessionToken helper retrieves a session token from Shopify. It sets up a subscription on the Shopify App Bridge client to listen for the APP::SESSION_TOKEN_RESPOND action and then immediately dispatches the APP::SESSION_TOKEN_REQUEST action.
+ In your app, set up the Shopify App Bridge client and import getSessionToken using the following code:
+ 1 import createApp from "@shopify/app-bridge";
+ 2 import { getSessionToken } from "@shopify/app-bridge/utilities";
+ 3
+ 4 const app = createApp({
+ 5
+    apiKey: "12345",
+ 6 });
+ Where your app requires a session token, specify the following code:
+ 1 const sessionToken = await getSessionToken(app);
+ getSessionToken returns a Promise, which either resolves with the session token, or rejects with an APP::ERROR::FAILED_AUTHENTICATION error when the session token is undefined.
+ Step 2: Authenticate your requests
+ The authenticatedFetch helper function authenticates your requests using the session token. The function gets the session token from Shopify App Bridge and passes in the Authorization header to your subsequent fetch requests.
+ Parameters
+ app: The App Bridge instance.
+ fetchOperation: Optional. Define a custom fetch wrapper.
+ The following example shows how to use authenticatedFetch with a custom ApolloLink:
+ 1 import ApolloClient from "apollo-client";
+ 2 import { authenticatedFetch } from "@shopify/app-bridge/utilities";
+ 3 import createApp from "@shopify/app-bridge";
+ 4 import { HttpLink } from "apollo-link-http";
+ 5 import { InMemoryCache } from "apollo-cache-inmemory";
+ 6
+ 7 const app = createApp({
+ 8
+    apiKey: "12345",
+ 9 });
+ 10
+ 11 const client = new ApolloClient({
+ 12
+    link: new HttpLink({
+ 13
+      credentials: "same-origin",
+ 14
+      fetch: authenticatedFetch(app), // ensures that all requests triggered by the ApolloClient are authenticated
+ 15
+    }),
+ 16
+    cache: new InMemoryCache(),
+ 17 });
+ Use a custom fetch wrapper
+ If you want to add custom headers, caching, or special treatment of requests, then you can optionally pass in a custom fetch wrapper function to the fetchOperation parameter.
+ The app-bridge function (authenticatedFetch) returns your custom fetch wrapper function along with an authenticated Authorization header appended to the request options provided.
+ Any custom fetch function that you provide needs to append all the appropriate options, including headers. The following example shows how to append options:
+ 1 import ApolloClient from "apollo-client";
+ 2 import { authenticatedFetch } from "@shopify/app-bridge/utilities";
+ 3 import createApp from "@shopify/app-bridge";
+ 4 import deepMerge from "@shopify/app-bridge/actions/merge";
+ 5 import { HttpLink } from "apollo-link-http";
+ 6 import { InMemoryCache } from "apollo-cache-inmemory";
+ 7
+ 8 // Sample custom fetch wrapper
+ 9 const yourCustomFetchWrapper = (uri, options) => {
+ 10
+    const aggregateOptions = deepMerge(options, {
+ 11
+      method: "POST",
+ 12
+      headers: { "Content-Type": "application/json" },
+ 13
+    });
+ 14
+    return fetch(uri, aggregateOptions);
+ 15 };
+ 16
+ 17 const app = createApp({
+ 18
+    apiKey: "12345",
+ 19 });
+ 20
+ 21 const client = new ApolloClient({
+ 22
+    link: new HttpLink({
+ 23
+      credentials: "same-origin",
+ 24
+      fetch: authenticatedFetch(app, yourCustomFetchWrapper), // ensures that your custom fetch wrapper is authenticated
+ 25
+    }),
+ 26
+    cache: new InMemoryCache(),
+ 27 });
+ Step 3: Decode session tokens for incoming requests
+ You need to add middleware that detects requests with a session token present, verifies that the session token's signature is correct, and then builds a session based on the shop and user information included in the token.
+ The Shopify App gem, Shopify Node API library, and Shopify PHP API library provide middleware and utilities for decoding session tokens.
+ If your app isn't built using the libraries mentioned above, then you can obtain session details and verify the session token's signature manually.
+ Optional: Obtain session details and verify the session token manually
+ If your app isn't built using the Shopify App gem, the Shopify Node API library, the Shopify PHP API library, or another library with session tokens included, then use the following steps to help you manually decode the session token and verify that it's valid.
+ Obtain and verify session details
+ A session token is a JWT string with the following structure: <header>.<payload>.<signature>. You can obtain the session details from the payload and then verify the contents as follows:
+ Extract the exp value from the payload.
+ Verify that the datetime value is in the future.
+ Extract the nbf value from the payload.
+ Verify that the datetime value was in the past.
+ Extract the iss and dest fields from the payload.
+ The top-level domains should match. The dest field specifies the shops that the request originated from. For example, myshop.myshopify.com.
+ Extract the aud value from the payload.
+ Verify that the value matches the client ID of your app.
+ Extract the sub value from the payload.
+ This is the ID of the user that made the request.
+ If any of the above steps fail, then discard the payload, stop processing the request, and respond with an error.
+ Note
+ Without third-party cookies, setting Cross-Site Request Forgery (CSRF) tokens in a cookie might not be possible. The session token serves as an alternative to CSRF tokens, because you can trust that the session token has been issued by Shopify to your app frontend.
+ Verify the session token's signature
+ To verify that the signature is correct, you need to generate a new Base64url-encoded signature using the app’s shared secret.
+ Session tokens are signed using the HS256 algorithm. This is a symmetric algorithm. The signing key is the shared secret for your Shopify app. A session token is a JWT string with the following structure: <header>.<payload>.<signature>
+ All three sections are base64 encoded.
+ Use the following steps to verify that the issued token has a valid signature. Refer to JWT.io for a useful JWT decoder tool.
+ Take the <header>.<payload> portion of the string and hash it with SHA-256.
+ Sign the string using the HS256 algorithm by using the app’s secret as the signing key.
+ Base64url-encode the result.
+ Verify that the result is the same as the signature that was sent with the session token.
+ Step 4: Allow authenticated requests
+ To allow authenticated requests, you need to update the route that serves the app so that it allows unauthenticated requests. You also need to add logic to the unauthenticated route to detect if this is the first time that the shop is loading your app.
+ Update the route
+ If the page that's rendered by the route depends on an authenticated request to the route, then remove the protected data from the response and expose the data to the frontend using an authenticated API route.
+ For example, your app might be embedding protected app user information in its initial HTML response. The only app user information that should be available on unauthenticated routes is the shop domain, which is passed in as a query parameter in the app URL.
+ Add logic to the unauthenticated route
+ If your app doesn't have a valid online or offline access token, then it should get a new session token from App Bridge. The session token should be passed into the app backend to exchange for an online and offline access token using token exchange.
+ Step 5: Mark shop records as uninstalled using the app/uninstalled webhook
+ To ensure OAuth continues to work with session tokens, your app must update its shop records when a shop uninstalls your app. An app can receive notifications of uninstall events by subscribing to the app/uninstalled webhook.
+ The following sections show a Ruby implementation that subscribes to the webhook and updates the records.
+ Set up the webhook
+ Use the add_webhook generator from the shopify_app gem to set up the app/uninstalled webhook for the app. The following code adds the app/uninstalled webhook to your app config and creates the AppUninstalledJob job class so that you can add uninstallation handler logic.
+ rails g shopify_app:add_webhook -t app/uninstalled -a {your_app_url}/webhooks/app_uninstalled
+ Mark the shop record as uninstalled
+ To mark the record as uninstalled, you need to update the AppUninstalledJob job class. In the following example, the app marks the shop as uninstalled by deleting the Shop record:
+ 1 class AppUninstalledJob < ActiveJob::Base
+ 2
+    def perform(args)
+ 3
+      shop = Shop.find_by(shopify_domain: args[:shop_domain])
+ 4
+ 5
+      mark_shop_as_uninstalled(shop)
+ 6
+    end
+ 7
+ 8
+    private
+ 9
+ 10
+    def mark_shop_as_uninstalled(shop)
+ 11
+      shop.uninstall! if shop
+ 12
+    end
+ 13 end
+ Define a background job
+ You need to define a background job to ensure that shops with existing installations also have the uninstall webhook set up. In the following example, the RegisterWebhooksForActiveShop job is defined to iterate all shop records in the database and configure the webhooks.
+ 1 class RegisterWebhooksForActiveShops < ApplicationJob
+ 2
+    queue_as :default
+ 3
+ 4
+    def perform
+ 5
+      register_webhooks_for_active_shops
+ 6
+    end
+ 7
+ 8
+    private
+ 9
+ 10
+    def register_webhooks_for_active_shops
+ 11
+      Shop.find_each do |shop|
+ 12
+        ShopifyApp::WebhooksManagerJob.perform_now(
+ 13
+          shop_domain: shop.shopify_domain,
+ 14
+          shop_token: shop.shopify_token,
+ 15
+          webhooks: ShopifyApp.configuration.webhooks
+ 16
+        )
+ 17
+      end
+ 18
+    end
+ 19 end
+ Enqueue the background job
+ Enqueue the RegisterWebhooksForActiveShops background job to apply the webhook registration. For details on enqueuing ActiveJobs on Rails, refer to the Rails guides.
+ Step 6: Handle the expiry of online access tokens
+ Apps that use online access tokens need to keep track of whether the online access token is expired.
+ If the online access token is expired, your app can request a new one using token exchange.
+ Step 7: Verify that the session token is being sent
+ Your app should now work using session token authentication. When any network calls are made, you should see the session token being sent in the header:
+ Next steps
+ Exchange your session token for an access token with token exchange.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Outcomes
+ Requirements
+ Recommendations
+ Step 1: Get a session token
+ Step 2: Authenticate your requests
+ Step 3: Decode session tokens for incoming requests
+ Step 4: Allow authenticated requests
+ Step 5: Mark shop records as uninstalled using the `app/uninstalled webhook`
+ Step 6: Handle the expiry of online access tokens
+ Step 7: Verify that the session token is being sent
+ Next steps
+ Updates & News

@@ -1,0 +1,40 @@
+Product subscription app extensions
+ Text
+ Text is used to visually style and provide semantic value for a small piece of text content.
+ Example
+ JS
+ React
+ 1 import {extend, Text} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const text = root.createComponent(Text, undefined, 'Text');
+ 5
+ 6
+    root.appendChild(text);
+ 7 });
+ Props
+ optional = ?
+ Name Type Description
+ size? "auto" | "fill" | number Size of the text
+ emphasized? boolean
+ subdued? boolean
+ role? "address" | "deletion" | AbbreviationRoleType | DirectionalOverrideRoleType | DatetimeRoleType Assign semantic value
+ id? string Unique identifier. Typically used as a target for another component’s controls to associate an accessible label with an action.
+ appearance? "critical" | "warning" | "success" Changes the visual appearance
+ DatetimeRoleType
+ Indicate the text is a date, a time or a duration. Use the "machineReadable" option to help browsers, tools or software understand the human-readable date. Valid format for "machineReadable" can be found here: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/time#Valid_datetime_Values
+ Name Type Description
+ type "datetime"
+ machineReadable? string
+ DirectionalOverrideRoleType
+ Override the text directionality. Typically used for email and phone numbers.
+ Name Type Description
+ type "directional-override"
+ direction "ltr" | "rtl"
+ AbbreviationRoleType
+ Indicate the text is an abbreviation or acronym. Use the "for" option to provide a description of the abbreviation.
+ Name Type Description
+ type "abbreviation"
+ for? string
+ Was this page helpful?

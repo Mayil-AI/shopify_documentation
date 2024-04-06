@@ -1,0 +1,50 @@
+Checkout UI
+ Post-purchase
+ Customer account UI extensions
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Checkout app extensions
+ Checkout app extensions make it easy for developers to extend their app code into checkout and customize many aspects of the checkout experience. Shopify provides the tools and resources for building checkout UI extensions on the checkout steps, post-purchase page, and Thank you and Order status pages.
+ Checkout UI extensions
+ Checkout UI extensions let you add custom workflows and functionality at defined points of the checkout process, and are built into apps using target APIs and UI components.
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ Post-purchase extensions
+ Post-purchase extensions let you add new UI and functionality to the post-purchase page, and are built into apps using extension points APIs and UI components provided by Shopify.
+ Tip
+ Learn how JWTs (JSON web tokens) need to be structured for use in post-purchase extensions.
+ Thank you and Order status page extensions
+ Checkout UI extensions can be developed for the Thank you page and the Order status page with similar target APIs and UI components. Extensions that appear after a purchase has been completed will be available to all plans except Shopify Starter.
+ Getting started
+ Learn how to use checkout app extensions by following one of our use case tutorials:
+ Pre-purchase product offers
+ Build a pre-purchase upsell offer that prompts the customer to add a product to their order.
+ Post-purchase checkout extensions
+ Create a basic example of a post-purchase checkout extension.
+ Thank you and order status extensions
+ Build a survey that asks customers how they heard about the store after they made a purchase.
+ Custom banners
+ Learn how to add a custom banner to checkout.
+ Custom fields
+ Learn how to add custom fields to checkout that customers can use to add delivery instructions to their order.
+ Client-side validation
+ Use a checkout UI extension to validate fields at checkout and block customer progress.
+ Header
+ Use a checkout UI extension and the GraphQL Admin API's checkout branding types to customize the checkout header with custom images, including the back to cart link.
+ Footer
+ Use a checkout UI extension and the GraphQL Admin API's checkout branding types to customize the checkout footer with store policies.
+ Next steps
+ Learn about the resources available for building checkout UI extensions.
+ Learn about the extension points available to post-purchase checkout extensions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Checkout UI extensions
+ Post-purchase extensions
+ Thank you and Order status page extensions
+ Getting started
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,60 @@
+Delivery and shipping
+ Overview
+ Enhance delivery methods
+ Reorder delivery options
+ Pickup points
+ Extensibility for delivery and shipping
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ Merchants can offer several different delivery methods in their Shopify checkout such as shipping, local pickup, and pickup points. This guide introduces ways to customize or add to the delivery methods and shipping options with extension points and functions.
+ How it works
+ You can customize and build additional functionality to delivery methods in Shopify checkout with the following methods:
+ Extension points, using a checkout UI extension
+ Delivery customizations, using a checkout function
+ Local pickup, using a checkout function
+ Pickup points, using a checkout function
+ Extension points
+ If you're adding functionality or content to a delivery method, then you should use checkout UI extensions in extension points. There are static extension points located for all native delivery methods including shipping, local pickup, and pickup points.
+ The following example shows a custom field that collects delivery instructions and renders at the purchase.checkout.shipping-option-item.render-after extension point:
+ 
+ Delivery customizations
+ To hide, rename, or reorder shipping options, you must use a checkout function. Delivery customization functions are only applicable to shipping options and aren't compatible with local delivery, local pickup, or pickup points.
+ Note
+ Any changes that you make with checkout functions aren't applied to Shop Pay checkout.
+ Local pickup customizations
+ To create a local pickup customization, use a checkout function.
+ Pickup points customizations
+ To create pickup point options, use Shopify CLI and a checkout function.
+ Learn more
+ Enhance delivery methods
+ Learn more about the different ways that you can use UI extensions with delivery methods.
+ Getting started with delivery customizations
+ Learn how to create a function that lets merchants rename a delivery option offered to their customers at checkout.
+ Create local pickup charges
+ Learn how to create a function that adds a price to local pickup options.
+ Pickup points
+ Learn about pickup points and how to create a function that adds pickup point options to checkout.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with using checkout UI extensions and building delivery customizations:
+ Checkout UI extensions API reference
+ Consult the API reference for checkout UI extension points and their respective types.
+ Components for checkout UI extensions
+ Learn about the components that are available in checkout UI extensions.
+ Checkout extension configuration
+ Learn about the properties you can configure in your checkout UI extension.
+ Shopify Functions APIs reference
+ Learn about the available APIs for Shopify Functions.
+ Next steps
+ Use checkout UI extensions with delivery methods using a checkout UI extension
+ Create a function that lets merchants rename a delivery option offered to their customers at checkout
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Extension points
+ Delivery customizations
+ Local pickup customizations
+ Pickup points customizations
+ Learn more
+ Developer tools and resources
+ Next steps

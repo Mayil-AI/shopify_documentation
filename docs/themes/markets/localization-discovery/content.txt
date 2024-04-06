@@ -1,0 +1,150 @@
+Customer engagement
+ Markets
+ Overview
+ Support multiple currencies and languages
+ Detect and set a visitor’s optimal localization
+ Country and language selector UX guidelines
+ Site navigation and search
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Detect and set a visitor’s optimal localization
+ If you have multiple localized versions of a single store using Shopify Markets, then you should make sure that each visitor interacts with the optimal version of the store. Depending on the merchant’s shop configuration, search engines might be able to pre-localize visitors, and Shopify might automatically redirect visitors. However, it’s still possible for a visitor to be browsing in a context for a market that they aren’t actually located in.
+ This guide shows how to use the Ajax API to detect a visitor’s optimal localization and to update their current state.
+ Note
+ As a best practice, don’t try to prevent visitors from browsing in a context other than their detected optimum. GeoIP detection isn’t perfect, especially when visitors are using VPNs, and sometimes customers want to have a product shipped to somewhere other than their current location. Shopify’s checkout will ensure that the prices and product availability are appropriate for the shipping address the customer eventually chooses.
+ Requirements
+ You have more than one market configured on your Shopify store.
+ Step 1: Query for browsing context suggestions
+ To use the customer’s browser settings and IP address to determine if a shop offers a better localized experience, you can query for browsing context suggestions. You can request country or language suggestions, or both, and provide values that should be excluded from suggestions. The names of languages and countries will be returned in the suggested language if there is one, or the current storefront language if not.
+ Querying for browsing context suggestions
+ Request
+ 1 await fetch(
+ 2
+    window.Shopify.routes.root
+ 3
+      + 'browsing_context_suggestions.json'
+ 4
+      + '?country[enabled]=true'
+ 5
+      + `&country[exclude]=${window.Shopify.country}`
+ 6
+      + '&language[enabled]=true'
+ 7
+      + `&language[exclude]=${window.Shopify.language}`
+ 8 ).then(r => r.json());
+ JSON response
+ 1 {
+ 2
+    "detected_values": {
+ 3
+      "country": {
+ 4
+        "handle": "CA",
+ 5
+        "name": "Canada"
+ 6
+      }
+ 7
+    },
+ 8
+    "suggestions": [
+ 9
+      {
+ 10
+        "parts": {
+ 11
+          "country": {
+ 12
+            "handle": "CA",
+ 13
+            "name": "Canada",
+ 14
+            "confidence": 1,
+ 15
+            "options": {
+ 16
+              "US": "États-Unis",
+ 17
+              "JP": "Japon",
+ 18
+              "CA": "Canada"
+ 19
+            }
+ 20
+          },
+ 21
+          "language": {
+ 22
+            "handle": "fr",
+ 23
+            "name": "français",
+ 24
+            "confidence": 1,
+ 25
+            "options": {
+ 26
+              "en": "anglais",
+ 27
+              "es": "espagnol",
+ 28
+              "fr": "français",
+ 29
+              "ja": "japonais"
+ 30
+            }
+ 31
+          }
+ 32
+        },
+ 33
+        "confidence": 1
+ 34
+      }
+ 35
+    ]
+ 36 }
+ Step 2: Update the current localization
+ The returned suggestions can be used to update the current localization by submitting a localization form. For a full tutorial detailing how to build a country and language selector in themes, refer to Support multiple currencies and languages. The following example shows a minimal implementation of building and submitting a localization form in JavaScript:
+ 1 function updateLocalization({country, language}) {
+ 2
+    const formId = crypto.randomUUID();
+ 3
+    const formHtml = `
+ 4
+      <form id="${formId}" action="/localization" method="POST" hidden>
+ 5
+        <input name="_method" value="PUT">
+ 6
+        <input name="country_code" value="${country}">
+ 7
+        <input name="language_code" value="${language}">
+ 8
+      </form>
+ 9
+    `;
+ 10
+    document.body.insertAdjacentHTML("beforeend", formHtml);
+ 11
+    document.getElementById(formId).submit();
+ 12 }
+ 13
+ 14 updateLocalization({country: "CA", language: "fr"});
+ Next steps
+ Learn how to detect and set a user’s optimal localization when building a Hydrogen shop.
+ Learn how to add a country and language selector to your theme so customers can choose their own locale preference.
+ Get an overview of the localized experiences that are possible with Shopify Markets, and how to effectively support them.
+ Explore an example of using the Storefront API to load a shop’s supported countries and languages.
+ Use the GraphQL Admin API to translate an online store’s content.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Query for browsing context suggestions
+ Step 2: Update the current localization
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

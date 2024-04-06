@@ -1,0 +1,220 @@
+Segment query language reference
+ Datasets
+ Blockchain
+ Liquid
+ Ajax API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ ShopifyQL overview
+ You can use the GraphQL Admin API to query data from a Plus merchant store using ShopifyQL. The ShopifyQL API enables you to write analytical queries to find insights in merchants' store data.
+ You can use the ShopifyQL API to create reporting apps that provide business insights for Plus merchants. The ShopifyQL API also enables you to export data from a Plus merchant store, so you can import the data into data warehouses.
+ For a complete reference of the ShopifyQL language, refer to the ShopifyQL reference.
+ Access scopes
+ To use ShopifyQL, you need to request access to protect customer data in the Partner Dashboard. Your app also needs to meet certain requirements to ensure customer privacy and security. You will need to request access for protected customer data including name, email, address, and phone fields.
+ You also need to request access to authenticated access scopes for the following access scopes read_reports, read_customers, read_fulfillments, read_inventory, read_orders, read_products, and read_all_orders.
+ How it works
+ Plus Merchant stores contain data in a format that can be read by ShopifyQL. The store data is organized as a table, which has columns that contain details about the data. The following store data is available, grouped into datasets:
+ orders dataset - Available for Plus Merchants
+ products dataset - Available for Plus Merchants
+ You can use the specific details to sort or filter store data.
+ The GraphQL Admin API enables you to interact with store data using ShopifyQL. You can compose queries that sort and filter store data, so you can create interfaces or visuals that merchants can use to find patterns in their stores.
+ Segment query language
+ The segment query language is a different implementation of ShopifyQL that uses a subset of ShopifyQL. The segment query language only uses the WHERE clause from ShopifyQL to filter customers by their attributes.
+ You can use the segment query language to create a collection of customers that are filtered out by specific criteria. Filtered customers in a collection are called “segment members”, and the collections of filtered customers are called “segments”. Merchants can create segments in the Shopify admin.
+ For a complete reference of the segment query language, refer to the segment query language reference.
+ Example
+ The following example shows how to use shopifyqlQuery in the GraphQL Admin API to retrieve the total sales for each month from the start of the year until today.
+ POST https://{shop}.myshopify.com/admin/api/<Version>/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    # The example below sends a ShopifyQL query to the Admin GraphQL API.
+ 3
+    shopifyqlQuery(query: "FROM orders SHOW sum(net_sales) AS monthly_net_sales GROUP BY month SINCE -3m ORDER BY month") {
+ 4
+      __typename
+ 5
+      ... on TableResponse {
+ 6
+        tableData {
+ 7
+          unformattedData
+ 8
+          rowData
+ 9
+          columns {
+ 10
+            # Elements in the columns section describe which column properties you want to return.
+ 11
+            name
+ 12
+            dataType
+ 13
+            displayName
+ 14
+          }
+ 15
+        }
+ 16
+      }
+ 17
+      # parseErrors specifies that you want errors returned, if there were any, and which error properties you want to return.
+ 18
+      parseErrors {
+ 19
+        code
+ 20
+        message
+ 21
+        range {
+ 22
+          start {
+ 23
+            line
+ 24
+            character
+ 25
+          }
+ 26
+          end {
+ 27
+            line
+ 28
+            character
+ 29
+          }
+ 30
+        }
+ 31
+      }
+ 32
+    }
+ 33 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shopifyqlQuery": {
+ 4
+        "__typename": "TableResponse",
+ 5
+        "tableData": {
+ 6
+          "unformattedData": [
+ 7
+            [
+ 8
+              "2022-08-01T00:00:00-04:00",
+ 9
+              2174587.26
+ 10
+            ],
+ 11
+            [
+ 12
+              "2022-09-01T00:00:00-04:00",
+ 13
+              790295.86
+ 14
+            ],
+ 15
+            [
+ 16
+              "2022-10-01T00:00:00-04:00",
+ 17
+              184255.86
+ 18
+            ],
+ 19
+            [
+ 20
+              "2022-11-01T00:00:00-04:00",
+ 21
+              786740.54
+ 22
+            ]
+ 23
+          ],
+ 24
+          "rowData": [
+ 25
+            [
+ 26
+              "Aug 2022",
+ 27
+              "$2,174,587.26"
+ 28
+            ],
+ 29
+            [
+ 30
+              "Sep 2022",
+ 31
+              "$790,295.86"
+ 32
+            ],
+ 33
+            [
+ 34
+              "Oct 2022",
+ 35
+              "$184,255.86"
+ 36
+            ],
+ 37
+            [
+ 38
+              "Nov 2022",
+ 39
+              "$786,740.54"
+ 40
+            ]
+ 41
+          ],
+ 42
+          "columns": [
+ 43
+            {
+ 44
+              "name": "month",
+ 45
+              "dataType": "month",
+ 46
+              "displayName": "Month"
+ 47
+            },
+ 48
+            {
+ 49
+              "name": "monthly_net_sales",
+ 50
+              "dataType": "price",
+ 51
+              "displayName": "Monthly net sales"
+ 52
+            }
+ 53
+          ]
+ 54
+        },
+ 55
+        "parseErrors": null
+ 56
+      }
+ 57
+    }
+ 58 }
+ Next steps
+ Access the language reference for ShopifyQL.
+ Access the language reference for Shopify's segment query language.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Access scopes
+ How it works
+ Segment query language
+ Example
+ Next steps
+ Updates & News

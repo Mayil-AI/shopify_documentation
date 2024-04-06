@@ -1,0 +1,200 @@
+Discounts
+ Subscriptions
+ Pre-orders and Try Before You Buy
+ Overview
+ Add pre-orders and TBYB to your theme
+ Pre-orders and TBYB UX guidelines
+ Shop Pay Installments
+ Accelerated checkout
+ B2B
+ Unit pricing
+ Pre-orders and Try Before You Buy (TBYB) UX guidelines
+ A great customer-facing user experience (UX) for pre-orders and TBYB is important for the success of our merchants because it enables them to offer customers a more flexible purchasing process.
+ A pre-order or a TBYB is any transaction where the payment or fulfillment doesn't happen at the time of purchase.
+ This guide explains the key principles and component-level guidelines for implementing pre-order and TBYB UIs. and TBYB user interfaces (UIs).
+ User experience principles
+ To provide a good experience with pre-order or TBYB options and gain trust from customers, make sure to implement the following UX principles:
+ Be clear and up front about important information: Customers should be able to clearly identify the options and make a choice, such as try now, pay later.
+ Provide clarity around money: Customers should be able to clearly identify how much they will pay at checkout, the total cost of the product, when they’ll be charged a remaining balance amount (when applicable), and when their payment method will be charged.
+ Offer as much clarity around delivery timelines as possible: When possible, provide exact dates or a range, if exact dates are unavailable, for when customers can expect to receive their products, or the duration of the trial period.
+ Provide a seamless integration: The UI for options should be integrated into the theme’s existing design system.
+ Use clear language: Use language that customers can understand and that refers to the actual purchase terms. For example, use "pre-order", "back-order", and "TBYB".
+ User interface guidelines
+ Before you integrate your pre-order and TBYB options app into a theme, familiarize yourself with the UX guidelines and best practices that are associated with each component.
+ Apps should consider that products with different ways of purchasing are displayed in the following places on the online store:
+ Product pages
+ Collection pages
+ Search results
+ Featured product sections on the home page
+ Quick view modals on product cards
+ When customers can see available ways of purchasing at relevant points in the shopping process, they're more likely to utilize them. Ensure that all relevant information is always included, such as the deposit amount and fulfillment date, estimate for pre-orders, or the trial period length for TBYB.
+ Pre-order and TBYB information is displayed in the following components of the online store:
+ Product forms
+ Cart items
+ Order details
+ The following sections include guidance for displaying prices, styling UI components for pre-orders and TBYB, and presenting multiple purchasing options. In each section, the relevant Liquid properties that are required to create each component are also referenced.
+ Product forms
+ The product form enables a customer to select their pre-order or TBYB option. This form is where the merchant can provide clarity and more details for a product and its available variants. Product forms are used in product pages, featured product sections on home pages, and quick view modals on product cards.
+ The subcomponents of a product form include the following:
+ A. Price
+ B. Selling plan selection
+ C. Selling plan details
+ D. Main call-to-action
+ Example: Product form (pre-order)
+ Example: Product form (TBYB)
+ A. Price
+ Customers should be able to clearly identify the full price of the product, and the type of purchasing option that the product is.
+ Example: Price (pre-order)
+ Product form: Price
+ # UI element Liquid properties and information UI guidelines
+ 1 Price price Reflect the price details from the selected pre-order.
+ 2 Pre-order badge selling_plan_group.name
+ 
+ Reflect the price details from the selected pre-order. Provide a contextual pre-order badge or label to help differentiate against a one-time pre-order. The badge or label will help customers quickly understand that this product can be bought as a pre-order.
+ Pricing patterns
+ Pre-orders and TBYB options don’t usually come with savings to encourage customers to purchase products.
+ Tip
+ Pricing for pre-orders often requires a deposit. Don't use visual styling that suggests money saving pricing tactics, such as price strikethroughs, to represent the full price of a product in relation to the initial deposit. Instead, simply display the full price, and if the pre-order product requires a deposit, display the deposit price elsewhere on the page.
+ Main price component
+ The main price component should always display the total cost of an item. When a customer selects a selling plan or a product variant, the main price component should reflect their changes.
+ To help customers understand what purchasing option they have selected, do the following:
+ Clearly display the product's full price.
+ Add the appropriate pre-order or TBYB badge to the component to help clarify to customers that they aren't buying a regular one-time product.
+ Example: Main price component (pre-order)
+ Example: Main price component (TBYB)
+ B. Selling plan selection
+ Customers should be able to clearly identify their pre-order or TBYB options.
+ Example: Selling plan selection (pre-order)
+ Example: Selling plan selection (TBYB)
+ Selling plan selection
+ # UI element Liquid properties and information UI guidelines
+ 1 Purchase options product.selling_plan_groups One-time purchases and selling plan groups are considered different types of purchasing options. Use the term **Purchase options** in your own designs.
+ 2 One-time purchase product.requires_selling_plan
+ 
+ If the property is false, then at least one variant can be purchased as a one-time purchase, and the one-time purchase option should be presented in the UI. Group behavior
+ 
+ On the first page load, select the one-time option by default. When the customer interacts with the UI, consider collapsing the unselected group to make good use of the space. Disable the selling plan group selection when it isn’t available for a given variant.
+ 
+ Group layout
+ 
+ Prioritize displaying purchasing options in a vertically stacked list to make them readable on all devices. When displayed side-by-side, the information can be crowded on smaller screens.
+ 
+ Group style
+ 
+ Consider displaying purchasing options as radio inputs instead of buttons. Buttons can easily compete with the product form’s call-to-action. For example, a submit button.
+ 3 Selling plan group name selling_plan_group.name
+ 
+ Always make this value visible. For more information, refer to selling_plan_group.name.
+ 4 Selling plan option value selling_plan_option.value Don’t express exact prices in option values, such as “$50 deposit”, because the values won’t be accurate if the currency changes.
+ 
+ Expressing percentages is possible because they stay consistent even if the currency changes. For more information refer to Considerations for currency switching and price rounding.
+ Purchase option label
+ Show the Purchase options label when the following conditions apply:
+ A one-time purchase exists and there's at least one sellingPlanGroup object.
+ A one-time purchase isn't available, but there are multiple sellingPlanGroup objects of different types.
+ Shopify doesn't show the Purchase options label when the following conditions apply:
+ There are no selling plan groups.
+ The product can only be purchased with a selling plan and there's only one selling plan group. In this case, the sellingPlanGroup name remains in its position, but without the radio input.
+ Selling plan group name
+ Selling plan names should make clear the benefit of choosing that option. For example, "Pre-order".
+ Because the SellingPlan object can be associated with multiple selling plan groups on a product, selling plan group names are used to differentiate purchase options.
+ Display selling plan option values
+ All the option values must be displayed at a glance from a group. Consider adapting the component layout to optimize readability.
+ Components should adapt to the number of options being shown. When there are many options to choose from, an appropriate component should be selected to enable customers to view all options easily. When there are fewer options, a different component may be used. When possible, apply the appropriate layout to all values within a selling plan group for consistency:
+ Four options or less: Show each option as a radio button to allow customers to view what’s available.
+ More than four options: Use a select dropdown to emphasize the customer's selection and hide other options within the collapsed dropdown.
+ UI UPDATE ON VARIANT CHANGE
+ A product’s variants might not all support the same purchasing options. As a customer changes their variant selection, the components should update to make clear which options are available and unavailable.
+ When a selected option within a selling plan group is unavailable, the following events should happen:
+ The unavailable options are unselected, and the customer must make a new selection to successfully submit the form.
+ The unavailable options for the selected variant are disabled.
+ The form submission button is enabled. Disabling the button removes the ability to display an error message and instead displays the product as unavailable, which is false. Let the customer click the button but prevent them from adding the product to the cart. Then, anchor and scroll back to the faulty UI area and display a message that describes why the process can't complete and what the customer needs to do to proceed.
+ C. Selling plan details
+ Display important deferred pre-order and TBYB terms and selections to customers. The summary confirms a customer's selections, shows any conditions, and helps build trust in the brand.
+ Example: Selling plan details (pre-order)
+ Selling plan details
+ # UI element Liquid properties and information UI guidelines
+ 1 Selling plan description selling_plan.description Don't express exact prices in option values, for example, "$100 deposit". For more information, refer to Considerations for currency switching and price rounding.
+ 
+ Consider including a link to the returns or billing policies in the description. Merchants might have more detailed policies that need to be accessed by customers.
+ D. Main call-to-action
+ Having a call-to-action (main button text) that reflects the purchasing option type helps customers differentiate between a pre-order or a TBYB and a one-time purchase, even if there's only one option available.
+ Example: Shop has accelerated checkout (pre-order and TBYB)
+ Example: Shop doesn’t have accelerated checkout (pre-order and TBYB)
+ Main call-to-action
+ # UI element Liquid properties and information UI guidelines
+ 1 Call-to-action On first page load, if the product requires a selling plan or one is selected, then switch the call-to-action string to something purchase option-specific that merchants can customize. Update the call-to-action label to the dynamic checkout button for a deferred purchase option, and keep the add to cart button as is.
+ Cart items
+ Each pre-order or TBYB option item displays the most important details to help customers understand their purchase.
+ For pre-order items, make sure that the customer understands the fulfillment date and relevant payment information, such as a deposit amount and future payments.
+ For TBYB items, customers should see the trial period length. The price should also match what's represented on the product page.
+ A cart item includes the following subcomponents:
+ Cart page
+ Cart notification
+ Cart page
+ Customers tend to scan the cart page and review the information before proceeding to checkout, so it’s important that the following elements are clearly represented.
+ Example: Cart page (pre-order)
+ Example: Cart page (TBYB)
+ Cart page
+ # UI element Liquid properties and information UI guidelines
+ 1 Selling plan information line_item.selling_plan_allocation.selling_plan.name
+ 
+ Use selling_plan.name in the cart line item. This same text is used at checkout. For more information, refer to Using the selling plan name. Because the selling plan name is meant to accurately summarize the deferred purchase option, don't list the individual selling plan option values alongside the selling plan name.
+ 2 Price price Display the full price of the product so that the customer is reminded of the total cost of the item they’re buying.
+ 3 Price at checkout selling_plan.checkout_charge.value The price customers will pay at checkout.
+ 
+ For pre-order items, this price usually represents the deposit amount.
+ 
+ For TBYB items, the price will usually be $0 to indicate to customers that they won’t need to pay anything at checkout.
+ Cart notification
+ The cart notification returns information about the item that was just added to the cart.
+ Example: Cart notification (pre-order)
+ Cart notification
+ # UI element Liquid properties and information UI guidelines
+ 1 Selling plan information line_item.selling_plan_allocation.selling_plan.name
+ 
+ Use selling_plan.name in the cart line item. This same text is used at checkout. For more information, refer to Using the selling plan name. Because the selling plan name is meant to accurately summarize the deferred purchase option, don't list the individual selling plan option values alongside the selling plan name.
+ 2 Price price Display the full price of the product so that the customer is reminded of the total cost of the item that they’re buying.
+ Using the selling plan name
+ The selling_plan.name should be a succinct description of the selling plan that can be easily understood by customers. The text is displayed in multiple areas of the online store, such as cart line items, checkout, and past order details. The value is also displayed in the merchant’s internal admin on order pages.
+ Note
+ The selling plan name shouldn't include any marketing text.
+ Shopify doesn't control the value of the name, which means that merchants can enter any text value they want using an app.
+ When creating selling plan names, implement the following recommended guidelines:
+ State the type of deferred purchase option.
+ Write the deposit amount and payment due date of the product in order for the customer to keep a reference of it throughout the purchase journey.
+ Considerations for currency switching and price rounding
+ Merchants can sell in multiple currencies on their online store.
+ When a customer visits the online store, Shopify presents the currency that's determined appropriate for the customer. Online stores can offer a currency selector to customers to enable them to manually switch the currency. Shopify also offers a price rounding feature to merchants, which enables merchants to set custom rounding rules for converted prices.
+ Note
+ Any prices that are written in strings won't reflect currency switching or price rounding, and might be incorrect or misleading to customers.
+ Price properties returned from APIs of the Online Store (Liquid or JSON) reflect the currency of the customer's session and any price rounding rules.
+ Order details
+ Customers logged in to the store can view the details of each past order. It's important to let the customer easily identify orders with pre-order or TBYB products.
+ Example: Order details (pre-order)
+ Order details
+ # UI element Liquid properties and information UI guidelines
+ 1 Selling plan information line_item.selling_plan_allocation.selling_plan.name
+ 
+ Use selling_plan.name in the cart line item. This same text is used at checkout. For more information, refer to Using the selling plan name. Because the selling plan name is meant to accurately summarize the pre-order or TBYB option, don't list the individual selling plan option values alongside the selling plan name.
+ 2 Price price Display the full price of the product so that the customer is reminded of the total cost of the item they’re buying.
+ 3 Price at checkout selling_plan.checkout_charge.value The price customers will pay at checkout.
+ 
+ For pre-order items, this price usually represents the deposit amount.
+ 
+ For TBYB items, the price will usually be $0 to indicate to customers that they won’t need to pay anything at checkout.
+ Next steps
+ Create and manage pre-order and TBYB
+ Getting started with a pre-order or TBYB app
+ Get started with product subscription app extensions
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ User experience principles
+ User interface guidelines
+ Product forms
+ Cart items
+ Order details
+ Next steps
+ Updates & News
+ Developer changelog

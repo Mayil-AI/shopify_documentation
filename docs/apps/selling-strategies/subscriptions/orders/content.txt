@@ -1,0 +1,875 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ B2B
+ Channels
+ Distribution
+ Billing
+ App Store
+ Manage orders for prepaid subscriptions
+ When an order is created by Shopify, and delivery anchors exist, the order contains delayed fulfillment orders for prepaid items. This guide describes how to keep your orders and subscription contracts in sync, and covers some common order management scenarios that relate to fulfillment orders and subscription contracts.
+ Caution
+ Order editing in the Shopify admin isn't supported for orders with prepaid subscriptions.
+ Keeping orders and subscription contracts in sync
+ Changes to prepaid subscription contracts aren't automatically reflected on the associated orders. For example, when a customer updates their address for a prepaid subscription in an app, their address isn't automatically updated in the order.
+ The following diagram shows the required actions that your app must take to sync updates for prepaid subscription contracts:
+ If the item hasn't been billed for, then update the information on the subscription contract using the subscriptionContract and subscriptionDraft objects.
+ If the item has been billed for, then update the information on the order using the Order and FulfillmentOrder objects.
+ Tip
+ Learn how to interact with the SubscriptionDraft object by completing the Update a subscription contract tutorial.
+ Managing cancellations
+ The cancellation of orders doesn't automatically cancel related subscription contracts. It's recommended that apps subscribe to the orders/cancel webhook and communicate with merchants when subscription contract orders are cancelled, so that merchants know that the subscription contract hasn't also been cancelled.
+ Subscription cancellation through a customer portal
+ When a customer cancels a subscription order through the customer portal, apps need to notify the merchant of this cancellation. If the cancellation is initiated through the app, then the app needs to handle the associated refunds. This applies to both prepaid and subscribe-and-save subscriptions.
+ Order tagging
+ Merchants often identify and filter subscription orders in the Shopify admin. To tag orders for subscriptions from your app, you can call the tagsAdd mutation. The following example adds tags to a specified order using the order ID:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation tagsAdd($id: ID!, $tags: [String!]!) {
+ 2
+    tagsAdd(id: $id, tags: $tags) {
+ 3
+      node {
+ 4
+        id
+ 5
+      }
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ 9
+      }
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/Order/2067697074232",
+ 3
+    "tags": [
+ 4
+      "subscription",
+ 5
+      "prepaid"
+ 6
+    ]
+ 7 }
+      "orderUpdate": {
+ 4
+        "order": {
+ 5
+          "id": "gid://shopify/Order/2067697074232"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ Automatic fulfillment
+ Scheduled fulfillment orders aren't eligible for automatic fulfillment. However, if a prepaid subscription order is created with its first fulfillment order set to the OPEN state, then the fulfillment order is automatically fulfilled.
+ Order CSV export
+ Apps that use CSV exports to manage fulfillments can rely on the value of lineItem.fulfillableQuantity to determine which orders are ready to fulfill. This is because SCHEDULED fulfillment orders aren't included in the calculation of the order lineItem.fulfillableQuantity.
+ For example, consider a fulfillment order scheduled to ship on January 15. Before January 15, lineItem.fulfillableQuantity is set to 0. After January 15, lineItem.fulfillableQuantity is set to 1. Then, after the item is fulfilled, lineItem.fulfillableQuantity is set back to 0.
+ Order webhooks
+ Your app can subscribe to order webhooks that are useful for apps that manage fulfillment orders for merchants. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration.
+ Example webhook responses
+ orders/create
+ orders/updated
+ orders/cancelled
+ refunds/create
+ 1 // Occurs when an order is created. Subscription apps need to query the order's line items for their selling plan to determine whether this is a subscription order that they own.
+ 2 {
+ 3
+    "id": 820982911946154508,
+ 4
+    "email": "jon@doe.ca",
+ 5
+    "closed_at": null,
+ 6
+    "created_at": "2022-10-03T12:55:00-04:00",
+ 7
+    "updated_at": "2022-10-03T12:55:00-04:00",
+ 8
+    "number": 234,
+ 9
+    "note": null,
+ 10
+    "token": "123456abcd",
+ 11
+    "gateway": null,
+ 12
+    "test": true,
+ 13
+    "total_price": "403.00",
+ 14
+    "subtotal_price": "393.00",
+ 15
+    "total_weight": 0,
+ 16
+    "total_tax": "0.00",
+ 17
+    "taxes_included": false,
+ 18
+    "currency": "USD",
+ 19
+    "financial_status": "voided",
+ 20
+    "confirmed": false,
+ 21
+    "total_discounts": "5.00",
+ 22
+    "total_line_items_price": "398.00",
+ 23
+    "cart_token": null,
+ 24
+    "buyer_accepts_marketing": true,
+ 25
+    "name": "#9999",
+ 26
+    "referring_site": null,
+ 27
+    "landing_site": null,
+ 28
+    "cancelled_at": "2022-10-03T12:55:00-04:00",
+ 29
+    "cancel_reason": "customer",
+ 30
+    "total_price_usd": null,
+ 31
+    "checkout_token": null,
+ 32
+    "reference": null,
+ 33
+    "user_id": null,
+ 34
+    "location_id": null,
+ 35
+    "source_identifier": null,
+ 36
+    "source_url": null,
+ 37
+    "processed_at": null,
+ 38
+    "device_id": null,
+ 39
+    "phone": null,
+ 40
+    "customer_locale": "en",
+ 41
+    "app_id": null,
+ 42
+    "browser_ip": null,
+ 43
+    "landing_site_ref": null,
+ 44
+    "order_number": 1234,
+ 45
+    "discount_applications": [
+ 46
+      {
+ 47
+        "type": "manual",
+ 48
+        "value": "5.0",
+ 49
+        "value_type": "fixed_amount",
+ 50
+        "allocation_method": "each",
+ 51
+        "target_selection": "explicit",
+ 52
+        "target_type": "line_item",
+ 53
+        "description": "Discount",
+ 54
+        "title": "Discount"
+ 55
+      }
+ 56
+    ],
+ 57
+    "discount_codes": [
+ 58
+ 59
+    ],
+ 60
+    "note_attributes": [
+ 61
+ 62
+    ],
+ 63
+    "payment_gateway_names": [
+ 64
+      "visa",
+ 65
+      "bogus"
+ 66
+    ],
+ 67
+    "processing_method": "",
+ 68
+    "checkout_id": null,
+ 69
+    "source_name": "web",
+ 70
+    "fulfillment_status": "pending",
+ 71
+    "tax_lines": [
+ 72
+ 73
+    ],
+ 74
+    "tags": "",
+ 75
+    "contact_email": "jon@doe.ca",
+ 76
+    "order_status_url": "https:\/\/jsmith.myshopify.com\/548380009\/orders\/123456abcd\/authenticate?key=abcdefg",
+ 77
+    "presentment_currency": "USD",
+ 78
+    "total_line_items_price_set": {
+ 79
+      "shop_money": {
+ 80
+        "amount": "398.00",
+ 81
+        "currency_code": "USD"
+ 82
+      },
+ 83
+      "presentment_money": {
+ 84
+        "amount": "398.00",
+ 85
+        "currency_code": "USD"
+ 86
+      }
+ 87
+    },
+ 88
+    "total_discounts_set": {
+ 89
+      "shop_money": {
+ 90
+        "amount": "5.00",
+ 91
+        "currency_code": "USD"
+ 92
+      },
+ 93
+      "presentment_money": {
+ 94
+        "amount": "5.00",
+ 95
+        "currency_code": "USD"
+ 96
+      }
+ 97
+    },
+ 98
+    "total_shipping_price_set": {
+ 99
+      "shop_money": {
+ 100
+        "amount": "10.00",
+ 101
+        "currency_code": "USD"
+ 102
+      },
+ 103
+      "presentment_money": {
+ 104
+        "amount": "10.00",
+ 105
+        "currency_code": "USD"
+ 106
+      }
+ 107
+    },
+ 108
+    "subtotal_price_set": {
+ 109
+      "shop_money": {
+ 110
+        "amount": "393.00",
+ 111
+        "currency_code": "USD"
+ 112
+      },
+ 113
+      "presentment_money": {
+ 114
+        "amount": "393.00",
+ 115
+        "currency_code": "USD"
+ 116
+      }
+ 117
+    },
+ 118
+    "total_price_set": {
+ 119
+      "shop_money": {
+ 120
+        "amount": "403.00",
+ 121
+        "currency_code": "USD"
+ 122
+      },
+ 123
+      "presentment_money": {
+ 124
+        "amount": "403.00",
+ 125
+        "currency_code": "USD"
+ 126
+      }
+ 127
+    },
+ 128
+    "total_tax_set": {
+ 129
+      "shop_money": {
+ 130
+        "amount": "0.00",
+ 131
+        "currency_code": "USD"
+ 132
+      },
+ 133
+      "presentment_money": {
+ 134
+        "amount": "0.00",
+ 135
+        "currency_code": "USD"
+ 136
+      }
+ 137
+    },
+ 138
+    "line_items": [
+ 139
+      {
+ 140
+        "id": 866550311766439020,
+ 141
+        "variant_id": 808950810,
+ 142
+        "title": "IPod Nano - 8GB",
+ 143
+        "quantity": 1,
+ 144
+        "sku": "IPOD2008PINK",
+ 145
+        "variant_title": null,
+ 146
+        "vendor": null,
+ 147
+        "fulfillment_service": "manual",
+ 148
+        "product_id": 632910392,
+ 149
+        "requires_shipping": true,
+ 150
+        "taxable": true,
+ 151
+        "gift_card": false,
+ 152
+        "name": "IPod Nano - 8GB",
+ 153
+        "variant_inventory_management": "shopify",
+ 154
+        "properties": [
+ 155
+ 156
+        ],
+ 157
+        "product_exists": true,
+ 158
+        "fulfillable_quantity": 1,
+ 159
+        "grams": 567,
+ 160
+        "price": "199.00",
+ 161
+        "total_discount": "0.00",
+ 162
+        "fulfillment_status": null,
+ 163
+        "price_set": {
+ 164
+          "shop_money": {
+ 165
+            "amount": "199.00",
+ 166
+            "currency_code": "USD"
+ 167
+          },
+ 168
+          "presentment_money": {
+ 169
+            "amount": "199.00",
+ 170
+            "currency_code": "USD"
+ 171
+          }
+ 172
+        },
+ 173
+        "total_discount_set": {
+ 174
+          "shop_money": {
+ 175
+            "amount": "0.00",
+ 176
+            "currency_code": "USD"
+ 177
+          },
+ 178
+          "presentment_money": {
+ 179
+            "amount": "0.00",
+ 180
+            "currency_code": "USD"
+ 181
+          }
+ 182
+        },
+ 183
+        "discount_allocations": [
+ 184
+ 185
+        ],
+ 186
+        "duties": [
+ 187
+ 188
+        ],
+ 189
+        "admin_graphql_api_id": "gid:\/\/shopify\/LineItem\/866550311766439020",
+ 190
+        "tax_lines": [
+ 191
+ 192
+        ]
+ 193
+      },
+ 194
+      {
+ 195
+        "id": 141249953214522974,
+ 196
+        "variant_id": 808950810,
+ 197
+        "title": "IPod Nano - 8GB",
+ 198
+        "quantity": 1,
+ 199
+        "sku": "IPOD2008PINK",
+ 200
+        "variant_title": null,
+ 201
+        "vendor": null,
+ 202
+        "fulfillment_service": "manual",
+ 203
+        "product_id": 632910392,
+ 204
+        "requires_shipping": true,
+ 205
+        "taxable": true,
+ 206
+        "gift_card": false,
+ 207
+        "name": "IPod Nano - 8GB",
+ 208
+        "variant_inventory_management": "shopify",
+ 209
+        "properties": [
+ 210
+ 211
+        ],
+ 212
+        "product_exists": true,
+ 213
+        "fulfillable_quantity": 1,
+ 214
+        "grams": 567,
+ 215
+        "price": "199.00",
+ 216
+        "total_discount": "5.00",
+ 217
+        "fulfillment_status": null,
+ 218
+        "price_set": {
+ 219
+          "shop_money": {
+ 220
+            "amount": "199.00",
+ 221
+            "currency_code": "USD"
+ 222
+          },
+ 223
+          "presentment_money": {
+ 224
+            "amount": "199.00",
+ 225
+            "currency_code": "USD"
+ 226
+          }
+ 227
+        },
+ 228
+        "total_discount_set": {
+ 229
+          "shop_money": {
+ 230
+            "amount": "5.00",
+ 231
+            "currency_code": "USD"
+ 232
+          },
+ 233
+          "presentment_money": {
+ 234
+            "amount": "5.00",
+ 235
+            "currency_code": "USD"
+ 236
+          }
+ 237
+        },
+ 238
+        "discount_allocations": [
+ 239
+          {
+ 240
+            "amount": "5.00",
+ 241
+            "discount_application_index": 0,
+ 242
+            "amount_set": {
+ 243
+              "shop_money": {
+ 244
+                "amount": "5.00",
+ 245
+                "currency_code": "USD"
+ 246
+              },
+ 247
+              "presentment_money": {
+ 248
+                "amount": "5.00",
+ 249
+                "currency_code": "USD"
+ 250
+              }
+ 251
+            }
+ 252
+          }
+ 253
+        ],
+ 254
+        "duties": [
+ 255
+ 256
+        ],
+ 257
+        "admin_graphql_api_id": "gid:\/\/shopify\/LineItem\/141249953214522974",
+ 258
+        "tax_lines": [
+ 259
+ 260
+        ]
+ 261
+      }
+ 262
+    ],
+ 263
+    "fulfillments": [
+ 264
+ 265
+    ],
+ 266
+    "refunds": [
+ 267
+ 268
+    ],
+ 269
+    "total_tip_received": "0.0",
+ 270
+    "original_total_duties_set": null,
+ 271
+    "current_total_duties_set": null,
+ 272
+    "payment_terms": null,
+ 273
+    "admin_graphql_api_id": "gid:\/\/shopify\/Order\/820982911946154508",
+ 274
+    "shipping_lines": [
+ 275
+      {
+ 276
+        "id": 271878346596884015,
+ 277
+        "title": "Generic Shipping",
+ 278
+        "price": "10.00",
+ 279
+        "code": null,
+ 280
+        "source": "shopify",
+ 281
+        "phone": null,
+ 282
+        "requested_fulfillment_service_id": null,
+ 283
+        "delivery_category": null,
+ 284
+        "carrier_identifier": null,
+ 285
+        "discounted_price": "10.00",
+ 286
+        "price_set": {
+ 287
+          "shop_money": {
+ 288
+            "amount": "10.00",
+ 289
+            "currency_code": "USD"
+ 290
+          },
+ 291
+          "presentment_money": {
+ 292
+            "amount": "10.00",
+ 293
+            "currency_code": "USD"
+ 294
+          }
+ 295
+        },
+ 296
+        "discounted_price_set": {
+ 297
+          "shop_money": {
+ 298
+            "amount": "10.00",
+ 299
+            "currency_code": "USD"
+ 300
+          },
+ 301
+          "presentment_money": {
+ 302
+            "amount": "10.00",
+ 303
+            "currency_code": "USD"
+ 304
+          }
+ 305
+        },
+ 306
+        "discount_allocations": [
+ 307
+ 308
+        ],
+ 309
+        "tax_lines": [
+ 310
+ 311
+        ]
+ 312
+      }
+ 313
+    ],
+ 314
+    "billing_address": {
+ 315
+      "first_name": "Bob",
+ 316
+      "address1": "123 Billing Street",
+ 317
+      "phone": "555-555-BILL",
+ 318
+      "city": "Billtown",
+ 319
+      "zip": "K2P0B0",
+ 320
+      "province": "Kentucky",
+ 321
+      "country": "United States",
+ 322
+      "last_name": "Biller",
+ 323
+      "address2": null,
+ 324
+      "company": "My Company",
+ 325
+      "latitude": null,
+ 326
+      "longitude": null,
+ 327
+      "name": "Bob Biller",
+ 328
+      "country_code": "US",
+ 329
+      "province_code": "KY"
+ 330
+    },
+ 331
+    "shipping_address": {
+ 332
+      "first_name": "Steve",
+ 333
+      "address1": "123 Shipping Street",
+ 334
+      "phone": "555-555-SHIP",
+ 335
+      "city": "Shippington",
+ 336
+      "zip": "40003",
+ 337
+      "province": "Kentucky",
+ 338
+      "country": "United States",
+ 339
+      "last_name": "Shipper",
+ 340
+      "address2": null,
+ 341
+      "company": "Shipping Company",
+ 342
+      "latitude": null,
+ 343
+      "longitude": null,
+ 344
+      "name": "Steve Shipper",
+ 345
+      "country_code": "US",
+ 346
+      "province_code": "KY"
+ 347
+    },
+ 348
+    "customer": {
+ 349
+      "id": 115310627314723954,
+ 350
+      "email": "john@example.com",
+ 351
+      "accepts_marketing": false,
+ 352
+      "created_at": null,
+ 353
+      "updated_at": null,
+ 354
+      "first_name": "John",
+ 355
+      "last_name": "Smith",
+ 356
+      "orders_count": 0,
+ 357
+      "state": "disabled",
+ 358
+      "total_spent": "0.00",
+ 359
+      "last_order_id": null,
+ 360
+      "note": null,
+ 361
+      "verified_email": true,
+ 362
+      "multipass_identifier": null,
+ 363
+      "tax_exempt": false,
+ 364
+      "tags": "",
+ 365
+      "last_order_name": null,
+ 366
+      "currency": "USD",
+ 367
+      "phone": null,
+ 368
+      "accepts_marketing_updated_at": null,
+ 369
+      "marketing_opt_in_level": null,
+ 370
+      "sms_marketing_consent": null,
+ 371
+      "admin_graphql_api_id": "gid:\/\/shopify\/Customer\/115310627314723954",
+ 372
+      "default_address": {
+ 373
+        "id": 715243470612851245,
+ 374
+        "customer_id": 115310627314723954,
+ 375
+        "first_name": null,
+ 376
+        "last_name": null,
+ 377
+        "company": null,
+ 378
+        "address1": "123 Elm St.",
+ 379
+        "address2": null,
+ 380
+        "city": "Ottawa",
+ 381
+        "province": "Ontario",
+ 382
+        "country": "Canada",
+ 383
+        "zip": "K2H7A8",
+ 384
+        "phone": "123-123-1234",
+ 385
+        "name": "",
+ 386
+        "province_code": "ON",
+ 387
+        "country_code": "CA",
+ 388
+        "country_name": "Canada",
+ 389
+        "default": true
+ 390
+      }
+ 391
+    }
+ 392 }
+ Note
+ To know when items should be fulfilled, apps should query fulfillmentOrders when they receive the orders/create webhook. If apps don't query fulfillmentOrders and submit a request to create fulfillments for items that shouldn't be fulfilled yet, then the request fails.
+ Next steps
+ Learn about fulfillments for prepaid subscriptions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Keeping orders and subscription contracts in sync
+ Order tagging
+ Automatic fulfillment
+ Order CSV export
+ Order webhooks
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

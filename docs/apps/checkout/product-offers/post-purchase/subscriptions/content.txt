@@ -1,0 +1,1180 @@
+Overview
+ Getting started
+ Create a subscription
+ UX guidelines
+ Payments
+ Billing
+ App Store
+ Create a post-purchase subscription
+ Beta
+ Post-purchase checkout extensions are in beta and can be used without restrictions in a development store. To use post-purchase extensions on a live store, you need to request access.
+ In this tutorial, you'll learn how to create a post-purchase offer that allows a buyer to add a subscription to their order.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Update your app with the required scopes to manage subscriptions
+ Add UI elements to allow buyers to select one time or subscription products
+ Update the app server to return subscription data
+ Requirements
+ You've completed Getting started with post-purchase checkout extensions.
+ Limitations
+ You can't create a post-purchase subscription that does the following:
+ Modifies a subscription on an order with an existing subscription
+ Adds a subscription to an order with an existing subscription
+ Converts a one-time purchase into a subscription order
+ Step 1: Add required data
+ To offer a customer a subscription, a product needs to have an associated selling plan group. Selling plans represent how products can be sold and purchased. When you create a selling plan, you can determine the policies under which a product can be sold. For example, you can create a selling plan where a customer can purchase a subscription on a monthly billing cycle, and where you offer a 15% discount for weekly deliveries of the product.
+ Note
+ If your app already has the capability to manage selling plans, or if you're integrating with an app that already has this capability, then you can skip to step 2. To complete this tutorial, the product on the store you will have in the upsell offer needs to be associated with a selling plan.
+ Update app scopes
+ To create a selling plan and associate it to a product, you need to add the write_purchase_options scope to the app.
+ Update the app scopes in the shopify.app.toml file to include the write_purchase_options scope. This scope allows you to create selling plan groups.
+ After you update scopes, when you navigate to the app home in the Shopify admin, you should be prompted to reauthorize the app to allow editing of purchase options. If you're not prompted to reauthorize, restart your server, and then navigate to the app home in the Shopify admin.
+ shopify.app.toml
+ 1 scopes = "write_products,write_purchase_options"
+ Create a selling plan group
+ Use the GraphQL Admin API to create a selling plan group, and associate a product with the selling plan group. In the following cURL command, add the myshopify domain of your development store, the access token for the app, and the product and variant IDs of the product that you're offering in the upsell.
+ Note
+ You can run npm run prisma studio to view your data in your browser. The access token is stored in the Session table in the accessToken column.
+ Terminal
+ 1 curl -X POST \
+ 2
+    -H 'X-Shopify-Access-Token: <YOUR ACCESS TOKEN>' \
+ 3
+    -H 'Content-Type: application/graphql' \
+ 4
+    -d 'mutation {
+ 5
+      sellingPlanGroupCreate(
+ 6
+        input: {
+ 7
+          name: "Subscribe and save"
+ 8
+          merchantCode: "subscribe-and-save"
+ 9
+          options: ["Delivery every"]
+ 10
+          position: 1
+ 11
+          sellingPlansToCreate: [
+ 12
+            {
+ 13
+              name: "Delivered every week"
+ 14
+              options: "1 Week(s)"
+ 15
+              position: 1
+ 16
+              category: SUBSCRIPTION
+ 17
+              billingPolicy: {
+ 18
+                recurring: {
+ 19
+                  interval: WEEK,
+ 20
+                  intervalCount: 1
+ 21
+                  anchors: { type: WEEKDAY, day: 1 }
+ 22
+                }
+ 23
+              }
+ 24
+              deliveryPolicy: {
+ 25
+                recurring: {
+ 26
+                  interval: WEEK,
+ 27
+                  intervalCount: 1
+ 28
+                  anchors: { type: WEEKDAY, day: 1 }
+ 29
+                  preAnchorBehavior: ASAP
+ 30
+                  cutoff: 0
+ 31
+                  intent: FULFILLMENT_BEGIN
+ 32
+                }
+ 33
+              }
+ 34
+              pricingPolicies: [
+ 35
+                {
+ 36
+                  fixed: {
+ 37
+                    adjustmentType: PERCENTAGE
+ 38
+                    adjustmentValue: { percentage: 15.0 }
+ 39
+                  }
+ 40
+                }
+ 41
+              ]
+ 42
+            }
+ 43
+            {
+ 44
+              name: "Delivered every two weeks"
+ 45
+              options: "2 Week(s)"
+ 46
+              position: 2
+ 47
+              category: SUBSCRIPTION
+ 48
+              billingPolicy: {
+ 49
+                recurring: {
+ 50
+                  interval: WEEK,
+ 51
+                  intervalCount: 2
+ 52
+                  anchors: { type: WEEKDAY, day: 1 }
+ 53
+                }
+ 54
+              }
+ 55
+              deliveryPolicy: {
+ 56
+                recurring: {
+ 57
+                  interval: WEEK,
+ 58
+                  intervalCount: 2
+ 59
+                  anchors: { type: WEEKDAY, day: 1 }
+ 60
+                  preAnchorBehavior: ASAP
+ 61
+                  cutoff: 0
+ 62
+                  intent: FULFILLMENT_BEGIN
+ 63
+                }
+ 64
+              }
+ 65
+              pricingPolicies: [
+ 66
+                {
+ 67
+                  fixed: {
+ 68
+                    adjustmentType: PERCENTAGE
+ 69
+                    adjustmentValue: { percentage: 10.0 }
+ 70
+                  }
+ 71
+                }
+ 72
+              ]
+ 73
+            }
+ 74
+            {
+ 75
+              name: "Delivered every month"
+ 76
+              options: "1 Month"
+ 77
+              position: 3
+ 78
+              category: SUBSCRIPTION
+ 79
+              billingPolicy: {
+ 80
+                recurring: {
+ 81
+                  interval: MONTH,
+ 82
+                  intervalCount: 1
+ 83
+                  anchors: { type: MONTHDAY, day: 15 }
+ 84
+                }
+ 85
+              }
+ 86
+              deliveryPolicy: {
+ 87
+                recurring: {
+ 88
+                  interval: MONTH,
+ 89
+                  intervalCount: 1
+ 90
+                  anchors: { type: MONTHDAY, day: 15 }
+ 91
+                  preAnchorBehavior: ASAP
+ 92
+                  cutoff: 0
+ 93
+                  intent: FULFILLMENT_BEGIN
+ 94
+                }
+ 95
+              }
+ 96
+              pricingPolicies: [
+ 97
+                {
+ 98
+                  fixed: {
+ 99
+                    adjustmentType: PERCENTAGE
+ 100
+                    adjustmentValue: { percentage: 5.0 }
+ 101
+                  }
+ 102
+                }
+ 103
+              ]
+ 104
+            }
+ 105
+          ]
+ 106
+        }
+ 107
+          resources: { productIds: [\"gid://shopify/Product/<YOUR PRODUCT ID>\"], productVariantIds: [\"gid://shopify/ProductVariant/<YOUR VARIANT ID>\"] }
+ 108
+      ) {
+ 109
+        sellingPlanGroup {
+ 110
+          id
+ 111
+          sellingPlans(first: 1) {
+ 112
+            edges {
+ 113
+              node {
+ 114
+                id
+ 115
+              }
+ 116
+            }
+ 117
+          }
+ 118
+        }
+ 119
+        userErrors {
+ 120
+          field
+ 121
+          message
+ 122
+        }
+ 123
+      }
+ 124
+    }' \
+ 125
+    'https://<YOUR SHOP DOMAIN>.myshopify.com/admin/api/2023-07/graphql.json'
+ Step 2: Return subscription information from the app server
+ Update the OFFERS array in the app/offer.server.js file that you created in the previous tutorial to return an offer with the selling plan information that you created in the previous step.
+ app/offer.server.js
+ 1 const OFFERS = [
+ 2
+    {
+ 3
+      id: 1,
+ 4
+      title: "One time offer",
+ 5
+      productTitle: "The S-Series Snowboard",
+ 6
+      productImageURL: "https://cdn.shopify.com/s/files/1/", // Replace with product image's URL.
+ 7
+      productDescription: ["This PREMIUM snowboard is so SUPER DUPER awesome!"],
+ 8
+      originalPrice: "699.95",
+ 9
+      discountedPrice: "699.95",
+ 10
+      changes: [
+ 11
+        {
+ 12
+          type: "add_variant",
+ 13
+          variantID: 123456789, // Replace with the variant ID.
+ 14
+          quantity: 1,
+ 15
+          discount: {
+ 16
+            value: 15,
+ 17
+            valueType: "percentage",
+ 18
+            title: "15% off",
+ 19
+          },
+ 20
+        },
+ 21
+      ],
+ 22
+    },
+ 23
+    {
+ 24
+      id: 2,
+ 25
+      title: "Weekly subscription offer",
+ 26
+      productTitle: "The S-Series Snowboard",
+ 27
+      productImageURL: "https://cdn.shopify.com/s/files/1/0", // Replace with the product image's URL.
+ 28
+      productDescription: ["This PREMIUM snowboard is so SUPER DUPER awesome!"],
+ 29
+      originalPrice: "699.95",
+ 30
+      discountedPrice: "699.95",
+ 31
+      sellingPlanName: "Subscribe and save",
+ 32
+      sellingPlanInterval: "WEEK",
+ 33
+      changes: [
+ 34
+        {
+ 35
+          type: "add_subscription",
+ 36
+          variantID: 123456789, // Replace with the variant ID.
+ 37
+          quantity: 1,
+ 38
+          sellingPlanId: "987654321", // Replace with the selling plan ID.
+ 39
+          initialShippingPrice: 10,
+ 40
+          recurringShippingPrice: 10,
+ 41
+          discount: {
+ 42
+            value: 15,
+ 43
+            valueType: "percentage",
+ 44
+            title: "15% off",
+ 45
+          },
+ 46
+          shippingOption: {
+ 47
+            title: "Subscription shipping line",
+ 48
+            presentmentTitle: "Subscription shipping line",
+ 49
+          },
+ 50
+        },
+ 51
+      ],
+ 52
+    },
+ 53 ];
+ Step 3: Update your extension code to offer subscriptions
+ Replace the content of your extension script with the following code.
+ src/index
+ React
+ Vanilla
+ src/index.jsx
+ 1 import { useEffect, useState } from "react";
+ 2 import {
+ 3
+    extend,
+ 4
+    render,
+ 5
+    useExtensionInput,
+ 6
+    BlockStack,
+ 7
+    Button,
+ 8
+    BuyerConsent,
+ 9
+    CalloutBanner,
+ 10
+    Heading,
+ 11
+    Image,
+ 12
+    Text,
+ 13
+    TextContainer,
+ 14
+    Separator,
+ 15
+    Select,
+ 16
+    Tiles,
+ 17
+    TextBlock,
+ 18
+    Layout,
+ 19 } from "@shopify/post-purchase-ui-extensions-react";
+ 20
+ 21 // For local development, replace APP_URL with your local tunnel URL.
+ 22 const APP_URL = "https://abcd-1234.trycloudflare.com";
+ 23
+ 24 // Preload data from your app server to ensure the extension loads quickly.
+ 25 extend(
+ 26
+    "Checkout::PostPurchase::ShouldRender",
+ 27
+    async ({ inputData, storage }) => {
+ 28
+      const postPurchaseOffer = await fetch(`${APP_URL}/api/offer`, {
+ 29
+        method: "POST",
+ 30
+        headers: {
+ 31
+          Authorization: `Bearer ${inputData.token}`,
+ 32
+          "Content-Type": "application/json",
+ 33
+        },
+ 34
+        body: JSON.stringify({
+ 35
+          referenceId: inputData.initialPurchase.referenceId,
+ 36
+        }),
+ 37
+      }).then((response) => response.json());
+ 38
+ 39
+      await storage.update(postPurchaseOffer);
+ 40
+ 41
+      // For local development, always show the post-purchase page
+ 42
+      return { render: true };
+ 43
+    }
+ 44 );
+ 45
+ 46 render("Checkout::PostPurchase::Render", () => <App />);
+ 47
+ 48 export function App() {
+ 49
+    const { storage, inputData, calculateChangeset, applyChangeset, done } =
+ 50
+      useExtensionInput();
+ 51
+    const [loading, setLoading] = useState(true);
+ 52
+    const [calculatedPurchase, setCalculatedPurchase] = useState();
+ 53
+    // Track the buyer's approval to the subscriptions policies.
+ 54
+    const [buyerConsent, setBuyerConsent] = useState(false);
+ 55
+    const [buyerConsentError, setBuyerConsentError] = useState();
+ 56
+    const [selectedPurchaseOption, setSelectedPurchaseOption] = useState(0);
+ 57
+ 58
+    const { offers } = storage.initialData;
+ 59
+ 60
+    const purchaseOptions = offers;
+ 61
+    const purchaseOption = purchaseOptions[selectedPurchaseOption];
+ 62
+ 63
+    // Define the changes that you want to make to the purchase, including the discount to the product.
+ 64
+    useEffect(() => {
+ 65
+      async function calculatePurchase() {
+ 66
+        // Call Shopify to calculate the new price of the purchase, if the above changes are applied.
+ 67
+        const result = await calculateChangeset({
+ 68
+          changes: purchaseOptions[selectedPurchaseOption].changes,
+ 69
+        });
+ 70
+ 71
+        setCalculatedPurchase(result.calculatedPurchase);
+ 72
+        setLoading(false);
+ 73
+      }
+ 74
+ 75
+      calculatePurchase();
+ 76
+ 77
+      // Add the selectedPurchaseOption to the dependency of the useEffect.
+ 78
+      // This will ensure that when the buyer selects a new purchase option, the price breakdown is recalculated.
+ 79
+    }, [calculateChangeset, purchaseOptions, selectedPurchaseOption]);
+ 80
+ 81
+    // Extract values from the calculated purchase.
+ 82
+    const shipping =
+ 83
+      calculatedPurchase?.addedShippingLines[0]?.priceSet?.presentmentMoney
+ 84
+        ?.amount;
+ 85
+    const taxes =
+ 86
+      calculatedPurchase?.addedTaxLines[0]?.priceSet?.presentmentMoney?.amount;
+ 87
+    const total = calculatedPurchase?.totalOutstandingSet.presentmentMoney.amount;
+ 88
+    const discountedPrice =
+ 89
+      calculatedPurchase?.updatedLineItems[0].totalPriceSet.presentmentMoney
+ 90
+        .amount;
+ 91
+    const originalPrice =
+ 92
+      calculatedPurchase?.updatedLineItems[0].priceSet.presentmentMoney.amount;
+ 93
+ 94
+    async function acceptOffer() {
+ 95
+      setLoading(true);
+ 96
+ 97
+      // Make a request to your app server to sign the changeset with your app's API secret key.
+ 98
+      const token = await fetch(`${APP_URL}/api/sign-changeset`, {
+ 99
+        method: "POST",
+ 100
+        headers: {
+ 101
+          Authorization: `Bearer ${inputData.token}`,
+ 102
+          "Content-Type": "application/json",
+ 103
+        },
+ 104
+        body: JSON.stringify({
+ 105
+          referenceId: inputData.initialPurchase.referenceId,
+ 106
+          changes: purchaseOptions[selectedPurchaseOption].id,
+ 107
+        }),
+ 108
+      })
+ 109
+        .then((response) => response.json())
+ 110
+        .then((response) => response.token)
+ 111
+        .catch((e) => console.log(e));
+ 112
+ 113
+      // Send the value of the buyer consent with the changeset to Shopify to add the subscription
+ 114
+      const result = await applyChangeset(token, {
+ 115
+        buyerConsentToSubscriptions: buyerConsent,
+ 116
+      });
+ 117
+ 118
+      // Ensure that there is no buyer consent error
+ 119
+      if (
+ 120
+        result.errors.find((error) => error.code === "buyer_consent_required")
+ 121
+      ) {
+ 122
+        // Show an error if the buyer didn't accept the subscriptions policy
+ 123
+        setBuyerConsentError("You need to accept the subscriptions policy.");
+ 124
+        setLoading(false);
+ 125
+      } else {
+ 126
+        // Redirect to the Thank you page.
+ 127
+        done();
+ 128
+      }
+ 129
+ 130
+      // Redirect to the thank-you page.
+ 131
+      done();
+ 132
+    }
+ 133
+ 134
+    function declineOffer() {
+ 135
+      setLoading(true);
+ 136
+      // Redirect to the thank-you page.
+ 137
+      done();
+ 138
+    }
+ 139
+ 140
+    return (
+ 141
+      <BlockStack spacing="loose">
+ 142
+        <CalloutBanner>
+ 143
+          <BlockStack spacing="xtight">
+ 144
+            <TextContainer>
+ 145
+              <Text size="medium" emphasized>
+ 146
+                It&#39;s not too late to add this to your order
+ 147
+              </Text>
+ 148
+            </TextContainer>
+ 149
+            <TextContainer>
+ 150
+              <Text size="medium">
+ 151
+                Add the {purchaseOption.productTitle} to your order and{" "}
+ 152
+              </Text>
+ 153
+              <Text size="medium" emphasized>
+ 154
+                save {purchaseOption.changes[0].discount.title}
+ 155
+              </Text>
+ 156
+            </TextContainer>
+ 157
+          </BlockStack>
+ 158
+        </CalloutBanner>
+ 159
+        <Layout
+ 160
+          media={[
+ 161
+            { viewportSize: "small", sizes: [1, 0, 1], maxInlineSize: 0.9 },
+ 162
+            { viewportSize: "medium", sizes: [532, 0, 1], maxInlineSize: 420 },
+ 163
+            { viewportSize: "large", sizes: [560, 38, 340] },
+ 164
+          ]}
+ 165
+        >
+ 166
+          <Image
+ 167
+            description="product photo"
+ 168
+            source={purchaseOption.productImageURL}
+ 169
+          />
+ 170
+          <BlockStack />
+ 171
+          <BlockStack spacing="loose">
+ 172
+            <BlockStack>
+ 173
+              <Heading>{purchaseOption.productTitle}</Heading>
+ 174
+              <PriceHeader
+ 175
+                discountedPrice={discountedPrice}
+ 176
+                originalPrice={originalPrice}
+ 177
+              />
+ 178
+              <ProductDescription textLines={purchaseOption.productDescription} />
+ 179
+            </BlockStack>
+ 180
+            {purchaseOptions.length > 1 && (
+ 181
+              <Select
+ 182
+                label="Purchase options"
+ 183
+                onChange={(value) =>
+ 184
+                  setSelectedPurchaseOption(parseInt(value, 10))
+ 185
+                }
+ 186
+                value={selectedPurchaseOption.toString()}
+ 187
+                options={purchaseOptions.map((option, index) => ({
+ 188
+                  label: option.title,
+ 189
+                  value: index.toString(),
+ 190
+                }))}
+ 191
+              />
+ 192
+            )}
+ 193
+            {purchaseOption.changes[0].type === "add_subscription" && (
+ 194
+              <BlockStack spacing="xtight">
+ 195
+                <TextBlock subdued size="small">
+ 196
+                  Delivery{" "}
+ 197
+                  {getBillingInterval(purchaseOption.sellingPlanInterval)}, save{" "}
+ 198
+                  {purchaseOption.changes[0].discount.value}%
+ 199
+                </TextBlock>
+ 200
+                <TextBlock subdued size="small">
+ 201
+                  Auto-renews, skip or cancel anytime
+ 202
+                </TextBlock>
+ 203
+              </BlockStack>
+ 204
+            )}
+ 205
+            <BlockStack spacing="tight">
+ 206
+              <Separator />
+ 207
+              <MoneyLine
+ 208
+                label="Subtotal"
+ 209
+                amount={formatCurrency(discountedPrice)}
+ 210
+              />
+ 211
+              <MoneyLine label="Shipping" amount={formatCurrency(shipping)} />
+ 212
+              <MoneyLine label="Taxes" amount={formatCurrency(taxes)} />
+ 213
+              <Separator />
+ 214
+              <BlockStack spacing="tight">
+ 215
+                <MoneySummary label="Total" amount={formatCurrency(total)} />
+ 216
+                {purchaseOption.sellingPlanInterval && (
+ 217
+                  <RecurringSummary
+ 218
+                    label="Recurring subtotal"
+ 219
+                    amount={originalPrice}
+ 220
+                    interval={purchaseOption.sellingPlanInterval}
+ 221
+                  />
+ 222
+                )}
+ 223
+              </BlockStack>
+ 224
+            </BlockStack>
+ 225
+            {purchaseOption.changes[0].type === "add_subscription" && (
+ 226
+              <BuyerConsent
+ 227
+                policy="subscriptions"
+ 228
+                checked={buyerConsent}
+ 229
+                onChange={setBuyerConsent}
+ 230
+                error={buyerConsentError}
+ 231
+              />
+ 232
+            )}
+ 233
+            <BlockStack>
+ 234
+              <Button onPress={acceptOffer} submit loading={loading}>
+ 235
+                Pay now · {formatCurrency(total)}
+ 236
+              </Button>
+ 237
+              <Button onPress={declineOffer} subdued>
+ 238
+                Decline this offer
+ 239
+              </Button>
+ 240
+            </BlockStack>
+ 241
+          </BlockStack>
+ 242
+        </Layout>
+ 243
+      </BlockStack>
+ 244
+    );
+ 245 }
+ 246 function PriceHeader({ discountedPrice, originalPrice }) {
+ 247
+    return (
+ 248
+      <TextContainer alignment="leading" spacing="loose">
+ 249
+        <Text role="deletion" size="large">
+ 250
+          {formatCurrency(originalPrice)}
+ 251
+        </Text>
+ 252
+        <Text emphasized size="large" appearance="critical">
+ 253
+          {" "}
+ 254
+          {formatCurrency(discountedPrice)}
+ 255
+        </Text>
+ 256
+      </TextContainer>
+ 257
+    );
+ 258 }
+ 259 function ProductDescription({ textLines }) {
+ 260
+    return (
+ 261
+      <BlockStack spacing="xtight">
+ 262
+        {textLines.map((text, index) => (
+ 263
+          <TextBlock key={index} subdued>
+ 264
+            {text}
+ 265
+          </TextBlock>
+ 266
+        ))}
+ 267
+      </BlockStack>
+ 268
+    );
+ 269 }
+ 270 function MoneyLine({ label, amount, size = "small" }) {
+ 271
+    return (
+ 272
+      <Tiles>
+ 273
+        <TextBlock size={size}>{label}</TextBlock>
+ 274
+        <TextContainer alignment="trailing">
+ 275
+          <TextBlock emphasized size={size}>
+ 276
+            {amount}
+ 277
+          </TextBlock>
+ 278
+        </TextContainer>
+ 279
+      </Tiles>
+ 280
+    );
+ 281 }
+ 282 function MoneySummary({ label, amount }) {
+ 283
+    return (
+ 284
+      <Tiles>
+ 285
+        <TextBlock size="medium" emphasized>
+ 286
+          {label}
+ 287
+        </TextBlock>
+ 288
+        <TextContainer alignment="trailing">
+ 289
+          <TextBlock emphasized size="medium">
+ 290
+            {amount}
+ 291
+          </TextBlock>
+ 292
+        </TextContainer>
+ 293
+      </Tiles>
+ 294
+    );
+ 295 }
+ 296 function RecurringSummary({ label, amount, interval }) {
+ 297
+    return (
+ 298
+      <BlockStack spacing="xtight">
+ 299
+        <Tiles>
+ 300
+          <TextBlock size="small">{label}</TextBlock>
+ 301
+          <TextContainer alignment="trailing">
+ 302
+            <TextBlock size="small" subdued>
+ 303
+              {formatCurrency(amount)} {getBillingInterval(interval)}
+ 304
+            </TextBlock>
+ 305
+          </TextContainer>
+ 306
+        </Tiles>
+ 307
+        <TextBlock size="small" subdued>
+ 308
+          Doesn&apos;t include shipping, tax, duties, or any applicable discounts.
+ 309
+        </TextBlock>
+ 310
+      </BlockStack>
+ 311
+    );
+ 312 }
+ 313 function getBillingInterval(interval) {
+ 314
+    switch (interval) {
+ 315
+      case "DAY":
+ 316
+        return "every day";
+ 317
+      case "WEEK":
+ 318
+        return "every week";
+ 319
+      case "MONTH":
+ 320
+        return "every month";
+ 321
+      case "YEAR":
+ 322
+        return "every year";
+ 323
+    }
+ 324 }
+ 325 function formatCurrency(amount) {
+ 326
+    if (!amount || parseInt(amount, 10) === 0) {
+ 327
+      return "Free";
+ 328
+    }
+ 329
+    return `$${amount}`;
+ 330 }
+ How the example extension code works
+ The following sections explain how different parts of the example extension code in Step 2 works.
+ Showing the selling plan options
+ To show the selling plan options to buyers, you need to use the Select component. When a buyer selects a new selling plan, we update the value of the selected purchase option.
+ src/index
+ React
+ Vanilla
+ src/index.jsx
+ 1 <Select
+ 2
+    label="Purchase options"
+ 3
+    onChange={(value) =>
+ 4
+      setSelectedPurchaseOption(parseInt(value, 10))
+ 5
+    }
+ 6
+    value={selectedPurchaseOption.toString()}
+ 7
+    options={purchaseOptions.map((option, index) => ({
+ 8
+      label: option.title,
+ 9
+      value: index.toString(),
+ 10
+    }))}
+ 11 />
+ After you've updated the code, the selling plan option renders as follows:
+ Updating the price breakdown
+ To show the price breakdown matching the currently selected offer, you need to call calculateChangeset when the buyer selects a selling plan:
+ src/index
+ React
+ Vanilla
+ src/index.jsx
+ 1 // Define the changes that you want to make to the purchase, including the discount to the product.
+ 2 useEffect(() => {
+ 3
+    async function calculatePurchase() {
+ 4
+      // Call Shopify to calculate the new price of the purchase, if the above changes are applied.
+ 5
+      const result = await calculateChangeset({
+ 6
+        changes: purchaseOptions[selectedPurchaseOption].changes,
+ 7
+      });
+ 8
+ 9
+      setCalculatedPurchase(result.calculatedPurchase);
+ 10
+      setLoading(false);
+ 11
+    }
+ 12
+ 13
+    calculatePurchase();
+ 14
+ 15
+    // Add the selectedPurchaseOption to the dependency of the useEffect.
+ 16
+    // This will ensure that when the buyer selects a new purchase option, the price breakdown is recalculated.
+ 17 }, [calculateChangeset, purchaseOptions, selectedPurchaseOption]);
+ After you've updated the code, the price breakdown renders as follows:
+ Showing a recurring subtotal
+ For subscription offers, you need to display the recurring subtotal of the order.
+ Note
+ The totalPriceSet for subscription items indicates the price of that item after discounts at each billing cycle, and not the total for the subscription duration.
+ src/index
+ React
+ Vanilla
+ src/index.jsx
+ 1 function RecurringSummary({label, amount, interval}) {
+ 2
+    return (
+ 3
+      <BlockStack spacing="xtight">
+ 4
+        <Tiles>
+ 5
+          <TextBlock size="small">{label}</TextBlock>
+ 6
+          <TextContainer alignment="trailing">
+ 7
+            <TextBlock size="small" subdued>
+ 8
+              {formatCurrency(amount)} {getBillingInterval(interval)}
+ 9
+            </TextBlock>
+ 10
+          </TextContainer>
+ 11
+        </Tiles>
+ 12
+        <TextBlock size="small" subdued>
+ 13
+          Doesn&apos;t include shipping, tax, duties, or any applicable discounts.
+ 14
+        </TextBlock>
+ 15
+      </BlockStack>
+ 16
+    );
+ 17 }
+ 18
+ 19 const originalPrice = calculatedPurchase?.updatedLineItems[0].priceSet.presentmentMoney.amount;
+ 20
+ 21 // ...
+ 22
+ 23 {purchaseOption.sellingPlanInterval && (
+ 24
+    <RecurringSummary
+ 25
+      label="Recurring subtotal"
+ 26
+      amount={originalPrice}
+ 27
+      interval={purchaseOption.sellingPlanInterval}
+ 28
+    />
+ 29 )}
+ After you've updated the code, the recurring subtotal renders as follows:
+ Collecting buyer's consent
+ To add a subscription item to an order, the buyer’s payment method must be vaulted for future billing cycles of the subscription. Before you can vault the buyer's payment method, the buyer has to explicitly give consent to the subscription policies. Use the BuyerConsent component in App Bridge to collect consent:
+ src/index
+ React
+ Vanilla
+ src/index.jsx
+ 1 // Track the buyer's approval to the subscriptions policies.
+ 2 const [buyerConsent, setBuyerConsent] = useState(false);
+ 3 const [buyerConsentError, setBuyerConsentError] = useState();
+ 4
+ 5 // ...
+ 6
+ 7 {purchaseOption.changes[0].type === "add_subscription" && (
+ 8
+    <BuyerConsent
+ 9
+      policy="subscriptions"
+ 10
+      checked={buyerConsent}
+ 11
+      onChange={setBuyerConsent}
+ 12
+      error={buyerConsentError}
+ 13
+    />
+ 14 )}
+ This component creates a checkbox and a link to the subscription policies.
+ Applying the subscription change
+ For the add_subscription change to be accepted, the value of the buyer consent checkbox needs to be provided as a new parameter to the applyChangeset method. Without this parameter, the changeset won’t be applied and an error is returned.
+ src/index
+ React
+ Vanilla
+ src/index.jsx
+ 1 await applyChangeset(token, {buyerConsentToSubscriptions: buyerConsent});
+ Step 4: Test your extension
+ Complete a test order on your store and go through the checkout steps. When the post-purchase page appears, add a subscription product to your order. Navigate to the orders section of the Shopify Admin. You should see that on the latest order you have a one time as well as a subscription product.
+ Next steps
+ Get familiar with the UX guidelines for creating subscriptions with post-purchase checkout extensions.
+ Limitations
+ Step 1: Add required data
+ Step 2: Return subscription information from the app server
+ Step 3: Update your extension code to offer subscriptions
+ Step 4: Test your extension

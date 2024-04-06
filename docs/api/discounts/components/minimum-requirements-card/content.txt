@@ -1,0 +1,95 @@
+Product subscription app extensions
+ Minimum Requirements Card
+ The MinimumRequirementsCard enables a user to set the minimum subtotal or quantity for an automatic discount, or subtotal, quantity, or "no minimum" for code discounts.
+ Example code
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    AppliesTo,
+ 4
+    DiscountMethod,
+ 5
+    RequirementType,
+ 6
+    MinimumRequirementsCard,
+ 7 } from "@shopify/discount-app-components";
+ 8 import { CurrencyCode } from "@shopify/react-i18n";
+ 9
+ 10 function MyApp() {
+ 11
+    const [requirementType, setRequirementType] = useState(RequirementType.None);
+ 12
+    const [subtotal, setSubtotal] = useState("");
+ 13
+    const [quantity, setQuantity] = useState("");
+ 14
+ 15
+    return (
+ 16
+      <MinimumRequirementsCard
+ 17
+        appliesTo={AppliesTo.Products}
+ 18
+        currencyCode={CurrencyCode.Cad}
+ 19
+        requirementType={{
+ 20
+          value: requirementType,
+ 21
+          onChange: setRequirementType,
+ 22
+        }}
+ 23
+        subtotal={{
+ 24
+          value: subtotal,
+ 25
+          onChange: setSubtotal,
+ 26
+        }}
+ 27
+        quantity={{
+ 28
+          value: quantity,
+ 29
+          onChange: setQuantity,
+ 30
+        }}
+ 31
+        discountMethod={DiscountMethod.Code}
+ 32
+        isRecurring
+ 33
+      />
+ 34
+    );
+ 35 }
+ Properties
+ Name Type Description Required
+ requirementType Field<RequirementType> The field that controls the selected requirement type (none, minimum amount, or minimum quantity) Yes
+ subtotal Field<PositiveNumericString | undefined> The field for the subtotal minimum requirement. Yes
+ quantity Field<PositiveNumericString | undefined> The field for the quantity minimum requirement. Yes
+ discountMethod DiscountMethod The discount method of the current discount (either code or automatic). Yes
+ appliesTo AppliesTo Renders a string describing what entity the minimum requirements apply to (collections, selected products, or all products). Yes
+ currencyCode CurrencyCode The currency code that should be used to format the input value Yes
+ isRecurring boolean Whether the discount supports selling plans and adds selling plan specific language. No
+ AppliesTo
+ Name Value Description
+ Collections COLLECTIONS Applies to products in a collection.
+ Order ORDER Applies to the entire order.
+ Product PRODUCT Applies to specific products or variants.
+ RequirementType
+ Name Value Description
+ None NONE No requirements. (default)
+ Subtotal SUBTOTAL Applies to cart subtotal amount.
+ Quantity QUANTITY Applies to product quantities.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ AppliesTo
+ RequirementType
+ Updates & News
+ Developer changelog
+ Partner blog

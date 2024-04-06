@@ -1,0 +1,25 @@
+Product subscription app extensions
+ About Shopify APIs
+ Shopify offers a suite of APIs that allow developers to extend the platform’s built-in features. These APIs allow app developers to read and write app user data, interoperate with other systems and platforms, and add new functionality to Shopify.
+ Requirements for using Shopify APIs
+ All APIs are subject to the Shopify API License and Terms of Use.
+ All APIs are subject to rate limits.
+ All APIs require developers to authenticate.
+ Some APIs are versioned.
+ Scopes and permissions
+ Some API features are only available to certain Shopify plans.
+ Depending on how you're distributing your app, you might need to request certain permissions or access scopes when users install your app.
+ With a few APIs, you’ll need to request access from Shopify and be approved before you can start making calls.
+ Available APIs
+ For a complete list of available APIs, refer to Shopify API reference docs.
+ Deprecated APIs
+ Deprecated APIs remain available but are unsupported and can stop working at any time. Developers should migrate to supported alternatives as soon as possible. To learn more about deprecated APIs and migrating to supported alternatives, refer to API release notes.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements for using Shopify APIs
+ Scopes and permissions
+ Available APIs
+ Deprecated APIs
+ Updates & News
+ Developer changelog

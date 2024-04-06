@@ -1,0 +1,35 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ FormattedTextField
+ Use a formatted text field when you require additional functionality such as the textfield input type or a custom validator.
+ Props
+ Name Type Description Options
+ inputType InputType? Determines the characters and format the merchant is permitted to input. "text" | "currency" | "giftcard" | "email"
+ title string? The text displayed as the text field title.
+ initialValue string? The initial text value in the text field.
+ placeholder string? Hint text to display when no text is input.
+ errorMessage string? The text displayed when an error is detected on merchant input. Displayed beneath the field.
+ isValid boolean? Whether the input is a valid option.
+ autoCapitalize boolean? Whether or not the entered text should auto capitalize.
+ onChangeText ((value: string) => void)? A callback containing the new string when the text field’s value changes.
+ customValidator ((text: string) => boolean)? A callback that provides the current value as a string. Return true or false if the string passes validation, and the text field will invalidate/validate.
+ Guidelines
+ When a merchant opens a new form, the first text field should be in a focused state.
+ If the merchant is actively focused in a text field, then the keyboard should come up and the label should move to the top of the field.
+ If focus goes away from the text field, then the keyboard should hide.
+ Text fields always take up the full screen width.
+ Text fields don’t change height. If text entered is longer than the width of the text field, then the oldest text on the left should be hidden to make room.
+ When it makes sense, provide autocomplete options (for example, entering an address).
+ Content guidelines
+ If a text field is required, then it should indicate "Required".
+ Label titles should be brief and written in sentence case.
+ Use the same terms for similar label titles throughout the app.
+ Any empty text field shouldn't have help text showing an example of how a text field should be filled out.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines

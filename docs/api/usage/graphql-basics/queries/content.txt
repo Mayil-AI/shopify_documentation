@@ -1,0 +1,275 @@
+Product subscription app extensions
+ GraphQL queries
+ GraphQL queries retrieve data from a server, similar to a GET request for a REST API. However, unlike REST, GraphQL queries are sent to a single endpoint and use the POST HTTP method.
+ A GraphQL API models data as nodes that are connected by edges. A node is an object that has a global ID, such as the Order or Product objects. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve.
+ QueryRoot
+ The QueryRoot object is the initial entry point for all queries in the GraphQL API. Everything that can be queried is defined as a field or connection on the QueryRoot object.
+ To learn about what data you can query, refer to the QueryRoot object in the relevant API's reference.
+ Note
+ You don't need to reference the QueryRoot object in your query.
+ Example
+ The following diagram illustrates example relationships between objects that are retrieved in an query:
+ The query requests the Shop object, data from a few fields, the child ShopAddress object, and the products connection. The following is the single request structure to retrieve this data. In the response, the structure of the data object mirrors the query's shape:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    shop {
+ 3
+      id
+ 4
+      name
+ 5
+      email
+ 6
+      billingAddress {
+ 7
+        id
+ 8
+        address1
+ 9
+      }
+ 10
+    }
+ 11
+    products(first:2) {
+ 12
+      nodes {
+ 13
+        id
+ 14
+        title
+ 15
+      }
+ 16
+    }
+ 17 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shop": {
+ 4
+        "id": "gid://shopify/Shop/17681717",
+ 5
+        "name": "johns-apparel",
+ 6
+        "email": "john@johns-apparel.com",
+ 7
+        "billingAddress": {
+ 8
+          "id": "gid://shopify/ShopAddress/20516601878",
+ 9
+          "address1": "151 O’Connor St"
+ 10
+        }
+ 11
+      },
+ 12
+      "products": {
+ 13
+        "nodes": [
+ 14
+          {
+ 15
+            "id": "gid://shopify/Product/108828309",
+ 16
+            "title": "Draft",
+ 17
+          },
+ 18
+          {
+ 19
+            "id": "gid://shopify/Product/121709582",
+ 20
+            "title": "Boots",
+ 21
+          }
+ 22
+        ]
+ 23
+      }
+ 24
+    }
+ 25 }
+ Fields
+ A field is unit of data associated with an object or type. For example, in the GraphQL Admin API's QueryRoot object, the customer field queries a single customer, and returns a Customer object.
+ An argument is a set of key-value pairs attached to a field, providing a parameterized input to the field that influences the returned data or an operation's behavior. For example, the customer field requires the id argument, which specifies the customer to query. After selecting the customer field and providing an ID, you list the fields on the Customer object that you want to return.
+ To learn about what data you can query, refer the object's fields in the relevant API's reference.
+ Example
+ The following query retrieves a specific customer, and selects a few fields from the Customer object:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    customer(id: "gid://shopify/Customer/6581271756") {
+ 3
+      displayName
+ 4
+      phone
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customer": {
+ 4
+        "displayName": "Beatrice Alighieri",
+ 5
+        "phone": "+12345678912"
+ 6
+      }
+ 7
+    }
+ 8 }
+ Tip
+ On many endpoints, the REST Admin API returns the admin_graphql_api_id property, which you can use to query that specific object in the GraphQL Admin API. Learn more.
+ Connections
+ Connections in GraphQL represent relationships between associated types. Nodes are elements within connections. You can traverse connections to perform nested queries, retrieving data from multiple nodes in a single GraphQL query. If you're selecting something with a pluralized name, then you're likely using a connection.
+ When you select a connection, you must pass a first or last argument to limit the number of nodes that are returned. This is a key component to manage rate-limiting and pagination.
+ You can access the nodes in a connection in the following ways:
+ edges: customers { edges { node { ... } } }
+ nodes: customers { nodes { ... } }
+ Tip
+ nodes is shorthand for edges { node ... and is appropriate for most queries. To retrieve information that's specific to the connection between a node and its parent, you might want to use edges. Learn more.
+ Regardless of the syntax that you use, the return is an array of objects of the same type. For example, when you query a product's variants, an array of Variant objects is returned.
+ Similar to when you query an individual node, list the fields to return. The response returns that data for those fields for each node in the connection. If a connection contains fewer objects than requested, then the response contains all the data that's available.
+ If you want to retrieve the next batch of objects, or you need to retrieve more than the maximum number of objects, then you can paginate the objects using cursor-based pagination.
+ Example
+ The following diagram illustrates example relationships between GraphQL types in a connection, including the connection, its constituent edges and nodes, and the associated objects and fields:
+ The example requests the products connection, and asks for the first three products. Because the Product object has a variants connection, the same pattern is used to get information on the first three variants for the original products:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL query
+ Using "nodes"
+ Using "edges"
+ 1 query {
+ 2
+    products(first:3) {
+ 3
+      nodes {
+ 4
+        id
+ 5
+        handle
+ 6
+        variants(first:3) {
+ 7
+          nodes {
+ 8
+            id
+ 9
+            displayName
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ Using "nodes"
+ Using "edges"
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/Product/1321540321336",
+ 7
+            "handle": "ocean-blue-shirt",
+ 8
+            "variants": {
+ 9
+              "nodes": [
+ 10
+                {
+ 11
+                  "id": "gid://shopify/ProductVariant/12195005104184",
+ 12
+                  "displayName": "Ocean Blue Shirt - xs"
+ 13
+                }
+ 14
+              ]
+ 15
+            }
+ 16
+          }
+ 17
+        ]
+ 18
+      }
+ 19
+    },
+ 20 }
+ In the response, only one set of data is returned because the store only has a single product and variant.
+ Filtering connections using a search query
+ You can filter connections with query argument, to return only the nodes that match a search query.
+ To learn which fields you can filter a connection by, refer to the API documentation for the connection's query argument. To learn how to format a search query, refer to Search syntax.
+ The following query retrieves the first two orders that are fulfilled:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    orders(first:2, query:"fulfillment_status:shipped") {
+ 3
+      nodes {
+ 4
+        id
+ 5
+        name
+ 6
+        displayFulfillmentStatus
+ 7
+      }
+ 2
+    "data": {
+ 3
+      "orders": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/Order/410479493176",
+ 7
+            "name": "#1592",
+ 8
+            "displayFulfillmentStatus": "FULFILLED"
+ 9
+          },
+ 10
+          {
+ 11
+            "id": "gid://shopify/Order/410478542904",
+ 12
+            "name": "#1564",
+ 13
+            "displayFulfillmentStatus": "FULFILLED"
+ 14
+          }
+ 15
+        ]
+ 16
+      }
+ 17
+    }
+ 18 }
+ Next steps
+ Learn how to create and modify data with mutations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ QueryRoot
+ Fields
+ Connections
+ Filtering connections using a search query
+ Next steps
+ Updates & News
+ Developer changelog

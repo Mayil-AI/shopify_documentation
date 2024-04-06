@@ -1,0 +1,150 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Shopify CLI for apps
+ Shopify CLI is a command-line interface tool that helps you build Shopify apps. It quickly generates Shopify apps and generates app extensions. You can also use it to automate many common development tasks.
+ You need to use Node.js to install Shopify CLI and manage its dependencies. However, you can use any technology stack to build your app's functionality.
+ This documentation explains how to use Shopify CLI for app development. To learn how to use Shopify CLI for other tasks, refer to the following documentation:
+ Shopify CLI for themes
+ Shopify CLI for Hydrogen storefronts
+ Features
+ Shopify CLI accelerates your app development process with the following features:
+ Creates new apps using app templates
+ Generates app extensions in your app
+ Creates app records in the Partner Dashboard
+ Builds your app and extensions, and creates a tunnel to let you preview your work in a development store
+ Deploys your app configuration and app extensions
+ Lets you search the Shopify.dev docs
+ Requirements
+ You've installed Node.js 18 or higher.
+ You've installed a Node.js package manager: either npm, Yarn 1.x, or pnpm.
+ You've installed Git 2.28.0 or higher.
+ You're using the latest version of Chrome or Firefox.
+ Getting started
+ Shopify CLI is managed as a set of Node.js packages:
+ @shopify/cli
+ @shopify/app
+ If you're building a Shopify app, then you don't need to install Shopify CLI globally. Instead, these packages should be added as dependencies of your app. Using Shopify CLI this way enables a consistent development experience across environments.
+ Because Shopify CLI requires a conventional directory structure, if you're creating a new app, then you should run one of the following commands to initialize your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest
+ Tip
+ You can specify the app template that you want to use with the --template flag. You can specify a Shopify app template, or pass a URL to a template hosted in GitHub.
+ If you have an existing app that wasn't built using Shopify CLI, you can migrate your app to Shopify CLI for a fully integrated development experience. If you don't want a complete migration, then you can make your app compatible with Shopify CLI.
+ Refer to the following tutorials for additional details about creating an app that works with Shopify CLI, or to learn how to work on an existing app that uses Shopify CLI 3.0 or higher:
+ Create an app
+ Learn how to set up your app development environment and start building.
+ Build an app
+ After creating your app, follow this in-depth tutorial to learn how to add features to your app using Shopify templates, tools, and libraries.
+ Work on an existing app
+ Learn how to set up your development environment to collaborate on an app with others.
+ Command reference
+ Refer to the Shopify CLI app command reference to explore the commands available to build apps with Shopify CLI.
+ App structure
+ To offer a better and more integrated development experience, apps created using Shopify CLI follow a conventional directory structure. This structure allows you to serve and deploy your web app and app extensions at the same time, easily generate new app extensions, and manage all of your app's dependencies in one place.
+ Learn more about the structure of apps built with Shopify CLI.
+ Using Shopify CLI for continuous integration
+ If you have app configuration and extensions that you want to deploy to Shopify regularly, then you can integrate Shopify CLI into your CI/CD pipeline to programmatically deploy your app components using the deploy command.
+ Learn more about running Shopify CLI in a CI/CD pipeline.
+ Upgrade Shopify CLI
+ To upgrade Shopify CLI 3.x to the latest version, run the upgrade command from your app directory:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify upgrade
+ 
+ To check your CLI version, run the version command from your app directory:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify version
+ 
+ If the version command doesn't return a version number, or the upgrade command fails, then you might be using the previous version of Shopify CLI. To work on an existing app with the newest version of Shopify CLI, you need to migrate your app. Alternatively, you can create a new app that uses Shopify CLI as a dependency.
+ Migrate to Shopify CLI 3.x
+ To offer a better and more integrated development experience, apps created Shopify CLI 3.x follow a conventional directory structure and manage your Node-based dependencies for you.
+ If you have an app that was created using a previous version of Shopify CLI, or without Shopify CLI, then you can migrate your app so you can use the newest version of Shopify CLI.
+ Making your app compatible with the CLI
+ If you want to access Shopify CLI capabilities without completely migrating your app, then you can add Shopify CLI dependencies manually:
+ @shopify/cli
+ @shopify/app
+ To enable a consistent development experience across environments, these packages should be added as dependencies of your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install @shopify/cli@latest @shopify/app@latest
+ If you can't add these packages as project-level dependencies, then you can install the Shopify CLI packages globally:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install @shopify/cli@latest @shopify/app@latest -g
+ To run Shopify CLI commands, create a package.json at the root of your app project. The content of package.json should match the content in the following code snippet, where my-app is replaced with the name of your app.
+ package.json
+ 1 {
+ 2
+    "name": "my-app",
+ 3
+    "private": true,
+ 4
+    "license": "UNLICENSED",
+ 5
+    "scripts": {
+ 6
+      "shopify": "shopify",
+ 7
+      "build": "shopify app build",
+ 8
+      "dev": "shopify app dev",
+ 9
+      "info": "shopify app info",
+ 10
+      "generate": "shopify app generate",
+ 11
+      "deploy": "shopify app deploy"
+ 12
+    },
+ 13
+    "dependencies": {
+ 14
+      "@shopify/app": "^3",
+ 15
+      "@shopify/cli": "^3"
+ 16
+    },
+ 17
+    "workspaces": [
+ 18
+      "extensions/*"
+ 19
+    ]
+ 20 }
+ Additional configuration is required to run some commands, including shopify app dev. To learn more about fully integrating with Shopify CLI, refer to the Shopify CLI 3.x migration guide.
+ Usage reporting
+ Anonymous usage statistics are collected by default. To opt out, you can use the environment variable SHOPIFY_CLI_NO_ANALYTICS=1.
+ Contributing to Shopify CLI
+ Shopify CLI is open source. Learn how to contribute to our GitHub repository.
+ Where to get help
+ Open a GitHub issue - To report bugs or request new features, open an issue in the Shopify CLI repository.
+ Shopify Community Forums - Visit our forums to connect with the community and learn more about Shopify CLI development.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Features
+ Requirements
+ Getting started
+ Command reference
+ App structure
+ Using Shopify CLI for continuous integration
+ Upgrade Shopify CLI
+ Migrate to Shopify CLI 3.x
+ Making your app compatible with the CLI
+ Usage reporting
+ Contributing to Shopify CLI
+ Where to get help

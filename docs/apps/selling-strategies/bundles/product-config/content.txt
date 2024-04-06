@@ -1,0 +1,75 @@
+Billing
+ App Store
+ Add a product configuration extension
+ You can add a product configuration extension that renders a UI to enable merchants to interact with bundles on the product details page in the Shopify admin. This guide describes how you can generate, preview, and deploy a product configuration extension.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Generate a product configuration extension.
+ Preview the rendered extension on the product details page in the Shopify admin.
+ Deploy your extension code to Shopify.
+ Requirements
+ You've created a Partner account.
+ You've created a development store that uses generated test data.
+ You've created an app that uses Shopify CLI 3.0 or higher. If you previously installed Shopify CLI, then make sure you're using the latest version.
+ You've installed Node.js 16 or higher.
+ You've created a customized bundle on your shop.
+ Step 1: Generate a new extension
+ To create a product configuration extension, you can use Shopify CLI, which generates starter code for building your extension and automates common development tasks.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to start creating the app extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template product_configuration --name my-product-config-extension
+ Select a language for your extension.
+ Start your development server to build and preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ To learn about the processes that are executed when you run dev, refer to the Shopify CLI command reference.
+ Press p to open the developer console.
+ In the developer console page, click on the preview link for the product configuration extension.
+ Step 2: Explore your project structure
+ Open your code editor and navigate to your product configuration project directory. The product configuration template provides the following structure and you can modify the files, as needed:
+ Product configuration extension file structure
+ └── my-app
+   └── extensions
+         └── my-product-config-extension
+             ├── src
+             │   └── ProductDetailsConfigurationExtension.ts[x] OR ProductDetailsConfigurationExtension.js[x] // The product details page of the extension
+             │   └── ProductVariantDetailsConfigurationExtension.ts[x] OR ProductVariantDetailsConfigurationExtension.js[x] // The product variant details page of the extension
+             ├── locales
+             │   ├── en.default.json // The default locale for the extension
+             │   └── fr.json // The locale file for non-regional French translations in the extension
+             ├── shopify.extension.toml // The config file for the extension
+             └── package.json
+ Tip
+ To learn about the UI components that you can use for your extension, refer to Admin UI extensions.
+ Step 3. Preview the extension
+ Navigate to your customized bundle product page in the Shopify admin. Your extension will be rendered within Bundled products card.
+ Step 4: Deploy the extension
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Next steps
+ Learn how to create a bundle app.
+ Step 1: Generate a new extension
+ Step 2: Explore your project structure
+ Step 3. Preview the extension
+ Step 4: Deploy the extension
+ Next steps

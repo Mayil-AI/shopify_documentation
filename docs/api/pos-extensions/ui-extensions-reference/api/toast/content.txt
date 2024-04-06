@@ -1,0 +1,45 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Toast API
+ Toast API allows the display of a Toast component.
+ JavaScript
+ React
+ 1 import { extend, Tile } from "@shopify/retail-ui-extensions";
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'My app',
+ 6
+      enabled: true,
+ 7
+      onPress: () => {
+ 8
+        api.toast.show('Content', {duration: 5000});
+ 9
+      },
+ 10
+    };
+ 11
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+ 14
+    root.appendChild(tile);
+ 15
+    root.mount();
+ 16 });
+ Props
+ Name Type Description
+ show (content, options) => void Show a Toast.
+ Toast
+ Name Type Description
+ content string The content of the Toast.
+ options? ShowToastOptions The options for the Toast.
+ ShowToastOptions
+ Name Type Description
+ duration? number The duration in milliseconds to display the Toast. Defaults to 5000.
+ Was this page helpful?
+ YesNo

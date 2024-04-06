@@ -1,0 +1,80 @@
+Additional SDKs
+ Redirect traffic to the Hydrogen channel
+ Caution
+ These steps redirect traffic from the online store to your Hydrogen storefront. Before you begin, ensure that you've completed your Hydrogen build and tested it in development.
+ You should review the production checklist before launching your store on Hydrogen.
+ When your Hydrogen storefront is ready for launch, you might need to redirect online traffic from the online store to your Hydrogen storefront so that customers don't mistakenly land on the wrong storefront.
+ In this tutorial, you'll learn how to redirect traffic from the online store to your Hydrogen storefront.
+ Requirements
+ You've completed your Hydrogen build and your Hydrogen storefront is ready for launch.
+ You've added a domain and subdomain to your domain settings.
+ Step 1: Set up the domains
+ This step describes how to set up a primary domain to receive traffic for the Hydrogen storefront while using a subdomain to receive traffic for the Shopify web checkout.
+ Tip
+ The hydrogen.shop demo provides an example of this routing pattern. The primary domain hydrogen.shop receives traffic on the Hydrogen storefront while the subdomain checkout.hydrogen.shop receives traffic at checkout.
+ Update domain DNS to point to Shopify
+ Point the subdomain and the primary domain to Shopify by updating DNS records
+ Note
+ For custom storefronts not hosted on Oxygen, only the subdomain must point to Shopify.
+ Direct checkout traffic to the subdomain
+ From the Shopify admin, click Settings > Domains.
+ For the Subdomain that you connected to Shopify, change the Target to Online Store.
+ Set the domain type to Primary.
+ Make the Hydrogen storefront public
+ From the Shopify admin, under Sales channels, click Hydrogen.
+ In the Hydrogen storefronts interface, select the storefront that you want to receive online store traffic.
+ Click … beside the production environment, and then click Edit environment.
+ Change the URL privacy to Public, and then click Save.
+ Direct online store traffic to the domain
+ From the Shopify admin, click Settings > Domains.
+ For the domain that you want to receive online store traffic, change the Target to the production Hydrogen storefront.
+ Set the domain type to Primary.
+ Remove password protection
+ From the Shopify admin, under Sales channels, click Online Store > Preferences.
+ In the Restrict store access section, deselect Restrict access to visitors with the password.
+ Click Save.
+ Step 2: Redirect old order status URL requests to the online store
+ If your online store had active orders before you launched your Hydrogen storefront, and the Hydrogen storefront uses the same domain formerly used by the online store, then customers will receive 404 pages when they click on the old order status URLs that are routing to your Hydrogen storefront. To prevent this, ensure that you redirect those requests back to the online store.
+ To handle a Shopify order status URL on your Hydrogen storefront, create a route to handle the redirect:
+ Example redirect
+ /app/routes/$shopId.orders.$token.authenticate.jsx
+ 1 import {redirect} from '@shopify/remix-oxygen';
+ 2
+ 3 export async function loader({request, context: {storefront}}) {
+ 4
+    const {origin} = new URL(request.url);
+ 5
+ 6
+    const {shop} = await storefront.query(
+ 7
+      `query getShopDomain{ shop { primaryDomain{ url } } }`,
+ 8
+    );
+ 9
+ 10
+    const onlineStoreStatusPage = request.url.replace(
+ 11
+      origin,
+ 12
+      shop.primaryDomain.url,
+ 13
+    );
+ 14
+ 15
+    return redirect(onlineStoreStatusPage);
+ 16 }
+ Step 3: Redirect visitors to the Hydrogen storefront
+ After going live on a Hydrogen storefront, your online store remains active. Visitors can browse online store pages if they visit your {shop}.myshopify.com URL. If you want to serve your Hydrogen storefront to visitors who land on online store pages, then you should download and publish the Hydrogen redirect theme, which includes client-side redirection in the theme.liquid template and a customized checkpoint.liquid template to use with bot protection.
+ Next steps
+ Learn how to adopt Hydrogen incrementally for merchants who want to use the online store theme and Hydrogen channel side-by-side.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Set up the domains
+ Step 2: Redirect old order status URL requests to the online store
+ Step 3: Redirect visitors to the Hydrogen storefront
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

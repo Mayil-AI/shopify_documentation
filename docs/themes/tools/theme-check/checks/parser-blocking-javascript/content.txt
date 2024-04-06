@@ -1,0 +1,80 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ ParserBlockingJavaScript
+ Identifies HTML script tags that don't have defer or async attributes.
+ When neither of those attributes are used, a script tag blocks the construction and rendering of the DOM until the script is loaded, parsed and executed. It also creates congestion on the network, messes with the resource priorities and significantly delays the rendering of the page.
+ Considering that JavaScript on Shopify themes should always be used to progressively enhance the experience of the site, themes should never make use of parser-blocking script tags.
+ As a general rule, use defer if the order of execution matters, and use async if it doesn't.
+ Learn more about improving your theme's performance.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ This example loads jQuery synchronously because inline scripts depend on it:
+ 1 theme.js
+ 2 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 3 ...
+ 4 <button id="thing">Click me!</button>
+ 5 <script>
+ 6
+    $('#thing').click(() => {
+ 7
+      alert('Oh. Hi Mark!');
+ 8
+    });
+ 9 </script>
+ ✓ Pass
+ This example contains an alternative to synchronous jQuery. Because the script tag has a defer attribute, jQuery is guaranteed to be loaded when DOMContentLoaded fires. This technique could be used as a first step to refactor an theme that depends on jQuery.
+ 1 <script src="theme.js" defer></script>>
+ 2 <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+ 3 ...
+ 4 <button id="thing">Click me!</button>
+ 5 <script>
+ 6
+    document.addEventListener('DOMContentLoaded', () => {
+ 7
+      $('#thing').click(() => {
+ 8
+        alert('Oh. Hi Mark!');
+ 9
+      });
+ 10
+    });
+ 11 </script>
+ This example avoids jQuery.
+ 1 <button id="thing">Click Me</button>
+ 2 <script>
+ 3
+    const button = document.getElementById('thing');
+ 4
+    button.addEventListener('click', () => {
+ 5
+      alert('Oh. Hi Mark!');
+ 6
+    });
+ 7 </script>
+ Options
+ The following example contains the default configuration for this check:
+ 1 ParserBlockingJavascript:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ If you can't avoid violating the rule, you should disable the check using the comment syntax. This ensures that you intentionally disable the check for each instance.
+ Disabling this check isn't recommended.
+ 1 {% # theme-check-disable ParserBlockingJavaScript %}
+ 2 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 3 {% # theme-check-enable ParserBlockingJavaScript %}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog

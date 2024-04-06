@@ -1,0 +1,325 @@
+Config
+ Locales
+ Overview
+ Schema locale files
+ Storefront locale files
+ Storefront locale files
+ Storefront locale files are JSON files with a .json file extension. They host translation strings for content displayed on the storefront throughout the theme. These translations can be accessed by merchants through the Shopify Language Editor.
+ Note
+ Shopify provides checkout and system message translations through the Shopify Language Editor. However, this data is stored by Shopify outside of storefront locale files.
+ Rather than hard-coded text strings, theme layouts, templates, snippets, and Liquid assets can reference these translations with the Liquid translation filter (t filter). This returns the appropriate translated string from the locale file for the active language.
+ When using the t filter, you can interpolate and pluralize translations, as well as localize any dates and times.
+ Location
+ Storefront locale files are located in the locales directory of the theme:
+ 1 └── theme
+ 2
+      ...
+ 3
+      ├── config
+ 4
+      └── locales
+ 5
+        ├── en.default.json
+ 6
+        ...
+ Schema
+ Storefront locale files need to follow a specific naming structure. They also follow a basic organizational structure:
+ Category: The top-level category of your translations.
+ Group: The second level grouping of translations within a category.
+ Description: The third level, which represents the individual translations.
+ Example
+ 1 {
+ 2
+    "my_category": {
+ 3
+      "my_group": {
+ 4
+        "my_description": "translation text",
+ 5
+        ...
+ 6
+      },
+ 7
+      ...
+ 8
+    },
+ 9
+    ...
+ 10 }
+ Tip
+ When naming translation descriptions, try to be descriptive enough to give the translation context. For example, blogs.article_comment.submit_button_text gives more context than blogs.article_comment.submit.
+ Name structure
+ Locale file naming must follow the standard IETF language tag nomenclature, where the first lowercase letter code represents the language, and the second uppercase letter code represents the region.
+ For example:
+ Language Format
+ English - Great Britain en-GB.json
+ Spanish - Spain es-ES.json
+ French - Canada fr-CA.json
+ If a language isn’t region specific, you can use the 2-letter lowercase language representation.
+ For example:
+ Language Format
+ Finnish - All regions fi.json
+ Additionally, you must designate a default locale file.
+ The default locale file
+ You must designate a default locale file in the format of *.default.json, where * is your selected language. This file contains the translations for the default language of the theme. Only one default file is permitted.
+ Most themes use en.default.json, which sets the default locale of the theme to English.
+ Content
+ To ensure that translations are mapped correctly, and to keep the process as simple as possible for merchants, you should organize your key structure to reflect your theme structure.
+ For example, the first two levels of the structure might look like this:
+ 1st level 2nd level
+ general 404, breadcrumbs, search (results page and blank slates), pagination
+ blogs article, article comments, blog sidebar
+ cart cart contents, updates, notes, link to checkout
+ collection collection, collection loop
+ products product, product loop, related products
+ layout general field titles and identifiers
+ customer account, orders (list and details), account activation, addresses, login, password, registration
+ contact contact form, form errors
+ home_page blank slate, featured, help
+ gift_cards title, usage terms
+ Note
+ If you use translations in snippets, then you should group them with the category most related to the snippet's role. For example, if you have a related-products.liquid snippet, then any associated translations should be included in the products group.
+ Usage
+ When working with storefront locale files, be aware of the following:
+ referencing storefront translations
+ interpolation
+ preventing translations from being escaped
+ pluralizing translations
+ date and time localization
+ checkout and system messages
+ Reference storefront translations
+ To reference translations from the storefront locale file for your theme's active language, you can use translation keys and the Liquid translation filter (t filter).
+ For example, let's assume you have locale files for English, French, and Spanish. In this case, you might have the following in each associated locale file:
+ /locales/en.default.json (English)
+ 1 {
+ 2
+    "blog": {
+ 3
+      "comment": {
+ 4
+        "email": "Your email"
+ /locales/fr.json (French)
+ 1 {
+ 2
+    "blog": {
+ 3
+      "comment": {
+ 4
+        "email": "Votre adresse courriel"
+ 5
+      }
+ 6
+    }
+ 7 }
+ /locales/es-ES.json (Spanish)
+ 1 {
+ 2
+    "blog": {
+ 3
+      "comment": {
+ 4
+        "email": "Su correo electrónico"
+ 5
+      }
+ 6
+    }
+ 7 }
+ To reference this translation, you might use something like the following:
+ 1 <span>{{ 'blog.comment.email' | t }}</span>
+ Tip
+ When referencing translation keys in Liquid, they must be wrapped in single quotes (').
+ The output is customized based on the settings in each locale file:
+ Output
+ 1 // English
+ 2 <span>Your email</span>
+ 3
+ 4 // French
+ 5 <span>Votre adresse courriel</span>
+ 6
+ 7 // Spanish
+ 8 <span>Su correo electrónico</span>
+ Interpolation
+ Translation strings can be interpolated, meaning you can include variables in your strings to be dynamically populated when the string is referenced in Liquid. For example, you can include following in your locale file:
+ /locales/en.default.json
+ 1 {
+ 2
+    "layout": {
+ 3
+      "header": {
+ 4
+        "hello_user": "Hello {{ name }}!"
+ When you reference that translation in your theme, you can specify a value for the name variable:
+ /layout/theme.liquid
+ 1 {% if customer %}
+ 2
+    <h1>{{ 'layout.header.hello_user' | t: name: customer.first_name }}</h1>
+ 3 {% endif %}
+ In the case of a customer named "Jane", this code outputs the following:
+ Output
+ 1 <h1>Hello Jane!</h1>
+ Pass multiple arguments
+ With interpolation, it's possible to pass multiple arguments, separated by a comma (,). For example, if you want to extend the example above to show the customer's first and last name, then you can adjust your translation string and theme reference to the following:
+ /locales/en.default.json
+ 1 {
+ 2
+    "layout": {
+ 3
+      "header": {
+ 4
+        "hello_user": "Hello {{ first_name }} {{ last_name }}!"
+ 5
+      }
+ 6
+    }
+ 7 }
+ /layout/theme.liquid
+ 1 {% if customer %}
+ 2
+    <h1>
+ 3
+      {{ 'layout.header.hello_user' | t: first_name: customer.first_name, last_name: customer.last_name }}
+ 4
+    </h1>
+ 5 {% endif %}
+ In the case of a customer named "Jane Doe", this code outputs the following:
+ Output
+ 1 <h1>Hello Jane Doe!</h1>
+ Prevent translations from being escaped
+ Translated content is escaped by default, meaning any HTML character is converted into its entity equivalent.
+ You can add the suffix _html to the description level of your translation key to prevent translated content from being escaped. For example, the content output by the following translation would be escaped, causing the <strong> tags to show as plain text:
+ /locales/en.default.json
+ 1 {
+ 2
+    "layout": {
+ 3
+      "header": {
+ 4
+        "announcement_bar_text": "Spend $50 and get <strong>FREE</strong> shipping",
+ 5
+      }
+ 6
+    }
+ 7 }
+ Adding the _html suffix prevents the output content from being escaped, allowing the <strong> tags to render as proper HTML:
+ /locales/en.default.json
+ 1 {
+ 2
+    "layout": {
+ 3
+      "header": {
+ 4
+        "announcement_bar_text_html": "Spend $50 and get <strong>FREE</strong> shipping",
+ 5
+      }
+ 6
+    }
+ 7 }
+ Tip
+ The _html suffix is useful for cases like including HTML characters in translations, or using translations in JavaScript as part of a <script> tag or js.liquid asset file.
+ Pluralize translations
+ You can apply locale-aware pluralizations to translations by passing a count attribute to the translation filter (t filter).
+ The following pluralization keys, defined by the Unicode Consortium's CLDR, are supported:
+ few
+ many
+ one
+ other
+ two
+ zero
+ For example, the following translation and translation reference returns the following output:
+ /locales/en.default.json
+ 1 {
+ 2
+    "customers": {
+ 3
+      "orders": {
+ 4
+        "order_count": {
+ 5
+          "one": "You've made {{ count }} order with us",
+ 6
+          "other": "You've made {{ count }} orders with us"
+    }
+ 10 }
+ /layout/theme.liquid
+ 1 {% if customer %}
+ 2
+    <h1>{{ 'customers.order.order_count' | t: count: customer.orders_count }}</h1>
+ 3 {% endif %}
+ Output
+ 1 // count == 1
+ 2 <h1>You've made 1 order with us</h1>
+ 3
+ 4 // count == 12
+ 5 <h1>You've made 12 orders with us</h1>
+ For more information about pluralization rules in different languages, refer to the Unicode language plural rules tables.
+ Date and time localization
+ Dates and times can be rendered with the date and time_tag Liquid filters. Each has default format options that will display in the appropriate format for the store's active language:
+ date filter default format options
+ time_tag filter default format options
+ For example, the following Liquid generates the following output:
+ Input
+ 1 {{ order.created_at | date: format: 'abbreviated_date' }}
+ Output
+ 1 Dec 31, 2018
+ Custom formats
+ You can include custom formats in locale files by adding a date_formats object:
+ locales/en.json
+ 1 {
+ 2
+    "date_formats": {
+ 3
+      "month_and_year": "%B %Y"
+ 4
+    }
+ 5 }
+ These formats must use the same parameters as Ruby's strftime method. You can find a list of these parameters in Ruby's documentation, or use a site like strfti.me.
+ Caution
+ Ensure that custom formats are included in all locale files. If a custom format is missing in the locale file of the active language, then a Liquid error is rendered.
+ Using the custom format above, the following Liquid generates the following output:
+ Input
+ 1 {{ order.created_at | date: format: 'month_and_year' }}
+ Output
+ 1 December 2018
+ Checkout and system messages
+ Shopify provides checkout and system messages in the following languages:
+ Bulgarian (Bulgaria)
+ Chinese (Simplified)
+ Chinese (Traditional)
+ Croatian (Croatia)
+ Czech
+ Danish
+ Dutch
+ English
+ Finnish
+ French
+ German
+ Greek
+ Hindi
+ Hungarian
+ Indonesian
+ Italian
+ Japanese
+ Korean
+ Lithunian (Lithuania)
+ Malay
+ Norwegian (Bokmål)
+ Polish
+ Portuguese (Brazil)
+ Portuguese (Portugal)
+ Romania (Romanian)
+ Russian
+ Slovak
+ Slovenian
+ Spanish
+ Swedish
+ Thai
+ Turkish
+ Note
+ If you're using a language that's not in the list above, then you'll need to manually enter translations for checkout and system messages through the Shopify Language Editor.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Schema
+ Content
+ Usage

@@ -1,0 +1,35 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Locale API
+ This is the POS UI Extension API for localization.
+ Receiving locale updates
+ JavaScript
+ React
+ 1 api.locale.subscribable.subscribe((locale) => {
+ 2
+    const localeText = root.createComponent(Text);
+ 3
+    const textContent = 'New locale: ' + locale;
+ 4
+    localeText.appendChild(textContent);
+ 5 });
+ LocaleApiContent
+ Name Type Description
+ subscribable RemoteSubscribable IETF-formatted locale at time of page load and a callback to subsribe to value changes. Current supports only one subscription. You can utilize makeStatefulSubscribable on a RemoteSubscribable to implement multiple subscriptions. Using makeStatefulSubscribable or the corresponding hooks counts as a subscription.
+ RemoteSubscribable
+ Name Type Description
+ initial string Merchant’s current locale.
+ Hooks
+ Name Description
+ useLocaleSubscription() A hook utilizing useState and the useStatefulSubscribableLocale function to create a component state. This hook returns the latest Locale state which re-renders on change.
+ useStatefulSubscribableLocale() A hook utilizing the makeStatefulSubscribable function to allow multiple Locale subscriptions. This hook returns StatefulRemoteSubscribable object with a Locale in it.
+ destroyStatefulSubscribableLocale() A function destroying the subscriptions useStatefulSubscribableLocale has.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Receiving locale updates
+ Hooks
+ Updates & News
+ Developer changelog
+ Partner blog

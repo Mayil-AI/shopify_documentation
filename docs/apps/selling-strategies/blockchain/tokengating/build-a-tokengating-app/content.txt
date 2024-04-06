@@ -1,0 +1,35 @@
+NFT distribution
+ Tokengating
+ Overview
+ Build a tokengating app
+ Overview
+ Create gates
+ Show gates
+ Apply discount
+ Build a tokengated storefront
+ UX guidelines
+ App Store
+ Build a tokengating app
+ You can use tokengating to offer token holders exclusive access to discounts. Customers can unlock the discount by connecting their wallet to prove that they own the token.
+ What you'll learn
+ In this tutorial series, you'll build a functional tokengating app that demonstrates the end-to-end gating experience. The example app addresses a real-world merchant problem and integrates the solution seamlessly with Shopify admin and Online Store. In this example app, merchants can create tokengates that give eligible customers an exclusive discount on products.
+ Developer resource
+ Tokengating example app
+ Explore an example app that enables merchants to tokengate products.
+ Tutorial series
+ Follow the tutorial series to go from "Hello World" to a functional tokengate experience.
+ Tutorial 1: Create gates
+ Create gates in the admin app using the GraphQL Admin API.
+ Tutorial 2: Show gates
+ Show gates on the storefront using a theme app extension.
+ Tutorial 3: Apply discount
+ Apply the exclusive discount with Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Developer resource
+ Tutorial series
+ Updates & News
+ Developer changelog
+ Partner blog

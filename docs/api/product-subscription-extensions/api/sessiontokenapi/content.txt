@@ -1,0 +1,30 @@
+ToastApi
+ Components
+ SessionTokenApi
+ Get a fresh session token for communication with your app's backend service. Calls to Shopify APIs must be made by your app’s backend service.
+ JavaScript
+ React
+ 1 import {extend} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Admin::Product::SubscriptionPlan::Add', (root, api) => {
+ 4
+    const {sessionToken} = api;
+ 5
+    const text = root.createText();
+ 6
+ 7
+    sessionToken.getSessionToken().then((newToken) => {
+ 8
+      text.updateText(newToken);
+ 9
+    });
+ 10
+ 11
+    root.appendChild(text);
+ 12
+    root.mount();
+ 13 });
+ Props
+ optional = ?
+ Name Type Description
+ getSessionToken () => Promise<string | UndefinedType> Get a fresh session token.

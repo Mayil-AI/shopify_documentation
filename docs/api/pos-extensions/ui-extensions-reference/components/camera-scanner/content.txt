@@ -1,0 +1,120 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CameraScanner
+ The camera scanner uses the device's camera to scan and decode barcodes or QR codes. It displays a live feed with guidance markers for alignment and triggers actions within the app upon successful recognition.
+ Receiving scan event updates
+ The scannerDataSubscribable will return the scanner data and source that is executed on the extension. You can learn more in the Scanner API documentation.
+ Props
+ Name Type Description
+ bannerProps CameraScannerBannerProps? A banner that appears at the top of the camera scanner.
+ CameraScannerBannerProps
+ Determines the banner's appearance and content.
+ Name Type Description Options
+ title string The text displayed inside the banner.
+ variant BannerVariant? Determines the appearance of the banner. information: Use to provide information.
+ 
+ confirmation: Use to indicate success.
+ 
+ alert: Use to indicate a warning.
+ 
+ error: Use to indicate an error.
+ visible boolean? Determines the banner's visibility.
+ Example
+ 1 // SmartGridModal component that adds a scanned product to the cart
+ 2 const SmartGridModal = () => {
+ 3
+    // Use hooks to get the extension API and scanner data
+ 4
+    const api = useExtensionApi();
+ 5
+    const { data } = useScannerDataSubscription();
+ 6
+ 7
+    // Use an effect to add the scanned product to the cart when data changes
+ 8
+    useEffect(() => {
+ 9
+      const addProductToCart = (data: string | undefined) => {
+ 10
+        if (data) {
+ 11
+          api.cart.addLineItem(Number(data), 1);
+ 12
+        }
+ 13
+      };
+ 14
+      addProductToCart(data);
+ 15
+    }, [data]);
+ 16
+ 17
+    return (
+ 18
+      <Navigator>
+ 19
+        <Screen name="Screen1" title="Screen1">
+ 20
+          <Stack direction="horizontal" flexChildren flex={1}>
+ 21
+              <CameraScanner />
+ 22
+          </Stack>
+ 23
+        </Screen>
+ 24
+      </Navigator>
+ 25
+    );
+ 26 };
+ Camera Scanning
+ Camera scanning is available when the device has a camera and the user grants POS permission to access it. For third-party apps, camera scanning can be initiated from within the app via a ‘Button’ component that launches the camera scanner feature.
+ Full Screen
+ The full-screen camera scanning UI should resemble the functionality in the core POS app.
+ Best practices
+ Error Scanning
+ Utilize the error banner to display scanning errors or unrecognized barcodes at the top of the camera view screen.
+ Successful Scanning
+ After a successful scan, dismiss the full-screen camera view and display a secondary screen showcasing the intended outcome.
+ Partial Screen
+ The camera scanner UI can be adjusted to display the camera view on part of the screen while dedicating the remaining portion to other components. This can be useful for tasks like inventory management.
+ Best practices
+ Blocking Scenarios
+ In situations where scanning should not be allowed within a specific section of your application, use an error banner to inform merchants that scanning is not permitted on that screen and offer alternative areas where the scanning function can be performed.
+ Error Scanning
+ Use the error banner at the top of the screen to denote errors while scanning or when encountering an unrecognized barcode.
+ Successful Scanning
+ Upon successful scanning of an item, display a ‘Toast’ component with a message such as "Item scanned" to indicate the outcome. Additionally, altering the screen contents can also be used to signal a successful scan.
+ Content guidelines
+ Blocking or Error Scenarios
+ Banners
+ Be concise.
+ Keep to 1 or 2 short sentences.
+ Be dismissible unless it contains critical information or an important step merchants need to take.
+ Example:
+ ✅ Scanning not permitted on this screen. Go to {Section} to scan items.
+ Dismiss (CTA)
+ ❌Error.
+ ✅ Barcode not recognized. Try scanning item again.
+ Dismiss (CTA)
+ ❌ Didn’t work.
+ Successful Scanning
+ Toast
+ Used for short messages to confirm an action.
+ Never go over 3 or 4 words.
+ Do not use for error messages.
+ Should be used for success messages.
+ Written in the pattern of noun + verb.
+ Example:
+ ✅ Item scanned.
+ ❌ Your item has been scanned and added to your inventory count!
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Receiving scan event updates
+ Props
+ CameraScannerBannerProps
+ Example
+ Updates & News

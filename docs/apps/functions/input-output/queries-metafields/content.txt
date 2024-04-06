@@ -1,0 +1,140 @@
+Variables in input queries
+ Network access
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Input queries and metafields
+ To make your code reusable, you can replace hard-coded variables in your function with metafield values. Using metafields enables merchants and staff to customize your function by entering values and options in interfaces provided by your app.
+ This guide introduces how input queries and metafields work in Shopify Functions. For an overview of how data is input to and output from Shopify Functions, refer to Function input and output.
+ How it works
+ Shopify Functions belong to and can affect the behavior of objects in the Shopify data model. The object associated with a function is known as the function owner. For example, the owner of a Discount API function is a discount.
+ You use App Bridge to create merchant UIs for managing function owners and their metafields. Then, you use input queries to provide the metafields as input to your function.
+ Tip
+ You can also use metafield values from anywhere within Shopify's data model to build your function's logic. For example, you can use metafields on products in the cart or the current customer.
+ Creating your merchant interface
+ Some Function APIs allow you to create a merchant interface for configuring your function using either embedded app pages or admin UI extensions. Refer to the available APIs documentation for specifics on what's supported by each Function API.
+ You need to configure specific properties in your function extension configuration based on the method that you use for creating a merchant interface.
+ Using Admin UI extensions
+ You have the option to configure an admin UI extension to be used as the merchant interface to create and edit the function owner.
+ To configure a UI extension to be used for configuring your function, you must specify the extension.ui.handle property in your shopify.extension.toml file. Ensure that the value for extension.ui.handle matches the handle property of the corresponding UI extension in your app.
+ The following example shows the properties in the shopify.extension.toml file:
+ shopify.extension.toml
+ 1 [extension.ui]
+ 2 handle = "ui-extension-handle"
+ Using embedded app pages
+ You have the option to configure the routes in your application that merchants will use to create and edit the function owner, such as a discount. The default path for both properties is the root directory of your app (/).
+ Property Description Example
+ ui.paths.create The route to create a new function owner. /my-discount-type
+ ui.paths.details The route to edit the function owner. /my-discount-type/:id
+ The following example shows the properties in the shopify.extension.toml file:
+ shopify.extension.toml
+ 1 [extensions.ui.paths]
+ 2 create = "/my-discount-type/:functionId"
+ 3 details = "/my-discount-type/:functionId/:id"
+ Configuring creation workflows for function owners
+ There are some cases where you might not want the merchant to create a function owner themselves. For example, the function could be an implementation detail of a bigger feature and it could make more sense for the bigger feature to manage the function owner lifecycle.
+ You can configure the function to opt-out of the default function owner creation workflow. This means that the app will solely be responsible for creating the function owner. While this means the merchant can't create a function owner in the Shopify Admin, they can still edit, activate, or deactivate one created by the app.
+ You can configure this with the following property in your function extension configuration.
+ Property Description Type
+ ui.enable_create Whether the merchant can create a function owner in the Shopify admin. Default value is true. Boolean
+ Dynamic ID values
+ If you specify the :id or :functionId in the ui.paths properties in shopify.extension.toml, then the URL is updated with the following values:
+ URL Path Update Availability
+ :id The :id is dynamically replaced by the ID of the function owner. ui.paths.details
+ :functionId The :functionId is dynamically replaced by the ID of the function. ui.paths.create and ui.paths.details
+ The ID values are needed as input to the create, update, and delete mutations for your customizations. By using dynamic IDs, you can avoid managing hardcoded values in your app.
+ Merchant experience
+ Use App Bridge and Polaris to create a seamless merchant experience within the Shopify admin. You can use the GraphQL Admin API to create and update your function owner and its metafields. Metafields are supported on all function owner types, and can be used to store custom values for your function logic.
+ The following is an example of a mutation that would set metafields on a discount function owner, when implementing a Discount API function.
+ set-metafields.graphql
+ 1 mutation CreateDiscount {
+ 2
+    discountAutomaticAppCreate(automaticAppDiscount: {
+ 3
+      functionId: "f0c17828-da1a-4748-810d-3c3cab2bc977",
+ 4
+      title: "My Discount",
+ 5
+      startsAt: "2022-06-01T00:00:00Z",
+ 6
+      metafields: [
+ 7
+        {
+ 8
+          namespace: "$app:my-function",
+ 9
+          type: "json",
+ 10
+          key: "function-configuration",
+ 11
+          value: "{\"value\":\"42\"}"
+ 12
+        }
+ 13
+      ]
+ 14
+    }) {
+ 15
+      automaticAppDiscount {
+ 16
+        discountId
+ 17
+      }
+ 18
+      userErrors {
+ 19
+        field
+ 20
+        message
+ 21
+      }
+ 22
+    }
+ 23 }
+ Reading metafields with input queries
+ All Function APIs provide access to the function owner, and its metafields, as part of their GraphQL schema. This means that you can access the metafield values set by merchants using input queries, and use those values in your function's logic.
+ The following is an example of an input query that would retrieve a metafield on a discount function owner, when implementing a Discount API function.
+ input.graphql
+ 1 {
+ 2
+    discountNode {
+ 3
+      metafield(namespace: "$app:my-function", key: "function-configuration") {
+ 4
+        value
+ 5
+      }
+ 6
+    }
+ 7 }
+ Best practices
+ This section provides some best practices for using metafields for function input.
+ Use a reserved prefix in your metafield namespace
+ You should use a reserved prefix in your metafield namespace, so that other apps can't use your metafields.
+ Use JSON metafields for complex configurations
+ Metafields support many types of data, but functions will often require nested and/or repeating data structures. Using a single JSON metafield can simplify the management and querying of your configuration.
+ Manage configuration changes with new metafields
+ If you need to make breaking changes to your function configuration data, then you can implement the Parallel Change (Expand and Contract) pattern using additional metafields:
+ Update your function's logic to simultaneously read configuration from your existing and new metafields, preferring the newer data, if present.
+ Change your function UI to simultaneously update both your existing and new metafields.
+ Use the GraphQL Admin API to migrate existing data from your old metafields to your new metafields.
+ After you've finished the migration, remove any UI and function logic for your old metafields.
+ Use the GraphQL Admin API to remove your old metafields.
+ Tip
+ To edit metafields outside of a merchant's web session, such as in an offline maintenance job, you can request an offline access token during app installation.
+ Next steps
+ Learn how to use variables in input queries with Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Creating your merchant interface
+ Reading metafields with input queries
+ Best practices
+ Next steps
+ Updates & News
+ Developer changelog

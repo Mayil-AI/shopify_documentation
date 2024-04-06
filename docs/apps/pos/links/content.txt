@@ -1,0 +1,30 @@
+App Store
+ Create Point of Sale links
+ You can use Shopify Point of Sale (POS) links to link directly to your app from pages in the Shopify POS app. This tutorial shows you how to create POS links.
+ Requirements
+ You've created a development store.
+ You've created an app in the Partner Dashboard or using Shopify CLI.
+ You've embedded your app in Shopify POS.
+ Create a POS link
+ After you embed your app in Shopify POS, you can create a quick link to your app from a page in Shopify POS.
+ Go to your Partner Dashboard.
+ In the sidebar, click Apps.
+ Click the name of your app.
+ Click Extensions.
+ Under Point of Sale, click the POS links card.
+ Enter information in the following fields:
+ Link label – The text that will appear to the user. It should be task oriented, and not just the name of your app.
+ Link target URL – The URL where your app is hosted, or a specific URL for this task.
+ Page to show link – The page in the Shopify POS app where this link should appear to the user. Try to place it only where it makes logical sense for the user. In general, avoid adding admin links to every page of the Shopify admin.
+ Display – The way users view the link, either as a modal or in fullscreen.
+ Click Create.
+ Create and release a new app version to make this extension available to users. You need to release a new app version whenever you update the extension configuration in the Partner Dashboard.
+ Next steps
+ Let users run promotions and reward customers using data provided by your app.
+ Allow your app to recommend products based on the current product, customer, or cart.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Create a POS link
+ Next steps

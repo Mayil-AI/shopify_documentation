@@ -1,0 +1,70 @@
+Billing
+ App Store
+ Fulfillment apps
+ You can create fulfillment apps that integrate into inventory management, order management, shipping, and fulfillment processes.
+ This guide describes the different types of apps that you can build with Shopify. It also provides information about migrating your app to use fulfillment order-based workflows, and offers related developers tools and resources to get you started.
+ Inventory management apps
+ Inventory management apps automate the inventory management process by querying and adjusting inventory quantities on behalf of merchants.
+ Inventory apps can help merchants organize and manage goods throughout the supply chain, manage what customers can purchase on the merchant's sales channels, determine when to make a purchase order, and centralize inventory and order data.
+ The following diagram shows some of the inventory management activities that an app or third-party logistics provider can perform in the context of an order lifecycle:
+ Order management apps
+ Order management apps fulfill orders on behalf of merchants. Apps can automate fulfillment, or merchants can directly fulfill orders through the app.
+ Order management apps can help merchants with complicated shipping workflows that include multiple steps like buying shipping labels, reassigning inventory based on availability, or rescheduling upcoming shipments for a different date.
+ The following diagram shows an example lifecycle of fulfilling an order using an order management app:
+ Order routing apps
+ Order routing apps provide a way for merchants with complex or highly custom needs to take control over their fulfillment and delivery strategy needs. Order routing apps use Shopify Functions to customize fulfillment and delivery strategies.
+ Apps can register custom location rules for use with order routing, or generate fulfillment constraints to determine how items are to be fulfilled.
+ The following diagram shows an example lifecycle of registering and executing a Shopify Function using an order routing app:
+ Fulfillment service apps
+ Fulfillment service apps are services that perform the fulfillment of physical products for merchants. These apps enable high-quality communication between fulfillment centers and merchants and transparent reporting about order status through the Shopify admin.
+ Merchants and other apps can submit requests to fulfill orders, and fulfillment services can subsequently approve or reject requests to fulfill. After a request is approved, merchants can also submit requests to cancel the fulfillment order before the order is shipped.
+ The following diagram shows an example lifecycle of fulfilling an order using a fulfillment service app:
+ Returns apps
+ Return apps capture the financial, logistical, and business intent of a return. These apps provide merchants with various ways to manage their returns.
+ Merchants manage their returns in Shopify, and returns apps can take actions on behalf of merchants. For example, a returns app can identify eligible items for a return and issue customers a refund for returned items on behalf of the merchant.
+ The following diagram shows an example lifecycle of a return:
+ Migrating your app
+ In Shopify, the FulfillmentOrder resource models an end-to-end fulfillment process and is available in both the REST Admin API and the GraphQL Admin API. The FulfillmentOrder resource enables fulfillment data to sync accurately between Shopify and apps.
+ By API version 2023-07, all apps should be using the FulfillmentOrder object to manage fulfillments. Apps using the following REST or GraphQL Admin API resources or objects to fulfill orders are using a legacy workflow that is no longer supported as of API version 2022-07:
+ Order REST or GraphQL.
+ Fulfillment REST or GraphQL.
+ Benefits
+ Migrating your app to the fulfillment orders workflow provides the following benefits:
+ You can fetch the assigned location of a given group of unfulfilled line items to determine where fulfillment should occur.
+ You no longer need to match SKUs or filter out the items on an order that don’t apply to you before you can determine which items you need to fulfill.
+ App users and apps can both add notes to requests, which can improve communication throughout the fulfillment process.
+ The process of making fulfillment and cancellation requests is formalized.
+ Implementing recommended workflows
+ To learn how to migrate your app, refer to Migrate to fulfillment orders.
+ If you maintain a third-party app or Shopify Flow workflow that relies on Order and Fulfillment API resources for order automation, then refer to Track orders placed through third-party marketplaces.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about fulfillment apps.
+ InventoryLevel object
+ Consult the GraphQL Admin API reference to learn more about the InventoryLevel object.
+ InventoryLevel resource
+ Consult the REST Admin API reference to learn more about the InventoryLevel resource.
+ FulfillmentOrder object
+ Consult the GraphQL Admin API reference to learn more about the FulfillmentOrder object.
+ FulfillmentOrder resource
+ Consult the REST Admin API reference to learn more about the FulfillmentOrder resource.
+ FulfillmentService object
+ Consult the GraphQL Admin API reference to learn more about the FulfillmentService object.
+ FulfillmentService resource
+ Consult the REST Admin API reference to learn more about the FulfillmentService resource.
+ Return object
+ Consult the GraphQL Admin API reference to learn more about the Return object.
+ Next steps
+ Learn how inventory management apps query and adjust inventory quantities on behalf of merchants.
+ Learn how order management apps fulfill orders on behalf of merchants.
+ Learn how fulfillment service app prepare and ship orders on behalf of store owners.
+ Learn how returns apps can provide a return management workflow for merchants and customers.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Inventory management apps
+ Order management apps
+ Order routing apps
+ Fulfillment service apps
+ Returns apps
+ Migrating your app
+ Developer tools and resources

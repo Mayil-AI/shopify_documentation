@@ -1,0 +1,370 @@
+Deciding extension placement
+ Localizing UI extensions
+ Overview
+ Getting started
+ Testing UI extensions
+ UX guidelines
+ Selling strategies
+ Online store
+ Admin
+ Flow
+ Distribution
+ Billing
+ App Store
+ Getting started with localizing a customer UI extension
+ In this tutorial, you'll use JavaScript API functions to localize an extension that displays a customer's loyalty point balance on the Profile page. You'll localize the extension text, the number format of the loyalty points balance, and the monetary value of the points. You'll also provide translations for singular and plural values. You can use what you learn here to localize other extensions.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create a customer account UI extension that renders in the Profile page with some basic localization.
+ Run the extension locally and test it on a development store.
+ Define translation data and localize the following elements:
+ Numbers using a formatNumber function similar to the Intl object
+ Currency using a formatCurrency Intl object
+ Singular and plural values
+ Deploy your extension code to Shopify.
+ Requirements
+ You've created a Partner account.
+ You've created a new development store with the following:
+ Generated test data
+ Checkout and Customer Accounts Extensibility developer preview enabled
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ You're familiar with how localization works for customer account UI extensions.
+ You've added and published a second language to your development store.
+ You've activated the language in your development store's primary market.
+ Sample code
+ You can copy and paste the following code into your index file and add a few example values to get the extension to render in the browser. The rest of the tutorial walks through this sample code step-by-step.
+ src/LoyaltyPoints.jsx
+ src/LoyaltyPoints.js
+ shopify.extension.toml
+ 1 import React from "react";
+ 2 import {
+ 3
+    reactExtension,
+ 4
+    Text,
+ 5
+    Banner,
+ 6
+    useApi,
+ 7
+    useTranslate,
+ 8 } from "@shopify/ui-extensions-react/customer-account";
+ 9
+ 10 /* This example assumes that you have the following contents in your `locales/en.default.json` file. You'll add this later in the tutorial:
+ 11
+    {
+ 12
+      "loyaltyPoints": {
+ 13
+        "one": "You have {{formattedPoints}} loyalty point",
+ 14
+        "other": "You have {{formattedPoints}} loyalty points"
+ 15
+      },
+ 16
+      "balanceRemaining": "Your balance is {{formattedBalance}}"
+ 17
+    }
+ 18 */
+ 19
+ 20 // Set the entry point for the extension
+ 21 export default reactExtension("customer-account.profile.block.render", () => <App />);
+ 22
+ 23 function App() {
+ 24
+    // Use i18n provided by the extension API
+ 25
+    const { i18n } = useApi();
+ 26
+    // Use the translate function
+ 27
+    const translate = useTranslate();
+ 28
+ 29
+    const balance = 9.99;
+ 30
+    // Localize the currency based on the current locale
+ 31
+    const formattedBalance = i18n.formatCurrency(balance);
+ 32
+    // Translate the balance remaining message
+ 33
+    const balanceRemainingMsg = translate("balanceRemaining", {
+ 34
+      // Provide a property/value that can be used in the translated message
+ 35
+      formattedBalance,
+ 36
+    });
+ 37
+ 38
+    const points = 10000;
+ 39
+    // Localize the number based on the current locale
+ 40
+    const formattedPoints = i18n.formatNumber(points);
+ 41
+    // Translate the loyalty points message, using pluralization to differentiate messages
+ 42
+    const loyaltyPointsMsg = translate("loyaltyPoints", {
+ 43
+      // Specify a count property so that the correct pluralization key (in this example, "many", "one" or "other") will be resolved
+ 44
+      count: points,
+ 45
+      // Provide a property/value that can be used in the translated message
+ 46
+      formattedPoints,
+ 47
+    });
+ 48
+ 49
+    // Render the components
+ 50
+    return (
+ 51
+      <Banner title={loyaltyPointsMsg}>
+ 52
+        <Text>{balanceRemainingMsg}</Text>
+ 53
+      </Banner>
+ 54
+    );
+ 55 };
+ Step 1: Create a UI extension
+ Note
+ If you already have a customer account UI extension that you want to localize, then you can skip ahead.
+ To create a customer account UI extension, you can use Shopify CLI, which generates starter code for building your extension and automates common development tasks.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new customer account UI extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template customer_account_ui --name customer-account-ui-extension
+ Select a language for your extension. You can choose from TypeScript, JavaScript, TypeScript React, or JavaScript React.
+ Tip
+ TypeScript or JavaScript is suitable for smaller projects that require a more straightforward API. TypeScript React or JavaScript React is suitable when you want an easy model for mapping state updates to UI updates. With JavaScript or TypeScript, you need to map state updates yourself. This process is similar to writing an application targeting the DOM, versus using react-dom.
+ You should now have a new extension directory in your app's directory. The extension directory includes the extension script at src/index.{file-extension}. The following is an example directory structure:
+ Customer account UI extension file structure
+ └── my-app
+   └── extensions
+     └── my-customer-account-ui-extension
+         ├── src
+         │   └── CustomerAccount.jsx OR CustomerAccount.js // The index page of the customer account UI extension
+         ├── locales
+         │   ├── en.default.json // The default locale for the customer account UI extension
+         │   └── fr.json // The locale file for non-regional French translations
+         ├── shopify.extension.toml // The config file for the customer account UI extension
+         └── package.json
+ Start your development server to build and preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ To learn about the processes that are executed when you run dev, refer to the Shopify CLI command reference.
+ Press p to open the developer console. In the developer console page, click on the preview link for your extension.
+ Step 2: Define translations
+ To define translations, you'll adjust the [locale].json files in the extensions/<name-of-customer-account-ui-extension>/locales folder within your app.
+ Tip
+ In this tutorial, you'll keep French (fr, non-regional) as an available locale. However, you can also create translations for additional locales.
+ Set the default locale
+ Your default locale specifies which locale Shopify should use when no other appropriate locale can be matched. In this example, English (en) is already the default locale. However, you can set any locale to be your default locale.
+ To change your default locale, go to the locales folder and change the [locale].json filename to [locale].default.json.
+ Add translation strings
+ In this step, you'll add translations for different plural forms. You'll set translations for the many, one and other plural rules needed for French (fr), but you can specify any pluralization key that Intl.PluralRules.select() supports and that's appropriate for the locale.
+ In subsequent steps, you'll define balance and points using a placeholder.
+ In en.default.json, add the following code:
+ locales/en.default.json
+ 1 {
+ 2
+    "loyaltyPoints": {
+ 3
+      "one": "You have {{formattedPoints}} loyalty point",
+ 4
+      "other": "You have {{formattedPoints}} loyalty points"
+ 5
+    },
+ 6
+    "balanceRemaining": "Your balance is {{formattedBalance}}"
+ 7 }
+ In the fr.json file, add the translated content:
+ locales/fr.json
+ 1 {
+ 2
+    "loyaltyPoints": {
+ 3
+      "many": "Vous avez {{formattedPoints}} de points de fidélité",
+ 4
+      "one": "Vouz avez {{formattedPoints}} point de fidélité",
+ 5
+      "other": "Vous avez {{formattedPoints}} points de fidélité"
+ 6
+    },
+ 7
+    "balanceRemaining": "Votre solde est de {{formattedBalance}}"
+ 8 }
+ Step 3: Localize the currency
+ Now that you've defined translations, you'll learn how to localize currency.
+ You'll add the formatCurrency function provided by i18n. The function wraps the standard Intl object.
+ src/LoyaltyPoints.jsx
+ src/LoyaltyPoints.js
+ 1 ...
+ 2 function App() {
+ 3
+    // Use i18n provided by the extension API
+ 4
+    const { i18n } = useApi();
+ 5
+    // Use the translate function
+ 6
+    const translate = useTranslate();
+ 7
+ 8
+    const balance = 9.99;
+ 9
+    // Localize the currency based on the current locale
+ 10
+    const formattedBalance = i18n.formatCurrency(balance);
+ 11
+    ...
+ 12 };
+ Depending on the current locale, 9.99 will now resolve to the following localized currency formats:
+ en: $9.99
+ fr: 9,99
+ Step 4: Localize numbers
+ In this step, you'll learn how to resolve localized numbers.
+ You'll localize number formatting using the formatNumber function provided by i18n. The function wraps the standard Intl object.
+ src/LoyaltyPoints.jsx
+ src/LoyaltyPoints.js
+ 1 ...
+ 2 function App() {
+ 3
+    ...
+ 4
+    const points = 10000;
+ 5
+    // Localize the number based on the current locale
+ 6
+    const formattedPoints = i18n.formatNumber(points);
+ 7
+    ...
+ 8 };
+ Depending on the current locale, 10000 will resolve to one of the following localized number formats:
+ en: 10,000
+ fr: 10 000
+ Step 5: Translate the balance remaining message
+ In this step, you'll learn how to translate the balance remaining message using a placeholder.
+ You'll use a placeholder for formattedBalance. You'll also call the translate function, which sends the formattedBalance variable so that it can be used in the translation string.
+ Note
+ When using React, and UI components as placeholders, you should use the provided useTranslate hook. This will make sure the required unique key is added to each UI component in the returned array.
+ src/LoyaltyPoints.jsx
+ src/LoyaltyPoints.js
+ 1 ...
+ 2 function App() {
+ 3
+    ...
+ 4
+    // Use the translate function
+ 5
+    const translate = useTranslate();
+ 6
+ 7
+    const balance = 9.99;
+ 8
+    // Localize the currency based on the current locale
+ 9
+    const formattedBalance = i18n.formatCurrency(balance);
+ 10
+    // Translate the balance remaining message
+ 11
+    const balanceRemainingMsg = translate("balanceRemaining", {
+ 12
+      // Provide a property/value that can be used in the translated message
+ 13
+      formattedBalance,
+ 14
+    });
+ 15
+    ...
+ 16 };
+ Step 6: Translate the loyalty points message with plural values
+ In this step, you'll learn how to translate the loyaltyPoints message, which supports pluralization.
+ You'll use the translate function to pass in the count of how many points are available. You'll use formattedPoints to render the points in the current locale.
+ Note
+ When working with translation keys with pluralization, you must provide the count property. This allows the translate function to determine which pluralization to use, according to Intl Pluralization Rules.
+ src/LoyaltyPoints.jsx
+ src/LoyaltyPoints.js
+ 1 ...
+ 2 function App() {
+ 3
+    ...
+ 4
+    // Use the translate function
+ 5
+    const translate = useTranslate();
+ 6
+    ...
+ 7
+ 8
+    const points = 10000;
+ 9
+    // Localize the number based on the current locale
+ 10
+    const formattedPoints = i18n.formatNumber(points);
+ 11
+    // Translate the loyalty points message, using pluralization to differentiate messages
+ 12
+    const loyaltyPointsMsg = translate("loyaltyPoints", {
+ 13
+      // Specify a count property so that the correct pluralization key (in this example, "many", "one" or "other") will be resolved
+ 14
+      count: points,
+ 15
+      // Provide a property/value that can be used in the translated message
+ 16
+      formattedPoints,
+ 17
+    });
+ 18
+    ...
+ 19 };
+ The customer account UI extension should now render localized content for en and fr:
+ To test the extension, preview the language from your development store admin.
+ Step 7: Deploy the UI extension
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Next steps
+ Review the APIs
+ Use JavaScript APIs to access translations for localizing customer account UI extensions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Sample code
+ Step 1: Create a UI extension
+ Step 2: Define translations
+ Step 3: Localize the currency
+ Step 4: Localize numbers
+ Step 5: Translate the balance remaining message
+ Step 6: Translate the loyalty points message with plural values
+ Step 7: Deploy the UI extension
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

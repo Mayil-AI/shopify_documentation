@@ -1,0 +1,115 @@
+Overview
+ Marketing
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ Track app usage metrics with the Partner Dashboard
+ You can find detailed information about your apps' revenue, installations, and reviews on the Apps page in your Partner Dashboard. From there, you can see at a glance how each of your apps is performing, how merchants are using your apps, and how much revenue your apps have generated.
+ View app analytics
+ Analytics for each app appear on its Overview page in your Partner Dashboard.
+ For data that includes a percentage change, the change compares data for the date range shown in the dashboard with the cumulative data prior to the start of that date range.
+ For example, when you look at the number of app installs for the last 90 days, the percentage change compares the number of installs during the past 90 days to the total number of installs from the day that your app was created up to the start of that 90-day period. If your app was installed 1000 times during its first year, and then was installed 100 times during the following 90 days, then the percentage change for that 90-day period would be 10% (100/1000).
+ To view analytics for an app:
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of the app whose details you want to view. You'll see a range of metrics on its Overview page:
+ By default, the dashboard shows data for the last 30 days. If you want to see data for a different date range, then select one from the date picker. To learn more about the metrics that appear on this page, see App metric definitions.
+ If you want to export your data to a CSV file, then click Export and select the data to export:
+ Current merchants
+ Earnings
+ History
+ Note
+ The data that appears on the app’s Overview page reflects a delay of up to 10 minutes. You can refresh your browser page to show the most recent available data.
+ App metric definitions
+ The following table includes definitions for the metrics that appear on the Overview page:
+ Total earnings to date The sum of an app's pending payments and payments received.
+ Merchants with your app The total number of active stores with the app installed. Active stores include any stores currently on a paid or trial plan, staff stores, and development stores. This number excludes stores that are canceled or frozen.
+ Merchant growth The cumulative number of active stores with the app installed over the selected date range.
+ Installs The total number of installs over the selected date range. An install occurs after a merchant approves the permissions shown on the OAuth grant screen. This number excludes stores that are canceled or frozen.
+ Uninstalls The total number of uninstalls over the selected date range. An uninstall occurs after a merchant has removed an app from their store.
+ Time to uninstall
+ The number of stores that have uninstalled an app over the selected date range. Time periods are:
+ Same day as install
+ 1-14 days from install
+ 15-90 days from install
+ 91+ days from install
+ Re-opened stores The number of previously closed stores that have been activated again. All apps that were installed prior to closing are considered to be active again when the store is re-opened.
+ Closed stores The number of stores that have closed (the merchant is no longer an active Shopify customer) with your app installed at the time of closing. This number includes stores that are canceled or frozen.
+ Earnings
+ The sum of the app's pending and previous payouts, minus any application credits that have been deducted, for the selected date range. The amount doesn't include any payments from merchants who have yet to pay an outstanding balance to Shopify. To learn more about how earnings are calculated, see Earnings.
+ Application credits will be subtracted from this amount for any payments.
+ Payouts you received The amount you have received from Shopify after fees and adjustments have been deducted.
+ Next payout The amount that you will receive for your next payout from Shopify.
+ Pending payment The total of all payments that Shopify has collected, before credits.
+ One-time charges The sum of an app's earnings through the ApplicationCharge API. It includes all pending and previous payments made through the API.
+ Recurring application charges The sum of an app's earnings through the RecurringApplicationCharge API. It includes all pending and previous payments made through the RecurringApplicationCharge API, but excludes payments made through the UsageCharge API.
+ Usage charges The sum of an app's earnings through the UsageCharge API. It includes all pending and previous payments made through the API.
+ Application credits The sum of an app's earnings through the ApplicationCredit API. Application credits should always be negative.
+ Average rating The average of all the app's merchant ratings from the Shopify App Store.
+ Note
+ The data in the dashboard might vary slightly from the data gathered by other reporting tools and services. For information on why the data can vary, see Report discrepancies.
+ Earnings
+ The earnings amount refers to how much an app developer has been paid. It includes both paid out amounts and pending payments, and it reflects the deduction of Shopify's revenue share and any application credits. Your share of the revenue is defined in the Shopify Partner revenue share agreement.
+ Payments occur after a merchant has paid their Shopify invoice. The payment schedule depends on the type of charges made by the app:
+ For a RecurringApplicationCharge, it can take up to 37 days from the time a merchant agrees to the charge to the time that the charge appears as an earning in your Partner Dashboard.
+ For an ApplicationCharge, merchants are invoiced immediately and the charge will appear as an earning in your Partner Dashboard within 7 days.
+ App history
+ Important user interactions with your app are tracked as events, which you can view in the app history log in your Partner Dashboard. The app history log displays all the tracked events for your app, with the most recent events appearing at the top. The following events are available:
+ Application charge events
+ Application credit events
+ Application install events
+ Recurring charge events
+ Usage charge events
+ View app history
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ In the sidebar, click Insights > App history.
+ Application charge events
+ The following table includes definitions of application charge events:
+ Charge accepted The ApplicationCharge has been accepted by the merchant but not activated by the developer.
+ Charge activated The ApplicationCharge has been activated by the app developer and will appear on the merchant's next invoice.
+ Charge declined The ApplicationCharge has been declined by the merchant.
+ Charge expired The merchant has taken no action 48 hours after being presented with an ApplicationCharge (for example, the merchant has not accepted or declined the charge).
+ Application credit events
+ The following table includes definitions of application credit events:
+ Credit applied The ApplicationCredit has been added to the store. Funds are deducted from the app developer's upcoming payment.
+ Credit failed
+ The ApplicationCredit was not added. Reasons why a credit could not be added include:
+ ApplicationCredit amount exceeds the amount paid from the store owner to the app developer in the last 30 days
+ App developer does not have available funds to credit the store (pending receivables is less than credit amount)
+ Credit pending The ApplicationCredit has been created but it has either failed or not yet been applied.
+ Application install events
+ The following table includes definitions of application install events:
+ Installed The app was installed on the store. An install occurs after a merchant approves the permissions shown on the OAuth grant screen.
+ Uninstalled The app was uninstalled from the store. An uninstall occurs after a merchant has removed an app from their store.
+ Recurring charge events
+ The following table includes definitions of recurring charge events:
+ Recurring charge accepted The RecurringApplicationCharge has been accepted by the merchant but not activated by the developer.
+ Recurring charge activated The RecurringApplicationCharge has been activated by the app developer and will appear on the merchant's next invoice.
+ Recurring charge canceled
+ The merchant has canceled the existing RecurringApplicationCharge. Examples of a canceled charge event include:
+ merchant has uninstalled the app
+ merchant has changed app plan type
+ merchant no longer wants to pay for the app
+ Recurring charge declined The RecurringApplicationCharge has been declined by the merchant.
+ Recurring charge expired The merchant has taken no action 48 hours after being presented with an RecurringApplicationCharge (for example, the merchant has not accepted or declined the charge).
+ Recurring charge frozen
+ The RecurringApplicationCharge has been suspended. Future payments for the app are on hold until the charge is unfrozen. Examples of a frozen charge event include:
+ merchant no longer has an active Shopify subscription
+ Recurring charge unfrozen
+ The RecurringApplicationCharge has been reactivated. A new billing cycle will commence on the day the RecurringApplicationCharge is unfrozen. Examples of an unfrozen charge event include:
+ merchant has resumed an active Shopify subscription
+ Usage charge events
+ The following table includes definitions of usage charge events:
+ Usage charge applied After a merchant has agreed to a UsageCharge, a UsageCharge is applied after the charge is created.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ View app analytics
+ App metric definitions
+ Earnings
+ App history
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

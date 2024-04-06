@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CompanyContact object
+ 2024-04 latest
+ A company's main point of contact.
+ On this page
+ Fields
+ Types that return CompanyContact
+ Fields
+ createdAt (DateTime!)
+ The date and time (ISO 8601 format) at which the company contact was created in Shopify.
+ id (ID!)
+ The ID of the company.
+ locale (String)
+ The company contact's locale (language).
+ title (String)
+ The company contact's job title.
+ updatedAt (DateTime!)
+ The date and time (ISO 8601 format) at which the company contact was last modified.
+ Types that return CompanyContact
+ PurchasingCompany.contact
+ Was this page helpful?
+ YesNo
+ Updates & News

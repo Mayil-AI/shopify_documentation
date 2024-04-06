@@ -1,0 +1,230 @@
+Product subscription app extensions
+ Advanced concepts
+ Learn how to optimize your GraphQL implementation further by using inline fragments and building multi-query requests.
+ Inline fragments
+ Inline fragments enhance query flexibility and reusability by enabling type-specific transformations and conditional inclusion of fields. Inline fragments use the ... on <TYPE> syntax.
+ For example, you can use the node field on the GraphQL Admin API QueryRoot object to request specific objects by their ID. The object is returned as a generic node object, which doesn't let you request any information other than the ID.
+ If you use an inline fragment, then you can ask for more specific data to return when the node is of a specific type. This is especially useful on nodes that don't have an easy access point through the QueryRoot object, such as a single LineItem object.
+ You can specify multiple inline fragments, which enables you to build conditionals in your request that enable you to request different return fields based on the node type. This is useful for selections that can return many different types of fields, such as the nodes connection on the GraphQL Admin API's QueryRoot object, which accepts an array of IDs and can return any number of different node types.
+ Example
+ The following example uses all the concepts covered so far to find where a line item is stocked so that it can be fulfilled from that location. The query uses the node field on the QueryRoot object and provides the line item's ID.
+ Tip
+ You can obtain a line item ID by querying the orders connection on the QueryRoot and using the lineItem connection to return a list of line item IDs.
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query getLineItemLocationId($id: ID!) {
+ 2
+    node(id: $id) {
+ 3
+      ... on LineItem {
+ 4
+        id
+ 5
+        variant {
+ 6
+          inventoryItem {
+ 7
+            inventoryLevels(first: 1) {
+ 8
+              nodes {
+ 9
+                location {
+ 10
+                  id
+ 11
+                  name
+ 12
+                }
+ 13
+              }
+ 14
+            }
+ 15
+          }
+ 16
+        }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/LineItem/3111147110422"
+ 3 }
+      "node": {
+ 4
+        "id": "gid://shopify/LineItem/3111147110422",
+ 5
+        "variant": {
+ 6
+          "inventoryItem": {
+ 7
+            "inventoryLevels": {
+ 8
+              "nodes": [
+ 9
+                {
+ 10
+                  "location": {
+ 11
+                    "id": "gid://shopify/Location/6884556842",
+ 12
+                    "name": "151 O'Connor St"
+ 13
+                  }
+ 14
+                }
+ 15
+              ]
+ 16
+            }
+ 17
+          }
+ 18
+        }
+ 19
+      }
+ 20
+    },
+ 21
+    ...
+ 22 }
+ Make multiple queries in one request
+ You can submit multiple queries or mutations in a single GraphQL request. This enables you to query the same field or run the name mutation multiple times with different arguments.
+ Note
+ Submitting multiple queries or mutations in a single request doesn't provide rate-limiting benefits, because the operation complexities are additive.
+ The syntax for submitting multiple queries has the following key elements:
+ At the beginning of the request, declare whether the operations are queries or mutations
+ Give each operation a custom alias with <your-custom-name>: <query field or mutation name> (<arguments>)
+ The operations don't have to be the same
+ Each operation must select the fields that it wants to return
+ Example
+ The following example uses multiple customerUpdate mutations to set three different tags on three different customers in a single request:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    VipGold: customerUpdate(
+ 3
+      input: {
+ 4
+        id: "gid://shopify/Customer/1322001989654",
+ 5
+        tags: ["Gold"]
+ 6
+      }
+ 7
+    )
+ 8
+    {
+ 9
+      customer {
+ 10
+        tags
+ 11
+      }
+ 12
+    }
+ 13
+    VipPlatinum: customerUpdate(
+ 14
+      input: {
+ 15
+        id: "gid://shopify/Customer/774173917206",
+ 16
+        tags: ["Platinum"]
+ 17
+      }
+ 18
+    )
+ 19
+    {
+ 20
+      customer {
+ 21
+        tags
+ 22
+      }
+ 23
+    }
+ 24
+    VipDiamond: customerUpdate(
+ 25
+      input: {
+ 26
+        id: "gid://shopify/Customer/773091000342",
+ 27
+        tags: ["Diamond"]
+ 28
+      }
+ 29
+    )
+ 30
+    {
+ 31
+      customer {
+ 32
+        tags
+ 33
+      }
+ 34
+    }
+ 35 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "VipGold": {
+ 4
+        "customer": {
+ 5
+          "tags": [
+ 6
+            "Gold"
+ 7
+          ]
+ 8
+        }
+ 9
+      },
+ 10
+      "VipPlatinum": {
+ 11
+        "customer": {
+ 12
+          "tags": [
+ 13
+            "Platinum"
+ 14
+          ]
+ 15
+        }
+ 16
+      },
+ 17
+      "VipDiamond": {
+ 18
+        "customer": {
+ 19
+          "tags": [
+ 20
+            "Diamond"
+ 21
+          ]
+ 22
+        }
+ 23
+      }
+ 24
+    },
+ 25
+    ...
+ 26 }
+ Next steps
+ Learn more ways to optimize your requests.
+ Explore additional guides to learn more about GraphQL at Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Inline fragments
+ Make multiple queries in one request
+ Example
+ Next steps

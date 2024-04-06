@@ -1,0 +1,245 @@
+Product description
+ Cart and checkout
+ Overview
+ Marketplace-level cart
+ Cart pages
+ Onboard merchants
+ Post checkout
+ Adding marketplace-level carts to product pages
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You've created a marketplace with buyer-facing pages that include product descriptions and a Buy Now button that redirects users to a merchant's online store for checkout. However, if buyers see something they want, they need to leave the marketplace to purchase the product individually. You want to remove that friction and enable buyers to select items for purchase while continuing to browse the marketplace.
+ In this tutorial, you'll start adding cart functionality that supports storing items from different shops. You'll add an ADD TO CART button to product description pages. You'll also create an icon for a marketplace-level cart with a badge showing the total number of items in the cart. You'll build a multi-merchant cart page in a subsequent tutorial.
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Create a cart object for a merchant using the cartCreate mutation
+ Add line items to a cart using the cartLinesAdd mutation
+ Create and manage multi-shop carts using local storage
+ Add a cart icon to the marketplace with a badge displaying the number of items in the cart
+ Requirements
+ You've completed the product description tutorials.
+ Step 1: Create helpers and mutations
+ In this step, you'll add helper functions to call the mutations for creating the cart and adding line items to it. You'll add logic to locally store the cart IDs associated with each shop that a buyer selects an item from. You'll add a function for creating a cart and opening a new tab to checkout, and you'll add logic to get and store the number of items in the cart.
+ At your project root, create a helpers folder and add a cartHelpers.js file.
+ In helpers/cartHelpers.js, add the following code.
+ When the checkout is created, the code passes in a countryCode to ensure a consistent currency across all carts that are created. Otherwise, the cart currency would be in the shop's default currency, which might not align across shops.
+ helpers/cartHelpers.js
+ 1 import { gql } from "apollo-boost";
+ 2
+ 3 const CART_CREATE_MUTATION = gql`
+ 4
+   mutation cartCreate($input: CartInput) {
+ 5
+     cartCreate(input: $input) {
+ 6
+       cart {
+ 7
+         id
+ 8
+       }
+ 9
+       userErrors {
+ 10
+         code
+ 11
+         field
+ 12
+         message
+ 13
+       }
+ 14
+     }
+ 15
+   }
+ 16 `;
+ 17
+ 18 const CART_LINES_ADD_MUTATION = gql`
+ 19
+   mutation cartLinesAdd($lines: [CartLineInput!]!, $cartId: ID!) {
+ 20
+     cartLinesAdd(lines: $lines, cartId: $cartId) {
+ 21
+       cart {
+ 22
+         id
+ 23
+       }
+ 24
+       userErrors {
+ 25
+         code
+ 26
+         field
+ 27
+         message
+ 28
+       }
+ 29
+     }
+ 30
+   }
+ 31 `
+ 32
+ 33 const CART_COUNT = 'cartCount';
+ 34 const CARTS = 'carts';
+ 35
+ 36 export const getCartCount = () => {
+ 37
+    return JSON.parse(window.localStorage.getItem(CART_COUNT));
+ 38 }
+ 39
+ 40 export const setCartCount = (amount) => {
+ 41
+    window.localStorage.setItem(CART_COUNT, JSON.stringify(amount));
+ 42
+    window.dispatchEvent(new Event("storage"));
+ 43 };
+ 44
+ 45 const increaseCartCount = () => {
+ 46
+    let currentCount = JSON.parse(getCartCount());
+ 47
+    if (!currentCount) currentCount = 0;
+ 48
+    setCartCount(currentCount + 1);
+ 49 }
+ 50
+ 51 export const getCarts = () => {
+ 52
+    const carts =  JSON.parse(window.localStorage.getItem(CARTS));
+ 53
+ 54
+    if (!carts) {
+ 55
+    window.localStorage.setItem(CARTS, JSON.stringify({}));
+ 56
+    return {};
+ 57
+    }
+ 58
+ 59
+    return carts;
+ 60 }
+ 61
+ 62 const setCartIdForShop = (cartId, shopDomain) => {
+ 63
+    const currentCarts = getCarts();
+ 64
+    window.localStorage.setItem(CARTS, JSON.stringify({
+ 65
+      ...currentCarts,
+ 66
+      [shopDomain]: cartId,
+ 67
+    }));
+ 68 }
+ 69
+ 70 const createNewCart = async (variantId, shopDomain, shopClient) => {
+ 71
+    const mutationData = {
+ 72
+      input: {
+ 73
+        lines: [
+ 74
+          {
+ 75
+            merchandiseId: variantId,
+ 76
+            quantity: 1,
+ 77
+          },
+ 78
+        ],
+ 79
+        buyerIdentity: {
+ 80
+          countryCode: "CA",
+ 81
+        },
+ 82
+      }
+ 83
+    };
+ 84
+ 85
+    const { data } = await shopClient.mutate({
+ 86
+      mutation: CART_CREATE_MUTATION,
+ 87
+      variables: mutationData,
+ 88
+    });
+ 89
+ 90
+    setCartIdForShop(data.cartCreate.cart.id, shopDomain);
+ 91
+    return data;
+ 92 }
+ 93
+ 94 const addToExistingCart = async (cartId, variantId, shopClient) => {
+ 95
+    const mutationData = {
+ 96
+      lines: [
+ 97
+        {
+ 98
+        merchandiseId: variantId,
+ 99
+        },
+ 100
+      ],
+ 101
+      cartId: cartId,
+ 102
+    };
+ 103
+ 104
+    const { data } = await shopClient.mutate({
+ 105
+      mutation: CART_LINES_ADD_MUTATION,
+ 106
+      variables: mutationData,
+ 107
+    });
+ 108
+ 109
+    increaseCartCount();
+ 110 }
+ 111
+ 112 export const addToCart = async(variantId, shopDomain, shopClient) => {
+ 113
+    const carts = getCarts();
+ 114
+ 115
+    if (!carts[shopDomain]) {
+ 116
+      createNewCart(variantId, shopDomain, shopClient);
+ 117
+      increaseCartCount();
+ 118
+      return;
+ 119
+    }
+ 120
+    addToExistingCart(carts[shopDomain], variantId, shopClient);
+ 121 }
+ Step 2: Create the cart, icon, and badge
+ You can build a cart, with a cart icon and a badge displaying the number of items in the cart. The following is an example:
+ Your shop page might now look something the following:
+ Step 3: Add the ADD TO CART button
+ Add an ADD TO CART button using the helper functions that you created in cartHelpers.js.
+ Your product page might now look something the following:
+ Next steps
+ Learn how to create multi-shop cart pages to display the items in the cart and the estimated cost associated with the cart.
+ Share feedback on Marketplace Kit.
+ Step 1: Create helpers and mutations
+ Step 2: Create the cart, icon, and badge
+ Step 3: Add the ADD TO CART button
+ Next steps
+ Updates & News

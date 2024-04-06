@@ -1,0 +1,45 @@
+Apps
+ Overview
+ Getting started
+ Overview
+ Create an app
+ Build an app
+ App surfaces
+ Developer tools
+ Best practices
+ Design guidelines
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Apps overview
+ Before you start planning and developing your app, it’s important to understand what Shopify apps do and how they fit into Shopify.
+ What's a Shopify app?
+ A Shopify app extends the existing functionality of Shopify. Most Shopify apps are built by third-party developers, not by Shopify.
+ You can build an app to add features to Shopify stores and extend the Shopify admin experience, or to create unique buying experiences for customers. You can also pull Shopify store data into your app, platform, or integration.
+ To tailor experiences to their specific needs, users install Shopify apps to help build their business, integrate with external services, and add features to their Shopify admin.
+ How apps fit into Shopify
+ Apps integrate with Shopify in the following ways:
+ connecting with Shopify APIs to read and write store data, in response to either user input or webhook event notifications
+ extending new features inside existing parts of the Shopify admin or Shopify Point of Sale (POS)
+ enhancing the way that stores display information to customers
+ Start building your app
+ You can use Shopify CLI to quickly create a new app using one of our app templates.
+ Create an app
+ Learn how to set up your app development environment and start building.
+ Build an app
+ After creating your app, follow this in-depth tutorial to learn how to add features to your app using Shopify templates, tools, and libraries.
+ Work on an existing app
+ Learn how to set up your development environment to collaborate on an app with others.
+ Next steps
+ Learn about the different methods of authenticating and authorizing apps with Shopify’s platform.
+ Use webhooks to stay in sync with Shopify or execute code after a specific event occurs in a shop.
+ Learn how to use metafields to share additional information about Shopify resources with your app.
+ Learn about the structure of an app built with Shopify CLI.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What's a Shopify app?
+ How apps fit into Shopify
+ Start building your app
+ Next steps

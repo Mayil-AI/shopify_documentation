@@ -1,0 +1,120 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ 2024-04 release notes
+ The API version release date and the date that the version is no longer supported
+ Release date Date version is no longer supported
+ April 1, 2024 April 1, 2025
+ What's new in 2024-04
+ The 2024-04 version of Shopify's APIs includes the following highlights:
+ Storefront API
+ Storefront API Checkout mutations, queries, and types, as well as the REST Admin API Checkout resource are deprecated and will be sunset on April 1, 2025. Instead, you can build custom experiences on Web and Mobile with the Cart API and Checkout Sheet.
+ Before version 2024-04 is released, we'll release a guide to help you migrate your apps, additional functionality to cover existing use cases, and more. Future functionality includes gift card support, dynamic shipping, and wallet support for headless experiences and mobile apps.
+ GraphQL Admin API
+ The GraphQL Admin API now includes new product types that support up to 2000 variants, increasing per-product variant support from our historical maximum of 100. As part of these changes, GraphQL types and REST resources for managing product variants and options are deprecated.
+ All public apps that are built on existing GraphQL product APIs or REST product APIs must migrate to the new GraphQL product APIs by February 1, 2025.
+ Custom apps that are built using the existing GraphQL product APIs must migrate to the new GraphQL product APIs by April 1, 2025.
+ Custom apps that are built on REST will also need to migrate if they need to support more than 100 variants.
+ Custom apps that don't need to support more than 100 variants can continue to use the deprecated REST product APIs. However, please note the following:
+ Developers should expect that the GraphQL API will be the only supported API over the long term and will be made aware of these timelines as they become available.
+ The deprecated REST product APIs are in maintenance mode. All new features and support will be built only for the new GraphQL product APIs.
+ Any merchant using custom apps that are built with these deprecated APIs will not be able to increase their variant limit past 100.
+ Breaking changes
+ These changes require special attention. If your app uses these API resources, and you don’t adjust your usage of the resources according to the following instructions, then your app might break when you update to this API version.
+ Count field unification
+ Fields that returned a count of resources are removed and replaced with new count fields that have consistent API design and improved features. Count fields are now standalone fields with a common naming pattern and their own arguments instead of being a field under a connection type.
+ Inventory mutations and fields removal
+ The following fields and mutations are removed:
+ InventoryLevel.available
+ InventoryLevel.incoming
+ InventoryLevel.deactivationAlertHtml
+ Mutation.InventoryAdjustQuantity
+ Mutation.InventoryBulkAdjustQuantityAtLocation
+ Replace InventoryLevel.available and InventoryLevel.incoming with InventoryLevel.quantities.
+ Replace InventoryLevel.deactivationAlertHtml with InventoryLevel.deactivationAlert.
+ Replace Mutation.InventoryAdjustQuantity and Mutation.InventoryBulkAdjustQuantityAtLocation with Mutation.AdjustQuantities or Mutation.MoveQuantities.
+ Locale fields on MarketWebPresence
+ The following fields on the MarketWebPresence object no longer return locale strings and instead make use of the ShopLocale type:
+ defaultLocale
+ alternateLocales
+ Update your API calls using MarketWebPresence.defaultLocale or MarketWebPresence.alternateLocales to use the ShopLocale type.
+ New create fulfillment request validation
+ As of the GraphQL and REST Admin API versions 2024-04, you can't have multiples of the same fulfillment_order_id within the following:
+ line_items_by_fulfillment_order parameter, for POST calls to the REST Admin API to create a fulfillment for one or many fulfillment orders.
+ The GraphQL Admin API's fulfillmentCreateV2 mutation.
+ Instead, you must combine any payload with the same fulfillment_order_id into one group.
+ OrderTransaction.receipt deprecation
+ The OrderTransaction.receipt field has been removed, and is replaced by receiptJson.
+ Payment and billing error codes and mapping
+ Payment error codes and mappings have changed. For detailed information on the changes, refer to the changelog.
+ Sunset of productDuplicateAsync mutation, GraphQL Admin API
+ We've removed the productDuplicateAsync mutation, which has been deprecated since version 2023-07, from the GraphQL Admin API.
+ Use the productDuplicateAsyncV2 mutation instead.
+ Customer Account API
+ The following changes will be introduced in the 2024-04 version of the Customer Account API.
+ Company and CompanyLocation metafields
+ GraphQL Admin API changes
+ The following changes will be introduced in the 2024-04 version of the GraphQL Admin API.
+ Additional information for delivery methods
+ Charge custom amounts
+ Checkout header and footer customization
+ Checkout section styling
+ Checkout color schemes
+ Code-based discounts on line items
+ Count field unification
+ Create options linked to metafields
+ Customer redaction support
+ Customer subscription contracts
+ Custom storefront attribution for abandonment events
+ Error codes for creating product media
+ Fulfillment service opt-in deprecation
+ Google Cloud Pub/Sub webhook duplicate error handling
+ Inventory management when updating fulfillment services
+ Inventory mutations and fields removal
+ Locale fields return
+ Media type query for product connection
+ Metafield capability violation error code
+ New fulfillment order assignment status
+ New fulfillment order search options
+ New fulfillment order sort key
+ New inventory item fields and product variant deprecations
+ Order payment status transaction
+ Order risk deprecation
+ Payment and error code mapping
+ Product model and components changes
+ Product taxonomy
+ Receipt field removal
+ Return sales and exchange APIs
+ Shipping lines on order editing
+ Shipping line price with currency
+ Transaction details on voided transactions
+ REST Admin API changes
+ The following changes will be introduced in the 2024-04 version of the REST Admin API:
+ Checkout deprecation
+ Fulfillment service opt-in deprecation
+ Product model and components changes
+ Order risk deprecation
+ Shipping lines on order editing
+ Shopify Function APIs changes
+ The following are all the changes currently introduced in the 2024-04 version of Shopify Function APIs.
+ Cart transform API set line properties
+ Fulfillment request validation
+ Sunset product duplicate async mutation
+ Storefront API changes
+ The following changes will be introduced in the 2024-04 version of the Storefront API:
+ Address validation in cart
+ Checkout deprecations
+ Delivery group types
+ Fulfillment request validation
+ Metafields model 3D reference type
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What's new in 2024-04
+ Breaking changes
+ Customer Account API
+ GraphQL Admin API changes
+ REST Admin API changes
+ Shopify Function APIs changes
+ Storefront API changes
+ Updates & News
+ Developer changelog

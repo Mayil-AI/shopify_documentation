@@ -1,0 +1,15 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ TimePicker
+ A component used to select a time through a dialog.
+ Props
+ Name Type Description Options
+ selected string? The selected time. Defaults to the current time.
+ onChange (string): void? A callback for changes.
+ visibleState [boolean, (boolean) => void] A Boolean to control the visible state, and a callback to set the visible state as false when the dialog closes.
+ inputMode string? Whether to display the picker in inline (clock) mode or spinner mode. Defaults to inline. iOS doesn't support inline. inline | spinner
+ is24Hour boolean? (Android only) Whether the clock displays in 24 hour time instead of 12 hour time. Defaults to false.
+ Guidelines
+ Use a smart default time for common selections.

@@ -1,0 +1,10 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ ScrollView
+ The ScrollView component allows content that doesn’t fully fit on screen to scroll. Typically, the ScrollView component serves as the root component of a Screen.
+ Guidelines
+ The ScrollView component applies a mandatory horizontal margin to inset the content according to our design guidelines. This is the equivalent of applying paddingHorizontal="ExtraExtraLarge" on a Stack component. If you have content outside of your ScrollView that needs to be inset to align with the content of your ScrollView, you can wrap this content in a Stack component and applying a paddingHorizontal of ExtraExtraLarge
+ Was this page helpful?
+ YesNo

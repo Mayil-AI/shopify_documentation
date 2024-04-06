@@ -1,0 +1,25 @@
+Unidirectional Product Synchronization
+ Some apps will need to maintain their own copy of product data. Shopify provides several tools to make this possible.
+ Webhooks
+ Subscribe to webhooks to be notified of product changes. The webhook payload will include the updated product data.
+ The products/* webhook topics send notifications for all products. The product_listings/* webhook topics only send notifications for products that are published to a channel app. For a complete list of webhook topics, refer to the GraphQL Admin API and REST Admin API webhook pages.
+ Product Feeds
+ A common use case for using Product Feed webhooks is for creating external copies of all products that are published to your sales channel. Product Feed webhooks are similar to the product_listings/* webhooks in that they will only send notifications for products that are published to a channel app, but Product Feed payloads are formatted for a specific country and language. You can also initiate a "full sync", which will cause a webhook notification to be sent for every published product.
+ To use Product Feed webhooks, you must first create a ProductFeed using the productFeedCreate mutation and provide the country and language that should be used to format the payload.
+ Next, subscribe to the following Product Feed webhook topics:
+ product_feeds/incremental_sync - includes notifications for new products, product changes, and deleted products, and notifications are sent as those changes occur
+ product_feeds/full_sync - includes notifications that are part of a full sync
+ Finally, start a full sync with the productFullSync mutation. The payload for full sync notifications is the same as the payload for new products on the incremental_sync topic.
+ APIs
+ While webhooks push data to subscribers as changes occur, it's also possible to pull data on demand using Shopify's API's. The Admin API is useful for building integrations that interact with a store's back end, while the Storefront API provides data more suited for buyer-facing integrations.
+ Note
+ It's important to consider rate limits when choosing an API. Also, make sure you have the correct access scopes. The Admin API requires the read_product_listings scope, and the Storefront API requies the unauthenticated_read_product_listings
+ Bulk Operations
+ You can also use a bulk operation query to download a complete copy of product data.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Webhooks
+ APIs
+ Bulk Operations
+ Updates & News

@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ HttpRequest object
+ 2024-04 latest
+ The attributes associated with an HTTP request.
+ Fields
+ body (String)
+ The HTTP body.
+ headers ([HttpRequestHeader!]!) required
+ The HTTP headers.
+ method (HttpRequestMethod!) required
+ The HTTP method.
+ policy (HttpRequestPolicy!) required
+ Policy attached to the HTTP request.
+ url (URL!) required
+ The HTTP url (eg.: https://example.com). The scheme needs to be HTTPS.
+ Was this page helpful?
+ YesNo
+ Updates & News

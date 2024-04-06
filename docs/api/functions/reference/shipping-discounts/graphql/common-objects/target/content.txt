@@ -1,0 +1,70 @@
+Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ DeliveryGroupTarget
+ DeliveryOptionTarget
+ Discount
+ DiscountNode
+ FixedAmount
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ Localization
+ LocalTime
+ MailingAddress
+ Market
+ MarketRegionCountry
+ Metafield
+ MoneyV2
+ Percentage
+ Product
+ ProductVariant
+ PurchasingCompany
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ Shop
+ Target
+ Value
+ INTERFACES
+ HasGates
+ HasMetafields
+ MarketRegion
+ ENUMS
+ CountryCode
+ CurrencyCode
+ DeliveryMethod
+ DiscountApplicationStrategy
+ LanguageCode
+ Product subscription app extensions
+ Target object
+ 2024-04 latest
+ The target of the discount.
+ Fields
+ deliveryGroup (DeliveryGroupTarget)
+ The target delivery group.
+ deliveryOption (DeliveryOptionTarget)
+ The target delivery option.
+ Was this page helpful?

@@ -1,0 +1,285 @@
+Delivery and shipping
+ Product offers
+ Payments
+ Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ UX guidelines
+ Thank you and Order status
+ Localized UI extensions
+ Getting started with building payment customizations
+ You can use payment customizations to hide, reorder, and rename the payment options that are available to buyers during checkout. In this tutorial, you'll use Shopify Functions to hide a payment option offered to customers at checkout, based on the total value of their cart.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Generate starter code for Shopify Functions.
+ Use GraphQL to define the input of your function.
+ Deploy functions to the Shopify platform.
+ Review logs for your function.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Create the payment customization function
+ To create your payment customization function, you can use Shopify CLI to generate a starter function, specify the inputs for your function using an input query, and implement your function logic using JavaScript or Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new payment customization extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template payment_customization --name payment-customization
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ $
+    (3) Rust
+ $
+    (4) Wasm
+ Navigate to extensions/payment-customization:
+ Terminal
+ $ cd extensions/payment-customization
+ Replace the contents of src/run.graphql file with the following code.
+ run.graphql defines the input for the function. You need the cart total and the available checkout payment methods.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      cost {
+ 4
+        totalAmount {
+ 5
+          amount
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9
+    paymentMethods {
+ 10
+      id
+ 11
+      name
+ 12
+    }
+ 13 }
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ This function logic will hide a payment method with a name containing Cash on Delivery when the cart total purchase amount is above 100.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 // Use JSDoc annotations for type safety
+ 4 /**
+ 5 * @typedef {import("../generated/api").RunInput} RunInput
+ 6 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 7 */
+ 8
+ 9 /**
+ 10 * @type {FunctionRunResult}
+ 11 */
+ 12 const NO_CHANGES = {
+ 13
+    operations: [],
+ 14 };
+ 15
+ 16 // The configured entrypoint for the 'purchase.payment-customization.run' extension target
+ 17 /**
+ 18 * @param {RunInput} input
+ 19 * @returns {FunctionRunResult}
+ 20 */
+ 21 export function run(input) {
+ 22
+    // Get the cart total from the function input, and return early if it's below 100
+ 23
+    const cartTotal = parseFloat(input.cart.cost.totalAmount.amount ?? "0.0");
+ 24
+    if (cartTotal < 100) {
+ 25
+      // You can use STDERR for debug logs in your function
+ 26
+      console.error("Cart total is not high enough, no need to hide the payment method.");
+ 27
+      return NO_CHANGES;
+ 28
+    }
+ 29
+ 30
+    // Find the payment method to hide
+ 31
+    const hidePaymentMethod = input.paymentMethods
+ 32
+      .find(method => method.name.includes("Cash on Delivery"));
+ 33
+ 34
+    if (!hidePaymentMethod) {
+ 35
+      return NO_CHANGES;
+ 36
+    }
+ 37
+ 38
+    // The @shopify/shopify_function package applies JSON.stringify() to your function result
+ 39
+    // and writes it to STDOUT
+ 40
+    return {
+ 41
+      operations: [{
+ 42
+        hide: {
+ 43
+          paymentMethodId: hidePaymentMethod.id
+ 44
+        }
+ 45
+      }]
+ 46
+    };
+ 47 };
+ Tip
+ If you're selling to multiple markets, then you might need to update this logic to include conversion to the store's default currency. Refer to function development practices for money for more information.
+ Step 2: Preview the function on a development store
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 3: Create the payment customization with GraphiQL
+ To activate your function, you must create a payment customization on the store where you installed your app. You can do this using the paymentCustomizationCreate GraphQL mutation.
+ In subsequent tutorials, you'll use metafields on this payment customization to configure your function, and create a user interface so merchants can configure the function themselves.
+ Install the Shopify GraphiQL app on your store. If you've already installed GraphiQL, then you should do so again to select the necessary access scopes for payment customizations.
+ Note
+ Make sure to select the read_payment_customizations and write_payment_customizations access scopes for the Admin API.
+ In the GraphiQL app, in the API Version field, select the 2023-07 version.
+ Find the ID of your function by executing the following query:
+ find-function-query.graphql
+ 1 query {
+ 2
+    shopifyFunctions(first: 25) {
+ 3
+      nodes {
+ 4
+        app {
+ 5
+          title
+ 6
+        }
+ 7
+        apiType
+ 8
+        title
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ The result contains a node with your function's ID:
+ find-function-result.json
+ 1 {
+ 2
+    "app": {
+ 3
+      "title": "your-app-name-here"
+ 4
+    },
+ 5
+    "apiType": "payment_customization",
+ 6
+    "title": "payment-customization",
+ 7
+    "id": "YOUR_FUNCTION_ID_HERE"
+ 8 }
+ Execute the following mutation and replace YOUR_FUNCTION_ID_HERE with the ID of your function:
+ mutation.graphql
+ 1 mutation {
+ 2
+    paymentCustomizationCreate(paymentCustomization: {
+ 3
+      title: "Hide payment method by cart total",
+ 4
+      enabled: true,
+ 5
+      functionId: "YOUR_FUNCTION_ID_HERE",
+ 6
+    }) {
+ 7
+      paymentCustomization {
+ 8
+        id
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ You should receive a GraphQL response that includes the ID of the created payment customization. If the response includes any messages under userErrors, then review the errors, check that your mutation and functionId are correct, and try the request again.
+ Tip
+ If you receive a Could not find Function error, then confirm the following:
+ The function ID is correct.
+ You've installed the app on your development store.
+ Development store preview is enabled.
+ Step 4: Test the payment customization
+ From the Shopify admin, go to Settings > Payments.
+ Check the Payment customizations section. You should find the Hide payment method by cart total payment customization that you created with GraphiQL.
+ From the Manual payment methods section, click Add manual payment method and then click Cash on Delivery (COD).
+ Click Activate.
+ Open your development store and build a cart with a total (including shipping and tax) under 100. The Cash on Delivery payment method should display in checkout.
+ Add additional items to your cart to raise the total over 100. Your payment function should now hide the Cash on Delivery payment option.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > payment-customization.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Add configuration to your payment customization using metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the payment customization function
+ Step 2: Preview the function on a development store
+ Step 3: Create the payment customization with GraphiQL
+ Step 4: Test the payment customization

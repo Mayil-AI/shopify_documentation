@@ -1,0 +1,35 @@
+Overview
+ Getting started
+ Create a subscription
+ UX guidelines
+ Overview
+ Upsell
+ Subscriptions
+ Payments
+ Thank you and Order status
+ Localized UI extensions
+ UX guidelines for post-purchase subscriptions
+ Beta
+ Post-purchase checkout extensions are in beta and can be used without restrictions in a development store. To use post-purchase extensions on a live store, you need to request access.
+ You can use the components listed in the following section in addition to the required components in the UX guidelines for post-purchase upsells to create a post-purchase subscription experience.
+ Selling plan options
+ Use the App Bridge Checkout Select component to display the selling plan options. For example, you can use the component to allow a customer to select whether they want to receive a weekly or a monthly subscription.
+ Selling plan description
+ Use the App Bridge TextBlock component to display important selling plan information to customers, such as subscription terms and selections. You can also use the Textblock component to add a subscription summary that confirms a customer's selections and shows any conditions. Adding this type of information helps build trust in the merchant's brand. Place the description directly beneath the selling plan options.
+ Buyer consent form
+ Use the BuyerConsent component to add a buyer consent form. A buyer consent form is used by the customer to acknowledge that their payment method will be stored for this subscription order and any future subscription orders of the selected product. The BuyerConsent component can be enabled or disabled by default. You must place the consent form between the money summary and offer buttons and it must only be used when adding a subscription to an offer.
+ Recurring subtotal
+ Use the App Bridge Text component to add a recurring summary line to the price breakdown. The recurring summary is used to communicate the selling plan option and recurring cost of the subscription, without taxes, shipping and discounts to the customer.
+ Next steps
+ Learn how to create and update subscriptions in a post-purchase checkout extension.
+ Explore UX guidelines for the entire checkout experience.
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Selling plan options
+ Selling plan description
+ Buyer consent form
+ Recurring subtotal

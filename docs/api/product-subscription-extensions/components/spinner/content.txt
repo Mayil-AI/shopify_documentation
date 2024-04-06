@@ -1,0 +1,30 @@
+TextField
+ Thumbnail
+ Spinner
+ Spinners are used to show merchants that your app is loading, or an action is being performed. Generally when a spinner is being used, the user shouldn't be able to interact.
+ JavaScript
+ React
+ 1 import {extend, Spinner} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const spinner = root.createComponent(Spinner);
+ 5
+    root.appendChild(spinner);
+ 6
+ 7
+    setTimeout(() => {
+ 8
+      root.removeChild(spinner);
+ 9
+    }, 2000);
+ 10
+ 11
+    root.mount();
+ 12 });
+ ✅ Do 🛑 Don't
+ Use Spinner to show that content is loading, or an action is being processed Don’t place Spinners for each loading element. Rather, Spinners should be at the top level of the section they apply to.
+ For more guidelines, refer to Polaris' Spinner best practices.
+ Was this page helpful?
+ YesNo
+ Updates & News

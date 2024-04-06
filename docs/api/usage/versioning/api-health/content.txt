@@ -1,0 +1,60 @@
+Authentication
+ Access scopes
+ Versioning
+ Overview
+ Getting updates
+ API health report
+ Global IDs
+ Rate limits
+ Search syntax
+ Response status codes
+ Idempotent requests
+ Bulk operations
+ Pagination
+ GraphQL basics
+ Admin API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ API health report
+ When a feature of a Shopify API is deprecated, you need to update your affected apps to make sure they continue to work for your app users. You can view an API health report for each of your public and custom apps. The report shows you any deprecated calls your app is making and the deadline for updating those calls in your app.
+ As well as checking the API health report, you can follow the developer changelog to make sure you're aware of any breaking changes that might affect your app. You can learn more about how to update your apps in our versioning guide.
+ View an app's health report
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ In the sidebar, click Insights > API health.
+ The API health report shows the status of the app and a list of any deprecated API calls it has made in the past 30 days. Each deprecated call in the list shows additional information about what you need to do to update your app.
+ API health statuses
+ API health status reflects any calls made with an app's access token in the last 30 days. An app can have one of the following statuses:
+ OK: The app has not made any deprecated API calls in the last 30 days.
+ Fix by (date): The app has made deprecated API calls that must be updated by a certain date. This status can appear with either a yellow or a red indicator:
+ A yellow indicator means that you have between 30 days and 9 months to update your app.
+ A red indicator means that you have less than 30 days to update your app.
+ Fix overdue: The app is making API calls to unsupported API versions and could be causing significant issues on stores that have it installed.
+ Since access tokens affect API health status, don't use an app's access tokens outside of the app. Any deprecated API calls will change an app's status. For example, your support team's Postman or Insomnia collections can cause a Fix by or Fix overdue status.
+ Caution
+ If your app is marked as Fix overdue and continues to call unsupported APIs after the deprecation date, Shopify reserves the right to take action. Actions can include delisting the app from the Shopify App Store, blocking new installations, notifying users that the app doesn’t work, or providing users with alternative app recommendations. You'll see a notice on your API health report and receive an email if your app with Fix overdue status is at risk of being delisted or having installs blocked.
+ Check the status of an updated app
+ After you update an app to remove all the deprecated calls, the app's status stays as Fix by (date) on the API health report for up to 30 days.
+ The app's status changes 30 days after the app last made a deprecated call. If the update deadline is less than 30 days away, then the app's status changes on the day after the update deadline.
+ When 30 days or the update deadline has passed, the app's status changes to OK. The time of the last deprecated call displays below the app's status indicator on the Apps page in the Partner Dashboard.
+ You can verify that your app is no longer making deprecated calls by filtering the API health report:
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the app's status indicator in the API health column.
+ Click Last day to show unsupported calls that the app has made in the last 24 hours.
+ If the report is empty, or the unsupported resources are no longer shown, then your app has been updated. The app's status will change to OK automatically after 30 days.
+ Note
+ If your app isn’t affected by the deprecated changes listed in your API health report, then you should still update your app to the specified API version in the API health report or later for all calls.
+ Fixing webhook deprecations
+ If you've fixed a deprecated webhook in your app, but the webhook deprecation is still shown in your API health report, then check to make sure you've manually upgraded your app’s webhook API version in the Partner Dashboard.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ View an app's health report
+ API health statuses
+ Fixing webhook deprecations
+ Updates & News
+ Developer changelog
+ Partner blog

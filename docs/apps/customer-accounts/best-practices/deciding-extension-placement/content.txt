@@ -1,0 +1,45 @@
+Deciding extension placement
+ Localizing UI extensions
+ Testing UI extensions
+ UX guidelines
+ Selling strategies
+ App Store
+ Extension placement
+ When you're deciding where to place a customer account extension, consider how the extension relates to the surrounding information on the page, and where it might fit within the existing page structure. You can place extensions on the Order status, Profile, and Order index (order action menu) pages. Explore all extension targets.
+ Tip
+ If an extension doesn’t fit into one of these pages, then consider building a full-page extension instead.
+ Order status
+ The Order status page is where customers can view, track, and manage their order. Extensions such as an order action menu extension that pertain to a specific order belong on this page.
+ To decide the most appropriate placement for extensions on the Order status page, consider the following page areas and their primary function:
+ Order status timelines: Provides updates on item delivery, pickup, or return, and information for tracking order statuses.
+ Order actions: Enables a customer to manage an order.
+ Order summary: Contains the items in an order and the cost.
+ Note
+ On mobile, the order summary is collapsed at the top of the page. This prioritizes the visibility of order actions and the order status timeline, while maintaining easy access to the order summary.
+ Order details: Contains the customer, shipping, and billing information for the order.
+ Note
+ Order action menu extensions are shared between the Order index and Order status pages, which enables customers to manage their order from either page.
+ The following image displays extension targets in the context of the Order status page's layout.
+ Profile page
+ The Profile page is where customers can view and edit their personal information. For B2B customers, this page also includes the company name, and the company location(s) that they have access to.
+ To decide the most appropriate placement for extensions on this page, consider whether your extension pertains to customer information, company information, or company location information, and choose an extension target accordingly.
+ For example, if your extension pertains to customer information, then the customer-account.profile.block.render block extension target is a good fit. The target renders in both the default and B2B experiences, and merchants can customize the placement of this extension in the checkout editor.
+ All static extensions available on this page render either on the default experience or the B2B experience.
+ Order index
+ The Order index page is where customers can view and manage all their past and current orders. The primary purpose of this page is to help customers find orders. To keep the page focused on this goal, only one block extension target, with two available placements, is available on this page. Order action menu extensions also render on this page, in both the grid view and list view.
+ Note
+ Order action menu extensions are shared between the Order index and Order status pages, which enables customers to manage their order from either page.
+ The following image displays extension targets in the context of the Order index page:
+ Next steps
+ Targets overview
+ Explore all extension targets available for placing customer account UI extensions.
+ UX guidelines
+ Explore the customer accounts UX guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Order status
+ Profile page
+ Order index
+ Next steps
+ Updates & News

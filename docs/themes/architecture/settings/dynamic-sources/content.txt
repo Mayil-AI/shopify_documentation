@@ -1,0 +1,150 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Dynamic sources
+ Settings for sections and blocks included in a JSON template have the option for merchants to connect one or more dynamic sources to the setting, depending on the setting type.
+ A dynamic source can be either:
+ A metafield value
+ A resource attribute
+ Note
+ Dynamic sources aren't available for general theme settings.
+ Available values
+ Shopify determines the value of each available dynamic source type based on the following:
+ The resource associated with the template that the section is in
+ The resource settings in the context of the current setting
+ For example:
+ How Shopify determines available values
+ Conditions Description
+ The section is included as part of the product template Metafields and attributes related to the product will be available for the following:
+ The section's settings
+ The settings for any block in the section
+ The section includes a collection type setting Metafields and attributes related to the collection will be available for the following:
+ The section's settings
+ The settings for any block in the section
+ The section's blocks include a product type setting Metafields and attributes for that product will be available for the block's settings.
+ Resources
+ The following table lists the available resources and their associated attributes:
+ Available resources and their attributes
+ Resource Attributes
+ product
+ title
+ vendor
+ collection
+ title
+ image
+ page
+ title
+ url
+ article
+ title
+ url
+ author
+ image
+ blog
+ title
+ url
+ Note
+ More resources and resource attributes will become available in the future.
+ Metafields
+ The following outlines which setting and metafield types are compatible:
+ Setting Metafield(s) Metafield validation options
+ collection
+ collection_reference
+ collection_list
+ list.collection_reference
+ color
+ color
+ image_picker
+ file_reference
+ page
+ page_reference
+ product
+ product_reference
+ product_list
+ list.product_reference
+ richtext
+ single_line_text_field
+ list.single_line_text_field
+ multi_line_text_field
+ number_integer
+ number_decimal
+ date
+ date_time
+ weight
+ volume
+ dimension
+ rating
+ money
+ inline_richtext
+ single_line_text_field
+ list.single_line_text_field
+ multi_line_text_field
+ number_integer
+ number_decimal
+ date
+ date_time
+ weight
+ volume
+ dimension
+ rating
+ money
+ text
+ single_line_text_field
+ list.single_line_text_field
+ number_integer
+ number_decimal
+ date
+ date_time
+ weight
+ volume
+ dimension
+ rating
+ money
+ url
+ url
+ video
+ file_reference
+ Must accept video file types
+ Referencing metaobject fields
+ You can use dynamic sources to connect metaobject fields to settings. The metaobject must be referenced in a metaobject_reference metafield.
+ When the user selects the metaobject_reference metafield, they're prompted to select the field that they want to display. Users can select metaobject fields in any settings that support the field's type.
+ In the case of a list.metaobject_reference, the metaobject entries attached to the resource are iterated over, and for each metaobject, the selected field's value is displayed in a list. The values are displayed as a list of the selected field's type. For example, if the selected metaobject field is of type single_line_text_field, then the values are returned as list.single_line_text_field.
+ EXAMPLE
+ A merchant has a list.metaobject_reference metafield that references a Materials metaobject. Each metaobject has a field called Material name.
+ You can assign the materials by name to the product in the Metafields section:
+ In the online store editor, any setting that supports list.single_line_text_field, such as a rich text field, can use dynamic sources to select the Material name field as a text source:
+ This outputs a list of the material names associated with the current product:
+ Default values
+ You can configure a setting's default value to reference a dynamic source. However, only do this if you're rendering a section or block in a context where the dynamic source value exists. For example, don't use a product-related value in a section that:
+ Can be rendered in non-product templates
+ Doesn't explicitly have a product type setting to provide the necessary value
+ Note
+ This also applies to setting values in presets.
+ Additional Liquid is invalid when using this method, so you can only reference the value directly. If you include additional Liquid, then you'll get an error.
+ The following is an example of a default setting that references a dynamic source:
+ 1 {
+ 2
+    "type": "text",
+ 3
+    "id": "featured_product_title",
+ 4
+    "label": "Featured product title",
+ 5
+    "default": "Featuring: {{ product.title }}"
+ 6 }
+ Limits
+ Shopify limits the number of dynamic sources that you can use in different areas of your theme. These limits help to keep the theme performant.
+ Dynamic sources limits
+ Description Limit
+ Dynamic sources in a JSON template 100
+ Dynamic sources in general theme settings 100
+ Dynamic sources in a section group 100
+ Dynamic sources in a single setting 50
+ Dynamic sources in a static section 50
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Available values
+ Default values
+ Limits
+ Updates & News

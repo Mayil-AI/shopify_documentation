@@ -1,0 +1,130 @@
+Functions
+ Overview
+ Input and output
+ Language support
+ Overview
+ JavaScript
+ Rust
+ WebAssembly
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ JavaScript support in Shopify Functions
+ You can write your functions in JavaScript. This guide describes the process of building a Shopify Function using JavaScript or TypeScript.
+ How it works
+ Shopify CLI compiles your JavaScript code using Javy, our JavaScript-to-WebAssembly toolchain. To make development easier, we've also published a Shopify Functions JavaScript library.
+ Note
+ To write functions in JavaScript, you must install Node.js 16 or higher. If you previously installed Shopify CLI, then make sure you're using the latest version.
+ Javy
+ Javy is part build tool, and part runtime engine:
+ Build tool: The build tool part takes a JavaScript file and compiles it into a WASI-compatible WebAssembly module, which contains both your code and a full JavaScript engine embedded.
+ Runtime engine: JavaScript by itself is lacking some APIs to meaningfully interact with the environment it is running in. Javy implements a handful of APIs that are required to make JavaScript work well for Shopify Functions.
+ Shopify Functions JavaScript library
+ The Shopify Functions JavaScript library provides convenient functions and hides repetitive boilerplate in your function code. If you create your JavaScript function using Shopify CLI, then it will set up the library for you.
+ The library includes a TypeScript type generator that inspects your GraphQL query to allow your IDE (Integrated Development Environment) to provide autocomplete suggestions.
+ Shopify Functions JavaScript library
+ Read the documentation of our JavaScript library for Shopify Functions.
+ Available JavaScript APIs
+ Javy and Shopify Functions provide access to the following APIs and globals:
+ ECMAScript 2020
+ Javy globals
+ ECMAScript 2020
+ The Javy runtime implements the ECMAScript 2020 specification. However, Javy doesn't enable JavaScript's event loop. This means that async/await and promises will compile fine, but will throw an error when your function executes:
+ Example error when using the event loop
+ 1 thread '<unnamed>' panicked at 'called `Result::unwrap()` on an `Err` value: Adding tasks to the event queue is not supported
+ Javy globals
+ Javy exposes additional IO globals for reading and writing from STDIO. The javy npm package provides convenience methods over the built-in functions.
+ Javy also exposes an encoding API which is W3C-compatible, with the following exceptions:
+ Support for UTF-8 encoding exclusively
+ No support for TextEncoderStream or TextDecoderStream
+ No support for TextEncoder.encodeInto
+ No support setting the stream property to true in TextDecoder.decode
+ Not available in Javy or Shopify Functions
+ The following JavaScript APIs aren't available:
+ Web-specific browser APIs such as setTimeout, fetch, crypto, or URL.
+ An exception to this is TextEncoder and TextDecoder, which Javy provides.
+ Node.js-specific globals and imports such as process, node:buffer, node:http, or node:util.
+ JavaScript functions and Shopify CLI
+ The quickest way to get started with JavaScript for Shopify Functions is to use the Shopify Functions JavaScript library with Shopify CLI.
+ Shopify CLI helps you scaffold projects and uses ESBuild to preprocess JavaScript and TypeScript. This means that you can install and import npm dependencies, just like you would in regular JavaScript. The dependencies will be bundled before everything gets compiled to WebAssembly.
+ Shopify CLI also supports TypeScript and type annotations from GraphQL schemas and input queries.
+ Shopify CLI uses Javy to compile a WebAssembly module that conforms to the WebAssembly requirements, automatically generating exports from targets in the function extension configuration.
+ Compatibility with earlier versions
+ Shopify CLI provides support for backwards compatibility with API versions 2023-07 and earlier. It uses Javy to compile a WebAssembly module that exports a _start function to conform to previous WebAssembly requirements.
+ Using Javy directly
+ If you want more control over your function, then you can also use Javy directly with no project boilerplate. The following example shows a minimal Shopify Function that only uses the Javy runtime library and Javy support for exporting functions:
+ my_function.js
+ 1 import * as fs from "javy/fs";
+ 2
+ 3 export function run() {
+ 4
+      const inputData = fs.readFileSync(fs.STDIO.Stdin);
+ 5
+      const inputStr = new TextDecoder("utf-8").decode(inputData);
+ 6
+      const inputObj = JSON.parse(inputStr);
+ 7
+ 8
+      const outputObj = /* process input_obj somehow */
+ 9
+ 10
+      const outputStr = JSON.stringify(outputObj);
+ 11
+      const outputData = new TextEncoder().encode(outputStr);
+ 12
+      fs.writeFileSync(fs.STDIO.Stdout, outputData);
+ 13 }
+ my_function.wit
+ 1 package my-function:main
+ 2
+ 3 world my-function-world {
+ 4
+    export run: func()
+ 5 }
+ You can compile the piece of JavaScript to a WASI module using the Javy CLI and then run it using function-runner:
+ Terminal
+ npx esbuild my_function.js --bundle --platform=node --format=esm --outfile=my_function_bundle.js
+ npx javy-cli compile my_function_bundle.js -o function.wasm --wit my_function.wit -n my-function-world
+ echo '{}' | npx function-runner -f function.wasm --export=run
+ Sample apps
+ Explore sample apps that contain functions written in JavaScript.
+ Discounts
+ View a sample discounts app that contains functions written in JavaScript.
+ Payment customizations
+ View a sample payment customization that contains functions written in JavaScript.
+ Delivery customizations
+ View a sample delivery customization that contains functions written in JavaScript.
+ Tutorials
+ Learn how to use JavaScript with Shopify Functions by following one of our use case tutorials:
+ Discounts
+ Use Shopify Functions to create a new discount type for merchants.
+ Payment customizations
+ Use Shopify Functions to hide a payment option offered to customers at checkout.
+ Delivery customizations
+ Use Shopify Functions to rename a delivery option offered to customers at checkout.
+ Validations
+ Use Shopify Functions to block progress on a checkout when the cart line quantities exceed a limit.
+ Fulfillment constraints
+ Use Shopify Functions to have cart items fulfilled from specific locations or together with one another.
+ Order routing location rules
+ Use Shopify Functions to choose a different order location during checkout.
+ Next steps
+ Learn about how data is input to and output from Shopify Functions.
+ Explore the references for each Function API.
+ Get familiar with testing and debugging practices that pertain to Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Available JavaScript APIs
+ JavaScript functions and Shopify CLI
+ Using Javy directly
+ Sample apps
+ Tutorials
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

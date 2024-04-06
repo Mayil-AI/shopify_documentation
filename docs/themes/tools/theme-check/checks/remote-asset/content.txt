@@ -1,0 +1,45 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ RemoteAsset
+ Discourages use of third party domains for hosting assets. You should deliver as much as you can from the Shopify content delivery network (CDN). Using the same host for your assets avoids unnecessary HTTP connections and allows the server to prioritize delivery of blocking resources using HTTP/2 prioritization. Learn more about hosting assets on Shopify servers.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ In these examples, multiple connections are competing for resources, are accelerating download independently and are improperly prioritized.
+ The following example retrieves assets from multiple CDNs:
+ 1 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
+ 2 {{ "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" | stylesheet_tag }}
+ 3 <img src="https://example.com/heart.png" ...>
+ The following example doesn't use the image_url filter to retrieve the image.
+ 1 <img src="{{ image }}" ...>
+ ✓ Pass
+ In the following examples, JavaScript, CSS and images are all loading from the same connection. The browser and CDN can properly prioritize which assets are downloaded first while maintaining a "hot" connection that downloads fast.
+ This can be done by downloading the files from those CDNs directly into your theme's assets directory and using the image_url filter for images, as in the following example:
+ 1 <script src="{{ 'theme.js' | asset_url }}" defer></script>
+ 2 {{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
+ 3 <img src="{{ image | image_url: width: 500 }}" ...>
+ Options
+ The following example contains the default configuration for this check:
+ 1 RemoteAsset:
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Consider disabling this check the remote content that you're retrieving is highly dynamic.
+ Aliases
+ For backward compatibility with configuration files made for Theme Check v1.X.X, this check is also recognized in configuration files with the following name:
+ AssetUrlFilters
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Aliases
+ Updates & News

@@ -1,0 +1,30 @@
+TextField
+ Thumbnail
+ TextBlock
+ TextBlock is used to render a block of text that occupies the full width available. Usually used to render paragraphs of text.
+ JavaScript
+ React
+ 1 import {extend, TextBlock} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const textBlock = root.createComponent(TextBlock, {size: 'small', variation: 'subdued'}, 'TextBlock');
+ 5
+ 6
+    root.appendChild(textBlock);
+ 7
+    root.mount();
+ 8 });
+ Props
+ optional = ?
+ Name Type Description
+ size? "small" | "base" | "medium" | "large" | "extraLarge" Size of the text
+ variation? "positive" | "negative" | "strong" | "subdued" | "code" Give text additional visual meaning
+ Guidelines
+ TextBlock is used to render a block of text that occupies the full width available. Usually used to render paragraphs of text.
+ Use variation to give visual meaning to your content and size to adjust the font size.
+ ✅ Do 🛑 Don't
+ Ensure that text styles are used to enhance the information provided in text. Don’t rely on text style alone to convey information to merchants.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE

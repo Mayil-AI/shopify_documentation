@@ -1,0 +1,65 @@
+robots.txt.liquid
+ The robots.txt.liquid template renders the robots.txt file, which is hosted at the /robots.txt URL.
+ The robots.txt file tells search engines which pages can, or can't, be crawled on a site. It contains groups of rules for doing so, and each group has three main components:
+ The user agent, which notes which crawler the group of rules applies to. For example, adsbot-google.
+ The rules themselves, which note specific URLs that crawlers can, or can't, access.
+ An optional sitemap URL.
+ Shopify generates a robots.txt file by default, which works for most shops, so this template isn't included in any themes by default.
+ Tip
+ If you want to customize the robots.txt.liquid template, then refer to Customize robots.txt for more information.
+ Location
+ The robots.txt.liquid template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── robots.txt.liquid
+ 6
+      |   ...
+ 7
+      ...
+ If your theme doesn't already contain the robots.txt.liquid template, then you can add it with the following steps:
+ Desktop
+ iPhone
+ Android
+ From your Shopify admin, go to Online Store > Themes.
+ Find the theme that you want to edit, and then click ... > Edit code.
+ In the left sidebar, under the Templates heading, click Add a new template.
+ In the Create a new template for drop-down menu, select robots.txt.
+ Click Create template.
+ Content
+ This template can't be a JSON template. It must be robots.txt.liquid.
+ The rules included in the default robots.txt file are mirrored through the Liquid robots object, which the robots.txt.liquid template uses to output the rules.
+ For example:
+ templates/robots.txt.liquid
+ 1 {% for group in robots.default_groups %}
+ 2
+    {{- group.user_agent -}}
+ 3
+ 4
+    {% for rule in group.rules %}
+ 5
+      {{- rule -}}
+ 6
+    {% endfor %}
+ 7
+ 8
+    {%- if group.sitemap != blank -%}
+ 9
+      {{ group.sitemap }}
+ 10
+    {%- endif -%}
+ 11 {% endfor %}
+ While you can replace all the template content with plain text rules, it's strongly recommended to use the provided Liquid objects whenever possible. The default rules are updated regularly to ensure that SEO best practices are always applied.
+ Usage
+ If you want to customize the robots.txt.liquid template, then you need to add it with the following steps:
+ In the code editor for the theme you want to edit, open the Templates folder.
+ Click Add a new template.
+ Select robots.txt under the Create a new template for drop-down menu.
+ Click Create template.
+ To learn about customizing this template, refer to Customize robots.txt.
+ Was this section helpful?

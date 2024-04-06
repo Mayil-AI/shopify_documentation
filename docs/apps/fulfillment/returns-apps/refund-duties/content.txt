@@ -1,0 +1,430 @@
+Overview
+ Manage returns
+ Preview and refund duties
+ Manage reverse fulfillment orders
+ Manage reverse deliveries
+ Billing
+ App Store
+ Preview and refund duties
+ Customers might be charged additional duties when they receive international shipments. If a customer requests a refund on an international order, then you can refund duties that were previously applied to the order.
+ This guide shows you how to preview and refund duties with the GraphQL Admin API.
+ Developer preview
+ The functionality to refund duties is in the Shopify Markets developer preview. The values that are returned are generated and aren't consistent with actual duty rates set by each country.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_orders access scope. Learn how to configure your access scopes using Shopify CLI.
+ You have a development store with the Shopify Markets developer preview enabled so that you can manage duties.
+ You've met Shopify's protected customer data requirements.
+ Step 1: Create an order with a duty charge
+ To preview and refund duties, you first need to create an international order with duties applied. You can create an international order with duties applied by using a development store that has the Shopify Markets developer preview enabled.
+ Set a Harmonized System Code on all products that you expect to have duties applied.
+ Make sure that your store has shipping rates set for all the countries that you plan to support.
+ Make sure that your development store is set up to place test orders.
+ Complete a checkout from your storefront.
+ For the shipping information checkout step, you need to enter a different country than the location where your product is fulfilled. If duties apply to your order, then they're displayed on the shipping rates view and order summary.
+ Note
+ Duties might not be applied if the price of the order doesn't exceed the destination country’s de minimis threshold.
+ On the order details page of your Shopify admin, verify that duties have been charged on the order.
+ Duties are calculated for each line item, and can be viewed in the duties field on the LineItem object in the GraphQL Admin API.
+ Step 2: Retrieve duties on an order
+ When you query an order, you can retrieve the total duties that are applied using the currentTotalDutiesSet field. If you want to retrieve the duties applied to each line item, then you can include the duties field on the LineItem field on the lineItems connection.
+ Tip
+ You can retrieve an order's ID with the orders query.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    # The ID of the order.
+ 3
+    order(id: "gid://shopify/Order/3") {
+ 4
+      # The total amount of duties after returns, in shop and presentment currencies. Returns `null` if duties aren't applicable.
+ 5
+      currentTotalDutiesSet {
+ 6
+        shopMoney {
+ 7
+          amount
+ 8
+        }
+ 9
+      }
+ 10
+      lineItems(first: 10) {
+ 11
+        edges {
+ 12
+          node {
+ 13
+            id
+ 14
+            refundableQuantity
+ 15
+            # The duties associated with the line item.
+ 16
+            duties {
+ 17
+              id
+ 18
+              harmonizedSystemCode
+ 19
+              price {
+ 20
+                shopMoney {
+ 21
+                  amount
+ 22
+                }
+ 23
+              }
+ 24
+            }
+ 25
+          }
+ 26
+        }
+ 27
+      }
+ 28
+    }
+ 29 }
+      "order": {
+ 4
+        "currentTotalDutiesSet": {
+ 5
+          "shopMoney": {
+ 6
+            "amount": "668.19"
+ 7
+          }
+ 8
+        },
+ 9
+        "lineItems": {
+ 10
+          "edges": [
+ 11
+            {
+ 12
+              "node": {
+ 13
+                "id": "gid://shopify/LineItem/2",
+ 14
+                "refundableQuantity": 5,
+ 15
+                "duties": [
+ 16
+                  {
+ 17
+                    "id": "gid://shopify/Duty/1",
+ 18
+                    "harmonizedSystemCode": "520100",
+ 19
+                    "price": {
+ 20
+                      "shopMoney": {
+ 21
+                        "amount": "668.19"
+ 22
+                      }
+ 23
+                    }
+ 24
+                  }
+ 25
+                ]
+ 26
+              }
+ 27
+            }
+ 28
+          ]
+ 29
+        }
+ 30
+      }
+ 31
+    }
+ 32 }
+ Step 3: Preview a refund that includes duties
+ Before refunding duties, you can preview the refund using the suggestedRefund query. You can then use the refundCreate mutation when you’re ready to create the refund.
+ The supported refund types are PROPORTIONAL and FULL.
+ Preview a proportional duty refund
+ The PROPORTIONAL refund type refunds duties in proportion to the line item quantity that you want to refund.
+ In the suggestedRefund query, include the duty ID, the refund type, and the ID and quantity of the line items that you want to preview the refund for. You must pass the refund line items to calculate the portion of duties to refund.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query suggestedRefund {
+ 2
+    order(id: "gid://shopify/Order/3") {
+ 3
+      suggestedRefund(refundLineItems: [{lineItemId:"gid://shopify/LineItem/2", quantity: 1}],
+ 4
+      # The `suggestedRefund` query uses the input type `RefundDutyInput`, which requires a `dutyId` and a `refundType` that specifies how you want the duty refunded.
+ 5
+      refundDuties: [{ dutyId: "gid://shopify/Duty/1", refundType: PROPORTIONAL}]) {
+ 6
+        refundDuties {
+ 7
+          amountSet {
+ 8
+            shopMoney {
+ 9
+              amount
+ 10
+              currencyCode
+ 11
+            }
+ 12
+          }
+ 13
+          originalDuty {
+ 14
+            id
+ 15
+          }
+ 16
+        }
+ 17
+        totalDutiesSet {
+ 18
+          shopMoney {
+ 19
+            amount
+ 20
+            currencyCode
+ 21
+          }
+ 22
+        }
+ 23
+      }
+ 24
+    }
+ 25 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "order": {
+ 4
+        "suggestedRefund": {
+ 5
+          "refundDuties": [
+ 6
+            {
+ 7
+              "amountSet": {
+ 8
+                "shopMoney": {
+ 9
+                  "amount": "133.65",
+ 10
+                  "currencyCode": "CAD"
+ 11
+                }
+ 12
+              },
+ 13
+              "originalDuty": {
+ 14
+                "id": "gid://shopify/Duty/1"
+ 15
+              }
+ 16
+            }
+ 17
+          ],
+ 18
+          "totalDutiesSet": {
+ 19
+            "shopMoney": {
+ 20
+              "amount": "133.65",
+ 21
+              "currencyCode": "CAD"
+ 22
+            }
+ 23
+          }
+ 24
+        }
+ 25
+      }
+ 26
+    }
+ 27 }
+ Preview a full duty refund
+ The FULL refund type refunds all the duties associated with a duty ID. In the suggestedRefund query, you don't need to include an order's line items when you preview a FULL refund type.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query suggestedRefund {
+ 2
+    order(id: "gid://shopify/Order/3") {
+ 3
+      suggestedRefund(
+ 4
+        # The `suggestedRefund` query uses the input type `RefundDutyInput`, which requires a `dutyId` and a `refundType` that specifies how you want the duty refunded.
+ 5
+        refundDuties: [{ dutyId: "gid://shopify/Duty/1", refundType: FULL }]
+ 6
+      ) {
+ 7
+        refundDuties {
+ 8
+          amountSet {
+ 9
+            shopMoney {
+ 10
+              amount
+ 11
+              currencyCode
+ 12
+            }
+ 13
+          }
+ 14
+        }
+ 15
+        totalDutiesSet {
+ 16
+          shopMoney {
+ 17
+            amount
+ 18
+            currencyCode
+ 19
+          }
+ 20
+        }
+ 21
+      }
+ 22
+    }
+ 23 }
+      "order": {
+ 4
+        "suggestedRefund": {
+ 5
+          "refundDuties": [
+ 6
+            {
+ 7
+              "amountSet": {
+ 8
+                "shopMoney": {
+ 9
+                  "amount": "668.19",
+ 10
+                  "currencyCode": "CAD"
+ 11
+                }
+ 12
+              }
+ 13
+            }
+ 14
+          ],
+ 15
+          "totalDutiesSet": {
+ 16
+            "shopMoney": {
+ 17
+              "amount": "668.19",
+ 18
+              "currencyCode": "CAD"
+ 19
+            }
+ 20
+          }
+    }
+ 24 }
+ Step 4: Create a refund that includes duties
+ When you’re ready to create a refund, you can use the refundCreate mutation. Include the order ID, the ID and quantity of the line items that you want to refund, the duty ID, and the refund type as input to the mutation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation refundIncludingDuties {
+ 2
+    refundCreate(input:{orderId:"gid://shopify/Order/3", refundLineItems: [{lineItemId:"gid://shopify/LineItem/2", quantity: 1}],  refundDuties: [{dutyId: "gid://shopify/Duty/1", refundType: PROPORTIONAL}] }) {
+ 3
+      refund {
+ 4
+        duties {
+ 5
+          originalDuty {
+ 6
+            id
+ 7
+          }
+ 8
+          amountSet {
+ 9
+            shopMoney {
+ 10
+              amount
+ 11
+            }
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+    }
+ 16 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "refundCreate": {
+ 4
+        "refund": {
+ 5
+          "duties": [
+ 6
+            {
+ 7
+              "originalDuty": {
+ 8
+                "id": "gid://shopify/Duty/1"
+ 9
+              },
+ 10
+              "amountSet": {
+ 11
+                "shopMoney": {
+ 12
+                  "amount": "133.65"
+ 13
+                }
+ 14
+              }
+ 15
+            }
+ 16
+          ]
+ 17
+        }
+ 18
+      },
+ 19
+      "userErrors": []
+ 20
+    }
+ 21 }
+ Next steps
+ Learn how to manage reverse fulfillment orders with the GraphQL Admin API.
+ Learn how to manage reverse deliveries with the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create an order with a duty charge
+ Step 2: Retrieve duties on an order
+ Step 3: Preview a refund that includes duties
+ Step 4: Create a refund that includes duties
+ Next steps
+ Updates & News

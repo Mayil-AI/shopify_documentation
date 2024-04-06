@@ -1,0 +1,20 @@
+Cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Payments
+ Thank you and Order status
+ Localized UI extensions
+ Test UI extensions
+ Best practices
+ Customer accounts
+ Selling strategies
+ Online store
+ Admin
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Updates & News

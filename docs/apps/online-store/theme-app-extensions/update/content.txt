@@ -1,0 +1,45 @@
+Update your app to use theme app extensions
+ This guide explains how to update apps to integrate with online stores using theme app extensions.
+ Caution
+ Shopify strongly recommends that your apps use theme app extensions to integrate with online stores. Theme app extensions prepare your app for the future when users increasingly adopt Dawn and other Online Store 2.0 themes that might not integrate as well with apps that use other methods.
+ If you're submitting a new app to the Shopify App Store, and it integrates with online stores, then your app must use theme app extensions. This will become a requirement for all apps in the Shopify App Store in the future.
+ Theme app extension benefits
+ Apps that integrate with online stores will traditionally modify theme code to inject assets, extract data, and extend theme functionality. Merchants are frequently required to edit theme code, which can be intimidating and error-prone. Uninstalling apps often leaves the code edits, or ghost code, behind in the theme, which can cause quality and performance issues and takes merchants off their theme upgrade paths.
+ For example, apps often require the following to integrate with online stores:
+ Adding snippets to the snippets directory of a published theme, which are then added to a page by modifying Liquid layout, template, or section files.
+ Injecting JavaScript into the theme, which then injects HTML into the layout of a page.
+ Theme app extensions don't edit theme code, which provides the following benefits:
+ Reduced risk of an app introducing breaking changes to the theme
+ Minimized app support debt
+ Increased app adoption by offering users a cleaner experience for app integration and customization.
+ Increased user retention owing to a graceful, out of the box integration experience.
+ Theme app extensions reduce the effort required to integrate apps in themes. You aren't required to build integration logic and installation instructions for the different themes on which the app might be installed. Instead, you can build once for all of the themes where your app is installed. Updating your app also won't require you to build theme-specific support.
+ Theme app extensions automatically expose your app in the theme editor, so that you can leverage the editor’s visual editing capabilities without needing to replicate them in your app.
+ When to use app blocks
+ Update your app to use app blocks if your current method of theme integration includes the following types of actions:
+ Using the Asset REST Admin API resource to add content to a published theme's snippets directory and render the content by modifying Liquid layout, template, or section files.
+ Using the ScriptTag REST Admin API or GraphQL Admin API resource to inject JavaScript into the theme, which then injects HTML in the page layout.
+ For more use cases and information about app blocks, refer to the theme app extensions framework.
+ When to use app embed blocks
+ Update your app to use app embed blocks if your current method of theme integration includes the following types of actions:
+ Using the ScriptTag resource to add JavaScript that's loaded on either some or all storefront pages.
+ Using the Asset resource to add scripts to the theme and <script> tags to the theme.
+ Using the Asset resource to add Liquid to the head of the document in theme.liquid.
+ For more use cases and information about app embed blocks, refer to the theme app extensions framework.
+ Note
+ Use app blocks if you want apps to automatically point to dynamic sources. App embed blocks only have access to the Global Liquid scope for the page on which they're rendered.
+ Update your apps
+ If you'll use app blocks, verify whether online stores that use your app have published themes that support app blocks.
+ Note
+ Stores with published themes that don't support app blocks will need to use your legacy onboarding flow.
+ If a published theme supports app blocks, then your app should skip all POST requests made to the Asset and ScriptTag resource.
+ Complete the Getting started with theme app extensions tutorial to learn how to build a theme app extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Theme app extension benefits
+ When to use app blocks
+ When to use app embed blocks
+ Update your apps
+ Updates & News
+ Developer changelog

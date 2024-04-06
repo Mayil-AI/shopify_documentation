@@ -1,0 +1,60 @@
+TextField
+ Thumbnail
+ InlineStack
+ Use to lay out a horizontal row of components.
+ A stack is made of flexible items that wrap each of the stack’s children. Options provide control of the alignment and spacing of the items in the stack. Use StackItem to group multiple elements inside a InlineStack together.
+ JavaScript
+ React
+ 1 import {extend, InlineStack, Text} from '@shopify/admin-ui-extensions';
+ 2
+ 3 function buildStackText(root) {
+ 4
+    const text = root.createComponent(Text);
+ 5
+    text.appendChild('Items to stack');
+ 6
+    return text;
+ 7 }
+ 8
+ 9 extend('Playground', (root) => {
+ 10
+    const inlineStack = root.createComponent(InlineStack, {
+ 11
+      inlineAlignment: 'center',
+ 12
+      spacing: 'loose',
+ 13
+    });
+ 14
+ 15
+    inlineStack.appendChild(buildStackText(root));
+ 16
+    inlineStack.appendChild(buildStackText(root));
+ 17
+    inlineStack.appendChild(buildStackText(root));
+ 18
+ 19
+    root.appendChild(inlineStack);
+ 20
+ 21
+    root.mount();
+ 22 });
+ Props
+ optional = ?
+ Name Type Description
+ blockAlignment? "leading" | "center" | "trailing" | "baseline" Specifies the block alignment. This affects the vertical flow of elements. Default value: 'leading'
+ inlineAlignment? "leading" | "center" | "trailing" Specifies the inline alignment. This affects the horizontal flow of elements. Default value: 'leading'
+ spacing? Spacing Adjust spacing between children. Default value: 'base'
+ Guidelines
+ All children of InlineStack are placed in a single view object, which makes recycling the views expensive and results in poorer performance when scrolling. Consider keeping your stacks simple.
+ By default, InlineStack alignment is 'leading’.
+ ✅ Do 🛑 Don't
+ Keep Inline Stacks shallow. Complex hierarchies have performance penalties Use complex and deep Stack layouts
+ For more guidelines, refer to Polaris' Stack best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Updates & News
+ Developer changelog

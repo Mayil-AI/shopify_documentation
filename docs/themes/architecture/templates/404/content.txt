@@ -1,0 +1,45 @@
+404
+ The 404 template renders page content that is shown to customers if they enter an invalid URL for the store.
+ Tip
+ Refer to the 404 template and its main section in Dawn for an example implementation.
+ Location
+ The 404 template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── 404.json
+ There are no suggested objects for a 404 template. However, the template should make it clear to the customer that the page they were looking for couldn’t be found.
+ You should provide obvious options for how to proceed. For example, you can add links to popular pages, a search bar to help customers find what they’re looking for, or a link that redirects customers to your home page or a collection to continue shopping:
+ 1 <p>
+ 2
+      404
+ 3
+    </p>
+ 4
+    <h1 class="title">
+ 5
+      Page not found
+ 6
+    </h1>
+ 7
+    <a href="{{ routes.all_products_collection_url }}" class="button">
+ 8
+      Continue shopping
+ 9
+    </a>
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Content
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

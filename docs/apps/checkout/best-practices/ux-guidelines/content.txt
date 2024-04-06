@@ -1,0 +1,55 @@
+Test UI extensions
+ Best practices
+ Overview
+ Multi-page extensions
+ UX guidelines
+ Distribution
+ Billing
+ App Store
+ Checkout UX guidelines
+ Checkout is the most critical step of the customer journey. Checkout should help customers feel in control and confident about their purchases. Use our UX guidelines when you're designing your checkout experiences to ensure that they're trustworthy, efficient, and considerate.
+ Maintain trust
+ Customers should understand why they need to input personal information, and what will happen when they take an action. This builds trust between a customer and the merchant.
+ Example: Make it clear if an item costs money. Customers could miss this information if it's hidden among other content.
+ Example: When checking out requires the customer to supply personal information, let them know why.
+ Reduce friction
+ Friction in checkout can have an impact on checkout conversion. To reduce friction, localize your experiences, write effective content, and only show components when you know that customers need them.
+ Note
+ Localization is only supported for checkout UI extensions. Localization for post-purchase extensions isn't supported. Shopify Functions also have support for localization.
+ Example: Show options when you know that customers need them.
+ Example: Help customers understand what's optional.
+ Test different scenarios
+ Although you might use a desktop while developing, the majority of customers make purchases on mobile devices. Many customers also use accelerated checkout options, like Shop Pay, which pre-fill the checkout with vaulted information. Test your extension to ensure that it behaves as desired in these scenarios.
+ The following are some examples that you can test for:
+ Mobile and desktop
+ Guest checkout and Shop Pay
+ Physical, digital, and discounted products
+ Ship and pickup delivery methods
+ Example: Checkout UI targets might change location between guest checkout and Shop Pay.
+ Additional UX guidelines
+ Consult the following UX guidelines to learn how to build specific experiences in Shopify checkout:
+ UX guidelines for pre-purchase product offers
+ Explore UX guidelines that you can refer to when building pre-purchase product offers.
+ UX guidelines for custom fields
+ Explore UX guidelines that you can refer to when building custom fields.
+ UX guidelines for payment customizations
+ Explore UX guidelines that you can refer to when building payment customizations.
+ UX guidelines for delivery customizations
+ Explore UX guidelines that you can refer to when building delivery customizations.
+ UX guidelines for Thank you and Order status extensions
+ Explore UX guidelines that you can refer to when building extensions for the Thank you and Order status pages.
+ UX guidelines for post-purchase product offers
+ Explore UX guidelines that you can refer to when building post-purchase product offers.
+ Next steps
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Maintain trust
+ Reduce friction
+ Test different scenarios
+ Additional UX guidelines
+ Next steps
+ Updates & News

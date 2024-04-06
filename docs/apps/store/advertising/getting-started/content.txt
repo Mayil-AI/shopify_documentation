@@ -1,0 +1,50 @@
+Ad permissions
+ Frequently asked questions
+ Security
+ Getting started with Shopify App Store ads
+ There are a few different steps required to set up ads for your app.
+ Note
+ To advertise an app, the app has to be published on the Shopify App Store.
+ Create an ad
+ Follow these steps to create a new ad on the Shopify App Store. The steps will differ depending on the type of ad you're creating:
+ Search ads
+ Choose an app to advertise. A preview of your ad appears in the Ad preview section.
+ Select the search results page as your ad placement.
+ Set a daily budget in USD.
+ Select whether you want to target your ad to specific countries and regions, or target your ad to all countries and regions. We recommend targeting all countries and regions unless your app is only available in certain markets.
+ If you selected Target specific countries and regions, then select the countries and regions that you want to target.
+ Choose the search keywords that you want to target with your ad.
+ Set a bid amount for each keyword. This is the maximum amount that you'll pay for every click on your ad from searches that contain that keyword.
+ Tip
+ If you're creating geotargeted ads, then consider creating one ad for each country or region. This lets you monitor and adjust bids and keywords for each country or region.
+ Homepage ads
+ Choose an app to advertise. A preview of your ad appears in the Ad preview section.
+ Select the Shopify App Store homepage as your ad placement.
+ Set a daily budget in USD.
+ Set a bid amount for your ad. This is the maximum amount that you'll pay for every click on your ad as they appear on the homepage.
+ Learn more about creating ads.
+ Track and optimize your ads
+ After you create your ad, you can view your ad performance over time by using reports in the Partner Dashboard. You can view the overall performance, and the performance by country or region, for each ad.
+ Based on the information in the report, you can then optimize the keywords and bids for your search ads.
+ For guidance on optimizing your ad, visit the Shopify Partners blog.
+ Pricing
+ Search and homepage ads use a Cost-Per-Click (CPC) model. This is an industry-standard model that uses pay-per-click auction bidding to determine when to show ads and which ads are shown. You pay only for each click on your ad.
+ The actual cost per click is calculated based on a first-price auction model. This means that the price you pay for a click on your ad is the same as the bid amount that you entered for the ad placement or search keyword that led to your ad being displayed.
+ Search ads
+ When you create a search ad, you specify the keywords for which you want your ad to be shown. Whenever a merchant searches for any search term, an auction takes place where advertisers who want to show their ad for related keywords compete by submitting their bid. The ads from the winning advertisers in each auction are shown in a ranked order.
+ However, keywords aren't always sold to the highest bidder. Your app's relevance to the search term and merchant is factored in as well. Keywords cost less for highly relevant apps, and their ads rank higher than others for the same auction.
+ In the example above, the first ad appears in position 1 and pays only $0.50 because of its high relevance. The last ad won’t be displayed because it did not win the auction to be within the first 3 ad slots. Its bid and relevance combination was too low, even though its bid was the highest.
+ Ad positions can change because they depend on the advertisers' bids and the relevance of their ads. For example, an ad in position 3 can move to position 1. Increases or decreases in bids immediately change ad rankings. This means that if you increase your bid for a particular keyword, then your ad's position can immediately be improved in the search results for that keyword.
+ If no one else competes for the same opportunity in an auction, then you automatically win and your ad is the only one that appears. In this case, your ad will appear in the top position.
+ Homepage ads
+ When you create a homepage ad, you specify the bid amount which you would pay to have your ad shown. When a merchant visits the homepage, an auction takes place where advertisers who want to show their ad compete by submitting their bid. The ads from the winning advertisers in each auction are shown in a ranked order.
+ Billing
+ To learn more about how you're billed for search and homepage ads, refer to Ad billing for the Shopify App Store.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Create an ad
+ Track and optimize your ads
+ Pricing
+ Updates & News
+ Developer changelog

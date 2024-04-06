@@ -1,0 +1,225 @@
+APIs
+ Collapse sidebar
+ Checkout UI extensions
+ Unstable
+ 2024-04
+ 2024-01
+ 2023-10
+ 2023-07
+ 2023-04
+ 2024-01
+ Overview
+ Scaffolding an extension
+ Extension Targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Resources
+ Targets Overview
+ Targets
+ APIs
+ Components
+ Configuration
+ Error handling
+ API versioning and unified UI extensions
+ Checkout UI extensions
+ Checkout UI extensions let app developers build custom functionality that merchants can install at defined points in the checkout flow, including product information, shipping, payment, order summary, and Shop Pay.
+ Shopify Plus
+ Checkout UI extensions for the information, shipping and payment step are available only to stores on a Shopify Plus plan.
+ Scaffolding an extension
+ Use Shopify CLI to generate a new extension in the directory of your app.
+ Watch
+ Getting started video
+ Scaffolding
+ npm
+ yarn
+ pnpm
+ 1 npm init @shopify/app@latest
+ 2 cd your-app
+ 3 npm run shopify app generate extension
+ Extension Targets
+ Extension targets provide locations where merchants can insert custom content. Static extension targets are tied to core checkout features like contact information, shipping methods, and order summary line items. Block extension targets can be displayed at any point in the checkout process and will always render regardless of which checkout features are available. An example is a field to capture order notes from the customer.
+ Extension UIs are rendered using remote UI, a fast and secure environment for custom (non-DOM) UIs.
+ Overview
+ Extension targets
+ Extension targets
+ React
+ JS
+ 1 import {
+ 2
+    reactExtension,
+ 3
+    Banner,
+ 4 } from '@shopify/ui-extensions-react/checkout';
+ 5
+ 6 export default reactExtension(
+ 7
+    'purchase.checkout.block.render',
+ 8
+    () => <Extension />,
+ 9 );
+ 10
+ 11 function Extension() {
+ 12
+    return <Banner>Your extension</Banner>;
+ 13 }
+ Configuration file
+ When you create a checkout UI extension, the shopify.extension.toml file is automatically generated in your checkout UI extension directory. It contains the extension's configuration, which includes the extension name, extension targets, metafields, capabilities, and settings definition.
+ Learn more
+ Configuration guide
+ Shopify.extension.toml
+ toml
+ 1 api_version = "2023-07"
+ 2
+ 3 [[extensions]]
+ 4 type = "ui_extension"
+ 5 name = "My checkout extension"
+ 6 handle = "checkout-ui"
+ 7
+ 8
+    [[extensions.targeting]]
+ 9
+    target = "purchase.checkout.block.render"
+ 10
+    module = "./Checkout.jsx"
+ Extension APIs
+ APIs enable checkout UI extensions to get information about the checkout or related objects and to perform actions. For example, you can use the APIs to retrieve what's in customer carts so that you can offer related products.
+ Extensions use JavaScript to read and write data and call external services, and natively render UIs built using Shopify's checkout components.
+ API reference
+ Checkout extensions API
+ Extension APIs
+ React
+ JS
+ 1 import {
+ 2
+    reactExtension,
+ 3
+    useShippingAddress,
+ 4
+    Banner,
+ 5 } from '@shopify/ui-extensions-react/checkout';
+ 6
+ 7 export default reactExtension(
+ 8
+    'purchase.checkout.delivery-address.render-before',
+ 9
+    () => <Extension />,
+ 10 );
+ 11
+ 12 function Extension() {
+ 13
+    const {countryCode} = useShippingAddress();
+ 14
+ 15
+    if (countryCode !== 'CA') {
+ 16
+      return (
+ 17
+        <Banner>
+ 18
+          Sorry, we can only ship to Canada at this
+ 19
+          time
+ 20
+        </Banner>
+ 21
+      );
+ 22
+    }
+ 23 }
+ UI components
+ Checkout UI extensions declare their interface using supported UI components. Shopify renders the UI natively, so it's performant, accessible, and works in all of checkout's supported browsers.
+ Checkout components are designed to be flexible, enabling you to layer and mix them to create highly-customized app extensions that feel seamless within the checkout experience. All components inherit a merchant's brand settings and the CSS cannot be altered or overridden.
+ API reference
+ Component library
+ UI Reference
+ Figma UI kit
+ UI components
+ React
+ JS
+ 1 import {
+ 2
+    reactExtension,
+ 3
+    BlockStack,
+ 4
+    InlineStack,
+ 5
+    Button,
+ 6
+    Image,
+ 7
+    Text,
+ 8 } from '@shopify/ui-extensions-react/checkout';
+ 9
+ 10 export default reactExtension(
+ 11
+    'purchase.checkout.block.render',
+ 12
+    () => <Extension />,
+ 13 );
+ 14
+ 15 function Extension() {
+ 16
+    return (
+ 17
+      <InlineStack>
+ 18
+        <Image source="/url/for/image" />
+ 19
+        <BlockStack>
+ 20
+          <Text size="large">Heading</Text>
+ 21
+          <Text size="small">Description</Text>
+ 22
+        </BlockStack>
+ 23
+        <Button
+ 24
+          onPress={() => {
+ 25
+            console.log('button was pressed');
+ 26
+          }}
+ 27
+        >
+ 28
+          Button
+ 29
+        </Button>
+ 30
+      </InlineStack>
+ 31
+    );
+ 32 }
+ Security
+ Checkout UI extensions are a safe and secure way to customize the appearance and functionality of the checkout page without compromising the security of checkout or customer data.
+ They run in an isolated sandbox, separate from the checkout page and other UI extensions.
+ They don't have access to sensitive payment information or the checkout page itself (HTML or other assets).
+ They are limited to specific UI components and APIs that are exposed by the platform.
+ They have limited access to global web APIs.
+ Apps that wish to access protected customer data, must submit an application and are subject to strict security guidelines and review proccesses by Shopify.
+ Constraints
+ You can't override the CSS for UI components. The checkout UI will always render the merchant's own branding as shown in the image in the UI components section above.
+ Checkout UI extensions don't have access to the DOM and can't return DOM nodes. They can't return <div> elements, for example. Building an arbitrary tree of HTML and loading additional scripts using script tags are also not supported.
+ Learn more
+ Rendering extensions
+ Learn more
+ Checkout styling
+ Troubleshooting
+ Find an end-to-end guide to testing your extensions in Testing checkout UI extensions.
+ If you're encountering errors when you run dev for an app that contains checkout UI extensions, follow this troubleshooting guide.
+ Learn more
+ Troubleshooting guide
+ Resources
+ remote-ui
+ Learn more about the underlying technology that powers checkout UI extensions.
+ UX guidelines
+ Use our UX guidelines when you're designing your checkout experiences to ensure that they're trustworthy, efficient, and considerate.
+ Localization
+ You can use JavaScript APIs to access translations and localize UI extensions for international merchants and customers.
+ Tutorials
+ Check out our tutorials on how to build payment or delivery customizations, product offers, custom banners and more.

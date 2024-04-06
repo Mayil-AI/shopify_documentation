@@ -1,0 +1,105 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ 2023-10 release notes
+ The API version release date and the date that the version is no longer supported
+ Release date Date version is no longer supported
+ October 1, 2023 October 1, 2024
+ What's new in 2023-10
+ The following features were added in version 2023-10 of Shopify's APIs:
+ Highlights from the GraphQL and REST Admin API changes:
+ We've added the compareAtPriceRange field to Product, which returns the minimum and maximum compare-at prices across a product's variants
+ You can now identify the variant that was used to model a bundle after it was purchased by querying the productvariantid field of LineItemGroup.
+ We've added STAFF to the OrderCancelReason GraphQL type, as a reason for canceling orders due to staff error.
+ Apps can now change the name and address of fulfillment service locations.
+ More flexible primary markets for multi-country stores
+ We've added a cancellation field to the GraphQL Admin API's Order object. Query this field for more details about an order's cancelation, such as any staff-provided notes on why the order was cancelled on a POS app.
+ Highlights from the Storefront API changes:
+ Cart line items are now ordered in reverse chronological order based on when they were added.
+ Breaking changes
+ These changes require special attention. If your app uses these API resources, and you don’t adjust your usage of the resources according to the following instructions, then your app might break when you update to this API version.
+ More flexible primary markets
+ As of API version 2023-10, primary markets can be customized in three new ways:
+ Transactions can be set to any supported currency, regardless of a shop's currency.
+ Countries can be set independently of the primary market's currency. For example, it's possible to combine Canada and USD.
+ Price lists can be created, allowing for fixed prices and percentage adjustments for the primary market.
+ Apps might need to be updated if they previously assumed that the primary market's currency and country were the same.
+ Deprecated fields on the Customer object
+ As of API version 2023-10, the following fields on the Customer object have been deprecated: - averageOrderAmount - averageOrderAmountV2
+ Deprecated property on the UsageCharge resource
+ The UsageCharge resource's billing_on property has been deprecated.
+ Fulfillment service location name and address
+ Apps can change the name and address of their fulfillment service locations using the GraphQL Admin API's LocationEdit mutation.
+ The mutation returns a new user error with the CANNOT_MODIFY_ONLINE_ORDER_FULFILLMENT_FOR_FS_LOCATION code if apps attempt to update the fulfillsOnlineOrders field for a fulfillment service location. This field can only be modified on manual locations.
+ In API version 2023-10, apps require the write_fulfillments access scope to edit a fulfillment service's location. Otherwise, the following error is returned: Access denied for locationEdit field. Required access: write_fulfillments access scope is required to edit the location associated with a fulfillment service.
+ Deprecated field on the ShopResourceLimits object
+ The skuResourceLimits field on the GraphQL Admin API's ShopResourceLimits object is deprecated.
+ We're no longer enforcing a limit of SKUs at the shop level. Instead, use maxProductVariants to determine the limit of variants at the product level.
+ MetafieldDefinitionUpdate mutation: access input type changed
+ The access field on the GraphQL Admin API's MetafieldDefinitionUpdateInput input object has changed from type MetafieldAccessInput to type MetafieldAccessUpdateInput. This is part of a broader API change to introduce support for explicit access grants. Refer to the changelog for details.
+ Simplified metafield interactions with default namespaces
+ The namespace field on the GraphQL Admin and Storefront APIs is now optional when you create, update, or query metafields and metafield definitions.
+ We've updated all relevant mutations and queries to accommodate this change. When an app interacts with metafields, the default namespace is the app-reserved namespace.
+ Deprecated metafield.id
+ The metafield(id) query is no longer supported.
+ Query metafields using the HasMetafields connection of metafield owners. If necessary, you can still query by ID using the Node interface.
+ Primary markets support multiple domains
+ The following changes have been introduced to the Markets API:
+ A new Market.webPresences connection has been added
+ The pre-existing Market.webPresence field now returns the primary domain web presence for a primary market with more than one web presence.
+ The marketWebPresenceCreate mutation now enables you to add web presences to the primary market.
+ The required marketId argument has been removed from the marketWebPresenceUpdate and marketWebPresenceDelete mutations. Use the new, required webPresenceId` argument instead.
+ App Revenue Attribution Record API Depreciated
+ The App Revenue Attribution API has been removed.
+ appRevenueAttributionRecordCreate and appRevenueAttributionRecordDelete are no longer supported in this and future API versions.
+ This change removes tracking for external app revenue attributions that occur outside of the Billing API. You can now use Google Analytics to track app installations that are driven by Shopify App Store Ads. Link these metrics to external app revenue, to calculate ad-related metrics such as ad-related return on ad spend.
+ Removal of Shop.shopifyPaymentsAccount
+ We're removing the deprecated Shop.shopifyPaymentsAccount field. Use the shopifyPaymentsAccount query instead.
+ Changes to Subscription Billing Attempt creation behavior
+ The SubscriptionBillingAttemptCreate mutation now limits the creation of Billing Attempts based on the Fraud Analysis result on the Subscription Contract’s Origin Order.
+ We've added the CONTRACT_UNDER_REVIEW error code to the GraphQL Admin API's BillingAttemptUserErrorCode enum. This new error code is returned when a Billing Attempt creation is prevented. In previous API versions, this action returned the INVALID error code.
+ GraphQL Admin API changes
+ The following are all the changes introduced in the 2023-10 version of the GraphQL Admin API.
+ New error code added for `MetafieldDefinitionUpdate`
+ More order information on the `FulfillmentOrder` object
+ serviceCode is available on the DeliveryMethod API
+ Making the primary market more flexible
+ Automatic free shipping discount
+ New webhook topic added for publication delete events
+ New `CustomerAccountsV2` field on the `Shop` object
+ averageOrderAmount fields removed from the Customer object
+ `url` available on `MediaImage.originalSource`
+ Fulfillment constraints built on Shopify Functions
+ Apps can now change the name and address of their fulfillment service locations
+ Breaking changes to ShopResourceLimits API: Deprecate "skuResourceLimits"
+ Access input type changed on `metafieldDefinitionUpdate` mutation
+ Simplify metafield interaction with default namespaces
+ Deprecation of `metafield(id)` query
+ Renderable and online store capabilities for metaobjects
+ Multiple domains on primary markets
+ Staff error as an order cancel reason
+ New field to query order cancellations
+ Order Routing Location Rule API — Developer Preview
+ New compare-at price range field on Product API
+ Manage Quantity Price Breaks for B2B Customers
+ App Revenue Attribution Record API Depreciated
+ Removing `Shop.shopifyPaymentsAccount` on Admin API
+ Shopify Protect protection status on Admin API
+ Changes to subscription billing attempt creation behavior
+ GraphQL Storefront API changes
+ Simplify metafield interaction with default namespaces
+ Renderable and Online Store capabilities for metaobjects
+ Staff error as Order cancel reason
+ REST Admin API changes
+ Removal of UsageCharge billing_on field on Admin REST API
+ Staff error as an order cancel reason
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Breaking changes
+ GraphQL Admin API changes
+ GraphQL Storefront API changes
+ REST Admin API changes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

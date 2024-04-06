@@ -1,0 +1,65 @@
+Authentication
+ Access scopes
+ Versioning
+ Overview
+ Getting updates
+ API health report
+ Global IDs
+ Rate limits
+ Search syntax
+ Response status codes
+ Idempotent requests
+ Bulk operations
+ Pagination
+ GraphQL basics
+ Admin API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Getting technical updates
+ If you create an app from the Shopify admin, or if you have a Partner account, then you need to provide emergency developer contact details. Shopify collects these details so that we can communicate critical, targeted technical information to developers who maintain Shopify apps. This guide explains what you should expect from these communications to help you decide who should receive these updates.
+ When will Shopify contact you?
+ Developer contact details are required so that we can inform you of backwards-incompatible changes in the API version that your app is using, or a bug or outage that's affecting a significant number of users. Below are some possible situations when we might contact you:
+ We are planning a change to our API that directly affects one of your apps.
+ Your app is using a deprecated endpoint, which might be affecting your app's functionality or the user experience.
+ Your app has a bug or experiences an outage that's affecting users' stores.
+ In each of these situations, our primary method of communication is email. In the second and third situations, we might also contact you by using your developer contact phone number to resolve the issue as soon as possible.
+ Who should be your developer contact?
+ For Partners, we recommend that your developer contact is an individual or team who monitors their inbox regularly. These communications are intended for developers responsible for maintaining apps that interact with Shopify’s API, and provide information that's useful for a technical audience that's familiar with Shopify API versioning.
+ If you're an app user and you’re setting up an app on behalf of your developer, then you should ask your developer for the best contact information to use. You can direct them to this guide to provide them with more information.
+ Update your developer contact details
+ The process of updating your developer contact details is different depending on whether you're updating details for a public app, a custom app, or a Partner organization.
+ Update your API contact email for a public or custom app created in the Partner Dashboard
+ If your public or custom app is using an API version with backwards-incompatible changes, Shopify will contact the email address listed on your Configuration page.
+ Log in to your Partner Dashboard.
+ Go to Apps.
+ Click the name of the app that you want to update.
+ Click Configuration.
+ In the App settings section, in the API contact email card, click Edit.
+ In the modal, enter an API contact email address.
+ Click Save.
+ Update the contact details for a custom app created in the Shopify admin
+ Custom apps created in the Shopify admin have a staff or collaborator account associated with them. This account should belong to the app developer, should include the email address where you can reach them, and must have permission to develop apps.
+ From your Shopify admin, go to Apps.
+ Click Develop apps.
+ Click the name of the app that you want to update.
+ Click App settings and select an account from the App developer drop-down.
+ Click Save.
+ If you set the app developer to a staff or collaborator account, and later delete that account, then the store owner becomes the app developer by default.
+ Update the contact details for a Partner organization
+ Log in to your Partner Dashboard.
+ Go to Settings.
+ In the Emergency developer contact information section, enter a developer contact email address and phone number.
+ Click Save.
+ Related links
+ Making Shopify apps
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ When will Shopify contact you?
+ Who should be your developer contact?
+ Update your developer contact details
+ Related links
+ Updates & News
+ Developer changelog

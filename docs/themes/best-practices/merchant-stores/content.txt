@@ -1,0 +1,25 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Working on themes attached to merchant stores
+ When you're developing or customizing a theme for a merchant, you should keep the following best practices in mind.
+ Access
+ You might want to access a client's store to perform specific tasks related to building a theme. For example, you can access a client's store to test a theme using a merchant's data.
+ To access a client's store, you can use one of the following accounts:
+ Collaborator account: You can use collaborator accounts to access your clients' stores directly through your own Partner Dashboard or using the Shopify app. Collaborator accounts give you access to only the sections of a store that your client wants you to access, and don't count towards a store's staff limit. Any stores that you have access to using a collaborator account are labeled as Managed stores in your Partner Dashboard. Learn how to send a collaborator request to a merchant.
+ Staff account: If you need to do something that can't be accomplished with a collaborator account, then you can request that a merchant create a staff account for you to use. For example, you might need to access the Shopify admin on a mobile device to test an app.
+ Asking a merchant for their password, or using a merchant's credentials to access their store, is prohibited.
+ Accounts and Shopify tools
+ You can't use a collaborator account to set up the Shopify GitHub integration.
+ If you want to set up the Shopify GitHub integration, then you can request that a merchant create a staff account for you to use.
+ Asking a merchant for their password, or using a merchant's credentials to access their store, is prohibited.
+ Version control
+ If you have an ongoing relationship with a merchant, then you might want to connect their theme to version control using the Shopify GitHub integration. Before you do this, you should discuss whether the merchant or your partner organization controls or maintains the GitHub repository. You might transfer the repository as a part of the final package that you deliver to the merchant so they or other developers can work on it.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Access
+ Version control
+ Updates & News
+ Developer changelog
+ Partner blog

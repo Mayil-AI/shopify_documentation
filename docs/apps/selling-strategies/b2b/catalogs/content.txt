@@ -1,0 +1,445 @@
+Billing
+ App Store
+ Manage B2B catalogs
+ Caution
+ Starting in API version 2023-04, the PriceList.contextRule field will be deprecated. If you have an existing app that uses the contextRule field, then you should migrate to catalogs.
+ Catalogs are used to determine the products that are published to customers in different contexts. For example, a business-to-business (B2B) catalog might specify that customers ordering for a specific B2B company location can purchase only the t-shirt products in the store at a 30% discount.
+ In this guide, you'll learn how to build price lists and publications, and associate them with catalogs to control prices and publishing for a specific B2B company location.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_products access scope. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your store.
+ You're familiar with the concept of catalogs.
+ You've created a company and created a B2B catalog.
+ Step 1: Associate a price list with the catalog
+ You can associate a price list with the catalog to determine the prices that are shown to customers ordering for that B2B company location. If a price list isn't associated with the catalog, then customers ordering for this B2B company location receive the initial variant prices converted to the market currency.
+ Create a new price list
+ Use the priceListCreate mutation to create a new price list for the catalog. You can set the name, a percentage-based adjustment, a currency, and the ID of the catalog to associate.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation priceListCreate($input: PriceListCreateInput!) {
+ 2
+    priceListCreate(input: $input) {
+ 3
+      priceList {
+ 4
+        id
+ 5
+      }
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ 9
+      }
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "name": "Prices for Company's Canadian location",
+ 4
+      "currency": "CAD",
+ 5
+      "catalogId": "gid://shopify/CompanyLocationCatalog/CATALOG-ID",
+ 6
+      "parent": {
+ 7
+        "adjustment": {
+ 8
+          "type": "PERCENTAGE_DECREASE",
+ 9
+          "value": 30
+ 10
+        },
+ 11
+        "settings": {
+ 12
+          "compareAtMode": "NULLIFY"
+ 13
+        }
+      "priceListCreate": {
+ 4
+        "priceList": {
+ 5
+          "id": "gid://shopify/PriceList/ID"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ Associate an existing price list
+ Use the priceListUpdate mutation to associate an existing price list with a catalog. You can also make changes to the name, currency, or percentage-based adjustments with the priceListUpdate mutation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation priceListUpdate($id: ID!, $input: PriceListUpdateInput!) {
+ 2
+    priceListUpdate(id: $id, input: $input) {
+ 3
+      priceList {
+ 4
+        id
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/PriceList/ID",
+ 3
+    "input": {
+ 4
+      "catalogId": "gid://shopify/CompanyLocationCatalog/CATALOG-ID"
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "priceListUpdate": {
+ 4
+        "priceList": {
+ 5
+          "id": "gid://shopify/PriceList/ID"
+ 6
+ 9
+    }
+ 10 }
+ Step 2: Associate a publication
+ Caution
+ If a publication isn't associated with a B2B catalog, then customers logged into their B2B accounts won't see any products for that location.
+ The publication determines which products are published to customers that are eligible for the catalog.
+ If you have an existing publication, then you can use the catalogUpdate mutation to associate a publication or make other changes to a catalog.
+ To create and associate a new publication, use the publicationCreate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation publicationCreate {
+ 2
+    publicationCreate(input: {
+ 3
+      catalogId: "gid://shopify/CompanyLocationCatalog/CATALOG-ID"
+ 4
+      defaultState: ALL_PRODUCTS
+ 5
+    }) {
+ 6
+      publication {
+ 7
+        id
+ 8
+        catalog { id title }
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        code
+ 12
+        field
+ 13
+        message
+ 14
+      }
+ 15
+    }
+ 16 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "publicationCreate": {
+ 4
+        "publication": {
+ 5
+          "id": "gid://shopify/Publication/123",
+ 6
+          "catalog": {
+ 7
+            "id": "gid://shopify/CompanyLocationCatalog/1",
+ 8
+            "title": "Catalog for Company's Canadian location"
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Add products and collections to the publication
+ After you create a publication, you can add products and collections to the publication with the publicationUpdate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation publicationUpdate {
+ 2
+    publicationUpdate(
+ 3
+      id: "gid://shopify/Publication/1",
+ 4
+      input: {
+ 5
+        publishablesToAdd: ["gid://shopify/Product/1"],
+ 6
+        publishablesToRemove: ["gid://shopify/Product/2"]
+ 7
+      }) {
+ 8
+      publication {
+ 9
+        products(first: 10) {
+ 10
+          edges {
+ 11
+            node {
+ 12
+              id
+ 13
+            }
+ 14
+          }
+ 15
+        }
+ 16
+      }
+ 17
+      userErrors {
+ 18
+        field
+ 19
+        code
+ 20
+        message
+ 21
+      }
+ 22
+    }
+ 23 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "publicationUpdate": {
+ 4
+        "publication": {
+ 5
+          "products": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "id": "gid://shopify/Product/1"
+ 10
+                }
+ 11
+              }
+ 12
+            ]
+ 13
+          }
+ 14
+        },
+ 15
+        "userErrors": []
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 3: Set fixed prices for specific product variants
+ Use the priceListFixedPricesAdd mutation to set a fixed price for specific product variants.
+ If a product variant is published to the catalog and doesn’t have a set fixed price, then its price is automatically calculated using the percentage-based adjustment that’s specified in the PriceListParent object.
+ Caution
+ The priceListFixedPricesAdd mutation accepts a maximum of 250 prices for each request and acts as an add and replace operation. If a fixed price for a given variant already exists on the price list, then it’s replaced.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation priceListFixedPricesAdd(
+ 2
+    $priceListId: ID!,
+ 3
+    $prices: [PriceListPriceInput!]!
+ 4 ) {
+ 5
+    priceListFixedPricesAdd(priceListId: $priceListId, prices: $prices) {
+ 6
+      prices {
+ 7
+        variant {
+ 8
+          id
+ 9
+        }
+ 10
+      }
+ 11
+      userErrors {
+ 12
+        field
+ 13
+        message
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "priceListId": "gid://shopify/PriceList/ID",
+ 3
+    "prices": [
+ 4
+      {
+ 5
+        "variantId": "gid://shopify/ProductVariant/ID",
+ 6
+        "price": {
+ 7
+          "amount": "10.00",
+ 8
+          "currencyCode": "CAD"
+ 9
+        },
+ 10
+        "compareAtPrice": {
+ 11
+          "amount": "12.00",
+ 12
+          "currencyCode": "CAD"
+ 13
+        }
+ 14
+      },
+ 15
+      {
+ 16
+        "variantId": "gid://shopify/ProductVariant/ID-2",
+ 17
+        "price": {
+ 18
+          "amount": "15.00",
+ 19
+          "currencyCode": "CAD"
+ 20
+        }
+ 21
+      }
+ 22
+    ]
+ 23 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "priceListFixedPricesAdd": {
+ 4
+        "prices": [
+ 5
+          {
+ 6
+            "variant": {
+ 7
+              "id": "gid://shopify/ProductVariant/ID"
+ 8
+            }
+ 9
+          },
+ 10
+          {
+ 11
+            "variant": {
+ 12
+              "id": "gid://shopify/ProductVariant/ID"
+ 13
+            }
+ 14
+          }
+ 15
+        ],
+ 16
+        "userErrors": []
+ 17
+      }
+ 18
+    }
+ 19 }
+ Delete fixed prices
+ To delete a partial set of fixed prices on a price list, you can use the priceListFixedPricesDelete mutation. After a fixed price is deleted, the price for the affected product variant is automatically calculated using the price list parent's percentage-based adjustment.
+ To delete fixed prices, you need to specify the variant ID. You can specify a maximum of 250 variant IDs in the array.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation priceListFixedPricesDelete(
+ 2
+    $priceListId: ID!,
+ 3
+    $variantIds: [ID!]!
+ 4 ) {
+ 5
+    priceListFixedPricesDelete(priceListId: $priceListId, variantIds: $variantIds) {
+ 6
+      userErrors {
+ 7
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "priceListId": "gid://shopify/PriceList/ID",
+ 3
+    "variantIds": [
+ 4
+      "gid://shopify/ProductVariant/ID"
+ 5
+    ]
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "priceListFixedPricesDelete": {
+ 4
+        "deletedFixedPriceVariantIds": [
+ 5
+          "gid://shopify/ProductVariant/ID"
+ 6
+        ],
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ Next steps
+ Learn how to calculate and send invoices for draft orders for B2B customers.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Associate a price list with the catalog
+ Step 2: Associate a publication
+ Step 3: Set fixed prices for specific product variants
+ Next steps
+ Updates & News
+ Developer changelog

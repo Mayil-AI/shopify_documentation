@@ -1,0 +1,60 @@
+App extensions
+ An app extension enables you to add your app's functionality to Shopify user interfaces. This guide introduces app extensions and how they work.
+ How it works
+ An app extension surfaces the functionality of your app where and when users need it most. App extensions are useful for apps that require quick, frequent actions from users.
+ For example, your app’s actions can appear as dropdown items in Shopify admin for orders, products, customers, and other resources. You can produce interfaces that easily mimic the Shopify look-and-feel, and make your app seamlessly appear in Shopify Point of Sale (POS).
+ Without an app extension
+ Without an app extension, users interact directly with your app. Your app relays information to Shopify that gets surfaced back to the users through your app:
+ With an app extension
+ With an app extension, users interact with Shopify. Shopify relays information to your app that gets surfaced back to the users through your app extension in Shopify:
+ Note
+ An app extension isn’t an app. It's a mechanism that lets an app add features to certain defined parts of several Shopify user interfaces. Apps that use extensions must adhere to the same authentication requirements and rate limits as apps that don’t use extensions.
+ Creating app extensions
+ You can create app extensions using Shopify CLI or the Partner Dashboard. The tool that you use to create an app extension depends on the type of extension that you're building. To learn which tool to use to create each extension type, refer to the list of extension types.
+ For information about building and previewing app extensions, refer to the documentation for your extension type.
+ Extension-only apps
+ Extension-only apps are apps that don't have embedded app pages. Because they're made up entirely of extensions, you can host extension-only apps on Shopify.
+ Extension-only apps have a Shopify-populated app URL, which you can optionally change, to build embedded app pages or list your app on the Shopify App Store.
+ Note
+ Extension-only apps must be custom apps.
+ Learn about extension-only apps that don't require a web server.
+ Configuring app extensions
+ When you generate an app extension, a TOML configuration file named shopify.extension.toml is automatically generated in your app's extension directory. The TOML file is located in the extensions/ directory of your app project.
+ For information about the properties that you can configure in the TOML file, refer to Configuring app extensions.
+ Versioning and deployment
+ Your app configuration and all extensions, including extensions created in the Partner Dashboard, are versioned together as a single app version.
+ When you run the deploy command using Shopify CLI, an app version is created and released. You can revert to a previous app version at any time. You can also create an app version from the Partner Dashboard.
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Learn how to deploy extensions.
+ Reviews and approvals
+ Some app extensions need to be reviewed and approved before they're released to users.
+ If an app extension needs to be reviewed, then you can't release the related app version until you submit it for review and it's been approved.
+ To learn whether your extension type needs to be reviewed, refer to the list of extension types.
+ Removing app extensions
+ If you no longer want users to use an app extension, or you want to temporarily disable an app extension, then you can remove it.
+ Learn how to remove an app extension from your app.
+ Developer tools and resources
+ List of app extensions
+ Learn about the available app extensions that you can use to add your app's functionality to Shopify user interfaces.
+ Extension-only apps
+ Learn about extension-only apps that don't require a web server.
+ Configuring app extensions
+ Learn about app extension properties that you can configure in the TOML file.
+ App versions
+ Learn about deploying and releasing app versions.
+ Remove an app extension
+ Learn how to remove app extensions from your app.
+ Next steps
+ Consult the list of app extensions to determine which app extensions are versioned, which app extensions require reviews and approvals, where you manage the app extensions in Shopify, and more.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Creating app extensions
+ Configuring app extensions
+ Versioning and deployment
+ Reviews and approvals
+ Removing app extensions
+ Developer tools and resources
+ Next steps
+ Updates & News

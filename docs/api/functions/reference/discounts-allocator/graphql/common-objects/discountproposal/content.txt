@@ -1,0 +1,65 @@
+Overview
+ UNIONS
+ Merchandise
+ Value
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CartLineTarget
+ CollectionMembership
+ CustomProduct
+ DeliverableCartLine
+ Discount
+ DiscountProposal
+ FixedAmount
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ LineDiscount
+ Metafield
+ MoneyV2
+ OutputAllocations
+ Percentage
+ Product
+ ENUMS
+ CountryCode
+ CurrencyCode
+ DeliveryMethod
+ DiscountApplicationStrategy
+ DiscountClass
+ LanguageCode
+ WeightUnit
+ FunctionRunResult
+ Input
+ Scalars
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ DiscountProposal object
+ unstable
+ The input object for the Function.
+ On this page
+ Fields
+ Types that return DiscountProposal
+ Fields
+ handle (Handle!)
+ The handle of the discount proposal.
+ message (String)
+ The message for this proposal.
+ targets ([CartLineTarget!]!)
+ The line items to which the discount proposal applies.
+ value (Value!)
+ The value of the discount.
+ Types that return DiscountProposal
+ Discount.discountProposals
+ Was this page helpful?
+ YesNo

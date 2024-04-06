@@ -1,0 +1,130 @@
+Overview
+ Ownership
+ Metafields
+ Metaobjects
+ Overview
+ Manage metaobjects
+ Access controls
+ Capabilities
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Metaobjects
+ Metaobjects are custom data structures that your app can define and create to store your app's information. Similar to metafields, they can be associated with a Shopify resource such as a product or a collection. However, they can also exist on their own. Metaobjects provide you with a way to create resources that Shopify doesn't offer out of the box.
+ Users can define their own metaobjects or use the ones that your app creates to extend their shop's data model. Metaobjects are also available in themes using Liquid, Storefront API, and Admin API.
+ Note
+ Metaobjects use metafields to store their fields. You can learn more about metafields and their supported types.
+ Metaobject definitions and entries
+ The following terms are used when describing metaobjects:
+ Definition: A template for which fields and properties you want to declare for your metaobjects.
+ Entry: A metaobject entry created using a definition.
+ Example
+ In the following GraphQL examples, a user wants to create a new resource in Shopify called Product Highlight. A product highlight has a title, description and image that displays an interesting fact about a product.
+ The following examples shows the structure of the Product Highlight metaobject definition:
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectDefinition": {
+ 4
+        "id": "gid://Shopify/MetaobjectDefinition/1",
+ 5
+        "type": "$app:product_highlight",
+ 6
+        "fieldDefinitions": [
+ 7
+          {
+ 8
+            "key": "title",
+ 9
+            "type": { "name": "single_line_text_field" },
+ 10
+          },
+ 11
+          {
+ 12
+            "key": "description",
+ 13
+            "type": { "name": "multi_line_text_field" },
+ 14
+          },
+ 15
+          {
+ 16
+            "key": "image",
+ 17
+            "type": { "name": "file_reference" },
+ 18
+          },
+ 19
+        ],
+ 20
+      }
+ 21
+    },
+ 22 }
+ The following example shows a Product Highlight metaobject entry:
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobject": {
+ 4
+        "id": "gid://Shopify/Metaobject/1",
+ 5
+        "type": "product_highlight",
+ 6
+        "displayName": "100% Reusable Plastics",
+ 7
+        "fields": [
+ 8
+          {
+ 9
+            "key": "title",
+ 10
+            "value": "100% Reusable Plastics",
+ 11
+          },
+ 12
+          {
+ 13
+            "key": "description",
+ 14
+            "value": "Rest easy - our glasses are made from 100% reusable materials",
+ 15
+          },
+ 16
+          {
+ 17
+            "key": "image",
+ 18
+            "value": "gid://Shopify/File/1",
+ 19
+          },
+ 20
+        ],
+ 21
+      }
+ 22
+    }
+ 23 }
+ Developer resources
+ GraphQL Admin API
+ Use the GraphQL Admin API to manage metaobjects and metaobject definitions.
+ GraphQL Storefront API
+ Use the GraphQL Storefront API to retrieve metaobjects.
+ Liquid
+ Use Liquid to access metaobjects and output metaobject data in themes.
+ Next steps
+ Learn about controlling access to who can read and write metaobjects.
+ Learn about managing metaobjects: Creating metaobject definitions and entries.
+ Learn more about metaobject capabilities: Customizing behavior for your metaobjects.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Metaobject definitions and entries
+ Developer resources
+ Next steps
+ Updates & News

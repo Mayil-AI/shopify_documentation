@@ -1,0 +1,95 @@
+Billing
+ App Store
+ Migrate metafields
+ In the 2021-07 API version release, the value_type field on the Metafield object was deprecated. As of the 2022-01 API version release, the value_type field has been removed from these APIs.
+ In the REST Admin API, the type property replaces the value_type property in the Metafield resource.
+ In the GraphQL Admin API, the type field replaces the valueType field in the Metafield object.
+ This guide describes how you can migrate your metafields from using value_type to type in the REST Admin API and GraphQL Admin API.
+ How it works
+ For backward compatibility, when metafields that use the new types are queried from API version 2021-04 or earlier, we return a backward-mapped value type. For example, the date type maps to the STRING value type.
+ The new type attribute also accepts deprecated value types. You can update the field name and keep the same value to avoid breaking other integrations (such as Liquid in themes). However, when adding new metafields, we recommend using the new types.
+ Migrate your metafields in the REST Admin API
+ Change the value_type property to type in your Metafield resource, as shown in the following example:
+ REST Admin API example
+ Before
+ 1 {
+ 2
+    "metafield": {
+ 3
+      "namespace": "inventory",
+ 4
+      "key": "warehouse",
+ 5
+      "value": 25,
+ 6
+      "value_type": "integer"
+ 7
+    }
+ 8 }
+ After
+ 1 {
+ 2
+    "metafield": {
+ 3
+      "namespace": "inventory",
+ 4
+      "key": "warehouse",
+ 5
+      "value": 25,
+ 6
+      "type": "number_integer"
+ 7
+    }
+ 8 }
+ Migrate your metafields in the GraphQL Admin API
+ Change the valueType field to type in your Metafield object, as shown in the following example:
+ GraphQL Admin API example
+ Before
+ 1 {
+ 2
+    "metafields": [{
+ 3
+      "namespace": "inventory",
+ 4
+      "key": "warehouse",
+ 5
+      "value": 25,
+ 6
+      "valueType": "INTEGER",
+ 7
+    }]
+ 8 }
+ After
+ 1 {
+ 2
+    "metafields": [
+ 3
+      {
+ 4
+        "namespace": "inventory",
+ 5
+        "key": "warehouse",
+ 6
+        "value": 25,
+ 7
+        "type": "number_integer"
+ 8
+      }
+ 9
+    ]
+ 10 }
+ Note
+ The value of the new type field needs to be lowercase because the new type field takes a string instead of an enum value.
+ Next steps
+ To learn more about using Shopify APIs to work with metafields, refer to the following documentation:
+ GraphQL Admin API reference
+ REST Admin API reference
+ Storefront API reference
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Migrate your metafields in the REST Admin API
+ Migrate your metafields in the GraphQL Admin API
+ Next steps
+ Updates & News

@@ -1,0 +1,175 @@
+Data fetching
+ Caching
+ Markets
+ SEO
+ Overview
+ Manage SEO
+ Storefronts
+ Environments
+ Deployments
+ Build your storefront
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Manage meta tags for SEO
+ It's essential to optimize your website for search engines, but it's hard to always get it right. In custom storefronts using Hydrogen, it is easy to add the proper metadata to products, pages, collections, blogs, and articles so they stand out in search results.
+ This guide shows you how to use the Seo component to ensure your website contains the following optimizations:
+ Proper standard meta and link tags present in the HTML document, usually the head tag.
+ Additional meta tags that target a range of protocols and supported applications, such as Open Graph and Twitter.
+ A well-defined object of JSON Linking Data (JSON-LD), inside a script tag with the type application/ld+json.
+ Requirements
+ You've started a new app with @shopify/hydrogen or added the @shopify/hydrogen npm dependency to an existing app.
+ You've added the necessary environment variables to request data from your Shopify store using the Storefront API.
+ Step 1: Render the Seo component in the root component
+ Hydrogen provides an Seo component that collects the data defined in the handle export of each route module. You can add this component in the <head> tag of the root file:
+ app/root.jsx
+ Javascript
+ Typescript
+ app/root.jsx
+ 1 import {Seo} from `@shopify/hydrogen`;
+ 2
+ 3 export default function App() {
+ 4
+    return (
+ 5
+      <html lang="en">
+ 6
+        <head>
+ 7
+          // Add Seo component
+ 8
+          <Seo />
+ 9
+          <Meta />
+ 10
+          <Links />
+ 11
+        </head>
+ 12
+        <body>
+ 13
+          <Outlet />
+ 14
+          <ScrollRestoration />
+ 15
+          <Scripts />
+ 16
+          <LiveReload />
+ 17
+        </body>
+ 18
+      </html>
+ 19
+    );
+ 20 }
+ Step 2: Define global SEO values in the root component
+ After you've rendered the Seo component in your root component, each route module can define an seo object inside of the handle export, which is part of the Remix Route Module API.
+ To reduce duplication on each route, you can define the shared global values in the root file.
+ Add an seo key on the handle export from the page. If the module doesn't already have a handle export, then you can define it and add the seo key. The following is an example:
+ app/root.jsx
+ Javascript
+ Typescript
+ app/root.jsx
+ 1 export const handle = {
+ 2
+    seo: {
+ 3
+      title: 'Snowdevil',
+ 4
+      titleTemplate: '%s - A custom Hydrogen storefront',
+ 5
+      description:
+ 6
+        'Hydrogen is a React-based framework for building headless storefronts on Shopify.',
+ 7
+    },
+ 8 };
+ The values for title and description generate the SEO metadata in the head of the HTML document, and define the default global values. In the next step, you'll override these values to make them specific to each route.
+ Step 3: Override SEO values on the product details page
+ In the previous step, you defined the seo key as a plain object, but you can also pass a function that receives the loader data as an argument. This enables you to have dynamic values that are informed by a Storefront API GraphQL query.
+ Inside the product details page, you can override the title and description keys with the SEO information that's defined in the Shopify admin for each product.
+ The following example shows how to request the SEO data in the PRODUCT_QUERY and return the values on the product key of the loader's return object. With the seo key now defined as a function, you have access to those values. If any data is missing, then the values you defined in your root file are used instead.
+ /app/routes/$productDetails.jsx
+ Javascript
+ Typescript
+ /app/routes/$productDetails.jsx
+ 1 const seo = ({data}) => ({
+ 2
+    title: data?.product?.seo?.title,
+ 3
+    description: data?.product?.seo?.description,
+ 4 });
+ 5
+ 6 export const handle = {
+ 7
+    seo,
+ 8 };
+ 9
+ 10 export async function loader({params, request, context}: LoaderArgs) {
+ 11
+    const {productHandle} = params;
+ 12
+ 13
+    const {shop, product} = await context.storefront.query(PRODUCT_QUERY, {
+ 14
+      variables: {
+ 15
+        handle: productHandle,
+ 16
+      },
+ 17
+    });
+ 18
+ 19
+    return {
+ 20
+      product,
+ 21
+    };
+ 22 }
+ 23
+ 24 const PRODUCT_QUERY = `#graphql
+ 25
+    query Product(
+ 26
+      $handle: String!
+ 27
+    ) {
+ 28
+      product(handle: $handle) {
+ 29
+        seo {
+ 30
+          description
+ 31
+          title
+ 32
+        }
+ 33
+      }
+ 34
+    }
+ 35 `;
+ Step 4: Define more granular metadata
+ So far, you've made changes to the title and description values on the seo object. While these two values alone will add the title tag, meta tags for Open Graph and Twitter, and some basic JSON-LD, you can take these concepts much further to provide additional SEO metadata for each route.
+ Using the same concept of requesting data using the loader and the GraphQL Storefront API, you can do the following tasks:
+ Define media to display when the page is shared on social media.
+ Specify the Twitter handle of your brand.
+ Provide mobile and language alternates.
+ Define additional custom jsonLd data.
+ For detailed examples, refer to the route modules in the Hydrogen demo-store template on GitHub.
+ Next steps
+ Add SEO information to the rest of the routes in your app.
+ View the type information of the generateSeoTags function for the full list of possible values that you can add.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Render the Seo component in the root component
+ Step 2: Define global SEO values in the root component
+ Step 3: Override SEO values on the product details page
+ Step 4: Define more granular metadata
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

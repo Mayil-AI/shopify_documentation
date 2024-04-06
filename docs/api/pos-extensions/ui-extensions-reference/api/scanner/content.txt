@@ -1,0 +1,200 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Scanner API
+ The Scanner API enables a UI extension to access scanner data and available scanning sources supported by the device.
+ External and embedded scanners
+ The API allows developers to integrate the scanning result with custom functionality in the POS app. To achieve this, use the scannerDataSubscribable to receive data and the scannerSourcesSubscribable to render specific UI elements based on available scanning sources.
+ Note
+ A UI extension will override all native POS scanning functionality.
+ Hardware scanner example
+ In this example, assuming a physical scanner is connected to the POS, any scans performed when ui extensions are in use will automatically add the product to the cart if the data exists on the shop.
+ 1 // SmartGridModal component that adds a scanned product to the cart
+ 2 const SmartGridModal = () => {
+ 3
+    // Use hooks to get the extension API and scanner data
+ 4
+    const api = useExtensionApi();
+ 5
+    const { data } = useScannerDataSubscription();
+ 6
+ 7
+    // Use an effect to add the scanned product to the cart when data changes
+ 8
+    useEffect(() => {
+ 9
+      const addProductToCart = (data: string | undefined) => {
+ 10
+        if (data) {
+ 11
+          api.cart.addLineItem(Number(data), 1);
+ 12
+        }
+ 13
+      };
+ 14
+      addProductToCart(data);
+ 15
+    }, [data]);
+ 16
+ 17
+    return (
+ 18
+      <Navigator>
+ 19
+        <Screen name="Screen1" title="Screen1">
+ 20
+          <Stack direction="horizontal" flexChildren flex={1}>
+ 21
+            <Text>{`Scanned data: ${data || ''}`}</Text>
+ 22
+          </Stack>
+ 23
+        </Screen>
+ 24
+      </Navigator>
+ 25
+    );
+ 26 };
+ Conditional scanner source rendering example
+ There might be situations where a developer needs to conditionally render UI elements based on the available scanning sources of the device on which the extension is installed. For example, an extension could be designed for full-screen camera scanning, but a device like POS GO does not have a camera. In such cases, it would be necessary to avoid rendering the camera scanner component and instead create a UI that supports embedded scanning.
+ 1 const SmartGridModal = () => {
+ 2
+    // Use hooks to get scanner data, source, and available scanners
+ 3
+    const { data, source } = useScannerDataSubscription();
+ 4
+    const availableScanners = useScannerSourcesSubscription();
+ 5
+ 6
+    // Check if a camera scanner is available
+ 7
+    const hasCameraScanner = availableScanners.includes('camera');
+ 8
+ 9
+    return (
+ 10
+      <Navigator>
+ 11
+        <Screen name='Screen1' title='Screen1'>
+ 12
+          <Stack direction='horizontal' flexChildren flex={1}>
+ 13
+          {/* Render CameraScanner component if a camera scanner is available */}
+ 14
+            {hasCameraScanner ? (
+ 15
+              <CameraScanner />
+ 16
+            ) : (
+ 17
+          {/* Render external/embedded scanning components if a camera scanner is not available */}
+ 18
+              <Stack direction='vertical' alignment='space-evenly'>
+ 19
+                <Text>{`Scanned data: ${data || ''}`}</Text>
+ 20
+                <Text>{`Scanned data source: ${source || ''}`}</Text>
+ 21
+              </Stack>
+ 22
+            )}
+ 23
+          </Stack>
+ 24
+        </Screen>
+ 25
+      </Navigator>
+ 26
+    );
+ 27 };
+ Receiving scan event updates
+ The scannerDataSubscribable will return any scanner data and source that is executed on the extension. This means you can scan with your camera or hardware devices and receive the data in one place.
+ JavaScript
+ React
+ 1 api.scanner.scannerDataSubscribable.subscribe((scannerData) => {
+ 2
+      const dataText = root.createComponent(Text);
+ 3
+      const sourcesText = root.createComponent(Text);
+ 4
+      sourcesText.appendChild(`Scanned data: ${scannerData.data}`);
+ 5
+      sourcesText.appendChild(`Scanner sources: ${scannerData.source}`);
+ 6
+    });
+ Receiving updates on available scanner sources for the POS
+ JavaScript
+ React
+ 1 api.scanner.scannerSourcesSubscribable.subscribe((scannerSources) => {
+ 2
+      const scannerSourcesText = root.createComponent(Text);
+ 3
+      scannerSourcesText.appendChild(`Scanner sources: ${scannerSources}`);
+ 4
+    })
+ ScannerApiContent
+ Name Type Description
+ scannerDataSubscribable RemoteSubscribable<ScannerSubscriptionResult> Creates a subscription to scan events. Provides an initial value and a callback to subscribe to value changes. Currently supports only one subscription. You can utilize makeStatefulSubscribable on a RemoteSubscribable to implement multiple subscriptions. Using makeStatefulSubscribable or the corresponding hooks counts as a subscription.
+ scannerSourcesSubscribable RemoteSubscribable<ScannerSource[]> Creates a subscription to the scanning sources available on the POS device. Provides an initial value and a callback to subscribe to value changes. Currently supports only one subscription. You can utilize makeStatefulSubscribable on a RemoteSubscribable to implement multiple subscriptions. Using makeStatefulSubscribable or the corresponding hooks counts as a subscription.
+ RemoteSubscribable
+ Name Type Description
+ initial ScannerSubscriptionResult Initial scan event or scanner sources.
+ ScannerSubscriptionResult
+ Name Type Description
+ data string? The string data from the last scanner event received.
+ source string? The scanning source from which the scan event came.
+ ScannerSource
+ Name Description
+ camera Device camera
+ external Third-party and externally connected scanning devices
+ embedded Scanner embedded in device
+ ScannerDataSubscribable Hooks
+ Name Description
+ useScannerDataSubscription() A hook utilizing useState and the useStatefulSubscribableScannerData function to create a component state. This hook returns the latest scale result state which re-renders on change.
+ useStatefulSubscribableScannerData() A hook utilizing the makeStatefulSubscribable function to allow multiple scanner subscriptions. This hook returns a StatefulRemoteSubscribable object with the scan result in it.
+ destroyStatefulSubscribableScannerData() A function destroying the subscriptions useStatefulSubscribableScannerData has.
+ ScannerSourcesSubscribable Hooks
+ Name Description
+ useScannerSourcesSubscription() A hook utilizing useState and the useStatefulSubscribableScannerSources function to create a component state. This hook returns the latest scanner sources state which re-renders on change.
+ useStatefulSubscribableScannerSources() A hook utilizing the makeStatefulSubscribable function to allow multiple scanner sources subscriptions. This hook returns a StatefulRemoteSubscribable object with scanner sources in it.
+ destroyStatefulSubscribableScannerSources() A function destroying the subscriptions useStatefulSubscribableScannerSources has.
+ Best practices
+ Blocking Scenarios
+ In situations where scanning should not be allowed within a specific section of your application, use an error banner to inform merchants that scanning is not permitted on that screen and offer alternative areas where the scanning function can be performed.
+ Error Scanning
+ Use the error banner at the top of the screen to denote errors while scanning or when encountering an unrecognized barcode.
+ Successful Scanning
+ Upon successful scanning of an item, display a ‘Toast’ component with a message such as "Item scanned" to indicate the outcome. Additionally, altering the screen contents can also be used to signal a successful scan.
+ Content guidelines
+ Blocking or Error Scenarios
+ Banners
+ Be concise.
+ Keep to 1 or 2 short sentences.
+ Be dismissible unless it contains critical information or an important step merchants need to take.
+ Example:
+ ✅Scanning not permitted on this screen. Go to {Section} to scan items.
+ Dismiss (CTA)
+ ❌Error.
+ ✅Barcode not recognized. Try scanning item again.
+ Dismiss (CTA)
+ ❌Didn’t work.
+ Successful Scanning
+ Toast
+ Used for short messages to confirm an action.
+ Never go over 3 or 4 words.
+ Do not use for error messages.
+ Should be used for success messages.
+ Written in the pattern of noun + verb.
+ Example:
+ ✅Item scanned.
+ ❌Your item has been scanned and added to your inventory count!
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ External and embedded scanners
+ Receiving scan event updates
+ Receiving updates on available scanner sources for the POS
+ ScannerDataSubscribable Hooks
+ ScannerSourcesSubscribable Hooks
+ Best practices

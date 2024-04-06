@@ -1,0 +1,60 @@
+Revenue share for Shopify App Store developers
+ App developers who sell apps on the Shopify App Store pay 20% in app revenue share to Shopify by default. However, app developers can register for a reduced revenue share plan. In this plan, Shopify collects 15% revenue share on annual gross app revenue earned through the Shopify App Store. Additionally, for developers who meet eligibility requirements, Shopify collects 0% revenue share on the first $1,000,000 USD in annual gross app revenue earned through the Shopify App Store.
+ Note
+ Effective January 1, 2024, developers who earn $20,000,000 USD or more through the Shopify App Store annually, or who have a gross company revenue of $100,000,000 USD or more annually, are not eligible to pay 0% revenue share on the first $1,000,000 USD in annual gross app revenue. Eligibility is reassessed annually. Shopify will reach out to confirm eligibility as needed.
+ Registering for the reduced revenue share plan
+ All Partner accounts need to complete a one-time Shopify App Store registration to access the reduced revenue share plan. When you register, you must pay a one-time fee of $19 USD per Partner account.
+ Registration and fee payment isn't required if you're only developing private or custom apps.
+ Developers must identify all of their Associated Developer Accounts during registration.
+ Steps:
+ In the Partner Dashboard, go to Settings.
+ In the App Store registration section, click Register now.
+ On the Register for the Shopify App Store page, enter the following information:
+ whether your account is owned by an individual or an entity
+ whether you have any Associated Developer Accounts
+ an owner email address and business name for each associated account
+ Review your information to verify that it adheres to the Associated Developer Accounts requirements in the Partner Program Agreement.
+ Click Add payment method and enter your payment information.
+ Click Register.
+ Calculating Shopify App Store revenue
+ Revenue share for the reduced revenue share plan is calculated using the following formulas:
+ Note
+ These formulas are effective January 1, 2024.
+ Prior calendar year's earnings Calculation formula
+ Developers who earned $20,000,000 USD in gross earnings or more through the Shopify App Store in the prior calendar year, or who have gross company revenue of $100,000,000 USD or more in the prior calendar year Partners pay 15% on all app revenue
+ Developers who earned less than $20,000,000 USD in gross earnings through the Shopify App Store in the prior calendar year, and who have gross company revenue under $100,000,000 USD in the prior calendar year
+ Partners pay 0% revenue share on their first $1,000,000 USD in gross app revenues for that calendar year
+ Partners pay 15% revenue share on earnings over $1,000,000 USD for the remainder of that calendar year
+ Every year on January 1, the revenue share resets to 0% until the Partner reaches $1,000,000 USD for that calendar year
+ Revenue share calculation for the reduced revenue share plan is subject to the following conditions:
+ Every year on January 1, the amount a Partner has earned resets to zero.
+ If a Partner earns revenue across multiple apps, then revenue share is calculated based on the total cumulative revenue of all the apps, including apps developed under any Associated Developer Accounts.
+ Even though total gross app revenue is calculated across all Associated Developer Accounts, revenue share is still paid out separately at the Partner account level.
+ Other income, such as from the Shopify Theme Store or referrals, isn't included in revenue share calculation for the Shopify App Store. Learn more about theme revenue share.
+ Tip
+ Revenue share is calculated based on gross sales, not net sales. Refunds aren't taken into account when revenue share is calculated.
+ Associated Developer Accounts
+ App developers are responsible for reporting Associated Developer Accounts when completing the Shopify App Store registration.
+ An Associated Developer is any Partner account that an app developer or Associated Developer has registered with Shopify. Learn more about Associated Developer Accounts on Shopify Help Center.
+ Even though total gross app revenue is calculated across all Associated Developer Accounts, revenue share is still paid out separately at the Partner account level.
+ Billing fees and sales tax
+ All billing is subject to a 2.9% processing fee and applicable sales tax. As of August 1, 2021, fees and taxes are charged separately in the new revenue share plan.
+ Earnings in some countries or regions are subject to additional regulatory operating fees.
+ Viewing your earnings and fees
+ There are several ways to review your earnings and fees in the Partner Dashboard:
+ View app charges for a specific store.
+ View app charges in the Payouts page.
+ View app charges from the App history page.
+ Download a CSV of your payouts in the Payouts page.
+ Review the Shopify fees invoice in the Payouts page.
+ You can also use the Shopify Partner API to programatically access the data found in your Partner Dashboard to automate your front and back office operations.
+ Additional terms
+ For additional terms related to earning money in the Shopify App Store, refer to Shopify Partner earnings and the Partner Program Agreement.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Registering for the reduced revenue share plan
+ Calculating Shopify App Store revenue
+ Viewing your earnings and fees
+ Additional terms
+ Updates & News

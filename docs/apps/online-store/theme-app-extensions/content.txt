@@ -1,0 +1,35 @@
+Theme app extensions overview
+ Theme app extensions allow merchants to easily add dynamic elements to their themes without having to interact with Liquid templates or code. For example, dynamic elements can include product reviews, prices, ratings, or interactive 3D models of products. Theme app extensions can integrate with Online Store 2.0 themes, such as the default Dawn theme, which is Shopify's Online Store 2.0 reference theme.
+ Benefits of using theme app extensions
+ Theme app extensions automatically expose your app in the theme editor. You can leverage the editor’s visual editing capabilities without needing to replicate them in your app.
+ You can deploy your app at the same time to all online stores that use it. You also have access to versioning, and asset hosting on the Shopify CDN.
+ A single set of integration logic and instructions works for all themes.
+ Merchants won't need to manually edit their theme code.
+ Theme app extensions resources
+ Theme app extensions contain the following resources:
+ Blocks - Liquid files that act as the entry point for what you want to inject in a theme. The following block types are supported:
+ App blocks
+ App embed blocks
+ Assets - CSS, JavaScript, and other static app content that gets injected into themes.
+ Snippets - Reusable Liquid snippets that can be used across multiple blocks.
+ Learn more about the theme app extensions framework.
+ Designing for the best merchant experience
+ Apps built in the theme app extension framework don't edit theme code, which decreases the risk of introducing breaking changes to the theme, makes it easier to iterate on the content of the integration, and provides for a better merchant experience.
+ Merchants can use the theme editor to configure exposed settings and add app blocks in theme sections for precise positioning in a page's layout.
+ Resources
+ Dawn
+ Explore Shopify's Online Store 2.0 reference theme, built to support app blocks.
+ Shopify CLI
+ Learn about Shopify CLI, which is used for creating and registering theme app extensions and for version control.
+ Next steps
+ Get started with theme app extensions
+ Review the theme app extensions framework
+ Understand the UX guidelines for theme app extensions
+ Update your app to use theme app extensions
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Benefits of using theme app extensions
+ Theme app extensions resources
+ Designing for the best merchant experience
+ Resources

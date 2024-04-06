@@ -1,0 +1,1195 @@
+Overview
+ Theme app extensions
+ Other integration methods
+ Verify theme support
+ Manage media
+ Media for products
+ Media for product variants
+ Admin
+ Flow
+ Payments
+ Billing
+ App Store
+ Manage media for products
+ You can use the GraphQL Admin API to manage the various types of media associated with products. You can also use the Storefront API to retrieve a product's media and display it on a custom storefront. This guide explains the different types of product media, and how to use Shopify APIs to work with them.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API and Storefront API.
+ Your app has the read_products and write_products access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You're performing actions on product media that are supported by the API you're working with:
+ GraphQL Admin API: Supports uploading media, adding media to a product, retrieving media, and deleting media
+ Storefront API: Only supports retrieving media
+ You're working within the constraints of the plan-based limits for product media. There's a limit to the number of Shopify-hosted videos and 3D models that a store can have. The limit depends on the Shopify plan that the store is on:
+ Basic Shopify: 250
+ Shopify: 1,000
+ Advanced Shopify: 5,000
+ Shopify Plus: Contact Plus Support
+ Step 1: Upload media to Shopify
+ A product can have different media types:
+ MediaImage: An image in one of the following formats: PNG, GIF, or JPG. The maximum image size is 4472 x 4472 px, or 20 megapixels. For square images, 2048 x 2048 px looks best.
+ Video: An MP4 video that's hosted by Shopify. The video runtime must be 10 minutes or shorter. The maximum file size is 1 GB.
+ ExternalVideo: A video that's hosted on YouTube or Vimeo, specified by its embed URL.
+ Model3d: A 3D model provided in GLB or USDZ format. The asset can be retrieved in GLB and USDZ formats. The file size must be 500 MB or smaller.
+ Note
+ Only the GraphQL Admin API and Storefront API supports working with all types of product media. The REST Admin API supports only product images.
+ Before you add a piece of media to a product, you can upload it and host it on Shopify. There are two parts to uploading an asset to Shopify:
+ Generate the upload URL and parameters.
+ Upload the asset.
+ Generate the upload URL and parameters
+ You can use the stagedUploadsCreate mutation to generate the values that you need to authenticate multiple uploads. The mutation returns the stagedTargets array. Each staged target has the following properties:
+ params: The parameters that you use to authenticate an upload request
+ url: The URL where you can upload the media asset
+ resourceUrl: The URL that you pass to productCreateMedia in the originalSource field after the asset has been uploaded
+ The mutation accepts an input of type stagedUploadInput, which has the following fields:
+ Field Type Description
+ resource StagedUploadTargetGenerateUploadResource Specifies the resource type to upload. Valid media values: VIDEO, MODEL_3D, IMAGE.
+ filename String The name of the file to upload.
+ mimeType String The Media type of the file to upload. Use one of the following values:
+ video/mp4
+ video/quicktime
+ image/png
+ image/gif
+ image/jpeg
+ model/gltf-binary
+ model/vnd.usd+zip
+ httpMethod StagedUploadHttpMethodType The HTTP method to be used by the staged upload. Valid values: POST (all media types), PUT (images only).
+ fileSize UnsignedInt64 The size in bytes of the file to upload.
+ The following example uses the stagedUploadsCreate mutation to generate the upload values required to upload an MP4 video and a 3D model.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation generateStagedUploads {
+ 2
+    stagedUploadsCreate(input: [
+ 3
+      {
+ 4
+        filename: "watches_comparison.mp4",
+ 5
+        mimeType: "video/mp4",
+ 6
+        resource: VIDEO,
+ 7
+        fileSize: "899765"
+ 8
+      },
+ 9
+      {
+ 10
+        filename: "another_watch.glb",
+ 11
+        mimeType: "model/gltf-binary",
+ 12
+        resource: MODEL_3D,
+ 13
+        fileSize: "456"
+ 14
+      }
+ 15
+    ])
+ 16
+      {
+ 17
+      stagedTargets {
+ 18
+        url
+ 19
+        resourceUrl
+ 20
+        parameters {
+ 21
+          name
+ 22
+          value
+ 23
+        }
+ 24
+      }
+ 25
+      userErrors {
+ 26
+        field, message
+ 27
+      }
+ 28
+    }
+ 29 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "stagedUploadsCreate": {
+ 4
+        "stagedTargets": [
+ 5
+          {
+ 6
+            "url": "https://shopify-video-production-core-originals.storage.googleapis.com",
+ 7
+            "resourceUrl": "https://shopify-video-production-core-originals.storage.googleapis.com?external_video_id=8490719",
+ 8
+            "parameters": [
+ 9
+              {
+ 10
+                "name": "GoogleAccessId",
+ 11
+                "value": "video-production@video-production-225115.iam.gserviceaccount.com"
+ 12
+              },
+ 13
+              {
+ 14
+                "name": "key",
+ 15
+                "value": "c/o/v/2e285673bb044aa1a174f813a2e953cf.mp4"
+ 16
+              },
+ 17
+              {
+ 18
+                "name": "policy",
+ 19
+                "value": "eyJjb25kaXRpb25zIjpbWyJlcSIsIiRidWNrZXQiLCJzaG9waWZ5LXZpZGVvLXByb2R1Y3Rpb24tY29yZS1vcmlnaW5hbHMiXSxbImVxIiwiJGtleSIsImMvby92LzJlMjg1NjczYmIwNDRhYTFhMTc0ZjgxM2EyZTk1M2NmLm1wNCJdLFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLDg5OTc2NSw4OTk3NjVdXSwiZXhwaXJhdGlvbiI6IjIwMjItMDctMjlUMDE6NTE6MzVaIn0="
+ 20
+              },
+ 21
+              {
+ 22
+                "name": "signature",
+ 23
+                "value": "I3b9kpOha6DjDYk+zHIJ3XF1Q8JBa6VVNJ+dOQje/F/Nnzry8d97CiI5j3AI+5c1/ZCkpw9MRcOJx4DK0PDJ8k/KWJ1j9x8YxuvT87KQTy/hiacpCGBKnx5qGowUHA/yNFsFZ4S+2oNsyMCHNHrYRxk0F56i3aSD2mTA28eusH1Xfa0d7wnTQbS8CV2H8IpPLFHUsxBWPM1VnKCFHR0BHy2IjEzYEvyl/ei9IfBCr1CL5JxtYwIzGe5YS2zYqE60gGu9xGcA57SVwqTsn5wVEi+sGmSgwlgGt8r526u+I40VvRrRpuD3zb7yxEL0C/LJpgIcpTd61Yhu8MeKquqzPA=="
+ 24
+              }
+ 25
+            ]
+ 26
+          },
+ 27
+          {
+ 28
+            "url": "https://storage.googleapis.com/threed-models-production/models/1495b0cb3bcee78e/another_watch.glb?external_model3d_id=bW9kZWwzZC0yNjIzMTA=",
+ 29
+            "resourceUrl": "https://storage.googleapis.com/threed-models-production/models/1495b0cb3bcee78e/another_watch.glb?external_model3d_id=bW9kZWwzZC0yNjIzMTA=",
+ 30
+            "parameters": [
+ 31
+              {
+ 32
+                "name": "GoogleAccessId",
+ 33
+                "value": "threed-model-service-prod@threed-model-service.iam.gserviceaccount.com"
+ 34
+              },
+ 35
+              {
+ 36
+                "name": "key",
+ 37
+                "value": "models/1495b0cb3bcee78e/another_watch.glb"
+ 38
+              },
+ 39
+              {
+ 40
+                "name": "policy",
+ 41
+                "value": "eyJleHBpcmF0aW9uIjoiMjAyMi0wNy0yOVQwMTowNjozNloiLCJjb25kaXRpb25zIjpbWyJlcSIsIiRidWNrZXQiLCJ0aHJlZWQtbW9kZWxzLXByb2R1Y3Rpb24iXSxbImVxIiwiJGtleSIsIm1vZGVscy8xNDk1YjBjYjNiY2VlNzhlL2Fub3RoZXJfd2F0Y2guZ2xiIl0sWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsNDU2LDQ1Nl1dfQ=="
+ 42
+              },
+ 43
+              {
+ 44
+                "name": "signature",
+ 45
+                "value": "HM7Vu8fPcE9pB9NzJee7AMxD612SVRT2bAX+zO+btvoEoSNlPAUanmn4dSr1Xjzv+/iGQgeGShEFkZSnqFiKaRyiiwS6TQKANkE2TbhjFAKS3hfGSTmW4Hq9rRsFOLzQ4a5umda+mugsZ+pT5GPw1amXgD7J+P9sONxrukgnyftyucUOkeBWDTBJrx3b02A9CvFb4md787fuB6qG4WRDJ0q317DObqW1eQ+ACor5mADlEZkGLtNgVhbIhA1JPY+06kDPpmQmBxd4RfrQngzBc36tKUwBkOVPLSwNRo7iMs2nMcRWGjJ9naBfKwrPkYjbe6/npKrq9BKTyeaEIf/fmQ=="
+ 46
+              }
+ 47
+            ]
+ 48
+          }
+ 49
+        ],
+ 50
+        "userErrors": []
+ 51
+      }
+ 52
+    }
+ 53 }
+ Upload the asset
+ After generating the parameters and URL for an upload, you need to upload the asset by using a POST or PUT request. The request is formatted differently depending on the media type and the HTTP method that you're using.
+ 3D models: POST request
+ Use a multipart form, and include all parameters as form inputs in the request body:
+ Terminal
+ $ curl -v \
+ $
+    -F "GoogleAccessId=threed-model-service-prod@threed-model-service.iam.gserviceaccount.com" \
+ $
+    -F "key=models/1495b0cb3bcee78e/another_watch.glb" \
+ $
+    -F "policy=eyJleHBpcmF0aW9uIjoiMjAyMi0wNy0yOVQwMTowNjozNloiLCJjb25kaXRpb25zIjpbWyJlcSIsIiRidWNrZXQiLCJ0aHJlZWQtbW9kZWxzLXByb2R1Y3Rpb24iXSxbImVxIiwiJGtleSIsIm1vZGVscy8xNDk1YjBjYjNiY2VlNzhlL2Fub3RoZXJfd2F0Y2guZ2xiIl0sWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsNDU2LDQ1Nl1dfQ==" \
+ $
+    -F "signature=HM7Vu8fPcE9pB9NzJee7AMxD612SVRT2bAX+zO+btvoEoSNlPAUanmn4dSr1Xjzv+\/iGQgeGShEFkZSnqFiKaRyiiwS6TQKANkE2TbhjFAKS3hfGSTmW4Hq9rRsFOLzQ4a5umda+mugsZ+pT5GPw1amXgD7J+P9sONxrukgnyftyucUOkeBWDTBJrx3b02A9CvFb4md787fuB6qG4WRDJ0q317DObqW1eQ+ACor5mADlEZkGLtNgVhbIhA1JPY+06kDPpmQmBxd4RfrQngzBc36tKUwBkOVPLSwNRo7iMs2nMcRWGjJ9naBfKwrPkYjbe6\/npKrq9BKTyeaEIf\/fmQ==" \
+ $
+    -F "file=@/Users/shopifyemployee/another_watch.glb" \
+ $
+    "https://storage.googleapis.com/threed-models-production/models/1495b0cb3bcee78e/another_watch.glb?external_model3d_id=bW9kZWwzZC0yNjIzMTA="
+ Videos: POST request
+ Use a multipart form, and include all parameters as form inputs in the request body:
+ Terminal
+ $ curl -v \
+ $
+    -F "GoogleAccessId=video-production@video-production-225115.iam.gserviceaccount.com" \
+ $
+    -F "key=c/o/v/123bbb4321f4d40a101mi1fd3c32aa7.mp4" \
+ $
+    -F "policy=eyJjb25kaXRpb25zIjpbWyJlcSIsIiRidWNrZXQiLCJzaG9waWZ5LXZpZGVvLWRldmVsb3BtZW50LWdlbmVyYWwtb3JpZ2luYWxzIl0sWyJlcSIsIiRrZXkiLCJkZXYvby92L2Y5MzdlZmM0MDExZjRkNDBhMTAxYWY4ZWQzYzU2Y2U3Lm1wNCJdLFsikj23423kj123kjahsdbaxNSw4NTA2MTVdXSwiZXhwaXJhdGlvbiI6IjIwMjItMDgtMDFUMjM6NTM6MjNaIn0=" \
+ $
+    -F "signature=vD7N/vHO4MS0EpG,ms@DSF@sfsdlkasn21D5+AuQXP2naBXU1mTr7K9EelXXufl/52lDvzgxJmQvgpUWVZ9tmNtxMjEj7uiL7dUzTs1vxQC7G/fWODk43bzX54Q6Xe2+BgBNp+fK4p9zM51+XZS9SrHcoTVaoqmGdYSWtu+ABOKRObQAf5hVm6AjKphB0hqWHxfLyk+/9MCnpXjdJzUrzNDnOAMVQYV7sBBNXS123123DuLQDn7lH8CFImsC3AVnB4nGoZpV2JhPko0teoogw7umfXrRZYB8NeTr2bOdnsFzJYdlXZvhbgUW3BjDQ==" \
+ $
+    -F "file=@/Users/shopifyemployee/watches_comparison.mp4" \
+ $
+    "https://shopify-video-production-core-originals.storage.googleapis.com"
+ Tip
+ You can send API requests that include form data by using clients API like Postman and Insomnia.
+ Images: POST request
+ Use a multipart form, and include all parameters as form inputs in the request body:
+ Terminal
+ $ curl -v \
+ $
+    -F "Content-Type=image/png" \
+ $
+    -F "success_action_status=201" \
+ $
+    -F "acl=private" \
+ $
+    -F "key=tmp/45732462614/products/7156c27e-0331-4bd0-b758-f345afaa90d1/watches_comparison.png" \
+ $
+    -F "x-goog-date=20221024T181157Z" \
+ $
+    -F "x-goog-credential=merchant-assets@shopify-tiers.iam.gserviceaccount.com/20221024/auto/storage/goog4_request" \
+ $
+    -F "x-goog-algorithm=GOOG4-RSA-SHA256" \
+ $
+    -F "x-goog-signature=039cb87e2787029b56f498beb2deb3b9c34d96da642c1955f79225793f853760906abbd894933c5b434899d315da13956b1f67d8be54f470571d7ac1487621766a2697dfb8699c57d4e67a8b36ea993fde0f888b8d1c8bd3f33539d8583936bc13f9001ea3e6d401de6ad7ad2ae52d722073caf250340d5b0e92032d7ad9e0ec560848b55ec0f943595578a1d6cae53cd222d719acb363ba2c825e3506a52b545dec5be57074f8b1b0d58298a0b4311016752f4cdb955b89508376c38f8b2755fce2423acb3f592a6f240a21d8d2f51c5f740a61a40ca54769a736d73418253ecdf685e15cfaf7284e6e4d5a784a63d0569a9c0cffb660028f659e68a68fb80e" \
+ $
+    -F "policy=eyJjb25kaXRpb25zIjpbeyJDb250ZW50LVR5cGUiOiJpbWFnZVwvcG5nIn0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7ImFjbCI6InByaXZhdGUifSxbImNvbnRlbnQtbGVuZ3RoLXJhbmdlIiwxLDIwOTcxNTIwXSx7ImJ1Y2tldCI6InNob3BpZnktc3RhZ2VkLXVwbG9hZHMifSx7ImtleSI6InRtcFwvZ2NzXC80NTczMjQ2MjYxNFwvcHJvZHVjdHNcLzcxNTZjMjdlLTAzMzEtNGJkMC1iNzU4LWYzNDVhZmFhOTBkMVwvd2F0Y2hlc19jb21wYXJpc29uLnBuZyJ9LHsieC1nb29nLWRhdGUiOiIyMDIyMTAyNFQxODExNTdaIn0seyJ4LWdvb2ctY3JlZGVudGlhbCI6Im1lcmNoYW50LWFzc2V0c0BzaG9waWZ5LXRpZXJzLmlhbS5nc2VydmljZWFjY291bnQuY29tXC8yMDIyMTAyNFwvYXV0b1wvc3RvcmFnZVwvZ29vZzRfcmVxdWVzdCJ9LHsieC1nb29nLWFsZ29yaXRobSI6IkdPT0c0LVJTQS1TSEEyNTYifV0sImV4cGlyYXRpb24iOiIyMDIyLTEwLTI1VDE4OjExOjU3WiJ9" \
+ $
+    -F "file=@/Users/shopifyemployee/Desktop/watches_comparison.png" \
+ $
+     "https://shopify-staged-uploads.storage.googleapis.com/"
+ Images: PUT request
+ Include the parameters as request headers. Additional parameters are already included in the URL:
+ Terminal
+ $ curl -X PUT -T /Users/shopifyemployee/Desktop/watches_comparison.png \
+ $
+    -H 'content_type:image/png' \
+ $
+    -H 'acl:private' \
+ $
+    "https://shopify-staged-uploads.storage.googleapis.com/tmp/45732462614/products/4da01e43-76ff-4014-be67-754bc154494d/watches_comparison.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=merchant-assets%40shopify-tiers.iam.gserviceaccount.com%2F20221024%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20221024T181931Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=5c27c9a5b22496b4e8ef8918f028667a6ea13f6c1970b89e587a41a269d7dcfc1611c2afe3e5f36048b9d1e94b4b599d51b2f00d3d33d71483e0d35e03140911450e837f2e6f9d482d3546f137874fdac4f7d0d9e9906eee553d7059f7c8b2b009678beee9fa69361aa1a646b07ba7fddc6f33eae932e7cfa56deb4e9c9c295d883910143099e6bc2811c2f41e1cb752bd8c61a3e15efe5311b7fbf79dc76df372bc5870ea4a31f9bc01f758f78f704d1edfa3cf72b2768557a84a93a471ad93d6fff7155cbac549dd4aa00aecb60e02323f058f31264e025a7a3123a17fa55d64413ee72089c23686664eb5c421625398d6246e152d2a4eab871a5e5c075e43"
+ Step 2: Add media to a product
+ You can add new media to a product by using the productCreateMedia mutation. The mutation takes two arguments:
+ productId: The ID of the product that you're adding media to.
+ media: An array of CreateMediaInput objects.
+ For each CreateMediaInput object, include the following fields:
+ CreateMediaInput object fields
+ Field Type Description
+ originalSource String The original source of the media object. Can be an external URL for images, YouTube videos, and Vimeo videos, or an upload URL for images, videos, and 3D models hosted by Shopify. For assets hosted by Shopify, use the resourceUrl value returned by the stagedUploadsCreate mutation.
+ alt String The alt text associated to the media.
+ mediaContentType MediaContentType The content type of the asset that you're adding. Valid values: IMAGE, VIDEO, EXTERNAL_VIDEO, MODEL_3D.
+ Note
+ An app can create a maximum of 1,000 video objects per store in a week. The count is reset seven days after the first Video object is created. If your app reaches the 1,000 limit before seven days, then your app is throttled and you receive a VIDEO_THROTTLE_EXCEEDED error code when you try to create Video objects for products. Wait for the count to reset, and then try again.
+ The following example adds a Shopify-hosted video to a product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation createProductMedia {
+ 2
+    productCreateMedia(productId: "gid://shopify/Product/1", media: [
+ 3
+      {
+ 4
+        originalSource: "https://storage.googleapis.com/shopify-video-production-core-originals/c/o/v/af64d230f6bc40cbba40a87be950a1a2.mp4?external_video_id=1730",
+ 5
+        alt: "Comparison video showing the different models of watches.",
+ 6
+        mediaContentType: VIDEO
+ 7
+      }
+ 8
+    ]) {
+ 9
+      media {
+ 10
+        ... fieldsForMediaTypes
+ 11
+        mediaErrors {
+ 12
+          code
+ 13
+          details
+ 14
+          message
+ 15
+        }
+ 16
+        mediaWarnings {
+ 17
+          code
+ 18
+          message
+ 19
+        }
+ 20
+      }
+ 21
+      product {
+ 22
+        id
+ 23
+      }
+ 24
+      mediaUserErrors {
+ 25
+        code
+ 26
+        field
+ 27
+        message
+ 28
+      }
+ 29
+    }
+ 30 }
+ 31
+ 32 fragment fieldsForMediaTypes on Media {
+ 33
+    alt
+ 34
+    mediaContentType
+ 35
+    preview {
+ 36
+      image {
+ 37
+        id
+ 38
+      }
+ 39
+    }
+ 40
+    status
+ 41
+    ... on Video {
+ 42
+      id
+ 43
+      sources {
+ 44
+        format
+ 45
+        height
+ 46
+        mimeType
+ 47
+        url
+ 48
+        width
+ 49
+      }
+ 50
+    }
+ 51
+    ... on ExternalVideo {
+ 52
+      id
+ 53
+      host
+ 54
+      originUrl
+ 55
+    }
+ 56
+    ... on Model3d {
+ 57
+      sources {
+ 58
+        format
+ 59
+        mimeType
+ 60
+        url
+ 61
+      }
+ 62
+      boundingBox {
+ 63
+        size {
+ 64
+          x
+ 65
+          y
+ 66
+          z
+ 67
+        }
+ 68
+      }
+ 69
+    }
+ 70 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productCreateMedia": {
+ 4
+        "media": [
+ 5
+          {
+ 6
+            "alt": "Comparison video showing the different models of watches.",
+ 7
+            "mediaContentType": "VIDEO",
+ 8
+            "preview": {
+ 9
+              "image": null
+ 10
+            },
+ 11
+            "status": "UPLOADED",
+ 12
+            "id": "gid://shopify/Video/1",
+ 13
+            "sources": [],
+ 14
+            "mediaErrors": [],
+ 15
+            "mediaWarnings": []
+ 16
+          }
+ 17
+        ],
+ 18
+        "product": {
+ 19
+          "id": "gid://shopify/Product/1"
+ 20
+        },
+ 21
+        "mediaUserErrors": []
+ 22
+      }
+ 23
+    }
+ 24 }
+ Step 3: Retrieve media objects
+ You can retrieve a product's media of all types by using the media connection on the Product type. The connection returns nodes that implement the Media interface.
+ The media connection includes the mediaContentType field, which you can use to check the media type of each node. Because each media type can return different fields, you can specify the return fields for each type by using fragments:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    product(id:"gid://shopify/Product/1") {
+ 3
+      title
+ 4
+      media(first:5) {
+            ... fieldsForMediaTypes
+ 8
+          }
+ 9
+        }
+ 13
+ 14 fragment fieldsForMediaTypes on Media {
+ 15
+    alt
+ 16
+    mediaContentType
+ 17
+    preview {
+ 18
+      image {
+ 19
+        id
+ 20
+        altText
+ 21
+        url
+ 22
+      }
+ 23
+    }
+ 24
+    status
+ 25
+    ... on Video {
+ 26
+      id
+ 27
+      sources {
+ 28
+        format
+ 29
+        height
+ 30
+        mimeType
+ 31
+        url
+ 32
+        width
+ 33
+      }
+ 34
+      originalSource {
+ 35
+        format
+ 36
+        height
+ 37
+        mimeType
+ 38
+        url
+ 39
+        width
+ 40
+      }
+ 41
+    }
+ 42
+    ... on ExternalVideo {
+ 43
+      id
+ 44
+      host
+ 45
+      embeddedUrl
+ 46
+    }
+ 47
+    ... on Model3d {
+ 48
+      sources {
+ 49
+        format
+ 50
+        mimeType
+ 51
+        url
+ 52
+      }
+ 53
+      originalSource {
+ 54
+        format
+ 55
+        mimeType
+ 56
+        url
+ 57
+      }
+ 58
+    }
+ 59
+    ... on MediaImage {
+ 60
+      id
+ 61
+      image {
+ 62
+        altText
+ 63
+        url
+ 64
+      }
+ 65
+    }
+ 66 }
+      "product": {
+ 4
+        "title": "Polaris Watch",
+ 5
+        "media": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "alt": "Comparison video showing the different models of watches.",
+ 10
+                "mediaContentType": "VIDEO",
+ 11
+                "preview": {
+ 12
+                  "image": {
+ 13
+                    "id": "gid://shopify/Image/1",
+ 14
+                    "altText": "Comparison video showing the different models of watches.",
+ 15
+                    "url": "https://cdn.shopify.com/s/files/1/1768/1717/products/31f1438669864f4f91847f07e39e3835.jpg?v=1234567890"
+ 16
+                  }
+ 17
+                },
+ 18
+                "status": "READY",
+ 19
+                "id": "gid://shopify/Video/1",
+ 20
+                "sources": [
+ 21
+                  {
+ 22
+                    "format": "mp4",
+ 23
+                    "height": 360,
+ 24
+                    "mimeType": "video/mp4",
+ 25
+                    "url": "https://videos.shopifycdn.com/c/vp/2a82811738ca41e7a508e6744028d169/SD-360p.mp4?Expires=1560956269&KeyName=core-signing-key-1&Signature=MYq_eEWGB-2Ww-oN58j-TbxwDYw=",
+ 26
+                    "width": 640
+ 27
+                  }
+ 28
+                ]
+ 29
+              }
+ 30
+            },
+ 31
+            {
+ 32
+              "node": {
+ 33
+                "alt": "Comparison video showing the different models of watches.",
+ 34
+                "mediaContentType": "EXTERNAL_VIDEO",
+ 35
+                "preview": {
+ 36
+                  "image": {
+ 37
+                    "id": "gid://shopify/Image/2",
+ 38
+                    "altText": "Comparison video showing the different models of watches.",
+ 39
+                    "url": "https://cdn.shopify.com/s/files/1/1768/1717/products/31f1438669864f4f91847f07e39e3835.jpg?v=2234567890"
+ 40
+                  }
+ 41
+                },
+ 42
+                "status": "READY",
+ 43
+                "id": "gid://shopify/ExternalVideo/1",
+ 44
+                "host": "YOUTUBE",
+ 45
+                "embeddedUrl": "https://youtu.be/z7RLjNOael0"
+ 46
+              }
+ 47
+            }
+ 48
+          ]
+ 49
+        }
+ 50
+      }
+ 51
+    }
+ 52 }
+ Retrieve product media by using the Storefront API
+ With the Storefront API, use the media field on the Product type to query for a product's media. Use a fragment to specify the fields that you want to return for each possible media type.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    node(id: "gid://shopify/Product/1") {
+ 3
+      ...on Product {
+ 4
+        id
+ 5
+          media(first: 10) {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              mediaContentType
+ 9
+              alt
+ 10
+              ...mediaFieldsByType
+ 11
+            }
+ 12
+          }
+    }
+ 16 }
+ 17
+ 18 fragment mediaFieldsByType on Media {
+ 19
+    ...on ExternalVideo {
+ 20
+      id
+ 21
+      host
+ 22
+          originUrl
+ 23
+    }
+ 24
+    ...on MediaImage {
+ 25
+      image {
+ 26
+        url
+ 27
+      }
+ 28
+    }
+ 29
+    ...on Model3d {
+ 30
+      sources {
+ 31
+        url
+ 32
+        mimeType
+ 33
+        format
+ 34
+        filesize
+ 35
+      }
+ 36
+    }
+ 37
+    ...on Video {
+ 38
+      sources {
+ 39
+        url
+ 40
+        mimeType
+ 41
+        format
+ 42
+        height
+ 43
+        width
+ 44
+      }
+ 45
+    }
+ 46 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "node": {
+ 4
+        "id": "gid://shopify/Product/1",
+ 5
+        "media": {
+ 6
+ 9
+                "mediaContentType": "VIDEO",
+ 10
+                "alt": "Comparison video showing the different models of watches.",
+ 11
+                "sources": [
+ 12
+                  {
+ 13
+                    "url": "https://videos.shopifycdn.com/c/vp/2a82811738ca41e7a508e6744028d169/SD-360p.mp4?Expires=1575744400&KeyName=core-signing-key-1&Signature=OPKELzhY-kYTx9QH9x6NJA9IqnI=",
+ 14
+                    "mimeType": "video/mp4",
+ 15
+                    "format": "mp4",
+ 16
+                    "height": 360,
+ 17
+                    "width": 640
+ 18
+                  }
+ 19
+                ]
+ 20
+              }
+ 21
+            },
+ 22
+            {
+ 23
+              "node": {
+ 24
+                "mediaContentType": "IMAGE",
+ 25
+                "alt": "Polaris watch",
+ 26
+                "image": {
+ 27
+                  "url": "https://cdn.shopify.com/s/files/1/1768/1717/products/IGQ.png?v=1560528103"
+ 28
+                }
+ 29
+              }
+ 30
+            }
+ 31
+          ]
+ 32
+        }
+ 33
+      }
+ 34
+    }
+ 35 }
+ Step 4: Check whether media is ready to display
+ When you add a piece of media to a product, Shopify needs to process the media before it can be displayed.
+ The Media interface includes the status field, which you can use to check whether the media has been processed. The status field can return different values.
+ Step 5: Update product media
+ You can use the productUpdateMedia mutation to update a piece of media associated with a product. As part of the mutation input, include the following arguments:
+ productId: The ID of the product that the media belongs to.
+ media: An array of media changes to apply.
+ You can change a media item's alt text or preview image URL. Include the media's ID to identify the media you want to update. Identify the media to update by its ID. For example, the GraphQL variable below updates the alt text of the MediaImage with ID gid://shopify/MediaImage/42729528:
+ 1 media: [
+ 2
+    {
+ 3
+      id: "gid://shopify/MediaImage/42729528",
+ 4
+      alt: "Some new alt text."
+ 5
+    }
+ 6 ]
+ The following example shows how to use the productUpdateMedia mutation to update the alt text of a piece of media. The example uses a JSON variable to provide the media changes, and a fragment to select the return fields based on the media type.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation updateProductMedia {
+ 2
+    productUpdateMedia(
+ 3
+      productId: "gid://shopify/Product/42729528",
+ 4
+      media: [
+ 5
+      {
+ 6
+        id: "gid://shopify/MediaImage/1",
+ 7
+        alt: "Man wearing Polaris watch."
+ 8
+      }
+ 9
+    ]
+ 10
+    ) {
+ 11
+      media {
+ 12
+        alt
+ 13
+        mediaContentType
+ 14
+        ... mediaFieldsByType
+ 15
+      }
+ 16
+      mediaUserErrors {
+ 17
+        field
+ 18
+        message
+ 19
+      }
+ 20
+    }
+ 21 }
+ 22
+ 23 fragment mediaFieldsByType on Media {
+ 24
+    ...on ExternalVideo {
+ 25
+      id
+ 26
+      host
+ 27
+      originUrl
+ 28
+    }
+ 29
+    ...on MediaImage {
+ 30
+      id
+ 31
+      image {
+ 32
+        url
+ 33
+      }
+ 34
+    }
+ 35
+    ...on Model3d {
+ 36
+      id
+ 37
+      sources {
+ 38
+        url
+ 39
+        mimeType
+ 40
+        format
+ 41
+        filesize
+ 42
+      }
+ 43
+    }
+ 44
+    ...on Video {
+ 45
+      id
+ 46
+      sources {
+ 47
+        url
+ 48
+        mimeType
+ 49
+        format
+ 50
+        height
+ 51
+        width
+ 52
+      }
+ 53
+    }
+ 54 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdateMedia": {
+ 4
+        "media": [
+ 5
+          {
+ 6
+            "alt": "Man wearing Polaris watch.",
+ 7
+            "mediaContentType": "IMAGE",
+ 8
+            "id": "gid://shopify/MediaImage/42729528",
+ 9
+            "image": {
+ 10
+              "url": "https://cdn.shopify.com/s/files/1/1768/1717/products/StockSnap_9NPZZJCWW3_copy.jpg?v=1566862515"
+ 11
+            }
+ 12
+          }
+ 13
+        ],
+ 14
+        "mediaUserErrors": []
+ 15
+      }
+ 16
+    }
+ 17 }
+ Step 6: Reorder media objects
+ You can reorder a product’s media by using the productReorderMedia mutation. The mutation accepts two arguments:
+ id: The ID of the product whose media you’re reordering.
+ moves: An array of tuples consisting of a media object’s ID and its new position in the list. For example, the following array would move the media objects to the front of the product’s media list:
+ 1 [
+ 2
+    {
+ 3
+      id: "gid://shopify/MediaImage/37"
+ 4
+      newPosition: "0"
+ 5
+    },
+ 6
+    {
+ 7
+      id: "gid://shopify/Video/2",
+ 8
+      newPosition: "1"
+ 9
+    }
+ 10 ]
+ The following example adjusts the order of a products first three media assets:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation reorderProductMedia {
+ 2
+    productReorderMedia(
+ 3
+      id: "gid://shopify/Product/1",
+ 4
+      moves: [
+ 5
+      {
+ 6
+        id: "gid://shopify/MediaImage/37",
+ 7
+        newPosition: "0"
+ 8
+      },
+ 9
+      {
+ 10
+        id: "gid://shopify/Video/2",
+ 11
+        newPosition: "1"
+ 12
+      },
+ 13
+      {
+ 14
+        id: "gid://shopify/ExternalVideo/1",
+ 15
+        newPosition: "2"
+ 16
+      }
+ 17
+    ]) {
+ 18
+      job {
+ 19
+        id
+ 20
+        done
+ 21
+      }
+ 22
+      mediaUserErrors {
+ 23
+        code
+ 24
+        field
+ 25
+        message
+ 26
+      }
+ 27
+    }
+ 28 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productReorderMedia": {
+ 4
+        "job": {
+ 5
+          "id": "gid://shopify/Job/17366d70-740a-4048-a102-82267e30c92a",
+ 6
+          "done": false
+ 7
+        },
+ 8
+        "mediaUserErrors": []
+ You can use the returned ID for the job to poll for when the reordering job is complete.
+ Step 7: Delete media objects (optional)
+ To delete media assets from a product, use the productDeleteMedia mutation. The mutation accepts two arguments:
+ productId: The ID of the product whose media you’re deleting.
+ mediaIds: An array of IDs for the media that you’re deleting.
+ The following example deletes two media assets from a product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation deleteProductMedia {
+ 2
+    productDeleteMedia(
+ 3
+      productId: "gid://shopify/Product/1",
+ 4
+      mediaIds: [
+ 5
+        "gid://shopify/ExternalVideo/1",
+ 6
+        "gid://shopify/Video/2"
+ 7
+      ]) {
+ 8
+      deletedMediaIds
+ 9
+      product {
+ 10
+        id
+ 11
+      }
+ 12
+      mediaUserErrors {
+ 13
+        code
+ 14
+        field
+ 15
+        message
+ 16
+      }
+ 17
+    }
+ 18 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productDeleteMedia": {
+ 4
+        "deletedMediaIds": [
+ 5
+          "gid://shopify/ExternalVideo/1",
+ 6
+          "gid://shopify/Video/2"
+ 7
+        ],
+ 8
+        "product": {
+ 9
+          "id": "gid://shopify/Product/1"
+ 10
+        },
+ 11
+        "mediaUserErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Next steps
+ Manage media objects on product variants with the GraphQL Admin API.
+ Use Liquid to add product media to a store's theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Upload media to Shopify
+ Step 2: Add media to a product
+ Step 3: Retrieve media objects
+ Step 4: Check whether media is ready to display
+ Step 5: Update product media
+ Step 6: Reorder media objects
+ Step 7: Delete media objects (optional)
+ Next steps
+ Updates & News

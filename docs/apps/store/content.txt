@@ -1,0 +1,30 @@
+Shopify App Store
+ With targeted recommendations and relevant categories, the Shopify App Store is the best place for Shopify merchants to find apps that they can use to build their business. As an app developer, you can create apps for the Shopify App Store to reach millions of entrepreneurs around the world, and use Shopify's Billing API to create pricing models that let you grow your own app development business.
+ Getting your app approved
+ When you’re ready to distribute your app on the Shopify App Store, you need to submit it to Shopify’s App Approval team and make sure it meets all requirements.
+ View the complete list of app requirements.
+ Learn more about the app review process.
+ Find out if your app needs to meet the protected customer data requirements.
+ Learn more about our support requirements for app developers.
+ Charging for your app
+ Shopify’s Billing API lets you charge merchants a one-time fee for your public app, or you can charge them for an ongoing subscription.
+ Apply for our reduced revenue share plan to pay only 15% revenue share on all app revenue, reduced from 20%. Eligible developers pay 0% revenue share on the first $1,000,000 USD that they make each year.
+ Learn more about using the Billing API.
+ Learn more about app revenue share.
+ Marketing and supporting your app
+ After your app is listed on the Shopify App Store, you can market and support your app to make it more successful. Successful developers market their app both through Shopify and externally, offer great customer service to merchants, and manage their app reviews.
+ Get advice on being successful in the Shopify App Store.
+ Improving quality and getting promoted
+ Merchants want apps that are easy to use, safe, and performant, and that solve their problems. To help merchants to find apps that meet their needs, Shopify adds indicators of quality to apps, and promotes high quality apps on various surfaces, including the Shopify App Store. Apps that meet all of our criteria are given Built for Shopify status, our highest level of recognition and achievement.
+ To learn about our quality standards, and how you can earn achievements that grant you quality indicators and promotion opportunities, refer to Built for Shopify.
+ Shopify App Store ads
+ As an app developer, you can create search ads to help merchants discover your apps in the Shopify App Store. Ads are shown to merchants on the search results page above the organic search results.
+ Learn more about Shopify App Store ads.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Getting your app approved
+ Charging for your app
+ Marketing and supporting your app
+ Improving quality and getting promoted
+ Shopify App Store ads

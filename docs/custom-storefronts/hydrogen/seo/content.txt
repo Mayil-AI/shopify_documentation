@@ -1,0 +1,45 @@
+Data fetching
+ Caching
+ Markets
+ SEO
+ Overview
+ Manage SEO
+ Storefronts
+ Environments
+ Deployments
+ Build your storefront
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ SEO
+ This guide explains how SEO works in Hydrogen and the output of SEO-related tags in your Hydrogen storefront.
+ How SEO works in Hydrogen
+ Hydrogen includes an Seo component that renders SEO information on a webpage, as well as the following example files in the Hydrogen demo store:
+ [sitemap.xml].tsx: Generates all products, collections, and pages URLs using the Storefront API
+ [robots.txt].tsx: A file that sets default rules for which URLs can be crawled by search engines
+ Seo component
+ The Seo component is rendered at the root module and collects data defined in the handle export of each route. The data defined in each route is used to generate the <head> tags that search engines look for.
+ Learn how to add the Seo component and customize <head> tags at each route level.
+ Limitations and considerations
+ The following limitations and considerations apply to the XML sitemap that's included in the Demo Store template:
+ The sitemap has a limit of 250 products, 250 collections, and 250 pages. You need to paginate results if your store has more than 250 resources.
+ Tip
+ If your store has more resources than the limit, and you haven't customized the URLs of the resources, then we recommend using the Online Store version of the sitemap at https://{store-domain}/sitemap.xml.
+ When you add or remove pages, the sitemap is automatically updated within one day. Similarly, if you unpublish a product, then the product is removed automatically from the sitemap.
+ The sitemap is cached for 24 hours.
+ By default, the sitemap uses the onlineStoreUrl field from the Storefront API as the URL. It falls back to the Demo Store template URL structure, which is based on resource's handle.
+ Robots.txt overrides for public Oxygen deployments
+ If you deploy to Oxygen hosting, then your custom robots.txt file will only be served in your public production environment with a custom domain set, as well as private deployments and environments. All deployments are private by default.
+ If you set an environment or a preview deployment to be publicly visible, then Oxygen overrides robots.txt with a disallow rule for all bots and crawlers. This helps prevent search engines from serving duplicate results or exposing site content prematurely.
+ Related components
+ Seo
+ Next steps
+ Learn how to perform common tasks for managing routes SEO in Hydrogen.
+ Learn about the analytics support built into Hydrogen.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How SEO works in Hydrogen
+ Limitations and considerations
+ Related components
+ Next steps

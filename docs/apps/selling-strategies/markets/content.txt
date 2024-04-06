@@ -1,0 +1,105 @@
+Overview
+ Catalogs
+ Translate content
+ Locally required order data
+ B2B
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Shopify Markets
+ Shopify helps merchants expand their business to a global audience, sell to multiple countries, and scale internationally. With Shopify Markets, you can configure multiple languages, international pricing, market-specific domains and subfolders, and more. By creating localized shopping experiences, merchants can better expand their business internationally.
+ This guide introduces the ways that merchants can localize their stores for international markets, how your apps can access localized data to be consistent with the merchant’s configuration, and how you can use Shopify Markets to build powerful tools for merchants selling internationally.
+ Note
+ Unless otherwise stated, the concepts and examples in this guide apply equally to stores using Shopify Markets, Shopify Markets Pro, and Global-E’s native integration that works with Shopify’s checkout.
+ How it works
+ In Shopify, a market is a group of one or more regions of the world that a merchant is targeting for sales. Merchants have one primary market, and any number of other markets up to a total of 50.
+ A merchant can configure a different buyer experience for each market depending on their needs. If a store is selling somewhere, then that region is included in one and only one of the store’s active markets — it’s not possible for a visitor in checkout to select a shipping address that’s not included in a market. If your app helps a merchant sell, then you may need to reference their market configuration to know where they sell and what buyer experiences they’ve configured.
+ When you’re building experiences for customers, don’t expose the merchant’s specific market groupings. Merchants group regions into markets based on their needs, and visitors to a store shouldn’t be asked to guess whether a particular merchant considers Germany to be “Western Europe” or “Central Europe.” Visitors should be told and asked about only the actual geographic regions that a merchant sells.
+ Examples
+ Explore an example of how to query for a merchant’s markets configuration with the Admin API.
+ Check out an example of how to load a store’s supported countries and languages using the Storefront API.
+ Learn about the localization data available in Liquid.
+ Determining which localized experience is best for a visitor
+ If you have multiple localized versions of a single store, then you should make sure that each visitor interacts with the optimal version of the store. Depending on the merchant’s store configuration, search engines might be able to pre-localize visitors, and Shopify might automatically redirect visitors. However, it’s still possible for a visitor to be browsing in a context for a market that they aren’t actually located in.
+ Learn how to detect a visitor’s optimal localized experience and help them access it.
+ Local web presences
+ For SEO purposes, and to localize marketing efforts, merchants often configure dynamic URLs for their international markets. Shopify Markets makes this automatic for merchants using Liquid storefronts. Developers of custom storefronts are encouraged to follow similar patterns.
+ Localized web presences for a specific market can take the form of different domains, subdomains, or subfolders. For example, if a store’s primary market is the United States on example.com, then when a Canadian market is created, the merchant can enable a Canadian subfolder at example.com/en-ca. Alternatively, the merchant could choose to configure a Canadian subdomain at ca.example.com or purchase a ccTLD example.ca.
+ When a merchant translates their storefront, they need a language-specific subfolder for each alternative language. This configuration is automatic for Liquid storefronts. If the same example merchant enables French translations for their United States and Canadian markets, then they’ll get a new URL for each market. The French version of their United States market will be at example.com/fr, and the French version for Canada will be at example.com/fr-ca, ca.example.com/fr, or example.ca/fr depending on the merchant’s configuration for the Canadian market.
+ Caution
+ Given these possible dynamic changes in URL structure, avoid hardcoding URL when integrating or linking to the online store. If you’ve hardcoded a URL like /cart in a link or Ajax request, then visitors browsing in another language or market context will be forced back to the domain defaults. This means they might see the wrong language or currency.
+ Examples
+ Learn about how to generate dynamic, locale-aware URLs in theme app extensions and script tags.
+ Refer to an example of how to use the Admin API to access the root URLs for a shop’s market web presences.
+ International pricing
+ When selling internationally, localized pricing is essential. Automatic conversion with price rounding might be the perfect balance between effort and reward for many merchants, but some merchants need more control. To account for costs or competitive positioning, merchants can adjust product prices in specific international markets up or down by a percentage. Marketing needs or agreements with partners might require merchants to set a fixed, local-currency price for a given product.
+ Note
+ When reading product prices from Shopify, don’t try to compute an international market’s price from the base variant prices. Instead, you should load each international market’s prices explicitly, treating Shopify as the source of truth.
+ Examples
+ Explore an example of how to query for local prices using the Storefront API.
+ Refer to example of how to use the Admin API to preview contextual prices for a product or a specific variant.
+ Learn how to use locale-aware URLs and automatically get correct prices in Liquid and the Ajax API.
+ Configuring international prices
+ There are a number of strategies that you can use to configure a market’s international pricing. Automatic conversion can be configured by updating a market’s currency settings. If automatic conversion is insufficient, then you can use price lists to uniformly adjust product prices up or down by a percentage, specify explicit per-variant fixed overrides.
+ Currencies and foreign exchange
+ When a merchant’s payment gateway supports selling in local currencies, it is often a merchant’s first step in localizing their shop for international customers. When integrating with a store using Markets, expect to deal with money values in various presentment currencies.
+ The following concepts in Shopify’s APIs are important to understand when working with multi-currency orders:
+ Currency concepts you’ll encounter when working with multi-currency orders
+ Concept Description
+ Presentment currency
+ The presentment currency is what store visitors see in checkout, what they agree to pay, and how their payment method is charged. These values are the source of truth. Presentment currency values are also displayed to the merchant as their source of truth on the order details page. Refunds and order edits are always based on the presentment currency. Shopify Functions are also provided monetary input values in the presentment currency.
+ Shop currency
+ The shop currency is the merchant’s common reference for their business on Shopify. If an order is placed in a different presentment currency, then shop currency values are back-converted from presentment values using the live exchange rate. These values power the merchant’s Analytics in the Shopify admin. Since the values are converted, intermediate shop currency values might not sum perfectly to totals, and shop currency values of corresponding transactions performed at different times (such as captures and refunds) might not match.
+ Settlement currency
+ The settlement currency is the currency of the merchant’s payout. It might equal the shop currency or the presentment currency, but it’s not guaranteed. These values are the most appropriate for accounting purposes. When a merchant is not using Shopify Payments, settlement currency values must be fetched and reconciled directly from their payment gateways.
+ Market catalogs
+ Whether for strategic or logistical reasons, sometimes merchants don’t want to sell all of their products in every market. With Shopify Markets, you can restrict specific products from sale in a specific market. Products that are excluded from a market’s catalog are hidden from storefronts, omitted from search results, and blocked from being added to cart when a visitor is browsing in that market’s context. If a customer is browsing in the wrong context, then the restricted product is removed from their cart when they change their shipping address in checkout.
+ In buyer-facing contexts, a product which is excluded from a market’s catalog will behave just like it was archived or deleted when accessed from that market’s perspective. It will be omitted from lists and not found when queried by handle or ID.
+ Examples
+ Refer to an example of how to use the Storefront API to query for products published in a certain context.
+ Learn how to restrict products from sale in a market by unpublishing it from that market’s catalog.
+ Explore an example of how to use the Admin API to query whether a product is published in a given country.
+ Translations and localized content
+ Translation of store content is a major contributor to successfully selling in an international market, and in some parts of the world it’s essential to reach the domestic market as well. You can assign an alternate language to one or more of a store’s markets, and translations in that language are shared across all those markets. A merchant can also localize their store’s content for a specific combination of market and language. For example, a merchant selling a product titled “Wool sweater” in English might translate it to French as “Pull en laine,” and then localize it for their Canada market as “Chandail en laine.”
+ Building an experience for customers
+ When building experiences for a merchant’s customers, you should always query for and display the right content for the customer’s language and country context. Shopify uses a defined fallback order when loading localized content. Consider a United States store with English as its primary language, which also sells in Belgium in French and Dutch. French is the default language for the shop’s Belgian market. When loading content for a customer browsing in a Dutch Belgian context, Shopify follows the following fallback order:
+ Dutch (Belgium)
+ Base Dutch
+ French (Belgium)
+ Base French
+ Base English (shop primary)
+ Shopify’s buyer-facing APIs, including Liquid and the Storefront API, handle this fallback automatically.
+ Examples
+ Learn how to load localized content with the Storefront API.
+ Learn how to use locale-aware URLs and automatically get localized content in Liquid and the Ajax API.
+ Building an experience for merchants
+ To better serve merchants around the world, you should internationalize the user interface of a merchant-oriented app. However, merchant-oriented tools should typically identify a store’s resources by their untranslated base attributes. For example, it might be confusing to a merchant if product titles in an inventory management app were shown in different languages based on their staff member’s language preferences.
+ If your app helps a merchant build an experience for shoppers, then you should show localized and translated store data in previews, as applicable. If a merchant can use your app to create buyer-facing content, then consider making that content translatable. If you’re storing the content in Shopify as metafields, for example, then your content will be translatable using the GraphQL Admin API. If not, you’ll have to implement your own translation system.
+ Examples
+ Refer to an example of how to load translations and localizations with the Admin API to power a merchant-facing preview of a shopper’s experience.
+ Learn about how to save translations of merchant-provided content.
+ Locally required order data
+ Some countries require additional information on international orders which must be collected from customers. If your app creates draft orders or orders with shipping addresses in these countries, then you might need to add the locally required data as “localized extensions” to the order. However, if your app helps merchants fulfill international orders, then you might need to read the locally required data collected in checkout.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about Shopify Markets.
+ GraphQL Admin API
+ Consult the GraphQL Admin API reference to learn more about the Market object.
+ Building for Markets with the Storefront API
+ Learn how to build localized customer experiences with the Storefront API and Shopify Markets.
+ User manual for Shopify Markets
+ Learn more about how merchants use Shopify Markets to sell internationally.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Local web presences
+ International pricing
+ Market catalogs
+ Translations and localized content
+ Locally required order data
+ Developer tools and resources
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

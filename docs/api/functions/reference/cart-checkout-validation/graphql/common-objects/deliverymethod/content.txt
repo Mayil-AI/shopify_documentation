@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ DeliveryMethod enum
+ 2024-04 latest
+ List of different delivery method types.
+ Values
+ LOCAL
+ Local Delivery.
+ NONE
+ None.
+ PICKUP_POINT
+ Shipping to a Pickup Point.
+ PICK_UP
+ Local Pickup.
+ RETAIL
+ Retail.
+ SHIPPING
+ Shipping.
+ Types that return DeliveryMethod
+ CartDeliveryOption.deliveryMethodType
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

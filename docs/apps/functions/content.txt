@@ -1,0 +1,90 @@
+Functions
+ Overview
+ Input and output
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Shopify Functions overview
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ Shopify Functions allow developers to customize the backend logic of Shopify. This guide introduces how Shopify Functions work and the benefits of using Shopify Functions.
+ How Shopify Functions work
+ Function extension targets inject code into the backend logic of Shopify. The following diagram shows how Shopify invokes a function which has been configured for an extension target:
+ Function input: The function input is a JSON object which is the result of a GraphQL input query you define. Input queries allow you to select the specific data you need for your function, such as cart line product data or metafields.
+ Function logic: The function logic is written in any language that can compile a WebAssembly module which meets function requirements. Function templates and client libraries are available for JavaScript and Rust.
+ Function output: The function output is a JSON document that describes the operations you'd like Shopify to carry out.
+ GraphQL schemas provided by Shopify specify the targets, available inputs, and expected outputs for a Functions API.
+ Lifecycle of a Shopify Function
+ The following diagram shows an example lifecycle of a Shopify Function:
+ App developers create and deploy apps that contain functions.
+ Merchants install the app on their Shopify store and configure the function. An API call is made with the function configuration.
+ Customers interact with a Shopify store and Shopify executes the function.
+ For example, an app developer might create and deploy an app with a function that defines a new discount type. The merchant can then install the app on their Shopify store and create a new discount from a discount type provided by the app. Shopify executes the function to calculate the discount when a customer adds a product to their cart.
+ Shopify Functions are never invoked directly by URL or otherwise. Shopify invokes them as-needed within the customer journey.
+ Getting started
+ Learn how to use Shopify Functions by following one of our use case tutorials:
+ Discounts
+ Use Shopify Functions to create a new discount type for users.
+ Payment customizations
+ Use Shopify Functions to hide a payment option offered to customers at checkout.
+ Delivery customizations
+ Use Shopify Functions to rename a delivery option offered to customers at checkout.
+ Cart and checkout validations
+ Use Shopify Functions to block progress on a checkout when the cart line quantities exceed a limit.
+ Order routing location rules
+ Use Shopify Functions to choose a different order location during checkout.
+ Customized bundles
+ Use Shopify Functions to group products together and sell them as a single unit.
+ Fulfillment constraints
+ Use Shopify Functions to customize fulfillment and delivery strategies.
+ Developer tools and resources
+ Explore the developer tools and resources available for Shopify Functions.
+ Shopify Function APIs reference
+ Learn about the available APIs for Shopify Functions.
+ Language support
+ Learn about the language support and tooling that are available in Shopify Functions.
+ API versions
+ Function APIs are versioned. Updates are released quarterly and supported API versions are listed in the release notes.
+ Learn how to update to a new version of a Function API.
+ Limitations and considerations
+ The following limitations and considerations apply to all functions:
+ Apps can reference only their own functions in GraphQL Admin API mutations, such as discountAutomaticAppCreate and cartTransformCreate. Referencing a function from another app results in a Function not found error.
+ Shopify doesn't allow nondeterminism in functions, which means that you can't use any randomizing or clock functionality in your functions.
+ The compiled function can't exceed 256 kB in size.
+ You can't debug your function by printing out STDOUT, which is reserved for function output. Use STDERR instead.
+ Function logs to STDERR are truncated after 1 kB. Some Wasm toolchains might crash if STDERR fails to write full logs.
+ The logic of the function must execute in a maximum of 11 million instructions, which can be tested locally using function-runner.
+ At runtime, a function can't exceed the following memory limits:
+ Linear memory limit: 10 MB
+ Stack memory limit: 512 kB
+ A function's input cannot exceed 64,000 bytes in size.
+ Refer to input query limitations for more information.
+ A function's output can't exceed 20 kB in size.
+ An app can deploy a maximum of 100 functions.
+ Apps that provide dynamic editing and execution of function code aren't permitted on the Shopify App Store.
+ Network access is supported for some functions, refer to network access for more information. You can also pre-populate data by using metafields on products and customers, or passing data using cart attributes.
+ Deleting functions
+ To delete a Shopify Function, you need to remove the relevant files from your app's /extensions directory, and then redeploy your app. Learn more about removing a Shopify Function.
+ When you delete a function, the following behavior occurs:
+ The function, including all associated function owners, is permanently deleted.
+ The function no longer runs, and becomes inaccessible to any Shopify stores that have your app installed.
+ Next steps
+ Learn about how data is input to and output from Shopify Functions.
+ Explore the references for each Function API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How Shopify Functions work
+ Lifecycle of a Shopify Function
+ Getting started
+ Developer tools and resources
+ API versions
+ Limitations and considerations
+ Deleting functions
+ Next steps

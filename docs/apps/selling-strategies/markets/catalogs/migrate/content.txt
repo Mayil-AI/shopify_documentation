@@ -1,0 +1,200 @@
+Overview
+ Catalogs
+ Overview
+ Getting started
+ Migrate to catalogs
+ Translate content
+ Locally required order data
+ B2B
+ Channels
+ Combined listings
+ Billing
+ App Store
+ Migrate to catalogs
+ The Catalog object connects product publications with buyer contexts. This resource enables apps to create product catalogs that can be targeted to specific markets or business-to-business (B2B) company locations. In the future, the Catalog object will be used to contextualize more aspects of merchandising, such as B2B quantity rules, volume pricing, and discounts.
+ In this guide, you'll learn how to migrate your app to use catalogs instead of context rules.
+ Requirements
+ You've built an app that creates and manages price lists.
+ Your app is on API version 2023-01 or earlier, and uses the PriceList.contextRule field to determine a customer's price list eligibility, instead of the Catalog resource.
+ Considerations
+ To be eligible to use market catalogs, merchants must be using Shopify Markets. Merchants on legacy country price lists aren't eligible to use market catalogs.
+ To be eligible for B2B catalogs, merchants must be on the Shopify Plus plan.
+ Step 1: Update price list mutations
+ Previously, price lists were associated with markets and countries through the contextRule field to provide international pricing. In API version 2023-04, an international price list needs to be associated with the catalog that's associated with a market or set of countries. Because of this change, you need to update the priceListCreate and priceListUpdate mutations to accept inputs for a catalog ID instead of the contextRule field.
+ The following example shows how to use these mutations to associate a price list with a catalog:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ priceListCreate
+ priceListUpdate
+ 1 mutation PriceListCreate {
+ 2
+    priceListCreate(input: {
+ 3
+      name: "Market Price List",
+ 4
+      currency: CAD,
+ 5
+      parent: {
+ 6
+        adjustment: {
+ 7
+          value: 10,
+ 8
+          type: PERCENTAGE_INCREASE
+ 9
+        }
+ 10
+      }
+ 11
+      catalogId: "gid://shopify/MarketCatalog/1"
+ 12
+    }) {
+ 13
+      priceList {
+ 14
+        id
+ 15
+        catalog { id }
+ 16
+      }
+ 17
+      userErrors {
+ 18
+        field
+ 19
+        code
+ 20
+        message
+ 21
+      }
+ 22
+    }
+ 23 }
+ JSON response
+ priceListCreate
+ priceListUpdate
+ 1 {
+ 2
+    "data": {
+ 3
+      "priceListCreate": {
+ 4
+        "priceList": {
+ 5
+          "id": "gid://shopify/PriceList/1",
+ 6
+          "catalog": {
+ 7
+            "id": "gid://shopify/MarketCatalog/1"
+ 8
+          }
+ 9
+        },
+ 10
+        "userErrors": []
+ 11
+      }
+ 12
+    }
+ 13 }
+ Tip
+ You can also use the catalogUpdate mutation to associate a price list with an existing catalog.
+ Step 2: Update price list queries
+ Previously, you could query a price list's eligible markets and countries through the contextRule field. In API version 2023-04, you need to query the eligible markets and countries through the catalog field instead. Because of this, you need to update the priceList and priceLists queries to retrieve information through the catalog field instead of the contextRule field.
+ The following example shows how to use these queries to retrieve market information through the catalog:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ priceList
+ priceLists
+ 1 query PriceList {
+ 2
+    priceList(id: "gid://shopify/PriceList/1") {
+ 3
+      id
+ 4
+      name
+ 5
+      parent {
+ 6
+        adjustment {
+ 7
+          type
+ 8
+          value
+ 9
+        }
+ 10
+      }
+ 11
+      catalog {
+ 12
+        id
+ 13
+        ... on MarketCatalog {
+ 14
+          markets(first: 10) { nodes { id } }
+ 15
+        }
+ 16
+      }
+ 17
+    }
+ 18 }
+ JSON response
+ priceList
+ priceLists
+ 1 {
+ 2
+    "data": {
+ 3
+      "priceList": {
+ 4
+        "id": "gid://shopify/PriceList/1",
+ 5
+        "name": "Market Pricing",
+ 6
+        "parent": {
+ 7
+          "adjustment": {
+ 8
+            "type": "PERCENTAGE_INCREASE",
+ 9
+            "value": 10
+ 10
+          }
+ 11
+        },
+ 12
+        "catalog": {
+ 13
+          "id": "gid://shopify/MarketCatalog/1",
+ 14
+          "markets": {
+ 15
+            "nodes": [
+ 16
+              {
+ 17
+                "id": "gid://shopify/Market/1"
+ 18
+              }
+ 19
+            ]
+ 20
+          }
+ 21
+        }
+ 22
+      }
+ 23
+    }
+ 24 }
+ Next steps
+ Learn how catalogs work, and how to create catalogs for B2B company locations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Considerations
+ Step 1: Update price list mutations
+ Step 2: Update price list queries

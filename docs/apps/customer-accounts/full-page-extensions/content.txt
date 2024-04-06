@@ -1,0 +1,40 @@
+Inline extensions
+ Order action menu extensions
+ Full-page extensions
+ Overview
+ Build full-page extensions
+ UX guidelines
+ Order status page
+ Best practices
+ Selling strategies
+ Online store
+ Full-page extensions
+ Merchants have diverse needs and some use cases won't fit into extension targets on existing customer account pages. For example, to create extensions for popular use cases like loyalty programs, wishlists, subscriptions, returns, and exchanges, a separate page is required. In these cases, build a full-page extension using the customer-account.page.render target. The full-page extension renders UI in a new page, below the header and above the footer.
+ How it works
+ Each full-page extension has its own unique URL so that logged-in customers can access these pages directly across a variety of entry points.
+ For example:
+ Additional extensions: Apps can build other extensions that link to the full-page extension URL.
+ Other channels: Merchants can share the URL in other important parts of their customer experience such as the online store, emails, or wherever else they decide.
+ Limitations
+ Merchants can't currently add full-page extension URLs to their customer accounts header navigation. This feature will be supported in a future release.
+ Each extension can only extend the full-page extension target once. You can create multiple new pages by creating multiple extensions. We recommend dedicating one page per use case.
+ Developer tools and resources
+ Target overview
+ Explore all extension targets available for customer account UI extensions.
+ Customer account UI extension components
+ Learn about the components that you can use to build customer account UI extensions.
+ Checkout UI extension components
+ Learn about the Checkout UI extension components that you can use to build customer account UI extensions.
+ Next steps
+ Build a full-page extension
+ Build a full-page extension for customers to manage a wishlist of products.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Limitations
+ Developer tools and resources
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

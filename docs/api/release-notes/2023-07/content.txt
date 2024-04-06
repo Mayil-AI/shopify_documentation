@@ -1,0 +1,120 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ 2023-07 release notes
+ The API version release date and the date that the version is no longer supported
+ Release date Date version is no longer supported
+ July 1, 2023 July 1, 2024
+ What's new in 2023-07
+ The following features were added in version 2023-07 of Shopify's APIs.
+ Highlights from the GraphQL Admin API changes:
+ Additional fees as a sale line type
+ New mutation for removing a CompanyContact from a Company
+ Creation of the new Customer Merge API
+ Transition of application credit creation to the Partner API
+ New mutations fulfillmentOrderSplit and fulfillmentOrderMerge that enable splitting and merging fulfillment orders
+ Sort orders by total item quantity
+ Specify a custom filename when using the fileCreate mutation
+ Highlights from the GraphQL Storefront API changes:
+ Search and predictive search are now available
+ Local pickup inventory availability is now available
+ Highlights from the REST Admin API changes:
+ Transition of application credit creation to the Partner API
+ Discount class for applied_discounts and discount_allocations is now available on a line item for the Checkout resource
+ The tax_exempt field is now available on the Order resource
+ The ONLINE_STORE_POST_PURCHASE_CROSS_SELL fulfillment hold reason is now available
+ Breaking changes
+ These changes require special attention. If your app uses these API resources, and you don’t adjust your usage of the resources according to the following instructions, then your app might break when you update to this API version.
+ Deprecating creation of application credits through the Admin API
+ Creating app credits through the Admin API is now deprecated. This affects both the REST resource and the GraphQL mutation.
+ Moving forward, create app credits using the new appCreditCreate mutation in the Partner API. This change will now allow Partners to issue credits to stores that have uninstalled their app.
+ Learn more about awarding app credits.
+ Breaking changes to the product_feeds webhook topics
+ The following major changes have been introduced to the product_feeds webhook topics:
+ Deprecation of the use of bulk in favour of full for the product_feeds/full_sync webhook topic. To continue receiving full sync notifications, use the productFullSync mutation instead of productBulkSync.
+ The spelling of the occurred_at field in the metadata for product_feeds notifications has been corrected.
+ Creation of region-specific subfolders on country-code top-level domains (ccTLDs)
+ You can now create region-specific subfolders on ccTLDs such as shop.ca or shop.fr. This is a departure from the previous behaviour where subfolders could only be created on generic top-level domains (gTLDs).
+ New error code added to inventory quantity mutations
+ The error code item_not_stocked_at_location has been added to the inventorySetOnHandQuantities, inventoryAdjustQuantities, and inventoryMoveQuantities mutations. This error code is returned when you attempt to change inventory quantities for an item that isn't stocked at the specified location.
+ No automatic creation of a subfolder web presence for a single-country market
+ As of API version 2023-07, a subfolder web presence for a single-country market is no longer automatically created.
+ To maintain the existing functionality, use the marketWebPresenceCreate mutation following the creation of a market. Passing the country code of the market region as the subfolderSuffix will create the corresponding web presence.
+ Mandatory provision of the chargebackLiability field in the Payments Apps API
+ As of version 2023-07 of the Payments Apps API, the chargebackLiability field must be provided in the 3-D Secure PaymentSessionThreeDSecureAuthenticationData input object. This change allows merchants to better manage their orders.
+ Learn more about the Payments Apps API and 3-D Secure.
+ Removal of the delivery_category field on order shipping lines
+ As of API version 2023-07, we're deprecating the order shipping line delivery_category property. The property hasn't been in use since 2020-06-12 and will no longer be present.
+ Translate filter settings
+ As of API version 2023-07, we're introducing a new capability to translate filters.
+ When enabled, all filter labels will be eligible for translations through the Translations API as well as the Translate and Adapt app.
+ Use of Flow action extensions to update marketing activity delivery status
+ We're deprecating the abandonmentEmailStateUpdate mutation. Instead, you can use the abandonmentUpdateActivitiesDeliveryStatuses to update the delivery status of marketing activities created using a Flow action extension.
+ Use of total_count on CustomerSegmentMemberConnection endpoint
+ You can now use total_count on the CustomerSegmentMemberConnection endpoint, which provides the total count of a specified customer segment. Additionally, the total_count field on SegmentStatistics object has been removed. The new total_count functionality makes it easier to know the count of members of a specified segment.
+ GraphQL Admin API changes
+ The following are all the changes introduced in the 2023-07 version of the GraphQL Admin API.
+ New API to update marketing activity delivery status
+ New error codes added to fileUpdate mutation
+ New field taxExempt on the Order object
+ Tax partners can now configure the state of a tax app configuration
+ Additional fees as a sale line type
+ Subfolders can now exist on ccTLD domains
+ New mutation for removing a CompanyContact from a Company
+ Webhooks for B2B Customers Flow primitives
+ `ExchangeV2` field is available behind beta flag on the Order object
+ Shop Promise details presented to buyer at checkout
+ Breaking changes to Product Feeds API
+ Introducing the new Customer Merge API
+ Adding metafield attributes to the CustomerSegmentMember object
+ Added acceptsMultipleValues attribute to the SegmentEventFilterParameter object
+ Function parameter values can be queried
+ Additional webhook subscription topics for customer tags
+ Transition of application credit creation to the Partner API
+ Purchase order numbers added to Order and DraftOrder objects
+ New field isMarketplace on ChannelDefinition object
+ New field type on TranslatableContent object
+ New tax_partners/update webhook
+ Translate filter settings
+ duplicateResolutionMode field added to fileCreate
+ ONLINE_STORE_POST_PURCHASE_CROSS_SELL fulfillment hold reason
+ Splitting and merging fulfillment orders
+ Update bytes in-place using fileUpdate
+ Inventory states
+ New error code added to inventory quantity mutations
+ metafieldsSet support for MediaImage
+ Deprecation of image-related fields in product and product variants mutations
+ PUBLIC_READ access setting for app-owned metafields
+ Moving total_count field from SegmentStatistics` to CustomerSegmentMemberConnection
+ Creating a single-country market will no longer automatically create a subfolder web presence for this market
+ Unknown sale type
+ Adding the ability to sort orders by total item quantity
+ Manage quantity rules for B2B customers
+ Sale attribution edits now can be subscribed using the orders/updated webhook
+ Specify a custom filename using fileCreate
+ Update a filename using fileUpdate
+ GraphQL Storefront API changes
+ Search and predictive search are now available
+ Determining local pickup inventory availability
+ GraphQL Payments Apps API changes
+ New chargebackLiability field for onsite credit card payments apps with 3-D Secure
+ REST Admin API changes
+ Transition of application credit creation to the Partner API
+ Removal of the delivery_category field on order shipping lines
+ Purchase order numbers added to Order and DraftOrder objects
+ Discount class for applied_discounts and discount_allocations on a line item in the Checkout resource
+ New field tax_exempt on the Order resource
+ ONLINE_STORE_POST_PURCHASE_CROSS_SELL fulfillment hold reason
+ Splitting and merging fulfillment orders
+ Sale attribution edits now can be subscribed using the orders/updated webhook
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Breaking changes
+ GraphQL Admin API changes
+ GraphQL Storefront API changes
+ GraphQL Payments Apps API changes
+ REST Admin API changes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

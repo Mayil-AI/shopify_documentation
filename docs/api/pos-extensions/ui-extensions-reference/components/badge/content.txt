@@ -1,0 +1,40 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Badge
+ Badges are used to inform merchants of the status of an item or action that’s been taken.
+ Props
+ Name Type Description
+ text string The text displayed inside the badge.
+ variant BadgeVariant The appearance and function of the badge.
+ status BadgeStatus? A circle icon on the badge.
+ BadgeVariant
+ Determines the badge's appearance and function:
+ 
+ neutral: Use this to give a non-critical status update on a piece of information or action. Appears gray.
+ 
+ critical: Use this for statuses that require a merchant’s urgent attention and action. Appears red.
+ 
+ warning: Use this for statuses that require a merchant’s attention and potential action. Appears yellow.
+ 
+ highlight: Use this to call out an item or action as having an important attribute. Appears turquoise.
+ 
+ success: Use to indicate a successful state. Appears green.
+ BadgeStatus
+ A circle icon on the badge:
+ 
+ empty: Use this for an empty circle.
+ 
+ partial: Use this for a half-full circle.
+ 
+ complete: Use this for a full circle.
+ Guidelines
+ Badges should be positioned as close as possible to the item they’re related to.
+ Content guidelines
+ Be concise. Use a single word to describe the status of an item. Only use two or three words if you need to describe a complex state, for example "partially fulfilled".
+ ✅ fulfilled
+ ❌ order fulfilled
+ Statuses should ideally be written as adjectives:
+ ✅ unpaid
+ ❌ payment not received

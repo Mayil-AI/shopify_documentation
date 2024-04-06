@@ -1,0 +1,40 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Deprecated settings
+ The following settings are deprecated and have been replaced. They might still exist in some older themes, but they’re no longer supported.
+ font
+ The font setting has been replaced by the font_picker setting.
+ Settings of type font outputs a drop-down menu that’s automatically populated with various font selections.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "font",
+ 3
+    "id": "heading_font",
+ 4
+    "label": "Heading font"
+ 5 },
+ Output
+ snippet
+ The snippet setting has been replaced by sections.
+ Settings of type snippet outputs a drop-down menu that’s automatically populated with the names of all snippet files in the theme.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "snippet",
+ 3
+    "id": "footer_content",
+ 4
+    "label": "Footer content"
+ 5 }
+ Output
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ font
+ snippet
+ Updates & News
+ Developer changelog

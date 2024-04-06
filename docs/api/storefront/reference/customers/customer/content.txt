@@ -1,0 +1,180 @@
+Common objects
+ Customers
+ Queries
+ Mutations
+ Objects
+ Customer
+ Fields
+ Connections
+ Queries
+ Mutations
+ Implements
+ CustomerAccessToken
+ Metaobjects
+ Search
+ GraphQL Types
+ Customer
+ object
+ Requires unauthenticated_read_customers access scope.
+ A customer represents a customer account with the shop. Customer accounts store contact information for the customer, saving logged-in customers the trouble of having to provide it at every checkout.
+ Fields
+ acceptsMarketing
+ Boolean!
+ non-null
+ Indicates whether the customer has consented to be sent marketing material via email.
+ createdAt
+ DateTime!
+ non-null
+ The date and time when the customer was created.
+ defaultAddress
+ MailingAddress
+ The customer’s default address.
+ Show fields
+ displayName
+ String!
+ non-null
+ The customer’s name, email or phone number.
+ email
+ String
+ The customer’s email address.
+ firstName
+ String
+ The customer’s first name.
+ id
+ ID!
+ non-null
+ A unique ID for the customer.
+ lastName
+ String
+ The customer’s last name.
+ metafield
+ Metafield
+ Returns a metafield found by namespace and key.
+ Show arguments and fields
+ metafields
+ [Metafield]!
+ non-null
+ The metafields associated with the resource matching the supplied list of namespaces and keys.
+ Show arguments and fields
+ numberOfOrders
+ UnsignedInt64!
+ non-null
+ The number of orders that the customer has made at the store in their lifetime.
+ phone
+ String
+ The customer’s phone number.
+ tags
+ [String!]!
+ non-null
+ A comma separated list of tags that have been added to the customer. Additional access scope required: unauthenticated_read_customer_tags.
+ updatedAt
+ DateTime!
+ non-null
+ The date and time when the customer information was updated.
+ Show deprecated fields
+ deprecated
+ Was this section helpful?
+ YesNo
+ Connections
+ addresses
+ [MailingAddress!]!
+ non-null
+ A list of addresses for the customer.
+ Show arguments and fields
+ orders
+ [Order!]!
+ non-null
+ The orders associated with the customer.
+ Show arguments and fields
+ Was this section helpful?
+ YesNo
+ Map
+ Fields from
+ CartBuyerIdentity
+ .
+ customer
+ Possible types in
+ MetafieldParentResource
+ Customer
+ Queries
+ customer
+ (arguments)
+ query
+ The customer associated with the given access token. Tokens are obtained by using the customerAccessTokenCreate mutation.
+ Show arguments and fields
+ Was this section helpful?
+ YesNo
+ <?>
+ Customer Queries
+ Customer
+ Queried by
+ customer
+ Mutations
+ customer
+ ActivateByUrl
+ (arguments)
+ mutation
+ Activates a customer with the activation url received from customerCreate.
+ Show arguments
+ customer
+ Activate
+ (arguments)
+ mutation
+ Activates a customer.
+ Show arguments
+ customer
+ Create
+ (input: CustomerCreateInput)
+ mutation
+ Creates a new customer.
+ Show arguments
+ customer
+ DefaultAddressUpdate
+ (arguments)
+ mutation
+ Updates the default address of an existing customer.
+ Show arguments
+ customer
+ ResetByUrl
+ (arguments)
+ mutation
+ "Resets a customer’s password with the reset password URL received from a reset password email. You can send a reset password email with the customerRecover mutation."
+ Show arguments
+ customer
+ Reset
+ (arguments)
+ mutation
+ "Resets a customer’s password with the token received from a reset password email. You can send a reset password email with the customerRecover mutation."
+ Show arguments
+ customer
+ Update
+ (arguments)
+ mutation
+ Updates an existing customer.
+ Show arguments
+ Show deprecated mutations
+ deprecated
+ Was this section helpful?
+ YesNo
+ <~>
+ Customer Mutations
+ Customer
+ Mutated by
+ customerActivateByUrl
+ customerActivate
+ customerCreate
+ customerDefaultAddressUpdate
+ customerResetByUrl
+ customerReset
+ customerUpdate
+ Show deprecated mutations
+ Implements
+ HasMetafields
+ interface
+ Was this section helpful?
+ YesNo
+ ||-
+ Customer Implements
+ Customer
+ Implements
+ HasMetafields

@@ -1,0 +1,255 @@
+Billing
+ App Store
+ Manage metafields
+ Metafields are a flexible way for your app to add and store additional information about a Shopify resource. If you want to include data validation for metafield values, then you can create metafield definitions.
+ This guide shows you how to manage metafields using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ You've created products in your store.
+ Step 1: Create a metafield
+ You can create any number of metafields for a resource, and they'll be accessible to any app (unless they're private metafields). To create a metafield, use a GraphQL mutation to create or update the resource that you want the metafields to belong to.
+ The following example adds a metafield to a product by using the productUpdate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(
+ 3
+    input : {
+ 4
+      id: "gid://shopify/Product/1",
+ 5
+      metafields: [
+ 6
+        {
+ 7
+          namespace: "instructions",
+ 8
+          key: "wash",
+ 9
+          value: "cold wash",
+ 10
+          type: "single_line_text_field",
+ 11
+        }
+ 12
+      ]
+ 13
+    }) {
+ 14
+      product {
+ 15
+        metafields(first: 100) {
+ 16
+          edges {
+ 17
+            node {
+ 18
+              namespace
+ 19
+              key
+ 20
+              value
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "metafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "namespace": "instructions",
+ 10
+                  "key": "wash",
+ 11
+                  "value": "cold wash"
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+ 15
+          }
+ 16
+        }
+ Step 2: Retrieve a metafield
+ When you query a resource, you can retrieve its metafields. Use the metafield field to return a single metafield. Specify the metafield that you want to retrieve by using the namespace and key arguments.
+ The following example queries a product for the value of the associated instructions.wash metafield:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    product(id: "gid://shopify/Product/1") {
+ 3
+      metafield(namespace: "instructions", key: "wash") {
+ 4
+        value
+ 5
+      }
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "metafield": {
+ 5
+          "value": "cold wash"
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9 }
+ Step 3: Update a metafield
+ To update a metafield, use a GraphQL mutation to update the owning resource, and include the metafield in the mutation input. Specify the owning resource and the metafields that you're updating by their IDs.
+ The following example updates a metafield that belongs to a product by using the productUpdate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(
+ 3
+    input : {
+ 4
+      id: "gid://shopify/Product/1",
+ 5
+      metafields: [
+ 6
+        {
+ 7
+          id: "gid://shopify/Metafield/1",
+ 8
+          value: "hang dry"
+ 9
+        }
+ 10
+      ]
+ 11
+    }) {
+ 12
+      product {
+ 13
+        metafields(first: 10) {
+ 14
+          edges {
+ 15
+            node {
+ 16
+              namespace
+ 17
+              key
+ 18
+              value
+ 19
+            }
+ 20
+          }
+ 21
+        }
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "metafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "key": "wash",
+ 10
+                  "value": "cold wash"
+ 11
+                }
+ 12
+              },
+ 13
+              {
+ 14
+                "node": {
+ 15
+                  "key": "dry",
+ 16
+                  "value": "hang dry"
+ 17
+                }
+ 18
+              }
+ 19
+            ]
+ 20
+          }
+    }
+ 24 }
+ Step 4 (Optional): Delete a metafield
+ Use the metafieldDelete mutation to delete a metafield. Specify the metafield that you want to delete by including its ID in the mutation input.
+ The following example deletes a metafield by ID:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    metafieldDelete(input: {
+ 3
+      id: "gid://shopify/Metafield/1",
+ 4
+      }) {
+ 5
+      deletedId
+ 6
+    userErrors {
+ 7
+      field
+ 8
+      message
+ 9
+      }
+ 10
+    "metafieldDelete": {
+ 3
+      "deletedId": "gid://shopify/Metafield/1",
+ 4
+      "userErrors": []
+ 5
+    }
+ 6 }
+ Next steps
+ Create metafield definitions to include data validation for metafield values.
+ Learn about access controls for app owned metafields.
+ Learn how to migrate your metafields that use the deprecated value_type field.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a metafield
+ Step 2: Retrieve a metafield
+ Step 3: Update a metafield
+ Step 4 (Optional): Delete a metafield

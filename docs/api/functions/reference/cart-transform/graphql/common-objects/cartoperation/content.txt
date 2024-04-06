@@ -1,0 +1,15 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CartOperation object
+ 2024-04 latest
+ An operation to apply to the Cart.
+ Fields
+ expand (ExpandOperation)
+ A cart line expand operation.
+ merge (MergeOperation)
+ A cart line merge operation.
+ update (UpdateOperation)
+ A cart line update operation. Only stores on the Shopify Plus plan can use apps with update operations.
+ Was this page helpful?

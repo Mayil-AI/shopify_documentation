@@ -1,0 +1,100 @@
+APIs
+ Collapse sidebar
+ Admin Extensions
+ Unstable
+ 2024-04
+ 2024-01
+ 2023-10
+ 2024-01
+ Overview
+ Overview
+ Getting Started
+ App Authentication
+ Direct API access
+ Custom Protocols
+ Deploying
+ Security
+ API
+ Components
+ Actions
+ Forms
+ Media
+ Other
+ Structure
+ Titles and text
+ All Admin Extensions components
+ Actions
+ Button
+ Use this component when you want to provide users the ability to perform specific actions, like saving data.
+ Link
+ This is an interactive component that directs users to a specified URL. It even supports custom protocols.
+ Pressable
+ Use this component when you need to capture click or press events on its child elements without adding any additional visual styling. It subtly enhances user interaction by changing the cursor when hovering over the child elements, providing a clear indication of interactivity.
+ Forms
+ Checkbox
+ Use this component when you want to provide users with a clear selection option, such as for agreeing to terms and conditions or selecting multiple options from a list.
+ ChoiceList
+ Use this component if you need to group together a related list of interactive choices as radio buttons or checkboxes.
+ ColorPicker
+ Use this component if you need to select a color.
+ DateField
+ This is a form field that lets users select a date using the DatePicker component.
+ DatePicker
+ Date pickers let merchants choose dates from a visual calendar that’s consistently applied wherever dates need to be selected across Shopify.
+ EmailField
+ Use this when you need users to provide their email addresses.
+ Form
+ Use this component when you want to collect input from users. It provides a structure for various input fields and controls, such as text fields, checkboxes, and buttons. It also integrates with the native Contextual Save Bar to handle form submission and reset actions.
+ MoneyField
+ This is the right component for letting users enter Money digits.
+ NumberField
+ This component is specifically designed for numeric data entry.
+ PasswordField
+ This component is for secure input, it obfuscates any text that users enter.
+ Select
+ Use this when you want to give users a predefined list of options to choose from.
+ TextArea
+ This component is perfect when you need to allow users to input larger amounts of text, such as for comments, feedback, or any other multi-line input.
+ TextField
+ This is your go-to component when you need to let users input textual information.
+ URLField
+ This is the right component for letting users enter a URL.
+ Media
+ Icon
+ This component renders an icon from a predefined list. Choose the one that suits your needs.
+ Image
+ Use this when you want to display an image.
+ ProgressIndicator
+ Use this component to notify merchants that their action is being processed or loaded.
+ Other
+ AdminAction
+ AdminAction is a component used by Admin Action extensions to configure a primary and secondary action and title.
+ AdminBlock
+ This component is similar to the AdminBlock, providing a deeper integration with the container your UI is rendered into. However, this only applies to Block Extensions which render inline on a resource page.
+ CustomerSegmentTemplate
+ CustomerSegmentTemplate is used to configure a template rendered in the Customers section of the Shopify admin. Templates can be applied in the and used to create segments.
+ Structure
+ BlockStack
+ This structures layout elements along the vertical axis of the page. It's useful for vertical alignment.
+ Box
+ This is your foundational structural element for composing UI. It can be styled using predefined tokens. Use it to build your layout.
+ Divider
+ Use this to create a clear visual separation between different elements in your user interface.
+ InlineStack
+ Use this to organize layout elements along the horizontal axis of the page. It's great for horizontal alignment.
+ Titles and text
+ Badge
+ Use this component to inform merchants of the status of an object or of an action that’s been taken.
+ Banner
+ Use this component if you need to communicate to merchants in a prominent way.
+ Heading
+ Use this to display a title. It's similar to the h1-h6 tags in HTML
+ HeadingGroup
+ This groups headings together, much like the hgroup element in HTML.
+ Paragraph
+ Use this to display a block of text similar to the <p> tag in HTML.
+ Text
+ This component renders text. Remember, you can also add your own styling.
+ Updates & News
+ Developer changelog
+ Partner blog

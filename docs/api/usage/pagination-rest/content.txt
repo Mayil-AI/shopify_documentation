@@ -1,0 +1,225 @@
+GraphQL
+ REST
+ GraphQL basics
+ Admin API
+ App Bridge
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Make paginated requests to the REST Admin API
+ REST endpoints support cursor-based pagination. This guide illustrates how to request paginated data from the REST Admin API and access each page of results.
+ How it works
+ When you send a request to a REST endpoint that supports cursor-based pagination, the response body returns the first page of results. If applicable, then a response header returns links to the next page and the previous page of results. You can use the links in the response header to iterate through the pages of results.
+ Link header syntax
+ Link headers use the following syntax:
+ Link header syntax
+ 1 #...
+ 2 link: "<https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info={page_info}&limit={limit}>; rel={next}, <https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info={page_info}&limit={limit}>; rel={previous}"
+ 3 #...
+ The link header includes a rel parameter that describes the relation of the linked page to the current page of results. The value can either be previous or next. If your initial request doesn't return enough records to generate an additional page of results, then the response won't have a link header.
+ Parameters
+ The URL in the link header can include the following parameters:
+ Parameter Description
+ page_info A unique ID used to access a certain page of results. The page_info parameter can't be modified and must be used exactly as it appears in the link header URL.
+ limit The maximum number of results to show on the page:
+ The default limit value is 50.
+ The maximum limit value is 250.
+ fields A comma-separated list of which fields to show in the results. This parameter only works for some endpoints.
+ Supported endpoints
+ You can use cursor-based pagination on most REST Admin API GET endpoints that retrieve a list of resources.
+ If the REST resource includes the limit parameter on the GET endpoint, then you can use the endpoint to request paginated data. For example, the Customer resource includes the limit parameter on the GET endpoint that retrieves a list of customers.
+ Tip
+ You can use the since_id parameter that's available on endpoints that support cursor-based pagination to make requests from a specific point. For example, you can use the since_id parameter on the Transaction resource to retrieve only transactions after a specified ID.
+ Make a request for paginated data
+ When you make a request to an endpoint that supports paginated results, you can set the number of results to return per page using the limit parameter. If you don't specify a limit, then the endpoint will use its default page limit. You can also set other parameters in this request to narrow down your results.
+ The following example request asks the product endpoint for all customers, with a limit of 3 customers per page of results:
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?limit=3
+ Response header
+ 1 #...
+ 2 link: "<https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=hijgklmn&limit=3>; rel=next"
+ 3 #...
+ JSON response
+ 1 {
+ 2
+    "customers": [
+ 3
+      {
+ 4
+        "id": 1
+ 5
+      },
+ 6
+      {
+ 7
+        "id": 2
+ 8
+      },
+ 9
+      {
+ 10
+        "id": 3
+ 11
+      }
+ 12
+    ]
+ 13 }
+ The response header returns a link header that includes a URL for the next page of results. The response body returns the first page of results, which includes 3 customers.
+ Retrieve the next page of results
+ To get the next page of results, you can make a request to the URL stored in the link header of the last response.
+ Note
+ Because the request URL contains the page_info parameter, you can't add any other parameters to the request, except for limit. Including other parameters can cause the request to fail.
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=hijgklmn&limit=3
+ Response header
+ 1 #...
+ 2 Link: "<https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=abcdefg&limit=3>; rel=previous, <https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=opqrstu&limit=3>; rel=next"
+ 3 #...
+ JSON response
+ 1 {
+ 2
+    "customers": [
+ 3
+      {
+ 4
+        "id": 4
+ 5
+      },
+ 6
+      {
+ 7
+        "id": 5
+ 8
+      },
+ 9
+      {
+ 10
+        "id": 6
+ 11
+      }
+ 12
+    ]
+ 13 }
+ The response header includes a link to the previous page of results and a link to the next page. The response body includes the second page of results, which includes the next 3 customers after the first page.
+ You can use the URLs in the link headers to iterate through each page of results. If you make a request to a page, and the response header only includes a link to the previous page, then you've reached the last page of results.
+ Change the number of results for a specific page
+ You can change the limit in a link header URL to return a different number of results from a specified point. For example, the following example request asks the product endpoint for all customers, with a limit parameter of 3:
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?limit=3
+ Response header
+ 1 #...
+ 2 link: "<https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=hijgklmn&limit=3>; rel=next"
+ 3 #...
+ JSON response
+ 1 {
+ 2
+    "customers": [
+ 3
+      {
+ 4
+        "id": 1
+ 5
+      },
+ 6
+      {
+ 7
+        "id": 2
+ 8
+      },
+ 9
+      {
+ 10
+        "id": 3
+ 11
+      }
+ 12
+    ]
+ 13 }
+ If you change the limit in the URL in the link header to 6 and make a request to that URL, then the response body returns the 6 customers after the first page of results:
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=hijgklmn&limit=6
+ Response header
+ 1 #...
+ 2 link: "<https://{shop}.myshopify.com/admin/api/{api_version}/customers.json?page_info=vwxyzab&limit=6>; rel=next"
+ 3 #...
+ JSON response
+ 1 {
+ 2
+    "customers": [
+ 3
+      {
+ 4
+        "id": 4
+ 5
+      },
+ 6
+      {
+ 7
+        "id": 5
+ 8
+      },
+ 9
+      {
+ 10
+        "id": 6
+ 11
+      },
+ 12
+      {
+ 13
+        "id": 7
+ 14
+      },
+ 15
+      {
+ 16
+        "id": 8
+ 17
+      },
+ 18
+      {
+ 19
+        "id": 9
+ 20
+      }
+ 21
+    ]
+ 22 }
+ Use the shopify-api npm library
+ The @shopify/shopify-api library provides backend support for JavaScript and TypeScript apps to access the REST Admin API.
+ Example
+ The following code retrieves customers from a store by fetching them in batches of 10 until all customers have been retrieved. You can store the pageInfo data between requests using a session.
+ Retrieve more than one set of customers
+ 1 let pageInfo;
+ 2 do {
+ 3
+    const response = await shopify.rest.Customer.all({
+ 4
+      ...pageInfo?.nextPage?.query,
+ 5
+      session,
+ 6
+      limit: 10,
+ 7
+    });
+ 8
+ 9
+    const pageCustomers = response.data;
+ 10
+    // Use pageCustomers as needed
+ 11
+ 12
+    pageInfo = response.pageInfo;
+ 13 } while (pageInfo?.nextPage);
+ Note
+ Each request returns the information required for an app to request the previous or next set of items. For REST resources, calls to the all method return the information that's necessary to make those requests in the pageInfo property.
+ Limitations and considerations
+ A request that includes the page_info parameter can't include any other parameters except for limit and fields (if it applies to the endpoint). If you want your results to be filtered by other parameters, then you need to include those parameters in the first request you make.
+ The link header URLs are temporary and we don't recommend saving them to use later. Use link header URLs only while working with the request that generated them.
+ Any request that sends the page parameter will return an error.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Supported endpoints
+ Make a request for paginated data
+ Retrieve the next page of results
+ Change the number of results for a specific page
+ Use the shopify-api npm library
+ Limitations and considerations

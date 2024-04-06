@@ -1,0 +1,150 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ 2024-01 release notes
+ The API version release date and the date that the version is no longer supported
+ Release date Date version is no longer supported
+ January 1, 2024 January 1, 2025
+ What's new in 2024-01
+ The 2024-01 version of Shopify's APIs include the following highlights:
+ Buy X Get Y discounts now support setting a fixed amount discount.
+ The new orderCancel mutation enables you to cancel orders.
+ You can now schedule changes to inventory quantities.
+ More granular capabilities are available for separating and combining line items inside a fulfillment order.
+ You can now update and remove discounts when editing orders.
+ Various improvements have been made to subscription contracts, subscription billing attempts, metaobjects, metafield definitions, and marketing activities.
+ Webhook sub-topics enable the delivery of a more specific and relevant stream of webhooks to your app.
+ New types enable some credit card payment apps to support vaulting card data in Shopify.
+ Several improvements have been made to Shopify Function APIs.
+ The new Customer Account API offers a secure and private way of accessing private customer-scoped data.
+ Breaking changes
+ These changes require special attention. If your app uses these API resources, and you don’t adjust your usage of the resources according to the following instructions, then your app might break when you update to this API version.
+ Change to AppSubscriptionDiscountInput
+ The durationLimitInIntervals field on the AppSubscriptionDiscountInput input object no longer accepts 0 as a value.
+ To create a discount with an unlimited duration, don't specify the durationLimitInIntervals field.
+ Field deprecation on ProductInput
+ We've deprecated the images field on the ProductInput input object.
+ Use the media argument on the productCreate and productUpdate mutations instead.
+ Field removals on ProductVariantInput
+ We've removed the deprecated imageId and imageSrc fields from the ProductVariantInput input object.
+ Use the mediaId and mediaSrc fields instead.
+ Field removal on the Shipping Discount Function API
+ We've removed the deprecated discountApplicationStrategy field on the FunctionRunResult object, and its predecessor, the FunctionResult object.
+ The discount application strategy for shipping discount functions is always considered to be ALL. This means that all applicable discounts are returned by a shipping discount function.
+ Handle as a scalar type on Shopify Function APIs
+ The following fields and arguments that return a handle to identify a Function resource now use the appropriate Handle scalar as their type:
+ Fields and arguments that use as a scalar type
+ Name Type Change
+ handle Field On the CartDeliveryOption object for all Function APIs
+ handle Field On the Product object for all Function APIs
+ deliveryOptionHandle Field On the MoveOperation input object (Delivery Customization API)
+ deliveryOptionHandle Field On the RenameOperation input object (Delivery Customization API)
+ deliveryOptionHandle Field On the HideOperation input object (Delivery Customization API)
+ handle Field On the GateConfiguration object for all Function APIs
+ handle Argument On the HasGates interface for all Function APIs
+ handle Field On the Market object for all Function APIs
+ Marketing activities
+ The following breaking changes have been made to marketing activity types on the GraphQL Admin API:
+ The channel field on the marketingActivityCreateExternal and marketingActivityUpdateExternal mutations has been renamed to marketingChannelType.
+ utcOffset and isCumulative are now required fields on the marketingEngagementInput input object.
+ The fetchedAt field has been removed from the marketingEngagementInput input object.
+ The utm field has been deprecated from the MarketingActivityUpdateExternalInput input object.
+ Marketing fields and properties removals
+ GraphQL Admin API: We've removed the following deprecated fields on the Customer object and CustomerInput input object:
+ acceptsMarketing
+ acceptsMarketingUpdatedAt
+ MarketingOptInLevel
+ Use the emailMarketingConsent field instead.
+ REST Admin API: We've removed the following deprecated properties on the Order and Customer resources:
+ accepts_marketing
+ accepts_marketing_updated_at
+ marketing_opt_in_level
+ Use the email_marketing_consent property instead.
+ Subscription billing attempts
+ The SubscriptionBillingAttemptCreate mutation now prevents the creation of billing attempts if a subscription contract has one of the following terminal statuses:
+ EXPIRED
+ CANCELLED
+ STALE
+ We've also added the CONTRACT_TERMINATED error code to the BillingAttemptUserErrorCode enum. This new error code is returned in the case where billing attempt creation is prevented.
+ Learn how to schedule and automate the billing of subscriptions.
+ Subscription contracts
+ The STALE value on the SubscriptionContractSubscriptionStatus enum has been removed. Existing subscription contracts with the STALE status will be returned as CANCELLED, and you won't be able to update the status of a subscription contract to STALE.
+ Use the EXPIRED or CANCELLED values instead.
+ GraphQL Admin API changes
+ The following are all the changes currently introduced in the 2024-01 version of the GraphQL Admin API.
+ Abandoned checkouts
+ App subscription discounts
+ Buy X Get Y discounts
+ Cancelling orders
+ Capturing transactions multiple times
+ Cart and checkout operations
+ Checkout branding
+ Customer data erasure
+ Deleting market regions
+ Filtering prices
+ Financial summaries
+ Fulfillment hold reasons
+ Including translations when duplicating products
+ Localizing metaobjects for different markets
+ Marketing activities: Field changes
+ Marketing activites: Improvements
+ Marketing fields
+ Metaobjects and metaobject definitions
+ New metafields error code
+ Order editing
+ Order routing
+ Product images
+ Product variant images
+ Retrieving payment details for transactions
+ Scheduling changes to inventory quantities
+ Separating and combining fulfillment order line items
+ Shopify Payments balance transactions
+ Storefront access controls for custom data
+ Subscription billing attempts
+ Subscription billing cycles
+ Subscription contracts: Statuses
+ Subscription contracts: New mutations and webhooks
+ Subscriptions support for automatic discounts
+ Validation logic in cart and checkout
+ Vaulting card data
+ Visual representations of metaobjects
+ Webhook sub-topics
+ Webhook topics for discounts
+ REST Admin API changes
+ The following are all the changes currently introduced in the 2024-01 version of the REST Admin API.
+ Adjustment transactions
+ Current quantity of line items
+ Financial summaries
+ Marketing properties
+ Sales tax remittance
+ Separating and combining fulfillment order line items
+ Storefront API changes
+ The following are all the changes currently introduced in the 2024-01 version of the Storefront API.
+ Validation logic in cart and checkout
+ Payments Apps API changes
+ The following are all the changes currently introduced in the 2024-01 version of the Payments Apps API.
+ Vaulting card data
+ Shopify Function APIs changes
+ The following are all the changes currently introduced in the 2024-01 version of Shopify Function APIs.
+ Cart and Checkout Validation Function API
+ Cart Transform Function API
+ Handle as a scalar type
+ New fields on all Shopify Function APIs
+ Order Routing Location Rule API
+ Product Discount Function API
+ Shipping Discount Function API: Field removal
+ Shipping Discount Function API: Public availability
+ Introducing the Customer Account API
+ The Customer Account API is a new API that's available as of the 2024-01 release. The API offers a secure and private way of accessing private customer-scoped data, such as customer, orders, payments, fulfillment, discounts, refunds, and metafields.
+ Building personalized customer experiences
+ Delivery options
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Breaking changes
+ GraphQL Admin API changes
+ REST Admin API changes
+ Storefront API changes
+ Payments Apps API changes
+ Shopify Function APIs changes
+ Introducing the Customer Account API
+ Updates & News

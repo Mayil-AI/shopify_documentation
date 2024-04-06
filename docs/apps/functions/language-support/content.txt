@@ -1,0 +1,40 @@
+Functions
+ Overview
+ Input and output
+ Language support
+ Overview
+ JavaScript
+ Rust
+ WebAssembly
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Language support in Shopify Functions
+ Shopify Functions support any language that compiles to WebAssembly (Wasm), such as Rust, AssemblyScript, or TinyGo. Functions that are compiled to Wasm need to meet our WebAssembly API specifications (including WASI), and our platform binary and performance limitations.
+ This guide introduces the language support and tooling that's available in Shopify Functions.
+ Choosing a language
+ When choosing a language for creating Shopify Functions, keep in mind that languages which compile directly to WebAssembly, such as Rust, will perform better than dynamic languages, such as JavaScript. If your function logic is computationally complex, then it's easier to stay within the Shopify Functions instruction count requirements by using Rust or another language with native WebAssembly support. For example, cryptographic hashes, such as SHA implemented in JavaScript, are unlikely to execute within the allowed instruction count.
+ You should also consider your familiarity with the language. If using Rust limits you from providing effective or creative solutions, then consider using JavaScript or TypeScript.
+ The availability of libraries that support your use case might also factor into your decision.
+ Available language support
+ JavaScript
+ Learn about the support for JavaScript and TypeScript in Shopify Functions.
+ Rust
+ Learn about the support for Rust in Shopify Functions.
+ WebAssembly
+ Learn about the using other languages that support WebAssembly in Shopify Functions.
+ Next steps
+ Learn about how data is input to and output from Shopify Functions.
+ Explore the references for each Function API.
+ Get familiar with testing and debugging practices that pertain to Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Choosing a language
+ Available language support
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,155 @@
+Theme Store
+ Shopify CLI for themes
+ Shopify CLI is a command-line interface tool that helps you build Shopify apps and themes. It quickly generates Shopify apps, themes, and custom storefronts. You can also use it to automate many common development tasks.
+ This documentation explains how to use Shopify CLI for theme development. To learn how to use Shopify CLI for other tasks, refer to the following documentation:
+ Shopify CLI for apps
+ Shopify CLI for Hydrogen storefronts
+ Tip
+ You can use Shopify CLI together with the Shopify GitHub integration to add version control to themes that you're developing.
+ Choosing between Shopify CLI and Theme Kit
+ Shopify CLI replaces Theme Kit for most Shopify theme development tasks. You should use Shopify CLI if you're working on Online Store 2.0 themes. You should use Theme Kit instead of Shopify CLI only if you're working on older themes.
+ Features
+ Shopify CLI accelerates your theme development process with the following features:
+ Safely preview, test, and share changes to themes using development themes
+ Hot reload CSS and section changes, or automatically refresh a page on file change, when previewing a theme
+ Initialize a new theme using Dawn as a starting point
+ Push and publish themes from the command line
+ Work on multiple themes using environments
+ Run Theme Check on your theme
+ Development themes
+ Development themes are temporary, hidden themes that are connected to the Shopify store that you're using for development. When you connect your theme to a store as a development theme, you can use that store's data for local testing.
+ You can create a development theme using the shopify theme dev command.
+ You can use development themes on a Shopify store or a development store. Development themes don't count toward your theme limit, and are deleted from the store after seven days of inactivity.
+ Your development theme is deleted when you run shopify auth logout. If you want a preview link for the theme that can be accessed after you log out, then you should push your development theme to an unpublished theme on your store.
+ Your development theme can be used to perform the following tasks:
+ View changes in real time to a theme that you're developing locally
+ Customize and interact with the theme using the Shopify admin theme editor
+ Share a password-protected preview of the theme with other developers
+ Environments
+ Many command configurations, such as the theme and store to be used with the command, are passed using flags. To avoid passing multiple flags with each command, and to easily switch projects or contexts, you can use environments. Environments are sets of command configurations that can be referenced by name using a single --environment flag.
+ You might want to use environments in the following cases:
+ You need to switch between development stores frequently.
+ You access multiple stores using Theme Access passwords.
+ You want to deploy your project to development, staging, and production instances of your theme.
+ Learn how to configure and use environments.
+ Installation
+ To learn how to install Shopify CLI on Windows, macOS, or Linux, refer to Install Shopify CLI.
+ Getting started
+ Refer to the following tutorials for details about creating or working on a Shopify theme using Shopify CLI:
+ Start building a theme
+ Learn how to set up your theme development environment and create a new theme.
+ Customize an existing theme
+ Learn how to set up your development environment to work on a theme in a Shopify store.
+ Command reference
+ Refer to the Shopify CLI theme command reference to explore the commands available to build themes with Shopify CLI.
+ Authenticating and accessing stores
+ As a theme developer, you might want to use a Shopify store to test your theme, or to share your theme with stakeholders. You also might need to work on multiple stores, or use a different set of credentials to authenticate with a particular store. Learn about the authentication methods that you can use to work on stores using Shopify CLI, and how to switch between accounts and stores.
+ Authentication
+ You can use the following authentication methods to work on a theme in a Shopify store using Shopify CLI:
+ Log in with a Shopify account
+ Provide a Theme Access password
+ Provide a custom app access token
+ Log in with a Shopify account
+ You can use the following types of Shopify accounts to access the store you want to work on:
+ A collaborator account with the Manage themes permission
+ A staff account with the Themes permission
+ The store owner account
+ To authenticate with a Shopify account, run a command that requires store access. You'll be prompted to log in.
+ Caution
+ To use a development store or Plus sandbox store with Shopify CLI, you need to be the store owner, or have a staff account on the store. Staff accounts are created automatically the first time you access a development store with your Partner staff account through the Partner Dashboard.
+ SWITCHING BETWEEN ACCOUNTS
+ If you need to switch between accounts, then log out of the current account using the following command:
+ Terminal
+ $ shopify auth logout
+ The next time you enter a command that requires authentication, you'll be prompted to log in, and can enter a new set of credentials.
+ Theme Access password
+ You can use a Theme Access password to authenticate with the store that you want to work on. Theme Access passwords are generated for a store using the Theme Access app.
+ To use a Theme Access password, pass the --password flag with each command that you want to run against the store. If you run a command without the --password flag, then Shopify CLI attempts to use your Shopify account credentials to run the command.
+ Custom app access token
+ You can use a custom app access token to authenticate with the store that you want to work on.
+ To authenticate using an access token, pass the --password flag with each command that you want to run against the store. If you run a command without the --password flag, then Shopify CLI attempts to use your Shopify account credentials to run the command.
+ Your custom app needs to have the read_themes and write_themes API access scopes. To enable hot reloading, you also need to add the unauthenticated_read_content access scope for Storefront API integration, and pass the tokens as environment variables instead of using the --password flag.
+ Connecting to a store
+ The first time you enter a command that requires you to interact with a Shopify store, pass the --store flag with the command and specify the store that you want to interact with:
+ Terminal
+ $ shopify theme dev --store my-store
+ The store that you specify is used for future commands until a new store is specified.
+ If you want to change the store that you're interacting with, pass the --store flag with your command, specifying the new store that you want to interact with.
+ To check which store you're using, run shopify theme info:
+ Terminal
+ $ shopify theme info
+ Output
+ 1 THEME CONFIGURATION
+ 2 -----------------------
+ 3 Store   my-store.myshopify.com
+ 4 ...
+ Directory structure
+ You can run certain theme commands, such as shopify theme dev, only if the directory you're using matches the default Shopify theme directory structure. This structure represents a buildless theme, or a theme that has already gone through any necessary file transformations. If you use build tools to generate theme files, then you might need to run commands from the directory where the generated files are stored.
+ The default Shopify theme directory structure is as follows:
+ Shopify theme directory structure
+ 1 └── project
+ 2
+      ├── assets
+ 3
+      ├── config
+ 4
+      ├── layout
+ 5
+      ├── locales
+ 6
+      ├── sections
+ 7
+      ├── snippets
+ 8
+      └── templates
+ 9
+          └── customers
+ Excluding files from Shopify CLI
+ If you have files in the same repository as your theme that you don't want to interact with using Shopify CLI, then you can add them to a .shopifyignore at the root of the theme.
+ .shopifyignore accepts references to files in the following formats:
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.(txt|gif|bat)$/
+ You can also exclude specific files or patterns during a push or pull using the --ignore flag. If files are excluded using .shopifyignore, then both the contents of .shopifyignore and the --ignore flag are respected.
+ Using Shopify CLI for continuous integration
+ If you have a theme that you want to work with programmatically, then you can integrate Shopify CLI into your CI/CD pipeline to perform actions like pushing, pulling, and publishing a theme.
+ Learn more about running Shopify CLI in a CI/CD pipeline.
+ Upgrade Shopify CLI
+ To upgrade Shopify CLI 3.x to the latest version, run the upgrade command from your theme directory:
+ Terminal
+ $ shopify upgrade
+ 
+ To check your CLI version, run the version command from your theme directory:
+ Terminal
+ $ shopify version
+ Migrate to Shopify CLI 3.x
+ In October 2022, support for themes was added to Shopify CLI 3.x. Shopify CLI 3.x provides a streamlined authentication and store management experience.
+ To learn about the differences between Shopify CLI 2.x and 3.x, how to upgrade to Shopify CLI 3.x, or how to use both Shopify CLI 2.x and 3.x on the same machine, refer to Migrate to Shopify CLI 3.x.
+ Usage reporting
+ Anonymous usage statistics are collected by default. To opt out, you can use the environment variable SHOPIFY_CLI_NO_ANALYTICS=1.
+ Contributing to Shopify CLI
+ Shopify CLI is open source. Learn how to contribute to our GitHub repository.
+ Where to get help
+ Open a GitHub issue - To report bugs or request new features, open an issue in the Shopify CLI repository.
+ Shopify Community Forums - Visit our forums to connect with the community and learn more about Shopify CLI development.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Choosing between Shopify CLI and Theme Kit
+ Features
+ Installation
+ Getting started
+ Command reference
+ Authenticating and accessing stores
+ Directory structure
+ Excluding files from Shopify CLI
+ Using Shopify CLI for continuous integration
+ Upgrade Shopify CLI
+ Migrate to Shopify CLI 3.x
+ Usage reporting
+ Contributing to Shopify CLI
+ Where to get help
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

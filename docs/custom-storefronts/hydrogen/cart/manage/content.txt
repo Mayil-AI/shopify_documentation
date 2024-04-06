@@ -1,0 +1,210 @@
+Hydrogen CLI
+ Analytics
+ Cart
+ Overview
+ Set up a cart handler
+ Read cart data
+ Manage cart line items
+ Update metafields
+ Update buyer identity
+ Update notes
+ Update attributes
+ Update discount codes
+ Update selected delivery options
+ Customize cart handler methods
+ Variant selector form
+ Client-rendering carts
+ Content security policy
+ Data fetching
+ Caching
+ Markets
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Manage items in a cart
+ This guide shows you how to use the cart handler to add, update, and remove items from the cart.
+ Requirements
+ You've completed the quickstart guide.
+ You've set up a cart handler.
+ Create a Remix action to handle different form requests
+ Create a Remix action to handle the different cart actions. We suggest using a single cart route, and switching on the different actions. Use the cart handler, which is available on the action context, to send cart mutation requests to the Storefront API.
+ File
+ JavaScript
+ TypeScript
+ /app/routes/cart.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ 2 import invariant from 'tiny-invariant';
+ 3
+ 4 export async function action({request, context}) {
+ 5
+    const {cart} = context;
+ 6
+ 7
+    const formData = await request.formData();
+ 8
+    const {action, inputs} = CartForm.getFormInput(formData);
+ 9
+ 10
+    let result;
+ 11
+ 12
+    switch(action) {
+ 13
+      case CartForm.ACTIONS.LinesAdd:
+ 14
+        result = await cart.addLines(inputs.lines);
+ 15
+        break;
+ 16
+      case CartForm.ACTIONS.LinesUpdate:
+ 17
+        result = await cart.updateLines(inputs.lines);
+ 18
+        break;
+ 19
+      case CartForm.ACTIONS.LinesRemove:
+ 20
+        result = await cart.removeLines(inputs.lineIds);
+ 21
+        break;
+ 22
+      default:
+ 23
+        invariant(false, `${action} cart action is not defined`);
+ 24
+    }
+ 25
+ 26
+    // The Cart ID might change after each mutation, so update it each time.
+ 27
+    const headers = cart.setCartId(result.cart.id);
+ 28
+ 29
+    return json(
+ 30
+      result,
+ 31
+      {status: 200, headers},
+ 32
+    );
+ 33 }
+ Add cart items
+ Use the CartForm component to create an add to cart button. You can add any fields defined by CartLineInput for each cart lines. The component submits a form request to the /cart route's action when users interact with the button. You can use this component anywhere in the app.
+ File
+ JavaScript
+ TypeScript
+ /app/components/AddToCartButton.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ 2
+ 3 export default function AddToCartButton({lines}) {
+ 4
+    return (
+ 5
+      <CartForm
+ 6
+        route="/cart"
+ 7
+        action={CartForm.ACTIONS.LinesAdd}
+ 8
+        inputs={
+ 9
+          {lines}
+ 10
+        }
+ 11
+      >
+ 12
+        <button>
+ 13
+          Add to cart
+ 14
+        </button>
+ 15
+      </CartForm>
+ 16
+    );
+ 17 }
+ Update cart items
+ Use the CartForm component to create an update cart button. You can update any fields in CartLineUpdateInput. The component submits a form request to the /cart route's action when users interact with the button. You can use this component anywhere in the app.
+ File
+ JavaScript
+ TypeScript
+ /app/components/UpdateCartItemsButton.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ 2
+ 3 export default function UpdateCartItemsButton({lines}) {
+ 4
+    return (
+ 5
+      <CartForm
+ 6
+        route="/cart"
+ 7
+        action={CartForm.ACTIONS.LinesUpdate}
+ 8
+        inputs={
+ 9
+          {lines}
+ 10
+        }
+ 11
+      >
+ 12
+        <button>
+ 13
+          Update cart
+ 14
+        </button>
+ 15
+      </CartForm>
+ 16
+    );
+ 17 }
+ Remove cart items
+ Use the CartForm component to remove an item from a cart. The component submits a form request to the /cart route's action when users interact with the button. You can use this component anywhere in the app.
+ File
+ JavaScript
+ TypeScript
+ /app/components/RemoveCartItemButton.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ 2
+ 3 export default function RemoveCartItemButton({lineIds}) {
+ 4
+    return (
+ 5
+      <CartForm
+ 6
+        route="/cart"
+ 7
+        action={CartForm.ACTIONS.LinesRemove}
+ 8
+        inputs={
+ 9
+          {lineIds}
+ 10
+        }
+ 11
+      >
+ 12
+        <button>
+ 13
+          Remove items
+ 14
+        </button>
+ 15
+      </CartForm>
+ 16
+    );
+ 17 }
+ Next steps
+ Learn how to show product variants.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Create a Remix action to handle different form requests
+ Add cart items
+ Update cart items
+ Remove cart items
+ Next steps
+ Updates & News

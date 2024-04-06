@@ -1,0 +1,75 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Scanner
+ Note
+ This is a legacy API. Use the latest version of Scanner instead.
+ The Scanner action set allows you to use the mobile device's camera to scan barcodes.
+ Requirements
+ These actions require the following app versions:
+ Shopify iOS v8.25.0 or above
+ Shopify Android v8.24.0 or above
+ Point of Sale iOS v5.32.0 or above
+ Point of Sale Android v3.25.0 or above
+ Setup
+ Create an app and import the Scanner module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Group, Scanner} from '@shopify/app-bridge/actions';
+ 3
+ 4 var app = createApp(config);
+ 5
+ 6 var scanner = Scanner.create(app);
+ Scanner Capture action
+ Group Scanner
+ Action CAPTURE
+ Action Type APP::SCANNER::CAPTURE
+ Description Dispatches when a scan is successful.
+ To open a Scanner component, you must first use Feature Detection to check whether it's available. If it is, then you can open it. To learn more about Feature Detection, see Features.
+ 1 scanner.subscribe(Scanner.Action.CAPTURE, function(payload) {
+ 2
+    // The payload will contain `scanData`, a string representation of the data scanned.
+ 3 });
+ Response
+ Key Type Description
+ scanData String? The resulting string from scanning a barcode.
+ Request access and Open Camera action
+ Group Scanner
+ Action OPEN::CAMERA
+ Action Type APP::SCANNER::OPEN::CAMERA
+ Description Opens a camera component for scanning barcodes.
+ 1 var features = Features.create(app);
+ 2 // Subscribe to the update action (triggered when the permission dialog is interacted with)
+ 3 features.subscribe(Features.Action.REQUEST_UPDATE, function (payload) {
+ 4
+    if (payload.feature[Scanner.Action.OPEN_CAMERA]) {
+ 5
+      var available = payload.feature[Scanner.Action.OPEN_CAMERA].Dispatch;
+ 6
+      // If the Camera Scanner actions were enabled, open a Scanner
+ 7
+      if (available) {
+ 8
+        scanner.dispatch(Scanner.Action.OPEN_CAMERA)
+ 9
+      }
+ 10
+    }
+ 11 });
+ 12 // Dispatch an action to request access to Scanner actions
+ 13 features.dispatch(Features.Action.REQUEST, {
+ 14
+    feature: Group.Scanner,
+ 15
+    action: Scanner.Action.OPEN_CAMERA
+ 16 });
+ Note
+ If the Camera Scanner Open action is already available, then dispatching Scanner.Action.OPEN_CAMERA is the only required step to use the Camera Scanner component. The state of the actions can be determined by calling app.featuresAvailable().
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Setup
+ Scanner Capture action
+ Request access and Open Camera action

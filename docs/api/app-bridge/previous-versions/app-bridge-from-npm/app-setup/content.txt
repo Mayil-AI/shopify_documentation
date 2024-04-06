@@ -1,0 +1,95 @@
+App Bridge from npm
+ Caution
+ This documentation covers App Bridge versions 3 and prior, which are installed from npm. You may want to view documentation for the current CDN version of App Bridge.
+ If you created your app with Shopify CLI 3.x or higher, then your app is already set up so it can be embedded in the Shopify admin. Otherwise, you need to perform a few steps to configure your app so it can be embedded.
+ Turn on embedding in the Partner Dashboard
+ By default, all new apps are embedded in the Shopify admin. You can embed an existing app with the following steps:
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ Click Configuration.
+ In the Embedded in Shopify admin section, set the value for Embed app in Shopify admin to True.
+ If you plan to embed your app in Shopify POS, then, in the POS section, set the value for Embed app in Shopify POS to True.
+ Click Save and release.
+ Caution
+ If you enable this feature for an existing app that isn't designed to use Shopify App Bridge, then users will no longer be able to use the app.
+ Serve your app over HTTPS
+ You must serve your embedded applications over HTTPS.
+ The Shopify admin uses HTTPS for all pages. Failure to serve an embedded app over HTTPS will cause errors in web browsers, due to mixed content restrictions.
+ Learn more about serving your app over HTTPS.
+ Tip
+ To simplify local development, use Shopify CLI.
+ Set the frame-ancestors directive
+ The Content Security Policy frame-ancestors directive controls where the app can be framed. You must ensure your app is only frameable by the authenticated shop domain and the admin domain to avoid clickjacking attacks.
+ You can do this with the Content Security Policy frame-ancestors directive:
+ Content-Security-Policy: frame-ancestors https://example.myshopify.com https://admin.shopify.com;
+ Learn more about the frame-ancestors directive and app security.
+ Note
+ The frame-ancestors directive replaces the obsolete X-Frame-Options response header.
+ Authorize with OAuth
+ Embedded apps should use token exchange to obtain an access token. Depending on your needs, you can request an online or offline access token.
+ Set up Shopify App Bridge 3 in your app
+ Shopify App Bridge 3 is available as a JavaScript module on npm. You can install it in your app using npm or yarn.
+ Tip
+ We recommend installing the latest version of App Bridge for an improved experience and to future proof your app.
+ npm
+ yarn
+ 1 npm install --save @shopify/app-bridge
+ Initialize Shopify App Bridge in your app
+ To keep your embedded apps secure, you need to specify the following configuration values, when intializing App Bridge:
+ apiKey - The client ID provided for your application in the Partner Dashboard.
+ host - The host of the specific shop that's embedding your app. This value is provided by Shopify as a URL query parameter that's appended to your application URL when your app is loaded inside the Shopify admin.
+ forceRedirect (Optional) - If set to true, then App Bridge detects when your app is loaded outside of the Shopify admin, and automatically redirects the user to the Shopify admin page that embeds your app.
+ Caution
+ To ensure that you're configuring App Bridge correctly, you must always use the host that's provided by Shopify.
+ Shopify is consolidating its admin domains. During the rollout period, the store loading your app might use the old myshopify.com domain, or the new admin.shopify.com domain. This impacts the value returned in the host parameter. to The host parameter value can also differ depending on whether your app runs in web, mobile, or POS.
+ If you initialize App Bridge with an incorrect host, then your app won't work as expected.
+ 1 import createApp from '@shopify/app-bridge';
+ 2
+ 3 const config = {
+ 4
+      // The client ID provided for your application in the Partner Dashboard.
+ 5
+      apiKey: "api_key",
+ 6
+      // The host of the specific shop that's embedding your app. This value is provided by Shopify as a URL query parameter that's appended to your application URL when your app is loaded inside the Shopify admin.
+ 7
+      host: new URLSearchParams(location.search).get("host"),
+ 8
+      forceRedirect: true
+ 9 };
+ 10
+ 11 const app = createApp(config);
+ Note
+ You should re-use the same App Bridge instance because the host parameter is only guaranteed on initial load of your app.
+ If your app isn't a single-page application, then your server needs to persist the host value during the initial page load. On subsequent page loads, you should use the persisted host value to configure App Bridge.
+ Make your first App Bridge call
+ The following example uses ResourcePicker to open a UI component that enables users to browse, find, and select products from their store using a familiar experience.
+ 1 import { ResourcePicker }  from '@shopify/app-bridge/actions';
+ 2
+ 3
+ 4 const picker = ResourcePicker.create(app, {
+ 5
+    resourceType: ResourcePicker.ResourceType.Product
+ 6 });
+ 7
+ 8 picker.subscribe(ResourcePicker.Action.SELECT, (payload) => {
+ 9
+    console.log(payload.selection);
+ 10 });
+ 11
+ 12 picker.dispatch(ResourcePicker.Action.OPEN);
+ Next steps
+ Note
+ If you need help using Shopify App Bridge please visit our API & SDK forum. It is the best place to discuss libraries and get support. If you have a specific bug report or feature request for App Bridge, please visit the App Bridge issue tracker on GitHub.
+ Now that you've initialized your app, you can use any Shopify App Bridge actions.
+ You can also debug your app with Shopify App Bridge.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Turn on embedding in the Partner Dashboard
+ Serve your app over HTTPS
+ Set the frame-ancestors directive
+ Authorize with OAuth
+ Set up Shopify App Bridge 3 in your app
+ Initialize Shopify App Bridge in your app
+ Make your first App Bridge call

@@ -1,0 +1,30 @@
+blog
+ The blog template renders the blog page, which lists all articles within a blog.
+ Tip
+ Refer to the blog template and its main section in Dawn for an example implementation.
+ Location
+ The blog template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── blog.json
+ Your blog template should contain a section that includes the blog object.
+ The blog object
+ You can access the Liquid blog object to display the blog details.
+ Usage
+ When working with the blog template, you should familiarize yourself with filtering articles by tag.
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Filter articles by tag
+ You can use article tags to filter a blog into smaller subsets of articles. This is done by appending /tagged/[tag-handle] to the blog URL, where [tag-handle] is the handleized version of the desired article tag.
+ For example, if you want to show only articles from the main blog that are tagged with news, then you can use the following URL structure:
+ 1 https://my-store.myshopify.com/blogs/main/tagged/news
+ You can also filter by multiple tags by combining the handleized tags with a +:
+ 1 https://my-store.myshopify.com/blogs/main/tagged/news+breaking
+ Tip
+ Instead of manually building this URL structure, you can use the link_to_tag, link_to_add_tag, and link_to_remove_tag URL filters.

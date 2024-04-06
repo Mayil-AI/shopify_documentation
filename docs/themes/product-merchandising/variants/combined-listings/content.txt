@@ -1,0 +1,330 @@
+Overview
+ Combined listings
+ Product recommendations
+ Media and images
+ Gift cards
+ Combined listings
+ Early Access
+ The GraphQL Admin API has been updated to support the creation of combined listings. To be considered for early access to these API updates, please reach out to Partner support.
+ A combined listing is modeled as a single parent product that has variants that point to one or more child products. For more information, see the combined listing help documentation or learn how to create a combined listing app.
+ In this tutorial, you'll learn how to update your theme to support combined listings. You can also check out a branch of the Dawn theme that supports combined listings, which can be used as a reference.
+ Shopify Plus
+ Combined listings are available only to stores on a Shopify Plus plan.
+ Use product.options_with_values to render options
+ As a liquid object, a combined listing product inherits options from both the parent and child products, so it may have more options than the standard product option limit. To ensure all options are rendered, themes need to use product.options_with_values.
+ 1 {%- for option in product.options_with_values -%}
+ 2
+    {{ option.name }} / {{ option.values }}
+ 3 {%- endfor -%}
+ Use product_option_value to simplify option value input rendering
+ The product_option.values array now returns an array of product_option_value objects instead of strings. This object has two properties that help render option value inputs:
+ selected - Whether the option value is currently selected.
+ variant - The variant associated with this option value combined with the other currently selected option values.
+ 1 {%- for option_value in option.values -%}
+ 2
+    <input
+ 3
+      type="radio"
+ 4
+      name="{{ option.name }}"
+ 5
+      value="{{ option_value | escape }}"
+ 6
+      {% if option_value.selected %}
+ 7
+        checked
+ 8
+      {% endif %}
+ 9
+      {% unless option_value.variant.available %}
+ 10
+        class="disabled"
+ 11
+      {% endunless %}
+ 12
+    />
+ 13 {%- endfor -%}
+ Pagination using selected option values
+ Caution
+ Products will soon support up to 2000 variants. However, to avoid negative render performance in themes, product.variants is capped to the shop's current variant limit.
+ When a buyer selects an option value, themes respond by filtering all product variants for the current option selection and using those variants to update the product form. Because product.variants is capped and may not return the full set of variants, themes need a new approach.
+ To avoid loading all variant information, themes can now paginate through a product's variants based on selected option values. The product_option_value.variant object enables this by providing the minimal set of variant data for the currently visible option values. After a buyer selects an option value, the Section Rendering API can be used to paginate to the next set of possible variants.
+ Looking at an example, a Pants product has options waist: 30,32,34, length: 30,32,34, color: red,green,blue. The product contains 3*3*3=27 variants, but at any given time the buyer is only shown option values associated with seven of the variants. When the buyer selects an option value, the theme paginates to the next seven variants. Here's how it works:
+ Example - Initial state
+ On pageload, the initial option value selection depends on which variant is returned by product.selected_or_first_available_variant. For example, if the variant 30 / 30 / red is returned, then the option values waist:30, length:30, and color:red will be selected. From this state, there are six other variants that a buyer could choose next. Here they are broken down by option and option value:
+ waist
+ 30 - variant 30 / 30 / red (selected variant)
+ 32 - variant 32 / 30 / red
+ 34 - variant 34 / 30 / red
+ length
+ 30 - variant 30 / 30 / red (selected variant)
+ 32 - variant 30 / 32 / red
+ 34 - variant 30 / 34 / red
+ color
+ red - variant 30 / 30 / red (selected variant)
+ green - variant 30 / 30 / green
+ blue - variant 30 / 30 / blue
+ Example - After option value selection
+ A buyer selects color: green, and the theme JS calls the Section Rendering API with the selected variant to load the next state of option values and associated variants, and updates the page. The buyer is still shown seven total variants, but they have been updated to reflect the new option value selection of waist:30, length:30, color:green:
+ waist
+ 30 - variant 30 / 30 / green (selected variant)
+ 32 - variant 32 / 30 / green
+ 34 - variant 34 / 30 / green
+ length
+ 30 - variant 30 / 30 / green (selected variant)
+ 32 - variant 30 / 32 / green
+ 34 - variant 30 / 34 / green
+ color
+ green - variant 30 / 30 / green (selected variant)
+ red - variant 30 / 30 / red
+ blue - variant 30 / 30 / blue
+ Option values with no associated variant
+ Caution
+ If the option values passed to the Section Rendering API have no associated variant, then both product.selected_or_first_available_variant and product.selected_variant will return null. Make sure your theme can handle this null case before using the Section Rendering API with option_values
+ In some scenarios, a set of option values may not map to a variant. For example, a merchant may only sell length: 36 pants for color: blue, and any other color will have no associated variant for length: 36. This scenario may also occur for a combined listing if an option value for one combined listing child is not present on another.
+ To enable themes to load the next variant state even if the selected option values have no associated variant, the Section Rendering API can accept the set of currently selected option value IDs when loading a product section:
+ 1 GET /products/pants-green?option_values=<option_value_id_1>,...,<option_value_id_N>
+ 2 or
+ 3 GET /products/pants-green?option_values[]=<option_value_id_1>&...&option_values[]=<option_value_id_N>
+ Adding support for combined listings
+ Note
+ The product and product_list theme input settings don't currently support combined listing products.
+ To support combined listings, your theme should use the variant pagination approach. Additionally, your theme must contain logic to refresh product information when switching between combined listing products.
+ For example, a shop has a combined listing Pants with child products Pants - red and Pants - green. If a buyer lands on the Pants product and changes the color, then the theme should be updated to display information from the corresponding child product (price, images, description, etc). This can be accomplished by using the product_option_value.product_url property as the URL when calling the Section Rendering API.
+ 1 <div data-section-id="{{ section.id }}">
+ 2
+    <input
+ 3
+      type="radio"
+ 4
+      id="option_value_1"
+ 5
+      name="{{ option.name }}"
+ 6
+      value="{{ option_value | escape }}"
+ 7
+      data-product-url="{{ option_value.product_url }}"
+ 8
+      data-variant-id="{{ option_value.variant.id }}"
+ 9
+    />
+ 10 </div>
+ 11
+ 12 <script>
+ 13 document.getElementById('option_value_1').addEventListener('click', (event) => {
+ 14
+    const {productUrl, variantId} = event.target.dataset;
+ 15
+    const sectionId = event.target.closest('[data-section-id]').dataset.sectionId;
+ 16
+ 17
+    // call the section rendering api
+ 18
+    fetch(`${productUrl}?section_id=${sectionId}&variant=${variantId}`)
+ 19
+      .then((response) => response.text())
+ 20
+      .then((responseText) => {
+ 21
+         // update product information
+ 22
+      });
+ 23 });
+ 24 </script>
+ Example
+ Putting it all together, a theme can load a minimal set of variants using the product_option_value.variant object, use the Section Rendering API to paginate variants using the option value selection, and support combined listings by replacing product content when a buyer switches to a sibling product. Here's a minimal example:
+ 1 <section id="productSection" data-section-id="{{ section.id }}">
+ 2
+    <div class="product" data-product-url="{{ product.url }}">
+ 3
+      <h2>{{ product.title }}</h2>
+ 4
+      <div class="price">
+ 5
+        {{ product.price | money }}
+ 6
+      </div>
+ 7
+      <!-- ...other product info... -->
+ 8
+ 9
+      <div class="optionValueSelectors">
+ 10
+ 11
+        <!-- Use options_with_values to render options -->
+ 12
+        {%- for option in product.options_with_values -%}
+ 13
+          <fieldset class="option">
+ 14
+            <legend>{{ option.name }}</legend>
+ 15
+ 16
+            {%- for option_value in option.values -%}
+ 17
+              {%- capture input_id -%}
+ 18
+                {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
+ 19
+              {%- endcapture -%}
+ 20
+ 21
+              <!-- Use product_option_value` fields to simplify option value input rendering and support combined listings -->
+ 22
+              <input
+ 23
+                type="radio"
+ 24
+                id="{{ input_id }}"
+ 25
+                name="{{ option.name }}"
+ 26
+                value="{{ option_value | escape }}"
+ 27
+                {% if option_value.selected %}
+ 28
+                  checked
+ 29
+                {% endif %}
+ 30
+                {% unless option_value.variant.available %}
+ 31
+                  class="disabled"
+ 32
+                {% endunless %}
+ 33
+                data-product-url="{{ option_value.product_url }}"
+ 34
+                data-variant-id="{{ option_value.variant.id }}"
+ 35
+                data-option-value-id="{{ option_value.id }}"
+ 36
+              />
+ 37
+ 38
+              <label for="{{ input_id }}">
+ 39
+                {{ option_value -}}
+ 40
+              </label>
+ 41
+            {%- endfor -%}
+ 42
+          </fieldset>
+ 43
+        {%- endfor -%}
+ 44
+      </div>
+ 45
+    </div>
+ 46 </section>
+ 47
+ 48 {% javascript %}
+ 49
+    function onVariantChange({target: optionValueElement}) {
+ 50
+      const productElement = this.querySelector('.product');
+ 51
+      const sectionId = this.dataset.sectionId;
+ 52
+      const oldProductUrl = productElement.dataset.productUrl;
+ 53
+      const newProductUrl = optionValueElement.dataset.productUrl;
+ 54
+      const newVariantId = optionValueElement.dataset.variantId;
+ 55
+ 56
+      let params = `section_id=${sectionId}&`;
+ 57
+      if (newVariantId) {
+ 58
+        // if the option value has a variant selection, call the section rendering api for that variant
+ 59
+        params += `variant=${newVariantId}`;
+ 60
+      } else {
+ 61
+        // if the option value selection has no variant, call the section rendering api with the selected option value IDs instead
+ 62
+        const selectedOptionValues = Array.from(this.querySelectorAll('fieldset input:checked')).map((element) => element.dataset.optionValueId).join(',');
+ 63
+        params += `option_values=${selectedOptionValues}`;
+ 64
+      }
+ 65
+ 66
+      // call the section rendering api
+ 67
+      fetch(`${newProductUrl}?${params}`)
+ 68
+        .then((response) => response.text())
+ 69
+        .then((responseText) => {
+ 70
+          const html = new DOMParser().parseFromString(responseText, 'text/html');
+ 71
+ 72
+          if (oldProductUrl !== newProductUrl) {
+ 73
+            // (combined listings) if the product changed, replace the product section with the new product section
+ 74
+            productElement.parentNode.insertBefore(html.querySelector('.product'), productElement);
+ 75
+            productElement.remove();
+ 76
+ 77
+            // focus the input for the last clicked option value
+ 78
+            this.querySelector(`#${optionValueElement.id}`).focus();
+ 79
+ 80
+            // ... update anything else that depends on product (url, recommended products, etc) ...
+ 81
+            return;
+ 82
+          }
+ 83
+ 84
+          this.querySelector('.optionValueSelectors').innerHTML = html.querySelector('.optionValueSelectors').innerHTML;
+ 85
+          this.querySelector(`#${optionValueElement.id}`).focus();
+ 86
+ 87
+          const priceEl = this.querySelector('.price');
+ 88
+          if (hasVariant) {
+ 89
+            priceEl.innerHTML = html.querySelector('.price').innerHTML;
+ 90
+            // ... update additional states ...
+ 91
+          } else {
+ 92
+            priceEl.innerHTML = '';
+ 93
+            // ... set additional unavailable states ...
+ 94
+          }
+ 95
+        });
+ 96
+    }
+ 97
+ 98
+    document.getElementById('productSection').addEventListener('change', onVariantChange);
+ 99 {% endjavascript %}
+ UX Considerations - Availability
+ When using the approach detailed in the example, option value availability is determined in relation to the currently selected variant.
+ A buyer lands on a product with variant blue/30/30 selected. The variants blue/32/30 and blue/30/32 are sold out, and are shown as struck through:
+ The buyer wants pants of length:32 and waist:30, so they select length:32. This variant is sold out, so the selected color, length, and waist are struck through.
+ The buyer can see that their size is available in other colors, and switches to the black pants. Because the variant blue/32/30 is sold out, blue is struck through:
+ In this example, we can see how this approach is helpful for a buyer. The buyer first selects the attribute that is most important to them (size), and then is able to see which colors have that size available.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Use `product.options_with_values` to render options
+ Use `product_option_value` to simplify option value input rendering
+ Pagination using selected option values
+ Option values with no associated variant
+ Adding support for combined listings
+ Example

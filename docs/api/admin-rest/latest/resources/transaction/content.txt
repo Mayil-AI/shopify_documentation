@@ -1,0 +1,555 @@
+Online store
+ Orders
+ Abandoned checkouts
+ DraftOrder
+ Order
+ Order Risk
+ Refund
+ Transaction
+ JSON
+ The Transaction resource
+ POST
+ Creates a transaction for an order
+ GET
+ Retrieves a list of transactions
+ GET
+ Retrieves a specific transaction
+ GET
+ Retrieves a count of an order's transactions
+ Plus
+ Products
+ Sales channels
+ Shipping and fulfillment
+ Shopify Payments
+ Store properties
+ TenderTransaction
+ Webhooks
+ Deprecated API calls
+ Transaction
+ Requires ANY of the following access scopes: orders, marketplace_orders.
+ Transactions are created for every order that results in an exchange of money.
+ There are five types of transactions:
+ Authorization: An amount reserved against the cardholder's funding source. Money does not change hands until the authorization is captured.
+ Sale: An authorization and capture performed together in a single step.
+ Capture: A transfer of the money that was reserved during the authorization stage.
+ Void: A cancellation of a pending authorization or capture.
+ Refund: A partial or full return of captured funds to the cardholder. A refund can happen only after a capture is processed.
+ Refund transactions must be created by using the Refund resource.
+ Note
+ An order can have more than one authorization transaction associated with it. This might happen when an order is edited or when a post-purchase upsell is added to the order. To be notified when an order is edited subscribe to the OrderEdit webhook.
+ If your app captures payments, you should make a GET request to the /admin/api/{version}/orders/{order_id}/transactions.json endpoint to retrieve the authorization transactions associated with an order. Then, to complete the full order payment capture, you should use the authorization or parent_id properties in separate capture POST requests to the same endpoint for each authorization transaction.
+ Note
+ An order can have no more than 100 transactions associated with it.
+ Was this section helpful?
+ YesNo
+ #
+ Endpoints
+ POST
+ /admin/api/2024-04/orders/{order_id}/transactions.json
+ Creates a transaction for an order
+ GET
+ /admin/api/2024-04/orders/{order_id}/transactions.json
+ Retrieves a list of transactions
+ GET
+ /admin/api/2024-04/orders/{order_id}/transactions/{transaction_id}.json
+ Retrieves a specific transaction
+ GET
+ /admin/api/2024-04/orders/{order_id}/transactions/count.json
+ Retrieves a count of an order's transactions
+ The Transaction resource
+ Properties
+ amount
+ The amount of money included in the transaction. If you don't provide a value for `amount`, then it defaults to the total cost of the order (even if a previous transaction has been made towards it).
+ authorization
+ The authorization code associated with the transaction.
+ authorization_expires_at
+ The date and time (ISO 8601 format) when the Shopify Payments authorization expires.
+ created_at
+ read-only
+ The date and time (ISO 8601 format) when the transaction was created.
+ currency
+ The three-letter code (ISO 4217 format) for the currency used for the payment.
+ device_id
+ read-only
+ The ID for the device.
+ error_code
+ read-only
+ A standardized error code, independent of the payment provider. Valid values:
+ Show error_code properties
+ extended_authorization_attributes
+ The attributes associated with a Shopify Payments extended authorization period. It has the following attributes:
+ Show extended_authorization_attributes properties
+ gateway
+ The name of the gateway the transaction was issued through. A list of gateways can be found on Shopify's payment gateways page.
+ id
+ read-only
+ The ID for the transaction.
+ kind
+ The transaction's type. Valid values:
+ Show kind properties
+ location_id
+ read-only
+ The ID of the physical location where the transaction was processed.
+ Show 13 hidden fields
+ Was this section helpful?
+ YesNo
+ {}
+ The Transaction resource
+ 1
+ 2
+ 3
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ {
+ "amount": "10.00",
+ "authorization": "ch_1AtJu6CktlpKSclI4zjeQb2t",
+ "authorization_expires_at": "2021-03-13T16:09:54-04:00",
+ "created_at": "2012-03-13T16:09:54-04:00",
+ "currency": "USD",
+ "device_id": 1,
+ "error_code": "invalid_cvc",
+ "extended_authorization_attributes": {
+ "standard_authorization_expires_at": "2020-10-08T00:00:00-04:00",
+ "extended_authorization_expires_at": "2020-10-30T00:00:00-04:00"
+ },
+ "gateway": "shopify_payments",
+ "id": 999225661,
+ "kind": "capture",
+ "location_id": {
+ "id": 49202758
+ },
+ "message": "Marked the Stripe payment as received",
+ "order_id": 450789469,
+ "payment_details": {
+ "credit_card_bin": "123456",
+ "avs_result_code": "Y",
+ "cvv_result_code": "M",
+ "credit_card_number": "•••• •••• •••• 4242",
+ "credit_card_company": "Visa",
+ "credit_card_name": "John Smith",
+ "credit_card_wallet": "shopify_pay",
+ "credit_card_expiration_month": 10,
+ "credit_card_expiration_year": 2028,
+ "buyer_action_info": {
+ "multibanco": {
+ "Entity": "12345",
+ "Reference": "999999999"
+ }
+ },
+ "payment_method_name": "multibanco"
+ },
+ "parent_id": 584698724408,
+ "payments_refund_attributes": {
+ "status": "success",
+ "acquirer_reference_number": "123456789012345678901234"
+ },
+ "processed_at": "2018-01-10T11:00:00-05:00",
+ "receipt": {},
+ "source_name": "web",
+ "status": "success",
+ "total_unsettled_set": {
+ POST
+ Creates a transaction for an order
+ Caution
+ For multi-currency orders, the currency property is required when creating refund and capture transactions. The value should be the presentment currency from the order. For more information, refer to the Transaction resource.
+ Creates a transaction for an order.
+ Parameters
+ api_version
+ string
+ required
+ order_id
+ string
+ required
+ source
+ An optional origin of the transaction. Set to external to import a cash transaction for the associated order.
+ Was this section helpful?
+ YesNo
+ Examples
+ Capture a specified amount on an authorized order, and associate the capture with an authorization by including its ID
+ Path parameters
+ order_id=450789469
+ string
+ required
+ Request body
+ transaction
+ Transaction resource
+ Show transaction properties
+ Capture the full amount for one authorization on an order, and associate the capture with an authorization by including its authorization code
+ Create a test transaction
+ Void a transaction
+ Was this section helpful?
+ YesNo
+ POST
+ /admin/api/2024-04/orders/450789469/transactions.json
+ cURL
+ Remix
+ Ruby
+ Node.js
+ PHP
+ 1
+ 2
+ 3
+ 4
+ 5
+ curl -d '{"transaction":{"currency":"USD","amount":"10.00","kind":"capture","parent_id":389404469}}' \
+ -X POST "https://your-development-store.myshopify.com/admin/api/2024-04/orders/450789469/transactions.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ HTTP/1.1 201 Created
+ {
+ "transaction": {
+ "id": 1068278733,
+ "order_id": 450789469,
+ "kind": "capture",
+ "gateway": "bogus",
+ "status": "success",
+ "message": "Bogus Gateway: Forced success",
+ "created_at": "2024-04-01T13:25:52-04:00",
+ "test": true,
+ "authorization": null,
+ "location_id": null,
+ "user_id": null,
+ "parent_id": 389404469,
+ "processed_at": "2024-04-01T13:25:52-04:00",
+ "device_id": null,
+ "error_code": null,
+ "source_name": "755357713",
+ "payment_details": {
+ "credit_card_bin": null,
+ "avs_result_code": null,
+ "cvv_result_code": null,
+ "credit_card_number": "•••• •••• •••• 4242",
+ "credit_card_company": "Visa",
+ "buyer_action_info": null,
+ "credit_card_name": null,
+ "credit_card_wallet": null,
+ "credit_card_expiration_month": null,
+ "credit_card_expiration_year": null,
+ "payment_method_name": "visa"
+ },
+ "receipt": {},
+ "currency_exchange_adjustment": null,
+ "amount": "10.00",
+ "currency": "USD",
+ "payment_id": "c901414060.1",
+ "total_unsettled_set": {
+ "presentment_money": {
+ "amount": "588.94",
+ "currency": "USD"
+ },
+ "shop_money": {
+ "amount": "588.94",
+ "currency": "USD"
+ }
+ },
+ "manual_payment_gateway": false,
+ "admin_graphql_api_id": "gid://shopify/OrderTransaction/1068278733"
+ }
+ }
+ GET
+ Retrieves a list of transactions
+ Retrieves a list of transactions.
+ Transactions attached to multi-currency orders are in the presentment currency by default. To retrieve transactions in the shop currency, include the URL parameter in_shop_currency=true.
+ Parameters
+ api_version
+ string
+ required
+ order_id
+ string
+ required
+ fields
+ Show only certain fields, specifed by a comma-separated list of fields names.
+ in_shop_currency
+ default false
+ Show amounts in the shop currency.
+ since_id
+ Retrieve only transactions after the specified ID.
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve an order's transactions
+ Path parameters
+ order_id=450789469
+ string
+ required
+ Retrieve an order's transactions after a specified ID
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/orders/450789469/transactions.json
+ cURL
+ Remix
+ Ruby
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/orders/450789469/transactions.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ {}
+ Response
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ HTTP/1.1 200 OK
+ {
+ "transactions": [
+ {
+ "id": 179259969,
+ "order_id": 450789469,
+ "kind": "refund",
+ "gateway": "bogus",
+ "status": "success",
+ "message": null,
+ "created_at": "2005-08-05T12:59:12-04:00",
+ "test": false,
+ "authorization": "authorization-key",
+ "location_id": null,
+ "user_id": null,
+ "parent_id": 801038806,
+ "processed_at": "2005-08-05T12:59:12-04:00",
+ "device_id": null,
+ "error_code": null,
+ "source_name": "web",
+ "receipt": {},
+ "currency_exchange_adjustment": null,
+ "amount": "209.00",
+ "currency": "USD",
+ "payment_id": "#1001.3",
+ "total_unsettled_set": {
+ "presentment_money": {
+ "amount": "348.0",
+ "currency": "USD"
+ },
+ "shop_money": {
+ "amount": "348.0",
+ "currency": "USD"
+ }
+ },
+ "manual_payment_gateway": false,
+ "admin_graphql_api_id": "gid://shopify/OrderTransaction/179259969"
+ },
+ {
+ "id": 389404469,
+ "order_id": 450789469,
+ "kind": "authorization",
+ "gateway": "bogus",
+ "status": "success",
+ "message": null,
+ "created_at": "2005-08-01T11:57:11-04:00",
+ "test": false,
+ "authorization": "authorization-key",
+ "location_id": null,
+ "user_id": null,
+ "parent_id": null,
+ "processed_at": "2005-08-01T11:57:11-04:00",
+ "device_id": null,
+ "error_code": null,
+ "source_name": "web",
+ GET
+ Retrieves a specific transaction
+ Retrieves a specific transaction.
+ Transactions attached to multi-currency orders are in the presentment currency by default. To retrieve transactions in the shop currency, include the URL parameter in_shop_currency=true.
+ extended_authorization_attributes are available on this endpoint only to stores on the Shopify Plus plan that use Shopify Payments. To learn more about extended authorization periods, refer to Payment authorization.
+ Parameters
+ api_version
+ string
+ required
+ order_id
+ string
+ required
+ transaction_id
+ string
+ required
+ fields
+ Show only certain fields, specified by a comma-separated list of field names.
+ in_shop_currency
+ default false
+ Show amounts in the shop currency.
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve a specific transaction for an order
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/orders/450789469/transactions/389404469.json
+ cURL
+ 2
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/orders/450789469/transactions/389404469.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ 53
+ 54
+ HTTP/1.1 200 OK
+ {
+ "transaction": {
+ "id": 389404469,
+ "order_id": 450789469,
+ "kind": "authorization",
+ "gateway": "bogus",
+ "status": "success",
+ "message": null,
+ "created_at": "2005-08-01T11:57:11-04:00",
+ "test": false,
+ "authorization": "authorization-key",
+ "location_id": null,
+ "user_id": null,
+ "parent_id": null,
+ "processed_at": "2005-08-01T11:57:11-04:00",
+ "device_id": null,
+ "error_code": null,
+ "source_name": "web",
+ "payment_details": {
+ "credit_card_bin": null,
+ "avs_result_code": null,
+ "cvv_result_code": null,
+ "credit_card_number": "•••• •••• •••• 4242",
+ "credit_card_company": "Visa",
+ "buyer_action_info": null,
+ "credit_card_name": null,
+ "credit_card_wallet": null,
+ "credit_card_expiration_month": null,
+ "credit_card_expiration_year": null,
+ "payment_method_name": "visa"
+ },
+ "receipt": {
+ "testcase": true,
+ "authorization": "123456"
+ },
+ "currency_exchange_adjustment": null,
+ "amount": "598.94",
+ "currency": "USD",
+ "authorization_expires_at": null,
+ "extended_authorization_attributes": {},
+ "payment_id": "#1001.1",
+ "total_unsettled_set": {
+ "presentment_money": {
+ "amount": "348.0",
+ "currency": "USD"
+ },
+ "shop_money": {
+ "amount": "348.0",
+ "currency": "USD"
+ }
+ },
+ "manual_payment_gateway": false,
+ "admin_graphql_api_id": "gid://shopify/OrderTransaction/389404469"
+ GET
+ Retrieves a count of an order's transactions
+ Retrieves a count of an order's transactions.
+ Parameters
+ api_version
+ string
+ required
+ order_id
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Count an order's transactions
+ Path parameters
+ order_id=450789469
+ string
+ required
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/orders/450789469/transactions/count.json
+ cURL
+ Remix
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/orders/450789469/transactions/count.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ {}
+ 4
+ HTTP/1.1 200 OK
+ {
+ "count": 3
+ }

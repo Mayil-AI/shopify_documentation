@@ -1,0 +1,270 @@
+Get access tokens
+ Token exchange
+ Authorization code grant
+ Overview
+ Getting started
+ Access token types
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Implement authorization code grant manually
+ All Shopify apps, other than apps created in the Shopify admin, need to obtain authorization using the OAuth 2.0 specification to use Shopify’s API resources.
+ This tutorial shows you how to authorize your app using authorization code grant, either using a Shopify Admin API library, or from scratch. Using a Shopify Admin API library helps you to keep your app secure and reduce implementation time. Shopify recommends that you use a library where possible.
+ Caution
+ When possible, you should use token exchange and shopify managed installation instead of authorization code grant.
+ All Shopify app templates already have OAuth implemented. If you're using one of these templates, then you don't need to follow this tutorial. To save time and keep your app secure, Shopify recommends using an app template if possible.
+ Note
+ If you're building an embedded app, then you also need to use a session token for authentication. To learn more, refer to Getting started with session token authentication.
+ What you'll learn
+ After you've completed this tutorial, you'll be able to authorize a Shopify app using authorization code grant.
+ Requirements
+ You've created a Partner account.
+ You've created an app that doesn't use a Shopify app template. These templates already have OAuth and sessions implemented.
+ You have your app's client credentials.
+ You're familiar with the authorization code grant flow in Shopify.
+ Step 1: Verify the installation request
+ When a user installs your app through the Shopify App Store or using an installation link, your app receives a GET request to the App URL path that you specify in the Partner Dashboard. The request includes the shop, timestamp, and hmac query parameters. You need to verify the authenticity of these requests using the provided hmac parameter.
+ All requests from Shopify contain the hmac parameter. You should use this procedure to verify any future requests to your app.
+ To verify the request, you need to remove the hmac parameter from the query string and process it through an HMAC-SHA256 hash function. For a request to be valid, the hmac parameter must match the HMAC-SHA256 hash of the remaining parameters in the query string. These parameters are subject to change, so don't hard code them inside your verification code.
+ Example query string
+ 1 "code=0907a61c0c8d55e99db179b68161bc00&hmac=700e2dadb827fcc8609e9d5ce208b2e9cdaab9df07390d2cbca10d7c328fc4bf&shop={shop}.myshopify.com&state=0.6784241404160823&timestamp=1337178173"
+ Note
+ The HMAC verification procedure for authorization code grant is different from the procedure for verifying webhooks. To learn more about HMAC verification for webhooks, refer to Verify the webhook.
+ Remove the HMAC parameter from the query string
+ To remove the HMAC parameter, you can transform the query string to a key-value table, remove the hmac key-value pair, and then transform your map back to a query string. The remaining parameters must be sorted alphabetically as strings, in the format "parameter_name=parameter_value".
+ Example
+ Before HMAC removal
+ 1 "code=0907a61c0c8d55e99db179b68161bc00&hmac=700e2dadb827fcc8609e9d5ce208b2e9cdaab9df07390d2cbca10d7c328fc4bf&shop={shop}.myshopify.com&state=0.6784241404160823&timestamp=1337178173"
+ After HMAC removal
+ 1 "code=0907a61c0c8d55e99db179b68161bc00&shop={shop}.myshopify.com&state=0.6784241404160823&timestamp=1337178173"
+ Process the new string through a hash function
+ You can process the string through an HMAC-SHA256 hash function using your client secret. The message is authentic if the generated hexdigest is equal to the value of the hmac parameter.
+ The following Ruby example shows how to process the string through a hash function:
+ 1 digest = OpenSSL::Digest.new('sha256')
+ 2 # The Shopify app's client secret, viewable from the Partner Dashboard. In a production environment, set the client secret as an environment variable to prevent exposing it in code
+ 3 secret = 'my_client_secret'
+ 4 message = 'code=0907a61c0c8d55e99db179b68161bc00&shop={shop}.myshopify.com&state=0.6784241404160823&timestamp=1337178173'
+ 5
+ 6 digest = OpenSSL::HMAC.hexdigest(digest, secret, message)
+ 7 ActiveSupport::SecurityUtils.secure_compare(digest, "700e2dadb827fcc8609e9d5ce208b2e9cdaab9df07390d2cbca10d7c328fc4bf")
+ Step 2: Request authorization code
+ Before an app can access any store data, it needs to acquire an access token. Your app begins the process of acquiring an access token by redirecting the user through the authorization code flow and retrieving an authorization code.
+ Before issuing an authorization code, Shopify confirms that the user authorizes the permissions needed for your app. Depending on your app's configuration, the grant screen may display before or during your authorization code request. The following is an example of how the grant screen displays:
+ Your app should redirect the user through the authorization code flow if your app has verified the authenticity of the request and any of the following is true:
+ Your app doesn't have a token for that shop.
+ Your app uses online tokens and the token for that shop has expired.
+ Your app has a token for that shop, but it was created before you rotated the app's secret.
+ Your app has a token for that shop, but your app now requires scopes that differ from the scopes granted with that token.
+ Redirect to the authorization code flow
+ To retrieve an authorization code, you need to perform a redirect. However, you can't perform a redirect from inside an iframe in the Shopify admin, due to X-Frame-Options: DENY restrictions on Shopify admin pages. As a result, you need to perform the following additional steps to redirect to the grant screen if your app can be embedded:
+ If your app is never embedded, then perform a 3xx redirect to the grant screen.
+ If your app can be embedded:
+ Check whether the app is being rendered in an iframe by checking the embedded parameter.
+ If the app is being rendered in an iframe, then escape the iframe using a Shopify App Bridge redirect action that redirects back to the same URL.
+ Perform a 3xx redirect to the grant screen.
+ Check for and escape the iframe (embedded apps only)
+ Check your request query parameters for an embedded parameter.
+ If the parameter is present and has a value of 1, then the request is being rendered in an iframe, and you should continue to the next step.
+ If the parameter isn't present, or has a value of 0, then the request isn't being rendered in an iframe. Use a 3xx redirect to redirect the user to the grant screen.
+ If embedded=1, then render a page that uses the Shopify App Bridge redirect action to redirect back to the same URL. This breaks your app out of the iframe so that you can redirect to the grant screen.
+ The Shopify App Bridge redirect action will only work if it's loaded in an iframe. You should only use it when embedded=1.
+ For an example implementation of this flow, refer to this page in the Node app template. This code uses a redirectUri parameter, which represents the location to redirect to after Shopify App Bridge escapes the iframe. To understand how this parameter is defined, refer to this function in the Node app template.
+ Redirect using a 3xx redirect
+ If your app doesn't need to escape the iframe because it isn't embedded, or the embedded parameter's value isn't 1, then you can redirect to the grant screen using a 3xx redirect.
+ The grant screen uses a URL with a specific format. When the user arrives at the URL, Shopify shows the grant screen to receive authorization from the user.
+ If you're using a Shopify Admin API library, then you can use a method from the library to construct the redirect URL and set a signed cookie. Later, your app will check the cookie to verify that the same browser initiated the OAuth request.
+ Node
+ Ruby
+ PHP
+ Note
+ In all of the libraries (Node, Ruby, and PHP), the redirect URL is populated using the HOST variable.
+ If you aren't using a library, then do the following:
+ Build a URL using the following format and parameters:
+ 1 https://{shop}.myshopify.com/admin/oauth/authorize?client_id={client_id}&scope={scopes}&redirect_uri={redirect_uri}&state={nonce}&grant_options[]={access_mode}
+ Query parameter Description
+ {shop} The name of the user's shop.
+ {client_id} The client ID for the app.
+ {scopes} A comma-separated list of scopes. For example, to write orders and read customers, use scope=write_products,read_shipping. You should include every scope your app needs, regardless of any previously requested scopes. Any permission to write a resource includes the permission to read it. Be careful about what scopes you request. Some data is considered protected customer data, and places additional requirements on your app. For more information, refer to Protected customer data. This parameter should be omitted if you've pushed requested API access scopes with the TOML file.
+ {redirect_uri} The URL to which a user is redirected after authorizing the app. The complete URL specified here must be added to your app as an allowed redirection URL, as defined in the Partner Dashboard.
+ {nonce} A randomly selected value provided by your app that is unique for each authorization request. During the OAuth callback, your app must check that this value matches the one you provided during authorization. This mechanism is important for the security of your app.
+ {access_mode} Sets the access mode. For an online access token, set to per-user. For an offline access token omit this parameter.
+ 3xx redirect to the URL. During the redirect, set a signed cookie with the nonce value from the URL.
+ Note
+ Most API access scopes can be requested using your app's .env or TOML file. However, in some cases, you must request specific permission to access data from the user in your Partner Dashboard. To learn more, refer to Shopify API access scopes.
+ Step 3: Validate authorization code
+ After processing your request, Shopify redirects the user to your app's server. The following example demonstrates how the authorization_code is passed in the redirect:
+ 1 https://example.org/some/redirect/uri?code={authorization_code}&hmac=da9d83c171400a41f8db91a950508985&host={base64_encoded_hostname}&shop={shop_origin}&state={nonce}&timestamp=1409617544
+ Security checks
+ Before you continue, make sure that your app performs the following security checks to validate the OAuth callback. If any of the checks fail, then your app must reject the request with an error and not continue.
+ If you're using a Shopify Admin API library, then you can use a method from the library to perform the security checks:
+ Node
+ Ruby
+ PHP
+ If you aren't using a library, then make sure that you verify the following:
+ The nonce is the same one that your app provided to Shopify when asking for permission. Additionally, the signed cookie that you set when asking for permission is present and its value equals the nonce value in the state parameter.
+ The hmac is valid and signed by Shopify.
+ The shop parameter is a valid shop hostname, ends with myshopify.com, and doesn't contain characters other than letters (a-z), numbers (0-9), periods, and hyphens.
+ You can use a regular expression to confirm that the hostname is valid. In the following example, the regular expression matches the hostname form of https://{shop}.myshopify.com/:
+ 1 /^https?\:\/\/[a-zA-Z0-9][a-zA-Z0-9\-]*\.myshopify\.com\/?/
+ To match for the hostname form {shop}.myshopify.com, you can use the following regular expression:
+ 1 /^[a-zA-Z0-9][a-zA-Z0-9\-]*\.myshopify\.com/
+ Step 4: Get an access token
+ Tip
+ Shopify's API libraries can retrieve an access token by default.
+ If all security checks pass, then you can exchange the authorization code from the confirmation redirect for an access token by sending a request to the shop’s access_token endpoint:
+ 1 POST https://{shop}.myshopify.com/admin/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={authorization_code}
+ In your request, {shop} is the name of the user's shop and following parameters must be provided in the request body:
+ Parameter Description
+ client_id The client ID for the app, as defined in the Partner Dashboard.
+ client_secret The client secret for the app, as defined in the Partner Dashboard.
+ code The authorization code provided in the redirect.
+ The server responds with an online access token or an offline access token, as specified.
+ 1 {
+ 2
+    "access_token": "f85632530bf277ec9ac6f649fc327f17",
+ 3
+    "scope": "write_orders,read_customers"
+ 4 }
+ The following values are returned:
+ Value Description
+ access_token An API access token that can be used to access the shop’s data as long as your app is installed. Your app should store the token somewhere to make authenticated requests for a shop’s data. An offline access token can be used for as long as the app is installed.
+ scope The list of access scopes that were granted to your app and are associated with the access token.
+ Confirm the requested scopes
+ Due to the nature of OAuth, it’s possible for an app user to change the requested scope in the URL during the authorize phase, so the app should ensure that all required scopes are granted before using the access token.
+ If you requested both the read and write access scopes for a resource, then check only for the write access scope. The read access scope is omitted because it’s implied by the write access scope. For example, if your request included scope=read_orders,write_orders, then check only for the write_orders scope.
+ Online access mode
+ If an online access token was requested when redirecting to the grant screen, then the server responds with an access token and additional data:
+ 1 {
+ 2
+    "access_token": "f85632530bf277ec9ac6f649fc327f17",
+ 3
+    "scope": "write_orders,read_customers",
+ 4
+    "expires_in": 86399,
+ 5
+    "associated_user_scope": "write_orders",
+ 6
+    "associated_user": {
+ 7
+      "id": 902541635,
+ 8
+      "first_name": "John",
+ 9
+      "last_name": "Smith",
+ 10
+      "email": "john@example.com",
+ 11
+      "email_verified": true,
+ 12
+      "account_owner": true,
+ 13
+      "locale": "en",
+ 14
+      "collaborator": false
+ 15
+    }
+ 16 }
+ The following values are returned:
+ Value Description
+ access_token An API access token that can be used to access the shop’s data. Your app should store the token somewhere to make authenticated requests for a shop’s data. An online access token can be used for as long as the app is installed or for the next 24 hours, whichever comes first. After 24 hours, you need to refresh the access token.
+ scope The list of access scopes that were granted to your app and are associated with the access token.
+ expires_in The number of seconds until the access token expires.
+ associated_user_scope The list of access scopes that were granted to the app and are available for this access token, given the user’s permissions.
+ associated_user Information about the user who completed the OAuth authorization flow. The email field in this response appears regardless of the email verification status. If you’re using emails as an identification source, then make sure that the email_verified field is also true. You can use the id field to uniquely identify a single user.
+ Step 5: Redirect to your app's UI
+ After you get an access token, you should redirect users to your app's UI. The method that you use depends on whether your app is embedded.
+ If your app is embedded, and the embedded parameter isn't present or is equal to 0, then you should 3xx redirect to the embedded app URL. If your app is never embedded, or embedded=1, then you should 3xx redirect to your app URL.
+ The following code is an example implementation of the redirect logic:
+ Redirect to the app or embedded app URL
+ Node
+ PHP
+ Ruby
+ 1 if (Shopify.Context.IS_EMBEDDED_APP && req.query.embedded !== "1") {
+ 2
+    const embeddedUrl = Shopify.Utils.getEmbeddedAppUrl(req);
+ 3
+ 4
+    return res.redirect(embeddedUrl + req.path);
+ 5 } else {
+ 6
+    const host = Shopify.Utils.sanitizeHost(req.query.host);
+ 7
+ 8
+    return res.redirect(`/?shop=${session.shop}&host=${encodeURIComponent(host)}`);
+ 9 }
+ If you redirect to your app URL, then make sure to include the shop and host parameters. Without these parameters, App Bridge can't initialize and your UI can't get a session token.
+ Because the embedded app URL might change in future, your app should construct the URL using Shopify Admin API libraries. If this isn't possible, then you can construct the embedded app URL manually using the following format:
+ 1 https://{base64_decode(host)}/apps/{api_key}/
+ Note
+ The host variable is base64-encoded and then the padding characters (=) are removed. Some base64 decoders like Node.js can handle the lack of padding, and others like Python can't handle the lack of padding. As a result, you might need to add padding to the bytes before decoding.
+ Step 6: Make authenticated requests
+ After your app has obtained an API access token, it can make authenticated requests to the Admin API. These requests are accompanied with a header X-Shopify-Access-Token: {access_token} where {access_token} is replaced with the access token.
+ The following examples show how to retrieve a list of products using the GraphQL Admin API and the REST Admin API.
+ Terminal
+ GraphQL
+ REST
+ 1 curl -X POST \
+ 2
+    https://{shop}.myshopify.com/admin/api/2024-04/graphql.json \
+ 3
+    -H 'Content-Type: application/json' \
+ 4
+    -H 'X-Shopify-Access-Token: {access_token}' \
+ 5
+    -d '{
+ 6
+      "query": "{
+ 7
+        products(first: 5) {
+ 8
+          edges {
+ 9
+            node {
+ 10
+              id
+ 11
+              handle
+ 12
+            }
+ 13
+          }
+ 14
+          pageInfo {
+ 15
+            hasNextPage
+ 16
+          }
+ 17
+        }
+ 18
+      }"
+ 19
+    }'
+ An authenticated request might fail in the following situations:
+ Your app is requesting data that isn't permitted by the scope of the access_token.
+ Your app uses online tokens and the access_token you're using has expired.
+ In these cases, the app should perform a 3xx redirect to the grant screen. If your app can be embedded, then you might need to escape the iframe used to embed it before you can perform the redirect.
+ Step 7: Change the granted scopes (Optional)
+ After the user has agreed to install your app, you might want to change the granted scopes. For example, you might want to request additional scopes if your integration requires access to additional data.
+ To change scopes, redirect the user to the app authorization link and request authorization of new permissions. If your app can be embedded, then you might need to escape the iframe used to embed it before you can perform the redirect.
+ 1 https://{shop}.myshopify.com/admin/oauth/authorize
+ In the URL above, {shop} is the name of the user's shop and the oauth/authorize link includes the required parameters.
+ This URL might change in the future. To avoid interruptions, you can construct the URL using a Shopify Admin API library.
+ Next steps
+ Learn how to configure a webhook for your app and manage webhooks for different API versions.
+ Explore the GraphQL Admin API and REST Admin API references.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Verify the installation request
+ Step 2: Request authorization code
+ Step 3: Validate authorization code
+ Step 4: Get an access token
+ Step 5: Redirect to your app's UI
+ Step 6: Make authenticated requests
+ Step 7: Change the granted scopes (Optional)
+ Next steps

@@ -1,0 +1,1140 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Input settings
+ Input settings can hold a value and are configurable by merchants.
+ Input settings are generally composed of standard attributes, and there are two categories:
+ Basic input settings
+ Specialized input settings
+ To learn how to access the values of these settings for use in your theme, refer to the settings overview.
+ Tip
+ If you want to add informational elements to your settings display, like a heading, then refer to Sidebar settings.
+ Standard attributes
+ The following are standard attributes across input settings. However, depending on the input type, there might be extra attributes or some might not apply:
+ Attribute Description Required
+ type The setting type, which can be any of the basic or specialized input setting types. Yes
+ id The setting ID, which is used to access the setting value. Yes
+ label The setting label, which will show in the theme editor. Yes
+ default The default value for the setting. No
+ info An option for informational text about the setting. No
+ Basic input settings
+ The following are the basic input setting types:
+ checkbox
+ number
+ radio
+ range
+ select
+ text
+ textarea
+ checkbox
+ A setting of type checkbox outputs a checkbox field. These fields can be used for toggling features on and off, such as whether to show an announcement bar.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "checkbox",
+ 3
+    "id": "show_announcement",
+ 4
+    "label": "Show announcement",
+ 5
+    "default": true
+ 6 }
+ Output
+ When accessing the value of a checkbox type setting, data is returned as a boolean.
+ Note
+ If default is unspecified, then the value is false by default.
+ number
+ A setting of type number outputs a single number field. In addition to the standard attributes of an input setting, number type settings have the following attribute:
+ Attribute Description Required
+ placeholder
+ A placeholder value for the input.
+ These values only appear for settings defined in settings_schema.json. They don't appear for settings defined in a section's schema.
+ No
+ You can use these fields to capture a varying numerical value, such as the number of products to show per page on a collection page.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "number",
+ 3
+    "id": "products_per_page",
+ 4
+    "label": "Products per page",
+ 5
+    "default": 20
+ 6 }
+ Output
+ When accessing the value of a number type setting, data is returned as one of the following:
+ A number.
+ nil, if nothing has been entered.
+ Caution
+ The default attribute is optional. However, the value must be a number and not a string. Failing to adhere results in an error.
+ radio
+ A setting of type radio outputs a radio option field. In addition to the standard attributes of an input setting, radio type settings have a required options attribute that accepts an array of value and label definitions.
+ You can use these fields to capture a multi-option selection, such as the alignment of a header logo.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "radio",
+ 3
+    "id": "logo_aligment",
+ 4
+    "label": "Logo alignment",
+ 5
+    "options": [
+ 6
+      {
+ 7
+        "value": "left",
+ 8
+        "label": "Left"
+ 9
+      },
+ 10
+      {
+ 11
+        "value": "centered",
+ 12
+        "label": "Centered"
+ 13
+      }
+ 14
+    ],
+ 15
+    "default": "left"
+ 16 }
+ Output
+ When accessing the value of a radio type setting, data is returned as a string.
+ Note
+ If default is unspecified, then the first option is selected by default.
+ range
+ A setting of type range outputs a range slider field with an input field. In addition to the standard attributes of an input setting, range type settings have the following attributes:
+ Attribute Description Required
+ min The minimum value of the input Yes
+ max The maximum value of the input Yes
+ step The increment size between steps of the slider Yes
+ unit The unit for the input. For example, you can set px for a font-size slider. No
+ You can use these fields to capture a varying numerical value, such as font size.
+ You can update the range value using the provided slider, or by typing a value into the input field:
+ If you enter a value that doesn't respect the step definition, then the value rounds to the closest step.
+ If you enter a value outside of the given min and max, then the value reverts to the min or max value accordingly.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "range",
+ 3
+    "id": "font_size",
+ 4
+    "min": 12,
+ 5
+    "max": 24,
+ 6
+    "step": 1,
+ 7
+    "unit": "px",
+ 8
+    "label": "Font size",
+ 9
+    "default": 16
+ 10 }
+ Output
+ When accessing the value of a range type setting, data is returned as a number.
+ Caution
+ The default attribute is required. The min, max, step, and default attributes can't be string values. Failing to adhere results in an error.
+ select
+ A setting of type select outputs different selector fields, depending on certain criteria. In addition to the standard attributes of an input setting, select type settings have the following attributes:
+ The additional attributes that the select type settings supports
+ Attribute Description Required
+ options Takes an array of value/label definitions for each option in the drop-down. Yes
+ group An optional attribute that you can add to each option to create option groups in the drop-down. No
+ Selector fields
+ The following criteria render selector fields as either a DropDown or a SegmentedControl:
+ The rendering criteria for selector fields
+ Field Rendering criteria Output
+ Dropdown
+ The optional group attribute is used.
+ More than five options are provided.
+ The options are too long and might overflow their container.
+ SegmentedControl
+ The optional group attribute isn't used.
+ Two to five options are provided.
+ All options fit within their container and don't overflow.
+ You can use these fields to capture a multi-option selection, such as the vertical alignment of slideshow text.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "select",
+ 3
+    "id": "vertical_alignment",
+ 4
+    "label": "Vertical alignment",
+ 5
+    "options": [
+ 6
+      {
+ 7
+        "value": "top",
+ 8
+        "label": "Top"
+ 9
+      },
+ 10
+      {
+ 11
+        "value": "middle",
+ 12
+        "label": "Middle"
+ 13
+      },
+ 14
+      {
+ 15
+        "value": "bottom",
+ 16
+        "label": "Bottom"
+ 17
+      }
+ 18
+    ],
+ 19
+    "default": "middle"
+ 20 }
+ Output
+ However, if your setting matches the criteria for a drop-down field (DropDown) because it has more than five options, then the following output is generated:
+ Setting
+ 1 {
+ 2
+    "type": "select",
+ 3
+    "id": "sizes",
+ 4
+    "label": "Sizes",
+ 5
+    "options": [
+ 6
+      {
+ 7
+        "value": "xs",
+ 8
+        "label": "X-small"
+ 9
+      },
+ 10
+      {
+ 11
+        "value": "s",
+ 12
+        "label": "Small"
+ 13
+      },
+ 14
+      {
+ 15
+        "value": "m",
+ 16
+        "label": "Medium"
+ 17
+      },
+ 18
+      {
+ 19
+        "value": "l",
+ 20
+        "label": "Large"
+ 21
+      },
+ 22
+      {
+ 23
+        "value": "xl",
+ 24
+        "label": "X-large"
+ 25
+      },
+ 26
+      {
+ 27
+        "value": "xxl",
+ 28
+        "label": "XX-large"
+ 29
+      }
+ 30
+    ],
+ 31
+    "default": "m"
+ 32 }
+ Output
+ When accessing the value of a select type setting, data is returned as a string.
+ Note
+ If default is unspecified, then the first option is selected by default.
+ text
+ A setting of type text outputs a single-line text field. In addition to the standard attributes of an input setting, text type settings have the following attribute:
+ Attribute Description Required
+ placeholder
+ A placeholder value for the input.
+ These values only appear for settings defined in settings_schema.json. They don't appear for settings defined in a section's schema.
+ No
+ You can use these fields to capture short strings, such as titles.
+ For example, the following setting generates the following output
+ Setting
+ 1 {
+ 2
+    "type": "text",
+ 3
+    "id": "footer_linklist_title",
+ 4
+    "label": "Heading",
+ 5
+    "default": "Quick links"
+ 6 }
+ Output
+ When accessing the value of a text type setting, data is returned as one of the following:
+ A string.
+ An empty object, if nothing has been entered.
+ Tip
+ Settings of type text are not updated when switching presets.
+ textarea
+ A setting of type textarea outputs a multi-line text field. In addition to the standard attributes of an input setting, textarea type settings have the following attribute:
+ Attribute Description Required
+ placeholder
+ A placeholder value for the input.
+ These values only appear for settings defined in settings_schema.json. They don't appear for settings defined in a section's schema.
+ No
+ You can use these fields to capture larger blocks of text, such as messages.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "textarea",
+ 3
+    "id": "home_welcome_message",
+ 4
+    "label": "Welcome message",
+ 5
+    "default": "Welcome to my shop!"
+ 6 }
+ Output
+ When accessing the value of a textarea type setting, data is returned as one of the following:
+ A string.
+ An empty object, if nothing has been entered.
+ Specialized input settings
+ The following are the specialized input setting types:
+ article
+ blog
+ collection
+ collection_list
+ color
+ color_background
+ color_scheme
+ color_scheme_group
+ font_picker
+ html
+ image_picker
+ inline_richtext
+ link_list
+ liquid
+ page
+ product
+ product_list
+ richtext
+ text_alignment
+ url
+ video
+ video_url
+ article
+ A setting of type article outputs an article picker field that's automatically populated with the available articles for the store. You can use these fields to capture an article selection, such as the article to feature on the homepage.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "article",
+ 3
+    "id": "article",
+ 4
+    "label": "Article"
+ 5 }
+ Output
+ When accessing the value of an article type setting, data is returned as one of the following:
+ An article object.
+ To ensure backwards compatibility with legacy resource-based settings, outputting the setting directly will return the object's handle.
+ blank if no selection has been made, the selection isn't visible, or the selection no longer exists.
+ Note
+ Settings of type article are not updated when switching presets. article settings also don't support the default attribute.
+ blog
+ A setting of type blog outputs a blog picker field that's automatically populated with the available blogs for the store. You can use these fields to capture a blog selection, such as the blog to feature in the sidebar.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "blog",
+ 3
+    "id": "blog",
+ 4
+    "label": "Blog"
+ 5 }
+ Output
+ When accessing the value of a blog type setting, data is returned as one of the following:
+ A blog object.
+ To ensure backwards compatibility with legacy resource-based settings, outputting the setting directly will return the object's handle.
+ blank, if either no selection has been made or the selection no longer exists.
+ Note
+ Settings of type blog are not updated when switching presets. blog settings also don't support the default attribute.
+ collection
+ A setting of type collection outputs a collection picker field that's automatically populated with the available collections for the store. You can use these fields to capture a collection selection, such as a collection for featuring products on the homepage.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "collection",
+ 3
+    "id": "collection",
+ 4
+    "label": "Collection"
+ 5 }
+ Output
+ When accessing the value of a collection type setting, data is returned as one of the following:
+ A collection object.
+ To ensure backwards compatibility with legacy resource-based settings, outputting the setting directly will return the object's handle.
+ blank, if no selection has been made, the selection isn't visible, or the selection no longer exists.
+ Note
+ Settings of type collection are not updated when switching presets. collection settings also don't support the default attribute.
+ collection_list
+ A setting of type collection_list outputs a collection picker field that's automatically populated with the available collections for the store. You can use these fields to capture multiple collections, such as a group of collections to feature on the homepage.
+ In addition to the standard attributes of an input setting, collection_list type settings have the following attributes:
+ Attribute Description Required
+ limit The maximum number of collections that the merchant can select. The default limit, and the maximum limit you can set, is 50. No
+ Setting
+ 1 {
+ 2
+    "type": "collection_list",
+ 3
+    "id": "collection_list",
+ 4
+    "label": "Collections",
+ 5
+    "limit": 8
+ 6 }
+ Output
+ Output
+ When accessing the value of a collection_list type setting, data is returned as one of the following:
+ An array of collection objects.
+ This array supports pagination using the paginate tag. You can also append .count to the setting key to return the number of collections in the array.
+ blank if no selection has been made, the selection isn't visible, or the selection no longer exists.
+ color
+ A setting of type color outputs a color picker field. You can use these fields to capture a color selection for various theme elements, such as the body text color.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "color",
+ 3
+    "id": "body_text",
+ 4
+    "label": "Body text",
+ 5
+    "default": "#000000"
+ 6 }
+ Output
+ When accessing the value of a color type setting, data is returned as one of the following:
+ A color object.
+ blank, if no selection has been made.
+ color_background
+ A setting of type color_background outputs a text field for entering CSS background properties. You can use these fields to capture background settings for various theme elements, such as the store background.
+ Caution
+ Settings of type color_background do not support image related background properties.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "color_background",
+ 3
+    "id": "background",
+ 4
+    "label": "Background",
+ 5
+    "default": "linear-gradient(#ffffff, #000000)"
+ 6 }
+ Output
+ When accessing the value of a color_background type setting, data is returned as one of the following:
+ A string.
+ An empty string, if nothing has been entered.
+ color_scheme
+ A setting of type color_scheme outputs a picker with all of the available theme color schemes, and a preview of the selected color scheme. Theme color schemes in the picker are defined using the color_scheme_group setting. You can apply a color scheme to sections, blocks and general theme settings. Color scheme settings aren't supported in app blocks.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "color_scheme",
+ 3
+    "id": "color_scheme",
+ 4
+    "default": "scheme_1",
+ 5
+    "label": "Color Scheme"
+ 6 }
+ Output
+ When accessing the value of a color_scheme type setting, Shopify returns the selected color_scheme object from color_scheme_group.
+ If no value was entered, or the value was invalid, then the default value from color_scheme is returned. If the default value is also invalid, then the first color_scheme from color_scheme_group is returned.
+ If the theme doesn't have color_scheme_group data in settings_data.json, then nil is returned.
+ color_scheme_group
+ A setting of type color_scheme_group outputs a color scheme which is composed of the following input setting types:
+ header
+ color
+ color_background
+ Color schemes can be added only in settings_schema.json.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "color_scheme_group",
+ 3
+    "id": "color_schemes",
+ 4
+    "definition": [
+ 5
+      {
+ 6
+        "type": "header",
+ 7
+        "content": "Typography"
+ 8
+      },
+ 9
+      {
+ 10
+        "type": "color",
+ 11
+        "id": "text",
+ 12
+        "label": "Text",
+ 13
+        "default": "#121212"
+ 14
+      },
+ 15
+      {
+ 16
+        "type": "header",
+ 17
+        "content": "Background"
+ 18
+      },
+ 19
+      {
+ 20
+        "type": "color",
+ 21
+        "id": "background",
+ 22
+        "label": "Background",
+ 23
+        "default": "#FFFFFF"
+ 24
+      },
+ 25
+      {
+ 26
+        "type": "color_background",
+ 27
+        "id": "background_gradient",
+ 28
+        "label": "Gradient",
+ 29
+        "info": "Background gradient replaces background where possible."
+ 30
+      },
+ 31
+      {
+ 32
+        "type": "header",
+ 33
+        "content": "Additional"
+ 34
+      },
+ 35
+      {
+ 36
+        "type": "color",
+ 37
+        "id": "primary_button",
+ 38
+        "label": "Primary",
+ 39
+        "default": "#121212"
+ 40
+      },
+ 41
+      {
+ 42
+        "type": "color",
+ 43
+        "id": "on_primary_button",
+ 44
+        "label": "On Primary Button",
+ 45
+        "default": "#FFFFFF"
+ 46
+      },
+ 47
+      {
+ 48
+        "type": "color",
+ 49
+        "id": "primary_button_border",
+ 50
+        "label": "Primary Button Border",
+ 51
+        "default": "#121212"
+ 52
+      },
+ 53
+      {
+ 54
+        "type": "color",
+ 55
+        "id": "secondary_button",
+ 56
+        "label": "Secondary Button"
+ 57
+      },
+ 58
+      {
+ 59
+        "type": "color",
+ 60
+        "id": "on_secondary_button",
+ 61
+        "label": "On Secondary Button",
+ 62
+        "default": "#121212"
+ 63
+      },
+ 64
+      {
+ 65
+        "type": "color",
+ 66
+        "id": "secondary_button_border",
+ 67
+        "label": "Secondary Button Border",
+ 68
+        "default": "#FFFFFF"
+ 69
+      },
+ 70
+      {
+ 71
+        "type": "color",
+ 72
+        "id": "icons",
+ 73
+        "label": "Icons",
+ 74
+        "default": "#FFFFFF"
+ 75
+      },
+ 76
+      {
+ 77
+        "type": "color",
+ 78
+        "id": "links",
+ 79
+        "label": "Links",
+ 80
+        "default": "#121212"
+ 81
+      }
+ 82
+    ],
+ 83
+    "role": {
+ 84
+      "background": {
+ 85
+        "solid": "background",
+ 86
+        "gradient": "background_gradient"
+ 87
+      },
+ 88
+      "text": "text",
+ 89
+      "primary_button": "primary_button",
+ 90
+      "on_primary_button": "on_primary_button",
+ 91
+      "primary_button_border": "primary_button_border",
+ 92
+      "secondary_button": "secondary_button",
+ 93
+      "on_secondary_button": "on_secondary_button",
+ 94
+      "secondary_button_border": "secondary_button_border",
+ 95
+      "icons": "icons",
+ 96
+      "links": "links"
+ 97
+    }
+ 98 }
+ Output
+ role
+ The role field outputs a color scheme preview. The color scheme previews are visible to merchants anywhere in the editor where they might pick a color scheme. You can assign roles to your color scheme definitions to map the color scheme to the previews. For example you can assign role.background to the Background definition. Role uses the following standardized mapping of the color_scheme_group definition to the color scheme preview:
+ Role Description Required? Gradient?
+ role.background Renders the background color of the preview Yes Optional
+ role.text Renders the text color of the preview Yes No
+ role.primary_button role.secondary_button Render the 1st and 2nd pills in the preview Yes Optional
+ role.primary_button_border role.secondary_button_border Render the 1st and 2nd pills' border in the preview Yes No
+ role.on_primary_button role.on_secondary_button Aren't used in the preview Yes No
+ role.links role.icons Aren't used in the preview Yes No
+ font_picker
+ A setting of type font_picker outputs a font picker field that's automatically populated with fonts from the Shopify font library. This library includes web-safe fonts, a selection of Google Fonts, and fonts licensed by Monotype.
+ You can use these fields to capture a font selection for various theme elements, such as the base heading font.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "font_picker",
+ 3
+    "id": "heading_font",
+ 4
+    "label": "Heading font",
+ 5
+    "default": "helvetica_n4"
+ 6 }
+ Output
+ When accessing the value of a font_picker type setting, data is returned as a font object.
+ Caution
+ The default attribute is required. Failing to include it will result in an error. You can find the possible values through the available fonts in the Shopify font library.
+ html
+ A setting of type html outputs a multi-line text field that accepts HTML markup. In addition to the standard attributes of an input setting, html type settings have the following attribute:
+ Attribute Description Required
+ placeholder A placeholder value for the input No
+ You can use these fields to capture custom blocks of HTML content, such as a video embed.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "html",
+ 3
+    "id": "video_embed",
+ 4
+    "label": "Video embed"
+ 5 }
+ Output
+ The following HTML tags will be automatically removed:
+ <html>
+ <head>
+ <body>
+ When accessing the value of an html type setting, data is returned as one of the following:
+ A string that contains the entered content.
+ An empty object, if nothing has been entered.
+ Note
+ Unclosed HTML tags are automatically closed when the setting is saved. This may not line up with your intended formatting, so be sure to verify your input.
+ image_picker
+ A setting of type image_picker outputs an image picker field that's automatically populated with the available images from the Files section of Shopify admin, and has the option to upload new images. Merchants also have an opportunity to enter alt text and select a focal point for their image.
+ You can use these fields to capture an image selection, such as logos, favicons, and slideshow images.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "image_picker",
+ 3
+    "id": "image_with_text_image",
+ 4
+    "label": "Image"
+ 5 }
+ Output
+ Output (Preview and edit modal)
+ When accessing the value of an image_picker type setting, data is returned as one of the following:
+ An image object.
+ nil, if either no selection has been made or the selection no longer exists.
+ Note
+ Settings of type image_picker are not updated when switching presets. image_picker settings also don't support the default attribute.
+ Image focal points
+ Images selected using an image_picker setting support focal points. A focal point is a position in an image that the merchant wants to remain in view as the image is cropped and adjusted by the theme. Focal points can be set in the theme editor image_picker setting, or from the Files page.
+ To make sure that your theme respects the focal point of the image, do the following:
+ Render your images using the image_tag filter.
+ Consider positioning images within containers using object-fit: cover.
+ Using image_tag, if a focal point was provided, then an object-position style is added to the image tag, with the value set to the focal point.
+ Input
+ 1 {{ section.settings.image_with_text_image | image_url: width: 1500 | image_tag }}
+ Output
+ 1 <img src="octopus-tentacle.jpg?v=1&width=1500" alt="My alt text"
+ 2
+   srcset="octopus-tentacle.jpg?v=1&width=352 352w,
+ 3
+           octopus-tentacle.jpg?v=1&width=832 832w,
+ 4
+           octopus-tentacle.jpg?v=1&width=1200 1200w"
+ 5
+   width="1500" height="1875"
+ 6
+   style="object-position:25% 10%;">
+ If you need override the object-position style for a specific use case, then pass a style: object-position: inherit; property to the image_tag filter.
+ Tip
+ You can also access the focal point data using image.presentation.focal_point.
+ inline_richtext
+ A setting of type inline_richtext outputs HTML markup that isn't wrapped in paragraph tags (<p>). The setting includes the following basic formatting options:
+ Bold
+ Italic
+ Link
+ Note
+ The inline_richtext setting doesn't support the following features:
+ Line breaks (<br>)
+ An underline option in the rich text editor. Merchants can underline text using the CMD+U or CTRL+U keyboard shortcut.
+ You can use these fields to capture formatted text content, such as introductory brand content on the homepage.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "inline_richtext",
+ 3
+    "id": "inline",
+ 4
+    "default": "my <i>inline</i> <b>text</b>",
+ 5
+    "label": "Inline rich text"
+ 6 }
+ Output
+ When accessing the value of a inline_richtext type setting, data is returned as one of the following:
+ A string that contains the entered content.
+ An empty object, if nothing has been entered.
+ link_list
+ A setting of type link_list outputs a menu picker field that's automatically populated with the available menus for the store. You can use these fields to capture a menu selection, such as the menu to use for footer links.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "link_list",
+ 3
+    "id": "menu",
+ 4
+    "label": "Menu"
+ 5 }
+ Output
+ When accessing the value of a link_list type setting, data is returned as one of the following:
+ A linklist object.
+ blank, if either no selection has been made or the selection no longer exists.
+ Note
+ Accepted values for the default attribute are main-menu and footer.
+ liquid
+ A setting of type liquid outputs a multi-line text field that accepts HTML and limited Liquid markup. You can use these fields to capture custom blocks of HTML and Liquid content, such as a product-specific message. Merchants can also use a liquid setting to add the code needed to integrate certain types of apps into your theme.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "liquid",
+ 3
+    "id": "battery_message",
+ 4
+    "label": "Battery message",
+ 5
+    "default": "{% if product.tags contains 'battery' %}This product can only be shipped by ground.{% else %}This product can be shipped by ground or air.{% endif %}"
+ 6 }
+ Output
+ When accessing the value of a liquid type setting, data is returned as one of the following:
+ A string that contains the entered content.
+ An empty object, if nothing has been entered.
+ Note
+ The default attribute is optional. However, if you use it, then its value can't be an empty string. Additionally, unclosed HTML tags are automatically closed when the setting is saved. This might not line up with your intended formatting, so be sure to verify your input.
+ Limitations
+ Settings of type liquid don't have access to the following liquid objects/tags:
+ layout
+ content_for_header
+ content_for_layout
+ content_for_index
+ section
+ javascript
+ stylesheet
+ schema
+ settings
+ However, liquid settings can access the following:
+ Global Liquid objects
+ Template specific objects like collection, product, etc. (within their respective templates)
+ Standard Liquid tags and filters
+ If your content includes non-existent, or empty, Liquid tags, then they will be rendered as empty strings. For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "liquid",
+ 3
+    "id": "message",
+ 4
+    "label": "Message",
+ 5
+    "default": "Hello {{ not_a_real_tag }}, welcome to our shop."
+ 6 }
+ Output
+ 1 Hello , welcome to our shop.
+ Caution
+ Content entered in these settings can't exceed 50kb. Saving content that either exceeds this limit or includes invalid Liquid will result in an error.
+ page
+ A setting of type page outputs a page picker field that's automatically populated with the available pages for the store. You can use these fields to capture a page selection, such as the page to feature content for in a size-chart display.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "page",
+ 3
+    "id": "page",
+ 4
+    "label": "Page"
+ 5 }
+ Output
+ When accessing the value of a page type setting, data is returned as one of the following:
+ A page object.
+ To ensure backwards compatibility with legacy resource-based settings, outputting the setting directly will return the object's handle.
+ blank, if no selection has been made, the selection isn't visible, or the selection no longer exists.
+ Note
+ Settings of type page are not updated when switching presets. page settings also don't support the default attribute.
+ product
+ A setting of type product outputs a product picker field that's automatically populated with the available products for the store. You can use these fields to capture a product selection, such as the product to feature on the homepage.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "product",
+ 3
+    "id": "product",
+ 4
+    "label": "Product"
+ 5 }
+ Output
+ When accessing the value of a product type setting, data is returned as one of the following:
+ A product object.
+ To ensure backwards compatibility with legacy resource-based settings, outputting the setting directly will return the object's handle.
+ blank if no selection has been made, the selection isn't visible, or the selection no longer exists.
+ Note
+ Settings of type product are not updated when switching presets. product settings also don't support the default attribute.
+ product_list
+ A setting of type product_list outputs a product picker field that's automatically populated with the available products for the store. You can use these fields to capture multiple products, such as a group of products to feature on the homepage.
+ In addition to the standard attributes of an input setting, product_list type settings have the following attributes:
+ Attribute Description Required
+ limit The maximum number of products that the merchant can select. The default limit, and the maximum limit you can set, is 50. No
+ Setting
+ 1 {
+ 2
+    "type": "product_list",
+ 3
+    "id": "product_list",
+ 4
+    "label": "Products",
+ 5
+    "limit": 12
+ 6 }
+ Output
+ Output
+ When accessing the value of a product_list type setting, data is returned as one of the following:
+ An array of product objects.
+ This array supports pagination using the paginate tag. You can also append .count to the setting key to return the number of products in the array.
+ blank if no selection has been made, the selection isn't visible, or the selection no longer exists.
+ richtext
+ A setting of type richtext outputs a multi-line text field with the following basic formatting options:
+ Bold
+ Italic
+ Underline
+ Link
+ Paragraph
+ Unordered list
+ Note
+ No underline option appears in the rich text component. Merchants can underline text using the CMD+U or CTRL+U keyboard shortcut.
+ You can use these fields to capture formatted text content, such as introductory brand content on the homepage.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "richtext",
+ 3
+    "id": "paragraph",
+ 4
+    "label": "Paragraph"
+ 5 }
+ Output
+ When accessing the value of a richtext type setting, data is returned as one of the following:
+ A string that contains the entered content.
+ An empty object, if nothing has been entered.
+ default
+ The default attribute isn't required. However, if it's used, then only <p> or <ul> tags are supported as top-level elements.
+ The following HTML tags are also supported inside the parent <p> tag:
+ <p>
+ <br>
+ <strong>
+ <b>
+ <em>
+ <i>
+ <u>
+ <span>
+ <a>
+ Caution
+ Failing to wrap the default content in <p> or <ul> tags will result in an error.
+ text_alignment
+ A setting of type text_alignment outputs a SegmentedControl field with icons. In addition to the standard attributes of an input setting, text_alignment type settings support the following attribute:
+ The additional attributes that the text_alignment type settings supports
+ Attribute Description Required
+ Default The initially selected value. Can be one of left, right, center. The default value is left. No
+ The following default values can't be changed to a different value:
+ Value Icon presentation
+ Left
+ Right
+ Center
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "text_alignment",
+ 3
+    "id": "alignment",
+ 4
+    "label": "Text alignment",
+ 5
+    "default": "center"
+ 6 }
+ Output
+ When you access the value of a text_alignment type setting, data is returned as a string.
+ Note
+ If you don't specify the default attribute, then the left option is selected by default.
+ url
+ A setting of type url outputs a URL entry field where you can manually enter external URLs and relative paths. It also has a picker that's automatically populated with the following available resources for the shop:
+ Articles
+ Blogs
+ Collections
+ Pages
+ Products
+ You can use these fields to capture a URL selection, such as the URL to use for a slideshow button link.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "url",
+ 3
+    "id": "button_link",
+ 4
+    "label": "Button link"
+ 5 }
+ Output
+ When accessing the value of a url type setting, data is returned as one of the following:
+ A string that contains the selected URL.
+ nil, if nothing has been entered.
+ Note
+ Accepted values for the default attribute are /collections and /collections/all.
+ video
+ A setting of type video outputs a video picker that's automatically populated with the available videos from the Files section of the Shopify admin. The merchant also has the option to upload new videos.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "video",
+ 3
+    "id": "video",
+ 4
+    "label": "A Shopify-hosted video"
+ 5 }
+ Output
+ The video type setting also accepts metafields of type file_reference as a dynamic source.
+ When accessing the value of a video type setting, data is returned as one of the following:
+ A video object.
+ nil, if:
+ no selection has been made,
+ the selection no longer exists, or
+ the selection is a file_reference metafield that points to a non-video file.
+ Note
+ video settings don't support the default attribute.
+ video_url
+ A setting of type video_url outputs a URL entry field. In addition to the standard attributes of an input setting, video_url type settings have the following attributes:
+ Attribute Description Required
+ accept Takes an array of accepted video providers. Valid values are youtube, vimeo, or both. Yes
+ placeholder A placeholder value for the input. No
+ These fields can be used to capture a video URL from YouTube and/or Vimeo, such as the URL for a static video to show in the product description.
+ For example, the following setting generates the following output:
+ Setting
+ 1 {
+ 2
+    "type": "video_url",
+ 3
+    "id": "product_description_video",
+ 4
+    "label": "Product description video",
+ 5
+    "accept": [
+ 6
+      "youtube",
+ 7
+      "vimeo"
+ 8
+    ]
+ 9 }
+ Output
+ When accessing the value of a video_url type setting, data is returned as one of the following:
+ A string that contains the entered URL.
+ nil, if nothing has been entered.
+ Additionally, there's access to the id and type (YouTube or Vimeo) of the video.
+ For example, assuming you're using this video with the above setting, the following Liquid generates the following output:
+ Setting
+ 1 ID: {{ settings.product_description_video.id }}
+ 2 Type: {{ settings.product_description_video.type }}
+ Output
+ ID: _9VUPq3SxOc
+ Type: youtube
+ Create links
+ You can add links to the info settings attribute by enclosing the link text in brackets and then following it immediately with the URL in parentheses.
+ For example, the following setting generates the following output:
+ Settings
+ 1 {
+ 2
+    "type": "checkbox",
+ 3
+    "id": "enable_payment_button",
+ 4
+    "label": "Show dynamic checkout button",
+ 5
+    "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/online-store/dynamic-checkout)",
+ 6
+    "default": true
+ 7 },
+ Output
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Standard attributes
+ Basic input settings
+ checkbox
+ number
+ radio
+ range
+ select
+ text
+ textarea
+ Specialized input settings
+ article
+ blog
+ collection
+ collection_list
+ color
+ color_background
+ color_scheme
+ color_scheme_group
+ font_picker
+ html
+ image_picker
+ inline_richtext
+ link_list
+ liquid
+ page
+ product
+ product_list
+ richtext
+ text_alignment
+ url
+ video
+ video_url
+ Create links
+ Updates & News
+ Developer changelog
+ Partner blog

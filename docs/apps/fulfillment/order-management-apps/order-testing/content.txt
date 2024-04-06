@@ -1,0 +1,395 @@
+Billing
+ App Store
+ Manage test orders
+ You can use the REST Admin API to create test orders and transactions to validate your app's behavior. To avoid platform fees, this guide shows you how to manage test orders with the REST Admin API by completing the following tasks:
+ Creating an order with an authorized transaction
+ Getting a transaction ID to use as a parent ID when capturing the transaction
+ Capturing the transaction and setting the test property to true on the order
+ Other methods, such as using a manual payment gateway and the cash on delivery payment method, don't create a test order and are subject to platform fees.
+ Requirements
+ Your app can make authenticated requests to the REST Admin API.
+ Your app has the read_orders and write_orders access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've familiarized yourself with the concepts of orders and transactions.
+ Transactions are associated to orders and occur each time there is an exchange of money. Transactions are processed by payment providers, and involve the transfer of money from the the customer's credit card to the merchant's bank account. For more information, refer to How a credit card payment gets processed.
+ Step 1: Create an order
+ To test an order, create an order with an authorization transaction by sending a POST request to the Order resource. Include the transactions object in the body of the request:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/orders.json
+ REST body
+ 1 {
+ 2
+    "order": {
+ 3
+      "email": " ",
+ 4
+      "financial_status": "pending",
+ 5
+      "line_items": [
+ 6
+        {
+ 7
+          "title": "Big Brown Bear Boots",
+ 8
+          "price": 100,
+ 9
+          "grams": "1300",
+ 10
+          "quantity": 2,
+ 11
+          "tax_lines": [
+ 12
+            {
+ 13
+              "price": 13.5,
+ 14
+              "rate": 0.06,
+ 15
+              "title": "State tax"
+ 16
+            }
+ 17
+          ]
+ 18
+        }
+ 19
+      ],
+ 20
+      "test": true,
+ 21
+      "transactions": [
+ 22
+        {
+ 23
+          "test": true,
+ 24
+          "kind": "authorization",
+ 25
+          "status": "success",
+ 26
+          "amount": 200
+ 27
+        }
+ 28
+      ]
+ 29
+    }
+ 30 }
+ JSON response
+ 1 {
+ 2
+    "order": {
+ 3
+      "id": 1165756760120,
+ 4
+      "email": "",
+ 5
+      "closed_at": null,
+ 6
+      "created_at": "2019-04-03T17:39:55-04:00",
+ 7
+      "updated_at": "2019-04-03T17:39:55-04:00",
+ 8
+      "number": 90,
+ 9
+      "note": null,
+ 10
+      "token": "07867cf3c1b2508b4310adaf9fce9ba9",
+ 11
+      "gateway": "",
+ 12
+      "test": true,
+ 13
+      "total_price": "200.00",
+ 14
+      "subtotal_price": "200.00",
+ 15
+      "total_weight": 0,
+ 16
+      "total_tax": "0.00",
+ 17
+      "taxes_included": false,
+ 18
+      "currency": "USD",
+ 19
+      "financial_status": "pending",
+ 20
+      "confirmed": true,
+ 21
+      "total_discounts": "0.00",
+ 22
+      "total_line_items_price": "200.00",
+ 23
+      "cart_token": null,
+ 24
+      "buyer_accepts_marketing": false,
+ 25
+      "name": "#1090",
+ 26
+      "referring_site": null,
+ 27
+      "landing_site": null,
+ 28
+      "cancelled_at": null,
+ 29
+      "cancel_reason": null,
+ 30
+      "total_price_usd": "200.00",
+ 31
+      "checkout_token": null,
+ 32
+      "reference": null,
+ 33
+      "user_id": null,
+ 34
+      "location_id": null,
+ 35
+      "source_identifier": null,
+ 36
+      "source_url": null,
+ 37
+      "processed_at": "2019-04-03T17:39:55-04:00",
+ 38
+      "device_id": null,
+ 39
+      "phone": null,
+ 40
+      "customer_locale": null,
+ 41
+      "app_id": 2802623,
+ 42
+      "browser_ip": null,
+ 43
+      "landing_site_ref": null,
+ 44
+      "order_number": 1090,
+ 45
+      "discount_applications": [],
+ 46
+      "discount_codes": [],
+ 47
+      "note_attributes": [],
+ 48
+      "payment_gateway_names": [
+ 49
+        ""
+ 50
+      ],
+ 51
+      "processing_method": "",
+ 52
+      "checkout_id": null,
+ 53
+      "source_name": "2802623",
+ 54
+      "fulfillment_status": null,
+ 55
+      "tax_lines": [
+ 56
+        {
+ 57
+          "price": "13.50",
+ 58
+          "rate": 0.06,
+ 59
+          "title": "State tax",
+ 60
+          "price_set": {
+ 61
+            "shop_money": {
+ 62
+              "amount": "13.50",
+ 63
+              "currency_code": "USD"
+ 64
+            },
+ 65
+            "presentment_money": {
+ 66
+              "amount": "13.50",
+ 67
+              "currency_code": "USD"
+ 68
+            }
+ 69
+          }
+ 70
+        }
+ 71
+      ],
+ 72
+      ...
+ 73
+    }
+ 74 }
+ Step 2: Get a transaction ID
+ After you create the order, the returned Order object includes an ID. You can use the order ID to return the transaction and its ID. To retrieve the transaction, send a GET request to the Order Transaction resource:
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/orders/{order_id}/transactions.json
+ REST body
+ 1 {empty}
+ JSON response
+ 1 {
+ 2
+    "transactions": [
+ 3
+      {
+ 4
+        "id": 1458851250232,
+ 5
+        "order_id": 1165756760120,
+ 6
+        "kind": "authorization",
+ 7
+        "gateway": "",
+ 8
+        "status": "success",
+ 9
+        "message": null,
+ 10
+        "created_at": "2019-04-03T17:39:55-04:00",
+ 11
+        "test": true,
+ 12
+        "authorization": null,
+ 13
+        "location_id": null,
+ 14
+        "user_id": null,
+ 15
+        "parent_id": null,
+ 16
+        "processed_at": "2019-04-03T17:39:55-04:00",
+ 17
+        "device_id": null,
+ 18
+        "receipt": {},
+ 19
+        "error_code": null,
+ 20
+        "source_name": "2802623",
+ 21
+        "amount": "200.00",
+ 22
+        "currency": "USD",
+ 23
+        "admin_graphql_api_id": "gid://shopify/OrderTransaction/1458851250232"
+ 24
+      }
+ 25
+    ]
+ 26 }
+ Step 3: Capture the transaction
+ After you return the transaction, you can use its ID to create a capture transaction to capture payment.
+ To create the capture transaction, send a Transaction object in the body of a POST request to the Order Transaction resource. The following example includes the transaction ID of the authorization as the parent_id and sets the test property to true:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/orders/{order_id}/transactions.json
+ REST body
+ 1 {
+ 2
+    "transaction": {
+ 3
+      "currency": "CAD",
+ 4
+      "amount": "200.00",
+ 5
+      "kind": "capture",
+ 6
+      "parent_id": 1458851250232,
+ 7
+      "test": "true"
+ 8
+    }
+ 9 }
+ JSON response
+ 1 {
+ 2
+    "transaction": {
+ 3
+      "id": 1458851708984,
+ 4
+      "order_id": 1165756760120,
+ 5
+      "kind": "capture",
+ 6
+      "gateway": "",
+ 7
+      "status": "success",
+ 8
+      "message": "Marked the payment as received",
+ 9
+      "created_at": "2019-04-03T17:49:07-04:00",
+ 10
+      "test": true,
+ 11
+      "authorization": null,
+ 12
+      "location_id": null,
+ 13
+      "user_id": null,
+ 14
+      "parent_id": 1458851250232,
+ 15
+      "processed_at": "2019-04-03T17:49:07-04:00",
+ 16
+      "device_id": null,
+ 17
+      "receipt": {},
+ 18
+      "error_code": null,
+ 19
+      "source_name": "2802623",
+ 20
+      "amount": "200.00",
+ 21
+      "currency": "CAD",
+ 22
+      "admin_graphql_api_id": "gid://shopify/OrderTransaction/1458851708984"
+ 23
+    }
+ 24 }
+ Step 4: Confirm the test order
+ You can retrieve the order to verify that it's in test mode. If the order is a test order, then the response includes the test property set to true:
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/orders/{order_id}.json
+ REST body
+ 1 {empty}
+ JSON response
+ 1 {
+ 2
+    "order": {
+ 3
+      "id": 1165756760120,
+ 4
+      "email": "",
+ 5
+      "closed_at": null,
+ 6
+      "created_at": "2019-04-03T17:39:55-04:00",
+ 7
+      "updated_at": "2019-04-03T17:49:07-04:00",
+ 8
+      "number": 90,
+ 9
+      "note": null,
+ 10
+      "token": "07867cf3c1b2508b4310adaf9fce9ba9",
+ 11
+      "gateway": "",
+ 12
+      "test": true,
+ 13
+      ...
+ 14
+    }
+ 15 }
+ Next steps
+ Learn how to create test orders by using Shopify's Bogus Gateway, or putting Shopify Payments into test mode.
+ Edit existing orders using the GraphQL Admin API.
+ Explore examples for querying orders, including retrieving sales data from an order, using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create an order
+ Step 2: Get a transaction ID
+ Step 3: Capture the transaction
+ Step 4: Confirm the test order
+ Next steps
+ Updates & News
+ Developer changelog

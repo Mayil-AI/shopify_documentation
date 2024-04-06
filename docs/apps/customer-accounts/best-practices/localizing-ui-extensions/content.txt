@@ -1,0 +1,95 @@
+Deciding extension placement
+ Localizing UI extensions
+ Overview
+ Getting started
+ Testing UI extensions
+ UX guidelines
+ Selling strategies
+ Online store
+ Admin
+ Flow
+ Distribution
+ Billing
+ App Store
+ Localizing customer UI extensions
+ Merchants can expand their business to a global audience by creating shopping experiences in local languages and currencies. You can translate customer account UI extensions into multiple languages for international merchants and customers. Shopify provides a set of JavaScript APIs for accessing translations and provides localized formatting utilities for your customer account UI extension.
+ What is localization?
+ Localization is the process of adapting content to meet the language and cultural requirements of a specific country or region. Shopify localizes customer account UI extensions by resolving customer and shop locales against the extensions' translation data.
+ The following diagram shows customers in France and Canada that are interacting with a store in Germany. The customers receive localized experiences based on the translation data that's supplied by an app extension.
+ How it works
+ You supply translation data for your extension's strings in .json-formatted locale files, which are stored in the extension's locales folder.
+ └── my-app
+   └── extensions
+         └── my-customer-account-ui-extension
+             ├── src
+             │   └── CustomerAccount.jsx OR CustomerAccount.js // The index page of the customer account UI extension
+             ├── locales
+             │   ├── en.default.json // The default locale for the customer account UI extension
+             │   └── fr.json // The locale file for non-regional French translations
+             ├── shopify.extension.toml // The config file for the customer account UI extension
+             └── package.json
+ The customer account UI extension queries the locale files for a match against locale data and translates the extension UI.
+ To choose a translation, Shopify evaluates locale data in the following order of precedence:
+ The customer locale. Example: de-DE.
+ The non-regional customer locale. Example: de.
+ The shop locale. Example: fr-FR.
+ The non-regional shop locale. Example: fr.
+ The extension's default locale.
+ Locale files
+ Locale files are UTF-8-encoded JSON files that contain a set of translations for your UI extension's strings. You can create non-regional, regional, and default locales.
+ Translations consist of key/value pairs. You can supply singular and plural translations.
+ Non-regional locale
+ Use an IETF BCP 47 language tag:
+ Non-regional locale
+ 1 en.json
+ Regional locale
+ Insert an ISO 3166-1 region code after the language tag:
+ Regional locale
+ 1 en-CA.json
+ Default locale
+ Insert .default between the locale and the .json file extension:
+ Default locale
+ 1 en-CA.default.json
+ Pluralization
+ The implementation of plural translation keys follows the language plural rules included in the Common Locale Data Repository. You can specify any pluralization key that Intl.PluralRules.select() supports and that's appropriate for the locale.
+ The following are additional details for localizing pluralized content:
+ The call to translate() must have a single count option.
+ Shopify uses count to determine a plural key for the given locale.
+ The translation must define all possible plural keys for the given locale. For example:
+ locales/en.json
+ locales/ar.json
+ 1 {
+ 2
+    "youHaveMessages": {
+ 3
+      "one": "you have one message",
+ 4
+      "other": "you have {{count}} messages",
+ 5
+    }
+ 6 }
+ Limitations
+ Merchants can't override or add translations for extensions.
+ Complex pluralization, like for dynamic numeric ranges, isn't supported. For example, you can't localize a phrase that lists a numeric range of items left in stock. This is because the range will change as items are sold, and for some languages, the localizer would need to update the grammar as well.
+ Translations can't contain HTML.
+ Use our i18n functions to localize content. However, if you need to use Intl functions for more advanced formatting, only the following are supported:
+ Intl.NumberFormat
+ Intl.DateTimeFormat
+ Intl.PluralRules
+ Note
+ Some older browsers don't support Intl. In these cases, Shopify polyfills a small portion of the object.
+ Get started
+ Localization
+ Get started localizing customer account UI extensions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What is localization?
+ How it works
+ Pluralization
+ Limitations
+ Get started
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,70 @@
+Test UI extensions
+ Best practices
+ Overview
+ Multi-page extensions
+ UX guidelines
+ Distribution
+ Billing
+ App Store
+ Create multi-page extensions
+ In this tutorial, you'll learn how an extension can target checkout, the Thank you page, the Order status page, or all of the above, to create a seamless experience for merchants and their customers.
+ What you'll learn
+ In this tutorial, you'll learn how to create a checkout UI extension that can render in checkout, the Thank you page, the Order status page, or all three areas.
+ Requirements
+ You're familiar with Thank you and Order status extensions.
+ You've created a Partner account.
+ You've created a new development store with the following:
+ Generated test data
+ Checkout and Customer Accounts Extensibility developer preview enabled
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ How it works
+ You can use a checkout UI extension to add custom content across multiple pages of checkout.
+ Depending on the page and state of Shopify’s internal order processing, the targets and APIs available to extensions can vary.
+ A multi-page extension can be used to add custom content such as final sale details, upsells, surveys and more. The following examples demonstrate how to use targets to target different parts of the flow, depending on your use case.
+ Pre-purchase
+ You can configure an extension to display before a purchase is completed by using the purchase.checkout.cart-line-item.render-after target. This means that merchants can place the extension on the information, payment and shipping steps of checkout (pre-purchase).
+ src/Checkout.tsx
+ shopify.extension.toml
+ 1 // Set up the entry point for the extension
+ 2 const cartLineItemRender = reactExtension("purchase.checkout.cart-line-item.render-after", () => <App />);
+ 3 export cartLineItemRender;
+ Post-purchase
+ You can configure an extension to display after a purchase is completed by using both the purchase.thank-you.cart-line-item.render-after and customer-account.order-status.cart-line-item.render-after targets. This means that merchants can place the extension on the Thank you and Order status pages (post-purchase).
+ src/Checkout.tsx
+ shopify.extension.toml
+ 1 // Allow the extension to render on the Thank you page
+ 2 const thankYouRender = reactExtension("purchase.thank-you.cart-line-list.render-after", () => <App />);
+ 3 export thankYouRender;
+ 4 // Allow the extension to render on the Order status page
+ 5 const orderDetailsRender = reactExtension("customer-account.order-status.cart-line-item.render-after", () => <App />);
+ 6 export orderDetailsRender;
+ Pre and post purchase
+ You can configure an extension to display on all areas of the checkout flow by combining the purchase.checkout.cart-line-item.render-after, purchase.thank-you.cart-line-item.render-after and customer-account.order-status.cart-line-item.render-after targets.
+ src/Checkout.tsx
+ shopify.extension.toml
+ 1 // Allow the extension to render on the pre-purchase checkout pages
+ 2 const cartLineItemRender = reactExtension("purchase.thank-you.cart-line-item.render-after", () => <App />);
+ 3 export cartLineItemRender;
+ 4 // Allow the extension to render on the Thank you page
+ 5 const thankYouRender = reactExtension("purchase.thank-you.cart-line-item.render-after", () => <App />);
+ 6 export thankYouRender;
+ 7 // Allow the extension to render on the Order status page
+ 8 const orderDetailsRender = reactExtension("customer-account.order-status.cart-line-item.render-after", () => <App />);
+ 9 export orderDetailsRender;
+ Testing the extension in the checkout editor
+ Follow the guide to test an extension in the editor
+ Use the dropdown list at the top of the page to navigate to the Thank you and Order status pages.
+ Note
+ In a future release, we will improve the extension installation in the editor to enable merchants to add an extension to multiple pages at once and share configuration between each placements.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ How it works
+ Pre-purchase
+ Post-purchase
+ Pre and post purchase
+ Testing the extension in the checkout editor
+ Updates & News
+ Developer changelog

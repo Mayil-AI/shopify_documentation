@@ -1,0 +1,50 @@
+Product subscription app extensions
+ CalloutBanner
+ CalloutBanner is used to inform buyers about the details of a limited time offer. They differ from Banner which is used to report status.
+ Example
+ JS
+ React
+ 1 import {extend, CalloutBanner, Text} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const calloutBanner = root.createComponent(
+ 5
+      CalloutBanner,
+ 6
+      {title: 'Special offer today only'},
+ 7
+      [
+ 8
+        root.createComponent(
+ 9
+          Text,
+ 10
+          undefined,
+ 11
+          'Add the Dinghy Skeleton Cruiser to your order and save 15%',
+ 12
+        ),
+ 13
+      ],
+ 14
+    );
+ 15
+ 16
+    root.appendChild(calloutBanner);
+ 17 });
+ Props
+ optional = ?
+ Name Type Description
+ title? string Callout banners have an optional title. Use a title to grab the buyers attention with a short, concise message.
+ border? "none" | "block" Adds a top and bottom border to the callout banner @default 'block'
+ background? "secondary" | "transparent" Sets the background color of the callout banner @default 'secondary'
+ alignment? "leading" | "center" | "trailing" Sets the alignment of the title and children @default 'center'
+ spacing? "xtight" | "tight" | "loose" | "xloose" Sets the spacing between the title and children @default 'tight'
+ Guidelines
+ Never display more than one CalloutBanner
+ Place callout banners near the top of the page to bring the buyer's attention
+ The text should be written as concisely as possible
+ Be considerate and avoid anxiety provoking language:
+ Avoid exclamation points – “Wait! Before time runs out!”
+ Give it a feeling of personalization

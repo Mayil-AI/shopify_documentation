@@ -1,0 +1,40 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Best practices for building Shopify themes
+ To optimize your theme development experience, Shopify has established a set of best practices that you can refer to when developing your theme and setting up your toolchains and processes.
+ Designing and coding a theme
+ To create an optimal customer experience, and to keep your merchants' stores fast, accessible, and discoverable, then you need to consider many factors. While building Dawn, Shopify developers identified principles and best practices that you can follow to design and build an optimized theme:
+ Templates, sections, and blocks: You can use Shopify theme architecture to create a modular, highly customizable theme that allows merchants to reach their business goals. Learn more about considerations when splitting theme templates into sections and blocks, and how to decide how granular to make your theme components.
+ Performance: Performance is key to the success of the merchants that you support and to the experiences of their customers. Learn how to optimize and test your theme for performance.
+ Accessibility: Learn how to increase the accessibility of your theme to create an inclusive experience for merchants and customers.
+ Design: Learn key principles behind good theme design, and learn how to design a theme to meet the requirements of merchants and their customers.
+ Best practices in action
+ Explore the Dawn repository to see how Shopify applies theme best practices.
+ Avoiding deceptive coding practices
+ As a Partner and a developer, you should never use deceptive coding practices, such as obfuscating code or manipulating search engines. Learn more about some of the practices that Shopify considers deceptive.
+ Using theme tools and build tools
+ As your team grows, you can review our best practices to help you to build robust processes using development tools.
+ Version control: Learn about applying version control for Shopify themes, and the approaches for managing source and compiled code.
+ File transformation: If you want to use your preferred code organization strategies and build tools while working with Shopify themes, then review these best practices to understand the types of file transformations that you can apply to theme files, and their benefits.
+ Guiding principles for theme development
+ In addition to the best practices listed above, you should consider the following guiding principles for theme development.
+ These principles apply whether you're building a theme for a single merchant or for the Shopify Theme Store.
+                                                                                                                                                                                     Theme development guiding principles
+ Principle Description
+ Be performant Themes should be built with performance in mind, so that merchants and their customers can benefit from the fastest, most reliable online shopping experiences. Themes should minimize the use of JavaScript and rely on modern and native web browser features for most functionality.
+ Be purpose-built Each theme's layout, style, and feature set should be opinionated and optimized for a specific merchant or merchant segment. Out of the box, your theme should equip merchants with an optimized set of tools to meet their needs, based on what they sell and who they sell to. Specialized themes provide more value to merchants than generic themes.
+ Offer best-in-class UX With the growing number of Shopify stores, themes have the power to lead the industry and to shape ecommerce user experience patterns. Themes should be designed with quality in mind, putting the customer first.
+ Be mobile first With the large majority of online store traffic happening on mobile, designing for mobile devices must be at the forefront throughout the theme build process.
+ Be accessible To provide the best experience to a wide range of merchants and customers, themes must be built from the ground up with accessibility best practices in mind.
+ Make customization simple Merchants use themes to customize and express their brand to potential customers. Themes should have flexible with well thought-out options for a merchant to be able to make customizations, but be simple enough to manage so that they can set their stores up quickly and start selling their products.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Designing and coding a theme
+ Using theme tools and build tools
+ Guiding principles for theme development
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,30 @@
+Billing
+ App Store
+ Build a tokengated storefront
+ You can use tokengating to create exclusive access and unlockable discounts for your customer segments. Whether you want to reward your most loyal customers or another brand's token holders, this tutorial shows you how to create end-to-end tokengating experiences with Headless and Hydrogen storefronts.
+ What you'll learn
+ In this tutorial series, you'll learn how to use the Gates API to read gates on products, use a connected crypto wallet to check wallet contents against gates, and react accordingly. The end result is an end-to-end gated customer experience that applies discounts to the cart automatically using Shopify Functions.
+ Before you start this tutorial, you first need to create gates using the Gates API, and build Shopify Function that applies a gated discount. Refer to the following tutorials for more information:
+ Create gates in admin using Gates API
+ Creating a Shopify Function to apply a gated discount
+ Resources
+ Gated Hydrogen example
+ Explore an example repository that shows how we've implemented gated buying experiences in a Hydrogen storefront.
+ Tutorial series
+ Follow the tutorial series to go from a Hydrogen template to a tokengated buying experience.
+ Tutorial 1: Get started
+ Install and configure blockchain packages, create gates and attach them to products.
+ Tutorial 2: Save a connected wallet to session storage
+ Handle connection events from the @shopify/connect-wallet package and store the connected wallet in cookies.
+ Tutorial 3: Read and evaluate gates
+ Use the stored wallet and your product's gates to evaluate if a customer satisfies the requirements for the gate.
+ Tutorial 4: Write gate context to cart attributes
+ Write an HMAC of the gateConfiguration.id to the customer's cart attributes to enable validation using your Shopify Function at checkout.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Resources
+ Tutorial series
+ Updates & News
+ Developer changelog

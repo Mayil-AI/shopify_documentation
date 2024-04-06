@@ -1,0 +1,770 @@
+API exploration
+ Products and collections
+ Search and discovery
+ Markets
+ Overview
+ International pricing
+ Multiple languages
+ Cart
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Support international pricing on storefronts
+ The prices displayed in a storefront can vary based on a customer's location. This guide shows you how to use the Storefront API to query international prices for products and orders, and explicitly set the context of a cart and checkout.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You're familiar with querying products and collections.
+ You've set up international pricing in your store.
+ You're familiar with the concepts introduced in the cart guide.
+ Your Headless channel or custom app has the unauthenticated_read_product_listings, unauthenticated_read_customers and unauthenticated_write_checkouts access scopes. Learn how to configure your access scopes using Shopify CLI. Learn how to request permissions for Headless channels.
+ You need to manually enable each country’s currency in a Shopify store's payment settings before you can create a query with different country contexts. Any queries for countries that aren't enabled will default to the store currency.
+ You're using API version 2022-07 or higher.
+ Step 1: Make queries
+ You can use the Storefront API to make the following queries:
+ Query available countries and currencies
+ Query product prices
+ Query price ranges for products
+ Query customer orders
+ Query available countries and currencies
+ To retrieve a list of available countries and corresponding currencies for a shop, you can query the localization field on QueryRoot. Specify a GraphQL directive called @inContext to get the current country's information.
+ @inContext directive
+ A directive provides a way for apps to describe additional options to the GraphQL executor. It lets GraphQL change the result of the query or mutation based on the additional information provided by the directive.
+ In the Storefront API, the @inContext directive takes an optional country code argument, and applies this directive to the query or mutation. The following example shows how to retrieve a list of available countries and their corresponding currencies for a shop that's located in France (@inContext(country: FR)).
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query @inContext(country: FR) {
+ 2
+    localization {
+ 3
+      availableCountries {
+ 4
+        currency {
+ 5
+          isoCode
+ 6
+          name
+ 7
+          symbol
+ 8
+        }
+ 9
+        isoCode
+ 10
+        name
+ 11
+        unitSystem
+ 12
+      }
+ 13
+      country {
+ 14
+        currency {
+ 15
+          isoCode
+ 16
+          name
+ 17
+          symbol
+ 18
+        }
+ 19
+        isoCode
+ 20
+        name
+ 21
+        unitSystem
+ 22
+      }
+ 23
+    }
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "localization": {
+ 4
+        "availableCountries": [
+ 5
+          {
+ 6
+            "currency": {
+ 7
+              "isoCode": "CAD",
+ 8
+              "name": "Canadian Dollar",
+ 9
+              "symbol": "$"
+ 10
+            },
+ 11
+            "isoCode": "CA",
+ 12
+            "name": "Canada",
+ 13
+            "unitSystem": "metric"
+ 14
+          },
+ 15
+          {
+ 16
+            "currency": {
+ 17
+              "isoCode": "EUR",
+ 18
+              "name": "Euro",
+ 19
+              "symbol": "€"
+ 20
+            },
+ 21
+            "isoCode": "FR",
+ 22
+            "name": "France",
+ 23
+            "unitSystem": "metric"
+ 24
+          }
+ 25
+        ],
+ 26
+        "country": {
+ 27
+          "currency": {
+ 28
+            "isoCode": "EUR",
+ 29
+            "name": "Euro",
+ 30
+            "symbol": "€"
+ 31
+          },
+ 32
+          "isoCode": "FR",
+ 33
+          "name": "France",
+ 34
+          "unitSystem": "metric"
+ 35
+        }
+ 36
+      }
+ 37
+    }
+ 38 }
+ Query product prices
+ To retrieve international prices for products, specify the @inContext(country: countryCode) directive in your query.
+ This directive also automatically filters out products that aren't published for the country that's specified in the directive. Merchants determine the products that are published for a given market.
+ If you don't include the @inContext directive, then the products that are published for the primary market are returned together, with prices in the shop's currency.
+ The following example shows how to query the price of the first published product in a storefront within the context of Canada (@inContext(country: CA)). The response returns the price of the product in Canadian dollars.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query allProducts @inContext(country: CA) {
+ 2
+    products(first: 1) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          variants(first: 1) {
+ 6
+            edges {
+ 7
+              node {
+ 8
+                price {
+ 9
+                  amount
+ 10
+                  currencyCode
+ 11
+                }
+ 12
+              }
+ 13
+            }
+      }
+ 17
+    }
+ 18 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "variants": {
+ 8
+                "edges": [
+ 9
+                  {
+ 10
+                    "node": {
+ 11
+                      "price": {
+ 12
+                        "amount": "30.0",
+ 13
+                        "currencyCode": "CAD"
+ 14
+                      }
+ 15
+                    }
+ 16
+                  }
+ 17
+                ]
+ 18
+              }
+ 19
+            }
+ 20
+          }
+ 21
+        ]
+ 22
+      }
+ 23
+    }
+ 24 }
+ Query price ranges for products
+ To query the price ranges for products, include the priceRange and compareAtPriceRange fields in your request.
+ Within the priceRange field, you can retrieve the lowest variant's price (minVariantPrice) and the highest variant's price (maxVariantPrice). You can also retrieve the compare at price of the product across all variants (compareAtPriceRange).
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query productPriceRanges @inContext(country: CA) {
+ 2
+    products(first: 1) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          title
+ 6
+          priceRange {
+ 7
+            minVariantPrice {
+ 8
+              amount
+ 9
+              currencyCode
+ 10
+            }
+ 11
+            maxVariantPrice {
+ 12
+              amount
+ 13
+              currencyCode
+ 14
+            }
+ 15
+          }
+ 16
+          compareAtPriceRange {
+ 17
+            minVariantPrice {
+ 18
+              amount
+ 19
+              currencyCode
+ 20
+            }
+ 21
+            maxVariantPrice {
+ 22
+              amount
+ 23
+              currencyCode
+ 24
+            }
+ 25
+          }
+ 26
+        }
+ 27
+      }
+ 28
+    }
+ 29 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "edges": [
+              "title": "French Bulldog with headphones sketch",
+ 8
+              "priceRange": {
+ 9
+                "minVariantPrice": {
+ 10
+                  "amount": "30.00",
+ 11
+                  "currencyCode": "CAD"
+ 12
+                },
+ 13
+                "maxVariantPrice": {
+ 14
+                  "amount": "40.00",
+ 15
+                  "currencyCode": "CAD"
+ 16
+                }
+ 17
+              },
+ 18
+              "compareAtPriceRange": {
+ 19
+                "minVariantPrice": {
+ 20
+                  "amount": "28.00",
+ 21
+                  "currencyCode": "CAD"
+ 22
+                },
+ 23
+                "maxVariantPrice": {
+ 24
+                  "amount": "40.00",
+ 25
+                  "currencyCode": "CAD"
+ 26
+                }
+ 27
+              }
+ 28
+            }
+ 29
+          }
+ 30
+        ]
+ 31
+      }
+ 32
+    }
+ 33 }
+ Query customer orders
+ Order information is returned in the context that it was created. For example, when an app requests the context of France (@inContext(country: FR)), any previous orders that were created in the United States are returned in USD totals:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query customerOrders @inContext(country: FR) {
+ 2
+    customer(customerAccessToken: "token") {
+ 3
+      orders(first: 10) {
+ 4
+        edges {
+ 5
+          node {
+ 6
+            totalPrice {
+ 7
+               amount
+ 8
+               currencyCode # order's currency - USD (point in time)
+ 9
+            }
+ 10
+            lineItems(first: 10) {
+ 11
+              edges {
+ 12
+                node {
+ 13
+                  originalTotalPrice {
+ 14
+                    amount
+ 15
+                    currencyCode # order's currency - USD (point in time)
+ 16
+                  }
+ 17
+                  variant {
+ 18
+                    price {
+ 19
+                      amount
+ 20
+                      currencyCode # EUR variant’s currency (passed context)
+ 21
+                    }
+ 22
+                  }
+ 23
+ 26
+          }
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customer": {
+ 4
+        "orders": {
+ 5
+          "edges": [
+ 6
+            {
+ 7
+              "node": {
+ 8
+                "totalPrice": {
+ 9
+                  "amount": "90.00",
+ 10
+                  "currencyCode": "USD"
+ 11
+                },
+ 12
+                "lineItems": {
+ 13
+                  "edges": [
+ 14
+                    {
+ 15
+                      "node": {
+ 16
+                        "originalTotalPrice": {
+ 17
+                          "amount": "90.00",
+ 18
+                          "currencyCode": "USD"
+ 19
+                        },
+ 20
+                        "variant": {
+ 21
+                          "price": {
+ 22
+                            "amount": "70.0",
+ 23
+                            "currencyCode": "EUR"
+ 24
+                          }
+ 25
+                        }
+ 26
+                      }
+ 27
+                    }
+ 28
+                  ]
+ 29
+                }
+ 30
+              }
+ 31
+            }
+ 32
+          ]
+ 33
+        }
+ 34
+      }
+ 35
+    }
+ 36 }
+ Step 2: Create a checkout or cart
+ After you've retrieved data about the available countries and currencies, products and their prices, and customer orders on a store, you can create a checkout or a cart.
+ Create a checkout
+ Note
+ International pricing is determined based on the customer's shipping address and is enforced at checkout.
+ While queries use the @inContext directive to contextualize the response from the server, checkout uses an explicit buyerIdentity argument as an input to the mutation that will be persisted. Context within the checkout is progressive and can change as customers input their address or additional information.
+ To create a checkout in the context of a specific country, the checkoutCreate mutation takes an optional buyerIdentity.countryCode input argument which sets the checkout’s country field. A PRODUCT_UNAVAILABLE error is returned when creating a checkout with a product that is unavailable in the specified country.
+ When an address is updated on the checkout to include a different country using the checkoutShippingAddressUpdateV2 mutation and the country belongs to a market with customized pricing, the prices that are returned reflect the new country’s prices, or the shop's default prices if the new country isn't enabled. Products that aren't published for the new country are removed from the checkout.
+ In the following example, the @inContext(country: FR) directive is used so that line item variants are returned in EUR prices.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation @inContext(country: FR) {
+ 2
+    checkoutCreate(input: {
+ 3
+      buyerIdentity: {
+ 4
+        countryCode: FR
+ 5
+      }
+ 6
+    }) {
+ 7
+      checkout {
+ 8
+        buyerIdentity {
+ 9
+          countryCode
+ 10
+        }
+ 11
+        totalPrice {
+ 12
+          amount
+ 13
+          currencyCode # EUR
+ 14
+        }
+ 15
+         lineItems(first: 1) {
+ 16
+          edges {
+ 17
+            node {
+ 18
+              title
+ 19
+              variant {
+ 20
+                price {
+ 21
+                  amount
+ 22
+                  currencyCode # EUR
+ 23
+ 26
+          }
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutCreate": {
+ 4
+        "checkout": {
+ 5
+          "buyerIdentity": {
+ 6
+            "countryCode": "FR"
+ 7
+          },
+ 8
+          "totalPrice": {
+ 9
+            "amount": "0.0",
+ 10
+            "currencyCode": "EUR"
+ 11
+          },
+ 12
+          "lineItems": {
+ 13
+            "edges": []
+      }
+ 17
+    }
+ 18 }
+ Create a cart
+ Similar to a checkout, cart uses an explicit buyerIdentity argument as an input to the mutation that will be persisted.
+ The buyerIdentity argument contextualizes product variant prices and assures that all products are published for the given country. You can access product variant prices on a cart using the amount and compareAtAmount fields. The country code that's passed into buyerIdentity contextualizes the estimated cost of the cart.
+ When a cart is created in a country context, the resulting response is in the specified country’s currency.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation @inContext(country: FR) {
+ 2
+    cartCreate(input: {
+ 3
+      buyerIdentity: {
+ 4
+        email: "example-email@example.com"
+ 5
+        countryCode: FR
+ 6
+      }
+ 7
+      lines: [
+ 8
+        {
+ 9
+          quantity: 2,
+ 10
+          merchandiseId: "gid://shopify/ProductVariant/1"
+ 11
+        }
+ 12
+      ]
+ 13
+    }) {
+ 14
+      cart {
+ 15
+        buyerIdentity {
+ 16
+          countryCode
+ 17
+          email
+ 18
+          phone
+ 19
+        }
+ 20
+        estimatedCost {
+ 21
+          totalAmount {
+ 22
+            amount
+ 23
+            currencyCode
+ 24
+          }
+ 25
+        }
+ 26
+        lines(first: 10) {
+ 27
+          edges {
+ 28
+            node {
+ 29
+              quantity
+ 30
+              estimatedCost {
+ 31
+                compareAtAmount {
+ 32
+                  amount
+ 33
+                  currencyCode
+ 34
+                }
+ 35
+                amount {
+ 36
+                  amount
+ 37
+                  currencyCode
+ 38
+                }
+ 39
+              }
+ 40
+            }
+ 41
+          }
+ 42
+        }
+ 43
+      }
+ 44
+    }
+ 45 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cartCreate": {
+ 4
+        "cart": {
+ 5
+          "buyerIdentity": {
+ 6
+            "countryCode": "FR",
+ 7
+            "email": "example-email@example.com",
+ 8
+            "phone": null
+ 9
+            },
+ 10
+            "estimatedCost": {
+ 11
+              "totalAmount": {
+ 12
+                "amount": "150.0",
+ 13
+                "currencyCode": "EUR"
+ 14
+              }
+ 15
+            },
+ 16
+            "lines": {
+ 17
+              "edges": [
+ 18
+                {
+ 19
+                  "node": {
+ 20
+                    "quantity": 2,
+ 21
+                    "estimatedCost": {
+ 22
+                      "compareAtAmount": {
+ 23
+                        "amount": "60.0",
+ 24
+                        "currencyCode": "EUR"
+ 25
+                      },
+ 26
+                      "amount": {
+ 27
+                        "amount": "50.0",
+ 28
+                        "currencyCode": "EUR"
+ 29
+                      }
+ 30
+                    }
+ 31
+                  }
+ 32
+                }
+ 33
+              ]
+ 34
+            }
+ 35
+          }
+ 36
+        }
+ 37
+      }
+ 38
+    }
+ 39 }
+ Next steps
+ Learn how to create and update a cart in Shopify with the Storefront API.
+ Learn how to manage subscription products by querying selling plans and selling plans groups with the Storefront API.
+ Learn how to manage customer accounts with the Storefront API.
+ Retrieve metafields with the Storefront API to access additional information from different types of resources.
+ Support multiple languages on a storefront with the Storefront API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Make queries
+ Step 2: Create a checkout or cart
+ Next steps
+ Updates & News
+ Developer changelog

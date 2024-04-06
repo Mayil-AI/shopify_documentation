@@ -1,0 +1,20 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ Weekday enum
+ unstable
+ The weekday.
+ Values
+ FRIDAY
+ Friday
+ MONDAY
+ Monday
+ SATURDAY
+ Saturday
+ SUNDAY
+ Sunday
+ THURSDAY
+ Thursday
+ TUESDAY
+ Tuesday
+ WEDNESDAY
+ Wednesday

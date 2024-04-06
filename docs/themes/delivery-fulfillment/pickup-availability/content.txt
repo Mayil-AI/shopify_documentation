@@ -1,0 +1,310 @@
+Overview
+ Pickup availability
+ Customer engagement
+ Markets
+ Site navigation and search
+ Show pickup availability on product pages
+ Merchants can make their products available through local pickup, and you can display whether a specific product variant is available for local pickup on the product page. This allows customers to view this information without having to add the product to cart and proceed to checkout to view the shipping details.
+ In this tutorial, you'll learn how to show variant pickup availability on product pages.
+ Requirements
+ Variant selection functionality. The pickup availability JavaScript function needs to be run when variants are selected.
+ Resources
+ To implement pickup availability, you'll use the following:
+ The variant object
+ The store_availability object
+ The location object
+ Implementing pickup availability
+ To support pickup availability functionality in your theme, you need to implements the following components:
+ The pickup availability section: Renders the display content, which contains information about each location that the current variant is stocked at.
+ The pickup availability container: An empty container on the product page that hosts the section content.
+ A JavaScript function: Renders the section content inside the container, and makes any updates on variant selection.
+ Caution
+ The examples below are only meant to illustrate basic considerations for implementing this feature. The full implementation will vary depending on your theme and what you want the display to look like. You can refer to the following files in Dawn for an example of a complete solution:
+ Section
+ Container
+ Buy Button
+ JS
+ CSS
+ The pickup availability section
+ The pickup availability section hosts the actual content to be displayed, which has two main components:
+ Availability summary
+ Availability modal
+ This section is rendered inside the pickup availability container by the JavaScript function.
+ Availability summary
+ The availability summary loops through the locations returned from the store_availabilites attribute of the current variant to find any locations that have pick_up_enabled set to true. If there are any, then the availability of the current variant at the first location is displayed, along with a button to open the availability modal.
+ Example
+ Availability modal
+ The availability modal displays the product and variant titles, and each location that the current variant is stocked at. For each location, the current availability and address are shown.
+ Example
+ Example
+ The following is an example of a pickup availability section with an availability summary and modal.
+ Note
+ You should only output the availability summary and modal if the current variant has at least one location with pickup enabled.
+ sections/pickup-availability.liquid
+ 1 <div class="pickup-availability-container">
+ 2
+    {%- assign pick_up_availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+ 3
+ 4
+    {%- if pick_up_availabilities.size > 0 -%}
+ 5
+      <!-- Availability summary -->
+ 6
+      <div class="pickup-availability-information">
+ 7
+        {%- assign closest_location = pick_up_availabilities.first -%}
+ 8
+ 9
+        {%- if closest_location.available -%}
+ 10
+          {% render 'icon-in-stock' %}
+ 11
+        {%- else -%}
+ 12
+          {% render 'icon-out-of-stock' %}
+ 13
+        {%- endif -%}
+ 14
+ 15
+        <div class="pickup-availability-information-container">
+ 16
+          {%- if closest_location.available -%}
+ 17
+            <p class="pickup-availability-information__title">
+ 18
+              {{ 'pickup_availability.general.pick_up_available_at_html' | t: location_name: closest_location.location.name }}
+ 19
+            </p>
+ 20
+            <p class="pickup-availability-information__stock pickup-availability-small-text">
+ 21
+              {{ closest_location.pick_up_time }}
+ 22
+            </p>
+ 23
+            <button
+ 24
+              class="pickup-availability-information__button js-modal-open-pickup-availability-modal pickup-availability-small-text"
+ 25
+              data-pickup-availability-modal-open aria-haspopup="dialog"
+ 26
+            >
+ 27
+              {%- if pick_up_availabilities.size == 1 -%}
+ 28
+                {{ 'pickup_availability.general.view_store_info' | t }}
+ 29
+              {%- else -%}
+ 30
+                {{ 'pickup_availability.general.check_other_stores' | t }}
+ 31
+              {%- endif -%}
+ 32
+            </button>
+ 33
+          {%- else -%}
+ 34
+            <p class="pickup-availability-information__title">
+ 35
+              {{ 'pickup_availability.general.pick_up_unavailable_at_html' | t: location_name: closest_location.location.name }}
+ 36
+            </p>
+ 37
+ 38
+            {%- if pick_up_availabilities.size > 1 -%}
+ 39
+              <button class="pickup-availability-information__button js-modal-open-pickup-availability-modal pickup-availability-small-text" data-pickup-availability-modal-open aria-haspopup="dialog">
+ 40
+                {{ 'pickup_availability.general.check_other_stores' | t }}
+ 41
+              </button>
+ 42
+            {%- endif -%}
+ 43
+          {%- endif -%}
+ 44
+        </div>
+ 45
+      </div>
+ 46
+ 47
+      <!-- Availability modal -->
+ 48
+      <div
+ 49
+        class="pickup-availabilities-modal modal"
+ 50
+        id="PickupAvailabilityModal"
+ 51
+        role="dialog"
+ 52
+        aria-modal="true"
+ 53
+        aria-labelledby="PickupAvailabilitiesModalProductTitle"
+ 54
+      >
+ 55
+        <div class="pickup-availabilities-modal__header">
+ 56
+          <div class="pickup-availabilities-modal__product-information">
+ 57
+            <h2
+ 58
+              id="PickupAvailabilitiesModalProductTitle"
+ 59
+              class="pickup-availabilities-modal__product-title"
+ 60
+              data-pickup-availability-modal-product-title
+ 61
+            >
+ 62
+            </h2>
+ 63
+            <p
+ 64
+              class="pickup-availabilities-modal__variant-title pickup-availability-small-text"
+ 65
+              data-pickup-availability-modal-variant-title
+ 66
+            >
+ 67
+              {{ product_variant.title }}
+ 68
+            </p>
+ 69
+          </div>
+ 70
+          <button
+ 71
+            type="button"
+ 72
+            class="pickup-availabilities-modal__close js-modal-close-pickup-availability-modal text-link"
+ 73
+            aria-label="{{ 'general.accessibility.close_modal' | t }}"
+ 74
+          >
+ 75
+            {% render 'icon-close' %}
+ 76
+          </button>
+ 77
+        </div>
+ 78
+        <ul class="pickup-availabilities-list" role="list">
+ 79
+          {%- for availability in pick_up_availabilities -%}
+ 80
+            <li class="pickup-availability-list__item">
+ 81
+              <h3 class="pickup-availability-list__location">
+ 82
+                {{ availability.location.name }}
+ 83
+              </h3>
+ 84
+              <div class="pickup-availability-list__stock pickup-availability-small-text">
+ 85
+                {%- if availability.available -%}
+ 86
+                  {% render 'icon-in-stock' %} {{ 'pickup_availability.general.pick_up_available' | t }}, {{ availability.pick_up_time | downcase }}
+ 87
+                {%- else -%}
+ 88
+                  {% render 'icon-out-of-stock' %} {{ 'pickup_availability.general.pick_up_currently_unavailable' | t }}
+ 89
+                {%- endif -%}
+ 90
+              </div>
+ 91
+              {%- assign address = availability.location.address -%}
+ 92
+              <address class="pickup-availability-list__address">
+ 93
+                {{ address | format_address }}
+ 94
+              </address>
+ 95
+              {%- if address.phone.size > 0 -%}
+ 96
+                <p class="pickup-availability-list__phone pickup-availability-small-text">
+ 97
+                  {{ address.phone }}<br>
+ 98
+                </p>
+ 99
+              {%- endif -%}
+ 100
+            </li>
+ 101
+          {%- endfor -%}
+ 102
+        </ul>
+ 103
+      </div>
+ 104
+    {%- endif -%}
+ 105 </div>
+ 106
+ 107 {% schema %}
+ 108 {
+ 109
+    "name": {},
+ 110
+    "settings": []
+ 111 }
+ 112 {% endschema %}
+ The pickup availability container
+ The pickup availability container is an empty <div> element that the JavaScript function will render the section contents inside of. It should be placed wherever you want the availability summary to show on the product page.
+ Example
+ 1 <div class="product-single__store-availability-container"
+ 2
+    data-store-availability-container
+ 3
+    data-product-title=""
+ 4
+    data-has-only-default-variant=""
+ 5
+    data-base-url=""
+ 6 >
+ 7 </div>
+ The JavaScript function
+ To add the pickup availability section content inside the pickup availability container, you need to use the section rendering API. The request needs to be prefixed with a /variants/[variant-id] parameter, where [variant-id] is the variant ID of the selected variant.
+ To access the variant ID, and update the display when a variant is selected, you need to make a call to your pickup availability JavaScript function from the JavaScript responsible for updating product page elements on variant selection.
+ Example
+ 1 fetch(window.Shopify.routes.root + "variants/[variant-id]/?section_id=pickup-availability")
+ 2
+    .then(response => response.text())
+ 3
+    .then(text => {
+ 4
+      const container = document.querySelector('[data-store-availability-container]');
+ 5
+      const pickupAvailabilityHTML = new DOMParser()
+ 6
+        .parseFromString(text, 'text/html')
+ 7
+        .querySelector('.shopify-section');
+ 8
+ 9
+      container.appendChild(pickupAvailabilityHTML);
+ 10
+    })
+ 11
+    .catch(e => {
+ 12
+      console.error(e);
+ 13
+    });
+ Tip
+ You can't access the Liquid product object in the pickup availability section. This means that product-specific changes, like updating the title and removing the variant title if the product only has a default variant, need to be done through JavaScript. The example availability container includes data-product-title and data-has-only-default-variant attributes for this purpose.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Resources
+ Implementing pickup availability
+ The pickup availability section
+ The pickup availability container
+ The JavaScript function
+ Updates & News
+ Developer changelog

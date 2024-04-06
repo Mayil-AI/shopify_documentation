@@ -1,0 +1,155 @@
+Product subscription app extensions
+ Shopify API rate limits
+ To ensure our platform remains stable and fair for everyone, some Shopify APIs are rate-limited. We use a variety of strategies to enforce rate limits. We ask developers to use industry standard techniques for limiting calls, caching results, and re-trying requests responsibly.
+ Compare rate limits by API
+ Shopify APIs use several different rate-limiting methods. They’re described in more detail below, but these are the key figures in brief:
+ API Rate-limiting method Standard limit Advanced Shopify limit Shopify Plus limit Commerce Components by Shopify limit
+ Admin API (GraphQL) Calculated query cost 100 points/second 200 points/second 1000 points/second None
+ Admin API (REST) Request-based limit 2 requests/second 4 requests/second 20 requests/second None
+ Storefront API None None None None None
+ Payments Apps API (GraphQL) Calculated query cost 910 points/second 910 points/second 1820 points/second None
+ Customer Account API Calculated query cost 100 points/second 200 points/second 200 points/second None
+ Shopify may temporarily reduce API rate limits to protect platform stability. We will strive to keep these instances brief and rare. However, your application should be built to handle limits gracefully.
+ The leaky bucket algorithm
+ All Shopify APIs use a leaky bucket algorithm to manage requests. The main points to understand about the leaky bucket metaphor are as follows:
+ Each app has access to a bucket. It can hold, say, 60 “marbles”.
+ Each API request tosses some number of marbles into the bucket.
+ Each second, a marble is removed from the bucket (if there are any). This restores capacity for more marbles.
+ If the bucket gets full, you get a throttle error and have to wait for more bucket capacity to become available.
+ This model ensures that apps that manage API calls responsibly can maintain capacity to make bursts of requests when needed. For example, if you average 20 requests (“marbles”) per second but suddenly need to make 30 requests all at once, you can still do so without hitting your rate limit.
+ The basic principles of the leaky bucket algorithm apply to all our rate limits, regardless of the specific methods used to apply them.
+ Rate limiting methods
+ Shopify uses two different methods for managing rate limits. Different APIs use different methods depending on use case, so it's useful to understand the various types of rate limits your apps will encounter:
+ Request-based limits
+ Apps can make a maximum number of requests per minute. For example: 40 API requests within 60 seconds. Each request counts equally, regardless of how much or how little data is returned.
+ This method is used by the REST Admin API.
+ Calculated query costs
+ Apps can make requests that cost a maximum number of points per minute. For example: 1000 points within 60 seconds. More complex requests cost more points, and therefore take up a proportionally larger share of the limit.
+ This method is used by the GraphQL API
+ GraphQL Admin API rate limits
+ Calls to the GraphQL Admin API are limited based on calculated query costs, which means you should consider the cost of requests over time, rather than the number of requests.
+ GraphQL Admin API rate limits are based on the combination of the app and store. This means that calls from one app don't affect the rate limits of another app, even on the same store. Similarly, calls to one store don't affect the rate limits of another store, even from the same app.
+ Each combination of app and store is given a bucket size and restore rate based on API and plan tier. By making simpler, lower-cost queries, you can maximize your throughput and make more queries over time.
+ Cost calculation
+ Every field in the schema has an integer cost value assigned to it. The cost of a query is the maximum of possible fields selected. Running a query is the best way to find out its true cost.
+ By default, a field's cost is based on what the field returns:
+ Field returns Cost value
+ Scalar 0
+ Enum 0
+ Object 1
+ Interface Maximum of possible selections
+ Union Maximum of possible selections
+ Connection Sized by first and last arguments
+ Mutation 10
+ Although these default costs are in place, Shopify also reserves the right to set manual costs on fields.
+ Requested and actual cost
+ Shopify calculates the cost of a query both before and after execution.
+ The requested cost is based on the composition of fields selected in the request.
+ The actual cost is based on the query results, and may be lower than requested cost due to the actual objects returned or connections that return fewer edges than requested.
+ Rate limits use a combination of the requested and actual query cost. Before execution begins, an app’s bucket must have enough capacity for the requested cost of a query. When execution is complete, the bucket is refunded the difference between the requested cost and the actual cost of the query.
+ Single query limit
+ A single query may not exceed a cost of 1,000 points, regardless of plan limits. This limit is enforced before a query is executed based on the query’s requested cost.
+ Maximum input array size limit
+ Input arguments that accept an array have a maximum size of 250. Queries and mutations return an error if an input array exceeds 250 items.
+ GraphQL response
+ The response includes information about the cost of the request and the state of the throttle. This data is returned under the extensions key:
+ "extensions": {
+     "cost": {
+       "requestedQueryCost": 101,
+       "actualQueryCost": 46,
+       "throttleStatus": {
+         "maximumAvailable": 1000,
+         "currentlyAvailable": 954,
+         "restoreRate": 50
+       }
+     }
+   }
+ To get a detailed breakdown of how each field contributes to the requested cost, you can include the header 'X-GraphQL-Cost-Include-Fields': true in your request.
+ "extensions": {
+     "cost": {
+       "requestedQueryCost": 101,
+       "actualQueryCost": 46,
+       "throttleStatus": ...,
+       "fields": [
+         {
+           "path": [
+             "shop"
+           ],
+           "definedCost": 1,
+           "requestedTotalCost": 101,
+           "requestedChildrenCost": 100
+         },
+         ...
+       ]
+     }
+   }
+ Bulk operations
+ To query and fetch large amounts of data, you should use bulk operations instead of single queries. Bulk operations are designed for handling large amounts of data, and they don't have the max cost limits or rate limits that single queries have.
+ REST Admin API rate limits
+ Calls to the REST Admin API are governed by request-based limits, which means you should consider the total number of API calls your app makes. In addition, there are resource-based rate limits and throttles.
+ REST Admin API rate limits are based on the combination of the app and store. This means that calls from one app don't affect the rate limits of another app, even on the same store. Similarly, calls to one store don't affect the rate limits of another store, even from the same app.
+ Limits are calculated using the leaky bucket algorithm. All requests that are made after rate limits have been exceeded are throttled and an HTTP 429 Too Many Requests error is returned. Requests succeed again after enough requests have emptied out of the bucket. You can see the current state of the throttle for a store by using the rate limits header.
+ The bucket size and leak rate properties determine the API’s burst behavior and request rate.
+ The default settings are as follows:
+ Bucket size: 40 requests/app/store
+ Leak rate: 2/second
+ Shopify Plus
+ The bucket size and leak rate is increased by a factor of 10 for Shopify Plus stores:
+ Bucket size: 400 requests/app/store
+ Leak rate: 20/second
+ If the bucket size is exceeded, then an HTTP 429 Too Many Requests error is returned. The bucket empties at a leak rate of two requests per second. To avoid being throttled, you can build your app to average two requests per second. The throttle is a pass or fail operation. If there is available capacity in your bucket, then the request is executed without queueing or processing delays. Otherwise, the request is throttled.
+ There is an additional rate limit for GET requests. When the value of the page parameter results in an offset of over 100,000 of the requested resource, a 429 Too Many Requests error is returned. For example, a request to GET /admin/collects.json?limit=250&page=401 would generate an offset of 100,250 (250 x 401 = 100,250) and return a 429 response.
+ Caution
+ Page-based pagination was deprecated in the Admin API with version 2019-07. Use cursor-based pagination instead.
+ Rate limits header
+ You can check how many requests you’ve already made using the Shopify X-Shopify-Shop-Api-Call-Limit header that was sent in response to your API request. This header lists how many requests you’ve made for a particular store. For example:
+ 1 X-Shopify-Shop-Api-Call-Limit: 32/40
+ In this example, 32 is the current request count and 40 is the bucket size. The request count decreases according to the leak rate over time. For example, if the header displays 39/40 requests, then after a wait period of ten seconds, the header displays 19/40 requests.
+ Retry-After header
+ When a request goes over a rate limit, a 429 Too Many Requests error and a Retry-After header are returned. The Retry-After header contains the number of seconds to wait until you can make a request again. Any request made before the wait time has elapsed is throttled.
+ 1 X-Shopify-Shop-Api-Call-Limit: 40/40
+ 2
+    Retry-After: 2.0
+ Storefront API rate limits
+ The Storefront API is designed to support businesses of all sizes. The Storefront API will scale to support surges in buyer traffic or your largest flash sale. There are no rate limits applied on the number of requests that can be made to the API.
+ The Storefront API provides protection against malicious users, such as bots, from consuming a high level of capacity. If a request appears to be malicious, Shopify will respond with a 430 Shopify Security Rejection error code to indicate potential security concerns. Ensure requests to the Storefront API include the correct Buyer IP header.
+ Checkout-level throttle
+ Shopify limits the amount of checkouts that can be created on the Storefront API per minute. If an API client exceeds this throttle, then a 200 Throttled error response is returned. Shopify recommends designing your app to be resilient to this scenario. For example, you could implement a request queue with an exponential backoff algorithm.
+ Maximum input array size limit
+ Input arguments that accept an array have a maximum size of 250. Queries and mutations return an error if an input array exceeds 250 items.
+ Resource-based rate limits
+ The following Admin API resources, in both GraphQL and REST versions, have an additional throttle that takes effect when a store has 50,000 product variants. After this threshold is reached, no more than 1,000 new variants can be created per day.
+ In certain cases, Shopify needs to enforce rate limiting in order to prevent abuse of the platform. Therefore, your app should be prepared to handle rate limiting on all endpoints, rather than just those listed here.
+ Shopify Plus
+ These additional limits don’t apply to stores on the Shopify Plus plan.
+ GraphQL mutations
+ productCreate
+ productUpdate
+ productVariantCreate
+ REST endpoints
+ admin/products.json
+ admin/products/{product_id}.json
+ admin/products/{product_id}/variants.json
+ If an app reaches API rate limits for a specific resource, then it receives a 429 Too Many Requests response, and a message that a throttle has been applied.
+ Avoiding rate limit errors
+ Designing your app with best practices in mind is the best way to avoid throttling errors. For example, you can stagger API requests in a queue and do other processing tasks while waiting for the next queued job to run. Consider the following best practices when designing your app:
+ Optimize your code to only get the data that your app requires.
+ Use caching for data that your app uses often.
+ Regulate the rate of your requests for smoother distribution.
+ Include code that catches errors. If you ignore these errors and keep trying to make requests, then your app won’t be able to gracefully recover.
+ Use metadata about your app’s API usage, included with all API responses, to manage your app’s behavior dynamically.
+ Your code should stop making additional API requests until enough time has passed to retry. The recommended backoff time is 1 second.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Compare rate limits by API
+ The leaky bucket algorithm
+ Rate limiting methods
+ GraphQL Admin API rate limits
+ REST Admin API rate limits
+ Storefront API rate limits
+ Resource-based rate limits
+ Avoiding rate limit errors
+ Updates & News
+ Developer changelog
+ Partner blog

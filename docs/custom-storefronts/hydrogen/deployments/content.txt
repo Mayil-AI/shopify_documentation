@@ -1,0 +1,75 @@
+Additional SDKs
+ Deployments
+ A deployment is an immutable snapshot of your Hydrogen app, running on Oxygen. Every deployment has its own unique preview URL so that you can view, test, or approve changes before merging them and deploying to production. You can also deploy to specific environments.
+ Continuous deployment
+ Developers typically prefer automated systems that deploy their app whenever they update its code base. These types workflows are broadly known as continuous integration or continuous delivery/deployment (CI/CD) systems.
+ Hydrogen and Oxygen support CI/CD with GitHub out of the box. You can also create your own CI/CD workflows using the Hydrogen CLI.
+ Deploy with GitHub (recommended)
+ Automatically create deployments whenever you merge or push changes to your connected GitHub repo.
+ Custom CI/CD
+ Configure your own advanced CI/CD workflows, such as deploying from BitBucket or GitLab.
+ Manual deployment
+ You can create a new deployment from your local development environment with the Hydrogen CLI deploy command. The Hydrogen CLI builds, uploads, and deploys your app, then returns the deployment's unique URL.
+ Terminal
+ $ npx shopify hydrogen deploy
+ Consult the Hydrogen CLI reference for the complete list of options for the deploy command.
+ Shareable links
+ Deployments are private by default, which means that you need to be logged in to your store to view them. You can create shareable links that allow anyone to view deployments, even if they’re not logged in.
+ Be aware of the following when you use shareable links:
+ Shareable links are URLs that include a token that bypasses the deployment's login requirement. Be sure to give shareable links only to people you trust.
+ Making changes to a shareable link takes up to 30 seconds.
+ Oxygen blocks search engines from indexing shared deployments with a disallow rule on the deployment's robots.txt file. This prevents potential harm to SEO caused by duplicated content.
+ Create a shareable link
+ In your Hydrogen storefront, open the deployment details page for the deployment that you want to update.
+ Click Share.
+ Select Anyone with the link.
+ Click Copy link to copy the shareable link to your clipboard.
+ Click Close.
+ Reset a shareable link
+ Resetting a shareable link revokes its existing token and creates a new one. The old link will stop working and people will need to use the new shareable link to view the deployment.
+ In your Hydrogen storefront, open the deployment details page for the deployment that you want to update.
+ Click Share.
+ Click Reset link.
+ Click Reset to confirm.
+ Click Copy link to copy the new link.
+ Click Close.
+ Remove a shareable link
+ Removing a shareable link revokes its existing token, which returns the deployment to its default state, meaning it's accessible only to logged-in staff.
+ In your Hydrogen storefront, open the deployment details page for the deployment to update.
+ Click Share.
+ Click Staff accounts only.
+ Click Close.
+ Deployment rollbacks
+ By default, environment URLs point to the environment’s most recent deployment.
+ If the most recent update contains a bug or other error, you can temporarily roll back to a previous deployment while you work on a fix. Rolling back doesn't redeploy or delete any deployments; it simply changes which deployment the environment URL points to.
+ Caution
+ Oxygen deployments are immutable, which means that their environment variables could be outdated. Always verify that a previous deployment works as expected before rolling back to it.
+ Roll back to a previous deployment
+ Only production and custom environments can be rolled back.
+ On your Hydrogen storefront overview page, click … on the environment to roll back.
+ Click View deployments.
+ In the list of deployments, click … beside the deployment to roll back to.
+ Click Make this the current deployment.
+ Click Make current for {Environment} to confirm.
+ The next time that you push an update to its linked branch, the environment will return to the default behavior of pointing to the most recent deployment.
+ Deployment immutability
+ Every deployment in Oxygen is immutable, which means that a deployment is a snapshot of a single Git commit in your Hydrogen app codebase, at a specific point in time.
+ Deployments also retain all the environment variables that they had at the time they were deployed. Whenever you update an environment variable, be sure to create new deployments for any of its relevant environments to keep these values up to date.
+ Deployment retention policy
+ Oxygen's data retention policy is designed to ensure that your Hydrogen storefront is always available to customers, and that you can always roll back to a previous deployment in case of error.
+ Oxygen deployments remain accessible for a minimum of six months. After that time, deployments are deleted, including their bundled worker files, logs, and preview URLs.
+ Your ten most recent Oxygen deployments per environment always remain accessible, regardless of how old they are.
+ Log data retention
+ Deployments' runtime logging data is available for up to one month. If you need to retain logging data for longer than that, then consider connecting a log drain.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Continuous deployment
+ Manual deployment
+ Shareable links
+ Deployment rollbacks
+ Deployment immutability
+ Deployment retention policy
+ Updates & News
+ Developer changelog
+ Partner blog

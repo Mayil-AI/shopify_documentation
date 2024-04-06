@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CartDeliveryGroup object
+ 2024-04 latest
+ Information about the options available for one or more line items to be delivered to a specific address.
+ On this page
+ Fields
+ Types that return CartDeliveryGroup
+ Fields
+ cartLines ([CartLine!]!)
+ A list of cart lines for the delivery group.
+ deliveryAddress (MailingAddress)
+ The destination address for the delivery group.
+ deliveryOptions ([CartDeliveryOption!]!)
+ The delivery options available for the delivery group.
+ id (ID!)
+ Unique identifier for the delivery group.
+ selectedDeliveryOption (CartDeliveryOption)
+ Information about the delivery option the buyer has selected.
+ Types that return CartDeliveryGroup
+ Cart.deliveryGroups
+ Was this page helpful?
+ YesNo
+ Updates & News

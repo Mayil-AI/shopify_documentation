@@ -1,0 +1,100 @@
+Functions
+ Overview
+ Input and output
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Testing and debugging practices for Shopify Functions
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ This guide describes recommended practices for testing and debugging when you are developing functions. Depending on your needs, you will use some combination of testing on Shopify, local execution, and unit tests.
+ Testing on your development store
+ Testing your function on Shopify is the best way to ensure it has the desired behavior when used in a store. When functions are run on a development store, all function runs are logged in your Partner Dashboard.
+ Usage Advantages Limitations
+ Confirmation of expected function behavior
+ Obtaining production-like function input values for other testing methods
+ Exploratory testing
+ Accurate production input JSON
+ Validates your function output JSON
+ Allows validation of production store behavior
+ Validates the user configuration flow
+ You need to set up the function in a development store
+ No step debugging
+ Manual steps are required on the store to trigger the function
+ Test your function on a development store
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Enable the function and test it on your development store.
+ The steps that you need to follow to test your function depend on the function API that you're implementing. Refer to the Shopify Functions use case tutorials for details.
+ Add debugging output to your function by writing to STDERR. For example, use console.error in JavaScript, or eprintln! in Rust.
+ Note
+ STDOUT is reserved for function output.
+ To debug, review function logs in the Partner Dashboard:
+ In the Partner Dashboard, navigate to Apps > {your app} > Extensions > {your function}.
+ Click on any function run to view its input, output, and logs.
+ Execute the function locally using the function runner
+ The function runner mimics production execution of your function's WebAssembly module. You can access the function runner using the Shopify CLI app function run command. The function runner is useful for fast local testing, and measuring your function against function performance restrictions.
+ Usage Advantages Limitations
+ Local testing of function logic for known input values
+ Local or automated integration tests in WebAssembly
+ Performance testing for known input values
+ Similar execution to production Shopify
+ Quick execution
+ Ability to pass in any JSON input and observe the resulting output
+ Ability to measure function performance
+ Doesn't validate that Shopify has the expected behavior based on your output
+ Step debugging is difficult or impossible, depending on language
+ Test a function using the function runner
+ Retrieve a valid input JSON result for your input query from function run logs in your Partner Dashboard, or construct your own mock input.
+ Open a terminal in your function extension folder.
+ Pipe the input JSON into the app function run command. For example, you might echo the JSON directly, or paste it into a file first, and cat the file as input.
+ Invoking the function
+ Using echo
+ $ echo '{ "cart": { "lines": [] }}' | npm run shopify app function run -- --export=run
+ Using a file
+ # Assumes you have created input.json
+ $ cat input.json | npm run shopify app function run -- --export=run
+ Tip
+ You can use the --json argument to get function measurements and output as JSON. This output can be used in automated testing and scripts.
+ Writing unit tests for functions
+ Writing unit tests allows you to validate your function logic on an ongoing basis as your code evolves. Unit tests are also useful for debugging, because they enable step debugging using the native tooling of your development stack.
+ Usage Advantages Limitations
+ Automated testing during development based on known use cases
+ Step debugging of errors for known input values
+ Quick execution
+ Automated and repeatable
+ Native language and integrated development environment (IDE) step debugging
+ Examples available in sample apps
+ Doesn't validate that Shopify has the expected behavior based on your output
+ You must identify and code each test case
+ Doesn't run in WebAssembly, which might cause different results than seen in production, in rare cases
+ Write unit tests for functions
+ You can retrieve a valid input JSON result for your input query from function run logs in your Partner Dashboard, or construct your own mock input. You can use this JSON to write tests which test your function as a single unit:
+ For JavaScript or TypeScript, we recommend Vitest. Input JSON can be used directly in your JavaScript code to execute the function. View an example.
+ For Rust, the shopify_function crate provides a run_function_with_input utility method to simplify unit testing with cargo test. View an example.
+ For complex functions, you might design your code in a way that allows you to break up your tests into multiple units.
+ Debugging functions in production
+ For production stores, all function runs are visible in your Partner Dashboard, but details are only available for failed runs that have been shared by users. If your function execution is failing, you should request that the user share those logs. You can also reproduce the issue in a development store, or one of the local testing options.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Testing on your development store
+ Execute the function locally using the function runner
+ Writing unit tests for functions
+ Debugging functions in production
+ Updates & News
+ Developer changelog
+ Partner blog

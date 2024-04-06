@@ -1,0 +1,45 @@
+Overview
+ Requirements
+ App review process
+ Built for Shopify
+ Overview
+ Achievement criteria
+ Losing your status
+ App success
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Losing Built for Shopify status
+ Your app can lose Built for Shopify status if it fails to meet certain criteria on an ongoing basis.
+ If your app loses Built for Shopify status, then you'll be notified by email, and through the Partner Dashboard.
+ To learn about the criteria that your app isn't meeting anymore, view the criteria checklist on the Distribution page of your Partner Dashboard. You can also monitor the criteria checklist to see if your app is failing to meet any criteria before you lose your status.
+ Criteria
+ Shopify monitors the following criteria for all apps with Built for Shopify status.
+ If your app fails to meet certain key criteria, then it will immediately lose Built for Shopify status. These key criteria ensure that your app meets our App Store requirements and uses the newest Shopify technologies. Failing to meet one of these criteria also might trigger an audit of your app.
+ If your app fails to meet other criteria that track ongoing quality signals, then you have a 30 day grace period to meet the criteria again before your app loses Built for Shopify status. To determine whether your app is failing to meet any of these criteria, view the criteria checklist on the Distribution page of your Partner Dashboard.
+ For more information about each of these criteria, refer to Achievement criteria.
+ Criterion Comes into effect
+ Good Partner standing Immediately
+ Meets App Store requirements
+ 
+ Your app fails this criterion if it fails an audit and is delisted. Immediately
+ Uninstalls cleanly: uses theme app extensions Immediately
+ App is embedded in the Shopify admin Immediately
+ Minimizes impact on store speed After 30 days of failure
+ Minimizes impact on checkout speed After 30 days of failure
+ Admin performance: meets 75th percentile Web Vitals targets After 30 days of failure
+ Minimum number of installs After 30 days of failure
+ Minimum number of reviews After 30 days of failure
+ Minimum app rating After 30 days of failure
+ Complete, updated app listing form After 30 days of failure
+ Regain Built for Shopify status
+ You'll automatically regain Built for Shopify status as soon your app meets all of the criteria again. You don't need to reapply.
+ After you regain Built for Shopify status, your app might be audited to ensure compliance with all manually assessed criteria, and ensure that the app meets all current App Store requirements.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Criteria
+ Regain Built for Shopify status
+ Updates & News

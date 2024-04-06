@@ -1,0 +1,165 @@
+Overview
+ Reference
+ Create a trigger
+ Actions
+ Lifecycle events
+ Migrating Flow legacy extensions
+ Using complex data types
+ Payments
+ Fulfillment
+ Point of Sale
+ Create a trigger
+ Requirements
+ Make sure that you have the following:
+ A test web server that you can use to send information to Shopify Flow. You can use an existing web server. This web server needs to be able to send POST requests to Shopify's GraphQL Admin API.
+ A test app that works with the test web server and can send HTTP requests.
+ A development store that has Shopify Flow and the test app installed.
+ Your application has access to the read_customers scope. The trigger you will build using this tutorial will be using a customer reference which requires that scope.
+ Step 1: Create a Flow trigger extension
+ To give your Flow action a meaningful name, use the following guidelines:
+ Use an object acted on + past tense verb format. For example, Auction bid placed.
+ Use sentence case.
+ Don't use punctuation.
+ Separate words using spaces.
+ Using the Shopify CLI
+ Note
+ Creating Flow extensions using the CLI is an exciting new feature that is currently in development. As with any developing feature, it's important to note that the Flow CLI capabilities will continue to evolve and improve over time. Developers can expect additional functionality, enhancements, and improvements to be added as development progresses.
+ To create Flow extensions using the Shopify CLI, version 3.48 or higher is required.
+ The following steps show how to create a trigger that sends bid information to Shopify Flow when a bid is placed on an auction.
+ Use the Shopify CLI to generate a new extension:
+ Navigate to your app directory.
+ Run the following command:
+ Terminal
+ #!/bin/bash
+ $ npm run generate extension
+ Select the Flow Trigger as the type of extension.
+ Provide a meaningful name for your extension.
+ After you've followed the prompts, the CLI generates the extension’s file representation in your app's /extensions directory and gives you a success message. You can then go into your app's /extensions directory and start editing your new extension.
+ The file structure of your extension should look like the following:
+ /auction-bid-placed
+   shopify.extension.toml
+ To learn more about the extensions file structure, refer to App structure and the documentation for your extension type.
+ Using the Partner Dashboard
+ In your Partner Dashboard, open the Shopify Flow app extension.
+ Click the app that you want to add your Shopify Flow trigger to.
+ Click Extensions, then click Create or Create extension.
+ Under Flow, click the Flow/Triggers card.
+ Enter an internal extension name for your trigger and click Save.
+ Enter a title and description for the trigger that will be shown to merchants.
+ Copy the GraphQL endpoint that displays under the Trigger description field to a text file. Your app uses this endpoint to send your POST request to Shopify Flow. The endpoint follows the format https://{shop}.myshopify.com/admin/api/latest/graphql.json.
+ In the Request body properties section, click Add property, choose a data type, and create the properties that display in Shopify Flow when your user chooses your trigger.
+ Step 2: Customize a Flow trigger configuration file
+ The following procedure requires you to have generated a flow extension using Shopify CLI. In this section you'll use the default trigger template and update it to be a functional extension example.
+ Change description to Trigger for auction bids.
+ On the second [[settings.fields]] field, update:
+ type to number_decimal
+ key to Amount
+ File
+ 1 [[extensions]]
+ 2 name = "Auction Bid Placed"
+ 3 type = "flow_trigger"
+ 4 handle = "auction-bid-placed"
+ 5 description = "Trigger for auction bids."
+ 6
+ 7 [settings]
+ 8
+ 9
+    [[settings.fields]]
+ 10
+    type = "customer_reference"
+ 11
+ 12
+    [[settings.fields]]
+ 13
+    type = "number_decimal"
+ 14
+    key = "Amount"
+ Step 3: Enable the draft version of your trigger
+ Running app dev allows changes made to local files to update the draft version of your Flow task extensions. The draft version is only available in your development store.
+ Note
+ When app dev is running and "Development store preview" is enabled, the draft version of a task will appear in your development store in place of the deployed version. Other shops will continue to see the deployed version of your task (if one exists). Draft versions can be identified by the "draft" badge. To see the deployed version of the task in your development store, turn off "Development store preview" in the "Extensions" section of your app in Shopify Partners.
+ Navigate to your app directory.
+ Run the following command to start using draft versions of your extension(s):
+ Terminal
+ #!/bin/bash
+ $ npm run dev
+ Follow the prompts.
+ Step 4: Test your trigger
+ After the app dev command has started, you can test the draft version of your trigger in Shopify Flow.
+ In your development store, create a workflow that uses the trigger that you created for your app.
+ Using the Admin GraphQL API, send a flowTriggerReceive mutation with the following arguments:
+ The handle of the trigger
+ The payload of the trigger containing the fields defined in the extension TOML
+ The size of the payload (keys included) must be under 50 KB. If the size of the properties body exceeds the limit, then Shopify responds to the GraphQL request with a validation error reading Properties size exceeds the limit of 50000 bytes. As a result, workflows with the specified trigger won't start from this request.
+ The following is an example of a flowTriggerReceive mutation:
+ 1 mutation
+ 2 {
+ 3
+    flowTriggerReceive(
+ 4
+      handle: "auction-bid-placed",
+ 5
+      payload: {
+ 6
+        "Amount": "30",
+ 7
+        "customer_id": 12345
+ 8
+    })
+ 9
+    {
+ 10
+      userErrors {field, message}
+ 11
+    }
+ 12 }
+ Learn how to authenticate your Admin API requests.
+ The following example shows the same mutation sent in a curl request:
+ Terminal
+ $ curl --location 'https://{shop_domain}.myshopify.com/admin/api/latest/graphql.json' \
+ $ --header 'X-Shopify-Access-Token: {access_token}' \
+ $ --header 'Content-Type: application/json' \
+ $ --data '{
+ $
+    "query": "mutation flowTriggerReceive($handle: String, $payload: JSON) { flowTriggerReceive(handle: $handle, payload: $payload) { userErrors { message field } } }",
+ $
+    "variables": {
+ $
+      "handle": "auction-bid-placed",
+ $
+      "payload": {
+ $
+        "customer_id": {customer_id},
+ $
+        "Amount": 30
+ $
+      }
+ $
+    }
+ $ }'
+ Step 5: Deploy your extension
+ Note
+ Deploying extensions using the app deploy command also publishes the extensions. We recommend testing changes by using app dev or deploying to a test app before deploying them to a production app.
+ Use the Shopify CLI to deploy your extensions:
+ Navigate to your app directory.
+ Run the following command to start deploying your extension(s):
+ Terminal
+ #!/bin/bash
+ $ npm run deploy
+ Follow the prompts.
+ When you receive confirmation that the deploy was successful, your extensions have been released.
+ Next steps
+ Familiarize yourself with Shopify Flow and learn about building connectors.
+ Connect your app to Shopify Flow so that your app receives data and information when a workflow action runs.
+ Learn how to receive lifecycle events from Shopify Flow about the stores that are using your triggers in enabled workflows.
+ Learn how to use complex data types in your Shopify Flow trigger.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a Flow trigger extension
+ Step 2: Customize a Flow trigger configuration file
+ Step 3: Enable the draft version of your trigger
+ Step 4: Test your trigger
+ Step 5: Deploy your extension
+ Next steps

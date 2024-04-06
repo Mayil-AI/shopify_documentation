@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Metafield object
+ 2024-04 latest
+ Metafields enable you to attach additional information to a Shopify resource, such as a Product or a Collection. For more information about the Shopify resources that you can attach metafields to, refer to HasMetafields.
+ On this page
+ Fields
+ Types that return Metafield
+ Fields
+ type (String!)
+ The type of data that the metafield stores in the value field. Refer to the list of supported types.
+ value (String!)
+ The data to store in the metafield. The data is always stored as a string, regardless of the metafield's type.
+ Types that return Metafield
+ Company.metafield
+ CompanyLocation.metafield
+ Customer.metafield
+ Market.metafield
+ Product.metafield
+ ProductVariant.metafield
+ Shop.metafield
+ Validation.metafield
+ Was this page helpful?
+ YesNo

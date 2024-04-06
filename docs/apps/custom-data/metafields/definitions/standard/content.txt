@@ -1,0 +1,90 @@
+Distribution
+ Billing
+ App Store
+ Standard metafield definitions
+ Standard metafield definitions are metafield definitions that we've created for some common use cases. If you need to store data for one of these use cases, then we recommend using the standard metafield definitions, because they're interoperable across the entire Shopify platform and connect more seamlessly to themes.
+ Standard metafield definition templates provide preset configurations to create metafield definitions. Each template has a specific namespace and key that we've reserved to have specific meanings for common use cases.
+ Tip
+ For more information about the types of information that metafield definitions can store, refer to Metafield types.
+ List of standard metafield definitions
+ The following table describes the standard metafield definitions:
+ Standard metafield definitions
+ Name ID Type Description Allowed resources Reserved namespace and key
+ Product subtitle 1 single_line_text_field
+ Stores a concise description of a product. All apps should use this metafield instead of the product’s full description when a brief product summary is needed. For example, SMS apps can use the product subtitle for short text messages about a product.
+ Maximum length: 70 characters
+ PRODUCT
+ PRODUCTVARIANT
+ descriptors.subtitle
+ Care guide 2 multi_line_text_field
+ Stores detailed instructions on how to take care of clothing. Themes aimed at users selling apparel can use this metafield for display on product detail pages.
+ Maximum length: 500 characters
+ PRODUCT
+ PRODUCTVARIANT
+ descriptors.care_guide
+ ISBN 3 single_line_text_field Stores an ISBN book identifier. Themes supporting booksellers can use this metafield to identify books to customers. Apps helping to merchandise books should write to this metafield for optimal theme integration.
+ Must be a 10-digit or 13-digit number (with optional hyphens).
+ PRODUCT
+ PRODUCTVARIANT
+ facts.isbn
+ UPC 4 single_line_text_field
+ Stores a Universal Product Code (UPC). Apps reading or writing UPCs should integrate this standard metafield for display purposes, or for integration with ERP systems.
+ Must be a 12-digit number with at least one zero.
+ PRODUCT
+ PRODUCTVARIANT
+ facts.upc
+ EAN 5 single_line_text_field
+ Stores a European Article Number (EAN). Similar to UPCs, apps reading or writing EANs should integrate this standard metafield for display in online stores, or for integration with ERP systems.
+ Must be a 13-digit number.
+ PRODUCT
+ PRODUCTVARIANT
+ facts.ean
+ Product rating 6 rating Stores the average rating for a product or variant. Product rating apps should write to this standard metafield, and should update this standard metafield whenever a product’s rating has changed. Themes displaying product ratings should reference the product rating for the aggregated average product rating (stored as a rating type).
+ PRODUCT
+ PRODUCTVARIANT
+ reviews.rating
+ Product rating count 7 number_integer Stores the total number of ratings for a product or variant. Product rating apps should write to this standard metafield, and should update this standard metafield whenever a product’s rating has changed. Themes that display product ratings should reference the product rating count for the total number of ratings for a product (stored as a number_integer type).
+ PRODUCT
+ PRODUCTVARIANT
+ reviews.rating_count
+ Related products 14 list.product_reference Stores products that are similar to a selected product. You can display potential substitutes to help customers discover other similar products they might like. PRODUCT shopify--discovery--product_recommendation.related_products
+ Related products setting 15 single_line_text_field
+ Stores a setting value that controls how manual product recommendations are displayed. Accepted values:
+ only manual: Display only manual recommendations
+ ahead: Display manual recommendations before auto-generated recommendations
+ PRODUCT
+ shopify--discovery--product_recommendation.related_products_display
+ Search product boosts 16 list.single_line_text_field Stores search terms associated to a product. When customer a customer searches your store using the search terms, the product ranks higher in the search results.
+ PRODUCT
+ shopify--discovery--product_search_boost.queries
+ Complementary products 17 list.product_reference Stores products often bought in addition to a selected product. You can display complementary products to help customers discover new products and increase your online store sales.
+ PRODUCT
+ shopify--discovery--product_recommendation.complementary_products
+ Birth date 19 date Stores the customer's date of birth in ISO 8601 format. A customer can have one birth date on record as part of their customer profile. You can use this metafield to create a filter that segments customers by birthday to automatically send a discount.
+ CUSTOMER
+ facts.birth_date
+ Trade item description 20 multi_line_text_field Stores a precise product description that describes specific attributes of the product for customs and import.
+ PRODUCT
+ PRODUCTVARIANT
+ import_information.trade_item_description
+ Product transport declaration 21 list.single_line_text_field Stores public transport declarations, such as batteries, hazardous materials, creams, liquids, or powders.
+ PRODUCT
+ PRODUCTVARIANT
+ import_information.product_transport_declaration
+ Interacting with standard metafield definitions
+ You can interact with standard metafield definitions using GraphQL queries or mutations:
+ Action Query or mutation
+ Access standard metafield definition templates Use the standardMetafieldDefinitionTemplates query to access standard metafield definition templates.
+ Access metafield definition Use the metafieldDefinition query to access a standard metafield definition.
+ Create a metafield definition Use the standardMetafieldDefinitionEnable mutation to create a metafield definition using one of the standard metafield definition templates.
+ 
+ To specify the template you want to use, provide the ID for the template in the format gid://shopify/StandardMetafieldDefinitionTemplate/<id>, where id is the corresponding ID value from the table.
+ Delete a metafield definition Use the metafieldDefinitionDelete mutation to delete a metafield definition.
+ Next steps
+ Learn how to manage metafield definitions using the GraphQL Admin API.
+ Learn how to manage validation options using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ List of standard metafield definitions
+ Interacting with standard metafield definitions

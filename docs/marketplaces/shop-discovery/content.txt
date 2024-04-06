@@ -1,0 +1,55 @@
+Overview
+ Getting started
+ Developer tools
+ Shop discovery
+ Overview
+ Shop search
+ Shop sort
+ Shop filter
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Shop discovery overview
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ Discovery is the process by which buyers become aware of the shops on your marketplace. A good marketplace UX enables buyers to quickly find and refine lists of shops. This improves buyer satisfaction and helps drive conversion rates.
+ This guide introduces you to the tutorials for building the shop discovery experience on a marketplace.
+ Note
+ Discovering shops by searching products at the marketplace-level is only supported with product sync.
+ Shop search
+ Shop search enables buyers to find the shops where your channel app is installed. For example, add the ability to search shops on the marketplace by name.
+ Shop sort
+ Shop sort enables buyers to order shops on the marketplace by specific criteria. For example, add the ability to sort shops on the marketplace by name.
+ Shop filter
+ Shop filters enable buyers to narrow down the shops on the marketplace by specific criteria. For example, add the ability to filter shops on the marketplace by country.
+ Marketplace Kit code
+ The merchant-facing channel app that you cloned includes code to simplify making shops discoverable on the marketplace.
+ Code structure
+ Folder/file Contains
+ models/shop.js The `Shop` data model, which contains the name field
+ server/handlers/queries/get-shop-details.js
+ A function for making requests to the Storefront API to obtain shop details, including the shop's name
+ This function is called in server/index.js after the authentication, and the details of the shop are saved to the database
+ server/handlers/webhooks/shop-update.js
+ A function that's called to update the shop's name when a webhook is received
+ server/handlers/webhooks/setup.js The subscription to the SHOP_UPDATE webhook
+ server/graphql/resolvers.js
+ server/graphql/schema.js
+ Queries to the GraphQL Storefront API that you can run for shop data
+ Limitations
+ The Storefront API limits your ability to interact with shops across the marketplace. For example, you can't use the Storefront API to retrieve a list of of shops in the marketplace by product. Throughout the tutorials in this section, all filtering, sorting, and other ways of parsing shop data is done at the shop level, not the marketplace level.
+ Parsing product data across multiple shops requires product sync, which Shopify doesn't fully support out of the box.
+ Next steps
+ Learn how add functionality for searching shops on a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Shop search
+ Shop sort
+ Shop filter
+ Marketplace Kit code
+ Limitations
+ Next steps

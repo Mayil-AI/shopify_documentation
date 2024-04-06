@@ -1,0 +1,180 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Distribution
+ Billing
+ App Store
+ Getting started with building validations
+ You can use validations to ensure that purchases meet certain criteria before customers can complete an order. In this tutorial, you'll use Shopify Functions to enforce product limits on store merchandise which have been configured by the merchant.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Generate starter code for Shopify Functions.
+ Use GraphQL to define the input of your function.
+ Deploy functions to the Shopify platform.
+ Review logs for your function.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Create the validation function
+ To create your validation function, you need to use the Shopify CLI to generate a starter function, specify the inputs for your function using an input query, and implement your function logic using JavaScript or Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new validation extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template cart_checkout_validation --name cart-checkout-validation
+ Tip
+ Shopify Functions support any language that compiles to WebAssembly (Wasm), such as Rust, AssemblyScript, or TinyGo. You specify the Wasm template option when you're using a language other than Rust and can conform to the Wasm API. Learn more about the Wasm API.
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ $
+    (3) Rust
+ $
+    (4) Wasm
+ Navigate to extensions/cart-checkout-validation:
+ Terminal
+ $ cd extensions/cart-checkout-validation
+ Replace the contents of src/run.graphql file with the following code.
+ run.graphql defines the input for the function. You need the current cart lines' quantity and merchandise ID.
+ Note
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ src/run.graphql
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        quantity
+ 5
+        merchandise {
+ 6
+          __typename
+ 7
+          ... on ProductVariant {
+ 8
+            id
+ 9
+          }
+ 10
+        }
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ This function logic checks that the quantity of each cart line is not above 1. You can adjust the maximum quantity as needed.
+ Tip
+ You can associate a validation error with a specific checkout UI field by specifying the target property. The target property follows the pattern that's provided in the Validation API reference. For example, $.cart.deliveryGroups[0].deliveryAddress.postalCode.
+ File
+ JavaScript
+ Rust
+ run/run.js
+ 1 // @ts-check
+ 2
+ 3 /**
+ 4 * @typedef {import("../generated/api").RunInput} RunInput
+ 5 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 6 */
+ 7
+ 8 /**
+ 9 * @param {RunInput} input
+ 10 * @returns {FunctionRunResult}
+ 11 */
+ 12 export function run({ cart }) {
+ 13
+    const errors = cart
+ 14
+      .lines
+ 15
+      .filter(({ quantity }) => {
+ 16
+        return quantity > 1;
+ 17
+      })
+ 18
+      .map(() => ({
+ 19
+        localizedMessage:
+ 20
+          "Not possible to order more than 1",
+ 21
+        target: "cart",
+ 22
+      }));
+ 23
+ 24
+    return {
+ 25
+      errors,
+ 26
+    };
+ 27 }
+ If you're using Rust, then build the function's Wasm module:
+ Terminal
+ $ cargo wasi build --release
+ If you encounter any errors, then ensure that you've installed Rust and cargo-wasi.
+ Step 2: Preview the validation on a development store
+ To test your validation, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 3: Turn on the validation
+ From the Shopify admin, go to Settings > Checkout.
+ Under Checkout rules, click Add rule: a new page will open and show a list of checkout rules.
+ Find the cart-checkout-validation function that you want to test and select it.
+ To enable this validation and install it on the shop, click Turn on and then Save.
+ Optional: Control how checkout behaves when encountering runtime exceptions by selecting the validation under Checkout rules and toggling Allow all customers to complete checkout.
+ Step 4: Test the validation
+ From your online store, without logging in, create a cart with more than a single quantity in merchandise. If your validation prevents you from creating an invalid cart, go back to Settings > Checkout > Checkout rules and temporarily turn it off.
+ Checkout and verify that your error message displays.
+ Verify that checkout progress is blocked. Clicking the Continue to shipping in 3-page checkout, or the Pay now button in 1-page checkout, shouldn't redirect the user.
+ Using the Storefront API cartLinesAdd mutation, confirm that the mutation's userErrors field contains the function's error message, and that executing the mutation was unsuccessful.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > cart-checkout-validation.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Add configuration to your validation using metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the validation function
+ Step 2: Preview the validation on a development store
+ Step 3: Turn on the validation
+ Step 4: Test the validation
+ Next steps
+ Updates & News
+ Developer changelog

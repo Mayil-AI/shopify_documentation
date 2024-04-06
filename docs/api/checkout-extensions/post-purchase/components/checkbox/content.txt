@@ -1,0 +1,45 @@
+Product subscription app extensions
+ Checkbox
+ Checkboxes are used to give buyers a binary option. They are commonly used to present terms and conditions.
+ Unlike most field components, any children passed to this component will be used as the label for the checkbox.
+ Example
+ JS
+ React
+ 1 import {extend, Checkbox} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const checkbox = root.createComponent(
+ 5
+      Checkbox,
+ 6
+      {id: 'checkbox', name: 'checkbox'},
+ 7
+      'Save this information for next time',
+ 8
+    );
+ 9
+ 10
+    root.appendChild(checkbox);
+ 11 });
+ Props
+ optional = ?
+ Name Type Description
+ id? string A unique identifier for the field. When no id is provided, a globally unique value will be used instead.
+ name? string An identifier for the field that is unique within the nearest containing &lt;Form /&gt; component.
+ value? boolean Whether the checkbox is active. This prop is an alias for checked, and can be useful in form libraries that provide a normalized API for dealing with both boolean and string values. If both value and checked are provided, checked takes precedence.
+ checked? boolean Whether the checkbox is active.
+ disabled? boolean Whether the checkbox can be changed.
+ error? string An error label to present with the field.
+ accessibilityLabel? string A label to use for the field that will be used for buyers using assistive technologies. When provided, any children supplied to this component are hidden from being seen for accessibility purposes to prevent duplicate content from being read.
+ onChange? (value: boolean) => void A callback that is run whenever the checkbox is changed. This callback is called with a boolean indicating whether the checkbox should now be active or inactive. This component is controlled, so you must store this value in state and reflect it back in the checked or value props.
+ Best practices
+ Be framed positively: for example, Turn on notifications instead of Turn off notifications.
+ Be aware of any legal issues around checkboxes - for example, to comply with GDPR, marketing sign-up checkboxes should always be deselected by default.
+ Link to more information or include a subtitle as required to provide more explanation. Don’t rely on tooltips to explain a checkbox.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Best practices
+ Updates & News

@@ -1,0 +1,65 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ B2B
+ Channels
+ Distribution
+ Billing
+ App Store
+ Subscriptions
+ Subscriptions enable customers to purchase products on a recurring basis. For example, customers can do the following:
+ Pay-per-delivery subscription: Pay for products for each delivery. New orders are created at regular intervals. This option is also known as "Subscribe and save".
+ Pre-paid subscription: Make a single payment upfront and receive products on a regular cadence until the order is fulfilled.
+ Subscription apps enable developers and merchants to build subscription experiences directly into Shopify's ecosystem. This guide describes what a subscription is, subscription APIs, migration to subscription APIs, and limitations for subscription apps.
+ Overview of merchant and buyer experiences
+ Subscriptions are deeply integrated across merchant and customer experiences. Here’s a high-level overview:
+ Learn more about merchant and buyer subscription experiences on Shopify
+ How do subscriptions work?
+ Subscriptions include policy configurations and subscription contracts.
+ Policy configurations
+ A subscription includes delivery, pricing, and billing policies. This enables you to build more flexible and extensible apps that support various ways to sell and buy products.
+ Learn more about policies and selling plans.
+ Subscription contracts
+ A subscription contract is the agreement between a customer and a merchant over a specific term for recurring purchases over a set or undefined period of time.
+ Learn more about subscription contracts.
+ Subscription APIs
+ Shopify provides the following APIs to help you build and manage subscriptions in your app:
+ Selling plan APIs: Create and manage various ways to sell and buy products.
+ Subscription contract APIs: Create and manage subscription agreements between a customer and merchant.
+ Customer payment method APIs: Store payment methods that can be used to pay for future orders without requiring the customer to manually go through checkout.
+ Migrating to use the Subscription APIs?
+ If you already have a subscription app and need to migrate to use Subscription APIs, then refer to the Subscription API migration guide.
+ If your existing subscription app uses Stripe to process subscription payments, refer to Migrating existing subscription contracts to Shopify.
+ Developer tools and resources
+ To help you build and manage purchase options, Shopify offers the following developer tools and resources.
+ Developer tools and resources
+ Tools/Resources Description
+ App extensions Surfaces your app’s purchase options in the Shopify admin
+ App proxy Fetches data from an app proxy server to display on a page of the online store. By using an app proxy, customers can have a seamless experience managing their existing agreements under the shop’s domain.
+ Storefront Liquid drops and properties Allows you to integrate purchase options into a store's theme
+ Legacy subscription apps
+ If you have merchants that are dependent on features in your legacy subscription app that are currently unresolved limitations of the subscription APIs, then any existing installs can continue to use your app.
+ All new installs and apps should use the new Subscription APIs.
+ UX guidelines
+ For information on UX guidelines, refer to the Subscription UX guidelines.
+ Next steps
+ Learn about the different methods of authenticating and authorizing apps with Shopify’s platform.
+ Use webhooks to stay in sync with Shopify or execute code after a specific event occurs in a shop.
+ Learn how to use metafields to share additional information about Shopify resources with your app.
+ Learn about the structure of an app built with Shopify CLI.
+ Refer to the Shopify Partners Blog for more information about why we built this feature and how to get started.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Overview of merchant and buyer experiences
+ How do subscriptions work?
+ Subscription APIs
+ Migrating to use the Subscription APIs?
+ Developer tools and resources
+ Legacy subscription apps
+ UX guidelines

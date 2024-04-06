@@ -1,0 +1,30 @@
+Inline extensions
+ Order action menu extensions
+ Overview
+ Build order action menu extensions
+ UX guidelines
+ Full-page extensions
+ Order status page
+ Best practices
+ Selling strategies
+ Online store
+ UX guidelines for order action menu extension
+ Use the following guidelines to build your order action menu extensions.
+ Button labels
+ To create a consistent experience across the UI, adhere to the following guidelines for button labels:
+ Lead with a strong verb that encourages actions.
+ Avoid unnecessary words and articles such as “the,” “an,” or “a.”
+ Use sentence case.
+ The following is an example:
+ Button logic
+ When there are three or more actions, the button on the right is converted into a dropdown to accommodate all available actions that the customer can take. Unless payment is due, the Buy again button typically occupies the left position. If payment is due, then the Pay now button takes precedence.
+ The following are some examples:
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Button labels
+ Button logic
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

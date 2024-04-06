@@ -1,0 +1,55 @@
+Ad permissions
+ Frequently asked questions
+ Security
+ Editing and managing ads
+ After you create an ad, you can make changes to it from your Partner Dashboard.
+ Ad statuses
+ You can keep track of your ads on the Ads page in your Partner Dashboard. Each ad has one of the following statuses:
+ Active - Your ad is being shown for searches on the Shopify App Store (as long as you’ve entered a winning keyword bid), and you're charged each time a merchant clicks on it.
+ Paused - Your ad isn't being shown on the Shopify App Store and you aren't being charged.
+ On hold - Your ad has been created, but there's a problem with the payment option: a payment option hasn't been added, there was a payment error, or your ad account has been suspended.
+ Stopped - Your ad isn’t being shown on the Shopify App Store because it has been stopped due to a change with your app’s status. Stopped ads can’t be reactivated.
+ Archived - Your ad is hidden from the Shopify App Store. Archived ads can be unarchived later.
+ Limited by budget - Your ad is out of budget or almost out of budget. When your budget is low, your ads will be shown less frequently on the Shopify App Store to avoid overspending. After your budget is used up, your ad won't be shown on the Shopify App Store until you increase your budget.
+ Search ads
+ Learn how to manage your search ad.
+ Updating keywords
+ After you create an ad, you can change the keywords that are associated with it.
+ Log in to your Partner Dashboard.
+ Click Apps > App ads.
+ Select the keywords that you want to modify.
+ If you want to pause keywords, then change their status to Off by using the toggles in the Status column. To pause multiple keywords at once, click Actions > Pause keywords.
+ If you want to remove keywords, then select them and click Actions > Remove keywords.
+ Editing bids
+ It's a good idea to monitor the performance of each keyword to see how much your advertising is costing you to acquire new customers for each keyword.
+ If the cost per install on a keyword is higher than you want to spend, then you can lower the bid per click or pause the keyword.
+ If the cost per install on a keyword is low and you want to spend more on it, then you can raise your bid per click. By raising your bid, you can help to increase your ad's position and get more impressions for the related search term.
+ Edit bids for multiple keywords
+ To edit bids for multiple keywords:
+ From your Partner Dashboard, click Apps > Ads.
+ Click the name of the ad.
+ From the Keywords tab, select the keywords you want to edit bids for.
+ Click Actions > Change bid.
+ To learn more about tracking the performance of your ads, refer to Ad reporting for the Shopify App Store.
+ Updating ad geotargeting
+ The geotargeting can be updated for ads that are already running. To update the geotargeting for an ad, duplicate it and then update the geotargeting settings.
+ Log in to your Partner Dashboard.
+ Click Apps > App ads.
+ Select the campaign that you want to modify.
+ Select Edit ad.
+ Update or remove the geographic targeting.
+ Save your ad with the new targeting.
+ Homepage ads
+ Learn how to manage your homepage ad.
+ Editing bids
+ It's a good idea to monitor the performance of your ad to see how much your advertising is costing you to acquire new customers.
+ If the cost per install is higher than you want to spend, then you can lower the bid per click or pause the ad.
+ If the cost per install is low and you want to spend more on it, then you can raise your bid per click. By raising your bid, you can help to increase your ad's position and get more impressions on the homepage.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Ad statuses
+ Search ads
+ Homepage ads
+ Updates & News
+ Developer changelog

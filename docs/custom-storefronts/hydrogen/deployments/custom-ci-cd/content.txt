@@ -1,0 +1,120 @@
+Additional SDKs
+ Deploy from any CI/CD system with deployment tokens
+ Hydrogen supports continuous deployment from GitHub out of the box. But if you use another version control platform like BitBucket or GitLab, or want to create your own custom continuous integration or continuous delivery/deployment system (CI/CD), then you can use the Hydrogen CLI deploy command in any context with a valid Oxygen deployment token.
+ Oxygen deployment tokens
+ The deploy command requires a secret Oxygen deployment token. You can create and manage deployment tokens through your storefront settings. If you don't pass a deployment token with the deploy command, then the deployment fails.
+ Every Hydrogen storefront has a default deployment token that's automatically managed by Shopify and can't be removed or edited. If your default token is ever leaked, you can rotate it by clicking the rotate icon in your tokens list.
+ Create an Oxygen deployment token
+ In the Hydrogen storefront you want to deploy with a custom CI/CD workflow, click Storefront settings.
+ Click Oxygen deployments.
+ Under Oxygen deployment tokens click Create new token.
+ Confirm with Generate new token. The new token will be added to your token list with a placeholder name.
+ (Optional) Give the token a more descriptive name by clicking the pencil icon, typing in your preferred name, then clicking the check icon. The token's name has no effect on its functionality.
+ Each token is valid for one year. When it expires, delete it and create a new one.
+ For security reasons, it's best to create a new token for each service, instead of reusing the same token across different services.
+ Delete an Oxygen deployment token
+ Oxygen deployment tokens should be kept secret. If your token ever leaks, delete it and create a new one to keep your storefront secure.
+ In the Hydrogen storefront you want to update, click Storefront settings.
+ Click Oxygen deployments.
+ Beside the token you want to delete, click the trash icon.
+ Click Delete token to confirm.
+ Using Oxygen deployment tokens
+ Once you’ve created a token, you can use it with the Hydrogen CLI deploy command in any supported context.
+ Oxygen deployment tokens are sensitive and should be kept secret. Most CI/CD platforms offer a way to securely store tokens and other secrets. Check with your service provider about how to securely store and use tokens in your workflows.
+ If your deployment token is exposed, delete it and create a new one.
+ Copy an Oxygen deployment token
+ In the Hydrogen storefront you want to configure CI/CD for, click Storefront settings.
+ Click Oxygen deployments.
+ Beside the token you want to copy, click the clipboard icon. The token value is copied to your clipboard.
+ Example workflows
+ Copy the generated Oxygen deployment token.
+ Open your CI/CD system's project settings.
+ Locate the section for environment or repository variables.
+ in Bitbucket go to your project > pipelines > starter pipeline > Add variable
+ In GitLab go to your project > settings > CI/CD > Variables
+ In your CI/CD create a new variable with the name SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN and not the custom name you created when generating the token.
+ Save the variable in the CI/CD.
+ To run the integration process whenever the watcher branch changes, adjust your workflow or config file. The following are some examples. However every CI/CD is different and might require different inputs.
+ In the following examples, the Oxygen deployment token has been saved as a variable named SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN.
+ Bitbucket
+ Consult the BitBucket docs for full details on pipelines and variables and secrets.
+ bitbucket-pipelines.yml
+ 1 image: atlassian/default-image:4
+ 2
+ 3 pipelines:
+ 4
+    default:
+ 5
+      - step:
+ 6
+          name: 'Build and deploy to Oxygen'
+ 7
+          script:
+ 8
+            - npm ci
+ 9
+            - npx shopify hydrogen deploy --token $SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN
+ GitLab
+ Consult the GitLab docs for full details on pipelines and variables. Ensure that the token and branches are not set to protected.
+ .gitlab-ci.yml
+ 1 stages:
+ 2
+    - build-and-deploy
+ 3
+ 4 build-and-deploy:
+ 5
+    image: node:18
+ 6
+    stage: build-and-deploy
+ 7
+    script:
+ 8
+      - npm ci
+ 9
+      - npx shopify hydrogen deploy --token $SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN
+ CircleCI
+ Consult the CircleCI docs for full details about pipelines and environment variables.
+ .circleci/config.yml
+ 1 # Use the latest 2.1 version of CircleCI pipeline process engine.
+ 2 # See: https://circleci.com/docs/configuration-reference
+ 3 version: 2.1
+ 4 # Define a job to be invoked later in a workflow.
+ 5 # Refer to https://circleci.com/docs/configuration-reference/#jobs
+ 6 jobs:
+ 7
+    deploy-hydrogen-storefront-to-oxygen:
+ 8
+      docker:
+ 9
+        - image: cimg/node:current
+ 10
+      steps:
+ 11
+        - checkout
+ 12
+        - run:
+ 13
+            name: "Install Dependencies, Build and Deploy Storefront"
+ 14
+            command: |
+ 15
+              npm ci
+ 16
+              npx shopify hydrogen deploy --token $SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN
+ 17
+ 18 workflows:
+ 19
+    storefront-deploy:
+ 20
+      jobs:
+ 21
+        - deploy-hydrogen-storefront-to-oxygen
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Oxygen deployment tokens
+ Using Oxygen deployment tokens
+ Example workflows
+ Updates & News
+ Developer changelog
+ Partner blog

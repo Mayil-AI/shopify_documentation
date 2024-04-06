@@ -1,0 +1,30 @@
+Product subscription app extensions
+ Bookend
+ Bookend sets the leading and/or trailing child to its inherent size while the remaining children fill the available space
+ Example
+ JS
+ React
+ 1 import {extend, Bookend, TextField, Button} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const bookend = root.createComponent(Bookend, {trailing: true}, [
+ 5
+      root.createComponent(TextField, {label: 'Discount'}),
+ 6
+      root.createComponent(Button, {plain: true}, 'Apply'),
+ 7
+    ]);
+ 8
+ 9
+    root.appendChild(bookend);
+ 10 });
+ Props
+ optional = ?
+ Name Type Description
+ leading? boolean Sets the leading child to its inherent size
+ trailing? boolean Sets the trailing child to its inherent size
+ alignment? "leading" | "center" | "trailing" Position children along the cross axis
+ spacing? "xtight" | "tight" | "loose" | "xloose" Adjust spacing between children
+ Was this page helpful?
+ YesNo

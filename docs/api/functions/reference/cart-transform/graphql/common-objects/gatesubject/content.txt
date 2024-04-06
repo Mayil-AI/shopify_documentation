@@ -1,0 +1,20 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ GateSubject object
+ unstable
+ Represents a connection from a subject to a gate configuration.
+ On this page
+ Fields
+ Types that return GateSubject
+ Fields
+ configuration (GateConfiguration!)
+ The bound gate configuration.
+ id (ID!)
+ The ID of the gate subject.
+ Types that return GateSubject
+ Product.gates
+ Was this page helpful?
+ YesNo
+ Updates & News

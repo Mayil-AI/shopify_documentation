@@ -1,0 +1,60 @@
+Billing
+ App Store
+ Troubleshooting
+ This guide introduces some common errors that you might encounter when building your POS UI extension, and provides some resolutions to help resolve unexpected errors.
+ An API or a component doesn't work despite following the documentation
+ Example
+ You're attempting to use the ScannerAPI, but it doesn't work. You've done everything according to the documentation.
+ Resolution
+ The POS UI extensions documentation represents the latest version of our components and APIs. If you're using an older version of the POS UI extensions library, then some features mentioned in the documentation might not be available to you.
+ Visit the changelog to make sure you're using the latest version of POS UI extensions. Additionally, if your app has multiple extensions, please ensure that all extensions have the same version of the POS UI extensions library installed. Failure to do so may cause unexpected behavior when loading extensions from the development server. This will be fixed in a future release of the CLI.
+ Extension QR code does not work on Android
+ Example 1
+ 1 Unable to access "..."
+ 2
+ 3 It looks like you don't have access to this store. Contact the store administrator for access.
+ Example 2
+ 1 This site can't be reached
+ 2
+ 3 Check if there is a typo in com.shopify.pos.
+ Resolution
+ Android devices can have a restriction on how deep links are handled. To resolve this issue, you can use one of the following options:
+ Connect the device to your computer. Use Android Studio to open your deep link by running the following command: adb shell am start "com.shopify.pos://pos-ui-extensions?url=<EXTENSION_URL>". Replace <EXTENSION_URL> with the URL that you want to test.
+ Download and use a deep link opener app from Play Store.
+ Could not resolve "..."
+ Example
+ 1 ✘ [ERROR] Could not resolve "react-dom"
+ 2
+ 3
+    node_modules/react-redux/es/utils/reactBatchedUpdates.js:1:40:
+ 4
+      1 │ export { unstable_batchedUpdates } from 'react-dom';
+ 5
+ 6 You can mark the path "react-dom" as external to exclude it from the bundle, which will remove this error.
+ Resolution
+ This error is most likely from missing a dependency in package.json in the app root. Try re-installing your dependencies and running the app again.
+ '...' cannot be used as a JSX component
+ Example
+ 1 'Tile' cannot be used as a JSX component.
+ 2
+    Its element type 'ReactElement<any, any> | Component<ReactPropsFromRemoteComponentType<RemoteComponentType<"Tile", TileProps, true>>, any, any> | null' is not a valid JSX element.
+ 3
+      Type 'Component<ReactPropsFromRemoteComponentType<RemoteComponentType<"Tile", TileProps, true>>, any, any>' is not assignable to type 'Element | ElementClass | null'.
+ 4
+        Type 'Component<ReactPropsFromRemoteComponentType<RemoteComponentType<"Tile", TileProps, true>>, any, any>' is not assignable to type 'ElementClass'.
+ 5
+          The types returned by 'render()' are incompatible between these types.
+ 6
+            Type 'React.ReactNode' is not assignable to type 'import("/Users/heltisace/app-store-app/node_modules/@types/react-reconciler/node_modules/@types/react/index").ReactNode'.
+ 7
+              Type '{}' is not assignable to type 'ReactNode'.
+ Resolution
+ This issue commonly happens when Yarn is used for dependency management. The package's version was updated but npm conflicts with Yarn. In the root of your application run npm install to get it up to date as well. Restart your IDE if necessary.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ An API or a component doesn't work despite following the documentation
+ Extension QR code does not work on Android
+ Could not resolve "..."
+ '...' cannot be used as a JSX component
+ Updates & News

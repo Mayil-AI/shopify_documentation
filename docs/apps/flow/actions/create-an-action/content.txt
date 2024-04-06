@@ -1,0 +1,155 @@
+Actions
+ Overview
+ Reference
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Lifecycle events
+ Migrating Flow legacy extensions
+ Using complex data types
+ Payments
+ Billing
+ App Store
+ Create an action
+ To create an action that users can use in their workflows, you need to add the action to your app. The action needs to contain the following information:
+ The fields that the user needs to complete when they add the action to their workflows
+ The URL that Shopify Flow uses to send (POST) the contents (JSON payload) of the action to your app
+ You also need to configure your app to process the data from the POST request when it arrives and to send status codes back to Shopify Flow.
+ To enhance the user experience and more closely integrate external systems, you can also build a custom configuration page. To improve the reliability of your action, you can add custom validation for action properties.
+ Requirements
+ You have the following:
+ A test web server that has access to the Internet, so that it can receive POST requests from Shopify Flow
+ A test app that works with the test web server
+ A development store that has Shopify Flow and the test app installed
+ Step 1: Create a Flow Action
+ To give your Flow action a meaningful name, use the following guidelines:
+ Use a present-tense verb + object acted on format. For example, Place auction bid.
+ Use sentence case.
+ Don't use punctuation.
+ Separate words using spaces.
+ Using the Shopify CLI
+ Note
+ Creating Flow extensions using the CLI is an exciting new feature that is currently in development. As with any developing feature, it's important to note that the Flow CLI capabilities will continue to evolve and improve over time. Developers can expect additional functionality, enhancements, and improvements to be added as development progresses.
+ To create Flow extensions using the Shopify CLI, version 3.48 or higher is required.
+ Use the Shopify CLI to generate a new extension:
+ Navigate to your app directory.
+ Run the following command:
+ Terminal
+ #!/bin/bash
+ $ npm run generate extension
+ Select Flow Action as the type of extension.
+ Provide a meaningful name for your extension.
+ After you've followed the prompts, the CLI generates the extension’s file representation in your app's /extensions directory and gives you a success message. You can then go into your app's /extensions directory and start editing your new extension.
+ The file structure of your extension should look like the following:
+ /place-auction-bid
+   shopify.extension.toml
+ To learn more about the extensions file structure, refer to App structure and the documentation for your extension type.
+ Using the Partner Dashboard
+ In your Partner Dashboard, click Apps.
+ Select the app that you want to add your Shopify Flow action to.
+ Click Extensions, then click Create or Create extension.
+ Under the Flow tab, click Flow/Actions.
+ In the Extension name field, name your action, such as Place auction bid. This name is used only for internal purposes.
+ Enter a title and description for the action. In the Action Preview area, you can see how the title and action display to users when they're choosing actions in Shopify Flow.
+ Enter the URL for the action execution endpoint that you created. Shopify Flow sends the action's JSON payload to this endpoint when it's about to execute your action.
+ Step 2: Customize a Flow action configuration file
+ In this section you'll use the default action template and update it to be a functional extension example. Once you have generated a Flow extension using the CLI, follow the instructions below:
+ Change the description to Place a bid on an auction.
+ Update the extensions.runtime_url to an endpoint where you can receive the runtime request.
+ On the second settings.fields field, update the following values:
+ type to number_decimal
+ key to amount
+ name to Bid Amount
+ Add a description property and set it to The amount of the bid
+ File
+ 1 [[extensions]]
+ 2 name = "Place Auction Bid"
+ 3 type = "flow_action"
+ 4 handle = "place-bid"
+ 5 description = "Place a bid on an auction"
+ 6 runtime_url = "https://your-server-domain/path/to/action/handler"
+ 7
+ 8 [settings]
+ 9
+ 10
+    [[settings.fields]]
+ 11
+    type = "customer_reference"
+ 12
+    required = true
+ 13
+ 14
+    [[settings.fields]]
+ 15
+    type = "number_decimal"
+ 16
+    key = "amount"
+ 17
+    name = "Bid Amount"
+ 18
+    description = "The amount of the bid"
+ 19
+    required = true
+ Step 3: Configure your web server
+ To build a Shopify Flow action, you need to add a service to your web server to listen for the JSON payload that Shopify Flow sends when the action runs.
+ Optionally, you can also add the following:
+ An endpoint to validate actions
+ A custom configuration page, and an endpoint that lets users preview your custom configuration page
+ Add the following API endpoints to your server:
+ Endpoint Purpose
+ Flow action execution The endpoint where the automation tool sends your action's payload. The payload contains data that you can use to execute the action in your app.
+ Custom configuration page preview An endpoint that provides data about your custom configuration page to display in the automation tool. This endpoint is required if you want to use a custom configuration page.
+ Custom validation An endpoint that validates the contents of merchant-configurable properties in an action payload when an action is saved. This endpoint is required if you want to use a custom configuration page.
+ To learn more about the endpoint requirements for your server, refer to Action endpoints.
+ To learn how to create a custom configuration page, refer to Build a custom configuration page.
+ Step 4: Enable the draft version of your action
+ Running app dev allows changes made to local files to update the draft version of your Flow task extensions. The draft version is only available in your development store.
+ Note
+ When app dev is running and "Development store preview" is enabled, the draft version of a task will appear in your development store in place of the deployed version. Other shops will continue to see the deployed version of your task (if one exists). Draft versions can be identified by the "draft" badge. To see the deployed version of the task in your development store, turn off "Development store preview" in the "Extensions" section of your app in Shopify Partners.
+ Navigate to your app directory.
+ Run the following command to start using draft versions of your extension(s):
+ Terminal
+ #!/bin/bash
+ $ npm run dev
+ Follow the prompts.
+ Step 5: Test the action
+ After you've created an action in the Partner Dashboard and added support for it in your web server, you can test the action in Shopify Flow on your development store.
+ In your development store, create a workflow that uses the action. For example, add the trigger that you created in the Triggers guide and this action to a workflow.
+ If you created a custom configuration page, then ensure that the preview displays and that the custom configuration page is accessible.
+ If you added any custom validation, then ensure that it works as expected.
+ Trigger the workflow. For example, in your web server, run the event that sends the trigger information to Shopify Flow.
+ When the workflow completes, your web server has sent data to Shopify Flow because of the trigger. Shopify Flow has sent this data to a web server that logged the information to its console because of the action.
+ Step 6: Deploy your extension
+ Note
+ Deploying extensions using the app deploy command also publishes the extensions. We recommend testing changes by using app dev or deploying to a test app before deploying them to a production app.
+ Use the Shopify CLI to deploy your extensions:
+ Navigate to your app directory.
+ Run the following command to start deploying your extension(s):
+ Terminal
+ #!/bin/bash
+ $ npm run deploy
+ Follow the prompts.
+ When you receive confirmation that the deploy was successful, your extensions have been released.
+ Verifying requests
+ For security reasons, make sure that you verify the following elements in each request:
+ The POST request's HMAC header (either x-shopify-hmac-sha256 or http-x-shopify-hmac-sha256). The HMAC header should be verified before you process the payload. For more information, refer to Verifying requests.
+ The payload handle. This ID should match the handle of the action that you created, and can be retrieved from the payload preview.
+ Next steps
+ Connect your app to Shopify Flow so that events that occur in your app can trigger workflows.
+ Learn how to receive lifecycle events from Shopify Flow about the stores that are using your triggers in enabled workflows.
+ Learn more about how to return complex data in a Flow action.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a Flow Action
+ Step 2: Customize a Flow action configuration file
+ Step 3: Configure your web server
+ Step 4: Enable the draft version of your action
+ Step 5: Test the action
+ Step 6: Deploy your extension
+ Verifying requests
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

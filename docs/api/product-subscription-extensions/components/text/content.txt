@@ -1,0 +1,55 @@
+TextField
+ Thumbnail
+ Text
+ The Text component is used to render text in different sizes, colors, and alignments.
+ JavaScript
+ React
+ 1 import {extend, Text} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const formattedText = root.createComponent(Text, {
+ 5
+      appearance: 'success',
+ 6
+      emphasized: true,
+ 7
+      id: 'some_id',
+ 8
+      size: 'small',
+ 9
+      strong: true,
+ 10
+    });
+ 11
+ 12
+    formattedText.appendChild('Formatted text is awesome!');
+ 13
+ 14
+    const simpleText = root.createText('This simple text is a bit less awesome');
+ 15
+ 16
+    root.appendChild(formattedText);
+ 17
+    root.appendChild(simpleText);
+ 18
+ 19
+    root.mount();
+ 20 });
+ Props
+ optional = ?
+ Name Type Description
+ appearance? "critical" | "code" | "subdued" | "success"
+ emphasized? boolean
+ id? string Unique identifier. Typically used as a target for another component’s controls to associate an accessible label with an action.
+ size? "extraSmall" | "small" | "base" | "medium" | "large" | "extraLarge"
+ strong? boolean
+ Guidelines
+ Do not nest other components other than Text, they will be ignored and not rendered. Nested Text will be used to render the content of Text.
+ ✅ Do 🛑 Don't
+ Use Text to add rich content to your extension Use the Text component for headings or block element text. Use Heading and TextBlock components instead.
+ Use size to (de)-emphasize your content
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props

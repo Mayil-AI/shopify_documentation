@@ -1,0 +1,35 @@
+Overview
+ GraphQL reference
+ Payment Customization API
+ Configuration
+ Error handling
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Order Routing Location Rule Function API overview
+ Beta
+ Location rules is a new feature that's only available by request. To develop location rules, you need to contact order-routing-early-access@shopify.com.
+ Order routing is the process of determining the location used to fulfill each cart line item. The Order Routing Location Rule API allows developers to provide their own ranking of location, for each item, during order routing.
+ Example use cases
+ Fulfill orders from the closest location within the shop's market matching the delivery address country.
+ Prioritize a group of locations, such as warehouses or retail stores.
+ Rank the locations relative to each other.
+ Deprioritize a location if the maximum order for each day has been reached.
+ Shopify Plus
+ Only custom apps on the Shopify Plus plan can use the Order Routing Location Rule API.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Order Routing Location Rule API reference
+ Consult the GraphQL reference for the Order Routing Location Rule API.
+ Next steps
+ Learn how to use Shopify Functions by building order routing location rules.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,55 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ TranslationKeyExists
+ Identifies references to translations that don't exist.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ locales/en.default.json
+ 1 {
+ 2
+    "greetings": "Hello, world!",
+ 3
+    "general": {
+ 4
+      "close": "Close"
+ 5
+    }
+ 6 }
+ templates/index.liquid
+ 1 {{ "notfound" | t }}
+ ✓ Pass
+ locales/en.default.json
+ 1 {
+ 2
+    "greetings": "Hello, world!",
+ 3
+    "general": {
+ 4
+      "close": "Close"
+ 5
+    }
+ 6 }
+ templates/index.liquid
+ 1 {{ "greetings" | t }}
+ 2 {{ "general.close" | t }}
+ Options
+ The following example contains the default configuration for this check:
+ 1 TranslationKeyExists:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check

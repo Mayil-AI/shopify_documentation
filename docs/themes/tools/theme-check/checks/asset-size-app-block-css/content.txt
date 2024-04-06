@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ AssetSizeAppBlockCSS
+ Prevents theme app extensions from using CSS files larger than the configured threshold_in_bytes. Limiting the size of CSS files helps to improve the performance of your theme app extension.
+ Example
+ In the following example, the size of assets/app.css is checked to make sure that it doesn't exceed the specified threshold_in_bytes:
+ 1 {% schema %}
+ 2 {
+ 3
+    ...
+ 4
+    "stylesheet": "app.css"
+ 5 }
+ 6 {% endschema %}
+ Options
+ The following example contains the default configuration for this check:
+ 1 AssetSizeAppBlockCss:
+ 2
+    enabled: true
+ 3
+    severity: suggestion
+ 4
+    threshold_in_bytes: 100_000
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ threshold_in_bytes The maximum allowed compressed size, in bytes, for a single CSS file. Reflects the suggested limit for theme app extension CSS, and includes theme and remote stylesheets.
+ Disabling this check
+ This check is enabled by default when you run the Shopify CLI 3.x build command on an app that contains a theme app extension. This limit is not yet enforced, but disabling this check isn't recommended for theme app extensions.
+ This check is disabled by default when you run the Shopify CLI 2.x shopify theme check command.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog

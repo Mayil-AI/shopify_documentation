@@ -1,0 +1,950 @@
+Overview
+ Create and update a cart
+ Migrate to the Cart API
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Create and update a cart with the Storefront API
+ A cart contains the merchandise that a customer intends to purchase, and the estimated cost associated with the cart. You can use the Storefront API to interact with a cart during a customer's session.
+ This guide shows how to create a cart and retrieve it, update cart line items and customer information, and retrieve a checkout URL.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You've created products and product variants in your store.
+ You're using version 2022-10 or higher of the Storefront API. To set metafields on a cart, you need to use version 2023-04 or higher of the Storefront API.
+ Cart object relationships
+ Before you start building a cart, we recommend familiarizing yourself with the following API objects and their relationships:
+ Object Description
+ Cart An object that contains the merchandise that a customer intends to purchase.
+ CartBuyerIdentity Identifies the customer that is interacting with the cart. It includes a customer access token that associates the customer with the cart.
+ Cost The estimated costs that the customer will pay at checkout. The costs are subject to change and changes display at checkout.
+ 
+ Merchants can configure the prices of products on a per country basis in their Shopify admin. The prices that display on a storefront are determined in the following ways:
+ 
+ Checkout pricing: The final sale price. CartBuyerIdentity is used to determine international pricing and should match the customer's shipping address.
+ Cart pricing: The estimated final sale price. CartCost uses CartBuyerIdentity to determine international pricing.
+ Product queries: The price that displays on a product page. Products use the @inContext directive to determine international pricing.
+ Attribute An array of custom information for a cart line. Attributes are returned as key-value pairs.
+ CartLine A list of line item objects, each containing information about an item in the cart.
+ Merchandise A product variant. It represents one version of a product with several options.
+ Step 1: Create a cart and add a line item
+ You can use the cartCreate mutation to create a new cart and add a line item to the cart. In the input, include the line item quantity (quantity) and the product variant ID (merchandiseId), and specify any attributes (attributes) associated with the cart.
+ If your storefront has context about the buyer that's interacting with the cart (buyerIdentity), then you can also define delivery address preferences (deliveryAddressPreferences) in the mutation's input. Preferences are declarative lists that Shopify can use to accelerate and personalize checkout, and best optimize conversion.
+ In the response, request the added line item’s ID, merchandise, attributes, and delivery address preferences to verify that all information was added correctly. You can also request information about the costs associated with the cart:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    cartCreate(
+ 3
+      input: {
+ 4
+        lines: [
+ 5
+          {
+ 6
+            quantity: 1
+ 7
+            merchandiseId: "gid://shopify/ProductVariant/1"
+ 8
+          }
+ 9
+        ],
+ 10
+        # The information about the buyer that's interacting with the cart.
+ 11
+        buyerIdentity: {
+ 12
+          email: "example@example.com",
+ 13
+          countryCode: CA,
+ 14
+          # An ordered set of delivery addresses associated with the buyer that's interacting with the cart. The rank of the preferences is determined by the order of the addresses in the array. You can use preferences to populate relevant fields in the checkout flow.
+ 15
+          deliveryAddressPreferences: {
+ 16
+            deliveryAddress: {
+ 17
+              address1: "150 Elgin Street",
+ 18
+              address2: "8th Floor",
+ 19
+              city: "Ottawa",
+ 20
+              province: "Ontario",
+ 21
+              country: "CA",
+ 22
+              zip: "K2P 1L4"
+ 23
+            },
+ 24
+          }
+ 25
+        }
+ 26
+        attributes: {
+ 27
+          key: "cart_attribute",
+ 28
+          value: "This is a cart attribute"
+ 29
+        }
+ 30
+      }
+ 31
+    ) {
+ 32
+      cart {
+ 33
+        id
+ 34
+        createdAt
+ 35
+        updatedAt
+ 36
+        lines(first: 10) {
+ 37
+          edges {
+ 38
+            node {
+ 39
+              id
+ 40
+              merchandise {
+ 41
+                ... on ProductVariant {
+ 42
+                  id
+ 43
+                }
+ 44
+              }
+ 45
+            }
+ 46
+          }
+ 47
+        }
+ 48
+        buyerIdentity {
+ 49
+          deliveryAddressPreferences {
+ 50
+            __typename
+ 51
+          }
+ 52
+        }
+ 53
+        attributes {
+ 54
+          key
+ 55
+          value
+ 56
+        }
+ 57
+        # The estimated total cost of all merchandise that the customer will pay at checkout.
+ 58
+        cost {
+ 59
+          totalAmount {
+ 60
+            amount
+ 61
+            currencyCode
+ 62
+          }
+ 63
+          # The estimated amount, before taxes and discounts, for the customer to pay at checkout.
+ 64
+          subtotalAmount {
+ 65
+            amount
+ 66
+            currencyCode
+ 67
+          }
+ 68
+          # The estimated tax amount for the customer to pay at checkout.
+ 69
+          totalTaxAmount {
+ 70
+            amount
+ 71
+            currencyCode
+ 72
+          }
+ 73
+          # The estimated duty amount for the customer to pay at checkout.
+ 74
+          totalDutyAmount {
+ 75
+            amount
+ 76
+            currencyCode
+ 77
+          }
+ 78
+        }
+ 79
+      }
+ 80
+    }
+ 81 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cartCreate": {
+ 4
+        "cart": {
+ 5
+          "id": "gid://shopify/Cart/1",
+ 6
+          "createdAt": "2021-06-11T14:46:44Z",
+ 7
+          "updatedAt": "2021-06-11T14:46:44Z",
+ 8
+          "lines": {
+ 9
+            "edges": [
+ 10
+              {
+ 11
+                "node": {
+ 12
+                  "id": "gid://shopify/CartLine/1",
+ 13
+                  "merchandise": {
+ 14
+                    "id": "gid://shopify/ProductVariant/1"
+ 15
+                  }
+ 16
+                }
+ 17
+              }
+ 18
+            ]
+ 19
+          },
+ 20
+          "buyerIdentity": {
+ 21
+            "deliveryAddressPreferences": [
+ 22
+              {
+ 23
+                "__typename": "MailingAddress"
+ 24
+              }
+ 25
+            ]
+ 26
+          },
+ 27
+          "attributes": [
+ 28
+            {
+ 29
+              "key": "cart_attribute",
+ 30
+              "value": "This is a cart attribute"
+ 31
+            }
+ 32
+          ],
+ 33
+          "cost": {
+ 34
+            "total": {
+ 35
+              "amount": 67.07,
+ 36
+              "currencyCode": "CAD"
+ 37
+            },
+ 38
+            "subtotal": {
+ 39
+              "amount": 59.99,
+ 40
+              "currencyCode": "CAD"
+ 41
+            },
+ 42
+            "totalTax": {
+ 43
+              "amount": 7.02,
+ 44
+              "currencyCode": "CAD"
+ 45
+            },
+ 46
+            "totalDuty": {
+ 47
+              "amount": 0,
+ 48
+              "currencyCode": "CAD"
+ 49
+            }
+ 50
+          }
+ 51
+        }
+ 52
+      }
+ 53
+    }
+ 54 }
+ Step 2: Retrieve a cart
+ You can use the cart query to retrieve a cart stored on Shopify. In the query, supply the cart ID as your input.
+ The following example shows how to retrieve a cart by its ID:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    cart(
+ 3
+      id: "gid://shopify/Cart/1"
+ 4
+    ) {
+ 5
+      id
+ 6
+      createdAt
+ 7
+      updatedAt
+ 8
+      lines(first: 10) {
+ 9
+        edges {
+ 10
+          node {
+ 11
+            id
+ 12
+            quantity
+ 13
+            merchandise {
+ 14
+              ... on ProductVariant {
+ 15
+                id
+ 16
+              }
+ 17
+            }
+ 18
+            attributes {
+ 19
+              key
+ 20
+              value
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+      attributes {
+ 26
+        key
+ 27
+        value
+ 28
+      }
+ 29
+      cost {
+ 30
+        totalAmount {
+ 31
+          amount
+ 32
+          currencyCode
+ 33
+        }
+ 34
+        subtotalAmount {
+ 35
+          amount
+ 36
+          currencyCode
+ 37
+        }
+ 38
+        totalTaxAmount {
+ 39
+          amount
+ 40
+          currencyCode
+ 41
+        }
+ 42
+        totalDutyAmount {
+ 43
+          amount
+ 44
+          currencyCode
+ 45
+        }
+ 46
+      }
+ 47
+      buyerIdentity {
+ 48
+        email
+ 49
+        phone
+ 50
+        customer {
+ 51
+          id
+ 52
+        }
+ 53
+        countryCode
+ 54
+        deliveryAddressPreferences {
+ 55
+          ... on MailingAddress {
+ 56
+            address1
+ 57
+            address2
+ 58
+            city
+ 59
+            provinceCode
+ 60
+            countryCodeV2
+ 61
+            zip
+ 62
+          }
+ 63
+        }
+ 64
+      }
+ 65
+    }
+ 66 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cart": {
+ 4
+        "id": "gid://shopify/Cart/1",
+ 5
+        "createdAt": "2021-06-11T14:46:44Z",
+ 6
+        "updatedAt": "2021-06-11T14:46:44Z",
+ 7
+        "lines": {
+ 8
+          "edges": [
+ 9
+            {
+ 10
+              "node": {
+ 11
+                "id": "gid://shopify/CartLine/1",
+ 12
+                "quantity": 1,
+ 13
+                "merchandise": {
+ 14
+                  "id": "gid://shopify/ProductVariant/1"
+ 15
+                },
+ 16
+                "attributes": [
+ 17
+                  {
+ 18
+                    "key": "engraving",
+ 19
+                    "value": "This is an engraving"
+ 20
+                  }
+ 21
+                ],
+ 22
+              }
+ 23
+            }
+ 24
+          ]
+ 25
+        },
+ 26
+        "attributes": [
+ 27
+          {
+ 28
+            "key": "cart_attribute",
+ 29
+            "value": "This is a cart attribute"
+ 30
+          }
+ 31
+        ],
+ 32
+        "cost": {
+ 33
+          "total": {
+ 34
+            "amount": 67.07,
+ 35
+            "currencyCode": "CAD"
+ 36
+          },
+ 37
+          "subtotal": {
+ 38
+            "amount": 59.99,
+ 39
+            "currencyCode": "CAD"
+ 40
+          },
+ 41
+          "totalTax": {
+ 42
+            "amount": 7.02,
+ 43
+            "currencyCode": "CAD"
+ 44
+          },
+ 45
+          "totalDuty": {
+ 46
+            "amount": 0.00,
+ 47
+            "currencyCode": "CAD"
+ 48
+          }
+ 49
+        },
+ 50
+        "buyerIdentity": {
+ 51
+          "email": "example@example.com",
+ 52
+          "phone": null,
+ 53
+          "customer": null,
+ 54
+          "countryCode": "CA",
+ 55
+          "deliveryAddressPreferences": [
+ 56
+            {
+ 57
+              "address1": "150 Elgin Street",
+ 58
+              "address2": "8th Floor",
+ 59
+              "city": "Ottawa",
+ 60
+              "provinceCode": "ON",
+ 61
+              "countryCodeV2": "CA",
+ 62
+              "zip": "K2P 1L4"
+ 63
+            }
+ 64
+          ]
+ 65
+        }
+ 66
+      }
+ 67
+    }
+ 68 }
+ Step 3: Increase an item's quantity
+ You can use the cartLinesUpdate mutation to add another product variant of the same type to the cart.
+ In the mutation's input, include the cart ID, cart line ID, and the new quantity value that you want to set. In the response, request the ID and quantity of the line items to verify that it was updated correctly.
+ The following example shows how to increase a line item's quantity in a cart to three:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    cartLinesUpdate(
+ 3
+      cartId: "gid://shopify/Cart/1"
+ 4
+      lines: {
+ 5
+        id: "gid://shopify/CartLine/1"
+ 6
+        quantity: 3
+ 7
+      }
+ 8
+    ) {
+ 9
+      cart {
+ 10
+        id
+ 11
+        lines(first: 10) {
+ 12
+          edges {
+ 13
+            node {
+ 14
+              id
+ 15
+              quantity
+ 16
+              merchandise {
+ 17
+                ... on ProductVariant {
+ 18
+                  id
+ 19
+                }
+ 20
+              }
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+        cost {
+ 25
+          totalAmount {
+ 26
+            amount
+ 27
+            currencyCode
+ 28
+          }
+ 29
+          subtotalAmount {
+ 30
+            amount
+ 31
+            currencyCode
+ 32
+          }
+ 33
+          totalTaxAmount {
+ 34
+            amount
+ 35
+            currencyCode
+ 36
+          }
+ 37
+          totalDutyAmount {
+ 38
+            amount
+ 39
+            currencyCode
+ 40
+          }
+ 41
+        }
+ 42
+      }
+ 43
+    }
+ 44 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cartLinesUpdate": {
+ 4
+        "cart": {
+ 5
+          "id": "gid://shopify/Cart/1",
+ 6
+          "lines": {
+ 7
+            "edges": [
+ 8
+              {
+ 9
+                "node": {
+ 10
+                  "id": "gid://shopify/CartLine/1",
+ 11
+                  "quantity": 3,
+ 12
+                  "merchandise": {
+ 13
+                    "id": "gid://shopify/ProductVariant/1"
+ 14
+                  }
+ 15
+                }
+ 16
+              }
+ 17
+            ]
+ 18
+          },
+ 19
+          "cost": {
+ 20
+            "total": {
+ 21
+              "amount": 201.03,
+ 22
+              "currencyCode": "CAD"
+ 23
+            },
+ 24
+            "subtotal": {
+ 25
+              "amount": 179.97,
+ 26
+              "currencyCode": "CAD"
+ 27
+            },
+ 28
+            "totalTax": {
+ 29
+              "amount": 21.06,
+ 30
+              "currencyCode": "CAD"
+ 31
+            },
+ 32
+            "totalDuty": {
+ 33
+              "amount": 0,
+ 34
+              "currencyCode": "CAD"
+ 35
+            }
+ 36
+          }
+ 37
+        }
+ 38
+      }
+ 39
+    }
+ 40 }
+ Step 4: Update customer information
+ You can use the cartBuyerIdentityUpdate mutation to associate customer information with the cart, such as a customer's email, phone number, and country.
+ In the mutation's input, supply the cart ID and the buyerIdentity attributes related to the customer (for example, email, phone, and countryCode). In the response, request the same information to verify that it was updated correctly.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    cartBuyerIdentityUpdate(
+ 3
+      cartId: "gid://shopify/Cart/1"
+ 4
+      buyerIdentity: {
+ 5
+        email: "example@example.com"
+ 6
+        phone: "555-555-555"
+ 7
+        countryCode: CA
+ 8
+      }
+ 9
+    ) {
+ 10
+      cart {
+ 11
+        id
+ 12
+        buyerIdentity {
+ 13
+          email
+ 14
+          phone
+ 15
+          countryCode
+ 16
+ 19 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cartBuyerIdentityUpdate": {
+ 4
+        "cart": {
+ 5
+          "id": "gid://shopify/Cart/1",
+ 6
+          "buyerIdentity": {
+ 7
+            "email": "example@example.com",
+ 8
+            "phone": "555-555-5555",
+ 9
+            "countryCode": "CA"
+ 10
+ 13
+    }
+ 14 }
+ Step 5: Set metafields on a cart
+ Metafields are a flexible way for your app to add and store additional information about a cart. You can create metafields to extend the cart schema with custom values and logic at checkout. For example, you might want to attach custom structured metadata on a cart, and read it from a checkout extension to deliver a customized end-to-end buyer experience.
+ You can use the cartMetafieldsSet mutation to create and update metafields on a cart. In the mutation's input, supply the cart ID in the ownerId field, and define the parts of the metafield.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    cartMetafieldsSet(
+ 3
+      metafields:[
+ 4
+        {
+ 5
+          ownerId: "gid://shopify/Cart/1",
+ 6
+          key: "public.materials",
+ 7
+          type: "multi_line_text_field",
+ 8
+          value: "95% Cotton\n5% Spandex"
+ 9
+        },
+ 10
+        {
+ 11
+          ownerId: "gid://shopify/Cart/1",
+ 12
+          key: "public.manufactured",
+ 13
+          type: "single_line_text_field",
+ 14
+          value: "Made in Canada"
+ 15
+        }
+ 16
+    ]) {
+ 17
+      metafields {
+ 18
+        namespace
+ 19
+        key
+ 20
+        value
+ 21
+        type
+ 22
+      }
+ 23
+      userErrors {
+ 24
+        code
+ 25
+        field
+ 26
+        message
+ 27
+      }
+ 28
+    }
+ 29 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cartMetafieldsSet": {
+ 4
+        "metafields": [
+ 5
+          {
+ 6
+            "namespace": "public",
+ 7
+            "key": "materials",
+ 8
+            "type": "multi_line_text_field",
+ 9
+            "value": "95% Cotton\n5% Spandex"
+ 10
+          },
+ 11
+          {
+ 12
+            "namespace": "public",
+ 13
+            "key": "manufactured",
+ 14
+            "type": "single_line_text_field",
+ 15
+            "value": "Made in Canada"
+ 16
+          }
+ 17
+        ],
+ 18
+        "userErrors": []
+ Step 6: Retrieve a checkout URL
+ To retrieve a checkout URL for the current cart, you can query the Cart object and supply the cart's ID as your input. The response includes a URL that, when viewed in a browser, will redirect customers through Shopify’s web checkout workflow.
+ Note
+ The following limitations apply to carts:
+ The cart works with the web checkout only. It isn't supported for native mobile checkouts.
+ Duties won't be displayed on cart, but only at checkout. Taxes are available to display on a cart.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query checkoutURL {
+ 2
+    cart(id: "gid://shopify/Cart/1") {
+ 3
+      checkoutUrl
+ 4
+    }
+ 5 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "cart": {
+ 4
+        // The structure of the returned URL is subject to change and shouldn't be relied upon.
+ 5
+        "checkoutUrl": "https:\/\/exam.myshopify.com\/cart\/c\/29567c413f68cf5e8c1cb623954f3a28"
+ 6
+      }
+ 7
+    }
+ 8 }
+ Next steps
+ Learn how create a cart and a subscription line item.
+ Learn how to query international prices for products and orders, and explicitly set the context of a cart and checkout.
+ Learn how to manage customer accounts with the Storefront API.
+ Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Cart object relationships
+ Step 1: Create a cart and add a line item
+ Step 2: Retrieve a cart
+ Step 3: Increase an item's quantity
+ Step 4: Update customer information
+ Step 5: Set metafields on a cart
+ Step 6: Retrieve a checkout URL
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,240 @@
+Delivery and shipping
+ Product offers
+ Payments
+ Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ UX guidelines
+ Thank you and Order status
+ Localized UI extensions
+ Add configuration to your payment customization
+ You can use metafields for the configuration of your payment customization function. Metafields provide greater flexibility to use functions, and are a prerequisite to creating a merchant user interface for configuring functions.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Define what configuration settings will be surfaced to merchants.
+ Read and use the merchant-defined values in your function.
+ Caution
+ In this tutorial, you'll use a metafield namespace that's accessible to any app so that the metafield namespace can be populated using the GraphiQL app. To make your function ready for production, you should update the metafield namespace to use a reserved prefix so that other apps can't use your metafield. You'll make this update in the next tutorial.
+ Requirements
+ You've completed the Getting started with building payment customizations tutorial.
+ Step 1: Configure the function
+ To make your function reusable, you can replace hardcoded values in your function with metafield values. You can update your input query to request a metafield value on the created payment customization, which is the function owner for this function API. You can then use that value in your function logic.
+ Navigate to your function in extensions/payment-customization.
+ Terminal
+ $ cd extensions/payment-customization
+ Replace the code in the src/run.graphql file with the following code.
+ This update to the input query adds a metafield from the paymentCustomization object, which is the function owner.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ 3
+      cost {
+ 4
+        totalAmount {
+ 5
+          amount
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9
+    paymentMethods {
+ 10
+      id
+ 11
+      name
+ 12
+    }
+ 13
+    paymentCustomization {
+ 14
+      metafield(namespace: "payment-customization", key: "function-configuration") {
+ 15
+        value
+ 16
+      }
+ 17
+    }
+ 18 }
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ This update includes parsing the JSON metafield value, and using values from that JSON in the function logic instead of hardcoded values.
+ This change is automatically reflected as long as you're running dev.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 /**
+ 4 * @typedef {import("../generated/api").RunInput} RunInput
+ 5 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 6 */
+ 7
+ 8 /**
+ 9 * @type {FunctionRunResult}
+ 10 */
+ 11 const NO_CHANGES = {
+ 12
+    operations: [],
+ 13 };
+ 14
+ 15 /**
+ 16 * @param {RunInput} input
+ 17 * @returns {FunctionRunResult}
+ 18 */
+ 19 export function run(input) {
+ 20
+    // Define a type for your configuration, and parse it from the metafield
+ 21
+    /**
+ 22
+    * @type {{
+ 23
+    *   paymentMethodName: string
+ 24
+    *   cartTotal: number
+ 25
+    * }}
+ 26
+    */
+ 27
+    const configuration = JSON.parse(
+ 28
+      input?.paymentCustomization?.metafield?.value ?? "{}"
+ 29
+    );
+ 30
+    if (!configuration.paymentMethodName || !configuration.cartTotal) {
+ 31
+      return NO_CHANGES;
+ 32
+    }
+ 33
+ 34
+    const cartTotal = parseFloat(input.cart.cost.totalAmount.amount ?? "0.0");
+ 35
+    // Use the configured cart total instead of a hardcoded value
+ 36
+    if (cartTotal < configuration.cartTotal) {
+ 37
+      console.error("Cart total is not high enough, no need to hide the payment method.");
+ 38
+      return NO_CHANGES;
+ 39
+    }
+ 40
+ 41
+    // Use the configured payment method name instead of a hardcoded value
+ 42
+    const hidePaymentMethod = input.paymentMethods
+ 43
+      .find(method => method.name.includes(configuration.paymentMethodName));
+ 44
+ 45
+    if (!hidePaymentMethod) {
+ 46
+      return NO_CHANGES;
+ 47
+    }
+ 48
+ 49
+    return {
+ 50
+      operations: [{
+ 51
+        hide: {
+ 52
+          paymentMethodId: hidePaymentMethod.id
+ 53
+        }
+ 54
+      }]
+ 55
+    };
+ 56 };
+ Step 2: Populate the payment customization configuration metafield
+ To populate the configuration metafield, you'll first use the paymentCustomizations query to confirm the payment customization ID, and then use the metafieldsSet mutation to populate the same metafield that you specified in the input query.
+ Open the Shopify GraphiQL app on your development store.
+ In the GraphiQL app, in the API Version field, select the 2023-07 version.
+ Execute the following query, and make note of the id value of the payment customization that you created in the previous tutorial. For more information about global IDs, refer to Global IDs in Shopify APIs.
+ payment-customization-query.graphql
+ 1 query {
+ 2
+    paymentCustomizations(first: 100) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+          title
+    }
+ 10 }
+ Execute the following mutation and replace YOUR_CUSTOMIZATION_ID_HERE with the full global ID of your payment customization.
+ The value of the metafield specifies that the function should hide Cash on Delivery when the cart total is above 150.
+ metafield-set-mutation.graphql
+ 1 mutation {
+ 2
+    metafieldsSet(metafields: [
+ 3
+      {
+ 4
+        ownerId: "YOUR_CUSTOMIZATION_ID_HERE"
+ 5
+        namespace: "payment-customization"
+ 6
+        key: "function-configuration"
+ 7
+        value: "{ \"paymentMethodName\": \"Cash on Delivery\", \"cartTotal\": 150 }"
+ 8
+        type: "json"
+ 9
+      }
+ 10
+    ]) {
+ 11
+      metafields {
+ 12
+        id
+ 13
+      }
+ 14
+      userErrors {
+ 15
+        message
+ 16
+      }
+ 17
+    }
+ 18 }
+ You should receive a GraphQL response that includes the ID of the created metafield. If the response includes any messages under userErrors, then review the errors, check that your mutation and ownerId are correct, and try the request again.
+ Step 3: Test the payment customization
+ Open your development store and build a cart with a total (including shipping and tax) under 150. The Cash on Delivery payment method should display in checkout.
+ Add additional items to your cart to raise the total over 150. Your payment function should now hide the Cash on Delivery payment option.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > payment-customization.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Build a payment customization user interface with App Bridge.
+ Learn how to use variables in your input query.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Configure the function
+ Step 2: Populate the payment customization configuration metafield
+ Step 3: Test the payment customization
+ Next steps
+ Updates & News
+ Developer changelog

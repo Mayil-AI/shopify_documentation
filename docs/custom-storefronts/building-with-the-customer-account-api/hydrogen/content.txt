@@ -1,0 +1,410 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Overview
+ Getting started
+ Using Customer Account API with Hydrogen
+ Customers
+ Customer Account API reference
+ Additional SDKs
+ Using the Customer Account API with Hydrogen
+ This tutorial shows how to create a login button on a Hydrogen storefront that lets a customer authenticate using the Customer Account API. If the login succeeds, then the site displays a welcome message with their email address.
+ What you'll learn
+ After you've completed this tutorial, you'll be able to authenticate a Customer and make Customer Account API queries within a Hydrogen storefront.
+ Requirements
+ You have completed the Getting started with the Customer Account API guide.
+ You have completed Getting started with Hydrogen guide.
+ You've installed the Hydrogen or Headless sales channel.
+ Limitations
+ Multipass currently doesn't support Customer Account API. If you require single sign-on from an external website in your storefront, then you should use the code in our multipass example, which uses the legacy customer account flow.
+ mock.shop, which provides example product data, doesn't support the Customer Account API. You must use a production store's credentials to work with the Customer Account API.
+ Step 1: Set up a public domain for local development
+ Customer Account API authentication doesn't support the use of localhost due to security concerns. For development purposes, use a tunnelling service, such as ngrok.
+ In this step, you'll learn how to use ngrok to set up a public HTTPS domain that connects to your local Hydrogen application.
+ Set up ngrok
+ Install and run ngrok in your development environment.
+ Set up an ngrok account.
+ In your ngrok settings, add a static domain.
+ Install the ngrok CLI.
+ In a terminal, start ngrok using the following command:
+ Terminal
+ $ ngrok http --domain=<your-ngrok-domain> 3000
+ Add your ngrok domain to the content security policy
+ Modify your Hydrogen app’s content security policy to allow the development domain as a connect-src. Your content security policy is typically located in /app/entry.server.tsx.
+ /app/entry.server.tsx
+ 1 import {createContentSecurityPolicy} from '@shopify/hydrogen';
+ 2
+ 3 createContentSecurityPolicy({
+ 4
+    connectSrc: [
+ 5
+      // (ie. 'wss://<your-ngrok-domain>.app:*')
+ 6
+      'wss://<your-tunneled-host>:*',
+ 7
+    ],
+ 8 });
+ Step 2: Set up the environment
+ Configure the necessary Customer Account API settings in the Shopify admin so you can send the initial authentication request to Shopify.
+ Open the Customer Account API settings
+ In the Shopify admin, open the Hydrogen sales channel.
+ Click the storefront you're adding the customer account API functionality for.
+ Click Storefront settings.
+ Click Customer Account API to open the API settings.
+ Update the application setup
+ For the Customer Account API to recognize your domain as a valid authentication host, edit your Customer Account API settings.
+ Under Application setup, click Edit ✎ to edit the endpoints.
+ Under Callback URI(s), click Add Callback URI, and add your ngrok domain, with /account/authorize appended:
+ 1 https://<your-ngrok-domain>.app/account/authorize
+ This is the URI your application will redirect to to continue the OAuth process after a successful customer login.
+ Under JavaScript origin(s), click Add origin, and then add your ngrok domain.
+ Under Logout URI, click Add Logout URI, and then add your ngrok domain.
+ Setup the environment variables
+ The two environment variables needed to set up Customer Account API in your application are:
+ Variable Description Location
+ PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID A token prefixed with shp_ that represents a client secret used in all authentication requests. Customer Account API settings page > Customer Account API Credentials
+ PUBLIC_CUSTOMER_ACCOUNT_API_URL The target URI origin of authentication requests. For example: https://shopify.com/<your-shopify-store-id>. Customer Account API settings page > Application endpoints The URI is the common base URL of all the endpoints listed in the card.
+ Production storefront
+ When deploying to Oxygen, these variables are automatically created and used in your production environment.
+ Local development
+ When developing Hydrogen locally, store your environment variables in an .env file. You can automatically download the required variables with Shopify CLI:
+ Run npx shopify hydrogen link in your Hydrogen project to link it to your Shopify store.
+ Run npx shopify hydrogen env pull to download your environment variables and write them to your local .env file.
+ Step 3: Create the Customer Account API client
+ Create a new Customer Account API client in your server file using the createCustomerAccountClient utility.
+ Pass the new client to createCartHandler to ensure that the logged-in customer is persisted from your store through to checkout.
+ Pass the new client to the application's context so the utility can be accessed throughout the application.
+ Note
+ The Customer Account API client uses the latest version of the API by default. If you need to use a specific version, then you can specify the version when you create the client.
+ Create a Customer Account API client
+ JavaScript
+ TypeScript
+ server.js
+ 1 import * as remixBuild from '@remix-run/dev/server-build';
+ 2 import {
+ 3
+    createCartHandler,
+ 4
+    storefrontRedirect,
+ 5
+    createCustomerAccountClient,
+ 6 } from '@shopify/hydrogen';
+ 7 import {
+ 8
+    createRequestHandler,
+ 9 } from '@shopify/remix-oxygen';
+ 10 import {AppSession} from '~/lib/session';
+ 11
+ 12 export default {
+ 13
+    async fetch(
+ 14
+      request,
+ 15
+      env,
+ 16
+      executionContext,
+ 17
+    ) {
+ 18
+      try {
+ 19
+        const waitUntil = executionContext.waitUntil.bind(executionContext);
+ 20
+        const session = await AppSession.init(request, [env.SESSION_SECRET]);
+ 21
+ 22
+        const customerAccount = createCustomerAccountClient({
+ 23
+          waitUntil,
+ 24
+          request,
+ 25
+          session,
+ 26
+          customerAccountId: env.PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID,
+ 27
+          customerAccountUrl: env.PUBLIC_CUSTOMER_ACCOUNT_API_URL,
+ 28
+        });
+ 29
+ 30
+        const cart = createCartHandler({
+ 31
+          customerAccount,
+ 32
+          // additional options here
+ 33
+        });
+ 34
+ 35
+        const handleRequest = createRequestHandler({
+ 36
+          getLoadContext: () => ({
+ 37
+            customerAccount,
+ 38
+          }),
+ 39
+          // additional options here
+ 40
+        });
+ 41
+ 42
+        const response = await handleRequest(request);
+ 43
+ 44
+        if (response.status === 404) {
+ 45
+          return storefrontRedirect({request, response, storefront});
+ 46
+        }
+ 47
+ 48
+        return response;
+ 49
+      } catch (error) {
+ 50
+        console.error(error);
+ 51
+        return new Response('An unexpected error occurred', {status: 500});
+ 52
+      }
+ 53
+    },
+ 54 };
+ createCustomerAccountClient expects a session, implemented based on HydrogenSession, to persist auth tokens and the customer's logged-in state.
+ You can view an example of a Hydrogen session in the Hydrogen GitHub repo.
+ Step 4: Create auth routes
+ Your application requires three routes for customer login and logout operations.
+ The default routes are as follows:
+ /account/login: A route that redirects the user to a Shopify login.
+ /account/authorize: A route that authorizes the customer after they log in.
+ /account/logout: A route that logs the customer out.
+ Tip
+ If you chose to scaffold routes when creating your app, then your app already has the required routes in place. To generate a set of standard routes, including basic account-related functionality, run npx shopify hydrogen setup.
+ Create the login route
+ Follow the following steps to create a customer login route in your Hydrogen storefront:
+ In the routes folder, create a new file called account_.login.[js|ts].
+ In the new file, add the context.customerAccount.login() function in the loader.
+ This function is responsible for redirecting users to Shopify to log in.
+ Create a login route
+ JavaScript
+ TypeScript
+ account_.login.js
+ 1 export async function loader({context}) {
+ 2
+    return context.customerAccount.login();
+ 3 }
+ Note the use of underscore in account_.login.ts. This is to ensure that no layout is rendered when this route is accessed.
+ Tip
+ If you need to override the default behavior or change the login route location, then you can implement a customAuthStatusHandler. Review an example implementation.
+ Create the authorization route
+ Follow the following steps to create an auth route in your Hydrogen storefront:
+ In the routes folder, create a new file called account_.authorize.[js|ts].
+ In the new file, add the context.customerAccount.authorize() function in the loader.
+ After a successful login, Shopify redirects to this authorize route. It continues the OAuth process, exchanges the access token, and persists the result to your application session.
+ If you choose to place this route somewhere else in the application, then use the authUrl option with a relative url, and add the full public domain auth path in the Callback URI of the Customer Account API application setup
+ Create the authorize route
+ JavaScript
+ TypeScript
+ account_.authorize.js
+ 1 export async function loader({context}) {
+ 2
+    return context.customerAccount.authorize();
+ 3 }
+ At the end of this authorization step, the application redirects back to the page that initiated the login.
+ Use the customAuthStatusHandler option to change this behavior.
+ Create the logout route
+ Follow the following steps to create a logout route in your Hydrogen storefront:
+ In the routes folder, create a new file called account_.logout.[js|ts].
+ In the new file, add the context.customerAccount.logout() function in the action. Avoid including this function in the loader.
+ The logout action should be triggered by a user event, like clicking a logout button, not when a component is being loaded that can occur by page load or prefetching. This is because logging out is a significant action that can disrupt the user's workflow, so it should only happen when the user explicitly requests it.
+ Create a logout route
+ JavaScript
+ TypeScript
+ account_.logout.js
+ 1 export async function action({context}) {
+ 2
+    return context.customerAccount.logout();
+ 3 }
+ You can set up a redirect that takes place after the logout step using the admin setting in the application setup step.
+ Step 5: Query the Customer Account API
+ After you've set up your auth routes, you can start querying the Customer Account API.
+ In this step, you'll create a new account route that queries for a logged in customer's first and last name.
+ In the routes folder, create a new file called account.[jsx|tsx].
+ Add the following code.
+ This code fetches the customer's first and last name from their account. If the customer isn't logged in, calling query() will trigger an automatic redirect to the login page, and redirect back to current page at the end of the auth process.
+ Query customer data
+ JavaScript
+ TypeScript
+ account.jsx
+ 1 import {Form, useLoaderData} from '@remix-run/react';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3
+ 4 export async function loader({context}) {
+ 5
+    const {data, errors} = await context.customerAccount.query(`#graphql
+ 6
+        query getCustomer {
+ 7
+          customer {
+ 8
+            firstName
+ 9
+            lastName
+        `);
+ 13
+ 14
+    if (errors?.length || !data?.customer) {
+ 15
+      throw new Error('Customer not found');
+ 16
+    }
+ 17
+ 18
+    return json(
+ 19
+      {customer: data.customer},
+ 20
+      {
+ 21
+        headers: {
+ 22
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+ 23
+          'Set-Cookie': await context.session.commit(),
+ 24
+        },
+ 25
+      },
+ 26
+    );
+ 27 }
+ 28
+ 29 export default function () {
+ 30
+    const {customer} = useLoaderData();
+ 31
+ 32
+    return customer ? (
+ 33
+      <>
+ 34
+        <b>
+ 35
+          Welcome {customer.firstName} {customer.lastName}
+ 36
+        </b>
+ 37
+        <Form method="post" action="/logout">
+ 38
+          <button>Logout</button>
+ 39
+        </Form>
+ 40
+      </>
+ 41
+    ) :  null;
+ 42 }
+ Tip
+ You need to commit the session at the end of a loader/action with any customer logged in check.
+ A logged in check can trigger an access token refresh, which won't persist in your application unless session is committed to the Set-Cookie header.
+ The query and mutate functions follow GraphQL standards and return both data and errors objects. The errors object typically returns GraphQL errors such as a syntax error for querying for unknown field name.
+ Most of the time, the existence of the errors object means that the query isn't successful and there is nothing to show. However, during a mutation, it is possible to receive partial data while still experiencing errors.
+ You should always handle errors gracefully, either by showing a message to the user, or re-throwing them for your application's ErrorBoundary to catch.
+ Caution
+ Never cache Customer Account API data or store personally identifiable information (PII). Caching this type of data causes risk of unauthorized access or data breaches, compromising user privacy and security.
+ Step 6: Check the customer logged in state
+ You can check whether a visitor is logged in without triggering an automatic login redirect. For instance, you might want to conditionally display a Log in or Account details link in a menu.
+ In the root file of your application, add customerAccount.isLoggedIn() in the loader.
+ Return this promise using Remix's deferred data loading pattern. This allows the user interface to render before the login check is complete.
+ Note that you need to commit() the session at the end of any loader or action that checks a customer's logged-in state. This is because a logged-in check can trigger an access token refresh, which won't persist in your application unless the session is committed to the Set-Cookie header.
+ Check customer logged-in state
+ JavaScript
+ TypeScript
+ root.jsx
+ 1 import {defer} from '@shopify/remix-oxygen';
+ 2 import {Await, NavLink, useLoaderData} from '@remix-run/react';
+ 3 import {Suspense} from 'react';
+ 4
+ 5 export async function loader({context}) {
+ 6
+    const isLoggedInPromise = customerAccount.isLoggedIn();
+ 7
+ 8
+    return defer(
+ 9
+      {isLoggedInPromise},
+ 10
+      {
+ 11
+        headers: {
+ 12
+          'Set-Cookie': await context.session.commit(),
+ 13
+        },
+ 14
+      },
+ 15
+    );
+ 16 }
+ 17
+ 18 export default function App() {
+ 19
+    const {isLoggedInPromise} = useLoaderData();
+ 20
+ 21
+    return (
+ 22
+      <html lang="en">
+ 23
+        <body>
+ 24
+          <header className="header">
+ 25
+            <NavLink prefetch="intent" to="/account">
+ 26
+              <Suspense fallback="Sign in">
+ 27
+                <Await resolve={isLoggedInPromise} errorElement="Sign in">
+ 28
+                  {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
+ 29
+                </Await>
+ 30
+              </Suspense>
+ 31
+            </NavLink>
+ 32
+          </header>
+ 33
+          <!--Rest of the application-->
+ 34
+        </body>
+ 35
+      </html>
+ 36
+    );
+ 37 }
+ Next steps
+ Explore the GraphQL Customer Account API reference.
+ Explore the createCustomerAccountClient reference, including additional examples.
+ Explore an end-to-end Customer Account API implementation example in the default Hydrogen template.
+ Learn how to Manage customer accounts with the Customer Account API
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Limitations
+ Step 1: Set up a public domain for local development
+ Step 2: Set up the environment
+ Step 3: Create the Customer Account API client
+ Step 4: Create auth routes
+ Step 5: Query the Customer Account API
+ Step 6: Check the customer logged in state
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

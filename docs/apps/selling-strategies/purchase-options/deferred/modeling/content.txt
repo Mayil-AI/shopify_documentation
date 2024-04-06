@@ -1,0 +1,90 @@
+Shipping and delivery
+ Building your app
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Modeling deferred purchase option apps
+ This guide explains the lifecycle of a deferred purchase option app, high level tasks for building deferred purchase options in your app, prohibited actions, and the division of responsibilities between Shopify and apps.
+ Lifecycle of a deferred purchase option
+ The following diagram illustrates the lifecycle of a purchase option based on the actions of a merchant, a customer, Shopify, and your app:
+ The merchant creates a deferred purchase option through the app and adds products and variants to the deferred purchase option.
+ The customer purchases products with the deferred purchase option.
+ Shopify creates an order, and then creates the payment term and the fulfillment for the order. Shopify also vaults the payment method.
+ The customer can update their payment method in one of the following ways:
+ Use an optional interface for managing orders that are created by the app.
+ Ask the merchant to send them a payment email through the payment method component on the customer details page in the Shopify admin.
+ The app is responsible for capturing the remaining balance amount.
+ The app is responsible for updating Shopify's data with any fulfillment and payment term adjustments that are made in the app.
+ Building deferred purchase options in your app
+ Building deferred purchase options in your app includes the following tasks:
+ Plan setup
+ Plan purchase and checkout
+ Area Task
+ Plan setup Save purchase options
+ 
+ You can use the SellingPlanGroup and SellingPlan objects to store purchase options and associate them with products or variants. Regardless of whether your app has an internal representation of purchase options, you need to save the purchase options in Shopify using the SellingPlanGroup and SellingPlan objects.
+ 
+ Learn more about GraphQL Admin API objects for purchase options.
+ Set up app extensions
+ 
+ Your app should provide the experience for users to manage their purchase options. The app should implement an embedded UX that enables the user to set up purchase options directly from the product page, using an app extension.
+ 
+ If there aren't any app extensions to modify purchase options that are associated with a given product or variant, then the purchase options are listed in a read-only state on the product page in the Shopify admin.
+ Plan purchase and checkout Display purchase options in the purchase flow
+ 
+ Shopify provides Liquid objects and the Ajax API to enable theme developers to display the purchase options for a given product in the purchase flow. To purchase a product with a purchase option, a variant ID and a selling plan ID need to be submitted through the Cart API.
+ 
+ Learn more about how to implement subscriptions in a theme.
+ Display purchase options in the checkout
+ 
+ The Shopify checkout handles carts containing line items that have plans associated with them. It also handles pricing, messaging, payment method vaulting, and customer consent, which the user should customize to their needs.
+ Create subscription contracts
+ 
+ The subscription contract describes the agreement between merchant and customer. The agreement includes key information, like the variant, plan, payment method to be used for subsequent billing, and the billing and shipping addresses.
+ 
+ Shopify automatically creates subscription contracts when products with selling plans are purchased through checkout. The contract is detached from the original plan. Updating the original plan doesn't modify pre-existing subscription contracts.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Deferred purchase option apps must meet the following requirements:
+ The purchase option app must include an in-product mechanism to allow a merchant's customers to cancel or discontinue their purchase option.
+ Apps that offer pre-orders must communicate to a merchant's customers when there's a delay in the stated shipment time.
+ Apps that offer pre-orders obtain customer consent to delays that exceed 30 days if no shipping time is stated and include a mechanism to return the funds in case customer consent is not obtained.
+ Prohibited actions
+ Note
+ Any failure to avoid these prohibited actions constitutes a breach of the Shopify API License and Terms of Use.
+ The prohibited actions list isn't exhaustive and might be updated at any time.
+ The following are prohibited actions for all purchase options:
+ Vaulting payment methods: Don't vault payment methods for any purpose other than processing recurring or deferred payments.
+ Overbilling: A purchase option specifies how to bill a customer. Don't overbill a customer.
+ Unsupported usage: APIs are built to support only authorized purchase options, such as pre-orders, try before you buys, and subscriptions. Don't use the APIs to solve for other business use cases, such as installments, layaways, and crowdfunding campaigns.
+ Division of responsibilities between Shopify and apps
+ The division of responsibilities allows Shopify to provide a fully-integrated purchase option experience and enables apps to provide innovative user-facing workflows and purchase option management automation.
+ The following table describes the division of responsibilities between Shopify and deferred purchase option apps.
+ Deferred purchase options: Division of responsibilities between Shopify and apps
+ Responsibility Shopify App
+ Modeling and storing purchase option business data ✔
+ Collecting initial payments ✔
+ Storing payment methods ✔
+ Managing inventory ✔
+ Labeling whether the purchase option is a pre-order or try before you buy ✔
+ Handling trial and return periods for try before you buy purchases ✔
+ Providing a customer interface for managing orders with deferred payments ✔
+ Automating when to run a pre-order ✔
+ Charging customers on the balance due date ✔
+ Scheduling fulfillments ✔
+ Next steps
+ Learn how to manage deferred purchase options using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Lifecycle of a deferred purchase option
+ Building deferred purchase options in your app
+ Requirements
+ Prohibited actions
+ Division of responsibilities between Shopify and apps
+ Next steps
+ Updates & News
+ Developer changelog

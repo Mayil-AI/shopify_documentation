@@ -1,0 +1,150 @@
+Additional SDKs
+ Hydrogen and Oxygen project structure
+ Hydrogen and Oxygen make up Shopify's recommended stack for headless commerce. The different parts of the system work together to make it faster and easier to build and deploy headless Shopify stores.
+ Hydrogen: A set of components, utilities, and design patterns for working with with Shopify APIs.
+ Remix: The underlying framework that handles routing, data fetching, reactive UI, and styling.
+ Oxygen: Runs Hydrogen apps at the edge and handles rendering, caching, static assets, and event logging.
+ The following diagram is a simplified visualization of how the different parts of the Hydrogen and Oxygen stack work together:
+ Hydrogen app structure
+ A Hydrogen project starts with a standard Remix app. The following example shows the directory structure of the most basic Hydrogen app:
+ Directory structure
+ 1 hydrogen-project/
+ 2
+    ├── .env
+ 3
+    ├── .eslintignore
+ 4
+    ├── .eslintrc.js
+ 5
+    ├── .gitignore
+ 6
+    ├── .graphqlrc.yml
+ 7
+    ├── README.md
+ 8
+    ├── app/
+ 9
+    │   ├── components/
+ 10
+    │   ├── entry.client.jsx
+ 11
+    │   ├── entry.server.jsx
+ 12
+    │   ├── root.jsx
+ 13
+    │   ├── styles/
+ 14
+    │   └── utils.js
+ 15
+    ├── jsconfig.json
+ 16
+    ├── package-lock.json
+ 17
+    ├── package.json
+ 18
+    ├── public/
+ 19
+    │   └── favicon.svg
+ 20
+    ├── remix.config.js
+ 21
+    └── server.js
+ Key files to understand
+ server.js
+ This is your app’s main entry point. In Hydrogen, this file does the following important things:
+ It creates the API client that allows your app to query Shopify’s Storefront API.
+ It creates the handler that allows you to manage Hydrogen’s cart component.
+ It provides a cookie-based session management utility.
+ app/root.jsx
+ This is Hydrogen’s root route. It renders the HTML that wraps every page in your app, so it’s the recommended place to include global <link>, <meta>, or <script> tags. This file is also where you should define a Remix loader for any global data.
+ app/entry.client.jsx
+ This is the entry point for the browser bundle. This file allows you to control client-side hydration after JavaScript loads.
+ app/entry.server.jsx
+ This is the entry point for the server-side rendered response that gets sent to the browser. This file allows you to control the HTTP response code, headers, and HTML markup.
+ remix.config.js
+ The Remix configuration file controls options for local development and your project build step. This file doesn’t run on the production server.
+ public/
+ This is a directory for storing static assets like images and other static files. Everything within this directory gets uploaded to Shopify's CDN when you deploy to Oxygen.
+ Packages and dependencies
+ Hydrogen comes bundled with a set of dependencies that work together to make it easier to manage end-to-end app development and deployment. The following table presents some key packages to be aware of:
+ Package Description
+ @shopify/hydrogen The main Hydrogen package. It contains Remix-specific components and utilities that you use to build Hydrogen apps. This package extends @shopify/hydrogen-react, which contains framework-agnostic components. Learn more about Hydrogen React.
+ @shopify/hydrogen-cli The Hydrogen plugin for the Shopify CLI. Refer to the complete list of Hydrogen CLI commands.
+ @shopify/mini-oxygen The development server for Hydrogen apps. It aims to provide near-parity with the Oxygen hosting runtime that runs in production.
+ @shopify/remix-oxygen A Remix adapter that enables Hydrogen to be served on Shopify’s Oxygen hosting platform.
+ The Hydrogen channel
+ The Hydrogen channel is a sales channel that you install on your Shopify store. It coordinates all the various services and platforms that make up the Hydrogen and Oxygen stack. It also allows you to manage storefronts, environments, deployments, and monitoring through the Shopify admin.
+ The Hydrogen channel handles the following key tasks:
+ Enables a sales channel in which you can publish product inventory.
+ Enables access to the Oxygen hosting runtime.
+ Watches any connected GitHub repositories for code updates to deploy to Oxygen.
+ Allows you to manage deployment environments, including environment variables.
+ Provides event logging for individual deployments.
+ Shopify GitHub app
+ The Shopify GitHub app enables you to connect a GitHub account to your Shopify admin. This connection enables you to make and track changes to Hydrogen storefront code, and enables you to collaborate with other developers to share progress.
+ How it works
+ The Shopify GitHub integration enables you to connect your Hydrogen storefront code to the Oxygen hosting platform. When you push commits to a connected Git repository, the commits trigger a deployment with a preview URL to the environment, enabling you to quickly preview your changes throughout the development process.
+ Connection to GitHub
+ You can connect only one GitHub account to your Shopify login. After you connect your Shopify login to a GitHub account, your Shopify login can connect repositories and branches that the Shopify GitHub app has access to.
+ If multiple users need to manage connections to a repository, then each user needs to authorize the Shopify GitHub app for their own account.
+ To disconnect your GitHub account or organization from the Shopify store, you can uninstall the Shopify GitHub app through GitHub.
+ Tip
+ If you don’t have permission to install the app for your organization, then you can send a request for your administrator to approve the installation, or install it on your organization's behalf. You can’t connect any repositories until your administrator completes the installation.
+ Change a GitHub account into a GitHub organization
+ If you've changed your GitHub user into a GitHub organization while having the Shopify GitHub app installed, then you need to uninstall and reinstall the app so that Shopify can connect to new repositories.
+ GitHub permissions
+ The Shopify GitHub app requires the following permissions to access certain data in your GitHub account or organization:
+ Read-only access deployments, metadata
+ Read and Write access administration, code, pull requests, secrets, workflows
+ Note
+ Access to deployments, secrets, and workflows is necessary to support custom storefronts built with Hydrogen.
+ Limitations
+ Only repositories to which you have write access can be used to create a new storefront.
+ Outside collaborators can't connect repositories. Only members of the organization with write access can.
+ Personal repositories where you're a collaborator, but not the owner, aren't visible in the list of available repositories.
+ Repository connection management
+ If Shopify loses access to your GitHub repository, then your Hydrogen storefront will disconnect and new deployments to Oxygen will stop. Existing deployments aren't affected. You can reconnect to a GitHub repository from the Integrations page in your Hydrogen storefront's settings.
+ Shopify can lose a connection to a GitHub repository in the following ways:
+ Shopify GitHub app suspended or deleted
+ Shopify GitHub app's access to a repository removed
+ Repository deleted or archived
+ Repository transferred to another account
+ Oxygen hosting
+ Hydrogen is optimized for deployment to Oxygen, Shopify’s serverless edge hosting platform.
+ Oxygen is a worker-based JavaScript runtime that adapts web browser APIs to the server context. This means you can access standard web platform features such as the Fetch API, Cache API, HTTP Headers, Streams, the Web Crypto API, and more. Some Node.js APIs aren't available. Check Cloudflare's Node.js compatibility documentation for full details, or consult the complete list of Oxygen runtime features.
+ Supported plans
+ Oxygen is available at no extra charge for the following plans:
+ Basic
+ Shopify
+ Advanced
+ Shopify Plus
+ It's not supported on Starter plans or development stores.
+ Oxygen limitations
+ You can use Oxygen for hosting commerce storefronts. The platform is subject to the Shopify Acceptable Use Policy. Misuse or abuse of Oxygen might lead to throttling, suspension, or termination.
+ Built worker file limitations:
+ The worker file must be 10 MB or less.
+ The worker file must be named index.js. The optional source map file must be named index.js.map. This is the default behavior of Hydrogen's build command.
+ Workers are limited to 30 seconds of CPU time per request.
+ Workers can consume a maximum of 128 MB of memory. If your worker file exceeds this limit, then requests for your worker might get cancelled.
+ Static assets have maximum file sizes, based on the asset type:
+ Images: 20 MB
+ Videos: 1 GB
+ 3D models: 500 MB
+ Other files: 20 MB
+ Content Delivery Network
+ Oxygen uses Shopify's content delivery network to compress, convert, and serve your storefront's assets in an optimized way.
+ By default, when a Hydrogen storefront is built and deployed, any new assets are automatically deployed to Shopify's content delivery network, and any application references are converted to use the cdn.shopify.com domain.
+ Oxygen also attempts to serve assets on your storefront's domain for requests to paths like /.well-known/ and other files that need to be served from the same domain. If a request for an asset on the storefront domain can't be served, then Oxygen falls back to serving that storefront request from the Hydrogen app. Consult the complete list of Oxygen runtime features.
+ Next steps
+ Set up or customize your CI/CD workflows.
+ Manage your deployment environments.
+ Start working with Shopify API data in your Hydrogen app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Hydrogen app structure
+ Packages and dependencies
+ The Hydrogen channel
+ Shopify GitHub app
+ Oxygen hosting
+ Next steps

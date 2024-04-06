@@ -1,0 +1,60 @@
+Product subscription app extensions
+ Shopify API authentication
+ This guide introduces you to the authentication and authorization methods that you will use to connect to Shopify's APIs.
+ Admin API access for Shopify apps
+ You can use Shopify CLI to generate a starter app with boilerplate code that handles authentication and authorization. The starter app includes code for an embedded app that follows app best practices:
+ Authorizing your app using session tokens and token exchange.
+ Installing on stores using Shopify managed installation.
+ You should use this starter app unless you need to create an app that is not embedded.
+ Create an app
+ Create an app that follows all authentication and authorization best practices.
+ To learn more about the authentication and authorization methods that you can use for Shopify apps, and the libraries that you can use to simplify your implementation, refer to authentication and authorization.
+ Access tokens for the Storefront API
+ All Storefront API requests require a valid Shopify access token. The following types of tokens are available:
+ Public access tokens: Used to make requests from client-side applications, such as a browser or mobile app.
+ Private access tokens: Used to make requests from a server or other private context.
+ Apps can have a maximum of 100 active storefront access tokens per shop.
+ Getting started with public access
+ Public access tokens enable your app to make Storefront API requests from public contexts like a browser. With public access, capacity scales with the number of buyers based on customer IP. In most cases, this is the IP of someone browsing your site or using your mobile app. Learn more about Storefront API rate limits.
+ To use public access, you need to create a public access token for your app by making a request to the GraphQL Admin API's storefrontAccessTokenCreate mutation or the REST Admin API's StorefrontAccessToken resource. Alternatively, you can create a custom app in the Shopify admin, and retrieve your Storefront API access token and manage access scopes from there.
+ To query the Storefront API with a public access token, include it as an X-Shopify-Storefront-Access-Token header on all client-side requests.
+ Getting started with private access
+ Private access tokens let you make authenticated, server-side queries to the Storefront API.
+ Caution
+ Unlike public access tokens, private access tokens should be treated as secret and not used on the client-side. We recommend only requesting the scopes that your app needs, to reduce the security risk if the token leaks.
+ To start using private access, you can use the following methods:
+ Add the Headless channel to your Shopify admin.
+ Create a delegate access token for your custom app.
+ Request unauthenticated scopes on an existing access token.
+ Making server-side requests
+ To query the Storefront API with a private access token:
+ Include the Shopify-Storefront-Private-Token header with the private access token.
+ In some cases, a request to the Storefront API isn't linked to buyer traffic, such as during a static site build, however when making server-side requests to the Storefront API as a result of buyer traffic, be sure to also:
+ Include the Shopify-Storefront-Buyer-IP (case-sensitive) header with the IP address of the buyer. This allows Shopify to accurately enforce IP-level bot and platform protection, to help your storefront manage traffic from a single user consuming a high level of capacity, such as a bot.
+ Caution
+ Failure to include the Shopify-Storefront-Buyer-IP (case-sensitive) header, may result in Shopify throttling your API requests, as Shopify will not be able to differentiate requests from different buyers.
+ Tools
+ Shopify CLI
+ A command-line tool to help you build Shopify apps faster
+ shopify_api
+ Shopify’s official Ruby gem for interacting with the Admin API
+ shopify_python_api
+ Shopify’s official Python library for interacting with the Admin API
+ @shopify/shopify-api
+ Shopify’s official Node library for interacting with the Storefront and Admin APIs, handling OAuth, webhooks, and billing
+ @shopify/admin-api-client
+ Shopify’s official lightweight Node library for interacting with the Admin API
+ shopify/shopify-api
+ Shopify’s official PHP library for interacting with the Admin API
+ Next steps
+ Authenticate your embedded app using session tokens.
+ Authorize your embedded app using a session token with token exchange.
+ Authorize your app that is not embedded with authorization code grant.
+ Authenticate your app created in the Shopify admin with access tokens.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Admin API access for Shopify apps
+ Access tokens for the Storefront API
+ Tools
+ Next steps

@@ -1,0 +1,95 @@
+Billing
+ App Store
+ App-data metafields
+ An app-data metafield is a metafield that is tied to a particular app installation and can only be accessed by that app. App-data metafields can't be overwritten by other apps or by merchants, and can be accessed using GraphQL, similar to private metafields. Unlike private metafields, you can access app-data metafields using the metafields property on the app object in Liquid.
+ Using app-data metafields, you can provide different levels of features to users depending on their app payment plan by using app-data metafields and conditional app blocks. You can also store a client ID or client secret in app-data metafields.
+ This guide shows you how to create an app-data metafield using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Step 1: Retrieve the app installation ID
+ Use the currentAppInstallation query to retrieve the ID of the AppInstallation object associated with the app. You'll use this ID to create an app-data metafield in the next step.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    currentAppInstallation {
+ 3
+      id
+ 4
+    }
+ 5 }
+ Response
+ 1 {
+ 2
+    "data": {
+ 3
+      "currentAppInstallation": {
+ 4
+        "id": "gid://shopify/AppInstallation/123456"
+ 5
+      }
+ 6
+    }
+ 7 }
+ Step 2: Create an app-data metafield
+ To create an app-data metafield, use the metafieldSet mutation and set the ownerID to the app installation ID that you retrieved in the previous step:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateAppDataMetafield($metafieldsSetInput: [MetafieldsSetInput!]!) {
+ 2
+    metafieldsSet(metafields: $metafieldsSetInput) {
+ 3
+      metafields {
+ 4
+        id
+ 5
+        namespace
+ 6
+        key
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "metafieldsSetInput": [
+ 3
+      {
+ 4
+        "namespace": "secret_keys",
+ 5
+        "key": "api_key",
+ 6
+        "type": "single_line_text_field",
+ 7
+        "value": "aS1hbS1hLXNlY3JldC1hcGkta2V5Cg==",
+ 8
+        "ownerId": "gid://shopify/AppInstallation/3"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ After you've created an app-data metafield, you can access its value using the metafield field on the AppInstallation object.
+ Next steps
+ Use an app-data metafield to implement a conditional app block.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve the app installation ID
+ Step 2: Create an app-data metafield
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

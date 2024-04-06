@@ -1,0 +1,110 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Actions
+ Shopify App Bridge introduces a new concept of actions. An action provides a way for applications and hosts to trigger events with a payload.
+ Use the actions with plain JavaScript or take advantage of the App Bridge React library. This page provides an overview of both approaches.
+ Plain JavaScript
+ Using CDN-hosted App Bridge
+ The code examples in this section assume you’re using modular JavaScript patterns. If you're using the CDN-hosted version of Shopify App Bridge, then you can achieve the same results by replacing imports with objects on the window['app-bridge'] global.
+ Instead of:
+ 1 import { TitleBar } from '@shopify/app-bridge/actions';
+ Use:
+ 1 var AppBridge = window['app-bridge'];
+ 2 var actions = AppBridge.actions;
+ 3 var TitleBar = actions.TitleBar;
+ All other example code should function as-is.
+ Simple actions
+ Both hosts, such as the Shopify admin or Shopify POS, and apps can dispatch actions.
+ Example code
+ This example demonstrates the app setup and dispatching a Redirect action.
+ Import the createApp function from @shopify/app-bridge and the Redirect from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import { Redirect } from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp({
+ 5
+    apiKey: '12345',
+ 6
+    host: host
+ 7 });
+ 8
+ 9 // App dispatches a remote redirect action
+ 10 app.dispatch(
+ 11
+    Redirect.toRemote({
+ 12
+      url: 'http://example.com'
+ 13
+    })
+ 14 );
+ Action sets
+ Action sets group simple actions. Each instance of an action set has a unique ID that makes it possible for apps to subscribe to them. Think of action sets as a persisted set of actions that the app can dispatch or subscribe to at any time.
+ Example code
+ This example demostrates the use of a Toast action set.
+ 1 const toastNotice = Toast.create(app, toastOptions);
+ 2 toastNotice.subscribe(Toast.Action.SHOW, data => {
+ 3
+    // Do something with the show action
+ 4 });
+ 5
+ 6 toastNotice.subscribe(Toast.Action.CLEAR, data => {
+ 7
+    // Do something with the clear action
+ 8 });
+ 9
+ 10 // Dispatch the show Toast action, using the toastOptions above
+ 11 toastNotice.dispatch(Toast.Action.SHOW);
+ React
+ Shopify App Bridge offers React component wrappers for some actions. This is a great option if you are already using React and want to follow familiar patterns.
+ Like App Bridge itself, the App Bridge React component library is available as a JavaScript module on npm.
+ You can access the App Bridge client app inside App Bridge React using the React Context API. See the <Provider> component for more information.
+ Example code
+ This example demonstrates the app setup with React and using the React TitleBar component.
+ Import the Provider and TitleBar from @shopify/app-bridge-react. Create a configuration object with your client ID and host, then pass that object into the Provider.
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import React from 'react';
+ 2 import ReactDOM from 'react-dom';
+ 3 import {Provider, TitleBar} from '@shopify/app-bridge-react';
+ 4
+ 5 function MyApp() {
+ 6
+    const config = {
+ 7
+      // The client ID provided for your application in the Partner Dashboard.
+ 8
+      apiKey: "api_key",
+ 9
+      // The host of the specific shop that's embedding your app. This value is provided by Shopify as a URL query parameter that's appended to your application URL when your app is loaded inside the Shopify admin.
+ 10
+      host: "example.myshopify.com"
+ 11
+    };
+ 12
+ 13
+    return (
+ 14
+      <Provider config={config}>
+ 15
+        <TitleBar title="My page title"/>
+ 16
+      </Provider>
+ 17
+    );
+ 18 }
+ 19
+ 20 const root = document.createElement('div');
+ 21 document.body.appendChild(root);
+ 22 ReactDOM.createRoot(root).render(<MyApp />);
+ Using App Bridge React with Polaris
+ App Bridge React is fully compatible with Polaris. While App Bridge provides access to features outside of your app, Polaris provides components to build within your app. To use both together, wrap your app in both Polaris’s <AppProvider> component as well as App Bridge React’s <Provider> component.
+ See the <Provider> component for more information.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Using App Bridge React with Polaris

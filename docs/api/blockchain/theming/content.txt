@@ -1,0 +1,415 @@
+Components
+ Theming
+ Analytics
+ Liquid
+ Ajax API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Theming
+ We understand the need to customize the appearance of your blockchain components. Because of this, we've included the ability to customize nearly every aspect of every component.
+ Colors
+ Background colors
+ Variable name Description Default value Affects
+ --sbc-bg-address-chip The background color of the copy address button located within the connected wallet button popover component. #FAFBFB --
+ --sbc-bg-address-chip-hover The background color of the copy address button located within the connected wallet button popover component when hovered. #F6F6F7 --
+ --sbc-bg-button-disabled The background color of a disabled button. #F1F1F1 The "Available Soon" and "Sold Out" buttons from @shopify/tokengate.
+ --sbc-bg-button-disabled-hover The background color of a disabled button when hovered. #F1F1F1 The "Available Soon" and "Sold Out" buttons from @shopify/tokengate.
+ --sbc-bg-button-primary The background color of a primary button. #202223 ConnectButton
+ --sbc-bg-button-primary-hover The background color of a primary button when hovered. #44474A ConnectButton
+ --sbc-bg-button-secondary The background color of a secondary button. #FFFFFF All buttons (excluding icon buttons) located within the @shopify/connect-wallet modal.
+ --sbc-bg-button-secondary-hover The background color of a secondary button when hovered. #F6F6F7 All buttons (excluding icon buttons) located within the @shopify/connect-wallet modal.
+ --sbc-bg-divider The background color of a divider element. #E1E3E5 The logic (AND, OR) separator in the @shopify/tokengate component.
+ 
+ The dividers between the wallets displayed in the "Get A Wallet" screen located within @shopify/connect-wallet modal.
+ --sbc-bg-overlay The background color of body overlay elements. rgba(18, 18, 18, 0.2) The background that covers the entire page when the Modal from @shopify/connect-wallet is open
+ 
+ The background that covers the entire page when the connected wallet popover is open on mobile devices.
+ --sbc-bg-popover The background color of popover components. #FFFFFF Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-bg-skeleton The background color of skeleton components. #E4E5E7 SkeletonDisplayText
+ 
+ SkeletonThumbnail
+ --sbc-bg-tokengate The background color of the tokengate component. #FFFFFF Tokengate
+ Border colors
+ Variable name Description Default value Affects
+ --sbc-border-color-button-disabled The background color of a disabled button. #202223 The "Available Soon" and "Sold Out" buttons from @shopify/tokengate.
+ --sbc-border-color-button-primary The background color of a primary button. unset ConnectButton
+ --sbc-border-color-button-secondary The background color of a secondary button. #C9CCCF All buttons (excluding icon buttons) located within the @shopify/connect-wallet modal.
+ --sbc-border-color-divider The background color of a divider element. #E1E3E5 The dividers between the wallets displayed in the "Get A Wallet" screen located within @shopify/connect-wallet modal.
+ 
+ Note: This does not affect the logic separator in the @shopify/tokengate package.
+ --sbc-border-color-popover The background color of popover components. unset Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-border-color-tokengate The background color of the tokengate component. rgba(0, 0, 0, 0.12) Tokengate
+ SVG fill colors
+ Variable name Description Default value Affects
+ --sbc-fill-qrcode-foreground The foreground color of a QR code. #202223 The QR code displayed when connecting with a connector that supports QR codes.
+ --sbc-fill-qrcode-background The background color of a QR code. #FFFFFF The QR code displayed when connecting with a connector that supports QR codes.
+ Text colors
+ Variable name Description Default value Affects
+ --sbc-text-color-address-chip The text color of the address and icon in the copy address button located within the connected wallet button popover component. #202223 --
+ --sbc-text-color-button-disabled The text color of a disabled button. #8C9196 The "Available Soon" and "Sold Out" buttons from @shopify/tokengate.
+ --sbc-text-color-button-primary The text color of a primary button. #FFFFFF ConnectButton
+ --sbc-text-color-button-secondary The text color of a secondary button. #202223 All buttons (excluding icon buttons) located within the @shopify/connect-wallet modal.
+ --sbc-text-color-critical The text color for error states. #D72C0D The text displayed when an error occurs after signing a message request.
+ --sbc-text-color-primary The text color of primary text elements. #202223 All headings.
+ --sbc-text-color-secondary The text color of secondary text elements. #6D7175 Back, close, and help icons in @shopify/connect-wallet modal
+ 
+ Descriptions in "What is a wallet?" modal screen
+ 
+ Body text in Connecting and Sign message modal screens.
+ 
+ Subheadings in @shopify/tokengate.
+ Borders
+ Border radius
+ Variable name Description Default value Affects
+ --sbc-border-radius-button-large The border radius for large buttons. 6px ConnectButton
+ 
+ All buttons (except for those mentioned in --sbc-border-radius-button-small) in @shopify/connect-wallet modal.
+ 
+ "Available Soon" and "Sold out" buttons from @shopify/tokengate
+ --sbc-border-radius-button-medium The border radius for medium buttons. 6px The disconnect button in the connected wallet button popover component.
+ 
+ Any "Retry" buttons in the @shopify/connect-wallet modal.
+ --sbc-border-radius-button-small The border radius for small buttons. 6px The "Get" buttons in the "Get A Wallet" screen located within @shopify/connect-wallet modal.
+ --sbc-border-radius-popover-desktop The border radius for popover components on desktop-sized devices (>= 640px). 16px Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-border-radius-popover-mobile The border radius for popover components on mobile-sized devices (< 640px). 32px 32px 0px 0px Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-border-radius-qrcode The border radius for QR codes displayed in @shopify/connect-wallet 16px The QR code displayed when connecting with a connector that supports QR codes.
+ --sbc-border-radius-tokengate The border radius of the tokengate component. 8px Tokengate
+ Border style
+ Variable name Description Default value Affects
+ --sbc-border-style-button-disabled The border style of a disabled button. unset The "Available Soon" and "Sold Out" buttons from @shopify/tokengate.
+ --sbc-border-style-button-primary The border style of a primary button. unset ConnectButton
+ --sbc-border-style-button-secondary The border style of a secondary button. solid All buttons (excluding icon buttons) located within the @shopify/connect-wallet modal.
+ --sbc-border-style-divider The border style of a divider element. solid The dividers between the wallets displayed in the "Get A Wallet" screen located within @shopify/connect-wallet modal.
+ 
+ Note: This does not affect the logic separator in the @shopify/tokengate package.
+ --sbc-border-style-popover The border style of popover components. unset Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-border-style-tokengate The border style of the tokengate component. solid Tokengate
+ Border width
+ Variable name Description Default value Affects
+ --sbc-border-width-button-disabled The border width of a disabled button. 0px The "Available Soon" and "Sold Out" buttons from @shopify/tokengate.
+ --sbc-border-width-button-primary The border width of a primary button. 0px ConnectButton
+ --sbc-border-width-button-secondary The border width of a secondary button. 1px All buttons (excluding icon buttons) located within the @shopify/connect-wallet modal.
+ --sbc-border-width-divider The border width of a divider element. 1px The dividers between the wallets displayed in the "Get A Wallet" screen located within @shopify/connect-wallet modal.
+ 
+ Note: This does not affect the logic separator in the @shopify/tokengate package.
+ --sbc-border-width-popover The border width of popover components. 0px Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-border-width-tokengate The border width of the tokengate component. 1px Tokengate
+ Fonts
+ Font family
+ Note
+ The default font-family value is: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji".
+ Variable name Description Default value Affects
+ --sbc-font-family-body-lg The font family of all body-lg text elements. Reference default value noted above ConnectButton
+ 
+ Connected wallet address chip text
+ 
+ Connector buttons
+ 
+ TokenList titles
+ --sbc-font-family-body-md The font family of all body-md text elements. Reference default value noted above Tokengate subheader
+ 
+ Tokengate error state (no unlocking tokens)
+ 
+ Tokengate sold out state (below sold out button)
+ 
+ TokenList subtitle
+ --sbc-font-family-body-sm The font family of all body-sm text elements. Reference default value noted above Tokengate logic (AND, OR) separator
+ 
+ TokenList order limit
+ --sbc-font-family-heading-lg The font family of all heading-lg text elements. Reference default value noted above Connecting modal screen title ("Connect with...")
+ 
+ Signature request modal screen title ("Sign with...")
+ --sbc-font-family-heading-md The font family of all heading-md text elements. Reference default value noted above Modal header
+ 
+ Tokengate title
+ --sbc-font-family-heading-sm The font family of all heading-sm text elements. Reference default value noted above "What are wallets?" modal screen ListItem titles
+ Font size
+ Variable name Description Default value Affects
+ --sbc-font-size-body-lg The font size of all body-lg text elements. 1rem ConnectButton
+ 
+ Connected wallet address chip text
+ 
+ Connector buttons
+ 
+ TokenList titles
+ --sbc-font-size-body-md The font size of all body-md text elements. 0.875rem Tokengate subheader
+ 
+ Tokengate error state (no unlocking tokens)
+ 
+ Tokengate sold out state (below sold out button)
+ 
+ TokenList subtitle
+ --sbc-font-size-body-sm The font size of all body-sm text elements. 0.75rem Tokengate logic (AND, OR) separator
+ 
+ TokenList order limit
+ --sbc-font-size-heading-lg The font size of all heading-lg text elements. 1.5rem Connecting modal screen title ("Connect with...")
+ 
+ Signature request modal screen title ("Sign with...")
+ --sbc-font-size-heading-md The font size of all heading-md text elements. 1.25rem Modal header
+ 
+ Tokengate title
+ --sbc-font-size-heading-sm The font size of all heading-sm text elements. 1rem "What are wallets?" modal screen ListItem titles
+ Font weight
+ Variable name Description Default value Affects
+ --sbc-font-weight-body-lg The font weight of all body-lg text elements. 500 ConnectButton
+ 
+ Connected wallet address chip text
+ 
+ Connector buttons
+ 
+ TokenList titles
+ --sbc-font-weight-body-md The font weight of all body-md text elements. 400 Tokengate subheader
+ 
+ Tokengate error state (no unlocking tokens)
+ 
+ Tokengate sold out state (below sold out button)
+ 
+ TokenList subtitle
+ --sbc-font-weight-body-sm The font weight of all body-sm text elements. 400 Tokengate logic (AND, OR) separator
+ 
+ TokenList order limit
+ --sbc-font-weight-heading-lg The font weight of all heading-lg text elements. 600 Connecting modal screen title ("Connect with...")
+ 
+ Signature request modal screen title ("Sign with...")
+ --sbc-font-weight-heading-md The font weight of all heading-md text elements. 600 Modal header
+ 
+ Tokengate title
+ --sbc-font-weight-heading-sm The font weight of all heading-sm text elements. 500 "What are wallets?" modal screen ListItem titles
+ Line height
+ Variable name Description Default value Affects
+ --sbc-line-height-body-lg The font size of all body-lg text elements. 1.25rem ConnectButton
+ 
+ Connected wallet address chip text
+ 
+ Connector buttons
+ 
+ TokenList titles
+ --sbc-line-height-body-md The font size of all body-md text elements. 1.25rem Tokengate subheader
+ 
+ Tokengate error state (no unlocking tokens)
+ 
+ Tokengate sold out state (below sold out button)
+ 
+ TokenList subtitle
+ --sbc-line-height-body-sm The font size of all body-sm text elements. 1rem Tokengate logic (AND, OR) separator
+ 
+ TokenList order limit
+ --sbc-line-height-heading-lg The font size of all heading-lg text elements. 1.75rem Connecting modal screen title ("Connect with...")
+ 
+ Signature request modal screen title ("Sign with...")
+ --sbc-line-height-heading-md The font size of all heading-md text elements. 1.5rem Modal header
+ 
+ Tokengate title
+ --sbc-line-height-heading-sm The font size of all heading-sm text elements. 1.25rem "What are wallets?" modal screen ListItem titles
+ Padding
+ Variable name Description Default value Affects
+ --sbc-padding-button-large The padding of large buttons. 14px 20px ConnectButton
+ 
+ All buttons (except for those mentioned in --sbc-border-radius-button-small) in @shopify/connect-wallet modal.
+ 
+ "Available Soon" and "Sold out" buttons from @shopify/tokengate
+ --sbc-padding-button-medium The padding of medium buttons. 10px 16px The disconnect button in the connected wallet button popover component.
+ 
+ Any "Retry" buttons in the @shopify/connect-wallet modal.
+ --sbc-padding-button-small The padding of small buttons. 6px 12px The "Get" buttons in the "Get A Wallet" screen located within @shopify/connect-wallet modal.
+ --sbc-padding-popover The padding of popover components. 24px Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-padding-tokengate The padding of the tokengate component. 20px Tokengate
+ Shadows
+ Variable name Description Default value Affects
+ --sbc-box-shadow-popover-desktop The box shadow of popover components on desktop-sized devices (>= 640px). 0px 3px 6px -3px rgba(23, 24, 24, 0.08), 0px 8px 20px -4px rgba(23, 24, 24, 0.12) Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-box-shadow-popover-mobile The box shadow of popover components on mobile-sized devices (< 640px). 0px 0px 1px rgba(0, 0, 0, 0.2), 0px 26px 80px rgba(0, 0, 0, 0.2) Connect wallet modal
+ 
+ Connected wallet button popover
+ --sbc-box-shadow-tokengate The box shadow of the tokengate component. unset Tokengate
+ All variables
+ A quick way to copy all variables (with their default values), into your style sheet.
+ 1 root: {
+ 2
+    --sbc-bg-address-chip: #FAFBFB;
+ 3
+    --sbc-bg-address-chip-hover: #F6F6F7;
+ 4
+    --sbc-bg-button-disabled: #F1F1F1;
+ 5
+    --sbc-bg-button-disabled-hover: #F1F1F1;
+ 6
+    --sbc-bg-button-primary: #202223;
+ 7
+    --sbc-bg-button-primary-hover: #44474A;
+ 8
+    --sbc-bg-button-secondary: #FFFFFF;
+ 9
+    --sbc-bg-button-secondary-hover: #F6F6F7;
+ 10
+    --sbc-bg-divider: #E1E3E5;
+ 11
+    --sbc-bg-overlay: rgba(18, 18, 18, 0.2);
+ 12
+    --sbc-bg-popover: #FFFFFF;
+ 13
+    --sbc-bg-skeleton: #E4E5E7;
+ 14
+    --sbc-bg-tokengate: #FFFFFF;
+ 15
+    --sbc-border-color-button-disabled: #202223;
+ 16
+    --sbc-border-color-button-primary: unset;
+ 17
+    --sbc-border-color-button-secondary: #C9CCCF;
+ 18
+    --sbc-border-color-divider: #E1E3E5;
+ 19
+    --sbc-border-color-popover: unset;
+ 20
+    --sbc-border-color-tokengate: rgba(0, 0, 0, 0.12);
+ 21
+    --sbc-border-radius-button-large: 6px;
+ 22
+    --sbc-border-radius-button-medium: 6px;
+ 23
+    --sbc-border-radius-button-small: 6px;
+ 24
+    --sbc-border-radius-popover-desktop: 16px;
+ 25
+    --sbc-border-radius-popover-mobile: 32px 32px 0px 0px;
+ 26
+    --sbc-border-radius-qrcode: 16px;
+ 27
+    --sbc-border-radius-tokengate: 8px;
+ 28
+    --sbc-border-style-button-disabled: unset;
+ 29
+    --sbc-border-style-button-primary: unset;
+ 30
+    --sbc-border-style-button-secondary: solid;
+ 31
+    --sbc-border-style-divider: solid;
+ 32
+    --sbc-border-style-divider: solid;
+ 33
+    --sbc-border-style-popover: unset;
+ 34
+    --sbc-border-style-tokengate: solid;
+ 35
+    --sbc-border-width-button-disabled: 0px;
+ 36
+    --sbc-border-width-button-primary: 0px;
+ 37
+    --sbc-border-width-button-secondary: 1px;
+ 38
+    --sbc-border-width-divider: 1px;
+ 39
+    --sbc-border-width-popover: 0px;
+ 40
+    --sbc-border-width-tokengate: 1px;
+ 41
+    --sbc-box-shadow-popover-desktop: 0px 3px 6px -3px rgba(23, 24, 24, 0.08), 0px 8px 20px -4px rgba(23, 24, 24, 0.12);
+ 42
+    --sbc-box-shadow-popover-mobile: 0px 0px 1px rgba(0, 0, 0, 0.2), 0px 26px 80px rgba(0, 0, 0, 0.2);
+ 43
+    --sbc-box-shadow-tokengate: unset;
+ 44
+    --sbc-fill-qrcode-foreground: #202223;
+ 45
+    --sbc-fill-qrcode-background: #FFFFFF;
+ 46
+    --sbc-font-family-body-lg: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+ 47
+    --sbc-font-family-body-md: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+ 48
+    --sbc-font-family-body-sm: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+ 49
+    --sbc-font-family-heading-lg: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+ 50
+    --sbc-font-family-heading-md: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+ 51
+    --sbc-font-family-heading-sm: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+ 52
+    --sbc-font-size-body-lg: 1rem;
+ 53
+    --sbc-font-size-body-md: 0.875rem;
+ 54
+    --sbc-font-size-body-sm: 0.75rem;
+ 55
+    --sbc-font-size-heading-lg: 1.5rem;
+ 56
+    --sbc-font-size-heading-md: 1.25rem;
+ 57
+    --sbc-font-size-heading-sm: 1rem;
+ 58
+    --sbc-font-weight-body-lg: 500;
+ 59
+    --sbc-font-weight-body-md: 400;
+ 60
+    --sbc-font-weight-body-sm: 400;
+ 61
+    --sbc-font-weight-heading-lg: 600;
+ 62
+    --sbc-font-weight-heading-md: 600;
+ 63
+    --sbc-font-weight-heading-sm: 500;
+ 64
+    --sbc-line-height-body-lg: 1.25rem;
+ 65
+    --sbc-line-height-body-md: 1.25rem;
+ 66
+    --sbc-line-height-body-sm: 1rem;
+ 67
+    --sbc-line-height-heading-lg: 1.75rem;
+ 68
+    --sbc-line-height-heading-md: 1.5rem;
+ 69
+    --sbc-line-height-heading-sm: 1.25rem;
+ 70
+    --sbc-padding-button-large: 14px 20px;
+ 71
+    --sbc-padding-button-medium: 10px 16px;
+ 72
+    --sbc-padding-button-small: 6px 12px;
+ 73
+    --sbc-padding-popover: 24px;
+ 74
+    --sbc-padding-tokengate: 20px;
+ 75
+    --sbc-text-color-address-chip: #202223;
+ 76
+    --sbc-text-color-button-disabled: #8C9196;
+ 77
+    --sbc-text-color-button-primary: #FFFFFF;
+ 78
+    --sbc-text-color-button-secondary: #202223;
+ 79
+    --sbc-text-color-critical: #D72C0D;
+ 80
+    --sbc-text-color-disabled: #8C9196;
+ 81
+    --sbc-text-color-primary: #202223;
+ 82
+    --sbc-text-color-secondary: #6D7175;
+ 83 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Colors
+ Borders
+ Fonts
+ Padding
+ Shadows
+ All variables

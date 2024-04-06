@@ -1,0 +1,130 @@
+Get access tokens
+ Access token types
+ Online tokens
+ Offline tokens
+ Generate access tokens for admin custom apps
+ Delegate tokens
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Access tokens for custom apps in the Shopify admin
+ You can create a custom app for a store directly in the Shopify admin. To authenticate an admin-created custom app, you or the app user needs to install the app from the Shopify admin to generate API credentials and the necessary API access tokens.
+ Note
+ This guide applies only to custom apps that were created in the Shopify admin. If you created a custom storefront with the Headless channel in the Shopify admin, then Shopify creates public and private access tokens for you. For more information, refer to Getting started with the Storefront API. If you created a custom app in the Partner Dashboard or with Shopify CLI, then you should use token exchange if your app is embedded and authorization code grant if it is not.
+ Requirements
+ You or the app user you're working with has created a Shopify store.
+ If you have a staff or collaborator account on a user's store, then make sure that the user gives you the relevant permissions to create a custom app and assign API scopes.
+ You understand how apps fit into Shopify and the different ways that you can distribute your app.
+ You're familiar with the different methods of authenticating and authorizing apps with Shopify’s platform.
+ Step 1: Create and install the app
+ You or the user can create and install a custom app in the Shopify admin by following the Custom apps documentation on the Shopify Help Center.
+ Step 2: Make authenticated requests
+ A custom app can make authenticated requests to the REST Admin API or the GraphQL Admin API using the API access tokens that are generated when the app is installed on the store.
+ The following examples show how to retrieve a list of products using the GraphQL Admin API and the REST Admin API.
+ Terminal
+ GraphQL
+ REST
+ 1 curl -X POST \
+ 2
+    https://{shop}.myshopify.com/admin/api/2024-04/graphql.json \
+ 3
+    -H 'Content-Type: application/json' \
+ 4
+    -H 'X-Shopify-Access-Token: {access_token}' \
+ 5
+    -d '{
+ 6
+      "query": "query {
+ 7
+        products(first: 5) {
+ 8
+          edges {
+ 9
+            node {
+ 10
+              id
+ 11
+              handle
+ 12
+            }
+ 13
+          }
+ 14
+          pageInfo {
+ 15
+            hasNextPage
+ 16
+          }
+ 17
+        }
+ 18
+      }"
+ 19
+    }'
+ Rotating API credentials for admin-created apps
+ To rotate the API credentials for a custom app that was created in the Shopify admin, you need to uninstall and reinstall the app. To uninstall and reinstall your app, refer to the Custom apps documentation on the Shopify Help Center.
+ Caution
+ Because you need to uninstall and reinstall the app to rotate the API credentials, requests and webhooks for your app will be interrupted until you put the new credentials into your app's code.
+ If you want to rotate access tokens for a custom storefront that you build with the Headless channel, refer to the documentation on rotating private access tokens in the Shopify admin.
+ Changing API scopes
+ Anyone with a staff or collaborator account on a store can change what store resources an admin-created custom app can access, but only if they have all the following permissions:
+ the Manage and install apps and channels permission and the Develop apps permission
+ the relevant permissions for the respective store resource
+ For example, if a staff or collaborator account has the View or manage products, variants, and collections permission for the store, then they can only change API scopes related to the store's products, variants, and collections.
+ The store owner can change the permissions for a staff or collaborator account in the Shopify admin.
+ Permissions required to assign scopes to a custom app
+ The following table shows what store permissions a staff account or collaborator account needs to assign Admin API access scopes to an admin-created custom app. In all cases, the account must also have the Develop apps permission.
+ Admin API scope name Permissions required for the staff or collaborator account
+ read_analytics View store metrics
+ read_assigned_fulfillment_orders, write_assigned_fulfillment_orders View or manage fulfillment orders
+ read_customer_merge, write_customer_merge View or manage customer profile merges
+ read_customers, write_customers View or manage customers, customer addresses, order history, and customer groups
+ read_discounts, write_discounts View or manage automatic discounts and discount codes
+ read_draft_orders, write_draft_orders View or manage orders created by app users on behalf of customers
+ read_files, write_files View or manage files
+ read_fulfillments, write_fulfillments View or manage fulfillment services
+ read_gdpr_data_request View GDPR data requests
+ read_gift_cards, write_gift_cards View or manage gift cards (Available to Plus merchants only)
+ read_inventory, write_inventory View or manage inventory across multiple locations
+ read_legal_policies, write_legal_policies View or manage a shop’s legal policies
+ read_locations View the geographic location of stores, headquarters, and warehouses
+ read_marketing_events, write_marketing_events View or manage marketing events and engagement data
+ read_merchant_managed_fulfillment_orders, write_merchant_managed_fulfillment_orders View or manage fulfilment orders assigned to merchant-managed locations
+ read_metaobject_definitions, write_metaobject_definitions View or manage metaobject definitions
+ read_metaobjects, write_metaobjects View or manage metaobject entries
+ read_online_store_navigation View menus for display on the storefront
+ read_online_store_pages, write_online_store_pages View or manage Online Store pages
+ read_order_edits, write_order_edits View or manage edits to orders
+ read_orders, write_orders, read_all_orders View or manage orders, transactions, fulfillments, and abandoned checkouts from the last 60 days, or View all past and future orders
+ read_price_rules, write_price_rules View or manage conditional discounts
+ read_products, write_products View or manage products, variants, and collections
+ read_product_listings, write_product_listings View or manage product or collection listings
+ read_reports, write_reports View or manage reports on the Reports page in the Shopify admin
+ read_resource_feedbacks, write_resource_feedbacks View or manage the status of shops and resources
+ read_script_tags, write_script_tags View or manage the JavaScript code in storefront or orders status pages
+ read_shipping, write_shipping View or manage shipping carriers, countries, and provinces
+ read_shopify_payments_accounts View Shopify Payments accounts
+ read_shopify_payments_bank_accounts View bank accounts that can receive Shopify Payment payouts
+ read_shopify_payments_disputes View Shopify Payment disputes raised by buyers
+ read_shopify_payments_payouts View Shopify Payments payouts and the account’s current balance
+ read_content, write_content View or manage articles, blogs, comments, pages, and redirects
+ read_themes, write_themes View or manage theme templates and assets
+ read_third_party_fulfillment_orders, write_third_party_fulfillment_orders View or manage fulfillment orders assigned to a location managed by any fulfillment service
+ read_translations, write_translations View or manage content that can be translated
+ Next steps
+ Learn how to configure a webhook for your app and manage webhooks for different API versions.
+ Explore the GraphQL Admin API and REST Admin API references.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create and install the app
+ Step 2: Make authenticated requests
+ Rotating API credentials for admin-created apps
+ Changing API scopes
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

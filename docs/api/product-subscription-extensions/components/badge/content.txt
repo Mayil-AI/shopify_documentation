@@ -1,0 +1,35 @@
+TextField
+ Thumbnail
+ Badge
+ Badges are used to inform merchants of the status of an object, or the status of an action that’s been taken.
+ JavaScript
+ React
+ 1 import {extend, Badge} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const badge = root.createComponent(Badge, {
+ 5
+      message: 'Example message',
+ 6
+      status: 'success',
+ 7
+    });
+ 8
+ 9
+    root.appendChild(badge);
+ 10
+    root.mount();
+ 11 });
+ Props
+ optional = ?
+ Name Type Description
+ message string The content to display inside the badge.
+ status? "success" | "info" | "attention" | "warning" | "new" Set the colour of the badge for the given status. Default value: none
+ Guidelines
+ ✅ Do 🛑 Don't
+ Use Badges to display the status of an object Use Badges without context, or as singular objects
+ Use Badges to represent discrete information
+ Have clear and helpful relationship to the content or task they represent
+ Badges can be stacked horizontally
+ For more guidelines, refer to Polaris' Badge best practices.

@@ -1,0 +1,485 @@
+Overview
+ Create a subscription contract
+ Update a subscription contract
+ Billing cycles
+ Orders
+ App Store
+ Update a subscription contract
+ Subscription contracts often require updates, such as when a customer needs to update their payment method or requests a change to their subscription.
+ This guide shows you how to manage and update your existing subscription contracts by creating and applying a discount code to a contract.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_own_subscription_contracts and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ You've created a subscription contract.
+ Step 1: Query the available contracts on the store
+ To view the available contracts on a store, you can query subscriptionContracts. In the following example, the response body returns the first ten available contracts, including the status of the contract and information about the customer, billing policy, and delivery policy.
+ For a list of possible statuses, refer to SubscriptionContractSubscriptionStatus.
+ Note
+ Importing past events on a subscription contract isn't supported.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    subscriptionContracts(first: 10) {
+ 3
+      edges {
+          createdAt
+ 7
+          status
+ 8
+          nextBillingDate
+ 9
+          customer {
+ 10
+            firstName
+ 11
+            lastName
+ 12
+          }
+ 13
+          billingPolicy {
+ 14
+            interval
+ 15
+            intervalCount
+ 16
+          }
+ 17
+          deliveryPolicy {
+ 18
+            interval
+ 19
+            intervalCount
+ 20
+          }
+ 21
+        }
+ 22
+      }
+ 23
+    }
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionContracts": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/SubscriptionContract/1",
+ 8
+              "createdAt": "2022-10-01T19:01:46Z",
+ 9
+              "status": "ACTIVE",
+ 10
+              "nextBillingDate": "2020-10-15T00:00:00Z",
+ 11
+              "customer": {
+ 12
+                "firstName": "John",
+ 13
+                "lastName": "Smith"
+ 14
+              },
+ 15
+              "billingPolicy": {
+ 16
+                "interval": "MONTH",
+ 17
+                "intervalCount": 3
+ 18
+              },
+ 19
+              "deliveryPolicy": {
+ 20
+                "interval": "MONTH",
+ 21
+                "intervalCount": 1
+ 22
+              }
+ 23
+            }
+ 24
+          },
+ 25
+          {
+ 26
+            "node": {
+ 27
+              "id": "gid://shopify/SubscriptionContract/2",
+ 28
+              "createdAt": "2022-10-01T19:04:15Z",
+ 29
+              "status": "ACTIVE",
+ 30
+              "nextBillingDate": "2022-10-15T00:00:00Z",
+ 31
+              "customer": {
+ 32
+                "firstName": "Jane",
+ 33
+                "lastName": "Smith"
+ 34
+              },
+ 35
+              "billingPolicy": {
+ 36
+                "interval": "MONTH",
+ 37
+                "intervalCount": 3
+ 38
+              },
+ 39
+              "deliveryPolicy": {
+ 40
+                "interval": "MONTH",
+ 41
+                "intervalCount": 1
+ 42
+              }
+ 43
+            }
+ 44
+          }
+ 45
+        ]
+ 46
+      }
+ 47
+    },
+ 48
+    "extensions": {
+ 49
+      "cost": {
+ 50
+        "requestedQueryCost": 32,
+ 51
+        "actualQueryCost": 8
+ 52
+      }
+ 53
+    }
+ 54 }
+ Step 2: Create a draft of an existing contract
+ Tip
+ This guide shows you how to update a subscription contract incrementally. However, if you only want to swap out a specific product variant on a subscription contract, then you can use the subscriptionContractProductUpdate mutation.
+ When a customer updates their payment method or makes a change to their subscription, you need to update the appropriate subscription contract.
+ To update a subscription contract, use the subscriptionContractUpdate mutation and supply the subscription contract ID. The call returns a draft with the existing state of the contract.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionContractUpdate(
+ 3
+      contractId: "gid://shopify/SubscriptionContract/2"
+ 4
+    ) {
+ 5
+      draft {
+ 6
+        id
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionContractUpdate": {
+ 4
+        "draft": {
+ 5
+          "id": "gid://shopify/SubscriptionDraft/3"
+ 6
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10,
+ 14
+        "throttleStatus": {
+ 15
+          "maximumAvailable": 1000,
+ 16
+          "currentlyAvailable": 990,
+ 17
+          "restoreRate": 50
+ 18
+        }
+ Step 3: Update the subscription draft
+ Tip
+ This step shows you how to create and apply a discount code to a subscription draft. However, you can make other updates to the subscription draft in this step as needed, such as adding a line item or updating the delivery policy.
+ After retrieving the draft ID, you can begin making edits to the contract draft. Edits to the contract draft can be made incrementally. Changes to the contract draft aren't made live until the draft is committed.
+ Create a subscription discount code
+ Use the discountCodeBasicCreate mutation to create a basic discount code. To specify that the discount can be applied on subscriptions, set the appliesOnSubscription field to true:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    discountCodeBasicCreate(
+ 3
+      basicCodeDiscount: {
+ 4
+        title: "WELCOME_10%"
+ 5
+        code: "WELCOME_10%"
+ 6
+        customerGets: {
+ 7
+          value: { percentage: 0.1 }
+ 8
+          items: { all: true }
+ 9
+          appliesOnSubscription: true
+ 10
+          appliesOnOneTimePurchase: false
+ 11
+        }
+ 12
+        customerSelection: { all: true }
+ 13
+        startsAt: "20200202T020202"
+ 14
+      }
+ 15
+    ) {
+ 16
+      codeDiscountNode {
+ 17
+        id
+ 18
+        codeDiscount {
+ 19
+          __typename
+ 20
+          ... on DiscountCodeBasic {
+ 21
+            title
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+      userErrors {
+ 26
+        code
+ 27
+        field
+ 28
+        message
+ 29
+      }
+ 30
+    }
+ 31 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "discountCodeBasicCreate": {
+ 4
+        "codeDiscountNode": {
+ 5
+          "id": "gid://shopify/DiscountCodeNode/1",
+ 6
+          "codeDiscount": {
+ 7
+            "__typename": "DiscountCodeBasic",
+ 8
+            "title": "WELCOME_10%"
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    },
+ 14
+    "extensions": {
+ 15
+      "cost": {
+ 16
+        "requestedQueryCost": 11,
+ 17
+        "actualQueryCost": 11,
+ 18
+        "throttleStatus": {
+ 19
+          "maximumAvailable": 1000,
+ 20
+          "currentlyAvailable": 989,
+ 21
+          "restoreRate": 50
+ 22
+        }
+ 23
+      }
+ 24
+    }
+ 25 }
+ Apply the discount code
+ Use the subscriptionDraftDiscountCodeApply mutation to apply the discount code to the subscription draft:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionDraftDiscountCodeApply(
+ 3
+      draftId: "gid://shopify/SubscriptionDraft/3"
+ 4
+      redeemCode: "WELCOME_10%"
+ 5
+    ) {
+ 6
+      appliedDiscount {
+ 7
+        id
+ 8
+        redeemCode
+ 9
+        rejectionReason
+ 10
+      }
+ 11
+      draft {
+ 12
+        id
+ 13
+      }
+ 14
+      userErrors {
+ 15
+        field
+ 16
+        message
+ 17
+        code
+ 18
+      }
+ 19
+    }
+ 20 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionDraftDiscountCodeApply": {
+ 4
+        "discountApplied": {
+ 5
+          "id": "gid://shopify/SubscriptionAppliedCodeDiscount/17598524-27c1-4cd5-8914-9beca81ea4b6",
+ 6
+          "redeemCode": "WELCOME_10%",
+ 7
+          "rejectionReason": null,
+ 8
+        },
+ 9
+        "draft": {
+ 10
+          "id": "gid://shopify/SubscriptionDraft/3"
+ 11
+        },
+ 12
+        "userErrors": []
+ 13
+      }
+ 14
+    }
+ 15 }
+ Step 4: Commit the subscription draft
+ When you commit the subscription draft, the changes that you've made become active on the subscription contract for which the draft was created. You can call the subscriptionDraft query to review the information on the subscription draft before committing it.
+ After you're satisfied with your updates, you can call the subscriptionDraftCommit mutation to commit your changes to the contract:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionDraftCommit(draftId: "gid://shopify/SubscriptionDraft/3") {
+ 3
+      contract {
+ 4
+        id
+ 2
+    "data": {
+ 3
+      "subscriptionDraftCommit": {
+ 4
+        "contract": {
+ 5
+          "id": "gid://shopify/SubscriptionContract/2"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10,
+ 14
+        "throttleStatus": {
+ 15
+          "maximumAvailable": 1000,
+ 16
+          "currentlyAvailable": 990,
+ 17
+          "restoreRate": 50
+ 18
+        }
+ 19
+      }
+ 20
+    }
+ 21 }
+ Next steps
+ Learn how to manage and edit billing cycles, including updating the schedule and contract information for a billing cycle, skipping a billing cycle or changing the contract information for one period.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Query the available contracts on the store
+ Step 2: Create a draft of an existing contract
+ Step 3: Update the subscription draft
+ Step 4: Commit the subscription draft
+ Next steps

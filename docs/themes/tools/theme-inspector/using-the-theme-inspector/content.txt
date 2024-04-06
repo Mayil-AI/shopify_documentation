@@ -1,0 +1,85 @@
+Collaborator accounts
+ Theme Inspector
+ Overview
+ Optimizing themes using Theme Inspector
+ GitHub integration
+ Lighthouse CI
+ Dawn
+ Best practices
+ Integrating apps
+ Product merchandising
+ Identify Liquid render issues using Shopify Theme Inspector
+ The Shopify Theme Inspector for Chrome is a browser plugin that visualizes Liquid render profiling data in a flame graph. This guide teaches you how to run the Shopify Theme Inspector on an online store and identify common Liquid render issues using the flame graph.
+ Running the Shopify Theme Inspector
+ To run the Shopify Theme Inspector on a store, you need to have the Themes staff permission or a collaborator account with the same permission. To verify that you have this permission, make sure that you can view the Themes page in the store's admin.
+ Navigate to the Shopify store that you want to analyze.
+ If you have collaborator access for the store that you want to analyze, then you need to open the store from your Partner Dashboard.
+ From the Google Chrome browser frame, click the Shopify Theme Inspector for Chrome icon.
+ Click Sign In, and then log in using your Shopify login.
+ If you have collaborator access to the store that you want to analyze, then log in using the Partner account that has collaborator access to the store.
+ Open Chrome DevTools and then select the Shopify tab. If the tab isn't visible, then click the >> button to check for it in the overflow list. This tab is only available when you are viewing a Shopify store.
+ Navigate to a page in the store that you want to profile.
+ To generate a flame graph for the page, click the ⟳ or Load Profile button.
+ Understanding the flame graph
+ The Shopify Theme Inspector generates a flame graph that represents when each node of Liquid ran and how long each node took to run.
+ Starting from the top of the stack, the Page node represents the total time the server spent to render the page.
+ The total time Page took to render isn't equal to time to first byte (TTFB), because it doesn't account for additional application and network overhead, such as request routing and the TLS handshake.
+ The Page node contains all of the Liquid nodes used to render the page content. template:index is an example of top level liquid code that Page needs to resolve and render.
+ Learn more information about each node by clicking on the relevant bar in the flame graph. The following information is displayed, where available:
+ File - The file containing the code.
+ Total Time - The time it took for the server to render the code, including any child nodes.
+ Code snippet - The code that the server resolved. Click the link to view the snippet in the online store code editor.
+ Line - The line number where the code exists.
+ Note
+ Render times might vary slightly each time that a page is profiled. This is due to external factors on Shopify servers.
+ What to look for when debugging
+ Below are some trends that you can observe in the Shopify Theme Inspector flame graph and their implications for your theme's performance.
+ Tip
+ When identifying code that's slowing down a store, you should weigh the benefits of the related feature against its impact on the speed of the store. You might need to make some speed tradeoffs to build a user experience that leads to more sales.
+ Too many nodes
+ The page's time to first byte (TTFB) is a combination of network overhead and the render time of the Liquid nodes. Each node that your store has to load adds render time and increases your overall TTFB.
+ A deeply nested graph
+ If your flame graph has many layers of nested nodes, then your code might not be optimized. Below are some of the common causes of nested nodes. Your code might contain a combination of these causes.
+ Too many conditionals
+ Nested loops
+ Nested includes
+ Complex operations inside of loops
+ Doing complex operations inside of a loop has adverse effects on Liquid render time. In some cases, you can simplify template logic and restructure the code to significantly improve Liquid performance.
+ In the example below, an assign tag is nested in a for loop. The code loops through the products in the collection and creates a list of products_by_price with each iteration. The code is unnecessarily repetitive because the value of products_by_price does not change per product.
+ 1 {%- for product in collection.products -%}
+ 2
+   {% assign products_by_price = collection.products | sort: "price" %}
+ 3
+ 4
+   // some liquid code
+ 5 {%- endfor -%}
+ You can simplify the code to only generate products_by_price once, as in the example below. In this example, the sorting of prices happens only once and can still be accessed within the loop when needed.
+ 1 {% assign products_by_price = collection.products | sort: "price" %}
+ 2
+ 3 {%- for product in collection.products -%}
+ 4
+       // some liquid code
+ 5 {%- endfor -%}
+ Non-visual sections
+ These sections could be for things like scripts, SEO, analytics, and more. Evaluate whether these sections are necessary or refactor them so they become more efficient.
+ Troubleshooting
+ Can I profile any Shopify store I want?
+ No, you can only profile a store in the following cases:
+ The store is linked to your Shopify ID.
+ You have a collaborator account for the store.
+ The store is not a development store.
+ To successfully run the Shopify Theme Inspector, you need to have the Online store > Themes staff permission, or a collaborator account with the same permission, on the store.
+ I can't see the Shopify tab in Chrome DevTools
+ The Shopify tab only appears when you are viewing a Shopify store.
+ This page cannot be profiled
+ You might see a This page cannot be profiled error in the following cases:
+ Your account doesn't have access to the store that you're trying to profile.
+ You're trying to profile a checkout page, which isn't supported by this extension.
+ There was an unhandled error in the request, such as a timeout or a lost connection.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Running the Shopify Theme Inspector
+ Understanding the flame graph
+ What to look for when debugging
+ Troubleshooting

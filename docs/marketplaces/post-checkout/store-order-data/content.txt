@@ -1,0 +1,365 @@
+Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Overview
+ Order data
+ Billing
+ Storing order data
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Your marketplace is ready for merchants to start selling. You want to save order data to your database for orders made on a marketplace through your channel app.
+ In this tutorial, you'll create a database table for storing order data. You'll also subscribe to webhook events and create handlers for them.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Handle webhook events for orders
+ Store order data in your database
+ Requirements
+ You've completed the Merchant onboarding tutorials.
+ You're familiar with webhooks.
+ Access scopes
+ Your channel app requires the following access scopes:
+ read_orders
+ Note
+ For sales channel apps, the read_orders scope grants access to only the orders that your app creates.
+ Step 1: Add the orders model
+ In this step, you'll create an Orders data table in your schema, with column data reflecting the information you want to store. You'll also run a database migration. For an overview of the available fields for generating your orders model, refer to the Order API reference.
+ Run the following command to create a new migration file:
+ Terminal
+ $ npx sequelize-cli migration:generate --name=add-order-model
+ In the newly-generated migration file, add the following code:
+ migrations/{TIMESTAMP}-add-order-model.js
+ 1 'use strict';
+ 2
+ 3 module.exports = {
+ 4
+    up: async (queryInterface, Sequelize) => {
+ 5
+      await queryInterface.createTable('Orders', {
+ 6
+        id: {
+ 7
+          allowNull: false,
+ 8
+          autoIncrement: true,
+ 9
+          primaryKey: true,
+ 10
+          type: Sequelize.INTEGER,
+ 11
+        },
+ 12
+        domain: {
+ 13
+          type: Sequelize.STRING,
+ 14
+        },
+ 15
+        orderId: {
+ 16
+          unique: true,
+ 17
+          type: Sequelize.BIGINT,
+ 18
+        },
+ 19
+        orderStatusUrl: {
+ 20
+          type: Sequelize.STRING,
+ 21
+        },
+ 22
+        lineItems: {
+ 23
+          type: Sequelize.JSON,
+ 24
+        },
+ 25
+        fulfillmentStatus: {
+ 26
+          type: Sequelize.STRING,
+ 27
+        },
+ 28
+        fulfillmentId: {
+ 29
+          type: Sequelize.BIGINT,
+ 30
+        },
+ 31
+        fulfillmentDate: {
+ 32
+          type: Sequelize.DATE,
+ 33
+        },
+ 34
+        fulfillmentTrackingCompany: {
+ 35
+          type: Sequelize.STRING,
+ 36
+        },
+ 37
+        fulfillmentTrackingNumber: {
+ 38
+          type: Sequelize.STRING,
+ 39
+        },
+ 40
+        createdAt: {
+ 41
+          allowNull: false,
+ 42
+          type: Sequelize.DATE,
+ 43
+        },
+ 44
+        updatedAt: {
+ 45
+          allowNull: false,
+ 46
+          type: Sequelize.DATE,
+ 47
+        },
+ 48
+      });
+ 49
+    },
+ 50
+ 51
+    down: async (queryInterface) => {
+ 52
+      await queryInterface.dropTable('Orders');
+ 53
+    },
+ 54 };
+ Create a models/order.js file and add the following code:
+ models/order.js
+ 1 'use strict';
+ 2 const {Model} = require('sequelize');
+ 3 module.exports = (sequelize, DataTypes) => {
+ 4
+    class Order extends Model {
+ 5
+      /**
+ 6
+      * Helper method for defining associations.
+ 7
+      * This method is not a part of Sequelize lifecycle.
+ 8
+      * The `models/index` file will call this method automatically.
+ 9
+      */
+ 10
+      static associate() {
+ 11
+        // define association here
+ 12
+      }
+ 13
+    }
+ 14
+    Order.init(
+ 15
+      {
+ 16
+        domain: DataTypes.STRING,
+ 17
+        orderId: DataTypes.BIGINT,
+ 18
+        orderStatusUrl: DataTypes.STRING,
+ 19
+        lineItems: DataTypes.JSON,
+ 20
+        fulfillmentStatus: DataTypes.STRING,
+ 21
+        fulfillmentId: DataTypes.BIGINT,
+ 22
+        fulfillmentDate: DataTypes.DATE,
+ 23
+        fulfillmentTrackingCompany: DataTypes.STRING,
+ 24
+        fulfillmentTrackingNumber: DataTypes.STRING,
+ 25
+      },
+ 26
+      {
+ 27
+        sequelize,
+ 28
+        modelName: 'Order',
+ 29
+      },
+ 30
+    );
+ 31
+    return Order;
+ 32 };
+ Run the following to apply the migration and create the new data table:
+ Terminal
+ $ npx sequelize-cli db:migrate
+ Step 2: Add a webhook handler
+ In this step, you'll create the framework to subscribe to the ORDERS_CREATE webhook topic and handle orders/create webhook events. You'll do the same for the ORDERS_FULFILLED webhook topic.
+ In server/handlers/webhooks, create an orders.js file.
+ In server/handlers/webhooks/orders.js, add a webhook handler to listen for incoming webhooks and save them to the Orders data table that you created.
+ server/handlers/webhooks/orders.js
+ 1 import db from '../../../models';
+ 2
+ 3 export const handleOrderCreate = async (shop, body) => {
+ 4
+    const data = JSON.parse(body);
+ 5
+ 6
+    try {
+ 7
+      await db.Order.create({
+ 8
+        domain: shop,
+ 9
+        orderId: data.id,
+ 10
+        orderStatusUrl: data.order_status_url,
+ 11
+        lineItems: data.line_items,
+ 12
+      });
+ 13
+    } catch (err) {
+ 14
+      console.log('Error creating the entry in the database: ', err);
+ 15
+    }
+ 16 };
+ 17
+ 18 export const handleOrderFulfill = async (shop, body) => {
+ 19
+    const data = JSON.parse(body);
+ 20
+ 21
+    const fulfillment = data.fulfillments[0];
+ 22
+ 23
+    const order = await db.Order.findOne({
+ 24
+      where: {orderId: fulfillment.order_id},
+ 25
+    });
+ 26
+ 27
+    if (!order) return;
+ 28
+ 29
+    const orderUpdate = {
+ 30
+      fulfillmentStatus: data.fulfillment_status,
+ 31
+      fulfillmentId: fulfillment.id,
+ 32
+      fulfillmentDate: fulfillment.created_at,
+ 33
+      fulfillmentTrackingCompany: fulfillment.tracking_company,
+ 34
+      fulfillmentTrackingNumber: fulfillment.tracking_number,
+ 35
+    };
+ 36
+ 37
+    await order.update(orderUpdate);
+ 38
+ 39
+    await order.save();
+ 40 };
+ In server/handlers/webhooks/setup.js, subscribe to the ORDERS_CREATE and ORDERS_FULFILLED webhooks.
+ server/handlers/webhooks/setup.js
+ 1 import {Shopify} from '@shopify/shopify-api';
+ 2 import {handleAppUninstall} from './app-uninstall';
+ 3 import {handleOrderCreate, handleOrderFulfill} from './order';
+ 4 import {handleShopUpdate} from './shop-update';
+ 5
+ 6 const APP_UNINSTALLED = 'APP_UNINSTALLED';
+ 7 const ORDERS_CREATE = 'ORDERS_CREATE';
+ 8 const ORDERS_FULFILLED = 'ORDERS_FULFILLED';
+ 9 const SHOP_UPDATE = 'SHOP_UPDATE';
+ 10
+ 11 export const addWebhookHandlers = () => {
+ 12
+    Shopify.Webhooks.Registry.addHandler(APP_UNINSTALLED, {
+ 13
+      path: '/webhooks',
+ 14
+      webhookHandler: async (topic, shop) => await handleAppUninstall(shop),
+ 15
+    });
+ 16
+ 17
+    Shopify.Webhooks.Registry.addHandler(ORDERS_CREATE, {
+ 18
+      path: '/webhooks',
+ 19
+      webhookHandler: async (topic, shop, body) =>
+ 20
+        await handleOrderCreate(shop, body),
+ 21
+    });
+ 22
+ 23
+    Shopify.Webhooks.Registry.addHandler(ORDERS_FULFILLED, {
+ 24
+      path: '/webhooks',
+ 25
+      webhookHandler: async (topic, shop, body) =>
+ 26
+        await handleOrderFulfill(shop, body),
+ 27
+    });
+ 28
+ 29
+    Shopify.Webhooks.Registry.addHandler(SHOP_UPDATE, {
+ 30
+      path: '/webhooks',
+ 31
+      webhookHandler: async (topic, shop, body) =>
+ 32
+        await handleShopUpdate(shop, body),
+ 33
+    });
+ 34 };
+ 35 export const registerWebhooks = async (shop, accessToken) => {
+ 36
+    const registerAllResponse = await Shopify.Webhooks.Registry.registerAll({
+ 37
+      shop,
+ 38
+      accessToken,
+ 39
+    });
+ 40
+    Object.keys(registerAllResponse).forEach((key) => {
+ 41
+      if (!registerAllResponse[key].success) {
+ 42
+        console.log(
+ 43
+          `Failed to register ${key} webhook: ${registerAllResponse[key].result}`,
+ 44
+        );
+ 45
+      }
+ 46
+    });
+ 47 };
+ Step 3: Register additional webhooks
+ There are several Order-adjacent webhook topics that you might want to subscribe to and make database adjustments based on their content.
+ Next steps
+ Learn how to bill merchants for sales they make on your marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Access scopes
+ Step 1: Add the orders model
+ Step 2: Add a webhook handler
+ Step 3: Register additional webhooks
+ Next steps
+ Updates & News

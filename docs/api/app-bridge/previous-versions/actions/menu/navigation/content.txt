@@ -1,0 +1,125 @@
+Features
+ Fullscreen
+ Loading
+ Menu
+ Overview
+ Channel Menu
+ Navigation Menu
+ Modal
+ Navigation
+ POS
+ Product subscription app extensions
+ Navigation Menu
+ Note
+ This is a legacy API. Use the latest version of the App Bridge Navigation Menu instead.
+ The NavigationMenu component creates a navigation menu for your app. On desktop web browsers, the navigation menu appears as part of the app nav, on the left of the screen. On Shopify mobile, the navigation menu appears in a dropdown from the TitleBar.
+ There are 2 ways to use the navigation menu action set:
+ Plain JavaScript
+ React component
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the NavigationMenu and AppLink actions from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {AppLink, NavigationMenu} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create any number of AppLink instances and then pass them into NavigationMenu. Each AppLink instance represents a link on the menu.
+ 1 const itemsLink = AppLink.create(app, {
+ 2
+    label: 'Items',
+ 3
+    destination: '/items',
+ 4 });
+ 5
+ 6 const settingsLink = AppLink.create(app, {
+ 7
+    label: 'Settings',
+ 8
+    destination: '/settings',
+ 9 });
+ 10
+ 11 // create NavigationMenu with no active links
+ 12
+ 13 const navigationMenu = NavigationMenu.create(app, {
+ 14
+    items: [itemsLink, settingsLink],
+ 15 });
+ 16
+ 17 // or create a NavigationMenu with the settings link active
+ 18
+ 19 const navigationMenu = NavigationMenu.create(app, {
+ 20
+    items: [itemsLink, settingsLink],
+ 21
+    active: settingsLink,
+ 22 });
+ Note
+ The first seven links are rendered by default. Anything above seven links is hidden under a View More section.
+ Set an active nav item
+ To update the active state for the menu, pass a link to the active option using the set method.
+ Note
+ App Bridge does not automatically set the active state.
+ 1 navigationMenu.set({active: settingsLink});
+ Reset active nav item
+ To clear the active link, pass undefined as the active option using the set method.
+ 1 navigationMenu.set({active: undefined});
+ React
+ Example Code
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import {Provider, NavigationMenu} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyApp {
+ 4
+    return (
+ 5
+      <Provider config={config}>
+ 6
+        <NavigationMenu
+ 7
+          navigationLinks={[
+ 8
+            {
+ 9
+              label: 'Home',
+ 10
+              destination: '/',
+ 11
+            },
+ 12
+            {
+ 13
+              label: 'About',
+ 14
+              destination: '/about',
+ 15
+            },
+ 16
+          ]}
+ 17
+          matcher={(link, location) => link.destination === location.pathname}
+ 18
+        />
+ 19
+      </Provider>
+ 20
+    );
+ 21 }
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ Props
+ Name Type Description Required
+ navigationLinks NavigationLink array A list of all the links to appear in the navigation menu Yes
+ matcher (link: NavigationLink, location: Location) => boolean A function to provide custom logic for setting the active link. This function gets called with each link and the current location. If it returns true, the current link will become the active link. No
+ NavigationLink
+ Name Type Description Required
+ label string The text displayed in the navigation menu link Yes
+ destination string The path to navigate to when a user link follows a link Yes
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News

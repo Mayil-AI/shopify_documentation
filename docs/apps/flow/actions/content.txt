@@ -1,0 +1,25 @@
+Actions
+ Overview
+ Reference
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Lifecycle events
+ Migrating Flow legacy extensions
+ Using complex data types
+ Payments
+ Billing
+ App Store
+ Action overview
+ How actions work
+ An action is a workflow component in Shopify Flow. It represents a task that's executed in a store or in an app when certain conditions are met. You can connect your app to Shopify Flow so that your app receives data when a workflow action runs.
+ This guide shows you how to add an action to your app so that users can use it in their workflows.
+ Next steps
+ Follow our step by step guide on how to create and test a Flow action.
+ Check out our action endpoint guide for more information on how to setup an execution endpoint, a custom configuration page preview endpoint and custom validation.
+ Learn more about how to return complex data in a Flow action.
+ Interested in building a custom configuration page? Follow this guide to learn more.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How actions work

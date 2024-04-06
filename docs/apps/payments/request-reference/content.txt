@@ -1,0 +1,650 @@
+Implementation considerations
+ Request reference
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale
+ Payments app request reference
+ This guide provides a comprehensive reference for the HTTP POST requests that initiate actions taken by your Payments app. The action flows begins with an HTTP POST request sent from Shopify to your payments app extension. Each request is different depending on the action flow you are trying to configure.
+ Offsite payment
+ The offsite payment flow begins with an HTTP POST request sent from Shopify to the payment session URL of your offsite payments app extension provided during app extension configuration. This request contains information about the customer and the order.
+ Start session
+ Request header
+ 1 Shopify-Shop-Domain: my-test-shop.myshopify.com
+ 2 Shopify-Request-Id: 94169f7e-ac8d-4ef4-9fd2-90f0791daddf
+ 3 Shopify-Api-Version: 2024-04
+ Request body
+ 1 {
+ 2
+    "id": "u0nwmSrNntjIWozmNslK5Tlq",
+ 3
+    "gid": "gid://shopify/PaymentSession/u0nwmSrNntjIWozmNslK5Tlq",
+ 4
+    "group": "rZNvy+1jH6Z+BcPqA5U5BSIcnUavBha3C63xBalm+xE=",
+ 5
+    "amount": "123.00",
+ 6
+    "currency": "CAD",
+ 7
+    "test": false,
+ 8
+    "merchant_locale": "en",
+ 9
+    "payment_method": {
+ 10
+      "type": "offsite",
+ 11
+      "data": {
+ 12
+        "cancel_url": "https://my-test-shop.com/1/checkouts/4c94d6f5b93f726a82dadfe45cdde432"
+ 13
+      }
+ 14
+    },
+ 15
+    "proposed_at": "2020-07-13T00:00:00Z",
+ 16
+    "customer": {
+ 17
+      "email": "buyer@example.com",
+ 18
+      "phone_number": "5555555555",
+ 19
+      "locale": "fr",
+ 20
+      "billing_address": {
+ 21
+        "given_name": "Alice",
+ 22
+        "family_name": "Smith",
+ 23
+        "line1": "123 Street",
+ 24
+        "line2": "Suite B",
+ 25
+        "city": "Montreal",
+ 26
+        "postal_code": "H2Z 0B3",
+ 27
+        "province": "Quebec",
+ 28
+        "country_code": "CA",
+ 29
+        "phone_number": "5555555555",
+ 30
+        "company": ""
+ 31
+      },
+ 32
+      "shipping_address": {
+ 33
+        "given_name": "Alice",
+ 34
+        "family_name": "Smith",
+ 35
+        "line1": "123 Street",
+ 36
+        "line2": "Suite B",
+ 37
+        "city": "Montreal",
+ 38
+        "postal_code": "H2Z 0B3",
+ 39
+        "province": "Quebec",
+ 40
+        "country_code": "CA",
+ 41
+        "phone_number": "5555555555",
+ 42
+        "company": ""
+ 43
+      }
+ 44
+    },
+ 45
+    "kind": "sale"
+ 46 }
+ Response body
+ 1 {
+ 2
+    "redirect_url": "https://buyer-payment-page.com/12345"
+ 3 }
+ Shopify must receive an HTTP 2xx response with redirect_url (URL for the Partner page where Shopify redirects the customer) for the payment session creation to be successful. The redirect_url response should be less than 8192 bytes in length.
+ If the request fails, then it's retried several times. If the request still fails, then the customer needs to retry their payment through Shopify checkout.
+ If there's an error on the payments app's side, then don't respond with an HTTP 2xx. Use an appropriate error status code instead.
+ Request headers
+ Header Description
+ Shopify-Shop-Domainrequired The permanent domain of the shop. Can be used to identify which shop is initiating the request.
+ Shopify-Request-Idrequired The unique request ID used to track specific requests for troubleshooting purposes.
+ Shopify-Api-Versionrequired The API version selected in the payments app configuration. The version selected defines the response expected by the payments app.
+ Request body
+ Attribute Description Type
+ idrequired Unique identifier for the payment attempt. Used as the idempotency key. It can be assumed that requests with a given ID are identical to any previously received requests with the same ID. This ID must be surfaced to the merchant so that they can correlate Shopify orders with payments managed by the Partner app. String
+ gidrequired Identifies the payment when communicating with Shopify (in GraphQL mutations, for example). String
+ grouprequired A customer might open multiple tabs in their browser for a given order. All of those tabs will be associated with the same group. As a result, Shopify can initiate multiple payment flows for the same id and group, redirecting to your app each time. Your app must only call the PaymentSessionResolve once per id and group. String
+ amountrequired The amount to be charged. The value is always sent using a decimal point as a separator, regardless of locale. String
+ currencyrequired Three-letter ISO 4217 currency code. String
+ testrequired Indicates whether the payment is in test or live mode. Refer to Test mode for more information. Boolean
+ merchant_localerequired IETF BCP 47 language tag representing the language used by the merchant. String
+ payment_methodrequired Hash giving details on the payment method used. Refer to payment_method hash for more information. Hash
+ proposed_atrequired Can be used to order payment attempts that are a part of the same group. String (ISO-8601)
+ customer If customer is included, then at least one of customer.email or customer.phone_number is present. For more information on the customer field, refer to the customer hash. Hash
+ kindrequired Either sale or authorization. If you support payment authorization, then this value is set based on the merchant's configuration. If you don't support separate authorization and capture, then the value is always sale. For sale transactions, you need to capture the funds instantly with this request. For authorization transactions, you must place a hold on the funds and capture them later when Shopify sends a capture request. String
+ Note
+ Shopify doesn't include an order ID in the payment session request. Instead, merchants can use the payment's id attribute to search for the corresponding order in the Shopify admin.
+ The payment ID also appears in order data that's exported from the Shopify admin, in the exported CSV's Payment References column.
+ payment_method hash
+ Attribute Description Type
+ type
+ required The type of payment method. Possible values: ["offsite"]. String
+ data
+ required Contains data relevant for the chosen payment method. Refer to payment_method.data hash for more information. Hash
+ payment_method.data hash
+ Attribute Description Type
+ cancel_url
+ required The URL to redirect the customer when the customer quits the payment flow and returns to the merchant's website. The cancel_url attribute should only be used when a customer is on the provider page and decides to cancel their payment and return to Shopify. String
+ customer hash
+ Attribute Description Type
+ email The email of the customer. Required if phone_number isn't present. String
+ phone_number The phone number of the customer. Required if email isn't present. String
+ locale
+ required The language code as an ISO 639-1 string and the country code as an ISO 3166-1 Alpha-2 string, if available. For more information on the locale field, refer to the locale fields changelog. String
+ billing_address
+ required The billing address of the customer. Refer to shipping/billing_address hash for more information. Hash
+ shipping_address
+ required The shipping address for the order. Refer to shipping/billing_address hash for more information. Hash
+ shipping/billing_address hash
+ Attribute Description Type
+ given_name The given name or first name of the customer. String
+ family_name
+ required The surname of the customer. String
+ line1
+ required First line of the customer's address (for example, the street or PO box). String
+ line2 Second line of the customer's address (for example, the apartment or suite). String
+ city
+ required Name of city or town. String
+ postal_code Zip or postal code. String
+ province Name of the province or state. String
+ country
+ required The country code as an ISO 3166-1 Alpha-2 string. String
+ phone_number The phone number of the customer. String
+ company Name of company. String
+ Note
+ The given_name, line2, postal_code, province and company fields are optional, depending on the customer's locality.
+ client_details hash
+ Attribute Description Type
+ ip_address
+ required The IP address from the browser of the customer. String
+ user_agent
+ required The HTTP user-agent header from the browser of the customer. String
+ accept_language
+ required The HTTP accept-language header from the browser of the customer. String
+ Credit card payment
+ The credit card payment flow begins with an HTTP POST request sent from Shopify to the payment session URL of your credit card payments app extension provided during app extension configuration. This request contains information about the customer and the order, and, for 3-D Secure, client details.
+ Start session
+ Request header
+ 1 Shopify-Shop-Domain: my-test-shop.myshopify.com
+ 2 Shopify-Request-Id: 94169f7e-ac8d-4ef4-9fd2-90f0791daddf
+ 3 Shopify-Api-Version: 2024-04
+ Request body
+ Credit Card
+ Credit Card with 3-D Secure
+ 1 {
+ 2
+    "id": "u0nwmSrNntjIWozmNslK5Tlq",
+ 3
+    "gid": "gid://shopify/PaymentSession/u0nwmSrNntjIWozmNslK5Tlq",
+ 4
+    "group": "rZNvy+1jH6Z+BcPqA5U5BSIcnUavBha3C63xBalm+xE=",
+ 5
+    "amount": "123.00",
+ 6
+    "currency": "CAD",
+ 7
+    "test": false,
+ 8
+    "merchant_locale": "en",
+ 9
+    "payment_method": {
+ 10
+      "type": "credit_card",
+ 11
+      "data": {
+ 12
+        "fingerprint": "65b1ae1fe49ff9d23d80e4967d9147e64b2357c0b2291f4a8bf719cbde331b4c",
+ 13
+        "encrypted_message": "<ENCRYPTED_MESSAGE>",
+ 14
+        "ephemeral_public_key": "<EPHEMERAL_PUBLIC_KEY>",
+ 15
+        "tag": "TAG"
+ 16
+      }
+ 17
+    },
+ 18
+    "proposed_at": "2020-07-13T00:00:00Z",
+ 19
+    "customer": {
+ 20
+      "billing_address": {
+ 21
+        "given_name": "Alice",
+ 22
+        "family_name": "Smith",
+ 23
+        "line1": "123 Street",
+ 24
+        "line2": "Suite B",
+ 25
+        "city": "Montreal",
+ 26
+        "postal_code": "H2Z 0B3",
+ 27
+        "province": "Quebec",
+ 28
+        "country_code": "CA",
+ 29
+        "phone_number": "5555555555",
+ 30
+        "company": ""
+ 31
+      },
+ 32
+      "shipping_address": {
+ 33
+        "given_name": "Alice",
+ 34
+        "family_name": "Smith",
+ 35
+        "line1": "123 Street",
+ 36
+        "line2": "Suite B",
+ 37
+        "city": "Montreal",
+ 38
+        "postal_code": "H2Z 0B3",
+ 39
+        "province": "Quebec",
+ 40
+        "country_code": "CA",
+ 41
+        "phone_number": "5555555555",
+ 42
+        "company": ""
+ 43
+      },
+ 44
+      "email": "buyer@example.com",
+ 45
+      "phone_number": "5555555555",
+ 46
+      "locale": "fr"
+ 47
+    },
+ 48
+    "kind": "sale"
+ 49 }
+ Response body
+ 1 Our API expects an empty response body.
+ Shopify must receive an HTTP 2xx response for the payment session creation to be successful.
+ If the request fails, then it's retried several times. If the request still fails, then the customer needs to retry their payment through Shopify checkout.
+ If there's an error on the payments app's side, then don't respond with an HTTP 2xx. Use an appropriate error status code instead.
+ Request headers
+ Header Description
+ Shopify-Shop-Domainrequired The permanent domain of the shop. Can be used to identify which shop is initiating the request.
+ Shopify-Request-Idrequired The unique request ID used to track specific requests for troubleshooting purposes.
+ Shopify-Api-Versionrequired The API version selected in the payments app configuration. The version selected defines the response expected by the payments app.
+ Request body
+ Attribute Description Type
+ idrequired Unique identifier for the payment attempt. Used as the idempotency key. It can be assumed that requests with a given ID are identical to any previously received requests with the same ID. This ID must be surfaced to the merchant so that they can correlate Shopify orders with payments managed by the Partner app. String
+ gidrequired Identifies the payment when communicating with Shopify (in GraphQL mutations, for example). String
+ grouprequired A customer might open multiple tabs in their browser for a given order. All of those tabs will be associated with the same group. As a result, Shopify can initiate multiple payment flows for the same id and group, redirecting to your app each time. Your app must only call the PaymentSessionResolve once per id and group. String
+ amountrequired The amount to be charged. The value is always sent using a decimal point as a separator, regardless of locale. String
+ currencyrequired Three-letter ISO 4217 currency code. String
+ testrequired Indicates whether the payment is in test or live mode. Refer to Test mode for more information. Boolean
+ merchant_localerequired IETF BCP 47 language tag representing the language used by the merchant. String
+ payment_methodrequired Hash giving details on the payment method used. Refer to payment_method hash for more information. Hash
+ proposed_atrequired Can be used to order payment attempts that are a part of the same group. String (ISO-8601)
+ customer If customer is included, then at least one of customer.email or customer.phone_number is present. For more information on the customer field, refer to the customer hash. Hash
+ kindrequired Either sale or authorization. For sale transactions, you need to capture the funds instantly with this request. For authorization transactions, you must place a hold on the funds and capture them later when Shopify sends a capture request. String
+ client_details Details about the browser of the customer, if your credit card payments app extension supports the 3-D Secure authentication customer feature. For more information on the client_details field, refer to the client_details hash. Hash
+ Note
+ Shopify doesn't include an order ID in the payment session request. Instead, merchants can use the payment's id attribute to search for the corresponding order in the Shopify admin.
+ The payment ID also appears in order data that's exported from the Shopify admin, in the exported CSV's Payment References column.
+ payment_method hash
+ Attribute Description Type
+ type
+ required The type of payment method. Possible values: ["credit_card"]. String
+ data
+ required Contains data relevant for the chosen payment method. Refer to payment_method.data hash for more information. Hash
+ payment_method.data hash
+ Attribute Description Type
+ fingerprint
+ required The fingerprint of the certificate that’s used to encrypt the credit card information of the customer. String
+ encrypted_message
+ required The encrypted credit card information of the customer strictly encoded as Base64. Learn how to decrypt encrypted_message and the structure of decrypted data. String
+ ephemeral_public_key
+ required The ephemeral public key that should be used with the private key to compute the shared secret, and to decrypt encrypted_message. String
+ tag
+ required HMAC digest of the encrypted_message strictly encoded as Base64. String
+ Decrypt encrypted_message
+ The credit card information of the customer is encrypted using ECIES hybrid encryption scheme. You can follow the following steps to decrypt the credit card information:
+ Decode the Base64 encoded encrypted_message and tag.
+ Use fingerprint to identify the certificate that's used for encryption.
+ Compute shared secret using the private key of the certificate and ephemeral_public_key.
+ Compute the hmac of decoded encrypted_message and ensure it matches the decoded value of tag.
+ Decrypt encrypted_message.
+ Caution
+ The application or service that decrypts the value of the encrypted_message must be in a PCI DSS compliant environment.
+ Example code for decrypting `encrypted_message`
+ Function
+ 1 def decrypt(key, encrypted_payload)
+ 2
+    # Decode the Base64 encoded `encrypted_message` and `tag`
+ 3
+    ciphertext = Base64.strict_decode64(encrypted_payload[:encrypted_message])
+ 4
+    mac = Base64.strict_decode64(encrypted_payload[:tag])
+ 5
+ 6
+    # Compute shared secret using the private key of the certificate and `ephemeral_public_key`
+ 7
+    ephemeral_public_key_pem = encrypted_payload[:ephemeral_public_key]
+ 8
+    ephemeral_public_key = OpenSSL::PKey::EC.new(ephemeral_public_key_pem).public_key
+ 9
+    shared_secret = key.dh_compute_key(ephemeral_public_key)
+ 10
+ 11
+    # Compute the hmac of decoded `encrypted_message` and ensure it matches the decoded value of `tag`
+ 12
+    cipher = OpenSSL::Cipher.new('AES-256-CTR')
+ 13
+    mac_digest = OpenSSL::Digest.new('SHA256')
+ 14
+    mac_length = mac_digest.digest_length / 2
+ 15
+    key_pair = OpenSSL::KDF.hkdf(
+ 16
+      shared_secret,
+ 17
+      length: cipher.key_len + mac_length,
+ 18
+      hash: 'SHA256',
+ 19
+      salt: '',
+ 20
+      info: ''
+ 21
+    )
+ 22
+    cipher_key = key_pair.byteslice(0, cipher.key_len)
+ 23
+    hmac_key = key_pair.byteslice(-mac_length, mac_length)
+ 24
+    computed_mac = OpenSSL::HMAC.digest(mac_digest, hmac_key, ciphertext).byteslice(0, mac_length)
+ 25
+    raise OpenSSL::PKey::ECError, "Invalid Message Authenticaton Code" unless OpenSSL.secure_compare(computed_mac, mac)
+ 26
+ 27
+    # Decrypt `encrypted_message`
+ 28
+    cipher.decrypt
+ 29
+    cipher.iv = ("\x00" * 16).force_encoding(Encoding::BINARY)
+ 30
+    cipher.key = cipher_key
+ 31
+    cipher.update(ciphertext) + cipher.final
+ 32 end
+ Usage
+ 1 # payment_method.data from payload
+ 2 encrypted_payload = {
+ 3
+    encrypted_message: "7oeGaIk3Tja5fkyB3P[...]urLyxgW4J9lu2x769+",
+ 4
+    ephemeral_public_key: "-----BEGIN PUBLIC KEY-----\nMEB3wYo[...]HKFkwjQ==\n-----END PUBLIC KEY-----\n",
+ 5
+    tag: "LDCZ1tbHX8t+KPO9w=="
+ 6 }
+ 7 # Use `fingerprint` to identify the certificate that's used for encryption
+ 8 key = OpenSSL::PKey::EC.new(File.open('path/to/private-key.file').read)
+ 9
+ 10 # decrypt
+ 11 decrypt(key, encrypted_payload)
+ Returns
+ API version 2023-04
+ API version 2023-07 and later
+ 1 {
+ 2
+    "type": "card",
+ 3
+    "full_name": "Percy Parker",
+ 4
+    "pan": "4242424242424242",
+ 5
+    "month": 12,
+ 6
+    "year": 2033,
+ 7
+    "verification_value": "122"
+ 8 }
+ Returned hash in API version 2023-04:
+ Attribute Description Type
+ type
+ required Type of card. String
+ full_name
+ required Full name of the card holder. String
+ pan
+ required Card number. String
+ month
+ required Month of expiry. Numeric
+ year
+ required Year of expiry. Numeric
+ verification_value
+ required Security code. String
+ Returned hash in API version 2023-07 or later:
+ Attribute Description Type
+ type
+ required Type of card. String
+ data
+ required Contains data relevant to the encrypted message. Refer to encrypted_message_data hash for more information. Hash
+ encrypted_message_data hash
+ Attribute Description Type
+ full_name
+ required Full name of the card holder. String
+ pan
+ required Card number. String
+ month
+ required Month of expiry. Numeric
+ year
+ required Year of expiry. Numeric
+ verification_value
+ required Security code. String
+ customer hash
+ Attribute Description Type
+ email The email of the customer. Required if phone_number isn't present. String
+ phone_number The phone number of the customer. Required if email isn't present. String
+ locale
+ required The language code as an ISO 639-1 string and the country code as an ISO 3166-1 Alpha-2 string, if available. For more information on the locale field, refer to the locale fields changelog. String
+ billing_address
+ required The billing address of the customer. Refer to shipping/billing_address hash for more information. Hash
+ shipping_address
+ required The shipping address for the order. Refer to shipping/billing_address hash for more information. Hash
+ shipping/billing_address hash
+ Attribute Description Type
+ given_name The given name or first name of the customer. String
+ family_name
+ required The surname of the customer. String
+ line1
+ required First line of the customer's address (for example, the street or PO box). String
+ line2 Second line of the customer's address (for example, the apartment or suite). String
+ city
+ required Name of city or town. String
+ postal_code Zip or postal code. String
+ province Name of the province or state. String
+ country
+ required The country code as an ISO 3166-1 Alpha-2 string. String
+ phone_number The phone number of the customer. String
+ company Name of company. String
+ Note
+ The given_name, line2, postal_code, province and company fields are optional, depending on the customer's locality.
+ client_details hash
+ Attribute Description Type
+ ip_address
+ required The IP address from the browser of the customer. String
+ user_agent
+ required The HTTP user-agent header from the browser of the customer. String
+ accept_language
+ required The HTTP accept-language header from the browser of the customer. String
+ Refund
+ The refund flow begins with an HTTP POST request sent from Shopify to the payments app's refund session URL provided during app extension configuration:
+ Start session
+ Request header
+ 1 Shopify-Shop-Domain: my-test-shop.myshopify.com
+ 2 Shopify-Request-Id: afd2de66-cda5-4486-879f-6a2b0071293b
+ 3 Shopify-Api-Version: 2024-04
+ Request body
+ 1 {
+ 2
+    "id": "PJUG6iB0xU7czy1ZN3xEwn4o",
+ 3
+    "gid": "gid://shopify/RefundSession/PJUG6iB0xU7czy1ZN3xEwn4o",
+ 4
+    "payment_id": "u0nwmSrNntjIWozmNslK5Tlq",
+ 5
+    "amount": "123.00",
+ 6
+    "currency": "CAD",
+ 7
+    "test": false,
+ 8
+    "merchant_locale": "en",
+ 9
+    "proposed_at": "2021-07-13T00:00:00Z"
+ 10 }
+ Response body
+ 1
+ Shopify must receive an HTTP 201 (Created) response for the refund session creation to be successful.
+ If the request fails, then it's retried several times. If the request still fails, then the user needs to manually retry the refund in the Shopify admin.
+ Request headers
+ Header Description
+ Shopify-Shop-Domainrequired The permanent domain of the shop. Can be used to identify which shop is initiating the request.
+ Shopify-Request-Idrequired The unique request ID used to track specific requests for troubleshooting purposes.
+ Shopify-Api-Versionrequired The API version selected in the payments app configuration. The version selected defines the response expected by the payments app.
+ Request body
+ Attribute Description Type
+ idrequired The unique identifier for the refund attempt. Used as the idempotency key. It can be assumed that requests with a given ID are identical to any previously-received requests with the same ID. String
+ gidrequired Identifies the refund when communicating with Shopify (in GraphQL mutations, for example). String
+ payment_idrequired The ID of the original payment that is to be refunded. For captured payments, this ID corresponds to the original authorization ID rather than the capture ID. String
+ amountrequired The amount to be refunded. The amount is always sent using a decimal point as a separator, regardless of locale. String
+ currencyrequired Three-letter ISO 4217 currency code. String
+ testrequired Indicates whether the refund is in test or live mode. The test field is only sent if you select API version 2022-01 or higher in the payments app extension configuration in the Partner Dashboard. For more information, refer to Test a payments app. Boolean
+ merchant_localerequired The IETF BCP 47 language tag representing the language used by the merchant. String
+ proposed_atrequired A timestamp (ISO-8601) representing when the refund request was proposed. String
+ Capture
+ The capture flow begins with an HTTP POST request sent from Shopify to the payments app's capture session URL provided during app extension configuration:
+ Start session
+ Request header
+ 1 Shopify-Shop-Domain: my-test-shop.myshopify.com
+ 2 Shopify-Request-Id: 70a330cc-8411-47ef-bcc3-650bc1acccf2
+ 3 Shopify-Api-Version: 2024-04
+ Request body
+ 1 {
+ 2
+    "id": "GZl9N9ghFvUrYhVONQIj59Rj",
+ 3
+    "gid": "gid://shopify/CaptureSession/GZl9N9ghFvUrYhVONQIj59Rj",
+ 4
+    "payment_id": "u0nwmSrNntjIWozmNslK5Tlq",
+ 5
+    "amount": "123.00",
+ 6
+    "currency": "CAD",
+ 7
+    "test": false,
+ 8
+    "merchant_locale": "en",
+ 9
+    "proposed_at": "2021-07-13T00:00:00Z"
+ 10 }
+ Response body
+ 1
+ Shopify must receive an HTTP 201 (Created) response for the capture session creation to be successful.
+ If the request fails, then it's retried several times. If the request still fails, then the user needs to manually retry the capture in the Shopify admin.
+ Request headers
+ Header Description
+ Shopify-Shop-Domainrequired The permanent domain of the shop. Can be used to identify which shop is initiating the request.
+ Shopify-Request-Idrequired The unique request ID used to track specific requests for troubleshooting purposes.
+ Shopify-Api-Versionrequired The API version selected in the payments app configuration. The version selected defines the response expected by the payments app.
+ Request body
+ Attribute Description Type
+ idrequired The unique identifier for the capture attempt. Used as the idempotency key. Assume that requests with a given ID are identical to any previously-received requests with the same ID. String
+ gidrequired Identifies the capture when communicating with Shopify in GraphQL mutations, for example. String
+ payment_idrequired The ID of the authorized payment that is to be captured. String
+ amountrequired The amount to be captured. The value is always sent using a decimal point as a separator, regardless of locale. String
+ currencyrequired The three-letter ISO 4217 currency code. String
+ testrequired Indicates whether the capture is in test or live mode. The test field is only sent if you select API version 2022-01 or higher in the payments app extension configuration in the Partner Dashboard. For more information, refer to Test a payments app. Boolean
+ merchant_localerequired The IETF BCP 47 language tag representing the language used by the merchant. String
+ proposed_atrequired A timestamp representing when the capture request was proposed. String (ISO-8601)
+ Void
+ The void flow begins with an HTTP POST request sent from Shopify to the payments app's void session URL provided during app extension configuration:
+ Start session
+ Request header
+ 1 Shopify-Shop-Domain: my-test-shop.myshopify.com
+ 2 Shopify-Request-Id: c42e7408-d87c-4048-a493-b941e4f8ae4f
+ 3 Shopify-Api-Version: 2024-04
+ Request body
+ 1 {
+ 2
+    "id": "rAQVz9SYrBs9RkEetRPKIqKfU",
+ 3
+    "gid": "gid://shopify/VoidSession/rAQVz9SYrBs9RkEetRPKIqKfU",
+ 4
+    "payment_id": "u0nwmSrNntjIWozmNslK5Tlq",
+ 5
+    "test": false,
+ 6
+    "merchant_locale": "en",
+ 7
+    "proposed_at": "2021-07-13T00:00:00Z"
+ 8 }
+ Response body
+ 1
+ Shopify must receive an HTTP 201 (Created) response for the void session creation to be successful.
+ If the request fails, then it's retried several times. If the request still fails, then the user needs to manually retry the void in the Shopify admin.
+ Request headers
+ Header Description
+ Shopify-Shop-Domainrequired The permanent domain of the shop. Can be used to identify which shop is initiating the request.
+ Shopify-Request-Idrequired The unique request ID used to track specific requests for troubleshooting purposes.
+ Shopify-Api-Versionrequired The API version selected in the payments app configuration. The version selected defines the response expected by the payments app.
+ Request body
+ Attribute Description Type
+ idrequired The unique identifier for the void attempt. Used as the idempotency key. It can be assumed that requests with a given ID are identical to any previously-received requests with the same ID. String
+ gidrequired Identifies the void when communicating with Shopify (in GraphQL mutations, for example). String
+ payment_idrequired The ID of the authorized payment that is to be voided. String
+ testrequired Indicates whether the void is in test or live mode. The test field is only sent if you select API version 2022-01 or higher in the payments app extension configuration in the Partner Dashboard. For more information, refer to Test a payments app. Boolean
+ merchant_localerequired The IETF BCP 47 language tag representing the language used by the merchant. String
+ proposed_atrequired A timestamp (ISO-8601) representing when the void request was proposed. String 
+ Confirm a payment (3-D Secure and Inventory confirmation)
+ When Shopify determines if the payment request can proceed, Shopify sends a POST request to the confirm session URL of the credit card payments app extension, delivering the confirmation result.
+ Request headers
+ Header Description
+ Shopify-Shop-Domainrequired The permanent domain of the shop. Can be used to identify which shop is initiating the request.
+ Shopify-Request-Idrequired The unique request ID used to track specific requests for troubleshooting purposes.
+ Shopify-Api-Versionrequired The API version selected in the payments app configuration. The version selected defines the response expected by the payments app.
+ Request body
+ Attribute Description Type
+ idrequired The unique identifier for the payment, as provided in the HTTP POST request sent from Shopify to the payment session URL. Used as the idempotency key. It can be assumed that requests with a given id are identical to any previously received requests with the same id.
+ gidrequired Identifies the payment when communicating with Shopify (in GraphQL mutations, for example). String
+ confirmation_resultrequired Result of the payment confirmation initiated by the paymentSessionConfirm mutation. The payment app can proceed with the payment request if and only if confirmation_result is true Boolean
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Offsite payment
+ Credit card payment
+ Refund
+ Capture
+ Void
+ Confirm a payment (3-D Secure and Inventory confirmation)
+ Updates & News

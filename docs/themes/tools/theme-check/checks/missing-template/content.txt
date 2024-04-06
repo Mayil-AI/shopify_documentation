@@ -1,0 +1,70 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ MissingTemplate
+ Identifies when a resource is referenced using a render, section, or include tag, but doesn't exist.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ In the following example, there is no corresponding snippet-that-does-not-exist file in the theme:
+ 1 {% render 'snippet-that-does-not-exist' %}
+ ✓ Pass
+ In the following example, article-card exists in the snippets directory of the theme:
+ 1 {% render 'article-card' %}
+ Options
+ 1 MissingTemplate:
+ 2
+    enabled: true
+ 3
+    ignore:
+ 4
+    - path-to-file/filename1.md
+ 5
+    ignore_missing:
+ 6
+    - path-to-file/filename-*
+ Parameter Description
+ enabled Whether this check is enabled.
+ ignore A list of files to ignore instances of missing templates within.
+ ignore_missing A list of patterns of missing template files to ignore.
+ ignore and ignore_missing
+ The ignore option instructs Theme Check to ignore all occurrences of MissingTemplate according to the file in which they appear.
+ For example, using the following setting, Theme Check ignores all MissingTemplate errors in templates/index.liquid, no matter the file being rendered:
+ 1 MissingTemplate:
+ 2
+    ignore:
+ 3
+    - templates/index.liquid
+ The ignore_missing option instructs Theme Check to ignore all occurrences of MissingTemplate based on the target template being rendered.
+ For example, using the following setting, Theme Check ignores offenses on {% render 'icon-missing' %} across all theme files:
+ 1 MissingTemplate:
+ 2
+    ignore_missing:
+ 3
+    - snippets/icon-*
+ Auto-correction
+ Theme Check can correct this error using the --auto-correct flag. When the flag is specified, Theme Check creates missing resources referenced using an include or render tag in the snippets directory, and creates missing resources referenced using a section tag in the sections directory. These resources are created as empty Liquid files.
+ Options
+ The following example contains the default configuration for this check:
+ 1 MissingTemplate:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Auto-correction
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog
+ Partner blog

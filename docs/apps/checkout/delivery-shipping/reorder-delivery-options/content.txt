@@ -1,0 +1,75 @@
+Reorder delivery options
+ You can use delivery customizations to hide, reorder, and rename the delivery options that are available to buyers during checkout. In this tutorial series, you'll use Shopify Functions to create a function that lets merchants rename a delivery option offered to their customers at checkout.
+ What you'll learn
+ In this tutorial series, you'll learn how to do the following tasks:
+ Set up your environment to use functions.
+ Create a delivery customization function.
+ Add configuration to your delivery customization using metafields.
+ Build a delivery customization user interface with App Bridge.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Sample code
+ If you want to quickly get started, then you can get the sample code by completing the following steps. The tutorial series describes the sample code step by step.
+ Clone the delivery customizations sample app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest -- --template https://github.com/Shopify/function-examples/sample-apps/delivery-customizations
+ Note
+ You can view the source code for the delivery customizations sample app in GitHub.
+ Enter a name for your app project.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Link your app configuration:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app config link
+ Start a local server for your app:
+ With the server running, open the Preview URL in the terminal output.
+ When you open the URL, you're prompted to install the app on your development store.
+ Click Install app to install the app on the store.
+ Create and test your delivery customization.
+ Tutorial series
+ Follow the tutorial series to go from "Hello World" to a functional delivery customization experience.
+ Tutorial 1: Getting started with building delivery customizations
+ Create a new delivery customization function.
+ Tutorial 2: Add configuration to your delivery customization
+ Add configuration to your delivery customization using metafields.
+ Tutorial 3: Build a delivery customization user interface
+ Build a new page in your app where merchants can create delivery customizations.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building delivery customizations.
+ Delivery Customization API reference
+ Consult the GraphQL reference for the Delivery Customization API.
+ Language support
+ Learn about the language support and tooling that are available in Shopify Functions.
+ UX guidelines for delivery customizations
+ Learn how to implement delivery customizations in user interfaces.
+ Next steps
+ Get started with building delivery customizations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Sample code
+ Tutorial series
+ Developer tools and resources

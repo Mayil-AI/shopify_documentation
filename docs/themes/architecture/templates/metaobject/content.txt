@@ -1,0 +1,35 @@
+Metaobject theme templates
+ Metaobject theme templates enable the rendering of metaobject webpages per metaobject definition. To create a metaobject template for an Online Store, you must enable the onlineStore capability. You should enable the renderable capability as well to enable SEO fields management.
+ The first template created for a metaobject must be the default template and will be automatically used by all active metaobject entries for that definition. You might optionally create alternative templates after the default template is created.
+ Tip
+ The template is empty when it's initially created in the Online Store editor. Merchants must add sections to their metaobject template to display content.
+ Location
+ The metaobject templates are located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ├── 404.json
+ 5
+      |   ├── article.json
+ 6
+      |   |── metaobject
+ 7
+      |   |   |── {type}.json
+ 8
+              ...
+ 9
+          ...
+ 10
+      ...
+ Content
+ Any sections that are available for any template or section group are included in metaobject templates by default. You can access the Liquid metaobject object to display the metaobject fields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Content
+ Updates & News
+ Developer changelog

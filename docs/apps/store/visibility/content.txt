@@ -1,0 +1,25 @@
+Visibility in the Shopify App Store
+ All apps distributed through the Shopify App Store must have an app listing page on the Shopify App Store, but you can choose whether the page is listed or unlisted.
+ Listing your app on the Shopify App Store is the easiest way to promote your app to Shopify merchants, but you can choose to make your app unlisted. You can change your app’s visibility at any time.
+ Note
+ Only public apps can be listed on the Shopify App Store. Custom apps are built exclusively for a single Shopify store or Plus organization and aren't listed on the Shopify App Store. For more information on distributing your app, refer to Distributing your app.
+ Comparing listed and unlisted apps
+ Merchants can install both listed and unlisted apps from an app listing page that uses a Shopify App Store URL. However, only a listed app is fully visible, because it's indexed and it appears in following places:
+ Relevant category pages
+ Shopify App Store search results
+ Third-party search engine results
+ Change your app’s visibility
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of the app whose listing status you want to change.
+ Click Distribution.
+ Click Create listing or Manage listing.
+ Click App visibility.
+ In the Manage app visibility dialog, select either Listed or Unlisted.
+ Click Save.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Comparing listed and unlisted apps
+ Change your app’s visibility
+ Updates & News

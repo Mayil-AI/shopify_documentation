@@ -1,0 +1,140 @@
+Overview
+ Getting started
+ Overview
+ Get started
+ Channel app
+ Marketplace homepage
+ Developer tools
+ Shop discovery
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Connecting your marketplace homepage to merchant stores
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Connect your existing marketplace to merchants' stores
+ Requirements
+ You have a buyer-facing marketplace.
+ You've completed the tutorial for creating a channel app experience.
+ Step 1: Connect to a merchant's store
+ Connect to a merchant's store using the following URI and headers. The domain and storefrontAccessToken are taken from your database.
+ 1 const client = new ApolloClient({
+ 2
+    uri: `https://${domain}/api/2024-04/graphql.json`,
+ 3
+    headers: {
+ 4
+      "X-Shopify-Storefront-Access-Token": storefrontAccessToken,
+ 5
+    },
+ 6
+    cache: new InMemoryCache(),
+ 7
+    });
+ 8
+    const { data } = await client.query({
+ 9
+    query: SHOP_PRODUCTS_QUERY,
+ 10
+    });
+ 11
+    setData(data);
+ Step 2: Retrieve data
+ Use a GraphQL query to retrieve the list of products that the merchant has published to your channel app.
+ For example, the following query retrieves basic shop details and the first four products:
+ GraphQL query
+ 1 import { gql } from "apollo-boost";
+ 2
+ 3 const SHOP_PRODUCTS_QUERY = gql`
+ 4
+    query ShopProducts {
+ 5
+      shop {
+ 6
+        name
+ 7
+        primaryDomain {
+ 8
+          url
+ 9
+        }
+ 10
+      }
+ 11
+      products(first: 4) {
+ 12
+        edges {
+ 13
+          node {
+ 14
+            id
+ 15
+            title
+ 16
+            images(first: 1) {
+ 17
+              edges {
+ 18
+                node {
+ 19
+                  id
+ 20
+                  altText
+ 21
+                  originalSrc
+ 22
+                }
+ 23
+              }
+ 24
+            }
+ 25
+            priceRange {
+ 26
+              minVariantPrice {
+ 27
+                amount
+ 28
+                currencyCode
+ 29
+              }
+ 30
+              maxVariantPrice {
+ 31
+                amount
+ 32
+                currencyCode
+ 33
+              }
+ 34
+            }
+ 35
+            onlineStoreUrl
+ 36
+          }
+ 37
+        }
+ 38
+      }
+ 39
+    }
+ 40 `;
+ The homepage of your marketplace might now look something like the following:
+ Next steps
+ Learn how to build the shop discovery experience.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Connect to a merchant's store
+ Step 2: Retrieve data
+ Next steps
+ Updates & News

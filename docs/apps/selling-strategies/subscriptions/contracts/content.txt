@@ -1,0 +1,145 @@
+Overview
+ Create a subscription contract
+ Update a subscription contract
+ Billing cycles
+ Orders
+ App Store
+ Subscription contracts
+ A subscription contract is the agreement between a customer and a merchant over a specific term for recurring purchases over a set or undefined period of time.
+ A subscription contract is the result of purchasing a selling plan that has recurring policies. After a customer purchases a subscription product or variant at checkout, Shopify generates a subscription contract and shares the subscription contract with your app using a webhook.
+ At the time of subscription renewal, apps charge customers for their subscriptions by initiating a billing attempt on the subscription contract. And a new order will be created.
+ Caution
+ 48 hours after a user uninstalls a subscription app, any subscription contracts that are owned by that app and that haven't been terminated are cancelled. These subscriptions contracts might have a status of active, paused, or failed.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_own_subscription_contracts and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ You've completed the Create and manage selling plans guide.
+ Subscription contract object relationships
+ The following diagram shows the relationship between subscription contracts, orders, subscription contract drafts, and billing attempts:
+ API object Description
+ Subscription contract Represents the agreement for a set of items delivered to a customer, on a specific billing and delivery schedule and at a specific price.
+ 
+ A subscription contract is different from an order. An order is a customer's completed request to purchase one or more products from a shop. An order is created when a customer completes the checkout process, during which time they provide an email address or phone number, billing address, and payment information.
+ 
+ Subscription contracts might not be immediately available when an order is created. It's best to rely on subscription contract webhooks to be notified when subscription contracts are created.
+ Subscription contract lines Represents the price and quantity of items in a subscription contract.
+ Pricing policy Represents the future intent to change the price after a given number of billing cycles. When the customer completes a checkout, Shopify creates a subscription contract, and the app developer is notified the policies that the customer chose.
+ 
+ The pricing policy serves as a guide for apps to modify the contract's price in accordance with the billing cycle. It's important to understand that the price of the line item does not update automatically.
+ Subscription order line Links a subscription contract to its related order line items, and optionally, to the billing attempt that created this order line.
+ 
+ A subscription order line is created when one of the following events occurs:
+ 
+ A billing attempt creates an order.
+ A subscription is created from a selling plan purchase.
+ Subscription draft Represents the intent to change a subscription. If a customer wants to change their subscription, then the app needs to create a subscription draft and commit the change to make the changes active.
+ Draft change Represents a change made to a subscription draft, such as changing a subscription contract line.
+ Billing attempt Represents an attempt at executing a billing cycle and charging the customer payment method for a subscription contract.
+ Subscription discounts
+ Note
+ To manage discounts on your subscription contracts, your app needs the write_discounts access scope. Learn how to configure your access scopes using Shopify CLI.
+ You can apply different discount types on subscriptions, including percentage, fixed amount, and free shipping discounts.
+ Discount types
+ Note
+ As of Admin API version 2023-10, you can create automatic discounts that apply to subscriptions. For more information on how to create automatic discounts, refer to Getting started with discounts.
+ You can apply discounts on subscriptions in the following ways:
+ Manual custom discounts: Defined on the subscription.
+ Shopify code discounts: Defined on a shop and applied to a subscription.
+ Shopify automatic discounts: Defined on a shop and applied to a subscription.
+ Using any of these methods, you can apply the following discount types:
+ Percentage discount: A percentage amount deducted from the original product price. For example, 10% off.
+ Fixed amount discount: A specific amount deducted from the original product price. For example, 10 CAD off.
+ Free shipping discount: An offer that deducts shipping costs from the original product price. For example, free shipping on a subscription purchase.
+ You can define whether the discount applies to only one-time purchases, subscriptions, or both:
+ You can also limit the number of times a discount can be used on recurring payments for subscriptions:
+ Tip
+ Refer to the Update a subscription contract tutorial for an example of how to create and apply a discount code to a subscription contract.
+ Conditions for code discounts
+ This section describes the conditions that Shopify provides for code discounts that apply to subscriptions.
+ Customer eligibility for discounts
+ You can limit customer eligibility for discounts to certain groups of customers and use the subscription-aware customer filters. The filters are available on the Customers page in the Shopify admin.
+ How are code discounts verified
+ A code discount is only verified when the code discount is first applied, either at checkout or when adding the discount to an existing subscription contract. After a code discount is successfully applied, it doesn't evaluate the conditions that were used in its first application again. Other conditions, such as recurring cycle limit, still apply.
+ Usage limits
+ The usage limit of a code discount is validated when the code discount is applied to an existing subscription contract or if the code discount is used on a subscription at checkout.
+ If the usage limit has been reached, then the discount is rejected. The usage count of a code discount increases when it's saved on the subscription. The usage count doesn't decrease when removed from a subscription contract.
+ How are automatic discounts verified
+ An automatic discount is verified and automatically applied at cart or checkout. After an automatic discount is successfully applied, it doesn't evaluate the conditions that were used in its first application again. Other conditions, such as recurring cycle limit, still apply.
+ Cancellation discounts
+ Apps that provide a cancellation discount to potential churning subscribers can configure and save the discount as a manual discount on the subscription contract.
+ Update line items of subscription contracts
+ When line items are added, updated, or removed from a subscription contract draft, Shopify reapplies the discount on the remaining applicable items.
+ Subscription-related webhooks
+ Your app can subscribe to webhooks that are related to subscription events. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration overview.
+ Example webhook responses
+ subscription_contracts/create
+ subscription_contracts/update
+ subscription_billing_attempts/success
+ subscription_billing_attempts/failure
+ subscription_billing_attempts/challenged
+ customer_payment_methods/create
+ customer_payment_methods/update
+ customer_payment_methods/revoke
+ 1 // Occurs when a contract is first created. This is deferred until after the order is created. Requires the read_own_subscription_contracts scope.
+ 2 {
+ 3
+    "admin_graphql_api_id": "gid:\/\/shopify\/SubscriptionContract\/9998878778",
+ 4
+    "id": 9998878778,
+ 5
+    "billing_policy": {
+ 6
+      "interval": "month",
+ 7
+      "interval_count": 1,
+ 8
+      "min_cycles": 1,
+ 9
+      "max_cycles": 2
+ 10
+    },
+ 11
+    "currency_code": "USD",
+ 12
+    "customer_id": 1,
+ 13
+    "admin_graphql_api_customer_id": "gid:\/\/shopify\/Customer\/1",
+ 14
+    "delivery_policy": {
+ 15
+      "interval": "week",
+ 16
+      "interval_count": 2
+ 17
+    },
+ 18
+    "status": "active",
+ 19
+    "admin_graphql_api_origin_order_id": "gid://shopify/Order/1",
+ 20
+    "origin_order_id": 1,
+ 21
+    "revision_id": "9998878778",
+ 22 }
+ Revision ID
+ The revision_id field in the payload for the subscription_contracts/create and subscription_contracts/update webhooks is a version identifier that you can use to determine whether your subscription contract record is up-to-date. You can keep a copy of the last revision_id that you received with your subscription contract record, and compare it to the one that's included in the event payload. If the revision_id of the subscription contract in your record is greater than the revision_id that's received in the new webhook payload, then your subscription contract is up-to-date.
+ For example, if a webhook payload for the subscriptionContractCreate mutation returned a revision_idof 1000, and the subsequent webhook payload for the subscriptionContractUpdate mutation returns a revision_id of 1050, then the update mutation occurred after the create mutation.
+ New revision_id values are incremental but not continuous. For example, a revision_id of 50 followed by a revision_id of 70 doesn't indicate that there are 20 versions of the subscription contract between the first and second IDs. revision_id determine if the subscription contract on your record is up-to-date.
+ Next steps
+ Learn how to create a subscription contract, and schedule and automate billing attempts for the subscription contract.
+ Learn how to update a subscription contract with new information.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Subscription contract object relationships
+ Subscription discounts
+ Subscription-related webhooks
+ Next steps
+ Updates & News

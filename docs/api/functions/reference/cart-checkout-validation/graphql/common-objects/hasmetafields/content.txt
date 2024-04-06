@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ HasMetafields interface
+ 2024-04 latest
+ Represents information about the metafields associated to the specified resource.
+ Fields
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ Types that implement HasMetafields
+ Company
+ CompanyLocation
+ Customer
+ Market
+ Product
+ ProductVariant
+ Shop
+ Validation
+ Was this page helpful?
+ YesNo

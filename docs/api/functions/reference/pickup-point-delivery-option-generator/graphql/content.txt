@@ -1,0 +1,305 @@
+Overview
+ GraphQL reference
+ Overview
+ Common Objects
+ FunctionFetchResult
+ FunctionRunResult
+ Input
+ Scalars
+ Delivery Customization API
+ Discounts APIs
+ Pickup Point Delivery Option Generator API reference
+ The Pickup Point Delivery Option Generator API enables you to generate custom pickup points available to buyers during checkout. The API includes three key objects: Input, FunctionFetchResult and FunctionRunResult.
+ Early access:
+ The Pickup Points Delivery Option Generator API is a new feature that's available by request to merchants on the Shopify Plus plan. To request access, contact pickup-point-generator-early-access@shopify.com. You can test the Pickup Points Delivery Option Generator API on Partner development stores without requesting access.
+ Fetch target
+ The fetch target is responsible for generating an HTTP request to call the external API.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query FetchInput {
+ 2
+    allocations {
+ 3
+      deliveryAddress {
+ 4
+        countryCode
+ 5
+        longitude
+ 6
+        latitude
+ Input
+ The Input object is the complete schema that your function can receive as input.
+ The following example shows an input query:
+ input.json
+ 1 {
+ 2
+    "allocations": [
+ 3
+      {
+ 4
+        "deliveryAddress": {
+ 5
+          "countryCode": "CA",
+ 6
+          "longitude": 43.7,
+ 7
+          "latitude": -79.42
+ 8
+        }
+ 9
+      }
+ 10
+    ]
+ 11 }
+ Output
+ The following example shows the resulting input to the query:
+ The FunctionFetchResult object is the shape of the function's output.
+ input.json
+ 1 {
+ 2
+    "request": {
+ 3
+      "method": "GET",
+ 4
+      "url": "https://cdn.shopify.com/s/files/1/0628/3830/9033/files/demo-pickup-points_3dcda620-e196-40cb-ae6b-6dac17dc81c3.json?v=1706119857&lat=-79.42&lon=43.7",
+ 5
+      "headers": [
+ 6
+        {
+ 7
+          "name": "Accept",
+ 8
+          "value": "application/json; charset=utf-8"
+ 9
+        }
+ 10
+      ],
+ 11
+      "body": null,
+ 12
+      "policy": {
+ 13
+        "read_timeout_ms": 500
+ 14
+      }
+ 15
+    }
+ 16 }
+ Run target
+ The run target is responsible for generating the pickup point delivery options.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query RunInput {
+ 2
+    fetchResult {
+ 3
+      status
+ 4
+      body
+ 5
+    }
+ 6 }
+ Input
+ The Input object is the complete schema that your function can receive as input.
+ The following example shows an input query:
+ input.json
+ 1 {
+ 2
+    "fetchResult": {
+ 3
+      "status": 200,
+ 4
+      "body": "{\"deliveryPoints\":[{\"pointId\":\"001\",\"pointName\":\"Toronto Store\",\"location\":{\"addressComponents\":{\"streetNumber\":\"620\",\"route\":\"King St W\",\"locality\":\"Toronto\",\"administrativeAreaLevel1\":\"ON\",\"postalCode\":\"M5V 1M6\",\"country\":\"Canada\",\"countryCode\":\"CA\"},\"geometry\":{\"location\":{\"lat\":43.644664618786685,\"lng\":-79.40066267417106}}},\"openingHours\":{\"weekdayText\":[\"Monday: 9:00 AM – 9:00 PM\",\"Tuesday: 9:00 AM – 9:00 PM\",\"Wednesday: 9:00 AM – 9:00 PM\",\"Thursday: 9:00 AM – 9:00 PM\",\"Friday: 9:00 AM – 9:00 PM\",\"Saturday: 10:00 AM – 6:00 PM\",\"Sunday: Closed\"]}}]}"
+ 5
+    }
+ 6 }
+ Output
+ The following example shows the resulting input to the query:
+ The FunctionRunResult object is the shape of the function's output.
+ input.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "add": {
+ 5
+          "pickup_point": {
+ 6
+            "external_id": "001",
+ 7
+            "name": "Toronto Store",
+ 8
+            "provider": {
+ 9
+              "name": "Shopify Demo",
+ 10
+              "logo_url": "https://cdn.shopify.com/s/files/1/0628/3830/9033/files/shopify_icon_146101.png?v=1706120545"
+ 11
+            },
+ 12
+            "address": {
+ 13
+              "address1": "620 King St W",
+ 14
+              "address2": null,
+ 15
+              "city": "Toronto",
+ 16
+              "country": "Canada",
+ 17
+              "country_code": "CA",
+ 18
+              "latitude": 43.644664618786685,
+ 19
+              "longitude": -79.40066267417106,
+ 20
+              "phone": null,
+ 21
+              "province": "ON",
+ 22
+              "province_code": null,
+ 23
+              "zip": "M5V 1M6"
+ 24
+            },
+ 25
+            "business_hours": [
+ 26
+              {
+ 27
+                "day": "MONDAY",
+ 28
+                "periods": [
+ 29
+                  {
+ 30
+                    "opening_time": "09:00:00",
+ 31
+                    "closing_time": "21:00:00"
+ 32
+                  }
+ 33
+                ]
+ 34
+              },
+ 35
+              {
+ 36
+                "day": "TUESDAY",
+ 37
+                "periods": [
+ 38
+                  {
+ 39
+                    "opening_time": "09:00:00",
+ 40
+                    "closing_time": "21:00:00"
+ 41
+                  }
+ 42
+                ]
+ 43
+              },
+ 44
+              {
+ 45
+                "day": "WEDNESDAY",
+ 46
+                "periods": [
+ 47
+                  {
+ 48
+                    "opening_time": "09:00:00",
+ 49
+                    "closing_time": "21:00:00"
+ 50
+                  }
+ 51
+                ]
+ 52
+              },
+ 53
+              {
+ 54
+                "day": "THURSDAY",
+ 55
+                "periods": [
+ 56
+                  {
+ 57
+                    "opening_time": "09:00:00",
+ 58
+                    "closing_time": "21:00:00"
+ 59
+                  }
+ 60
+                ]
+ 61
+              },
+ 62
+              {
+ 63
+                "day": "FRIDAY",
+ 64
+                "periods": [
+ 65
+                  {
+ 66
+                    "opening_time": "09:00:00",
+ 67
+                    "closing_time": "21:00:00"
+ 68
+                  }
+ 69
+                ]
+ 70
+              },
+ 71
+              {
+ 72
+                "day": "SATURDAY",
+ 73
+                "periods": [
+ 74
+                  {
+ 75
+                    "opening_time": "10:00:00",
+ 76
+                    "closing_time": "18:00:00"
+ 77
+                  }
+ 78
+                ]
+ 79
+              },
+ 80
+              {
+ 81
+                "day": "SUNDAY",
+ 82
+                "periods": []
+ 83
+              }
+ 84
+            ]
+ 85
+          }
+ 86
+        }
+ 87
+      }
+ 88
+    ]
+ 89 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Fetch target
+ Run target
+ Updates & News
+ Developer changelog
+ Partner blog

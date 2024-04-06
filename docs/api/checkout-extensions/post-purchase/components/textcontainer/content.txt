@@ -1,0 +1,30 @@
+Product subscription app extensions
+ TextContainer
+ TextContainer is used to wrap text elements such as TextBlock and Heading, and provide consistent vertical spacing.
+ Example
+ JS
+ React
+ 1 import {extend, TextBlock, TextContainer} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const textContainer = root.createComponent(TextContainer, undefined, [
+ 5
+      root.createComponent(TextBlock, undefined, 'TextBlock'),
+ 6
+      root.createComponent(TextBlock, undefined, 'TextBlock'),
+ 7
+      root.createComponent(TextBlock, undefined, 'TextBlock'),
+ 8
+    ]);
+ 9
+ 10
+    root.appendChild(textContainer);
+ 11 });
+ Props
+ optional = ?
+ Name Type Description
+ alignment? "leading" | "center" | "trailing" Align children’s on the horizontal axis
+ spacing? "xtight" | "tight" | "loose" | "xloose" Adjust spacing between children
+ Was this page helpful?
+ YesNo

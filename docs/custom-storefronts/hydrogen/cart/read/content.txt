@@ -1,0 +1,85 @@
+Hydrogen CLI
+ Analytics
+ Cart
+ Overview
+ Set up a cart handler
+ Read cart data
+ Manage cart line items
+ Update metafields
+ Update buyer identity
+ Update notes
+ Update attributes
+ Update discount codes
+ Update selected delivery options
+ Customize cart handler methods
+ Variant selector form
+ Client-rendering carts
+ Content security policy
+ Data fetching
+ Caching
+ Markets
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Read data from a cart
+ This guide shows you how to read a user's cart.
+ Requirements
+ You've completed the quickstart guide.
+ You've set up a cart handler.
+ Step 1: Get a visitor's cart
+ Use the cart, created from createCartHandler, to get a user's cart. You don't need to provide a cart ID because it's already handled by the cart handler. cart.get() returns a promise. Use Remix's defer so that the cart data is deferred, and streamed to the browser.
+ File
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 export async function loader({context}) {
+ 2
+    const {cart} = context;
+ 3
+ 4
+    return defer({
+ 5
+      cart: cart.get(),
+ 6
+    });
+ 7 }
+ Step 2: Server render the content of the cart
+ You can get the content of the cart using Remix's useMatches hook, because you made it available in the root loader. Since the data is deferred, you'll need to wait for the data.
+ File
+ JavaScript
+ TypeScript
+ /app/components/CartDrawer.jsx
+ 1 function CartDrawer() {
+ 2
+    const [root] = useMatches();
+ 3
+ 4
+    // Cart data is deferred
+ 5
+    // Use Suspense to unblock UI rendering and Await to resolve when data arrives
+ 6
+    return (
+ 7
+      <Suspense fallback={<CartLoading />}>
+ 8
+        <Await resolve={root.data?.cart}>
+ 9
+          {(cart) => <Cart cart={cart} />}
+ 10
+        </Await>
+ 11
+      </Suspense>
+ 12
+    );
+ 13 }
+ Next steps
+ Learn how to manage items in a cart.
+ Learn how to render the cart client side.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Get a visitor's cart
+ Step 2: Server render the content of the cart
+ Next steps
+ Updates & News

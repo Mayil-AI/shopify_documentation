@@ -1,0 +1,15 @@
+Product subscription app extensions
+ Discount object
+ 2024-04 latest
+ The discount to be applied.
+ Fields
+ conditions ([Condition!])
+ The condition to apply the discount.
+ message (String)
+ The discount message.
+ targets ([Target!]!) required
+ The targets of the discount.
+ The value is validated against: targets should contain only one type of Target. For example, targets that contain a list of ProductVariantTarget targets are valid.
+ value (Value!) required
+ The value of the discount.
+ Was this page helpful?

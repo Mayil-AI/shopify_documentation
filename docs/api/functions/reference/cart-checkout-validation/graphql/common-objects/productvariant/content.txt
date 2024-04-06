@@ -1,0 +1,35 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ ProductVariant object
+ 2024-04 latest
+ Represents a product variant.
+ On this page
+ Fields
+ Implements
+ Fields
+ id (ID!)
+ A globally-unique identifier.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ product (Product!)
+ The product that this variant belongs to.
+ requiresShipping (Boolean!)
+ Whether the merchandise requires shipping.
+ sku (String)
+ An identifier for the product variant in the shop. Required in order to connect to a fulfillment service.
+ title (String)
+ The localized title of the product variant in the customer’s locale.
+ weight (Float)
+ The weight of the product variant in the unit system specified with weight_unit.
+ weightUnit (WeightUnit!)
+ Unit of measurement for weight.
+ Implements
+ HasMetafields
+ Was this page helpful?
+ YesNo

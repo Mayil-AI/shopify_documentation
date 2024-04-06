@@ -1,0 +1,375 @@
+Overview
+ Commands
+ Install, upgrade, or uninstall
+ VS Code extension
+ Prettier plugin
+ Theme Check
+ Theme editor
+ Code editor
+ Theme Access app
+ Theme Kit
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Shopify CLI 2.x
+ Deprecated
+ This documentation is for the previous major version of Shopify CLI. Unless specifically instructed, you should use the new version of Shopify CLI (version 3), which provides a more streamlined theme development experience.
+ Shopify CLI 2.x is deprecated, and no longer supported by Shopify.
+ Learn how to migrate to Shopify CLI 3.x.
+ This reference lists the commands that you can use to build themes with Shopify CLI 2.x.
+ Command overview
+ Topic Command Description
+ theme init Clones a Git repository to your local machine to use as the starting point for building a theme.
+ serve Uploads the current theme to a store so you can preview it.
+ check Calls and runs Theme Check to analyze your theme code for errors and to ensure that it follows theme and Liquid best practices.
+ list Lists the themes in your store.
+ open Returns links that let you preview the specified theme.
+ pull Retrieves theme files from Shopify.
+ push Uploads your local theme files to Shopify, overwriting the remote version if specified.
+ share Uploads your theme as a new, unpublished theme in your theme library.
+ publish Publishes an unpublished theme from your theme library.
+ package Packages your local theme files into a ZIP file that can be uploaded to Shopify.
+ delete Deletes a theme from your store.
+ none help Lists the available commands and describes what they do.
+ login Authenticates and logs you into the specified store with Shopify CLI.
+ logout Logs you out of the Shopify account or Partner account and store.
+ populate Adds example data to your store for testing your app or theme’s behavior.
+ store Displays the store that you're currently connected to.
+ switch Switches between stores without logging out and logging in again.
+ version Displays the version of Shopify CLI that you're running.
+ config Configures Shopify CLI options. There are two available options: analytics and feature.
+ whoami Determines which Partner organization you're logged in to, or which store you're logged in to as a staff member.
+ init
+ Clones a Git repository to your local machine to use as the starting point for building a theme.
+ If no Git repository is specified, then this command creates a copy of Dawn, Shopify's example theme, with the specified name in the current folder. If no name is provided, then you're prompted to enter one.
+ Terminal
+ $ shopify theme init [ NAME ] [ options ]
+ Caution
+ If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be substantively different from Dawn so that it provides added value for users. Learn about the ways that you can use Dawn.
+ Optional parameters
+ Parameter Short version Description
+ NAME The name that you want to give your theme. Cloned files are stored in a folder with this name.
+ --clone-url <URL> -u <URL> The URL of the Git repository that you want to clone. If no URL is specified, then https://github.com/Shopify/dawn.git is used.
+ serve
+ Uploads the current theme as the specified theme, or a development theme, to the store that you're connected to.
+ This command also returns the following information:
+ A link to your development theme at http://127.0.0.1:9292. This URL can hot reload local changes to CSS and sections, or refresh the entire page when a file changes, enabling you to preview changes in real time using the store's data.
+ You can specify a different network interface and port using --host and --port.
+ A link to the editor for the theme in the Shopify admin.
+ A preview link that you can share with other developers.
+ If you already have a development theme for your current environment, then this command replaces the development theme with your local theme. You can override this using the --theme-editor-sync flag.
+ Note
+ You can't preview checkout customizations using http://127.0.0.1:9292.
+ Development themes are deleted when you run shopify logout. If you need a preview link that can be used after you log out, then you should share your theme or push to an unpublished theme on your store.
+ You can run this command only in a directory that matches the default Shopify theme folder structure.
+ Terminal
+ $ shopify theme serve [ ROOT ] [ options ]
+ Optional parameters
+ Parameter Short version Description
+ --live-reload <MODE> The level at which content is reloaded when changes are made to the theme.
+ 
+ Accepts the following values:
+ hot-reload - Hot reloads local changes to the CSS and sections (default)
+ full-page - Refreshes the entire page when a file is modified
+ off - Deactivates live reload
+ --host <IP> The network interface that the web server listens on. The default value is 127.0.0.1.
+ --port <PORT> The local port to serve the theme preview from.
+ --poll Forces the polling adapter to watch file changes. You can try this option if live reload isn't working as expected.
+ --theme-editor-sync -e Enables two-way sync for theme JSON files. When this option is enabled, changes made in the theme editor in the Shopify admin are applied to the local copy of the theme.
+ 
+ If you run the serve command with this flag and you already have a development theme for your current environment, then the local and remote themes are compared. If there are any differences between files in the local copy of the theme and remote development theme, then the differing files are listed. You're prompted to overwrite your local or remote version, or merge the files.
+ --theme <NAME_OR_ID> -t <NAME_OR_ID> Specify the ID or name of the theme that you want to serve. If you don't use this flag, then the theme is served using a new or existing development theme.
+ --ignore -x Skips hot reloading any files that match the specified pattern. Specify multiple patterns to ignore by using the flag multiple times in a single command.
+ 
+ If a file matches both the pattern specified in --only and --ignore, then the file is ignored.
+ 
+ If files are excluded using .shopifyignore, then both the contents of .shopifyignore and the --ignore flag are respected.
+ 
+ Accepts references to files in the following formats:
+ 
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.jpe?g$/. If you're entering the command in a shell, then you might need to add additional escape characters.
+ --only -o Hot reloads only files that match the specified pattern. Specify multiple patterns by using the flag multiple times in a single command.
+ 
+ Accepts references to files in the following formats:
+ 
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.jpe?g$/. If you're entering the command in a shell, then you might need to add additional escape characters.
+ check
+ Calls and runs Theme Check to analyze your theme code for errors and to ensure that it follows theme and Liquid best practices. Learn more about the checks that Theme Check runs.
+ Terminal
+ $ shopify theme check [ ROOT ] [ options ]
+ Optional parameters
+ Flag Alias Description Environment variable
+ --config <PATH> -C <PATH> The path to your custom Theme Check config. This config overrides .theme-check.yml, if it is present in the directory being analyzed. SHOPIFY_FLAG_CONFIG
+ --fail-level <LEVEL> The severity level that causes a run of theme check to fail (exit code 1). Options include error, suggestion, and style. SHOPIFY_FLAG_FAIL_LEVEL
+ --auto-correct -a Automatically fixes correctable offenses. SHOPIFY_FLAG_AUTO_CORRECT
+ --init Generates a new Theme Check config file. SHOPIFY_FLAG_INIT
+ --output -o Outputs the results of the check to a file. Options include json and text (default). SHOPIFY_FLAG_OUTPUT
+ --print Outputs the active config to STDOUT. SHOPIFY_FLAG_PRINT
+ --list -l Lists the active checks. SHOPIFY_FLAG_LIST
+ --environment <ENV_NAME> -e <ENV_NAME> The environment that you want to use. SHOPIFY_FLAG_ENVIRONMENT
+ --version -v Prints the version of Theme Check being used. SHOPIFY_FLAG_VERSION
+ --path <path> The path to your theme directory. SHOPIFY_FLAG_PATH
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ list
+ Lists the themes in your store, along with their IDs and statuses.
+ Terminal
+ $ shopify theme list
+ open
+ Returns links that let you preview the specified theme. The following links are returned:
+ A link to the editor for the theme in the Shopify admin.
+ A preview link that you can share with other developers.
+ If you don't specify a theme, then you're prompted to select the theme to open from the list of the themes in your store.
+ Terminal
+ $ shopify theme open [ options ]
+ Parameter Short version Description
+ --theme <NAME_OR_ID> -t <NAME_OR_ID> The name or ID of the theme that you want to open.
+ --live -l Returns links for the live (published) theme. This option doesn't require --theme.
+ --development -d Returns links for your development theme. This option doesn't require --theme.
+ --editor -e Opens the theme editor for the specified theme in your browser.
+ pull
+ Retrieves theme files from Shopify.
+ If no theme is specified, then you're prompted to select the theme to pull from the list of the themes in your store.
+ Terminal
+ $ shopify theme pull [ ROOT ] [ options ]
+ Optional parameters
+ Parameter Short version Description
+ --theme <NAME_OR_ID> -t <NAME_OR_ID> The name or ID of the theme that you want to pull.
+ --live -l Pulls the live (published) theme. This option doesn't require --theme.
+ --development -d Downloads theme files from your remote development theme.
+ 
+ You might use this command to copy changes made to the development theme in the theme editor to your local copy of the theme.
+ 
+ This option doesn't require --theme.
+ --nodelete -n Runs the pull command without deleting local files.
+ --ignore -x Skips downloading the specified files from Shopify. Specify multiple patterns to ignore by using the flag multiple times in a single command.
+ 
+ If files are excluded using .shopifyignore, then both the contents of .shopifyignore and the --ignore flag are respected.
+ 
+ Accepts references to files in the following formats:
+ 
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.jpe?g$/. If you're entering the command in a shell, then you might need to add additional escape characters.
+ --only -o Downloads only the specified files from Shopify. Specify multiple patterns by using the flag multiple times in a single command.
+ 
+ Accepts references to files in the following formats:
+ 
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.jpe?g$/. If you're entering the command in a shell, then you might need to add additional escape characters.
+ push
+ Uploads your local theme files to Shopify, overwriting the remote theme if specified.
+ If no theme is specified, then you're prompted to select the theme to overwrite from the list of the themes in your store.
+ You can run this command only in a directory that matches the default Shopify theme folder structure.
+ This command returns the following information:
+ A link to the editor for the theme in the Shopify admin.
+ A preview link that you can share with others.
+ Terminal
+ $ shopify theme push [ ROOT ] [ options ]
+ If you use the --json flag, then theme information is returned in JSON format, which can be used as a machine-readable input for scripts or continuous integration.
+ Terminal
+ $ shopify theme push --unpublished --json
+ Sample output:
+ 1 {
+ 2
+    "theme": {
+ 3
+      "id": 108267175958,
+ 4
+      "name": "MyTheme",
+ 5
+      "role": "unpublished",
+ 6
+      "shop": "mystore.myshopify.com",
+ 7
+      "editor_url": "https://mystore.myshopify.com/admin/themes/108267175958/editor",
+ 8
+      "preview_url": "https://mystore.myshopify.com/?preview_theme_id=108267175958"
+ 9
+    }
+ 10 }
+ Optional parameters
+ Parameter Short version Description
+ --theme <NAME_OR_ID> -t <NAME_OR_ID> The name or ID of the theme that you want to overwrite.
+ --development -d Pushes to your development theme. If you don't have a development theme, then one is created. This option doesn't require --theme.
+ --nodelete -n Pushes your local files without deleting remote files from Shopify.
+ --json -j Returns information about the pushed theme as a JSON object.
+ --allow-live -a Allows Shopify CLI to overwrite the live (published) theme.
+ --live -l Pushes to the live (published) theme. This option doesn't require --theme or --allow-live.
+ --publish -p After the theme is pushed, publishes the theme so it is live in the store.
+ --unpublished -u Uploads the theme to the theme library as a new unpublished theme.
+ 
+ You're prompted to provide a name for the theme. Use the --theme flag to provide a name as a part of the command.
+ --ignore -x Skips uploading the specified files to Shopify. Specify multiple patterns to ignore by using the flag multiple times in a single command.
+ 
+ If files are excluded using .shopifyignore, then both the contents of .shopifyignore and the --ignore flag are respected.
+ 
+ Accepts references to files in the following formats:
+ 
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.jpe?g$/. If you're entering the command in a shell, then you might need to add additional escape characters.
+ --only -o Uploads only the specified files to Shopify. Specify multiple patterns by using the flag multiple times in a single command.
+ 
+ Accepts references to files in the following formats:
+ 
+ Simple file names: templates/product.temp.json
+ Wildcards: config/*_secret.json, *.jpg
+ Regular expressions: /\.jpe?g$/. If you're entering the command in a shell, then you might need to add additional escape characters.
+ share
+ Uploads your theme as a new, unpublished theme in your theme library. The theme is given a randomized name.
+ This command returns a preview link that you can share with others.
+ Terminal
+ $ shopify theme share [ ROOT ]
+ publish
+ Publishes an unpublished theme from your theme library.
+ If no theme ID is specified, then you're prompted to select the theme that you want to publish from the list of themes in your store.
+ You can run this command only in a directory that matches the default Shopify theme folder structure.
+ If you want to publish your local theme, then you need to run shopify theme push first. You're asked to confirm that you want to publish the specified theme. You can skip this confirmation using the --force flag.
+ Terminal
+ $ shopify theme publish [ THEME_ID ] [ --force | -f ]
+ Parameter Short version Description
+ THEME_ID The ID of the theme that you want to publish.
+ --force -f Publishes the theme without confirming with the user.
+ package
+ Packages your local theme files into a ZIP file that can be uploaded to Shopify.
+ Only folders that match the default Shopify theme folder structure are included in the package.
+ The ZIP file uses the name theme_name-theme_version.zip, based on parameters in your settings_schema.json file.
+ Terminal
+ $ shopify theme package [ ROOT ]
+ delete
+ Deletes a theme from your store.
+ You can specify multiple themes by ID. If no theme is specified, then you're prompted to select the theme that you want to delete from the list of themes in your store.
+ You're asked to confirm that you want to delete the specified themes before they are deleted. You can skip this confirmation using the --force flag.
+ Terminal
+ $ shopify theme delete { THEME_ID [ ... ] | --development, -d } [ --force | -f ]
+ Optional parameters
+ Parameter Short version Description
+ THEME_ID The ID of the theme that you want to delete. You can specify multiple theme IDs separated by spaces.
+ --development -d Deletes your development theme.
+ --force -f Deletes the theme without confirming with the user.
+ help
+ Lists the available commands and describes what they do.
+ Terminal
+ $ shopify help
+ $ shopify -h
+ $ shopify --help
+ You can also use the help command or options to get more detailed information about a specific command:
+ Terminal
+ $ shopify help [command]
+ $ shopify [command] -h
+ $ shopify [command] --help
+ login
+ Authenticates and logs you into the specified store with Shopify CLI.
+ Terminal
+ $ shopify login [--store <DOMAIN>]
+ Optional parameters
+ Parameter Description
+ --store <DOMAIN> The store that you want to log in to.
+ The --store flag accepts the following inputs:
+ Type Example
+ The store prefix johns-apparel
+ The myshopify.com URL johns-apparel.myshopify.com
+ https://johns-apparel.myshopify.com
+ The store admin URL https://johns-apparel.myshopify.com/admin
+ The custom domain or custom domain admin https://johnsapparel.com
+ https://johnsapparel.com/admin
+ The specified store can be a development store or a Shopify store. You need to have collaborator access to the store, or be a staff member or owner of the store.
+ To switch between stores that you have access to, use shopify switch.
+ Caution
+ To use a development store or Plus sandbox store with Shopify CLI, you need to be the store owner, or have a staff account on the store. Staff accounts are created automatically the first time you access a development store with your Partner staff account through the Partner Dashboard.
+ logout
+ Logs you out of the Shopify account or Partner account and store.
+ The logout command clears credentials. You need to reauthenticate the next time that you connect to a store.
+ Terminal
+ $ shopify logout
+ populate
+ Adds example data to your store for testing your app or theme’s behavior.
+ The populate command lets you specify which type of data you're populating, and how many to create:
+ Terminal
+ $ shopify populate [ products | customers | draftorders ] [ --count <NUMBER> ]
+ Parameter Description
+ products Creates products in your store. Products are created with a title and a price.
+ customers Creates customers in your store. Customers are created with a name only.
+ draftorders Creates draft orders in your store. Draft orders are created with one custom item.
+ --count <NUMBER> Creates the specified number of records. This is an optional parameter. If no count is specified, then five records are created.
+ Note
+ Products that are created by the populate command are not published to any sales channels.
+ store
+ Displays the store that you're currently connected to.
+ Terminal
+ $ shopify store
+ Example output:
+ Terminal
+ $ You're currently logged into johns-apparel.myshopify.com
+ switch
+ Switches between stores without logging out and logging in again.
+ Terminal
+ $ shopify switch [--store <DOMAIN>]
+ If you enter this command without a --store flag, then you're prompted to select a store associated with your account.
+ The --store flag accepts the following inputs:
+ Type Example
+ The store prefix johns-apparel
+ The myshopify.com URL johns-apparel.myshopify.com
+ https://johns-apparel.myshopify.com
+ The store admin URL https://johns-apparel.myshopify.com/admin
+ The custom domain or custom domain admin https://johnsapparel.com
+ https://johnsapparel.com/admin
+ version
+ Displays the version of Shopify CLI that you're running.
+ Terminal
+ $ shopify version
+ Example output:
+ Terminal
+ $ 1.6.0
+ config
+ Configures Shopify CLI options. There are two available options: analytics and feature.
+ analytics
+ Configures anonymous usage reporting by enabling or disabling analytics.
+ Terminal
+ $ shopify config analytics [ --status | --enable | --disable ]
+ feature
+ Configures active feature sets in the CLI.
+ This command is used for development and debugging work on the CLI tool itself. Unless you're developing the tool, don't alter this command. Review the Shopify CLI development guide for more information.
+ Terminal
+ $ shopify config feature [ feature_name ] [ --status | --enable | --disable ]
+ whoami
+ Determines which Partner organization you're logged in to, or which store you're logged in to as a staff member.
+ Terminal
+ $ shopify whoami
+ Example output:
+ Terminal
+ $ Logged into partner organization Shopify Partner
+ Terminal
+ $ Logged into store johns-apparel.myshopify.com as staff
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Command overview
+ init
+ serve
+ check
+ list
+ open
+ pull
+ push
+ share
+ publish
+ package
+ delete
+ help
+ login
+ logout
+ populate
+ store
+ switch
+ version
+ config
+ whoami
+ Updates & News
+ Developer changelog

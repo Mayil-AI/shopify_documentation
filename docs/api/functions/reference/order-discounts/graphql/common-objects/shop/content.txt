@@ -1,0 +1,25 @@
+Product subscription app extensions
+ Shop object
+ 2024-04 latest
+ Information about the shop.
+ On this page
+ Fields
+ Types that return Shop
+ Implements
+ Fields
+ localTime (LocalTime!)
+ Information about the current time relative to the shop's timezone setting.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ Types that return Shop
+ Input.shop
+ Implements
+ HasMetafields
+ Was this page helpful?
+ YesNo
+ Updates & News

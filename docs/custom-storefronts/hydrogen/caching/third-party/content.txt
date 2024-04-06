@@ -1,0 +1,275 @@
+Data fetching
+ Caching
+ Shopify API data
+ Third-party data
+ Full-page cache
+ Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Caching third-party API data with Hydrogen and Oxygen
+ The API client built into Hydrogen includes caching strategies for Storefront API data. However, if you make fetch requests to third-party APIs in your Hydrogen app, then the following behavior occurs:
+ HTTP GET responses are cached according to their response headers.
+ POST requests aren't cached.
+ There are several ways to manage caching of third-party data with Hydrogen and Oxygen:
+ Hydrogen’s built-in withCache utility (recommended)
+ Creating custom abstractions
+ Caching content manually
+ Note
+ If you host your Hydrogen app on another provider instead of Oxygen, then caching might work differently. Consult your provider for details on its caching capabilities.
+ Hydrogen’s built-in withCache utility
+ Hydrogen includes a createWithCache utility to support caching third-party API calls. This utility wraps an arbitrary number of sub-requests under a single cache key.
+ Step 1: Create and inject the utility function
+ To start, create a withCache function in your project server file and pass it as part of the Remix context.
+ The following example shows how withCache works with Oxygen:
+ Create the withCache utility
+ JavaScript
+ TypeScript
+ Type declaration file
+ /server.js
+ 1 import {createStorefrontClient, createWithCache} from '@shopify/hydrogen';
+ 2 import {createRequestHandler} from '@shopify/remix-oxygen';
+ 3
+ 4 export default {
+ 5
+    async fetch(request, env, executionContext) {
+ 6
+      const cache = await caches.open('hydrogen');
+ 7
+      const waitUntil = (promise) => executionContext.waitUntil(promise);
+ 8
+ 9
+      const {storefront} = createStorefrontClient({
+ 10
+        cache,
+ 11
+        waitUntil,
+ 12
+        // ...
+ 13
+      });
+ 14
+ 15
+      // Create withCache object
+ 16
+      const withCache = createWithCache({cache, waitUntil});
+ 17
+ 18
+      const handleRequest = createRequestHandler({
+ 19
+        build: remixBuild,
+ 20
+        mode: process.env.NODE_ENV,
+ 21
+        // Pass withCache to the Remix context
+ 22
+        getLoadContext: () => ({storefront, withCache, waitUntil}),
+ 23
+      });
+ 24
+ 25
+      return handleRequest(request);
+ 26
+    },
+ 27 };
+ Step 2: Call withCache in Remix loaders and actions
+ After you pass the utility function to the Remix context, withCache is available in all Remix loaders and actions.
+ In the following example, the withCache function wraps a standard fetch query to a third-party CMS:
+ Cache a sub-request to a third-party API using withCache
+ JavaScript
+ TypeScript
+ /app/routes/pages/example.jsx
+ 1 const CMS_API_ENDPOINT = 'https://example-cms.com/api';
+ 2
+ 3 export async function loader({request, context}) {
+ 4
+    { storefront, withCache } = context;
+ 5
+    const query = `query { product { id } }`;
+ 6
+ 7
+    /**
+ 8
+     *  The cache key is used to uniquely identify the stored value in cache.
+ 9
+     *  If caching data for logged-in users, then make sure to add something
+ 10
+     *  unique to the user in the cache key, such as their email address.
+ 11
+     */
+ 12
+    const cacheKey = [CMS_API_ENDPOINT, query];
+ 13
+ 14
+    // The second parameter accepts custom cache options
+ 15
+    const idFromCMS = await withCache(cacheKey, storefront.CacheLong(), async () => {
+ 16
+      const response = await fetch(CMS_API_ENDPOINT, {
+ 17
+        method: 'POST',
+ 18
+        body: JSON.stringify({ query }),
+ 19
+        headers: {'Content-Type': 'application/json'},
+ 20
+      });
+ 21
+ 22
+      // Thrown errors behave like any other error in a Remix loader
+ 23
+      if (!response.ok) throw new Error('Something went wrong. Skipping cache.');
+ 24
+ 25
+      const {product} = await response.json()
+ 26
+ 27
+      // The returned value must be serializable
+ 28
+      return product.id
+ 29
+    });
+ 30
+ 31
+    return {idFromCMS};
+ 32 }
+ Custom cache abstractions
+ Instead of using withCache directly in your routes, you can also create custom abstractions around it. For example, you can make your own CMS fetcher and inject it in the Remix context.
+ You can create as many abstractions as needed for your third-party APIs, and they will be available in Remix loaders and actions. For TypeScript projects, you should add types accordingly in the remix.env.d.ts file.
+ Create a custom abstraction
+ JavaScript
+ TypeScript
+ /server.js
+ 1 import {createStorefrontClient, createWithCache} from '@shopify/hydrogen';
+ 2 import {createRequestHandler} from '@shopify/remix-oxygen';
+ 3
+ 4 export default {
+ 5
+    async fetch(request, env, executionContext) {
+ 6
+      const cache = await caches.open('hydrogen');
+ 7
+      const waitUntil = (promise) => executionContext.waitUntil(promise);
+ 8
+ 9
+      const {storefront} = createStorefrontClient({
+ 10
+        cache,
+ 11
+        waitUntil,
+ 12
+        // ...
+ 13
+      });
+ 14
+ 15
+      const withCache = createWithCache({cache, waitUntil});
+ 16
+ 17
+      const fetchMyCMS = (query, cacheOptions = storefront.CacheLong()) => {
+ 18
+        const CMS_API_ENDPOINT = 'https://example-cms.com/api';
+ 19
+        const cacheKey = [CMS_API_ENDPOINT, query];
+ 20
+ 21
+        return withCache(cacheKey, cacheOptions, async () => {
+ 22
+          const response = await fetch(CMS_API_ENDPOINT, {
+ 23
+            method: 'POST',
+ 24
+            body: JSON.stringify({ query }),
+ 25
+            headers: {'Content-Type': 'application/json'},
+ 26
+          });
+ 27
+ 28
+          if (!response.ok) throw new Error('Something went wrong. Skipping cache.');
+ 29
+ 30
+          return response.json()
+ 31
+        });
+ 32
+      };
+ 33
+ 34
+      const handleRequest = createRequestHandler({
+ 35
+        build: remixBuild,
+ 36
+        mode: process.env.NODE_ENV,
+ 37
+        getLoadContext: () => ({storefront, fetchMyCMS, waitUntil}),
+ 38
+      });
+ 39
+ 40
+      return handleRequest(request);
+ 41
+    },
+ 42 };
+ Manual caching
+ As an alternative to the withCache utility, you can also directly use the cache instance that's passed to the Storefront client and available in storefront.cache.
+ This cache instance follows the Cache API. Using the cache instance directly is a low-level approach and you need to handle all the cases and features manually, including error handling and stale-while-revalidate.
+ The following example shows how to cache a request to a third-party API with Oxygen:
+ Cache a sub-request to a third-party API using the cache instance
+ JavaScript
+ TypeScript
+ /app/routes/pages/example.jsx
+ 1 const CMS_API_ENDPOINT = 'https://my-cms.com/api';
+ 2
+ 3 export async function loader({request, context: {storefront, waitUntil}}) {
+ 4
+    const body = JSON.stringify(Object.fromEntries(new URL(request.url).searchParams.entries()));
+ 5
+ 6
+    // Create a new request based on a unique key representing the API request.
+ 7
+    // This could use any unique URL that depends on the API request.
+ 8
+    // For example, it could concatenate its text body or its sha256 hash.
+ 9
+    const cacheUrl = new URL(CMS_API_ENDPOINT);
+ 10
+    cacheUrl.pathname = '/cache' + cacheUrl.pathname + generateUniqueKeyFrom(body);
+ 11
+    const cacheKey = new Request(cacheUrl.toString());
+ 12
+ 13
+    // Check if there's a match for this key.
+ 14
+    let response = await storefront.cache.match(cacheKey);
+ 15
+ 16
+    if (!response) {
+ 17
+      // Since there's no match, fetch a fresh response.
+ 18
+      response = await fetch(CMS_API_ENDPOINT, {body, method: 'POST'});
+ 19
+      // Make the response mutable.
+ 20
+      response = new Response(response.body, response);
+ 21
+      // Add caching headers to the response.
+ 22
+      response.headers.set('Cache-Control', 'public, max-age=10')
+ 23
+      // Store the response in cache to be re-used the next time.
+ 24
+      waitUntil(storefront.cache.put(cacheKey, response.clone()));
+ 25
+    }
+ 26
+ 27
+    return response;
+ 28 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Hydrogen’s built-in withCache utility
+ Custom cache abstractions
+ Manual caching

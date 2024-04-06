@@ -1,0 +1,390 @@
+Hydrogen CLI
+ Analytics
+ Cart
+ Overview
+ Set up a cart handler
+ Read cart data
+ Manage cart line items
+ Update metafields
+ Update buyer identity
+ Update notes
+ Update attributes
+ Update discount codes
+ Update selected delivery options
+ Customize cart handler methods
+ Variant selector form
+ Client-rendering carts
+ Content security policy
+ Data fetching
+ Caching
+ Markets
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Update cart metafields
+ This guide shows you how to use a cart handler to update cart metafields.
+ Requirements
+ You've completed the quickstart guide.
+ You've set up a cart handler.
+ Step 1: Read cart metafields
+ Update the cart query fragment to return cart metafields. For more information, refer to the default CartApiQuery fragment.
+ The following example adds themetafield field:
+ File
+ JavaScript
+ TypeScript
+ server.js
+ 1 const cart = createCartHandler({
+ 2
+    storefront,
+ 3
+    getCartId: cartGetIdDefault(request.headers),
+ 4
+    setCartId: cartSetIdDefault(),
+ 5
+    cartQueryFragment: CART_QUERY_FRAGMENT,
+ 6 });
+ 7
+ 8 const CART_QUERY_FRAGMENT = `#graphql
+ 9
+    fragment CartApiQuery on Cart {
+ 10
+      metafield(namespace: "custom", key: "gift") {
+ 11
+        value
+ 12
+      }
+ 13
+      id
+ 14
+      checkoutUrl
+ 15
+      totalQuantity
+ 16
+      buyerIdentity {
+ 17
+        countryCode
+ 18
+        customer {
+ 19
+          id
+ 20
+          email
+ 21
+          firstName
+ 22
+          lastName
+ 23
+          displayName
+ 24
+        }
+ 25
+        email
+ 26
+        phone
+ 27
+      }
+ 28
+      lines(first: $numCartLines) {
+ 29
+        edges {
+ 30
+          node {
+ 31
+            id
+ 32
+            quantity
+ 33
+            attributes {
+ 34
+              key
+ 35
+              value
+ 36
+            }
+ 37
+            cost {
+ 38
+              totalAmount {
+ 39
+                amount
+ 40
+                currencyCode
+ 41
+              }
+ 42
+              amountPerQuantity {
+ 43
+                amount
+ 44
+                currencyCode
+ 45
+              }
+ 46
+              compareAtAmountPerQuantity {
+ 47
+                amount
+ 48
+                currencyCode
+ 49
+              }
+ 50
+            }
+ 51
+            merchandise {
+ 52
+              ... on ProductVariant {
+ 53
+                id
+ 54
+                availableForSale
+ 55
+                compareAtPrice {
+ 56
+                  ...CartApiMoney
+ 57
+                }
+ 58
+                price {
+ 59
+                  ...CartApiMoney
+ 60
+                }
+ 61
+                requiresShipping
+ 62
+                title
+ 63
+                image {
+ 64
+                  ...CartApiImage
+ 65
+                }
+ 66
+                product {
+ 67
+                  handle
+ 68
+                  title
+ 69
+                  id
+ 70
+                }
+ 71
+                selectedOptions {
+ 72
+                  name
+ 73
+                  value
+ 74
+                }
+ 75
+              }
+ 76
+            }
+ 77
+          }
+ 78
+        }
+ 79
+      }
+ 80
+      cost {
+ 81
+        subtotalAmount {
+ 82
+          ...CartApiMoney
+ 83
+        }
+ 84
+        totalAmount {
+ 85
+          ...CartApiMoney
+ 86
+        }
+ 87
+        totalDutyAmount {
+ 88
+          ...CartApiMoney
+ 89
+        }
+ 90
+        totalTaxAmount {
+ 91
+          ...CartApiMoney
+ 92
+        }
+ 93
+      }
+ 94
+      note
+ 95
+      attributes {
+ 96
+        key
+ 97
+        value
+ 98
+      }
+ 99
+      discountCodes {
+ 100
+        applicable
+ 101
+        code
+ 102
+      }
+ 103
+    }
+ 104
+ 105
+    fragment CartApiMoney on MoneyV2 {
+ 106
+      currencyCode
+ 107
+      amount
+ 108
+    }
+ 109
+ 110
+    fragment CartApiImage on Image {
+ 111
+      id
+ 112
+      url
+ 113
+      altText
+ 114
+      width
+ 115
+      height
+ 116
+    }
+ 117 `;
+ Step 2: Create a metafield form
+ Use Remix's useFetcher hook to create a form that submits information that you want to store in a metafield. The hook submits a form request to the /cart route's action when users submit with this metafield form. You can use this component anywhere in the app.
+ When you use fetcher.submit, make sure there's a data key with the name CartForm.INPUT_NAME. The key value must be a JSON stringified object with action and inputs defined.
+ File
+ JavaScript
+ TypeScript
+ /app/components/ThisIsGift.jsx
+ 1 import {useFetcher} from '@remix-run/react';
+ 2 import {CartForm} from '@shopify/hydrogen';
+ 3
+ 4 export function ThisIsGift({metafield}) {
+ 5
+    const fetcher = useFetcher();
+ 6
+ 7
+    return (
+ 8
+      <div>
+ 9
+        <input
+ 10
+          checked={metafield?.value === 'true'}
+ 11
+          type="checkbox"
+ 12
+          id="isGift"
+ 13
+          onChange={(event) => {
+ 14
+            fetcher.submit(
+ 15
+              {
+ 16
+                [CartForm.INPUT_NAME]: JSON.stringify({
+ 17
+                  action: CartForm.ACTIONS.MetafieldsSet,
+ 18
+                  inputs: {
+ 19
+                    metafields: [{
+ 20
+                      key: 'custom.gift',
+ 21
+                      type: 'boolean',
+ 22
+                      value: event.target.checked.toString(),
+ 23
+                    }],
+ 24
+                  },
+ 25
+                }),
+ 26
+              },
+ 27
+              {method: 'POST', action: '/cart'}
+ 28
+            )
+ 29
+          }}
+ 30
+        />
+ 31
+        <label htmlFor="isGift">This is a gift</label>
+ 32
+      </div>
+ 33
+    );
+ 34 }
+ Step 3: Handle the update metafield form request
+ Handle the update metafield form request in an action. Use the cart, created from createCartHandler, to handle cart mutation requests to the Storefront API.
+ File
+ JavaScript
+ TypeScript
+ /app/routes/cart.jsx
+ 1 import {CartForm} from '@shopify/hydrogen';
+ 2 import invariant from 'tiny-invariant';
+ 3
+ 4 export async function action({request, context}) {
+ 5
+    const {cart} = context;
+ 6
+ 7
+    const formData = await request.formData();
+ 8
+    const {action, inputs} = CartForm.getFormInput(formData);
+ 9
+ 10
+    let result;
+ 11
+ 12
+    switch(action) {
+ 13
+      case CartForm.ACTIONS.MetafieldsSet:
+ 14
+        result = await cart.setMetafields(inputs.metafields);
+ 15
+        break;
+ 16
+      default:
+ 17
+        invariant(false, `${action} cart action is not defined`);
+ 18
+    }
+ 19
+ 20
+    // The Cart ID might change after each mutation, so update it each time.
+ 21
+    const headers = cart.setCartId(result.cart.id);
+ 22
+ 23
+    return json(
+ 24
+      result,
+ 25
+      {status: 200, headers},
+ 26
+    );
+ 27 }
+ Next steps
+ Learn how to update buyer identity.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Read cart metafields
+ Step 2: Create a metafield form
+ Step 3: Handle the update metafield form request

@@ -1,0 +1,55 @@
+Secure tokens
+ Shortened URLs
+ Setting up Iframe protection
+ Apps on the Shopify App Store must set the proper Content Security Policy frame-ancestors directive to avoid clickjacking attacks. If the Content Security Policy frame-ancestors directive is missing or set incorrectly when you submit your app to the Shopify App Store, then your app might be rejected. You'll be required to address this before re-submitting your app for review.
+ Tip
+ To learn more about clickjacking, refer to Portswigger's Web Academy or OWASP Clickjacking. To learn more about the frame-ancestors directive, refer to MDN Web Docs.
+ Embedded Apps
+ If your app is an embedded app, then you need to make sure that your app is only frameable by the authenticated shop domain. Set the frame-ancestors directive dynamically based on the current shop domain and the Shopify admin domain. Setting this directive guarantees that your app can be framed only within the shop admin.
+ For example, if the shop shopify-dev.myshopify.com installs your app, then the response headers from your app when being rendered by this shop will contain the following frame-ancestors declaration:
+ 1 Content-Security-Policy: frame-ancestors https://shopify-dev.myshopify.com https://admin.shopify.com;
+ You can include other declarations in your Content-Security-Policy header besides frame-ancestors.
+ Note
+ The frame-ancestors declaration must be different for every shop, and these headers must be present in any routes that render HTML content.
+ Apps that aren't embedded
+ If your app isn't embedded, then we recommend setting the frame-ancestors directive to 'none' in order to disallow framing.
+ Content-Security-Policy: frame-ancestors 'none';
+ Troubleshooting
+ Apps can fail to meet the iframe protection requirement in the following ways:
+ The app isn't embedded, but is configured as an embedded app in the Partner Dashboard
+ The app is embedded, but isn't following the expected frame-ancestors guidelines
+ The following scenarios explain how to correct these issues.
+ The app shouldn't be embedded, but is configured as an embedded app in the Partner Dashboard
+ If your app isn't embedded in the shop admin, then it shouldn't be configured as embedded in the Partner Dashboard.
+ Follow these steps to check the configuration of your app:
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ Click Configuration.
+ In the Embedded in Shopify admin section, set the value for Embed app in Shopify admin to True.
+ Click Save and release.
+ The app is embedded, but isn't following the expected frame-ancestors guidelines
+ This scenario uses the following example values:
+ Fraud Filter as the app
+ cambridgetestshop-staging.myshopify.com as the shop
+ To validate whether Fraud Filter implements the expected headers, follow these steps:
+ Log in to the cambridgetestshop-staging shop.
+ Click Apps.
+ Right-click anywhere on the page and select Inspect.
+ Select the Network tab.
+ Load your app by clicking on its name. The content of the Network tab will start to change.
+ Click Doc in the Network tab to filter requests for documents.
+ Click the document to load a panel with more details.
+ If there's more than one document, then select the last one in the list.
+ Check the Request URL. The URL should be from the app's domain. In this scenario, the Request URL is from the Fraud Filter app domain.
+ Check that the "frame-ancestors" directive is included in the "Content-Security-Policy" header.
+ In this scenario, the directive is correctly included for the cambridgetestshop-staging.myshopify.com shop.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Embedded Apps
+ Apps that aren't embedded
+ Troubleshooting
+ Updates & News
+ Developer changelog
+ Partner blog

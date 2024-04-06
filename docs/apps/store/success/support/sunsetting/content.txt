@@ -1,0 +1,65 @@
+Overview
+ Marketing
+ Managing app reviews
+ Supporting your app
+ Overview
+ Sunsetting your app
+ Tracking app usage
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Sunsetting your app
+ Removing an app can have serious implications for merchants who rely on its functionality. To ensure the best possible experience for merchants who use your app, adhere to the following procedures and best practices.
+ Note
+ The best practices in this section apply to both listed and unlisted apps in the Shopify App Store.
+ Sunsetting best practices
+ Follow this timeline to ensure that your users have enough warning that your app will be sunset, and that they have the opportunity to find alternate solutions.
+ Before you sunset your app, you need to complete the following steps:
+ Set your app listing visibility to Unlisted to prevent further installs from the Shopify App Store. Unlisted apps can still be installed, but you're notified if a merchant installs your unlisted app.
+ In the Partner Dashboard, export a CSV file that lists the merchants that are using your app. You can export user data only when your app is published.
+ Send a minimum of two communications to merchants who have an active merchant install of your app.
+ Cancel any recurring application charges that your app makes through the REST Admin API.
+ Contact Shopify Partner Support to unpublish your sunsetted app.
+ Remove your app from your servers.
+ Caution
+ You must complete steps 1-5 prior to removing your app from your servers.
+ Thirty days before you sunset the app
+ Contact Shopify Partner Support to have your app unpublished from the Shopify App Store. Unpublishing your app stops new users from downloading your app during the sunsetting period. When you contact Support, include a link to the app that you're sunsetting, the date when you want the app to be unpublished, and the official sunset date.
+ Note
+ Only Shopify Partner Support can unpublish your app from the Shopify App Store. Unpublishing an app isn't the same as setting the app listing visibility to Unlisted.
+ After you receive confirmation from Shopify that your app will be unpublished, cancel any recurring application charges that your app makes through the REST Admin API (including active, frozen, pending, or accepted charges).
+ After the app is unpublished, send an email to your users that explains that your app will be sunset, provides the sunset date, and suggests that users uninstall the app from their storefront. If you're migrating users to a new Shopify app that you have developed, then include instructions on how to do so. Otherwise, instruct merchants to uninstall the app and find an alternative.
+ Two weeks before you sunset the app
+ Post a notice within your app, notifying users that the app will not function after the sunset date.
+ Offer support to any users who need it during this period.
+ One week before you sunset the app
+ Send an email reminding users of the sunset date. If merchants contact you for alternate apps to use, then direct them to the Shopify App Store.
+ On the sunset date
+ Contact Shopify Partner Support to confirm the next steps for your app's removal.
+ Check the number and type of remaining installs you have on your app. Because removing an app can have serious implications for merchants who rely on its functionality, Partner Support might ask you to send an additional email and wait 15 days if there are a high number of active merchant installs.
+ To view how many merchant installs, and what plans they're on, refer to View active merchant installs.
+ Remove the app from your servers rather than deleting it from the Apps page in your Partner Dashboard.
+ Caution
+ Because client IDs and historical app data are not available if you delete the app from your Partner Dashboard, it's recommended that you retain your app in the Dashboard.
+ 
+ Retaining your app lets you reuse the same client ID if you decide to relaunch your app in the future. Additionally, keeping your app in the Dashboard retains all your historical app data, such as revenue, the number of installs, and support interactions.
+ View active merchant installs
+ To assess the impact of sunsetting your app, and better communicate to impacted merchants, Shopify might require additional communications if there are still a high number of merchant installs.
+ To view your active merchant installs, complete the following steps:
+ From your Partner Dashboard, click Apps.
+ Click the name of the app that you want to sunset.
+ The Overview page opens and shows you how many merchants have your app installed.
+ To see a detailed view of the type of merchants that have installed your app, click Export and select Export Current Merchants.
+ From the exported data, you can remove the Inactive filter under Shop Plan to see what active stores still have your app installed.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Sunsetting best practices
+ Thirty days before you sunset the app
+ Two weeks before you sunset the app
+ One week before you sunset the app
+ On the sunset date
+ Updates & News
+ Developer changelog

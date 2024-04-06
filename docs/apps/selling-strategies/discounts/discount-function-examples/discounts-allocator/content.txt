@@ -1,0 +1,830 @@
+Discount function examples
+ Overview
+ Order discount
+ Discounts allocator
+ Bundles
+ Billing
+ App Store
+ Discounts Allocator Function
+ Developer preview
+ This Function API is available only in the Discounts Allocator developer preview.
+ Building a Discounts Allocator Function will enable you to have a higher degree of customization when you define discount allocation strategies. With this Function, you can implement custom logic to distribute discounts across line items.
+ What you'll learn
+ In this example, you create a Discounts Allocator Function that uses two metafields to help define its custom allocation logic. The first metafield will be applied to a discount, setting a max amount per discount application. If the discount is 50 percent off, then a max amount can be set to not exceed X number of dollars. The second metafield will be applied to the shop, setting a max discounted amount per cart.
+ Refer to a sample app with a completed example
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Update your app access scopes
+ You must request the write_discounts_allocator_functions access scope to give your app the permissions it needs to create and update discounts.
+ In shopify.app.toml, located in the root of your app, add the write_discounts_allocator_functions scope:
+ shopify.app.toml
+ 1 # This file stores configurations for your Shopify app.
+ 2
+ 3 scopes = "write_products, write_discounts, write_discounts_allocator_functions"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Restart your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Use the URL provided by Shopify CLI to open or re-install your app. You should be prompted to accept the new access scope permissions in your store.
+ Step 2: Create the Discounts Allocator Function
+ To create your Discounts Allocator Function, you'll do the following: - Generate a starter Function with Shopify CLI. - Specify the inputs for your Function with an input query. - Implement the Function logic using either JavaScript or Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <app_directory>
+ Run one of the following commands to create a new Discounts Allocator Function extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template discounts_allocator --name discounts-allocator
+ Choose the language that you want to use. For this tutorial, select either JavaScript or Rust.
+ Navigate to extensions/discounts-allocator.
+ Terminal
+ $ cd extensions/discounts-allocator
+ Replace the contents of src/run.graphql file with the following code:
+ run.graphql defines the input for the Function target. The query is slightly different in JavaScript and Rust due to code generation requirements.
+ run.GraphQL
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    discounts {
+ 3
+      id
+ 4
+      title
+ 5
+      code
+ 6
+      discountApplicationStrategy
+ 7
+      discountProposals
+ 8
+      {
+ 9
+        handle
+ 10
+        message
+ 11
+        valueType
+ 12
+        value
+ 13
+        targets{
+ 14
+          cartLineId
+ 15
+          quantity
+      metafield(namespace: "testing-app-allocator", key: "single-discount-cap") {
+ 19
+        value
+ 20
+      }
+ 21
+    }
+ 22
+    presentmentCurrencyRate
+ 23
+    cart {
+ 24
+      lines {
+ 25
+        id
+ 26
+        quantity
+ 27
+        cost {
+ 28
+          amountPerQuantity {
+ 29
+            amount
+ 30
+            currencyCode
+ 31
+          }
+ 32
+        }
+ 33
+        merchandise {
+ 34
+          __typename
+ 35
+          ... on ProductVariant {
+ 36
+            id
+ 37
+            title
+ 38
+            product {
+ 39
+              id
+ 40
+              title
+ 41
+            }
+ 42
+          }
+ 43
+        }
+ 44
+      }
+ 45
+    }
+ 46
+    shop {
+ 47
+      metafield(namespace: "testing-app-allocator", key: "per-cart-cap") {
+ 48
+        value
+ 49
+      }
+ 50
+    }
+ 51 }
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the content of the src/run.js or src/run.rs file with the following code:
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2 import {Decimal} from 'decimal.js';
+ 3
+ 4 // Define error messages for when discount limits are reached
+ 5 const TOTAL_DISCOUNTS_CAP_REACHED = 'Maximum discount limit reached for this cart';
+ 6 const SINGLE_DISCOUNT_CAP_REACHED = 'Maximum discount limit reached for this discount';
+ 7
+ 8 // Function to get the index of the target line in the cart
+ 9 function getTargetLineIndex(target) {
+ 10
+    return parseInt(target.cartLineId.slice(-1));
+ 11 }
+ 12
+ 13 // Function to calculate the current price of the target line in the cart
+ 14 function calculateCurrentTargetPrice(inputCartLines, target) {
+ 15
+    const targetLineIndex = getTargetLineIndex(target);
+ 16
+    const targetLine = inputCartLines[targetLineIndex];
+ 17
+    return targetLine.cost.amountPerQuantity.amount * target.quantity;
+ 18 }
+ 19
+ 20 export function run(input) {
+ 21
+    // Initialize total discount cap and total discount
+ 22
+    let totalDiscountsCap = parseFloat(input.shop.metafield?.value ?? '-1');
+ 23
+    let totalDiscount = 0.0;
+ 24
+ 25
+    // Initialize all lines output discounts and displayable errors
+ 26
+    let allLinesOutputDiscounts = input.cart.lines.map(line => ({
+ 27
+      cartLineId: line.id,
+ 28
+      quantity: line.quantity,
+ 29
+      allocations: [],
+ 30
+    }));
+ 31
+    let displayableErrors = [];
+ 32
+ 33
+    // Iterate over each discount
+ 34
+    for (const discount of input.discounts) {
+ 35
+      // Initialize current discount cap and current discount total
+ 36
+      let currentDiscountCap = parseFloat(discount.metafield?.value ?? '-1');
+ 37
+      let currentDiscountTotal = 0.0;
+ 38
+ 39
+      // Iterate over each discount proposal
+ 40
+      for (const proposal of discount.discountProposals) {
+ 41
+        // Calculate total price of all targets
+ 42
+        const totalTargetsPrice = proposal.targets.reduce((total, target) => {
+ 43
+          return total + calculateCurrentTargetPrice(input.cart.lines, target);
+ 44
+        }, 0);
+ 45
+ 46
+        // Iterate over each target
+ 47
+        for (const target of proposal.targets) {
+ 48
+          // Calculate current target price and ratio
+ 49
+          const currentTargetPrice = calculateCurrentTargetPrice(input.cart.lines, target);
+ 50
+          const currentTargetRatio = currentTargetPrice / totalTargetsPrice;
+ 51
+ 52
+          let lineDiscountAmount = 0.0;
+ 53
+          // Calculate line discount amount based on the type of the discount
+ 54
+          if (proposal.value.__typename == 'FixedAmount') {
+ 55
+            if (proposal.value.appliesToEachItem) {
+ 56
+              lineDiscountAmount = proposal.value.amount * target.quantity;
+ 57
+            } else {
+ 58
+              lineDiscountAmount = proposal.value.amount * currentTargetRatio;
+ 59
+            }
+ 60
+          } else if (proposal.value.__typename == 'Percentage') {
+ 61
+            lineDiscountAmount = (proposal.value.value / 100.0) * totalTargetsPrice * currentTargetRatio;
+ 62
+          }
+ 63
+ 64
+          // Check if the discount cap is reached for the current discount
+ 65
+          if (
+ 66
+            currentDiscountCap >= 0.0 &&
+ 67
+            currentDiscountTotal + lineDiscountAmount > currentDiscountCap
+ 68
+          ) {
+ 69
+            lineDiscountAmount = currentDiscountCap - currentDiscountTotal;
+ 70
+            displayableErrors.push({
+ 71
+              discountId: discount.id.toString(),
+ 72
+              reason: SINGLE_DISCOUNT_CAP_REACHED,
+ 73
+            });
+ 74
+          }
+ 75
+ 76
+          // Check if the discount cap is reached for the total discount
+ 77
+          if (
+ 78
+            totalDiscountsCap >= 0.0 &&
+ 79
+            totalDiscount + lineDiscountAmount > totalDiscountsCap
+ 80
+          ) {
+ 81
+            lineDiscountAmount = totalDiscountsCap - totalDiscount;
+ 82
+            displayableErrors.push({
+ 83
+              discountId: discount.id.toString(),
+ 84
+              reason: TOTAL_DISCOUNTS_CAP_REACHED,
+ 85
+            });
+ 86
+          }
+ 87
+ 88
+          // Skip if the line discount amount is zero
+ 89
+          if (lineDiscountAmount === 0.0) {
+ 90
+            continue;
+ 91
+          }
+ 92
+ 93
+          // Update total discount and current discount total
+ 94
+          totalDiscount += lineDiscountAmount;
+ 95
+          currentDiscountTotal += lineDiscountAmount;
+ 96
+ 97
+          // Add the discount to the target line
+ 98
+          const targetLineIndex = getTargetLineIndex(target);
+ 99
+          const targetAllocation = {
+ 100
+            discountProposalId: proposal.handle,
+ 101
+            amount: new Decimal(lineDiscountAmount),
+ 102
+          };
+ 103
+          allLinesOutputDiscounts[targetLineIndex].allocations.push(
+ 104
+            targetAllocation,
+ 105
+          );
+ 106
+        }
+ 107
+      }
+ 108
+    }
+ 109
+ 110
+    // Filter out lines without any discounts
+ 111
+    const lineDiscounts = allLinesOutputDiscounts.filter(
+ 112
+      outputDiscount => outputDiscount.allocations.length > 0,
+ 113
+    );
+ 114
+ 115
+    // Prepare the output
+ 116
+    const output = {
+ 117
+      lineDiscounts,
+ 118
+      displayableErrors,
+ 119
+    };
+ 120
+ 121
+    // Return the output
+ 122
+    return output;
+ 123 }
+ Step 3: Setting Shop and Discount Metafield Definitions
+ Caution
+ UI implementation to give merchant capability to set these metafield definitions is currently not part of this example.
+ Using GraphiQL App (Install it from here) run the following mutations in your shop:
+ Create the discount metafield definition:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+      }
+ 7
+      userErrors {
+ 8
+        field
+ 9
+        message
+ 10
+        code
+ 11
+      }
+ 12
+    }
+ 13 }
+ Query variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Single discount Cap",
+ 4
+      "namespace": "testing-app-allocator",
+ 5
+      "key": "single-discount-cap",
+ 6
+      "type": "number_decimal",
+ 7
+      "description": "Maximum reduction value for a single discount",
+ 8
+      "validations": [
+ 9
+        {
+ 10
+          "name": "min",
+ 11
+          "value": "0"
+ 12
+        }
+ 13
+      ],
+ 14
+      "ownerType": "DISCOUNT"
+ 15
+    }
+ 16 }
+ Create the shop metafield definition:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+      }
+ 7
+      userErrors {
+ 8
+        field
+ 9
+        message
+ 10
+        code
+ 11
+      }
+ 12
+    }
+ 13 }
+ Query variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Maximum Discount Per Cart",
+ 4
+      "namespace": "testing-app-allocator",
+ 5
+      "key": "per-cart-cap",
+ 6
+      "type": "number_decimal",
+ 7
+      "description": "The Maximum discount value applied to a single cart",
+ 8
+      "validations": [
+ 9
+        {
+ 10
+          "name": "min",
+ 11
+          "value": "0"
+ 12
+        }
+ 13
+      ],
+ 14
+      "ownerType": "SHOP"
+ 15
+    }
+ 16 }
+ Step 4: Create the frontend UI for registering your Allocator Function
+ After a merchant installs your app, they will need to register the allocator function in order for it to be actively allocating discounts. This takes precedence over most discount features that are built by Shopify.
+ In app/routes, create a new file named app.discounts-allocator.$functionId.jsx.
+ The Shopify Remix app template uses file-based routing, so the filename determines the page's URL. The $ prefix indicates functionId is a dynamic segment. The path for this page is /app/discounts-allocator/{functionId}.
+ Add the following code in app.discounts-allocator.$functionId.jsx:
+ The action function handles submitting the form data to Shopify to create the discount. The DiscountsAllocator function renders the page and form components using Polaris components, and Remix hooks.
+ 1 import {useEffect} from 'react';
+ 2 import {json} from '@remix-run/node';
+ 3 import {useActionData, useNavigate, useSubmit} from '@remix-run/react';
+ 4 import {Page, Layout, BlockStack, Card, Banner, Text} from '@shopify/polaris';
+ 5
+ 6 import {registerDiscountsAllocator} from '../models/discounts.server';
+ 7
+ 8 export const action = async ({params, request}) => {
+ 9
+    const registerDiscountsAllocatorMutation = `
+ 10
+      #graphql
+ 11
+        mutation registerDiscountsAllocator($functionExtensionId: String!) {
+ 12
+          discountsAllocatorFunctionRegister(functionExtensionId: $functionExtensionId) {
+ 13
+            userErrors {
+ 14
+              code
+ 15
+              message
+ 16
+              field
+ 17
+            }
+ 18
+          }
+ 19
+        }
+ 20
+      `;
+ 21
+ 22
+    const formData = await request.formData();
+ 23
+    const functionExtensionId = formData.get('functionExtensionId');
+ 24
+ 25
+    if (functionExtensionId !== null) {
+ 26
+      const {admin} = await authenticate.admin(request);
+ 27
+ 28
+      const response = await admin.graphql(registerDiscountsAllocatorMutation, {
+ 29
+        variables: {
+ 30
+          functionExtensionId: JSON.parse(functionExtensionId),
+ 31
+        },
+ 32
+      });
+ 33
+ 34
+      const responseJson = await response.json();
+ 35
+      const errors =
+ 36
+        responseJson.data.discountsAllocatorFunctionRegister?.userErrors;
+ 37
+      return json({errors});
+ 38
+    }
+ 39
+ 40
+    return json({errors: ['No functionExtensionId provided']});
+ 41 };
+ 42
+ 43
+ 44 export default function DiscountsAllocator() {
+ 45
+    const actionData = useActionData();
+ 46
+ 47
+    const submitForm = useSubmit();
+ 48
+    const navigate = useNavigate();
+ 49
+ 50
+    useEffect(() => {
+ 51
+      if (actionData?.errors && actionData?.errors.length === 0) {
+ 52
+        shopify.toast.show(
+ 53
+          'Discounts Allocator Function registered successfully!',
+ 54
+        );
+ 55
+      }
+ 56
+    }, [actionData]);
+ 57
+ 58
+    const errorBanner = actionData?.errors.length ? (
+ 59
+      <Layout.Section>
+ 60
+        <Banner
+ 61
+          title="There were some issues with your form submission"
+ 62
+          tone="critical"
+ 63
+        >
+ 64
+          <ul>
+ 65
+            {actionData?.errors?.map((error, index) => {
+ 66
+              return <li key={`${index}`}>{error.message}</li>;
+ 67
+            })}
+ 68
+          </ul>
+ 69
+        </Banner>
+ 70
+      </Layout.Section>
+ 71
+    ) : null;
+ 72
+ 73
+    const actions = {
+ 74
+      backAction: {
+ 75
+        content: 'Home',
+ 76
+        onAction: () => navigate('/app'),
+ 77
+      },
+ 78
+      primaryAction: {
+ 79
+        content: 'Register Discounts allocator',
+ 80
+        onAction: () => submitForm({}, {method: 'post'}),
+ 81
+      }
+ 82
+    }
+ 83
+ 84
+    return (
+ 85
+      <Page
+ 86
+        title="Register Discounts Allocator Function"
+ 87
+        {...actions}
+ 88
+      >
+ 89
+        <BlockStack gap="500">
+ 90
+          <Layout>
+ 91
+            <Layout.Section>
+ 92
+              <Card>
+ 93
+                <Text as="h2" variant="bodyMd">
+ 94
+                  Add more awesome details about your allocator here! (Like ability to add metafields)
+ 95
+                </Text>
+ 96
+              </Card>
+ 97
+            </Layout.Section>
+ 98
+            {errorBanner}
+ 99
+          </Layout>
+ 100
+        </BlockStack>
+ 101
+      </Page>
+ 102
+    );
+ 103 }
+ Step 5: Configure the details UI path for your Function
+ The settings in the shopify.extension.toml file define the URLs that Shopify uses to enable merchants to create and edit discounts based on your Function. Shopify automatically fills in any dynamic tokens in these URLs.
+ In extensions/discounts-allocator/shopify.extension.toml, populate the create and module setting in the [ui] section. This change is automatically applied as long as you're running dev.
+ extensions/discounts-allocator/shopify.extension.toml
+ 1 create = "/"
+ 2 details = "/app/discounts-allocator/:functionId"
+ Step 6: Test your Discounts Allocator Function
+ If your app isn't already running, then start it using Shopify CLI.
+ From your Shopify admin, go to Discounts.
+ If you have existing discounts from previous tutorials, then click the checkbox next to each of them, and then click Deactivate discounts.
+ Click the Create discount button near the top right of your page and select Amount off products. Now fill in the values for the discount:
+ For Method, use Automatic.
+ For Discount percentage, use 50.
+ Open your development store and build a cart with some eligible products and notice the discount amount applied is 50 percent off.
+ To utilize the single-discount-cap capability of your allocator, go to the GraphiQL App and run the following mutation in your shop:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+ 2
+      metafieldsSet(metafields: $metafields) {
+ 3
+        metafields {
+ 4
+          key
+ 5
+          namespace
+ 6
+          value
+ 7
+          createdAt
+ 8
+          updatedAt
+ 9
+        }
+ 10
+        userErrors {
+ 11
+          field
+ 12
+          message
+ 13
+          code
+ 14
+ Query variables
+ 1 {
+ 2
+    "metafields": [
+ 3
+      {
+ 4
+        "key": "single-discount-cap",
+ 5
+        "namespace": "testing-app-allocator",
+ 6
+        "ownerId": "gid://shopify/DiscountNode/<DISCOUNT_ID>",
+ 7
+        "type": "number_decimal",
+ 8
+        "value": "<SINGLE_DISCOUNT_CAP>"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ Note
+ Replace DISCOUNT_ID with the ID of the discount that you created and replace SINGLE_DISCOUNT_CAP with the desired single discount cap, for example 20.
+ Go to the cart you created and refresh the page, notice the discounts will be capped at the SINGLE_DISCOUNT_CAP value you set in the metafield.
+ Now to utilize the per-cart-cap capability of your allocator, go to the GraphiQL App and run the following mutation in your shop:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+ 2
+    metafieldsSet(metafields: $metafields) {
+ 3
+      metafields {
+ 4
+        key
+ 5
+        namespace
+ 6
+        value
+ 7
+        createdAt
+ 8
+        updatedAt
+ 9
+      }
+ 10
+ 13
+        code
+ 14
+      }
+ 15
+    }
+ 16 }
+ Query variables
+ 1 {
+ 2
+    "metafields": [
+ 3
+      {
+ 4
+        "key": "per-cart-cap",
+ 5
+        "namespace": "testing-app-allocator",
+ 6
+        "ownerId": "gid://shopify/Shop/<SHOP_ID>",
+ 7
+        "type": "number_decimal",
+ 8
+        "value": "<PER_CART_CAP>"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ Note
+ For this example, replace SHOP_ID with the development store ID that you're testing the Allocator Function with, and replace PER_CART_CAP with the desired per cart discounts cap, for example 50.
+ Click the Create discount button and select Amount off order. Fill in the values for the discount:
+ For Method, use Automatic.
+ For Fixed Amount, use 500 or any amount higher than your PER_CART_CAP.
+ Go to the cart you created and refresh the page, notice the total savings will be capped at the PER_CART_CAP value you set in the metafield.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Update your app access scopes
+ Step 2: Create the Discounts Allocator Function
+ Step 3: Setting Shop and Discount Metafield Definitions
+ Step 4: Create the frontend UI for registering your Allocator Function
+ Step 5: Configure the details UI path for your Function
+ Step 6: Test your Discounts Allocator Function

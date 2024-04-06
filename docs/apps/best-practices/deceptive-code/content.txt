@@ -1,0 +1,15 @@
+Billing
+ App Store
+ Avoid deceptive coding practices
+ Deceptive development practices are prohibited on Shopify's platform. Shopify expects app developers to act with integrity and in the best interests of app users. Developers should regularly review, and remain compliant with, the Partner Program Agreement and Shopify’s API Terms of Service.
+ The following sections describe some of the development practices that Shopify considers deceptive. Any developer that uses these practices, or any other practices considered by Shopify to be deceptive or harmful to merchants, is subject to Partner governance action.
+ Obfuscating code
+ Don’t obfuscate your code. Obfuscation means changing simple, straightforward code into code that is difficult to understand. Obfuscated code obscures the intended behaviour of the code, usually with the intention of hiding that behavior from users. In addition, obfuscation techniques might hinder the performance of a user's site. There is no legitimate reason for developers to use obfuscated code in their apps.
+ Manipulating search engines
+ Apps shouldn't include any code that targets search engines to misrepresent the site content. One example of this type of deceptive coding practice is cloaking. Cloaking refers to the use of code that presents different content to search engines than is presented to users.
+ Developers should never use any code that attempts to trick search engines for any purpose, including increasing page speed scores.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Obfuscating code
+ Manipulating search engines

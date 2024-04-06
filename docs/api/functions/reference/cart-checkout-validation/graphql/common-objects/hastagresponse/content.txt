@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ HasTagResponse object
+ 2024-04 latest
+ Represents whether the current object has the given tag.
+ On this page
+ Fields
+ Types that return HasTagResponse
+ Fields
+ hasTag (Boolean!)
+ Whether the current object has the tag.
+ tag (String!)
+ The tag.
+ Types that return HasTagResponse
+ Customer.hasTags
+ Product.hasTags
+ Was this page helpful?
+ YesNo
+ Updates & News

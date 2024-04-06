@@ -1,0 +1,405 @@
+Marketing automations
+ Overview
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Action endpoints
+ Before your app can receive communication from marketing automation actions, you need to create one or more standardized API endpoints on your web server. Review the information for each endpoint to understand its requirements, the format of the payload, and the expected response. You'll also learn how to avoid processing duplicate requests, identify an action by its ID, and verify requests for security purposes.
+ Endpoint Purpose
+ Flow action execution The endpoint where the automation tool sends your action's payload. The payload contains data that you can use to execute the action in your app.
+ Custom configuration page preview An endpoint that provides data about your custom configuration page to display in the automation tool. This endpoint is required if you want to use a custom configuration page.
+ Custom validation An endpoint that validates the contents of merchant-configurable properties in an action payload when an action is saved. This endpoint is required if you want to use a custom configuration page.
+ Marketing activity create This endpoint is called when a step in a workflow is created using the action. Shopify creates a marketing activity and sends the marketing_activity_id to you.
+ Marketing activity delete This endpoint is called when a workflow associated with the marketing activity is deleted.
+ General endpoint requirements
+ The requirements for Shopify marketing automations action endpoints are as follows:
+ Rule / concern Type / requirement
+ API format REST
+ Content type JSON
+ Security mechanism HMAC / Signed requests
+ Protocol HTTPS (app domain requires valid SSL certificate)
+ Flow action execution
+ When a workflow that contains your action is executed, Flow sends an HTTP request to your Flow action execution endpoint (runtime URL). The request contains a payload that matches the payload schema that you configured for your action.
+ Request
+ POST <Flow action HTTPS request URL>
+ 1 {
+ 2
+    "shop_id": "gid://shopify/Shop/1",
+ 3
+    "shopify_domain": "{shop}.myshopify.com",
+ 4
+    "action_run_id": "xxxx-xxxx-xxxx-xxxx",
+ 5
+    "action_definition_id": "Send Marketing SMS",
+ 6
+    "handle": "send-marketing-sms",
+ 7
+    "properties": {
+ 8
+      "customer_id": "gid://shopify/Customer/1234567",
+ 9
+      "sms_message": "Thanks for making the purchase!",
+ 10
+      "marketing_activity_id": "gid://shopify/MarketingActivity/1234567",
+ 11
+      "step_reference": "320d4f8a-aaab-40ff-9ed2-2bc079633705"
+ 12
+    }
+ 13 }
+ The payload contains the following parameters:
+ Property Name Property Usage
+ shop_id The ID of the store.
+ shopify_domain The myshopify.com domain of the store.
+ action_run_id An ID that represents an instance of an action being run. Learn more.
+ handle The extension’s handle. We recommend using this property to identify your actions.
+ step_reference A unique ID for the step within a workflow. This property only appears if you’ve set a Custom Configuration Page.
+ action_definition_id A unique ID for the action. The ID is based on the action name in the Partner Dashboard.
+ properties The fields that you selected as part of the action configuration.
+ To learn how to configure the payload schema, refer to Shopify marketing automation actions.
+ Expected response
+ After the automation tool sends a POST request to your web server, it waits for a maximum of 10 seconds for an HTTP status code.
+ If after 10 seconds the automation tool hasn't received a response from your web server, then the automation tool closes the connection to your web server and resends the request later.
+ When the automation tool receives a response, it processes the codes as displayed in the following table:
+ Status codes Description
+ 200 Success The automation tool assumes that the POST request has been processed by your web server.
+ 202 Success The automation tool assumes that the POST request has been accepted but not processed by your web server. The automation tool will resend the POST request at increasing intervals for up to 36 hours.
+ 4XX Client errors
+ If your web server sends a 429 status code without a Retry-After header, then the automation tool resends the POST request at increasing intervals for up to 36 hours.
+ If your web server sends a 429 status code with a Retry-After header that specifies a wait time, then the automation tool resends the POST request after the wait time (formatted in seconds) has passed.
+ If your web server sends any other 4XX code, then the automation tool assumes that there was a failure and it doesn't resend the POST request. Merchants see a notification in the automation tool that includes the raw contents of your web server's response.
+ Example: 400 Bad Request { "error1": "server unresponsive" }
+ You can provide a merchant-friendly description of the error by adding a key named message. For example:
+ Example: { "message": "Finish the onboarding on our website." }
+ 5XX Server errors The automation tool resends the POST request at increasing intervals for up to 36 hours.
+ Other status code If your web server returns a code that isn't described in this table, then the automation tool assumes that there was a failure and it doesn't resend the POST request.
+ Prevent apps from processing duplicate requests
+ Each request from an automation workflow contains an action_run_id that's unique to the associated action run. This ID is included in the body of the request.
+ You can use action_run_id as an idempotency key to check if the request is unique. In some cases, your app could receive an identical request more than once. For example, the automation tool might resend a request because it didn't receive your response in time. Your app can store the idempotency key in a cache with a set expiry time to avoid reprocessing duplicate requests.
+ Identify actions
+ The handle property is how you identify the action for processing when your web server receives a request from Flow during workflow execution.
+ 1 {
+ 2
+    "shop_id": 0,
+ 3
+    "shopify_domain": "{shop}.myshopify.com",
+ 4
+    "action_run_id": "xxxx-xxxx-xxxx-xxxx",
+ 5
+    "handle": "auction-bid",
+ 6
+    "action_definition_id": "Auction Bid",
+ 7
+    "properties": {}
+ 8 }
+ Custom validation
+ An endpoint that validates the contents of merchant-configurable properties in an action payload when an action is saved. This endpoint is required if you want to use a custom configuration page.
+ Request
+ The request contains a payload that matches the payload schema you configured for your action.
+ POST <Validation endpoint>
+ 1 {
+ 2
+    "shop_id": "gid://shopify/Shop/1",
+ 3
+    "shopify_domain": "{shop}.myshopify.com",
+ 4
+    "handle": "my-extension-handle",
+ 5
+    "locale": "en",
+ 6
+    "steps": [
+ 7
+      {
+ 8
+        "step_reference": "122438de2e57d8bad7e50958d2bd4999ca2c4c35ee3b5120e85e42a17fc1ce93",
+ 9
+        "properties" : {
+ 10
+          "outside_na": true,
+ 11
+          "guest_no": 22,
+ 12
+          "first_name": "John",
+ 13
+          "customer_id": "customer.id"
+ 14
+        }
+ 15
+      },
+ 16
+      {
+ 17
+        "step_reference": "ca2c4c35ee3b5120e85e42a17fc1ce93122438de2e57d8bad7e50958d2bd4999",
+ 18
+        "properties" : {
+ 19
+          "outside_na": false,
+ 20
+          "guest_no": 14,
+ 21
+          "first_name": "Kim",
+ 22
+          "customer_id": "customer.id"
+ 23
+        }
+ 24
+      },
+ 25
+    ]
+ 26 }
+ The payload contains the following parameters:
+                                                                                                                                                                                                               Parameter Description
+ shop_id The ID of the store.
+ shopify_domain The myshopify.com domain of the store.
+ handle The extension’s handle. We recommend using this property to identify your actions.
+ locale The locale of the store, in ISO format.
+ steps An array of all of the steps to validate. Each child step object represents a separate action on the merchant’s workflow.
+ steps.step_reference The unique identifier for the step. This ID should be used when returning errors for a step.
+ steps.properties
+ An object containing the properties specified on the action.
+ Merchant-configurable properties: These properties are passed as strings, with the following exceptions:
+ Checkbox properties: Boolean
+ Number properties: integer
+ Shopify properties:
+ Marketing activity ID: The GID for the marketing activity that was specified in the action configuration.
+ Example:
+ Validation payload value: "gid://shopify/MarketingActivity/123456"
+ Runtime value: "gid://shopify/MarketingActivity/123456"
+ All other properties: The path to the value for the related commerce object in the workflow environment. For example, customer.id. If the value isn't available in the workflow environment, then an empty string is returned. The property will be populated with an actual value at runtime.
+ Example 1: Customer ID is available in the workflow environment
+ Validation payload value: "customer.id"
+ Runtime value: "123456"
+ Example 2: Customer ID isn't available in the workflow environment
+ Validation payload value: ""
+ Runtime value: null
+ If a property is marked as optional, then the workflow tool won't validate the presence of the commerce object, and will only rely on external validation. The path to the value for the commerce objects is still returned as a path, but Shopify can't guarantee their presence at runtime. If you need a commerce object to be present at runtime, then you should mark it as required. This allows the workflow tool to assess the presence of the commerce object and return any errors to the editor.
+ Example 3: Customer ID might be available in the workflow environment (for example, when using a custom trigger and an order step)
+ Validation payload value: "customer.lastOrder.id"
+ Runtime value: "123456" OR null
+ Expected response
+ Your app should return an array of the steps that you validated, identified by their step_reference. If there are any validation errors, then specify them in a step_errors array. The error messages that return appear to the user in the action configuration pane in Shopify marketing automations.
+ 1 [
+ 2
+    {
+ 3
+      step_reference: '122438de2e57d8bad7e50958d2bd4999ca2c4c35ee3b5120e85e42a17fc1ce93',
+ 4
+      step_errors: [
+ 5
+        {
+ 6
+          message: 'A step level error occurred'
+ 7
+        }
+ 8
+       ],
+ 9
+      properties_errors: [
+ 10
+        {
+ 11
+          id: 'guest_no',
+ 12
+          message: 'Number of guests is limited to 8 when outside of North America'
+ 13
+        }
+ 14
+      ]
+ 15
+    },
+ 16
+    {
+ 17
+      step_reference: 'ca2c4c35ee3b5120e85e42a17fc1ce93122438de2e57d8bad7e50958d2bd4999',
+ 18
+      step_errors: [],
+ 19
+      properties_errors: []
+ 20
+    }
+ 21 ]
+                                                                                                                                                                                       Parameter Description
+ step_reference The unique identifier for the step. This ID should be used when returning errors for a step.
+ step_errors An array of errors that apply to the entire step.
+ step_errors.message An error message to display at the top of the action configuration pane.
+ properties_errors An array of errors that apply to particular properties.
+ properties_errors.id The key of the property that contains the error.
+ properties_errors.message An error message to display for the property.
+ Custom configuration page preview
+ An endpoint that provides data about your custom configuration page to display in the automation tool. This endpoint is required if you want to use a custom configuration page. Using the endpoint, you can dynamically set the following information:
+ The field’s label
+ A text preview
+ A last updated at timestamp
+ An image preview
+ The text used by the button that redirects to the custom configuration page
+ Request
+ POST <Custom configuration page preview URL>
+ 1 {
+ 2
+    "shop_id": "gid://shopify/Shop/1",
+ 3
+    "shopify_domain": "{shop}.myshopify.com",
+ 4
+    "step_reference": "122438de2e57d8bad7e50958d2bd4999ca2c4c35ee3b5120e85e42a17fc1ce93",
+ 5
+    "handle": "my-extension-handle",
+ 6
+    "locale": "en",
+ 7
+    "properties": {
+ 8
+      "customer_id": "gid://shopify/Customer/1234567",
+ 9
+      "sms_message": "Thanks for making the purchase!",
+ 10
+      "marketing_activity_id": "gid://shopify/MarketingActivity/1234567"
+ 11
+    }
+ 12 }
+ The payload contains the following parameters:
+ Parameter Description
+ shop_id The ID of the store.
+ shopify_domain The myshopify.com domain of the store.
+ handle The extension’s handle. We recommend using this property to identify your actions.
+ step_reference A unique ID for the step within a workflow.
+ locale The locale of the store making the request, in ISO format.
+ properties The fields that you selected as part of the action configuration.
+ Expected response
+ 1 {
+ 2
+    "label_text": "Abandonment Email Template",
+ 3
+    "text_preview": "We want you back. Enjoy a 15% discount on your next purchase.",
+ 4
+    "button_text": "Edit Email",
+ 5
+    "image_preview": {
+ 6
+      "url": "http://someUrl.io/assets/preview_image.png",
+ 7
+      "alt": "Abandonment Email Template Preview Image"
+ 8
+    },
+ 9
+    "last_updated_at": "2023-02-10T16:50:24.709Z"
+ 10 }
+ Other than text_preview, all fields are nullable.
+                                                                                                                                                                                                                                       Parameter Description
+ 1 label_text A title for the custom configuration page.
+ 
+ If no value is specified, then the label text defaults to Configuration Page Preview.
+ 2 text_preview A preview that indicates the resource that's tied to the step. For example, in the case of an email content editor, this might be a preview of the email text.
+ 
+ This field is required.
+ 3 button_text The text for the button the user clicks to access the custom configuration page.
+ 
+ If no value is specified, then the label text defaults to Edit.
+ 
+ If the value for `button_text` is longer than 23 characters, then the label is truncated to twenty characters with an ellipsis.
+ image_preview The details of the image.
+ 4 image_preview.url The URL for a preview image of the custom configuration page. The image should be between 500px and 600px wide, and 100KB or less. There is no maximum height.
+ image_preview.thumbnail_url The URL for a thumbnail version of the preview image.
+ 
+ This image is not currently used in the user interface.
+ image_preview.alt The alt text for the preview image. This text appears if your image fails to render, and is accessible to screen readers.
+ 5 last_updated_at The date and time that the resource was last updated, in IS0-8601 format.
+ Marketing activity create
+ The marketing activity create endpoint is called when a step in a workflow is created using a marketing automation action.
+ Request
+ POST <Marketing activity creation URL>
+ 1 {
+ 2
+    "shop_id": "gid://shopify/Shop/1",
+ 3
+    "shopify_domain": "{shop}.myshopify.com",
+ 4
+    "step_reference": "320d4f8a-aaab-40ff-9ed2-2bc079633705",
+ 5
+    "marketing_activity_id": "gid://shopify/MarketingActivity/40",
+ 6
+    "automation_step_type": "free_form",
+ 7
+    "locale": "en"
+ 8 }
+ The payload contains the following parameters:
+ Parameter Description
+ shop_id The ID of the store.
+ shopify_domain The myshopify.com domain of the store.
+ step_reference A unique ID for the step within a workflow.
+ marketing_activity_id The ID for the marketing activity. You need to reference this ID when you send marketing data and insights back to Shopify.
+ automation_step_type An enum that represents the intent of the action, based on the marketing automation trigger. You should use this attribute to render default content.
+ locale The locale of the customer whose action in the store triggered the workflow action.
+ Automation step types
+ The following are valid values for the automation_step_type attribute. Use these values to render default content based on the action's intent.
+ Value Intent
+ abandoned_browse Encourage customers who browsed a product page without adding products to the cart to make a purchase.
+ abandoned_checkout Encourage customers who didn't finish the checkout process to complete their purchase.
+ abandoned_cart Encourage customers who left items in their cart to complete their purchase.
+ free_form No predefined intent. The action was triggered by a custom automation.
+ upsell Encourage first-time customers to return to the store.
+ welcome_email Welcome new email subscribers to the store. This intent excludes customers who subscribed at checkout.
+ winback Drive customers who haven't made a purchase in a long time back to the store.
+ Expected response
+ When a request is received, the marketing activity create endpoint should respond with an HTTP 200. Any response other than an HTTP 200 is interpreted as an error.
+ Expected response
+ 1 HTTP/1.1 200 OK
+ 2 {
+ 3
+    "tactic": <tactic>,
+ 4
+    "channel": <channel>,
+ 5
+    "utm_campaign": <utm_campaign>,
+ 6
+    "utm_source": <utm_source>,
+ 7
+    "utm_medium": <utm_medium>
+ 8 }
+ The response must contain the following parameters:
+ Parameter Description
+ tactic Accepted values: message, notification, or newsletter
+ channel Accepted values: email, sms
+ UTM parameters (utm_campaign, utm_source, utm_medium) The UTM parameter combination must be unique to each marketing activity in the store.
+ Marketing activity delete
+ Marketing activity delete is called when a workflow associated with the marketing activity is deleted.
+ POST <Marketing activity deletion URL>
+ 1 {
+ 2
+    "shop_id": "gid://shopify/Shop/1",
+ 3
+    "shopify_domain": "{shop}.myshopify.com",
+ 4
+    "step_reference": "ba04e8b9-82ad-4b96-8075-202c0d18b5f7",
+ 5
+    "marketing_activity_id": "gid://shopify/MarketingActivity/40"
+ 6 }
+ The payload contains the following parameters:
+ Parameter Description
+ shop_id The ID of the store.
+ shopify_domain The myshopify.com domain of the store.
+ step_reference A unique ID for the step within a workflow.
+ marketing_activity_id The ID for the marketing activity.
+ Expected response
+ When a request is received, the marketing activity delete endpoint should respond with an HTTP 200. Any response other than an HTTP 200 is interpreted as an error. The request will be retried up to 5 times using exponential back-off.
+ Expected response
+ 1 HTTP/1.1 200 OK
+ 2 {}
+ Verifying requests
+ For security reasons, your web service should enforce a hash-based message authentication (HMAC) header verification that uses the client secret that you created when you configured your app.
+ The name of the HMAC header is x-shopify-hmac-sha256. If you are using a Ruby-based web framework, then the name of the header is http-x-shopify-hmac-sha256.
+ When the action runs in a workflow, the automation tool posts the contents (JSON payload and the HMAC header) of the action to the URL that you entered when you created the action in the Partner Dashboard. When your web server receives the POST request, it needs to verify the HMAC header against the JSON payload and your app's API secret. The HMAC verification works the same as webhooks.
+ Your web server also needs to verify that the handle that's sent in the payload matches the handle of the action that you created.
+ After you've verified the HMAC header, you can process the contents of the payload. For example, you could log the contents of the payload to your web server's console.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ General endpoint requirements
+ Flow action execution
+ Custom validation
+ Custom configuration page preview
+ Marketing activity create
+ Marketing activity delete
+ Verifying requests
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

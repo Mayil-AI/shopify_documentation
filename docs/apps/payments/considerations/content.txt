@@ -1,0 +1,120 @@
+Implementation considerations
+ Request reference
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale
+ Implementation considerations
+ After you've created your payments app, learned about the payments app actions and published your payments app extension, you must make sure you've implemented the following protocols to be approved as a payments app.
+ Requirements
+ You've created a payments app.
+ You've made sure your payments app meets the requirements.
+ Your app has the write_payment_gateways and write_payment_sessions access scopes.
+ Note
+ These are restricted scopes, and you need to apply for access.
+ mTLS configuration
+ Payments apps need to implement mTLS to handle all requests where the app acts as the server and Shopify acts as the client, such as when Shopify initiates sessions with payments apps for payment, refund, capture, and void requests. In these cases, Shopify uses its own client certificate. Payments apps need to use the provided self-signed CA to validate Shopify's certificate. Using mTLS in these scenarios allows payments apps to verify that the client initiating the request is Shopify and that the traffic between Shopify and the payments app is trusted and secure.
+ Because mTLS is mutual, the payments app also needs to provide a certificate that Shopify will validate. For this certificate, you need to use a Trusted CA Signed SSL Certificate, and not Shopify’s self-signed CA.
+ Note
+ mTLS isn’t used to retrieve the OAuth access token. All requests that use Shopify GraphQL mutations are authenticated with an OAuth access token, not mTLS.
+ Shopify's self-signed CA
+ Certificate expiry
+ Our current Shopify CA intermediate certificate, Payments Platform Secondary CA Production, will expire soon. In anticipation of this, we're transitioning to a new CA chain on December 18, 2023.
+ To ensure a smooth transition and avoid any downtime for your app, add the new intermediate certificate to your systems, in addition to the current Payments Platform Secondary CA Production. You must maintain both certificates until at least December 18, 2023.
+ Chain Scheduled for Retirement (Effective until December 18, 2023)
+ Shopify's Payments Platform Secondary CA Production (expiring soon)
+ -----BEGIN CERTIFICATE-----
+ MIICUjCCAfigAwIBAgIUXLkjZ6s/S+FzEbQABn9FmC3vCD8wCgYIKoZIzj0EAwIw
+ bTELMAkGA1UEBhMCQ0ExEDAOBgNVBAgTB09udGFyaW8xDzANBgNVBAcTBk90dGF3
+ YTEQMA4GA1UEChMHU2hvcGlmeTEpMCcGA1UEAxMgU2hvcGlmeSBQYXltZW50IFBs
+ YXRmb3JtIFJvb3QgQ0EwHhcNMjEwMjI1MTk0OTU1WhcNMjQwMjI1MTk1MDI1WjB9
+ MQswCQYDVQQGEwJDQTEQMA4GA1UECBMHT250YXJpbzEPMA0GA1UEBxMGT3R0YXdh
+ MRAwDgYDVQQKEwdTaG9waWZ5MTkwNwYDVQQDEzBTaG9waWZ5IFBheW1lbnQgUGxh
+ dGZvcm0gU2Vjb25kYXJ5IENBIFByb2R1Y3Rpb24wWTATBgcqhkjOPQIBBggqhkjO
+ PQMBBwNCAASB/PJiqXjVxmdKWsAjg8ljtdB6th71ZuiSjyMIHfUqe1zUGkNlGfhc
+ Wdxb/XSY1RiO0uZZJUTGsr37Aj42mPgDo2YwZDAOBgNVHQ8BAf8EBAMCAQYwEgYD
+ VR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQU9PLeHDNrctw7CkA6UhSNOZU8uVEw
+ HwYDVR0jBBgwFoAUVamr8bzmvSvUihLh8+GZl3AssuQwCgYIKoZIzj0EAwIDSAAw
+ RQIhAJkeNxYqCCPo115sgd20SN/87olMagNZqlJa8GZbo4oDAiB9S88ga4jsZCvA
+ ciExpaKrSSFdl4TTxpfLiNZX0OFU5w==
+ -----END CERTIFICATE-----
+ Shopify's Payments Platform Root CA
+ -----BEGIN CERTIFICATE-----
+ MIICQTCCAeigAwIBAgIUe+t5Y8PXvczEIT25w+VFTeKQUn4wCgYIKoZIzj0EAwIw
+ bTELMAkGA1UEBhMCQ0ExEDAOBgNVBAgTB09udGFyaW8xDzANBgNVBAcTBk90dGF3
+ YTEQMA4GA1UEChMHU2hvcGlmeTEpMCcGA1UEAxMgU2hvcGlmeSBQYXltZW50IFBs
+ YXRmb3JtIFJvb3QgQ0EwHhcNMjEwMjI1MTk0OTQ5WhcNMjkwMjIzMTk1MDE5WjBt
+ MQswCQYDVQQGEwJDQTEQMA4GA1UECBMHT250YXJpbzEPMA0GA1UEBxMGT3R0YXdh
+ MRAwDgYDVQQKEwdTaG9waWZ5MSkwJwYDVQQDEyBTaG9waWZ5IFBheW1lbnQgUGxh
+ dGZvcm0gUm9vdCBDQTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABE2tRNrL28gM
+ eD6cVH1Evn40gTzoy+aH47QnAhs6oHBZ+pgN1iCK9G6u/Va1BdWqsbmmZMZfZkY4
+ x+kqHRjw29GjZjBkMA4GA1UdDwEB/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgED
+ MB0GA1UdDgQWBBRVqavxvOa9K9SKEuHz4ZmXcCyy5DAfBgNVHSMEGDAWgBRVqavx
+ vOa9K9SKEuHz4ZmXcCyy5DAKBggqhkjOPQQDAgNHADBEAiB+pPrzREg+NpenROMY
+ n5IH3OrORXERggd0+YLI5HhL/wIgcAo70tOV/0Vv9oGFjNbI9TpkeFUgb8Rc5Gh6
+ 65LHwoQ=
+ -----END CERTIFICATE-----
+ New chain (effective from December 18, 2023)
+ Shopify's Payments Platform CA - intermediate certificate
+ -----BEGIN CERTIFICATE-----
+ MIICTTCCAfOgAwIBAgIUK1vMN/HtxzoEqDKH2I4MgP2cP2owCgYIKoZIzj0EAwIw
+ bTELMAkGA1UEBhMCQ0ExEDAOBgNVBAgTB09udGFyaW8xDzANBgNVBAcTBk90dGF3
+ YTEQMA4GA1UEChMHU2hvcGlmeTEpMCcGA1UEAxMgU2hvcGlmeSBQYXltZW50IFBs
+ YXRmb3JtIFJvb3QgQ0EwHhcNMjIxMDI3MjMyMDQyWhcNMjUxMDI2MjMyMTEyWjB4
+ MQswCQYDVQQGEwJDQTEQMA4GA1UECBMHT250YXJpbzEPMA0GA1UEBxMGT3R0YXdh
+ MRAwDgYDVQQKEwdTaG9waWZ5MTQwMgYDVQQDEytTaG9waWZ5IFBheW1lbnQgUGxh
+ dGZvcm0gbVRMUyBDQSBQcm9kdWN0aW9uMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD
+ QgAECKi+TdzYcjIp8mwF4lLZs9XCtiZkCrdEV8hqsYL20EPmIX4dV2ivWBIzyfJ4
+ +XsY2xvMLqSxExpPBj18/KcEy6NmMGQwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB
+ /wQIMAYBAf8CAQEwHQYDVR0OBBYEFI44kyg5F05UlNj56detRgo366vVMB8GA1Ud
+ IwQYMBaAFFWpq/G85r0r1IoS4fPhmZdwLLLkMAoGCCqGSM49BAMCA0gAMEUCIQCp
+ jtCL9N0dKdPaZkVgkgUZUc/LmyXZAWi50oNmli1QvAIgeZmAs0EiA9tv55IdLl3v
+ FtoaHxRZJZ1kpP/lgjYm1E0=
+ -----END CERTIFICATE-----
+ Shopify's Payments Platform Root CA
+ -----BEGIN CERTIFICATE-----
+ MIICQTCCAeigAwIBAgIUe+t5Y8PXvczEIT25w+VFTeKQUn4wCgYIKoZIzj0EAwIw
+ bTELMAkGA1UEBhMCQ0ExEDAOBgNVBAgTB09udGFyaW8xDzANBgNVBAcTBk90dGF3
+ YTEQMA4GA1UEChMHU2hvcGlmeTEpMCcGA1UEAxMgU2hvcGlmeSBQYXltZW50IFBs
+ YXRmb3JtIFJvb3QgQ0EwHhcNMjEwMjI1MTk0OTQ5WhcNMjkwMjIzMTk1MDE5WjBt
+ MQswCQYDVQQGEwJDQTEQMA4GA1UECBMHT250YXJpbzEPMA0GA1UEBxMGT3R0YXdh
+ MRAwDgYDVQQKEwdTaG9waWZ5MSkwJwYDVQQDEyBTaG9waWZ5IFBheW1lbnQgUGxh
+ dGZvcm0gUm9vdCBDQTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABE2tRNrL28gM
+ eD6cVH1Evn40gTzoy+aH47QnAhs6oHBZ+pgN1iCK9G6u/Va1BdWqsbmmZMZfZkY4
+ x+kqHRjw29GjZjBkMA4GA1UdDwEB/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgED
+ MB0GA1UdDgQWBBRVqavxvOa9K9SKEuHz4ZmXcCyy5DAfBgNVHSMEGDAWgBRVqavx
+ vOa9K9SKEuHz4ZmXcCyy5DAKBggqhkjOPQQDAgNHADBEAiB+pPrzREg+NpenROMY
+ n5IH3OrORXERggd0+YLI5HhL/wIgcAo70tOV/0Vv9oGFjNbI9TpkeFUgb8Rc5Gh6
+ 65LHwoQ=
+ -----END CERTIFICATE-----
+ Idempotency
+ Payments Apps APIs support idempotency, which allows Shopify to safely retry requests without accidentally performing the same operation twice. Idempotency is critical in cases where there are network errors to prevent, such as multiple charges for the same payment. Idempotency keys don't expire.
+ HTTP requests from Shopify to your payments app
+ You need to support idempotent requests for the Payments Apps APIs. Regardless of how many requests with the same idempotency key are sent, the result must be the same. The idempotency key attributes are defined on a per-API basis in the payment request body.
+ GraphQL requests from your payments app to Shopify
+ Idempotency is implemented on a per mutation basis for a given id. If multiple requests of the same mutation are made, then the mutation will only be performed once during the first request, and the same response will be returned in subsequent requests. For instance, if several requests for paymentSessionResolve are made using the same id, then the mutation will only be executed once.
+ Some mutations are mutually exclusive, such as paymentSessionResolve and paymentSessionReject, where only one can be processed for a given id. If requests for different mutations are submitted using the same id, then the first request to be received will be processed, and any subsequent requests with incompatible mutation will fail with a user_error.
+ Retry policy
+ Due to the asynchronous nature of Shopify's Payments Apps APIs, you must send a GraphQL request to notify Shopify of the results of any payment or refund requests. A retry policy helps provide data consistency between merchants, Partners, and Shopify. You must implement a retry policy for the Payments Apps API mutations.
+ If there's a Shopify service disruption (or if 5xx status codes are being returned), then requests must be retried according to the following incremental strategy, up to a total of 18 retries over 24h. During this time, you can provide the customer with the following information:
+ Their payment is processed, but Shopify is unreachable.
+ They'll receive a notification from Shopify when the order is processed.
+ They should contact the merchant directly if the maximum number of recommended retries elapses without acknowledgment.
+ Parameter Description Value
+ Number of recommended retries The maximum number of recommended retries. 18
+ Base delay interval The time interval after which the first retry is attempted. 5 seconds
+ Exponential backoff factor Partners are expected to retry their requests immediately, and then 5 seconds afterwards, and then at increasing time intervals after that, until the request is acknowledged or 24 hours has passed, whichever comes first. See example
+ Example:
+ [0 seconds, 5 seconds, 10 seconds, 30 seconds, 45 seconds, 1 minute, 2 minutes, 5 minutes, 12 minutes, 38 minutes, 1 hour, 2 hours] + [4 hours] * 5
+ Rate limiting
+ To protect the stability of the platform, payments apps are rate-limited. For more information, refer to Shopify API rate limits.
+ Next steps
+ Learn how to onboard a merchant to your payment app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ mTLS configuration
+ Idempotency
+ Retry policy
+ Rate limiting
+ Next steps

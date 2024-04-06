@@ -1,0 +1,35 @@
+APIs
+ Collapse sidebar
+ Admin Extensions
+ Unstable
+ 2024-04
+ 2024-01
+ 2023-10
+ 2024-01
+ Overview
+ Overview
+ Getting Started
+ App Authentication
+ Direct API access
+ Custom Protocols
+ Deploying
+ Security
+ API
+ Action Extension API
+ Block Extension API
+ CustomerSegmentTemplate Extension API
+ Extension Targets
+ Standard API
+ Components
+ All Admin Extensions api
+ Action Extension API
+ This API is available to all action extension types. Refer to the tutorial for more information.
+ Block Extension API
+ This API is available to all block extension types. Refer to the tutorial for more information.
+ CustomerSegmentTemplate Extension API
+ This API is available to all customer segment template extension types.
+ Extension Targets
+ This is a list of all the available extension targets for Admin App Extensions.
+ Standard API
+ This API is available to all extension types.
+ Updates & News

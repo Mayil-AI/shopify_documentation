@@ -1,0 +1,35 @@
+Theme Store
+ Shopify Liquid Language Server
+ The Language Server Protocol enables developers to provide code editing features to all code editors in a single codebase with no code editor-specific code.
+ Installation
+ The Shopify Liquid Language Server is a Shopify CLI theme command.
+ Usage basics
+ The Language Server is started by running the following CLI command:
+ Terminal
+ $ shopify theme language-server
+ Features
+ The Language Server offers the following features:
+ Documentation on hover
+ Code completion and documentation
+ Code formatting
+ Theme checks
+ Code navigation
+ To learn more about the features, refer to the Shopify Liquid VS Code extension user guide.
+ Editor integration
+ Every editor has its own way of integrating with Language Servers, but the principle is always the same: telling the editor how to start the Language Server.
+ View some example implementations in the Theme Tools repo.
+ Contributing to the Language Server
+ The Shopify Liquid Language Server is open source and part of our suite of theme developer tools.
+ Learn how to contribute to the theme-tools repository
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Installation
+ Usage basics
+ Features
+ Editor integration
+ Contributing to the Language Server
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

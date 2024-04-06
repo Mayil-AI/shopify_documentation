@@ -1,0 +1,10 @@
+Extension points APIs
+ Components
+ Product subscription app extensions reference
+ Product subscription extensions enable you to add new UI and functionality to the Shopify admin. You build the extensions into your app using Shopify-provided extension points, APIs, and UI components.
+ Learn how to build a product subscription app extension.
+ In this section
+ Extension points APIs: Learn about the APIs provided to extension points.
+ Components: Learn about the components that you can use to build experiences in the Shopify admin.
+ Was this page helpful?
+ YesNo

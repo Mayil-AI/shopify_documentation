@@ -1,0 +1,510 @@
+GraphQL
+ REST
+ GraphQL basics
+ Admin API
+ App Bridge
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Paginating results with GraphQL
+ When you use a connection to retrieve a list of resources, you use arguments to specify the number of results to retrieve. You can select which set of results to retrieve from a connection by using cursor-based pagination.
+ Note
+ You can retrieve up to a maximum of 250 resources. If you need to paginate larger volumes of data, then you can perform a bulk query operation using the GraphQL Admin API.
+ How it works
+ Connections retrieve a list of nodes. A node is an object that has a global ID and is of a type that's defined by the schema, such as the Order type. For example, the orders connection finds all the Order nodes connected to the query root. The nodes field is similar to a for-loop because it retrieves the selected fields from each node in the connection.
+ To optimize performance and user experience, you can request only a certain number of nodes at a time. The batch of nodes that is returned is known as a page. The position of each node in the array is indicated by its cursor.
+ To retrieve the next page of nodes, you need to indicate the position of the node the page should start from. You can do so by providing a cursor. You can retrieve cursor information about the current page using the PageInfo object, and use that cursor value in a subsequent query by passing it in a after or before argument.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    orders(first: 2) {
+ 3
+      nodes {
+ 4
+        id
+ 5
+        name
+ 6
+        createdAt
+ 7
+      }
+ 8
+    }
+ 9 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "orders": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/Order/1",
+ 7
+            "name": "#1001",
+ 8
+            "createdAt": "2022-05-12T19:42:48Z"
+ 9
+          },
+ 10
+          {
+ 11
+            "id": "gid://shopify/Order/2",
+ 12
+            "name": "#1002",
+ 13
+            "createdAt": "2022-05-12T19:45:07Z"
+ 14
+          }
+ 15
+        ]
+ 16
+      }
+ 17
+    }
+ 18 }
+ Tip
+ You can also retrieve a list of nodes using edges.
+ The PageInfo object
+ In the GraphQL Admin API, each connection returns a PageInfo object that assists in cursor-based pagination. The PageInfo object is composed of the following fields:
+ Field Type Description
+ hasPreviousPage Boolean Whether there are results in the connection before the current page.
+ hasNextPage Boolean Whether there are results in the connection after the current page.
+ startCursor string The cursor of the first node in the nodes list.
+ endCursor string The cursor of the last node in the nodes list.
+ Note
+ The PageInfo object in the GraphQL Partner API is only composed of the hasNextPage and hasPreviousPage fields.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    orders(first: 2) {
+ 3
+      nodes {
+ 4
+        id
+ 5
+        name
+ 6
+        createdAt
+ 7
+      }
+ 8
+      pageInfo {
+ 9
+        hasPreviousPage
+ 10
+        hasNextPage
+ 11
+        startCursor
+ 12
+        endCursor
+      "orders": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/Order/1",
+ 7
+            "name": "#1001",
+ 8
+            "createdAt": "2022-05-12T19:42:48Z"
+ 9
+          },
+ 10
+          {
+ 11
+            "id": "gid://shopify/Order/2",
+ 12
+            "name": "#1002",
+ 13
+            "createdAt": "2022-05-12T19:45:07Z"
+ 14
+          }
+ 15
+        ]
+ 16
+        "pageInfo": {
+ 17
+          "hasPreviousPage": false,
+ 18
+          "hasNextPage": true,
+ 19
+          "startCursor": "eyJsYXN0X2lkIjoxNDIzOTgwNTI3NjM4LCJsYXN0X3ZhbHVlIjoiMjAyMC0wMS0yMCAxNDo0ODoxMS4wMDAwMDAifQ==",
+ 20
+          "endCursor": "eyJsYXN0X2lkIjoyMzIxMjM5MTQ2NTE4LCJsYXN0X3ZhbHVlIjoiMjAyMC0xMi0xNSAyMzowMDo0NS4wMDAwMDAifQ=="
+    }
+ 24 }
+ Forward pagination
+ All connections in Shopify's APIs provide forward pagination. This is achieved with the following connection variables:
+ Field Type Description
+ first integer The requested number of nodes for each page.
+ after string The cursor to retrieve nodes after in the connection. Typically, you should pass the endCursor of the previous page as after.
+ Examples
+ You can include the PageInfo fields in your queries to paginate your results. The following example includes the hasNextPage and endCursor fields, and uses query variables to pass the endCursor value as an argument:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ($numProducts: Int!, $cursor: String) {
+ 2
+    # The `$numProducts` variable is required and is used to specify the number of results to return. The `$cursor` variable isn't required. If the `$cursor` variable is omitted, then the `after` argument is ignored.
+ 3
+    products(first: $numProducts, after: $cursor) {
+ 4
+      nodes {
+ 5
+        title
+ 6
+      }
+ 7
+      pageInfo {
+ 8
+        hasNextPage
+ 9
+        endCursor
+ 10
+      }
+ 11
+    }
+ 12 }
+ Variables
+ 1 {
+ 2
+    "numProducts": 3,
+ 3
+    "cursor": null
+ 4 }
+      "products": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "title": "Product 1 title"
+ 7
+          },
+ 8
+          {
+ 9
+            "title": "Product 2 title"
+ 10
+          },
+ 11
+          {
+ 12
+            "title": "Product 3 title"
+ 13
+          }
+ 14
+        ],
+ 15
+        "pageInfo": {
+ 16
+          // The response indicates that there's a next page and provides the cursor to use as an `after` input for the next page of nodes.
+ 17
+          "hasNextPage": true,
+ 18
+          "endCursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MTY0MTUyLCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDE2NDE1MiJ9"
+ 19
+        }
+ 20
+      }
+ 21
+    }
+ 22 }
+ By using the same query with different variables, you can query for the next page:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ($numProducts: Int!, $cursor: String){
+ 2
+    products(first: $numProducts, after: $cursor) {
+ 3
+      nodes {
+ 4
+        title
+ 5
+      }
+ 6
+      pageInfo {
+ 7
+        hasNextPage
+ 8
+        endCursor
+ 9
+      }
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "numProducts": 3,
+ 3
+    "cursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MTY0MTUyLCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDE2NDE1MiJ9"
+ 4 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "title": "Product 4 title"
+ 7
+          }
+ 8
+        ],
+ 9
+        "pageInfo": {
+ 10
+          // The response indicates that there's no next page. This is the last page of the connection.
+ 11
+          "hasNextPage": false,
+ 12
+          "endCursor": "eyJsYXN0X2lkIjo3MjE0Njc0MjgwNTA0LCJsYXN0X3ZhbHVlIjoiNzIxNDY3NDI4MDUwNCJ9"
+ 13
+        }
+ 14
+      }
+ 15
+    }
+ 16 }
+ Backward pagination
+ Some connections in Shopify's APIs also provide backward pagination. This is achieved with the following connection variables:
+ Field Type Description
+ last integer The requested number of nodes for each page.
+ before string The cursor to retrieve nodes before in the connection. Typically, you should pass the startCursor of the previous page as before.
+ Examples
+ Similar to forward pagination, you can start at the end of the list of nodes, and then query in reverse page order to the beginning. The following example includes the hasPreviousPage and startCursor fields, and uses query variables to pass the startCursor value as an argument:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ($numProducts: Int!, $cursor: String){
+ 2
+    products(last: $numProducts, before: $cursor) {
+ 3
+      nodes {
+ 4
+        title
+ 5
+      }
+ 6
+      pageInfo {
+ 7
+        hasPreviousPage
+ 8
+        startCursor
+ 9
+      }
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "numProducts": 3,
+ 3
+    "cursor": null
+ 4 }
+      "products": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "title": "Product 2 title"
+ 7
+          },
+ 8
+          {
+ 9
+            "title": "Product 3 title"
+ 10
+          },
+ 11
+          {
+ 12
+            "title": "Product 4 title"
+ 13
+          }
+ 14
+        ],
+ 15
+        "pageInfo": {
+ 16
+          "hasPreviousPage": true,
+ 17
+          "startCursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MDk4NjE2LCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDA5ODYxNiJ9"
+ 18
+ 21 }
+ The startCursor field can also be used in the subsequent request as the input before to get the previous page:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ($numProducts: Int!, $cursor: String){
+ 2
+    products(last: $numProducts, before: $cursor) {
+ 3
+      nodes {
+ 4
+        title
+ 5
+      }
+ 6
+      pageInfo {
+ 7
+        hasPreviousPage
+ 8
+        startCursor
+ 9
+      }
+ 10
+    }
+ 11 }
+ Variables
+ 1 {
+ 2
+    "numProducts": 3,
+ 3
+    "cursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MDk4NjE2LCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDA5ODYxNiJ9"
+ 4 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "nodes": [
+ 5
+          {
+ 6
+            "title": "Product 1 title"
+ 7
+          }
+ 8
+        ],
+ 9
+        "pageInfo": {
+ 10
+          "hasPreviousPage": false,
+ 11
+          "startCursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MDY1ODQ4LCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDA2NTg0OCJ9"
+ 12
+        }
+ Connection edges
+ In connections, an Edge type describes the connection between the node and its parent. In almost all cases, querying nodes and pageInfo is preferred to querying edges. However, if you want the Edge metadata, then you can query edges instead of nodes. Each Edge contains a minimum of that edge's cursor and the node.
+ Example
+ The following query is equivalent to the forward pagination query. However, it requests a cursor for every edge instead of only the endCursor:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ($numProducts: Int!, $cursor: String){
+ 2
+    products(first: $numProducts, after: $cursor) {
+ 3
+      edges {
+ 4
+        cursor
+ 5
+        node {
+ 6
+          title
+ 7
+        }
+ 8
+      }
+ 9
+      pageInfo {
+ 10
+        hasNextPage
+ 11
+        endCursor
+ 12
+      }
+ 13
+    }
+ 14 }
+ Variables
+ 1 {
+ 2
+    "numProducts": 3,
+ 3
+    "cursor": null
+ 4 }
+ JSON response
+ 1 // The PageInfo `endCursor` and the last edge's `cursor` are the same. Also, the `edges[].node` list is the equivalent of the `nodes` list in the forward pagination query.
+ 2 {
+ 3
+    "data": {
+ 4
+      "products": {
+ 5
+        "edges": [
+ 6
+          {
+ 7
+            "cursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MDY1ODQ4LCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDA2NTg0OCJ9",
+ 8
+            "node": {
+ 9
+              "title": "Product 1 title"
+ 10
+            }
+ 11
+          },
+ 12
+          {
+ 13
+            "cursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MDk4NjE2LCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDA5ODYxNiJ9",
+ 14
+            "node": {
+ 15
+              "title": "Product 2 title"
+ 16
+            }
+ 17
+          },
+ 18
+          {
+ 19
+            "cursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MTY0MTUyLCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDE2NDE1MiJ9",
+ 20
+            "node": {
+ 21
+              "title": "Product 3 title"
+ 22
+            }
+ 23
+          }
+ 24
+        ],
+ 25
+        "pageInfo": {
+ 26
+          "hasNextPage": true,
+ 27
+          "endCursor": "eyJsYXN0X2lkIjo3MDE3MjQ0MTY0MTUyLCJsYXN0X3ZhbHVlIjoiNzAxNzI0NDE2NDE1MiJ9"
+ 28
+        }
+ 29
+      }
+ 30
+    }
+ 31 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Forward pagination
+ Backward pagination
+ Connection edges
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,150 @@
+Additional SDKs
+ Adopt Hydrogen incrementally
+ Some merchants may prefer to adopt the Hydrogen storefront incrementally. For instance, they might want to initially create their product pages in Hydrogen while continuing to serve other pages with Liquid during the migration process.
+ To achieve this in Hydrogen, you can programmatically proxy your Liquid online store routes to be served by your Hydrogen app on a request-by-request basis.
+ Note
+ Oxygen doesn't support proxies in front of your Oxygen deployments. A proxy might conflict with Oxygen's bot mitigation systems and may cause SEO issues. Requests should go to Oxygen, and any proxies to the online store should be done through Hydrogen.
+ Requirements
+ You've completed your Hydrogen build and your Hydrogen storefront is ready for launch.
+ Limitations
+ Incremental adoption is only supported with Oxygen.
+ Customer sessions can't be shared between the online store and the Hydrogen storefront without using Multipass.
+ Proxy routes to the online store
+ Caution
+ This is an advanced tutorial and is not supported by Shopify. Some Shopify features, such as Shopify analytics, may not work as expected. Proxying requests to the online store might also result in increased latency for proxied pages. Because of this, we recommend migrating as much as possible to your Hydrogen app.
+ You can leverage Remix's catch-all route (app/routes/$.jsx) to fall back to the Online Store by default, or handle each route individually in the appropriate file (e.g., app/routes/products/$handle.jsx).
+ Here's an example of how to create a catch-all proxy route:
+ /app/routes/$.jsx
+ 1 const config = {
+ 2
+    cacheControl: 'public, max-age=3600, stale-while-revalidate=86400', // Set to the amount of time you want to cache the page, in seconds
+ 3
+    removeNoIndex: true, // Set to false if you want to respect robots noindex tags
+ 4
+    updateCanonical: true, // Set to false if you want to respect canonical meta tags
+ 5
+    ignoreRedirects: true, // Set to false if you aren't redirecting to Hydrogen in your theme
+ 6 };
+ 7
+ 8 export async function loader({request, context}) {
+ 9
+    const {
+ 10
+      shop: {
+ 11
+        primaryDomain: {url},
+ 12
+      },
+ 13
+    } = await context.storefront.query(
+ 14
+      `#graphql
+ 15
+        query {
+ 16
+          shop {
+ 17
+            primaryDomain {
+ 18
+              url
+ 19
+            }
+ 20
+          }
+ 21
+        }
+ 22
+      `,
+ 23
+      {
+ 24
+        cacheControl: config.cacheControl,
+ 25
+      },
+ 26
+    );
+ 27
+ 28
+    const {origin, pathname, search} = new URL(request.url);
+ 29
+ 30
+    const customHeaders = new Headers({
+ 31
+      'X-Shopify-Client-IP': request.headers.get('X-Shopify-Client-IP') || '',
+ 32
+      'X-Shopify-Client-IP-Sig':
+ 33
+        request.headers.get('X-Shopify-Client-IP-Sig') || '',
+ 34
+      'User-Agent': 'Hydrogen',
+ 35
+    });
+ 36
+ 37
+    const response = await fetch(url + pathname + search, {
+ 38
+      headers: customHeaders,
+ 39
+    });
+ 40
+ 41
+    const data = await response.text();
+ 42
+ 43
+    const processedData = data
+ 44
+      .replace(
+ 45
+        /<meta.*name="robots".*content="noindex.*".*>|<link.*rel="canonical".*href=".*".*>|("monorailRegion":"shop_domain")|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+ 46
+        (match) => {
+ 47
+          if (match.startsWith('<meta') && config.removeNoIndex) return '';
+ 48
+          if (match.startsWith('<link') && config.updateCanonical)
+ 49
+            return match.replace(url, origin);
+ 50
+          if (match.startsWith('"monorailRegion"'))
+ 51
+            return '"monorailRegion":"global"';
+ 52
+          if (match.startsWith('<script') && config.ignoreRedirects)
+ 53
+            return match.replace(/window\.location\.replace\([^)]*\);?/g, '');
+ 54
+          return match;
+ 55
+        },
+ 56
+      )
+ 57
+      .replace(new RegExp(url, 'g'), origin);
+ 58
+ 59
+    const status = /<title>(.|\n)*404 Not Found(.|\n)*<\/title>/i.test(data)
+ 60
+      ? 404
+ 61
+      : response.status;
+ 62
+ 63
+    const headers = new Headers(response.headers);
+ 64
+    headers.set('content-type', 'text/html');
+ 65
+    headers.delete('content-encoding');
+ 66
+    headers.set('Cache-Control', config.cacheControl);
+ 67
+ 68
+    return new Response(processedData, {status, headers});
+ 69 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Limitations
+ Proxy routes to the online store
+ Updates & News
+ Developer changelog

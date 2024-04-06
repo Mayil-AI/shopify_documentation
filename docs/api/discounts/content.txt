@@ -1,0 +1,20 @@
+Discounts
+ Overview
+ Components
+ Multipass
+ ShopifyQL
+ Product subscription app extensions
+ Discount React library
+ Shopify's discount React library offers React components for building a discount form page. This component library will make it possible to replicate the experience and behavior of existing discount types in your own app.
+ Like App Bridge, the component library is available as a JavaScript module on npm.
+ The following components are available to build your discounts page:
+ ActiveDatesCard
+ AppProvider
+ CombinationCard
+ CountriesAndRatesCard
+ CustomerEligibilityCard
+ MethodCard
+ MinimumRequirementsCard
+ PurchaseTypeCard
+ SummaryCard
+ UsageLimitsCard

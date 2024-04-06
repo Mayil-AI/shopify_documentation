@@ -1,0 +1,25 @@
+Build the best commerce apps
+ It's never been easier to create high-quality apps that look, feel, and perform like they’re part of Shopify. Quickly build performant apps with our updated CLI, optimized APIs, and App Design Guidelines.
+ Start building now
+ Learn how to set up your development environment, and build your Shopify app.
+ What's new with Shopify apps
+ Leverage the latest from Shopify to improve how your app works, so you can easily add new features to the platform and deliver unique customer experiences.
+ Shopify Functions
+ Customize Shopify in more ways with new Functions for Product Bundles, Order Routing logic, and Checkout Validation rules.
+ Checkout UI extensions
+ Drive conversion with new UI extensions for making authenticated network calls, querying the Storefront API, and applying discount codes and gift cards.
+ Metaobjects
+ Extend Shopify’s data schema with metaobjects—a flexible way to add, store, and manage additional structured information, like product specifications.
+ Built for Shopify
+ We're sharing a new set of standards and specific, actionable criteria to improve your app quality. Apps that meet the highest level of app excellence can earn Built for Shopify status, with special merchandising and the greatest visibility across merchant surfaces.
+ Learn how to qualify
+ Earn achievements along the way
+ Unlock individual achievements as you meet more quality standards and work toward Built for Shopify status. You can track your progress in the Partner Dashboard.
+ How we define quality
+ Merchants want apps that are easy to use, safe, and performant, and that solve their problems. Learn how we define quality and how to build apps that meet merchant expectations.
+ Start selling on the Shopify App Store
+ Launch your app to millions of merchants around the world on the Shopify App Store. Eligible developers pay 0% revenue share on the first $1M USD in annual gross app revenue.
+ Learn how to start selling
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,1010 @@
+Overview
+ Manage returns
+ Preview and refund duties
+ Manage reverse fulfillment orders
+ Manage reverse deliveries
+ Billing
+ App Store
+ Manage returns
+ A return represents the intent of a buyer to ship one or more items from an order back to a merchant or a third-party fulfillment location. Merchants can manage their returns in Shopify, and returns apps can take actions on behalf of merchants.
+ This guide shows you how to manage returns using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_returns and write_returns access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Your store has existing orders that have been fulfilled. You can return only items that have been fulfilled. If you need to make changes to an unfulfilled item, then you can edit an order.
+ You're using API version 2023-01 or higher.
+ You've met Shopify's protected customer data requirements.
+ Step 1: Query returnable fulfillments
+ A returnable fulfillment is an order that has been delivered and is eligible to be returned to the merchant or third-party fulfillment service.
+ To retrieve the fulfillment line items that can be returned in an order, provide the ID of the order in the returnableFulfillments query. The response returns the fulfillment line item ID, which you'll use as input to create a return in the next step.
+ Tip
+ You can retrieve the ID of an order using the orders query.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query returnableFulfillmentsQuery {
+ 2
+    returnableFulfillments(orderId: "gid://shopify/Order/1", first: 10) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+          fulfillment {
+ 7
+            id
+ 8
+          }
+ 9
+          # Return the first ten returnable fulfillment line items that belong to the order.
+ 10
+          returnableFulfillmentLineItems(first: 10) {
+ 11
+            edges {
+ 12
+              node {
+ 13
+                fulfillmentLineItem {
+ 14
+                  id
+ 15
+                }
+ 16
+                quantity
+ 17
+              }
+ 18
+            }
+ 19
+          }
+ 20
+        }
+ 21
+      }
+ 22
+    }
+ 23 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "returnableFulfillments": {
+ 4
+        "edges": [
+              "id": "gid://shopify/ReturnableFulfillment/1",
+ 8
+              "fulfillment": {
+ 9
+                "id": "gid://shopify/Fulfillment/1"
+ 10
+              },
+ 11
+              "returnableFulfillmentLineItems": {
+ 12
+                "edges": [
+ 13
+                  {
+ 14
+                    "node": {
+ 15
+                      "fulfillmentLineItem": {
+ 16
+                        "id": "gid://shopify/FulfillmentLineItem/1"
+ 17
+                      },
+ 18
+                      "quantity": 1
+ 19
+                    }
+ 20
+                  }
+ 21
+                ]
+ 22
+              }
+ 23
+            }
+ 24
+          }
+ 25
+        ]
+ 26
+      }
+ 27
+    }
+ 28 }
+ Step 2: Request a return
+ You can use the returnRequest mutation to create a return with its status set to REQUESTED. This mutation should be used to create returns that need to be approved by the merchant. If you create a return on an archived order, then the order is automatically unarchived.
+ To request a return, provide the ID of the order and the return line items as input to the mutation. The response returns the return ID and the return's status.
+ Note
+ You can't cancel a requested return. Instead, you need to approve or decline the request.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation RequestReturnMutation {
+ 2
+   returnRequest(
+ 3
+     input: {
+ 4
+       # The ID of the order to return.
+ 5
+       orderId: "gid://shopify/Order/1"
+ 6
+       # The return line items list to be handled.
+ 7
+       returnLineItems: [
+ 8
+         {
+ 9
+           # The ID of the related fulfillment line item to return.
+ 10
+           fulfillmentLineItemId: "gid://shopify/FulfillmentLineItem/1"
+ 11
+           # The quantity of the item to return.
+ 12
+           quantity: 1
+ 13
+           # The reason to return the item.
+ 14
+           returnReason: OTHER
+ 15
+           # A message from the customer about the item to return.
+ 16
+           customerNote: "I accidentally bought this."
+ 17
+         }
+ 18
+         {
+ 19
+           fulfillmentLineItemId: "gid://shopify/FulfillmentLineItem/2"
+ 20
+           quantity: 1
+ 21
+           returnReason: SIZE_TOO_SMALL
+ 22
+           customerNote: "I need a bigger size."
+ 23
+         }
+ 24
+       ]
+ 25
+     }
+ 26
+   ) {
+ 27
+     return {
+ 28
+       id
+ 29
+       status
+ 30
+     }
+ 31
+     userErrors {
+ 32
+       field
+ 33
+       message
+ 34
+     }
+ 35
+    }
+ 36 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "returnRequest": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1",
+ 6
+          "status": "REQUESTED"
+ 7
+        },
+ 8
+        "userErrors": []
+ Approve a request
+ You can use the returnApproveRequest mutation to approve a single requested return. This changes the return's status from REQUESTED to OPEN. Approving the return creates a reverse fulfillment order, and enables you to create a reverse delivery for the reverse fulfillment order.
+ To approve a request, provide the ID of the return to be approved. The response returns the return ID and the return's status.
+ Caution
+ Approving a return is a permanent action. After a return is approved, you can't change its status to REQUESTED or DECLINED.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation ApproveReturnRequestMutation {
+ 2
+   returnApproveRequest(
+ 3
+     # The ID of the return to be approved.
+ 4
+     input: { id: "gid://shopify/Return/1" }
+ 5
+   ) {
+ 6
+     return {
+ 7
+       id
+ 8
+       status
+ 9
+     }
+ 10
+     userErrors {
+ 11
+       field
+ 12
+       message
+ 13
+     }
+ 14
+   }
+ 15 }
+      "returnRequest": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1",
+ 6
+          "status": "OPEN"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    }
+ 11 }
+ Decline a request
+ You can use the returnDeclineRequest mutation to decline a single requested return. This changes the return's status from REQUESTED to DECLINED. A declined return doesn't have reverse fulfillment orders. As a result, shipping can't be added to the declined return.
+ You can only decline a return if the return meets the following criteria:
+ It must be in a REQUESTED state.
+ It can't have been refunded.
+ To decline a request, provide the ID of the return to be declined. The response returns the return ID and the return's status.
+ Caution
+ Declining a return is a permanent action. After a return is declined, you can't change its status to REQUESTED or APPROVED.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation DeclineReturnRequestMutation {
+ 2
+   returnDeclineRequest(
+ 3
+     input: {
+ 4
+       # The ID of the return to be declined.
+ 5
+       id: "gid://shopify/Return/1"
+ 6
+       # The reason for rejecting the return.
+ 7
+       declineReason: FINAL_SALE
+ 8
+     }
+ 9
+   ) {
+ 10
+     return {
+ 11
+       id
+ 12
+       status
+ 13
+       decline {
+ 14
+         reason
+ 15
+       }
+ 16
+     }
+ 17
+   }
+ 18 }
+      "returnRequest": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1",
+ 6
+          "status": "DECLINED",
+ 7
+          "decline": {
+ 8
+            "reason": "FINAL_SALE"
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Step 3 (Optional): Create a return
+ Note
+ You can skip this step if you've already requested a return.
+ If your workflow involves approving or declining requested returns outside of the Shopify platform, then you should create a return using the returnCreate mutation.
+ You can create a return from an existing order that has at least one fulfilled line item that hasn't yet been refunded. If you create a return on an archived order, then the order is automatically unarchived.
+ The returnCreate mutation does the following:
+ It creates a return in the OPEN state, and assumes that the return request from the customer has already been approved. You should only create a return if the merchant's intent is to approve a customer’s return request.
+ It creates a reverse fulfillment order, and enables you to create a reverse delivery for the reverse fulfillment order.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation returnCreateMutation {
+ 2
+    returnCreate(
+ 3
+      returnInput: {
+ 4
+        # The ID of the order to return.
+ 5
+        orderId: "gid://shopify/Order/1",
+ 6
+        returnLineItems: [
+ 7
+          {
+ 8
+            # The ID of the related fulfillment line item to return.
+ 9
+            fulfillmentLineItemId: "gid://shopify/FulfillmentLineItem/1",
+ 10
+            # The number of items that were previously fulfilled.
+ 11
+            quantity: 1,
+ 12
+            # The item is returned for another reason. For the `OTHER` value, you must also provide a return reason note.
+ 13
+            returnReason: OTHER
+ 14
+            # Additional information about the return reason.
+ 15
+            returnReasonNote: "I need a bigger size."
+ 16
+          },
+ 17
+          {
+ 18
+            fulfillmentLineItemId: "gid://shopify/FulfillmentLineItem/2",
+ 19
+            quantity: 1,
+ 20
+            # The item is returned because the size was too small.
+ 21
+            returnReason: SIZE_TOO_SMALL
+ 22
+          }
+ 23
+       ],
+ 24
+       # Send an email to the customer to notify them about the return.
+ 25
+       # The return is associated to the `Order` object, specified by the `orderId`.
+ 26
+       # If `notifyCustomer` is set to `true`, then `Order.email` is required.
+ 27
+       notifyCustomer: true,
+ 28
+       # The UTC date and time when the customer first requested the return.
+ 29
+       requestedAt: "2022-05-04T00:00:00Z"
+ 30
+     }
+ 31
+    )
+ 32
+    {
+ 33
+      return {
+ 34
+        id
+ 35
+      }
+ 36
+      userErrors {
+ 37
+        field
+ 38
+        message
+ 39
+      }
+ 40
+    }
+ 41 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "returnCreate": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ The created return is marked as Return in progress in the order details view in the Shopify admin:
+ Step 4: Retrieve a return
+ After you've created a return, you can use the return query to retrieve the return by its ID. The response returns the order ID associated with the return and the return's status.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 query returnQuery {
+ 2
+    return(id: "gid://shopify/Return/1") {
+ 3
+      name
+ 4
+      order {
+ 5
+        id
+ 6
+      }
+ 7
+      status
+ 8
+    }
+ 9 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "return": {
+ 4
+        "name": "#1111-R1",
+ 5
+        "order": {
+ 6
+          "id": "gid://shopify/Order/1"
+ 7
+        },
+ 8
+        "status": "OPEN"
+ 9
+      }
+ 10
+    }
+ 11 }
+ Step 5 (Optional): Cancel a return
+ If you create a return by mistake, have an error in the created return, or a customer has changed their mind about wanting to return an item, then you can cancel the return that you've created. Canceling a return restores an order's line items back to being fulfilled. To cancel a return, provide the ID of the return as input to the returnCancel mutation.
+ You can only cancel a return if the return meets the following criteria:
+ It must be in an OPEN state.
+ It can't have cancelled fulfillments.
+ It can't have been refunded.
+ It can't have dispositions.
+ It can't have Shopify Shipping return label. Returns with manually-uploaded return labels and manually-provided tracking information (not PDFs) can be canceled.
+ Returns to Shopify Fulfillment Network (SFN) might be cancelable. If SFN rejects the cancelation request, then a "return failed" description displays in the Shopify admin.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation returnCancelMutation {
+ 2
+    returnCancel(id: "gid://shopify/Return/1") {
+ 3
+      return {
+ 4
+        id
+ 5
+      }
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ 9
+      }
+ 10
+    }
+ 11 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "returnCancel": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1"
+ 6
+ 9
+    }
+ 10 }
+ Canceling a return removes it from the order details view in the Shopify admin:
+ Step 6: Query a suggested refund
+ A suggested refund represents a refund that Shopify suggests based on the items being reimbursed. In your query, provide the ID of the return, the ID of the return line item, and the quantity of the line item.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 query suggestedReturnRefundQuery {
+ 2
+    return(id: "gid://shopify/Return/1") {
+ 3
+      # You can use the suggested refund object to later generate an actual refund.
+ 4
+      suggestedRefund(
+ 5
+        returnRefundLineItems: [
+ 6
+          {
+ 7
+            returnLineItemId: "gid://shopify/ReturnLineItem/1",
+ 8
+            quantity: 1
+ 9
+          }
+ 10
+        ]
+ 11
+      ) {
+ 12
+        # The total monetary value to be refunded.
+ 13
+        amount {
+ 14
+          shopMoney {
+ 15
+            amount
+ 16
+          }
+ 17
+        }
+ 18
+        # The shipping costs to be refunded from the order.
+ 19
+        shipping {
+ 20
+          maximumRefundableSet {
+ 21
+            shopMoney {
+ 22
+              amount
+ 23
+            }
+ 24
+          }
+ 25
+        }
+ 26
+        # A list of line items to be refunded, along with restock instructions.
+ 27
+        refundDuties {
+ 28
+          amountSet {
+ 29
+            shopMoney {
+ 30
+              amount
+ 31
+            }
+ 32
+          }
+ 33
+        }
+ 34
+        # The sum of all the prices of the line items being refunded.
+ 35
+        subtotal {
+ 36
+          shopMoney {
+ 37
+            amount
+ 38
+          }
+ 39
+        }
+ 40
+        # A list of suggested order transactions.
+ 41
+        suggestedTransactions {
+ 42
+          amountSet {
+ 43
+            shopMoney {
+ 44
+              amount
+ 45
+            }
+ 46
+          }
+ 47
+          gateway
+ 48
+          parentTransaction {
+ 49
+            kind
+ 50
+            id
+ 51
+          }
+ 52
+        }
+ 53
+      }
+ 54
+    }
+ 55 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "return": {
+ 4
+        "suggestedRefund": {
+ 5
+          "amount": {
+ 6
+            "shopMoney": {
+ 7
+              "amount": "23.99"
+ 8
+            }
+ 9
+          },
+ 10
+          "shipping": {
+ 11
+            "maximumRefundableSet": {
+ 12
+              "shopMoney": {
+ 13
+                "amount": "10.0"
+ 14
+              }
+ 15
+            }
+ 16
+          },
+ 17
+          "refundDuties": [],
+ 18
+          "subtotal": {
+ 19
+            "shopMoney": {
+ 20
+              "amount": "23.99"
+ 21
+            }
+ 22
+          },
+ 23
+          "suggestedTransactions": [
+ 24
+            {
+ 25
+              "amountSet": {
+ 26
+                "shopMoney": {
+ 27
+                  "amount": "23.99"
+ 28
+                }
+ 29
+              },
+ 30
+              "gateway": "manual",
+ 31
+              "parentTransaction": {
+ 32
+                "kind": "SALE",
+ 33
+                "id": "gid://shopify/OrderTransaction/1"
+ 34
+              }
+ 35
+            }
+ 36
+          ]
+ 37
+        }
+ 38
+      }
+ 39
+    }
+ 40 }
+ Step 7: Issue a refund
+ When you refund an order, you send payment back to the customer. Using the returnRefund mutation, you can issue a refund and associated it with the related return. You can refund an entire order or only part of an order.
+ The refunding behavior of this mutation is similar to the refundCreate mutation. The main difference is that the returnRefund mutation doesn't involve restocking input.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation returnRefundMutation {
+ 2
+    returnRefund(
+ 3
+      returnRefundInput: {
+ 4
+        # The ID of the return.
+ 5
+        returnId: "gid://shopify/Return/1",
+ 6
+        # A list of return line items to refund.
+ 7
+        returnRefundLineItems: [
+ 8
+          {
+ 9
+            returnLineItemId: "gid://shopify/ReturnLineItem/1",
+ 10
+            quantity: 1
+ 11
+          },
+ 12
+          {
+ 13
+            returnLineItemId: "gid://shopify/ReturnLineItem/2",
+ 14
+            quantity: 2
+ 15
+          }
+ 16
+       ],
+ 17
+       # The shipping amount to refund.
+ 18
+       refundShipping: {
+ 19
+         shippingRefundAmount: {
+ 20
+           amount: 5.0
+ 21
+           currencyCode: CAD
+ 22
+         },
+ 23
+         fullRefund: false
+ 24
+       },
+ 25
+       # A list of duties to refund.
+ 26
+       refundDuties: [
+ 27
+         {
+ 28
+           dutyId: "gid://shopify/Duty/1",
+ 29
+           refundType: TYPE_PROPORTIONAL
+ 30
+         }
+ 31
+       ],
+ 32
+       # A list of transactions involved in refunding the return.
+ 33
+       orderTransactions: [
+ 34
+         {
+ 35
+           transactionAmount: {
+ 36
+             amount: 16.90
+ 37
+             currencyCode: CAD
+ 38
+           },
+ 39
+           parentId: "gid://shopify/OrderTransaction/1"
+ 40
+         }
+ 41
+       ]
+ 42
+     }
+ 43
+    )
+ 44
+    {
+ 45
+      refund {
+ 46
+        id
+ 47
+      }
+ 48
+      userErrors {
+ 49
+        field
+ 50
+        message
+ 51
+      }
+ 52
+    }
+ 53 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "returnRefund": {
+ 4
+        "refund": {
+ 5
+          "id": "gid://shopify/Refund/1"
+ 6
+ 9
+    }
+ 10 }
+ Step 8: Dispose items
+ When a merchant or third-party fulfillment service receives a returned item, they can inspect the product to determine whether it's in sellable condition. For example, the product might be stained or missing components.
+ For health and safety reasons, some products can only be restocked if they are in unopened or brand new condition. If the products are returned in an opened or used condition, then the products are disposed of during inspection.
+ Depending on your use case, you can do the following:
+ If you require a delivery to dispose items, then refer to Manage reverse deliveries.
+ If you want to dispose items with no deliveries involved, then refer to Manage reverse fulfillment orders.
+ Step 9: Close a return
+ You can use the returnClose mutation to close a return at any time. For example, you might want to close a return when a refund has been made and items are restocked, or when items have been marked as returned.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation returnCloseMutation {
+ 2
+    returnClose(id: "gid://shopify/Return/1") {
+ 3
+      return {
+ 4
+        id
+ 2
+    "data": {
+ 3
+      "returnClose": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ A closed return is marked as Returned in the Shopify admin:
+ Step 10 (Optional): Reopen a return
+ If you need to reopen a closed return, then you can use the returnReopen mutation. You can reopen a return only if it was closed.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation returnReopenMutation {
+ 2
+    returnReopen(id: "gid://shopify/Return/1") {
+ 3
+      return {
+ 4
+        id
+ 5
+      }
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ 9
+      }
+ 10
+    "data": {
+ 3
+      "returnReopen": {
+ 4
+        "return": {
+ 5
+          "id": "gid://shopify/Return/1"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ Webhooks
+ As of GraphQL Admin API version 2023-01 and higher, your app can subscribe to webhooks for event notifications related to returns, refunds, reverse fulfillment orders, and reverse deliveries. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration overview.
+ Note
+ Return webhooks are available only in the GraphQL Admin API. They aren't available in the REST Admin API.
+ Example webhook responses
+ returns/request
+ returns/approve
+ returns/decline
+ refunds/create
+ returns/cancel
+ returns/close
+ returns/reopen
+ reverse_fulfillment_orders/dispose
+ reverse_deliveries/attach_deliverable
+ 1 // Occurs when a return is requested. This means that the return's status is `REQUESTED`.
+ 2 {
+ 3
+    "id": 1,
+ 4
+    "admin_graphql_api_id": "gid://shopify/Return/1",
+ 5
+    "status": "requested",
+ 6
+    "name": "1001-R1",
+ 7
+    "order": {
+ 8
+      "id": 1,
+ 9
+      "admin_graphql_api_id": "gid://shopify/Order/1"
+ 10
+    },
+ 11
+    // The `total_return_line_items` field represents the total number of line items in the return. In this example, the `return_line_items` field is an array with one return line item. `"total_return_line_items": 1` matches the number of `return_line_items`.
+ 12
+    "total_return_line_items": 1,
+ 13
+    // To confirm that you've retrieved all return line items, you can poll if `total_return_line_items` is bigger than `return_line_items.size`.
+ 14
+    "return_line_items": [
+ 15
+      {
+ 16
+        "id": 1,
+ 17
+        "admin_graphql_api_id": "gid://shopify/ReturnLineItem/1",
+ 18
+        "fulfillment_line_item": {
+ 19
+          "id": 1,
+ 20
+          "admin_graphql_api_id": "gid://shopify/FulfillmentLineItem/1",
+ 21
+          "line_item": {
+ 22
+            "id": 1,
+ 23
+            "admin_graphql_api_id": "gid://shopify/LineItem/1"
+ 24
+          }
+ 25
+        },
+ 26
+        "quantity": 2,
+ 27
+        "return_reason": "wrong_item",
+ 28
+        "return_reason_note": "",
+ 29
+        "customer_note": "I ordered the wrong item by accident. Could I get a refund or at least exchange it for store credit? Thanks."
+ 30
+      }
+ 31
+    ]
+ 32 }
+ Next steps
+ Learn how to preview and refund duties with the GraphQL Admin API.
+ Learn how to manage reverse fulfillment orders with the GraphQL Admin API.
+ Learn how to manage reverse deliveries with the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Query returnable fulfillments
+ Step 2: Request a return
+ Step 3 (Optional): Create a return
+ Step 4: Retrieve a return
+ Step 5 (Optional): Cancel a return
+ Step 6: Query a suggested refund
+ Step 7: Issue a refund
+ Step 8: Dispose items
+ Step 9: Close a return
+ Step 10 (Optional): Reopen a return
+ Webhooks
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

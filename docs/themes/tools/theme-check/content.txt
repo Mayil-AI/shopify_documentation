@@ -1,0 +1,50 @@
+Overview
+ Commands
+ Configuration
+ Checks reference
+ Migrate
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Theme Check
+ Theme Check is a linter for the Liquid and JSON inside your theme and theme app extensions. It detects errors and enforces Liquid best practices.
+ Theme Check can identify several issues in your theme code. For example, it can identify the following:
+ Syntax errors
+ Missing templates
+ Unused variables and snippets
+ Unknown and deprecated tags
+ Performance issues
+ Programming and style errors display directly in your console or code editor. Each error includes a link to the failed check's documentation, allowing you to debug issues quickly.
+ You can use Theme Check in the following ways:
+ Through Shopify CLI - Run checks against your theme on demand, in CI or with our Language Server.
+ Via the Shopify Liquid Visual Studio Code extension - Theme Check is included in the extension.
+ Installation
+ Install Theme Check with Shopify CLI
+ Install the Shopify Liquid Visual Studio Code extension
+ Configuration
+ You can configure check options to override defaults, or enable or disable specific checks, or point to your own custom checks. To learn more, refer to Theme Check configuration.
+ Creating your own checks
+ You can write your own checks in TypeScript and then reference them in your configuration. To learn about how the existing checks are written, explore the theme-tools repo.
+ Using Theme Check in other editors
+ Theme Check is available for integration in other editors using Shopify's Language Server.
+ Command reference
+ Checks reference
+ Learn what each check does, how to configure it, and when to disable it.
+ Command reference
+ Review the Theme Check reference for commands.
+ Contributing to Theme Check
+ Theme Check is open source and part of our suite of theme developer tools.
+ Learn how to contribute to the theme-tools repository
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Installation
+ Configuration
+ Creating your own checks
+ Using Theme Check in other editors
+ Command reference
+ Contributing to Theme Check
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,35 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CompanyLocation object
+ 2024-04 latest
+ A company's location.
+ On this page
+ Fields
+ Types that return CompanyLocation
+ Implements
+ Fields
+ createdAt (DateTime!)
+ The date and time (ISO 8601 format) at which the company location was created in Shopify.
+ externalId (String)
+ A unique externally-supplied ID for the company.
+ id (ID!)
+ The ID of the company.
+ locale (String)
+ The preferred locale of the company location.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ name (String!)
+ The name of the company location.
+ updatedAt (DateTime!)
+ The date and time (ISO 8601 format) at which the company location was last modified.
+ Types that return CompanyLocation
+ PurchasingCompany.location
+ Implements
+ HasMetafields
+ Was this page helpful?

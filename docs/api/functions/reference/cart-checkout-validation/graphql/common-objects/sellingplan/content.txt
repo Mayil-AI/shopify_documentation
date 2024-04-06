@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ SellingPlan object
+ 2024-04 latest
+ Represents how products and variants can be sold and purchased.
+ On this page
+ Fields
+ Types that return SellingPlan
+ Fields
+ description (String)
+ The description of the selling plan.
+ id (ID!)
+ A globally-unique identifier.
+ name (String!)
+ The name of the selling plan. For example, '6 weeks of prepaid granola, delivered weekly'.
+ recurringDeliveries (Boolean!)
+ Whether purchasing the selling plan will result in multiple deliveries.
+ Types that return SellingPlan
+ SellingPlanAllocation.sellingPlan

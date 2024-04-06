@@ -1,0 +1,30 @@
+Discounts
+ Subscriptions
+ Overview
+ Add subscriptions to your theme
+ Subscription UX guidelines
+ Pre-orders and Try Before You Buy
+ Shop Pay Installments
+ Accelerated checkout
+ B2B
+ Unit pricing
+ Subscriptions
+ Users are able to offer various options for purchasing goods and services at checkout through a subscription app. For example, customers can subscribe to a product delivery every month for a 10% discount, or every week for a 20% discount.
+ Tip
+ To be eligible to use Shopify subscriptions, merchants must meet the qualifying criteria.
+ How it works
+ To enable subscriptions, apps create selling plan groups, within which they create selling plans. These selling plans are linked to products and product variants. For example, a selling plan group called "Subscribe & Save" can offer selling plans that enable the customer to choose the delivery frequency and billing frequency separately. Merchants can offer multiple optional selling plans to customers, or specify a required selling plan for a product, such as "subscription-only" offers.
+ Implementing subscriptions in a theme
+ You can use Liquid and JavaScript to integrate subscriptions into your theme. You should also review the UX guidelines for subscriptions to ensure a great user experience.
+ Add subscriptions to your theme
+ Learn more about how to integrate subscriptions into your theme.
+ Subscriptions UX guidelines
+ Learn how to build a subscription experience and style components in your theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Implementing subscriptions in a theme
+ Updates & News
+ Developer changelog
+ Partner blog

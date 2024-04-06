@@ -1,0 +1,80 @@
+TextField
+ Thumbnail
+ Select
+ Select allows merchants to choose one option from a dropdown menu.
+ Consider Select when you have 4 or more options, to avoid creating clutter and make your component more scalable.
+ JavaScript
+ React
+ 1 import {extend, Select} from '@shopify/admin-ui-extensions';
+ 2
+ 3 const options = [
+ 4
+    {
+ 5
+      label: 'Cool option',
+ 6
+      value: 'cool-option',
+ 7
+    },
+ 8
+    {
+ 9
+      label: 'Cooler option',
+ 10
+      value: 'cooler-option',
+ 11
+    },
+ 12
+    {
+ 13
+      label: 'Coolest option',
+ 14
+      value: 'coolest-option',
+ 15
+    },
+ 16 ];
+ 17
+ 18 extend('Playground', (root) => {
+ 19
+    const select = root.createComponent(Select, {
+ 20
+      label: 'Select an option',
+ 21
+      options,
+ 22
+      labelInline: true,
+ 23
+      onChange: (value) => console.log(value, 'was selected'),
+ 24
+      value: 'cooler-option',
+ 25
+    });
+ 26
+ 27
+    root.appendChild(select);
+ 28
+ 29
+    root.mount();
+ 30 });
+ Props
+ optional = ?
+ Name Type Description
+ error? string Display an error state
+ label string Label for the select.
+ labelInline? boolean Show the label to the left of the value, inside the control.
+ options Option[] Array of Options to select from.
+ onChange? (value: string) => void Callback when selected Option changes.
+ onBlur? () => void Callback when focus is removed
+ value? string The value of the currently selected Option.
+ Option
+ Name Type Description
+ label string Rendered
+ value string Non-rendered
+ Guidelines
+ ✅ Do 🛑 Don't
+ Use Select when you have 4 or more options Have only a single item
+ For more guidelines, refer to Polaris' Select best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props

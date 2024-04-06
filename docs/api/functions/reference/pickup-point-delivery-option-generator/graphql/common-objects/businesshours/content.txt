@@ -1,0 +1,10 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ BusinessHours object
+ unstable
+ The business hours for a pickup point.
+ Fields
+ day (Weekday!) required
+ The day of the week.
+ periods ([BusinessHoursPeriod!]!) required
+ The business hours periods.

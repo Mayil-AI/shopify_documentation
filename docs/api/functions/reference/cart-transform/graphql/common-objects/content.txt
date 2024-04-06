@@ -1,0 +1,65 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Common objects
+ You can use common objects to access common Cart Transform API objects.
+ In this section
+ Attribute — Represents a generic custom attribute.
+ AttributeOutput — Key-value pairs that contains additional information.
+ BuyerIdentity — Represents information about the buyer that is interacting with the cart.
+ Cart — A cart represents the merchandise that a buyer intends to purchase, and the cost associated with the cart.
+ CartLine — Represents information about the merchandise in the cart.
+ CartLineCost — The cost of the merchandise line that the buyer will pay at checkout.
+ CartLineInput —
+ CartOperation — An operation to apply to the Cart.
+ CartTransform — A customization which applies cart transformations to the merchandise lines.
+ CollectionMembership — Represents whether the product is a member of the given collection.
+ Company — Represents information about a company which is also a customer of the shop.
+ CompanyContact — A company’s main point of contact.
+ CompanyLocation — A company’s location.
+ Country — A country.
+ CountryCode — The code designating a country/region, which generally follows ISO 3166-1 alpha-2 guidelines. If a territory doesn’t have a country code value in the CountryCode enum, then it might be considered a subdivision of another country. For example, the territories associated with Spain are represented by the country code ES, and the territories associated with the United States of America are represented by the country code US.
+ CurrencyCode — The three-letter currency codes that represent the world currencies used in stores. These include standard ISO 4217 codes, legacy codes, and non-standard codes.
+ CustomProduct — A custom product.
+ Customer — Represents a customer with the shop.
+ ExpandOperation — A cart line expand operation.
+ ExpandedItem —
+ ExpandedItemFixedPricePerUnitAdjustment — A fixed price per unit adjustment to apply to the expanded item.
+ ExpandedItemPriceAdjustment — A price adjustment to apply to the expanded item.
+ ExpandedItemPriceAdjustmentValue — A price adjustment to apply to a cart line.
+ GateConfiguration — Represents a gate configuration.
+ GateSubject — Represents a connection from a subject to a gate configuration.
+ HasGates — Gate subjects associated to the specified resource.
+ HasMetafields — Represents information about the metafields associated to the specified resource.
+ HasTagResponse — Represents whether the current object has the given tag.
+ ImageInput — The image of an object.
+ Language — A language.
+ LanguageCode — ISO 639-1 language codes supported by Shopify.
+ LocalTime — Represents limited information about the current time relative to the parent object.
+ Localization — Information about the localized experiences configured for the shop.
+ Market — A market is a group of one or more regions that you want to target for international sales. By creating a market, you can configure a distinct, localized shopping experience for customers from a specific area of the world. For example, you can change currency, configure international pricing, or add market-specific domains or subfolders.
+ MarketRegion — Represents a region.
+ MarketRegionCountry — A country which comprises a market.
+ Merchandise — The merchandise to be purchased at checkout.
+ MergeOperation — A cart line merge operation.
+ Metafield — Metafields enable you to attach additional information to a Shopify resource, such as a Product or a Collection. For more information about the Shopify resources that you can attach metafields to, refer to HasMetafields.
+ MoneyV2 — A monetary value with currency.
+ PriceAdjustment —
+ PriceAdjustmentValue —
+ Product — Represents a product.
+ ProductVariant — Represents a product variant.
+ PurchasingCompany — Represents information about the buyer that is interacting with the cart.
+ SellingPlan — Represents how products and variants can be sold and purchased.
+ SellingPlanAllocation — Represents an association between a variant and a selling plan. Selling plan allocations describe the options offered for each variant, and the price of the variant when purchased with a selling plan.
+ SellingPlanAllocationPriceAdjustment — The resulting prices for variants when they’re purchased with a specific selling plan.
+ Shop — Information about the shop.
+ UpdateOperation — A cart line update operation. Only stores on the Shopify Plus plan can use apps with update operations.
+ UpdateOperationFixedPricePerUnitAdjustment — A fixed price per unit adjustment to apply to a cart line.
+ UpdateOperationPriceAdjustment — A price adjustment to apply to a cart line item.
+ UpdateOperationPriceAdjustmentValue — A price adjustment to apply to a cart line item.
+ WeightUnit — Units of measurement for weight.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

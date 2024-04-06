@@ -1,0 +1,15 @@
+Discount function examples
+ Overview
+ Order discount
+ Discounts allocator
+ Bundles
+ Billing
+ App Store
+ Discount Function Examples
+ This section includes a collection of Discount Function examples that you can use in your app. The examples include visual representations of the function configuration to help you understand what GraphQL objects can be used in FunctionResult with the Order Discount Function API.
+ Example
+ Order discount function with an `orderMinimumSubtotal` condition
+ Create an order discount function with orderMinimumSubtotal.
+ Discounts Allocator Function using metafields to set a single discount cap and per cart cap on discounts
+ Create a Discounts Allocator Function with to customize your discount allocation strategies.
+ Was this page helpful?

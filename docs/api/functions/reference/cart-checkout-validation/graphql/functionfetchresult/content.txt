@@ -1,0 +1,25 @@
+Overview
+ Common objects
+ FunctionFetchResult
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Cart Transform API
+ Pickup Point Delivery Option Generator API
+ Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ FunctionFetchResult object
+ 2024-04 latest
+ The fetch target result. Refer to network access for Shopify Functions.
+ Fields
+ request (HttpRequest)
+ HTTP Request.
+ Was this page helpful?
+ YesNo
+ Updates & News

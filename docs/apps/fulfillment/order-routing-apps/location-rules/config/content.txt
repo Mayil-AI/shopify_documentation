@@ -1,0 +1,395 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Build fulfillment constraints
+ Build local pickup delivery option generators
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ Point of Sale
+ Add configuration to your location rule function
+ You can use metafields to store configuration values for your location rule function. Metafields provide greater flexibility to use functions, and are a prerequisite to creating a merchant user interface for configuring functions.
+ Beta
+ Location rules is a new feature that's only available by request. To develop location rules, you need to contact order-routing-early-access@shopify.com.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create a metafield definition.
+ Add metafields to your GraphQL input query.
+ Use metafield values in your function logic.
+ Requirements
+ You've completed the Getting started with building location rules tutorial.
+ Step 1: Create the metafield definition
+ To make your function reusable, you can replace hardcoded values in your function with metafield values.
+ For security reasons, it's recommended to create a metafield definition under a reserved namespace. The Shopify admin requires additional permissions to handle reserved namespaces in order to broker metafield changes on behalf of your application.
+ Update shopify.server.ts file with the following code inside the afterAuth hook to create a metafield definition and grant additional access to Shopify admin:
+ shopify.server.ts
+ 1 const definition = {
+ 2
+    access: {
+ 3
+      admin: "MERCHANT_READ_WRITE"
+ 4
+    },
+ 5
+    description: "The preferred country",
+ 6
+    key: "preferred-country",
+ 7
+    name: "Preferred Country",
+ 8
+    namespace: " $app:location-rule",
+ 9
+    ownerType: "ORDER_ROUTING_LOCATION_RULE",
+ 10
+    type: "json",
+ 11 };
+ 12
+ 13 const response = await admin.graphql(
+ 14
+    `#graphql
+ 15
+    mutation CreateMetafieldDefinition($definition) {
+ 16
+      metafieldDefinitionCreate(definition: $definition) {
+ 17
+        createdDefinition {
+ 18
+          id
+ 19
+        }
+ 20
+        userErrors {
+ 21
+          field
+ 22
+          message
+ 23
+          code
+ 24
+        }
+ 25
+      }
+ 26
+    }`,
+ 27
+    {
+ 28
+      variables: {
+ 29
+        definition
+ 30
+      }
+ 31
+    }
+ 32 );
+ Your code should look like this:
+ shopify.server.ts
+ 1 import "@shopify/shopify-app-remix/adapters/node";
+ 2 import {
+ 3
+    AppDistribution,
+ 4
+    DeliveryMethod,
+ 5
+    shopifyApp,
+ 6
+    LATEST_API_VERSION,
+ 7 } from "@shopify/shopify-app-remix/server";
+ 8 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
+ 9 import { restResources } from "@shopify/shopify-api/rest/admin/2023-10";
+ 10 import prisma from "./db.server";
+ 11
+ 12 const shopify = shopifyApp({
+ 13
+    apiKey: process.env.SHOPIFY_API_KEY,
+ 14
+    apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
+ 15
+    apiVersion: LATEST_API_VERSION,
+ 16
+    scopes: process.env.SCOPES?.split(","),
+ 17
+    appUrl: process.env.SHOPIFY_APP_URL || "",
+ 18
+    authPathPrefix: "/auth",
+ 19
+    sessionStorage: new PrismaSessionStorage(prisma),
+ 20
+    distribution: AppDistribution.AppStore,
+ 21
+    restResources,
+ 22
+    webhooks: {
+ 23 APP_UNINSTALLED: {
+ 24
+    deliveryMethod: DeliveryMethod.Http,
+ 25
+    callbackUrl: "/webhooks",
+ 26 },
+ 27
+    },
+ 28
+    hooks: {
+ 29 afterAuth: async ({ session, admin }) => {
+ 30
+    shopify.registerWebhooks({ session });
+ 31
+ 32
+    const definition = {
+ 33
+      access: {
+ 34
+        admin: "MERCHANT_READ_WRITE"
+ 35
+      },
+ 36
+      description: "The preferred country",
+ 37
+      key: "preferred-country",
+ 38
+      name: "Preferred Country",
+ 39
+      namespace: " $app:location-rule",
+ 40
+      ownerType: "ORDER_ROUTING_LOCATION_RULE",
+ 41
+      type: "json",
+ 42
+    };
+ 43
+ 44
+    const response = await admin.graphql(
+ 45
+      `#graphql
+ 46
+      mutation CreateMetafieldDefinition($definition) {
+ 47
+        metafieldDefinitionCreate(definition: $definition) {
+ 48
+          createdDefinition {
+ 49
+            id
+ 50
+          }
+ 51
+          userErrors {
+ 52
+            field
+ 53
+            message
+ 54
+            code
+ 55
+          }
+ 56
+        }
+ 57
+      }`,
+ 58
+      {
+ 59
+        variables: {
+ 60
+          definition
+ 61
+        }
+ 62
+      }
+ 63
+    );
+ 64 },
+ 65
+    },
+ 66
+    future: {
+ 67 v3_webhookAdminContext: true,
+ 68 v3_authenticatePublic: true,
+ 69
+    },
+ 70
+    ...(process.env.SHOP_CUSTOM_DOMAIN
+ 71 ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }
+ 72 : {}),
+ 73 });
+ 74
+ 75 export default shopify;
+ 76 export const apiVersion = LATEST_API_VERSION;
+ 77 export const addDocumentResponseHeaders = shopify.addDocumentResponseHeaders;
+ 78 export const authenticate = shopify.authenticate;
+ 79 export const unauthenticated = shopify.unauthenticated;
+ 80 export const login = shopify.login;
+ 81 export const registerWebhooks = shopify.registerWebhooks;
+ 82 export const sessionStorage = shopify.sessionStorage;
+ Step 2: Configure the function
+ After you create the metafield definition, you can update your function to use metafield values set by the user.
+ Update your input query to request a metafield value on the created location rule, which is the function owner for this function API. You can then use that value in your function logic.
+ Navigate to your function in extensions/location-rule.
+ Terminal
+ $ cd extensions/location-rule
+ Replace the code in the src/run.graphql file with the following code.
+ This update to the input query adds a metafield from the locationRule object, which is the function owner.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    locationRule {
+ 3
+      metafield(namespace: "location-rule", key: "preferred-country") {
+ 4
+        value
+ 5
+      },
+ 6
+    }
+ 7
+    fulfillmentGroups {
+ 8
+      handle
+ 9
+      inventoryLocationHandles
+ 10
+    }
+ 11
+    locations {
+ 12
+      handle
+ 13
+      address {
+ 14
+        countryCode
+ 15
+      }
+ 16
+    }
+ 17 }
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ This update includes parsing the JSON metafield value, and using values from that JSON in the function logic instead of hardcoded values.
+ This change is automatically reflected as long as you're running dev.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 /**
+ 4 * @typedef {import("../generated/api").RunInput} RunInput
+ 5 * @typedef {import("../generated/api").RunInput["fulfillmentGroups"][0]} FulfillmentGroup
+ 6 * @typedef {import("../generated/api").RunInput["locations"][0]} Location
+ 7 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 8 * @typedef {import("../generated/api").Operation} Operation
+ 9 * @typedef {import("../generated/api").FulfillmentGroupRankedLocations} FulfillmentGroupRankedLocations
+ 10 * @typedef {import("../generated/api").RankedLocation} RankedLocation
+ 11 */
+ 12
+ 13 /**
+ 14 * @param {RunInput} input
+ 15 * @returns {FunctionRunResult}
+ 16 */
+ 17 export function run(input) {
+ 18
+    // Define a type for your configuration, and parse it from the metafield
+ 19
+    /**
+ 20
+    * @type {{
+ 21
+    *   preferredCountryCode: string
+ 22
+    * }}
+ 23
+    */
+ 24
+    const configuration = JSON.parse(
+ 25
+      input?.locationRule?.metafield?.value ?? "{}"
+ 26
+    );
+ 27
+ 28
+    // Load the fulfillment groups and generate the rank operations for each one
+ 29
+    let operations = input.fulfillmentGroups
+ 30
+      .map(fulfillmentGroup => /** @type {Operation} */(
+ 31
+        {
+ 32
+          rank: buildRankOperation(fulfillmentGroup, input.locations, configuration.preferredCountryCode)
+ 33
+        }
+ 34
+      ));
+ 35
+ 36
+    // Return the operations
+ 37
+    return { operations: operations };
+ 38 };
+ 39
+ 40 /**
+ 41 * @param {FulfillmentGroup} fulfillmentGroup
+ 42 * @param {Location[]} locations
+ 43 * @param {String} preferredCountryCode
+ 44 * @returns {FulfillmentGroupRankedLocations}
+ 45 */
+ 46 function buildRankOperation(fulfillmentGroup, locations, preferredCountryCode) {
+ 47
+    return {
+ 48
+      fulfillmentGroupHandle: fulfillmentGroup.handle,
+ 49
+      rankings: prioritizeLocations(fulfillmentGroup.inventoryLocationHandles, locations, preferredCountryCode),
+ 50
+    };
+ 51 };
+ 52
+ 53 /**
+ 54 * @param {string[]} locationHandles
+ 55 * @param {Location[]} locations
+ 56 * @param {String} preferredCountryCode
+ 57 * @returns {RankedLocation[]}
+ 58 */
+ 59 function prioritizeLocations(locationHandles, locations, preferredCountryCode) {
+ 60
+    // Load the inventory locations for the fulfillment group
+ 61
+    return locationHandles.map(locationHandle => {
+ 62
+      const location = locations.find((loc) => loc.handle == locationHandle);
+ 63
+      return {
+ 64
+        locationHandle,
+ 65
+        // Rank the location as 0 if the country code matches the preferred one, otherwise rank it as 1
+ 66
+        rank: location?.address.countryCode === preferredCountryCode ? 0 : 1,
+ 67
+      }
+ 68
+    });
+ 69 };
+ Next steps
+ Build a location rule user interface using Admin UI extensions.
+ Learn how to use variables in your input query.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the metafield definition
+ Step 2: Configure the function
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

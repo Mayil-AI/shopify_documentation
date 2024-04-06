@@ -1,0 +1,85 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Build a discounts experience
+ In this tutorial series, you'll use Shopify Functions to create a new discount type called "Volume discount" that offers a percentage off when customers purchase more than the minimum quantity of each product. You'll end up with a working discounts sample app to build your functionality.
+ What you'll learn
+ In this tutorial series, you'll learn how to do the following tasks:
+ Set up your environment to use functions.
+ Create a product discount function.
+ Add configuration to your product discount using metafields.
+ Build a product discount user interface with App Bridge.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Sample code
+ If you want to quickly get started, then you can get the sample code by completing the following steps. The tutorial series describes the sample code step by step.
+ Clone the discount sample app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest -- --template https://github.com/Shopify/function-examples/sample-apps/discounts
+ Note
+ You can view the source code for the discount sample app in GitHub.
+ Enter a name for your app project.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Link your app configuration:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app config link
+ Start a local server for your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ With the server running, open the Preview URL in the terminal output.
+ When you open the URL, you're prompted to install the app on your development store.
+ Click Install app to install the app on the store.
+ Create and test your discount.
+ Tutorial series
+ Follow the tutorial series to go from "Hello World" to a fully built out discounts experience.
+ Tutorial 1: Getting started with building a discounts experience
+ Create a new product discount function.
+ Tutorial 2: Add configuration to your discounts experience
+ Add configuration to your product discount using metafields.
+ Tutorial 3: Build a discount user interface with App Bridge
+ Build a new page in your app where users can create a product discount.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building discount experiences.
+ Shopify Function APIs reference
+ Learn about the available discounts APIs for Shopify Functions.
+ Language support
+ Learn about the language support and tooling that are available in Shopify Functions.
+ UX guidelines for discounts
+ Learn how to implement discounts in user interfaces.
+ Next steps
+ Get started with building a discounts experience.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Sample code
+ Tutorial series
+ Developer tools and resources
+ Next steps

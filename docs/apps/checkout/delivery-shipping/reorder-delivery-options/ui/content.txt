@@ -1,0 +1,545 @@
+Build a a UI for customized delivery options
+ Merchants create and manage delivery customizations in the Shopify admin. Shopify uses the URLs that you configure to render the delivery customization creation and editing experience for the merchant. You can customize this UI for your function's configuration needs, or to meet other requirements of your app.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create an App Bridge UI that enables users to create a function owner.
+ Configure the UI paths for your function.
+ Requirements
+ You've completed the Add configuration to your delivery customization tutorial.
+ You created your app with the Remix app template.
+ Step 1: Create the frontend UI for your function
+ The following example builds a React-based page that enables merchants to create and configure a new delivery customization. The code renders a frontend page in your app and uses the GraphQL Admin API to create a delivery customization.
+ In app/routes, create a new file named app.delivery-customization.$functionId.$id.jsx.
+ The Shopify Remix app template uses file-based routing, so the file name determines the page's URL. The $ prefix indicates functionId and id are dynamic segments. The path for this page is /app/delivery-customization/{functionId}/{id} .
+ Add the following code in app.delivery-customization.$functionId.$id.jsx:
+ The loader function handles fetching the data to populate the form and is used when this page has an id value that is not new.
+ The action function handles submitting the form data to Shopify to create the delivery customization.
+ The DeliveryCustomization function renders the page and form components using Polaris components and Remix hooks.
+ app/routes/app.delivery-customization.$functionId.$id.jsx
+ 1 import { useState, useEffect } from "react";
+ 2 import {
+ 3
+    Banner,
+ 4
+    Card,
+ 5
+    FormLayout,
+ 6
+    Layout,
+ 7
+    Page,
+ 8
+    TextField,
+ 9 } from "@shopify/polaris";
+ 10 import {
+ 11
+    Form,
+ 12
+    useActionData,
+ 13
+    useNavigation,
+ 14
+    useSubmit,
+ 15
+    useLoaderData,
+ 16 } from "@remix-run/react";
+ 17 import { json } from "@remix-run/node";
+ 18 import { authenticate } from "../shopify.server";
+ 19
+ 20 export const loader = async ({ params, request }) => {
+ 21
+    const { functionId, id } = params;
+ 22
+    const { admin } = await authenticate.admin(request);
+ 23
+ 24
+    if (id != "new") {
+ 25
+      const gid = `gid://shopify/DeliveryCustomization/${id}`;
+ 26
+ 27
+      const response = await admin.graphql(
+ 28
+        `#graphql
+ 29
+          query getDeliveryCustomization($id: ID!) {
+ 30
+            deliveryCustomization(id: $id) {
+ 31
+              id
+ 32
+              title
+ 33
+              enabled
+ 34
+              metafield(namespace: "$app:delivery-customization", key: "function-configuration") {
+ 35
+                id
+ 36
+                value
+ 37
+              }
+ 38
+            }
+ 39
+          }`,
+ 40
+        {
+ 41
+          variables: {
+ 42
+            id: gid,
+ 43
+          },
+ 44
+        }
+ 45
+      );
+ 46
+ 47
+      const responseJson = await response.json();
+ 48
+      const deliveryCustomization = responseJson.data.deliveryCustomization;
+ 49
+      const metafieldValue = JSON.parse(deliveryCustomization.metafield.value);
+ 50
+ 51
+      return {
+ 52
+        headers: { "Content-Type": "application/json" },
+ 53
+        body: JSON.stringify({
+ 54
+          stateProvinceCode: metafieldValue.stateProvinceCode,
+ 55
+          message: metafieldValue.message,
+ 56
+        }),
+ 57
+      };
+ 58
+    }
+ 59
+ 60
+    return {
+ 61
+      headers: { "Content-Type": "application/json" },
+ 62
+      body: JSON.stringify({
+ 63
+        stateProvinceCode: "",
+ 64
+        message: "",
+ 65
+      }),
+ 66
+    };
+ 67 };
+ 68
+ 69 export const action = async ({ params, request }) => {
+ 70
+    const { functionId, id } = params;
+ 71
+    const { admin } = await authenticate.admin(request);
+ 72
+    const formData = await request.formData();
+ 73
+ 74
+    const stateProvinceCode = formData.get("stateProvinceCode");
+ 75
+    const message = formData.get("message");
+ 76
+ 77
+    const deliveryCustomizationInput = {
+ 78
+      functionId,
+ 79
+      title: `Change ${stateProvinceCode} delivery message`,
+ 80
+      enabled: true,
+ 81
+      metafields: [
+ 82
+        {
+ 83
+          namespace: "$app:delivery-customization",
+ 84
+          key: "function-configuration",
+ 85
+          type: "json",
+ 86
+          value: JSON.stringify({
+ 87
+            stateProvinceCode,
+ 88
+            message,
+ 89
+          }),
+ 90
+        },
+ 91
+      ],
+ 92
+    };
+ 93
+ 94
+    if (id != "new") {
+ 95
+      const response = await admin.graphql(
+ 96
+        `#graphql
+ 97
+          mutation updateDeliveryCustomization($id: ID!, $input: DeliveryCustomizationInput!) {
+ 98
+            deliveryCustomizationUpdate(id: $id, deliveryCustomization: $input) {
+ 99
+              deliveryCustomization {
+ 100
+                id
+ 101
+              }
+ 102
+              userErrors {
+ 103
+                message
+ 104
+              }
+ 105
+            }
+ 106
+          }`,
+ 107
+        {
+ 108
+          variables: {
+ 109
+            id: `gid://shopify/DeliveryCustomization/${id}`,
+ 110
+            input: deliveryCustomizationInput,
+ 111
+          },
+ 112
+        }
+ 113
+      );
+ 114
+ 115
+      const responseJson = await response.json();
+ 116
+      const errors = responseJson.data.deliveryCustomizationUpdate?.userErrors;
+ 117
+ 118
+      return json({ errors });
+ 119
+    } else {
+ 120
+      const response = await admin.graphql(
+ 121
+        `#graphql
+ 122
+          mutation createDeliveryCustomization($input: DeliveryCustomizationInput!) {
+ 123
+            deliveryCustomizationCreate(deliveryCustomization: $input) {
+ 124
+              deliveryCustomization {
+ 125
+                id
+ 126
+              }
+ 127
+              userErrors {
+ 128
+                message
+ 129
+              }
+ 130
+            }
+ 131
+          }`,
+ 132
+        {
+ 133
+          variables: {
+ 134
+            input: deliveryCustomizationInput,
+ 135
+          },
+ 136
+        }
+ 137
+      );
+ 138
+ 139
+      const responseJson = await response.json();
+ 140
+      const errors = responseJson.data.deliveryCustomizationCreate?.userErrors;
+ 141
+ 142
+      return json({ errors });
+ 143
+    }
+ 144 };
+ 145
+ 146 export default function DeliveryCustomization() {
+ 147
+    const submit = useSubmit();
+ 148
+    const actionData = useActionData();
+ 149
+    const navigation = useNavigation();
+ 150
+    const loaderData = useLoaderData();
+ 151
+ 152
+    const [stateProvinceCode, setStateProvinceCode] = useState(loaderData.stateProvinceCode);
+ 153
+    const [message, setMessage] = useState(loaderData.message);
+ 154
+ 155
+    useEffect(() => {
+ 156
+      if (loaderData) {
+ 157
+        const parsedData = JSON.parse(loaderData.body);
+ 158
+        setStateProvinceCode(parsedData.stateProvinceCode);
+ 159
+        setMessage(parsedData.message);
+ 160
+      }
+ 161
+    }, [loaderData]);
+ 162
+ 163
+    const isLoading = navigation.state === "submitting";
+ 164
+ 165
+    useEffect(() => {
+ 166
+      if (actionData?.errors.length === 0) {
+ 167
+        open('shopify:admin/settings/shipping/customizations', '_top')
+ 168
+      }
+ 169
+    }, [actionData?.errors]);
+ 170
+ 171
+    const errorBanner = actionData?.errors.length ? (
+ 172
+      <Layout.Section>
+ 173
+      <Banner
+ 174
+        title="There was an error creating the customization."
+ 175
+        status="critical"
+ 176
+      >
+ 177
+        <ul>
+ 178
+          {actionData?.errors.map((error, index) => {
+ 179
+            return <li key={`${index}`}>{error.message}</li>;
+ 180
+          })}
+ 181
+        </ul>
+ 182
+      </Banner>
+ 183
+    </Layout.Section>
+ 184 ) : null;
+ 185
+ 186 const handleSubmit = () => {
+ 187
+    submit({ stateProvinceCode, message }, { method: "post" });
+ 188 };
+ 189
+ 190 return (
+ 191
+    <Page
+ 192
+      title="Change delivery message"
+ 193
+      backAction={{
+ 194
+        content: "Delivery customizations",
+ 195
+        onAction: () => open('shopify:admin/settings/shipping/customizations', '_top')
+ 196
+      }}
+ 197
+      primaryAction={{
+ 198
+        content: "Save",
+ 199
+        loading: isLoading,
+ 200
+        onAction: handleSubmit,
+ 201
+      }}
+ 202
+    >
+ 203
+      <Layout>
+ 204
+        {errorBanner}
+ 205
+        <Layout.Section>
+ 206
+          <Card>
+ 207
+            <Form method="post">
+ 208
+              <FormLayout>
+ 209
+                <FormLayout.Group>
+ 210
+                  <TextField
+ 211
+                    name="stateProvinceCode"
+ 212
+                    type="text"
+ 213
+                    label="State/Province code"
+ 214
+                    value={stateProvinceCode}
+ 215
+                    onChange={setStateProvinceCode}
+ 216
+                    disabled={isLoading}
+ 217
+                    requiredIndicator
+ 218
+                    autoComplete="on"
+ 219
+                  />
+ 220
+                  <TextField
+ 221
+                    name="message"
+ 222
+                    type="text"
+ 223
+                    label="Message"
+ 224
+                    value={message}
+ 225
+                    onChange={setMessage}
+ 226
+                    disabled={isLoading}
+ 227
+                    requiredIndicator
+ 228
+                    autoComplete="off"
+ 229
+                  />
+ 230
+                </FormLayout.Group>
+ 231
+              </FormLayout>
+ 232
+            </Form>
+ 233
+          </Card>
+ 234
+        </Layout.Section>
+ 235
+      </Layout>
+ 236
+    </Page>
+ 237 );
+ 238 }
+ Step 2: Update your input query to use an app-owned namespace
+ In the previous tutorial, you used a metafield namespace that was accessible to any app, so that the metafield namespace could be populated using GraphiQL. To make your function ready for production, you should update the metafield namespace to use a reserved prefix so that other apps can't use your metafield.
+ Replace the code in the extensions/delivery-customization/src/run.graphql file with the following code. The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ extensions/delivery-customization/src/run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      deliveryGroups {
+ 4
+        deliveryAddress {
+ 5
+          provinceCode
+ 6
+        }
+ 7
+        deliveryOptions {
+ 8
+          handle
+ 9
+          title
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13
+    deliveryCustomization {
+ 14
+      metafield(namespace: "$app:delivery-customization", key: "function-configuration") {
+ 15
+        value
+ Step 3: Configure the create UI path for your function
+ In shopify.extension.toml, define the URLs that users will access to create and edit delivery customizations using your function. Shopify automatically fills in any dynamic tokens in these URLs.
+ In extensions/delivery-customization/shopify.extension.toml, populate the two settings directly under [ui.paths]. This change is automatically reflected as long as you're running dev.
+ extensions/delivery-customization/shopify.extension.toml
+ 1 [ui.paths]
+ 2 create = "/app/delivery-customization/:functionId/new"
+ 3 details = "/app/delivery-customization/:functionId/:id"
+ Step 4: Update your app access scopes
+ You must request the write_delivery_customizations access scope to invoke delivery customization mutations in the Admin API.
+ In shopify.app.toml in the root of your app, add the write_delivery_customizations scope.
+ shopify.app.toml
+ 1 # This file stores configurations for your Shopify app.
+ 2
+ 3 scopes = "write_products, write_delivery_customizations"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Restart your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Use the URL provided by the CLI to open and re-install your app. You should be prompted to accept the new access scope permissions in your store.
+ Step 5: Create and test your delivery customization
+ From the Shopify admin, go to Settings > Shipping and delivery.
+ Under the Delivery customizations section, click Manage.
+ If you have existing customizations from previous tutorials, then click the checkbox next to each of them, and then click Deactivate.
+ Click Add a customization and then click delivery-customization by {your app}.
+ Fill in the delivery customization form, then click Save.
+ Open your development store, build a cart, and proceed to checkout.
+ Enter a delivery address that doesn't use the specified state/province code. You shouldn't see any additional messaging on the delivery options.
+ Change your shipping address to use your chosen state/province code. Your delivery options should now have the additional messaging.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > delivery-customization.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Learn more about how Shopify Functions work and the benefits of using Shopify Functions.
+ Consult the API references for Shopify Functions.
+ Learn how to use variables in your input query.
+ Review the UX guidelines to learn how to implement delivery customizations in user interfaces.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the frontend UI for your function
+ Step 2: Update your input query to use an app-owned namespace
+ Step 3: Configure the create UI path for your function
+ Step 4: Update your app access scopes
+ Step 5: Create and test your delivery customization
+ Next steps

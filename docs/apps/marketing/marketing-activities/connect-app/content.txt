@@ -1,0 +1,385 @@
+Overview
+ Getting started
+ Manage marketing activities
+ Connect a marketing app
+ Marketing automations
+ Connect a marketing app to Shopify
+ You can use the GraphQL Admin API to create and manage marketing efforts in your app or on a platform outside of Shopify. By integrating with Shopify, apps can connect their data, and app users can access a complete picture of how their marketing efforts are performing.
+ This guide shows you how to connect a marketing app to the Shopify platform using the GraphQL Admin API.
+ Requirements
+ You've created a Partner account and a development store.
+ You understand how apps fit into Shopify and the different ways of distributing your app.
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_marketing_events access scope. Learn how to configure your access scopes using Shopify CLI.
+ You're using API version 2022-10 or higher.
+ Note
+ You don't need to use a marketing activities app extension to connect a marketing app to Shopify.
+ Step 1: Create a marketing activity
+ When you create a marketing activity, Shopify measures how marketing efforts are performing in the following ways:
+ Collecting engagement metrics from apps: Engagement metrics include impressions, likes, shares, and clicks. The engagement metrics are sent in aggregate to Shopify using APIs.
+ Analyzing storefront traffic: Shopify provides metrics such as sessions, visitors, add to cart events, orders, and sales, and is able to attribute these metrics to marketing campaigns through the use of UTM parameters.
+ Note
+ Each marketing activity should have a unique set of UTM parameters associated with it, and incoming traffic to the storefront should include the UTM parameters as query parameters. For example: https://shop-domain/landing-page?utm_source=search&utm_medium=dir&utm_campaign=campaign_name_1&....
+ Example
+ You can use the marketingActivityCreateExternal mutation to create a marketing activity so that Shopify can track engagements. The following example shows how to send a marketing activity created in your platform to Shopify:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation CreateActivity($input: MarketingActivityCreateExternalInput!) {
+ 2
+    marketingActivityCreateExternal(input: $input) {
+ 3
+      marketingActivity {
+ 4
+        id
+ 5
+        title
+ 6
+        marketingEvent {
+ 7
+          id
+ 8
+          remoteId
+ 9
+          previewUrl
+ 10
+          # Shopify uses UTM parameters to attribute storefront traffic and sales to each activity. Each UTM parameter must be unique for each shop ID.
+ 11
+          utmMedium
+ 12
+          utmSource
+ 13
+          utmCampaign
+ 14
+        }
+ 15
+      }
+ 16
+      userErrors {
+ 17
+        field
+ 18
+        message
+ 19
+      }
+ 20
+    }
+ 21 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      // The `title` field is used to display a human-readable name of the marketing activity.
+ 4
+      "title": "Activity Title",
+ 5
+      "remoteId": "id-on-external-platform",
+ 6
+      // The `remoteUrl` field is used to link the merchant back to the marketing platform so they can access detailed reporting information.
+ 7
+      "remoteUrl": "https://example.com/111",
+ 8
+      "remotePreviewImageUrl": "https://example.com/images/111",
+ 9
+      // The `tactic` and `channel` fields are used to accurately classify the type of marketing activity.
+ 10
+      "tactic": "AD",
+ 11
+      "channel": "EMAIL",
+ 12
+      "adSpend": {
+ 13
+        "amount": 500,
+ 14
+        "currencyCode": "CAD"
+ 15
+      },
+ 16
+      "budget": {
+ 17
+        "budgetType": "DAILY",
+ 18
+        "total": {
+ 19
+          "amount": 550,
+ 20
+          "currencyCode": "CAD"
+ 21
+        }
+ 22
+      },
+ 23
+      "utm": {
+ 24
+        "campaign": "campaign-name-1",
+ 25
+        "medium": "email",
+ 26
+        "source": "banner"
+ 27
+      }
+ 28
+    }
+ 29 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "marketingActivityCreateExternal": {
+ 4
+        "marketingActivity": {
+ 5
+          "id": "gid://shopify/MarketingActivity/135351468054",
+ 6
+          "title": "Activity Title",
+ 7
+          "marketingEvent": {
+ 8
+            "id": "gid://shopify/MarketingEvent/180727021590",
+ 9
+            "remoteId": "id-on-external-platform",
+ 10
+            "previewUrl": "https://example.com/images/111",
+ 11
+            "utmMedium": "email",
+ 12
+            "utmSource": "banner",
+ 13
+            "utmCampaign": "campaign-name-1"
+ 14
+          }
+ 15
+        },
+ 16
+        "userErrors": []
+ 17
+      }
+ 18
+    },
+ 19
+    "extensions": {
+ 20
+      "cost": {
+ 21
+        "requestedQueryCost": 11,
+ 22
+        "actualQueryCost": 11
+ 23
+      }
+ 24
+    }
+ 25 }
+ Step 2: Update a marketing activity
+ You can use the marketingActivityUpdateExternal mutation to keep metadata about marketing activities up to date in Shopify.
+ The marketing activity id, remoteId, and UTM parameters can all be used to select the activity to update, as they're considered static and unique values. If the UTM parameters of a marketing activity have changed, then you need to create a new marketing activity.
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation UpdateExternalActivity($remoteId: String!, $utmSource: String!, $utmMedium: String!, $utmCampaign: String!, $input: MarketingActivityUpdateExternalInput!) {
+ 2
+    marketingActivityUpdateExternal(remoteId: $remoteId, utm: {source: $utmSource, medium: $utmMedium, campaign: $utmCampaign}, input: $input) {
+ 3
+      marketingActivity {
+ 4
+        id
+ 5
+        title
+ 6
+        marketingEvent {
+ 7
+          manageUrl
+ 8
+          previewUrl
+ 9
+        }
+ Variables
+ 1 {
+ 2
+    "remoteId": "id-on-external-platform",
+ 3
+    "utmSource": "banner",
+ 4
+    "utmMedium": "email",
+ 5
+    "utmCampaign": "campaign-name-1",
+ 6
+    "input": {
+ 7
+      "title": "New Activity Title",
+ 8
+      "remoteUrl": "https://example.com/111",
+ 9
+      "remotePreviewImageUrl": "https://example.com/images/111"
+ 10
+    }
+ 11 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "marketingActivityUpdateExternal": {
+ 4
+        "marketingActivity": {
+ 5
+          "id": "gid://shopify/MarketingActivity/135351468054",
+ 6
+          "title": "New Activity Title",
+ 7
+          "marketingEvent": {
+ 8
+            "manageUrl": "https://example.com/111",
+ 9
+            "previewUrl": "https://example.com/images/111"
+ 10
+ 13
+    },
+ 14
+    "extensions": {
+ 15
+      "cost": {
+ 16
+        "requestedQueryCost": 11,
+ 17
+        "actualQueryCost": 11
+ 18
+      }
+ 19
+    }
+ 20 }
+ Step 3: Send engagement data
+ After you've created marketing events, you can use the marketingEngagementCreate mutation to create a periodic job that sends incremental engagement data about active marketing activities. Engagement data can be sent using any of the previously provided unique identifiers, including the marketingActivityId or remoteId fields, or UTM parameters.
+ Engagements are currently tracked on a daily resolution. You need to supply the date the engagements occurred, and the daily totals for each value. These can be sent incrementally multiple times per day. The most recent value overwrites previously sent values.
+ Note
+ Engagement data is processed asynchronously. There might be a delay between sending the data to the GraphQL Admin API and being able to see it in the app user’s report.
+ Engagement data
+ For each marketing activity, the value of the cumulative field (true or false) should remain the same across all of its engagement data. The cumulative boolean indicates whether each engagement sent is a lifetime value of all metrics or just a daily total for that day.
+ If the value is true, then each engagement is a lifetime value for all metrics up to that occurredOn date.
+ If the value is false, then each engagement is the total metrics for only that occurredOn date.
+ For a full list of metrics that you can send in an engagement, refer to the MarketingEngagementInput input object in the GraphQL Admin API.
+ Example
+ The following example shows how to use the marketingEngagementCreate mutation to send engagement data for a marketing activity:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation marketingEngagementCreate($marketingActivityId: ID!, $marketingEngagement: MarketingEngagementInput!) {
+ 2
+    marketingEngagementCreate(marketingActivityId: $marketingActivityId, marketingEngagement: $marketingEngagement) {
+ 3
+      marketingEngagement {
+ 4
+        clicksCount
+ 5
+        commentsCount
+ 6
+        complaintsCount
+ 7
+        failsCount
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ Variables
+ 1 {
+ 2
+    "marketingActivityId": "gid://shopify/MarketingActivity/135351468054",
+ 3
+    "marketingEngagement": {
+ 4
+      "adSpend": {
+ 5
+        "amount": "20",
+ 6
+        "currencyCode": "USD"
+ 7
+      },
+ 8
+      "clicksCount": 1,
+ 9
+      "commentsCount": 1,
+ 10
+      "complaintsCount": 1,
+ 11
+      "failsCount": 1,
+ 12
+      "favoritesCount": 1,
+ 13
+      "fetchedAt": "2022-01-01",
+ 14
+      "impressionsCount": 1,
+ 15
+      // The `isCumulative` field enables you to control whether you're sending daily running totals, or cumulative metrics since creation.
+ 16
+      "isCumulative": true,
+ 17
+      // The `occurredOn` field that's used to send data should always be after the creation date of the activity.
+ 18
+      "occurredOn": "2022-10-01",
+ 19
+      "sendsCount": 1,
+ 20
+      "sharesCount": 1,
+ 21
+      "uniqueClicksCount": 1,
+ 22
+      "uniqueViewsCount": 1,
+ 23
+      "unsubscribesCount": 1,
+ 24
+      "utcOffset": "-00:00",
+ 25
+      "viewsCount": 1
+ 26
+    }
+ 27 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "marketingEngagementCreate": {
+ 4
+        "marketingEngagement": {
+ 5
+          "clicksCount": 1,
+ 6
+          "commentsCount": 1,
+ 7
+          "complaintsCount": 1,
+ 8
+          "failsCount": 1
+ 9
+        },
+ 10
+        "userErrors": []
+ 11
+      }
+ 12
+    },
+ 13
+    "extensions": {
+ 14
+      "cost": {
+ 15
+        "requestedQueryCost": 10,
+ 16
+        "actualQueryCost": 10
+ Next steps
+ Consult the GraphQL Admin API reference to learn more about the mutations mentioned in this guide:
+ marketingActivityCreateExternal
+ marketingActivityUpdateExternal
+ marketingEngagementCreate
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a marketing activity
+ Step 2: Update a marketing activity
+ Step 3: Send engagement data
+ Next steps
+ Updates & News
+ Developer changelog

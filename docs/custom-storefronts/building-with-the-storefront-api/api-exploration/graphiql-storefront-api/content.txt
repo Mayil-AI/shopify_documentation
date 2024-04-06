@@ -1,0 +1,25 @@
+API exploration
+ Overview
+ GraphiQL Storefront API explorer
+ Storefront API learning kit
+ Products and collections
+ Search and discovery
+ Markets
+ Cart
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Shopify Storefront API GraphiQL explorer
+ Start exploring Shopify's Storefront GraphQL API on our demo shop. Use the embedded GraphiQL explorer below to run queries.
+ Caution
+ This is a read-only demo. To build queries and mutations install Shopify's GraphiQL app.
+ Launch the Explorer in its own window.
+ Next steps
+ Familiarize yourself with the Storefront API reference documentation.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

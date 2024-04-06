@@ -1,0 +1,90 @@
+Troubleshooting
+ Theme Store
+ Explicit currency formatting
+ Multiple currencies can use the same currency symbol, such as $, which can make it difficult for customers to know which currency they're browsing in. To help prevent this confusion, you can use explicit currency formatting which shows the currency code with the price.
+ In this tutorial, you'll learn how to create a setting that lets merchants enable explicit currency formatting, and then apply it to price displays. You can also review guidelines for price displays and currency formatting.
+ Note
+ Merchants can define the format of money filters in the Shopify admin.
+ Resources
+ To add explicit currency formatting to your theme, you'll use the following Liquid filters:
+ The money_with_currency filter
+ The money filter
+ Implement explicit currency formatting
+ To implement explicit currency formatting, you need to implement the following components:
+ A currency code theme setting: This setting enables merchants to choose whether the currency code is included in price displays.
+ References to the theme setting in price displays: Reference the currency code theme setting to display the appropriate currency format in price displays.
+ Create a currency code theme setting
+ You can create a global theme setting to enable merchants to choose whether the currency code is included in price displays.
+ In the example below, a Show currency codes checkbox setting with the ID currency_code_enable is exposed to the merchant.
+ settings_schema.json
+ 1 ...
+ 2 },
+ 3 {
+ 4
+    "name": "Currency format",
+ 5
+    "settings": [
+ 6
+      {
+ 7
+        "type": "header",
+ 8
+        "content": "Currency codes"
+ 9
+      },
+ 10
+      {
+ 11
+        "type": "paragraph",
+ 12
+        "content": "Note that cart and checkout totals will always show the currency code, and itemized, unit, and installment prices will not."
+ 13
+      },
+ 14
+      {
+ 15
+        "type": "checkbox",
+ 16
+        "id": "currency_code_enable",
+ 17
+        "label": "Show currency codes",
+ 18
+        "default": true
+ 19
+      }
+ 20
+    ]
+ 21 }
+ Reference the theme setting in price displays
+ After you create the theme setting, you can update theme price displays to show the currency code, or not, depending on the setting.
+ You shouldn't update all price displays to reference the currency code setting. To learn where you should and shouldn't use this setting in a theme, refer to Guidelines for updating price displays.
+ Your code should do the following:
+ Check the value of the currency setting to determine whether currency codes are enabled.
+ If currency codes are enabled, show the price with currency code by applying the money with currency filter to the price display.
+ If currency codes aren't enabled, show the price without the currency code by applying the money filter to the price display.
+ Example
+ 1 {% if settings.currency_code_enable %}
+ 2
+    {{ product.price | money_with_currency }}
+ 3 {% else %}
+ 4
+    {{ product.price | money }}
+ 5 {% endif %}
+ Guidelines for updating price displays
+ Most price displays should be updated to reference a currency code theme setting. However, there are some areas that should be hardcoded to provide the best customer experience or avoid repetition.
+ Displays that should always use explicit currency formatting
+ Cart and checkout totals should always use explicit currency formatting so that there's no confusion for customers when they place an order.
+ Displays that shouldn't use explicit currency formatting
+ The following price displays have enough surrounding context for customers to safely infer the currency. The shorter format also fits better within the display.
+ Price display Example
+ Installment prices in an installment banner
+ Itemized prices in a cart or order
+ Unit prices
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implement explicit currency formatting
+ Guidelines for updating price displays
+ Updates & News
+ Developer changelog

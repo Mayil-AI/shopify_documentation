@@ -1,0 +1,35 @@
+Overview
+ Getting started
+ Developer tools
+ Overview
+ Channels UI
+ Shop discovery
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Channels UI
+ The Channels UI component library is a React component library designed to help developers create the best marketplace channel experiences for merchants.
+ Channels UI is a great option if you are building your app in React and want to follow Shopify's channel best practices.The Channels UI component library shares many of the same philosophies as Polaris, and we recommend reviewing the style guide and codebase if you're building a marketplace channel app.
+ Note
+ It may be helpful to check out the UX guidelines in GitHub to craft a great channel for merchants to join your marketplace.
+ Getting Started with Channels UI
+ Use the Channels UI component library to create a simple channel app overview page in the Shopify admin.
+ Using Channels UI
+ Shopify Channels UI is available as a JavaScript module on npm. To install in in your app, you can use npm or yarn.
+ Terminal
+ $ yarn add @shopify/channels-ui
+ or
+ Terminal
+ $ npm install --save @shopify/channels-ui
+ Page components
+ Page components make developing your app quicker and easier. For example, the overview pages use the Channels UI LoadingCard, OverviewPage, and ProductStatusSection components to build a channel app overview page with a product status card.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Getting Started with Channels UI
+ Using Channels UI
+ Page components
+ Updates & News
+ Developer changelog

@@ -1,0 +1,30 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ MoneyV2 object
+ 2024-04 latest
+ A monetary value with currency.
+ On this page
+ Fields
+ Types that return MoneyV2
+ Fields
+ amount (Decimal!)
+ Decimal money amount.
+ currencyCode (CurrencyCode!)
+ Currency of the money.
+ Types that return MoneyV2
+ CartCost.subtotalAmount
+ CartCost.totalAmount
+ CartCost.totalDutyAmount
+ CartCost.totalTaxAmount
+ CartDeliveryOption.cost
+ CartLineCost.amountPerQuantity
+ CartLineCost.compareAtAmountPerQuantity
+ CartLineCost.subtotalAmount
+ CartLineCost.totalAmount
+ Customer.amountSpent
+ SellingPlanAllocationPriceAdjustment.perDeliveryPrice
+ SellingPlanAllocationPriceAdjustment.price
+ Was this page helpful?
+ YesNo
+ Updates & News

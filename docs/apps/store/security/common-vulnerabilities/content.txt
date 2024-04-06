@@ -1,0 +1,10 @@
+Secure tokens
+ Shortened URLs
+ Protecting your app against common web security vulnerabilities
+ Shopify expects that all third-party applications be protected against common web security vulnerabilities, including but not limited to, The OWASP Top 10. The OWASP Top 10 is a list of the most critical security risks to web applications and is published by the Open Web Application Security Project (OWASP). The list is a standard awareness document for developers and web application security experts.
+ If we discover any vulnerabilities in your app during the application review, then your app will be rejected and you'll be required to fix the vulnerabilities before submitting your app for another review.
+ The OWASP Top Ten list includes all the necessary information to understand common web application vulnerabilities and how to protect against them. The list also includes OWASP cheat sheets and external references. Another resource you can use is the Web Security Academy, a free online training center for web application security. The Web Security Academy includes interactive labs where you can put what you learn to the test.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

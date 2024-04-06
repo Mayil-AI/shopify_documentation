@@ -1,0 +1,205 @@
+Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Overview
+ GraphQL reference
+ Overview
+ Common Objects
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Order Routing Location Rule API
+ Payment Customization API
+ Configuration
+ Local Pickup Delivery Option Generator API reference
+ The Local Pickup Delivery Option Generator API enables you to generate custom local pickup options available to buyers during checkout. The API includes two key objects: Input and FunctionResult.
+ Beta
+ The local pickup delivery option generator API is a new feature that is available by request. To request access, contact local-pickup-generator-early-access@shopify.com.
+ Input
+ The Input object is the complete schema that your function can receive as input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    fulfillmentGroups {
+ 3
+      handle
+ 4
+      lines {
+ 5
+        id
+ 6
+      }
+ 7
+      deliveryGroup {
+ 8
+        id
+ 9
+      }
+ 10
+      locationHandles
+ 11
+    }
+ 12
+    locations {
+ 13
+      handle
+ 14
+      title
+ 15
+      address {
+ 16
+        countryCode
+ 17
+      }
+ 18
+    }
+ 19
+    deliveryOptionGenerator {
+ 20
+      functionConfiguration: metafield(namespace: "$app:delivery-options-generator", key: "config") {
+ 21
+        value
+ The following example shows the resulting input to the query:
+ input.json
+ 1 {
+ 2
+    "fulfillmentGroups": [
+ 3
+      {
+ 4
+        "handle": "1",
+ 5
+        "deliveryGroup": {
+ 6
+          "id": "gid://shopify/CartDeliveryGroup/1"
+ 7
+        },
+ 8
+        "locationHandles": [
+ 9
+          "1"
+ 10
+        ]
+ 11
+      }
+ 12
+    ],
+ 13
+    "locations": [
+ 14
+      {
+ 15
+        "handle": "1",
+ 16
+        "title": "Main St",
+ 17
+        "address": {
+ 18
+          "countryCode": "US"
+ 19
+        }
+ 20
+      },
+ 21
+      {
+ 22
+        "handle": "2",
+ 23
+        "title": "West St",
+ 24
+        "address": {
+ 25
+          "countryCode": "CA"
+ 26
+        }
+ 27
+      },
+ 28
+      {
+ 29
+        "handle": "3",
+ 30
+        "title": "Warehouse",
+ 31
+        "address": {
+ 32
+          "countryCode": "CA"
+ 33
+        }
+ 34
+      }
+ 35
+    ],
+ 36
+    "deliveryOptionGenerator": {
+ 37
+      "functionConfiguration": {
+ 38
+        "value": "true"
+ 39
+      }
+ 40
+    }
+ 41 }
+ FunctionResult
+ The FunctionResult object is the shape of the function's output.
+ Example
+ The following function returns local pickup location delivery options:
+ output.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "add": {
+ 5
+          "title": "Main St",
+ 6
+          "cost": "0.00",
+ 7
+          "pickupLocation": {
+ 8
+            "locationHandle": "2",
+ 9
+            "pickupInstruction": "Usually ready in 24 hours."
+ 10
+          }
+ 11
+        }
+ 12
+      },
+ 13
+      {
+ 14
+        "add": {
+ 15
+          "title": "West St",
+ 16
+          "cost": "0.00",
+ 17
+          "pickupLocation": {
+ 18
+            "locationHandle": "3",
+ 19
+            "pickupInstruction": "Usually ready in 2 hours."
+ 20
+          }
+ 21
+        }
+ 22
+      }
+ 23
+    ]
+ 24 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Input
+ FunctionResult
+ Updates & News
+ Developer changelog

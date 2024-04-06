@@ -1,0 +1,160 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Shopify Liquid Prettier Plugin
+ The Shopify Liquid Prettier Plugin is an opinionated code formatter for enforcing a consistent style in Liquid and HTML code.
+ Installation
+ You can install the Shopify Liquid Prettier Plugin using either npm or Yarn.
+ Terminal
+ npm
+ Yarn
+ $ npm install --save-dev prettier @shopify/prettier-plugin-liquid
+ For Prettier version 3 and above, the plugin must also be declared in the configuration.
+ .prettierrc
+ {
+   "plugins": ["@shopify/prettier-plugin-liquid"]
+ }
+ Configuration
+ The Shopify Liquid Prettier Plugin supports the following configuration options:
+ Name Default value Description
+ printWidth 120 The number of characters allowed on a line before wrapping.
+ 
+ To learn more about the printWidth option, refer to the Prettier documentation.
+ tabWidth 2 The number of spaces included in each indentation level.
+ 
+ To learn more about the tabWidth option, refer to the Prettier documentation.
+ useTabs false Whether to indent lines with tabs or spaces.
+ 
+ To learn more about the useTabs option, refer to the Prettier documentation.
+ singleQuote false Whether to use single or double quotes.
+ 
+ To learn more about the singleQuote option, refer to the Prettier documentation.
+ liquidSingleQuote true Whether to use single quotes instead of double quotes in Liquid tags and objects.
+ embeddedSingleQuote true Whether to use single quotes instead of double quotes in embedded languages (JavaScript, CSS, TypeScript inside <script>, <style> or Liquid equivalent).
+ htmlWhitespaceSensitivity css The HTML whitespace sensitivity.
+ 
+ To learn more about the htmlWhitespaceSensitivity option, refer to the Prettier documentation.
+ singleLineLinkTags false Whether to print <link> tags on a single line.
+ indentSchema false Whether to indent the contents of {% schema %} tags.
+ Usage
+ You can use the Shopify Liquid Prettier Plugin in the following environments:
+ Terminal
+ Browser
+ Editor
+ You can also use the plugin as a pre-commit hook or with a bundler.
+ Use the plugin in the terminal
+ You can use Prettier in the terminal as either a local or global dependency.
+ Local dependency
+ To use Prettier as a local dependency, you can add it as a script in your package.json file:
+ package.json
+ 1 ...
+ 2 {
+ 3
+    "scripts": {
+ 4
+      "prettier": "prettier"
+ 5
+    }
+ 6 }
+ 7 ...
+ Then you can run it using either npm or Yarn:
+ Terminal
+ npm
+ Yarn
+ $ npm run prettier -- path/to/file.liquid --write
+ Global dependency
+ If you install Prettier as a global dependency, then you can run it with the following command:
+ Terminal
+ $ prettier path/to/file.liquid --write
+ Use the plugin in the browser
+ The Shopify Liquid Prettier Plugin exposes a standalone.js file that can be used alongside Prettier's own standalone.js file.
+ To use Prettier and the Shopify Liquid Prettier Plugin in the browser, include both standalone files using an npm CDN, such as UNPKG.
+ 1 <script src="https://unpkg.com/prettier/standalone.js"></script>
+ 2 <script src="https://unpkg.com/@shopify/prettier-plugin-liquid/standalone.js"></script>
+ With the standalone scripts included, you can format code like the following:
+ 1 prettier.format(YOUR_CODE, {
+ 2
+    plugins: [prettierPluginLiquid],
+ 3
+    parser: 'liquid-html',
+ 4 });
+ Use the plugin in an editor
+ You can use the Shopify Liquid Prettier Plugin in the following editors:
+ Visual Studio Code
+ Vim
+ WebStorm
+ Visual Studio Code
+ You can use the Shopify Liquid Prettier Plugin in Visual Studio Code through one of the following extensions:
+ Shopify Liquid
+ Prettier
+ The Shopify Liquid extension
+ The Shopify Liquid extension includes the Shopify Liquid Prettier Plugin by default.
+ If you'd like to activate format-on-save, then you can add the following setting:
+ settings.json
+ 1 {
+ 2
+    "[liquid]": {
+ 3
+      "editor.defaultFormatter": "Shopify.theme-check-vscode",
+ 4
+      "editor.formatOnSave": true
+ 5
+    },
+ 6 }
+ To learn about how to format files with Prettier in Visual Studio Code, refer to the documentation for the Prettier extension.
+ The Prettier extension
+ Using the Shopify Liquid Prettier Plugin with the Prettier extension requires the following steps:
+ Install the Prettier extension.
+ Install the Shopify Liquid Prettier Plugin locally in your repository.
+ To learn about how to format files with Prettier in Visual Studio Code, refer to the documentation for the Prettier extension.
+ Vim
+ Using the Shopify Liquid Prettier Plugin in Vim requires the following steps:
+ Install vim-plug.
+ Install vim-prettier.
+ Install the Shopify Liquid Prettier Plugin locally in your repository.
+ To learn about how to format files with Prettier in Vim, refer to the documentation for vim-prettier.
+ WebStorm
+ Using the Shopify Liquid Prettier Plugin in WebStorm requires the following steps:
+ Install the Prettier plugin.
+ Install the Shopify Liquid Prettier Plugin locally in your repository.
+ Restart WebStorm.
+ Search for Prettier in the WebStorm preferences and update Run for files to include liquid.
+ You can also tick the On save checkbox to format-on-save.
+ Click Ok to save your settings.
+ To learn about how to format files with Prettier in WebStorm, refer to the WebStorm documentation.
+ Use the plugin as a pre-commit hook
+ You can use Prettier with a pre-commit tool. Pre-commit tools can reformat your "staged" files before you commit them.
+ Tip
+ To learn about pre-commit tools that are compatible with Prettier and how to install them, refer to Prettier's documentation.
+ Use the plugin with a bundler
+ The Shopify Liquid Prettier Plugin exposes a standalone.js file that can be used alongside Prettier's own standalone.js file.
+ To use Prettier and the Shopify Liquid Prettier Plugin with bundlers, such as webpack, Rollup, or Browserify, import both standalone files.
+ 1 import prettier from 'prettier/standalone';
+ 2 import liquidPlugin from '@shopify/prettier-plugin-liquid/standalone';
+ With the standalone files imported, you can format code like the following:
+ 1 prettier.format(YOUR_CODE, {
+ 2
+    plugins: [liquidPlugin],
+ 3
+    parser: 'liquid-html',
+ 4 });
+ Contributing to the Shopify Liquid Prettier Plugin
+ The Shopify Liquid Prettier Plugin is open source.
+ Learn how to contribute to the prettier-plugin-liquid repository
+ Report an issue
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Installation
+ Configuration
+ Usage
+ Use the plugin in the terminal
+ Use the plugin in the browser
+ Use the plugin in an editor
+ Use the plugin as a pre-commit hook
+ Use the plugin with a bundler
+ Contributing to the Shopify Liquid Prettier Plugin
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

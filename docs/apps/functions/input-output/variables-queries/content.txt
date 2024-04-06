@@ -1,0 +1,120 @@
+Variables in input queries
+ Network access
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Use variables in input queries
+ You can use variables in the GraphQL input query of your function. This allows a function to have merchant configured values used as the variables for your input query. For example, you can use these variables to check if a product is inAnyCollection or hasAnyTag to add custom logic to your function.
+ The values for the input query variables can be set using metafields when creating a function owner. Variables allow you to customize the data requested by your input query, which is used as input to your function.
+ This guide shows you how to use variables in input queries with Shopify Functions.
+ Requirements
+ You're using Shopify CLI version 3.34.0 or higher.
+ You're familiar with metafields concepts and APIs.
+ Step 1: Specify the metafield to use
+ To specify which metafield contains the input query variables, you need to set the values in the extensions.input.variables section of the function's settings:
+ shopify.extension.toml
+ 1 [extensions.input.variables]
+ 2 namespace = "$app:my-namespace"
+ 3 key = "my-key"
+ If you're using a previous version of the configuration file that doesn't have an [[extensions]] section, then the configuration section for input query variables is called [input.variables].
+ Tip
+ You should use a reserved prefix in your metafield namespace so that other apps can't use your metafields.
+ Step 2: Set the metafield
+ Functions can use a metafield on the function owner to populate the variables for their GraphQL input query. The definition of variables and their values is similar to the use of variables when invoking GraphQL over HTTP. Input query variables value are managed by your app using a JSON metafield type.
+ Your app can allow merchants to customize the variable's values that are needed for your input query. If you want to check if any product is inAnyCollection, then you can set a JSON metafield to store values for the variable named selectedCollectionIds. The values for the keys of this metafield must be set to the correct type for that field.
+ In the example of using inAnyCollection, the metafield must store the values of correct type for the list of ID's defined by the field.
+ For example, setting a selectedCollectionIds variable of type [ID!] would require a metafield value such as the following:
+ metafield-value.json
+ 1 {
+ 2
+    "selectedCollectionIds": [
+ 3
+      "gid://shopify/Collection/1",
+ 4
+      "gid://shopify/Collection/2",
+ 5
+      "gid://shopify/Collection/3"
+ 6
+    ]
+ 7 }
+ This variable value can be set using the metafield collection on the create or update mutation on your function owner (for example, discountAutomaticAppCreate).
+ You can also use the metafieldsSet mutation. The ownerId field in the mutation specifies the global ID of the function owner.
+ set-metafield.graphql
+ 1 mutation SetMetafield {
+ 2
+    metafieldsSet(metafields: [
+ 3
+      {
+ 4
+        namespace: "$app:my-namespace",
+ 5
+        key: "my-key",
+ 6
+        ownerId: "OWNER_ID",
+ 7
+        type: "json",
+ 8
+        value: "{\"selectedCollectionIds\":[\"gid://shopify/Collection/1\",\"gid://shopify/Collection/2\",\"gid://shopify/Collection/3\"]}"
+ 9
+      }
+ 10
+    ]) {
+ 11
+      metafields {
+ 12
+        id
+ 13
+      }
+ 14
+    }
+ 15 }
+ Note
+ The metafield storing the input query variables can also be used to store other values for your function's custom logic. Metafields above the size limit won't be returned and the function should use separate metafields in these cases.
+ Step 3: Use the metafield as input query variables
+ If input query variables are specified in your function's settings file, then they must be used in your input query. When Shopify runs your function, the JSON value of the specified metafield is used as variables to the input query. The keys in the JSON object must correspond to the variable names.
+ The following example shows how to use the values provided by the merchant for a selectedCollectionIds variable in an input query. Using the query results, you could check if a product is in any of the collections specified and then apply the discount accordingly:
+ input.graphql
+ 1 query Input($selectedCollectionIds: [ID!]) {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        id
+ 5
+        merchandise {
+ 6
+          ... on ProductVariant {
+ 7
+            id
+ 8
+            product {
+ 9
+              inAnyCollection(ids: $selectedCollectionIds)
+ 10
+            }
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ Note
+ Input query variables will return errors for any GraphQL list variable with a value that exceeds 100 elements.
+ Next steps
+ Learn about the language support available in Shopify Functions.
+ Consult the API references for Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Specify the metafield to use
+ Step 2: Set the metafield
+ Step 3: Use the `metafield` as input query variables

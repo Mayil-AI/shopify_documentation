@@ -1,0 +1,45 @@
+Overview
+ Performance
+ Accessibility
+ Internationalization
+ Overview
+ Getting started
+ Embedding
+ Mobile
+ Deceptive code
+ Design guidelines
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Internationalization
+ Shopify helps merchants expand their business to a global audience, sell to multiple countries, and scale internationally. This means that many merchants need to sell in multiple languages and currencies.
+ This guide describes the process of internationalizing your app, offers definitions associated with the concept of internationalization, and provides a list of use cases for internationalization.
+ How it works
+ Internationalization helps merchants expand their business to a global audience by creating shopping experiences in local languages and currencies.
+ Tip
+ You can speed up internationalizing new and existing apps by using i18n-ally, an open source Visual Studio Code extension that makes it easier to externalize strings, view and navigate to translation strings from code, and perform machine translation.
+ The following diagram illustrates the different stages in the process of internationalizing your app:
+ Prepare strings: The first stage in internationalizing your app includes preparing localized strings. This involves externalizing strings, getting access to the user's locale, formatting strings, and translating strings in your app.
+ Manage your App Store listing: After you've prepared localized strings, you can promote your app to a global audience by writing an app listing and translating the app listing.
+ Definitions
+ The following definitions provide a starting point for understanding key terms associated with internationalizing your app:
+ Term Definition
+ Internationalization Building your app and interface so it can be used in different locales. This includes creating flexible interfaces that allow for text expansion and changes to word order.
+ Localization Adapting your app and interface for different locales to make them a good cultural fit. This includes adapting features, changing visuals, and translating text.
+ Translation Converting text from one language to another. Not to be confused with localization, translation is just one part of localizing a product.
+ Use cases
+ The app user is going global as their addressable market is growing, and their buyers live in different parts of the world.
+ The app user has staff that use the Shopify admin in multiple languages.
+ You want to promote your app in the Shopify community. Shopify promotes localized apps in the App Store over apps that aren’t localized.
+ You want to sell your app cross-border in other markets.
+ Next steps
+ Learn how to get started with internationalizing your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Definitions
+ Use cases
+ Next steps
+ Updates & News

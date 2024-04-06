@@ -1,0 +1,275 @@
+GraphQL reference
+ Overview
+ Common objects
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Pickup Point Delivery Option Generator API
+ Delivery Customization API
+ Discounts APIs
+ Cart Transform API reference
+ The Cart Transform API enables you to expand cart line items and update the presentation of cart line items.
+ Extension targets
+ The Cart Transform API exposes the following targets:
+ Target Output type Description
+ purchase.cart-transform.run FunctionRunResult Outputs the cart transform operations
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Cart Transform API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        id
+ 5
+      }
+ 6
+    }
+ 7
+    cartTransform {
+ 8
+      someSetting: metafield(namespace: "some-namespace", key: "some-key") {
+ 9
+        value # String
+ 10
+      }
+ 11
+    }
+ 12 }
+ The following example shows the resulting input to the query:
+      "lines": [
+ 4
+        {
+ 5
+          "id": "gid://shopify/CartLine/1"
+ 6
+        }
+ 7
+      ]
+ 8
+    },
+ 9
+    "cartTransform": {
+ 10
+      "someSetting": {
+ 11
+        "value": "some-value"
+ 12
+      }
+ 13
+    }
+ 14 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.cart-transform.run target.
+ The output returns a list of cart operations, where each element can have one of the following values:
+ ExpandOperation: Specify the components of an item and apply a price adjustment. For example, Skin care kit is expanded into 2x Face mask and 1 cream.
+ MergeOperation: Enable merging items together into a bundle by specifying the bundle's product parent. For example, the items 1x Burger, 1x Coke, and 2x Fries can be combined into the Meal Kit product, resulting in one item (Meal Kit) with three components.
+ In the case where the function returns multiple operations and there's a collision, Shopify executes a subset of the operations using the following criteria:
+ Multiple expand operations targeting the same cart line: The first expand operation in the list is executed, and all other expand operations for the same cart line are discarded.
+ Multiple merge operations targeting the same cart line: The first merge operation in the list is executed, and all other merge operations for the same cart line are discarded.
+ Expand and merge operations targeting the same cart line: The expand operation is executed, and the merge operation is discarded.
+ Example
+ The following example shows an input query:
+ run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        id
+ 5
+        quantity
+ 6
+        merchandise {
+ 7
+          ... on ProductVariant {
+ 8
+            id
+ 9
+            component_parents: metafield(
+ 10
+              namespace: "custom"
+ 11
+              key: "component_parents"
+ 12
+            ) {
+ 13
+              value
+ 14
+            }
+ 15
+            component_reference: metafield(
+ 16
+              namespace: "custom"
+ 17
+              key: "component_reference"
+ 18
+            ) {
+ 19
+              value
+ 20
+            }
+ 21
+            component_quantities: metafield(
+ 22
+              namespace: "custom"
+ 23
+              key: "component_quantities"
+ 24
+            ) {
+ 25
+              value
+ 26
+            }
+ 27
+            price_adjustments: metafield(
+ 28
+              namespace: "custom"
+ 29
+              key: "price_adjustment"
+ 30
+            ) {
+ 31
+              value
+ 32
+            }
+ 33
+          }
+ 34
+        }
+ 35
+      }
+ 36
+    }
+ 37 }
+ The following function result uses all operations on the single Transform Cart API:
+ output.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "merge": {
+ 5
+          "cartLines": [
+ 6
+            {
+ 7
+              "cartLineId": "gid://shopify/CartLine/2",
+ 8
+              "quantity": 4
+ 9
+            },
+ 10
+            {
+ 11
+              "cartLineId": "gid://shopify/CartLine/3",
+ 12
+              "quantity": 6
+ 13
+            }
+ 14
+          ],
+ 15
+          "parentVariantId": "gid://shopify/ProductVariant/123",
+ 16
+          "price": {
+ 17
+            "percentageDecrease": {
+ 18
+              "value": 10.5
+ 19
+            }
+ 20
+          },
+ 21
+          "image": null,
+ 22
+          "title": null
+ 23
+        }
+ 24
+      },
+ 25
+      {
+ 26
+        "expand": {
+ 27
+          "cartLineId": "gid://shopify/CartLine/4",
+ 28
+          "expandedCartItems": [
+ 29
+            {
+ 30
+              "merchandiseId": "gid://shopify/ProductVariant/111",
+ 31
+              "quantity": 2
+ 32
+            },
+ 33
+            {
+ 34
+              "merchandiseId": "gid://shopify/ProductVariant/222",
+ 35
+              "quantity": 3
+ 36
+            }
+ 37
+          ],
+ 38
+          "price": {
+ 39
+            "percentageDecrease": {
+ 40
+              "value": 10.5
+ 41
+            }
+ 42
+          }
+ 43
+        }
+ 44
+      }
+ 45
+    ]
+ 46 }
+ Invalid operations
+ The following scenarios are considered as invalid:
+ expand operations:
+ One of the component quantities is less than 0.
+ The line to be expanded doesn't exist.
+ One of the component variant IDs doesn't exist.
+ Both ExpandedItem.Price and PriceAdjustment are returned in the operation.
+ One of the components is given a price less than 0.
+ Some of the components have a customized price and others don't.
+ merge operations:
+ The merge operation contains an invalid quantity for the children (less than 0 or the quantity to merge is bigger than the line's quantity).
+ The parent variant ID doesn't exist.
+ One of the lines to be merged doesn't exist.
+ update operations:
+ The operation includes a price < 0.
+ The line to be updated doesn't exist.
+ The operation targets a line that is going to be expanded or merged.
+ The shop is not on a Plus plan or a Development store plan.
+ Note
+ The expand, merge, and update operations will be dropped in the event that a selling plan is present.
+ For more information and examples, refer to the Cart Transform API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Invalid operations
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

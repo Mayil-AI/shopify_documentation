@@ -1,0 +1,35 @@
+Overview
+ Test data
+ Transfer a development store
+ Collaborator accounts
+ Theme Inspector
+ Theme Store
+ Transfer a development store
+ Development stores can be used to build a store for a client, or to test your app while you’re building it.
+ Development stores have limitations on them to make sure that they’re only used for development purposes. Some actions, such as enabling a developer preview or installing a draft app, disable store transfer permanently.
+ When to transfer a store
+ There are two main reasons to transfer a store to a live plan:
+ The work on the store is complete and the store is ready to sell products.
+ The work on the store is not complete, but the store requires a feature that's available only on a paid Shopify plan. To learn more about what features aren't available for development stores, refer to Features and limitations of development stores.
+ When transferring to a live subscription plan, the store requires billing information, which must be provided by the store owner.
+ Note
+ After you've transferred a development store to a live plan, your store is no longer eligible for promotions or free trials.
+ How to transfer a store to a merchant
+ To learn more about how to transfer a development store to a merchant, refer to the Shopify Help Center page on transferring ownership of a development store.
+ Transfer-disabled stores
+ By default, development stores are transferable to merchants. However, store transfer is disabled if the store uses functionality that can’t be transferred to a live store. After store transfer is disabled, it can't be transferred to a merchant.
+ Caution
+ After store transfer is disabled on a development store, the change can’t be reversed. If you want to transfer anything that you developed in a transfer-disabled store to a client, then you need to recreate your changes in a new development store.
+ Development store transfer is permanently disabled in the following cases:
+ If you install a custom app or a draft app on a development store
+ If you enable developer preview for a development store
+ When you attempt to perform any action that will cause transfer to be disabled for a development store, a warning appears before the store is converted.
+ Transfer-disabled stores have a Store transfer disabled label in the Shopify admin.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ When to transfer a store
+ How to transfer a store to a merchant
+ Transfer-disabled stores
+ Updates & News
+ Developer changelog

@@ -1,0 +1,30 @@
+Product subscription app extensions
+ CartLine object
+ 2024-04 latest
+ Represents information about the merchandise in the cart.
+ On this page
+ Fields
+ Types that return CartLine
+ Fields
+ attribute (Attribute)
+ Retrieve a cart line attribute by key.
+ Cart line attributes are also known as line item properties in Liquid.
+ Argument Description
+ key ( String )
+ The key of the attribute to retrieve.
+ cost (CartLineCost!)
+ The cost of the merchandise line that the buyer will pay at checkout.
+ id (ID!)
+ The ID of the cart line.
+ merchandise (Merchandise!)
+ The merchandise that the buyer intends to purchase.
+ quantity (Int!)
+ The quantity of the merchandise that the customer intends to purchase.
+ sellingPlanAllocation (SellingPlanAllocation)
+ The selling plan associated with the cart line and the effect that each selling plan has on variants when they're purchased.
+ Types that return CartLine
+ Cart.lines
+ CartDeliveryGroup.cartLines
+ Was this page helpful?
+ YesNo
+ Updates & News

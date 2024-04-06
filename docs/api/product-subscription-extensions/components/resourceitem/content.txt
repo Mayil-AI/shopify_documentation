@@ -1,0 +1,60 @@
+TextField
+ Thumbnail
+ ResourceItem
+ Resource items represent specific objects within a collection, such as products or orders. They provide contextual information on the resource type and link to the object’s detail page.
+ A ResourceItem should be rendered within a ResourceList.
+ JavaScript
+ React
+ 1 import {extend, ResourceList, ResourceItem} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const resourceItem1 = root.createComponent(ResourceItem, {
+ 5
+      id: '1234',
+ 6
+      onPress: () => console.log('Pressed 1'),
+ 7
+    });
+ 8
+    resourceItem1.appendChild('Cool item');
+ 9
+    const resourceItem2 = root.createComponent(ResourceItem, {
+ 10
+      id: '5678',
+ 11
+      onPress: () => console.log('Pressed 2'),
+ 12
+    });
+ 13
+    resourceItem2.appendChild('Cooler item');
+ 14
+ 15
+    const resourceList = root.createComponent(ResourceList, {});
+ 16
+ 17
+    resourceList.appendChild(resourceItem1);
+ 18
+    resourceList.appendChild(resourceItem2);
+ 19
+ 20
+    root.appendChild(resourceList);
+ 21
+    root.mount();
+ 22 });
+ Props
+ optional = ?
+ Name Type Description
+ id string Unique ID for the resource item.
+ onPress () => void Callback when the resource item is pressed.
+ Behavior
+ 📱 All children of ResourceItems are placed in a single view object, which makes recycling the views expensive. Consider making your ResourceItems simple.
+ 📱 Any child of ResourceItem that has an onPress will take precedence and the onPress of ResourceItem will not be invoked
+ ✅ Do 🛑 Don't
+ 📱 Keep ResourceItem shallow. Complex hierarchies have performance penalties 📱 Use complex and deep Stack layouts
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Behavior
+ Updates & News

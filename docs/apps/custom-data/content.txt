@@ -1,0 +1,20 @@
+Overview
+ Ownership
+ Metafields
+ Metaobjects
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Custom data
+ Shopify's platform includes data models for fundamental commerce concepts such as products, collections, and orders out of the box. However, commerce is diverse and often requires more complex or specific data models. The custom data platform enables you to extend Shopify's data models and create your own by using the following resources:
+ Metafields: Define and associate custom fields with Shopify resources such as products.
+ Metaobjects: Define and create custom data structures within Shopify.
+ Developer tools and resources
+ Getting started with metafields
+ Learn about creating and defining custom fields on resources in Shopify.
+ Getting started with metaobjects
+ Get started with defining and creating metaobjects to extend your shop's data model.
+ Understanding ownership for metafields and metaobjects
+ Learn how to own the custom objects and fields your app defines in Shopify.

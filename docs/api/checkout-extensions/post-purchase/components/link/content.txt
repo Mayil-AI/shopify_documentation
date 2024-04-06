@@ -1,0 +1,50 @@
+Product subscription app extensions
+ Link
+ Link is used to navigate the buyer to another page.
+ Example
+ JS
+ React
+ 1 import {extend, Link} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const link = root.createComponent(
+ 5
+      Link,
+ 6
+      {
+ 7
+        to: 'https://shopify.com',
+ 8
+      },
+ 9
+      'Shopify',
+ 10
+    );
+ 11
+ 12
+    root.appendChild(link);
+ 13 });
+ Props
+ optional = ?
+ Name Type Description
+ to? string Destination to navigate to. You must provide either this property, onPress, or both.
+ external? boolean Open the link in a new window or tab
+ id? string Unique identifier. Typically used as a target for another component’s controls to associate an accessible label with an action.
+ onPress? () => void Callback when pressed. If to is provided, it will execute the callback and then navigate to the location specified by to.
+ Best practices
+ If the link isn’t in a paragraph, consider using a plain button instead to get a larger hit area.
+ Use links primarily for navigation and button primarily for actions.
+ The HTML that renders for the Button and Link components carries meaning. Using these components intentionally and consistently results in a more inclusive experience for assistive technology users and a more cohesive visual experience for sighted users.
+ Related components
+ Button: Buttons are used for actions, such as “Add”, “Continue”, or “Pay now”, or “Save”.
+ ButtonGroup: A button group controls the layout for two or more stacked buttons such as “Continue” and “Return to cart”, and adds the necessary spacing between them.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Best practices
+ Related components
+ Updates & News
+ Developer changelog
+ Partner blog

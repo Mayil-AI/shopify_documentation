@@ -1,0 +1,35 @@
+TextField
+ Thumbnail
+ Icon
+ Icons are small visual indicators from a set of pre-defined glyphs.
+ JavaScript
+ React
+ 1 import {extend, Icon} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const icon = root.createComponent(Icon, {
+ 5
+      source: 'cancelSmallMinor',
+ 6
+    });
+ 7
+ 8
+    icon.appendChild('This is the best extension.');
+ 9
+    root.appendChild(icon);
+ 10
+ 11
+    root.mount();
+ 12 });
+ Props
+ optional = ?
+ Name Type Description
+ source "cancelSmallMinor" | "searchMinor" | "starHollow" | "starFilled" | "sortMinor" Pre-defined glyph content to display.
+ accessibilityLabel? string Text describing the icon, to be read to screenreaders.
+ Guidelines
+ ✅ Do 🛑 Don't
+ Use Icons to provide visual indicators to your actions, such as sorting and searching Use the same accessibility label for every Icon
+ Use a unique accessibility label that describes the Icon, so that the merchants device’s screen reader can announce the content
+ For more guidelines, refer to Polaris' Icon related guidelines.
+ Was this section helpful?

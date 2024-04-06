@@ -1,0 +1,45 @@
+Delivery and shipping
+ Overview
+ Enhance delivery methods
+ Overview
+ Build a date picker
+ UX guidelines
+ Reorder delivery options
+ Pickup points
+ Create local pickup charges
+ Product offers
+ Distribution
+ Billing
+ App Store
+ Enhance delivery methods
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ Delivery methods are ways that merchants can fulfill orders from their online stores. Methods include shipping to an address, local pickup, and shipping to a pickup point, all of which are natively supported by Shopify checkout. This guide introduces how delivery method extension points work, and provides some resources for getting started.
+ How it works
+ You can use checkout UI extensions to add extra functionality and content to delivery methods. If multiple delivery methods are available, then customers are shown all options at checkout.
+ Each delivery method has its own unique content and extension points. These extension points can be aware of the available and selected delivery options. Some use cases for extension points include collecting additional information from customers or to display specific delivery and shipping information depending on the selected rate.
+ Shipping
+ Shipping methods can include the carrier information, expected delivery time, rate names, and costs. Local delivery also displays here. To see the extension points that are placed in shipping methods, refer to supported locations.
+ Local pickup
+ Local pickup displays a list of store locations where a customer can choose to pick up their order. To see where you can extend local pickup, see supported locations.
+ Learn more
+ UX guidelines for enhancing delivery methods
+ Explore UX guidelines for enhancing delivery methods.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with using checkout UI extensions and building delivery customizations.
+ Checkout UI extensions API reference
+ Consult the API reference for checkout UI targets and their respective types.
+ Delivery Customization API reference
+ Consult the Shopify Functions API reference documentation for more information on the Delivery Customization API.
+ Checkout extension configuration
+ Learn about the properties you can configure in your checkout UI extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Shipping
+ Local pickup
+ Learn more
+ Developer tools and resources
+ Updates & News
+ Developer changelog

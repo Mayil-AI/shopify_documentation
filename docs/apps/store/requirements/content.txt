@@ -1,0 +1,710 @@
+Requirements for apps in the Shopify App Store
+ The following requirements are used at Shopify to review all apps distributed through the Shopify App Store. These requirements are the same for both listed and unlisted apps. They're intended to provide the best experience across the entire app lifecycle, from branding, to installation, to onboarding, functionality, and quality. By following them, you can make sure that the review process is as quick as possible when you submit your own apps.
+ Some app types, such as sales channel apps, need to meet additional requirements based on how they're configured. You can find these requirements in the Specific requirements for certain app configurations section below.
+ Caution
+ These requirements are subject to change, as we're continuously making improvements to the Shopify App Store and developer platform. Your app will be expected to meet any new requirements that are added here. The Shopify App Review team can reject an app at their discretion if it doesn't meet the set standards.
+ General requirements for all apps
+ The requirements in this section apply to both listed and unlisted apps distributed through the Shopify App Store. Depending on how your app is configured, it might also need to meet the requirements in the Specific requirements for certain app configurations section below.
+ Shopify Plus
+ As of October 1, 2022, apps that work for merchants only on the Shopify Plus plans can be listed in the Shopify App Store by changing your app's visibility. If you require assistance with changing your app's visibility, then please reach out to Shopify Partner Support.
+ 1. Prohibited and restricted app configurations
+ Some types of apps aren't permitted on the Shopify App Store and others must have their visibility set to unlisted.
+ Prohibited app types
+ The following app types aren't permitted on the Shopify App Store:
+ Apps that are pieces of standalone software that need to be downloaded to a computer - Your app must not require a desktop app to function.
+ Apps that mostly rely on merchant or Partner interaction to operate - Apps that rely on mainly person-to-person interactions should consider listing as a service in our Partner Directory.
+ Apps that make little or no use of Shopify's APIs - Apps that do not make use of Shopify's APIs are not permitted on the Shopify App Store. This is to make the merchant experience better by using direct shop data and mitigate user error.
+ Apps that falsify data to deceive merchants or buyers - Apps must not violate our Partner Program Agreement as well as our Acceptable Use Policy. Your app should only use factual information in popups and notifications.
+ Apps that process payments outside of Shopify's checkout - Shopify can't guarantee the safety or security of an order that has been placed through an offsite or third party checkout. Apps that bypass checkout or payment processing, or register any transactions through the Shopify API in connection with such activity, are prohibited.
+ Multiple apps with overlapping functionality created by the same Partner - App must not be identical to other apps you've published to the Shopify App Store. Learn more about duplicate apps in our Partner Program Agreement.
+ Apps that host marketplaces on Shopify - Apps that connect merchants to marketplaces or allow them to turn their stores into marketplaces cannot be distributed through the Shopify App Store
+ Apps that offer or promote capital funding - Apps that provide capital funding (including but not limited to loans, cash advances, and purchase of receivables) cannot be distributed through the Shopify App Store. These types of services are difficult to monitor on an ongoing basis, and in a manner that makes sure merchants are protected from unsound lending practices.
+ Apps with restricted beta API scopes enabled - If your app has been granted access to beta testing API scopes, then you can't submit your app to the Shopify App Store. For announcements about when betas become publicly available, visit the Shopify Community forums Shopify Community forums.
+ Apps that primarily function to share or provide merchant data to third parties - Apps that primarily function to share or provide merchant data to one or more third parties must have prior written consent from Shopify and must comply with our API Terms. Otherwise, they aren't eligible to be listed on the Shopify App Store. Each third party that receives merchant data using the app must agree to Shopify’s API Terms.
+ Apps that connect merchants to external developers - Apps that connect merchants to agencies and freelancers cannot be distributed through the Shopify App Store.
+ Apps that require a browser extension to function - Browser extensions are only permitted as an optional feature.
+ Apps that provide refunds - Your app must not offer methods for processing refunds outside of the original payment processor.
+ Apps that connect to an established payments gateway - Apps that connect to established payments gateways to provide services that aren't related to processing payments aren't permitted on the Shopify App Store.
+ Unauthorized payment apps - Payment Gateway apps must be authorized through an application process. They must be built using the Payments API. Review the requirements for more information.
+ Apps that bypass Shopify's Theme Store - Your app must not allow merchants to download themes. Themes can only be installed using the Shopify Theme Store.
+ 2. Installation and setup
+ These requirements make sure that merchants can quickly set up and start using your app. The installation requirements describe the correct flows for authentication, app install charges, and any sign-up steps (if required). These requirements make sure that you provide merchants with the guidance they need when they start learning to use your app.
+ A. Authentication
+ Your app must immediately authorize using OAuth before any other steps occur, even if the merchant has previously installed and then uninstalled your app.
+ Merchants shouldn't be able to interact with the user interface (UI) before OAuth.
+ B. Permissions
+ Permissions are the levels of access that your app has to a merchant's store through the API. The permissions that you request are shown to the merchant on the OAuth grant page, where the merchant can either grant or decline them.
+ Your app must redirect merchants to the user interface (UI) after they accept permissions access on the OAuth grant page.
+ Your app should request only the permissions that are necessary for it to function.
+ C. Setup and merchant workflows
+ Any connection that your app makes from its UI to either link to another shop or install other apps must go through the Shopify App Store listing first.
+ Apps must be installed and initiated only on Shopify services. Your app must not request the manual entry of a myshopify.com URL or a shop's domain during the installation or configuration flow.
+ For merchant security, your app must not use pop-up windows for essential app functionality, like running OAuth or approving app charges. Avoiding the use of pop-up windows also protects your app from being compromised by pop-up blockers.
+ If your app adds secondary payments to orders because of post-purchase upsells or other order edits, then you need to tell merchants that orders might have multiple payments associated with them. Include a note in your Shopify App Store listing and the app setup instructions to tell merchants that if they're capturing payments manually, then they might need to capture more than one payment for a single order.
+ 3. Functionality and quality
+ For your app to be successful, it should offer a consistent and positive experience for the merchants who use it. The following functionality and quality requirements apply to the core features of your app, such as its user interface, performance, and billing.
+ A. User interface
+ By offering a great user interface, you can make it easier for merchants to use your app to grow their businesses. Your app's user interface must meet the following requirements:
+ Your app in the Shopify App Store must be operational through a UI regardless of how it is launched. Operational errors (within an app's functionality) are acceptable, but web errors such as 404's, 500's and 300's are not.
+ Your app must explicitly inform merchants if it adds secondary payments to their customers' orders. Merchants must be aware that they may need to capture these secondary payments separately when using the manual payment capture method. It is essential to include this note in both your app's listing and within the app's user interface.
+ Your app doesn't use admin UI blocks or admin actions to display promotions, advertisements, or solicit reviews.
+ Tip
+ Need help designing and building your app's user interface? The resources at Shopify Polaris are a great place to start.
+ B. Billing
+ Shopify has an API-based billing system that supports different types of app charges. It bills merchants through the same system that's used for their Shopify subscription, and makes it easier for them to keep track of their payments.
+ Apps that do not use the Shopify Billing API cannot be distributed through the Shopify App store, unless you've been notified otherwise by Shopify.
+ Your app must allow merchants to upgrade and downgrade their pricing plan without having to contact your support team or having to reinstall the app.
+ This includes ensuring that the charges are successfully processed in the application charge history page in the merchant admin.
+ Enterprise-level pricing plans must be referenced in the Description of additional charges section of the pricing section of the app's listing.
+ If your app has any charges, it must implement the Billing API so it can accept, decline, and request approval for charges again on reinstall.
+ C. State of the app
+ Caution
+ Make sure your app is compliant with the latest Google Chrome cookie behavior and compatible with the SameSite cookie attribute.
+ Merchants are busy, and every minute matters when running their businesses. By making sure that your app performs well, you can help merchants achieve their goals faster and spend more time on the problems that need their attention the most.
+ Your app must be a stable, finished product when you submit it to the Shopify App Store. It shouldn't be in an unfinished state. Your app should function and generally be free of bugs.
+ For example, an app might fail this requirement if buttons return errors when they’re clicked, or the app returns a success state in the user interface when an action has failed.
+ Apps that no longer reflect the original core functionality submitted to the App Store will be re-evaluated and will need to be resubmitted for a full App review.
+ 4. App performance
+ For merchants to be successful, their online stores must have best-in-class speed and user experience. Apps can easily slow down performance, and we require apps to keep performance top-of-mind while helping merchants, to follow our performance requirements and best practices, and to test that their products continue to meet our minimum requirements for speed.
+ Tip
+ For best practices and recommendations on app performance, refer to our app performance recommendations.
+ A. Performance score
+ To be published in the Shopify App Store, your app must not reduce Lighthouse performance scores by more than 10 points. Submissions are evaluated based on this criteria, using the testing methodology outlined in the section below.
+ Test your app's impact on Lighthouse performance scores using the steps outlined in Testing storefront performance. The impact that you’ve calculated should be included in the App testing information section of your submission form. Please provide a screenshot of your results. This information must be provided to our App Review Specialist prior to the review process.
+ B. Testing methodology
+ For apps that affect storefronts directly, Shopify tests the app's effect on store performance by measuring the Lighthouse score before and after the app is installed. We calculate a weighted average of score from the following pages:
+                                                                                                               The pages that are used to calculate the performance impact of apps on the storefront, and their weights.
+ Page Weight
+ Home page 17%
+ Most visited product page 40%
+ Most visited collection page 43%
+ The difference in the score before and after the app is installed indicates whether the app improves or worsens store performance. To meet Shopify App Store requirements, your app must demonstrate low or no impact on store performance consistently across actual merchant stores over time.
+ Note
+ Lighthouse scores can vary between runs. Consider running these tests frequently during your development, and averaging your scores across a few consecutive Lighthouse tests before submission.
+ 5. App listing
+ The app listing is your calling card - it helps merchants find your app and understand how it can help them run their businesses. Your listing explains the features, user interface, and functionality of your app. Your listing should clearly communicate functionality and pricing so that merchants can quickly understand the benefits of your app.
+ Writing a Shopify App Store listing
+ The app listing is your first point of contact with a merchant, and it's where they'll go to determine whether your app is right for them. All approved public apps have a listing on the Shopify App Store, regardless of whether you choose to make it listed or unlisted.
+ The listing is often your biggest marketing tool — an effective app listing encourages Shopify merchants to try your app for themselves. Make sure that your app listing is clear, and that it answers the questions that a potential user might have.
+ To create a Shopify App Store listing, you first need to select Shopify App Store as the distribution method for your app.
+ Caution
+ If you're building a carrier integration that uses Fed-Ex, then you can't use the carrier's name in your app's branding. This is because of contractual agreements between Shopify Shipping and these carriers.
+ The app listing submission form lets you do the following:
+ highlight app features so merchants can easily see what your app can do for them
+ provide clear pricing information
+ specify which merchants can install your app
+ Follow these requirements and guidelines when you're filling out the app submission form to make sure that merchants can easily find your app, understand what they can use it for, and see how much it costs.
+ Note
+ The Shopify logo must not be used in any of the graphic elements of your app listing, including but not limited to the feature image, app icon, or screenshots.
+ Example app listing
+ The following image shows an example app listing, and shows where some of the fields in the app submission form are used in the app listing.
+ 1. Feature media
+ 2. Demo store URL
+ 3. Screenshots
+ 4. App introduction
+ 5. App details
+ 6. Feature list
+ Translate your app listing
+ Translated listings help your app to reach a wider audience, as they convert in non-English speaking markets up to 4x better than English-only listings. You can add and delete translated app listings for any of the supported languages in the Shopify App Store on the App listings page in the Partner Dashboard.
+ Certain listing details can be managed only on your primary listing. If you have created translated listings for your app, then you can choose which one to set as your primary listing.
+ Every English-language primary listing is automatically translated into the following languages:
+ Brazilian Portuguese
+ Danish
+ Dutch
+ French
+ German
+ Simplified Chinese
+ Spanish
+ Swedish
+ Automated listing translations get updated each time you publish an updated version of your app’s primary listing. Automated translations are clearly labeled on the app listing page, and merchants can toggle those translations off to view the listing in its original language. The listing also indicates to merchants if the app isn't available in a given language.
+ Note
+ Automated listing translation covers the following fields: App card subtitle, App introduction, App details, Features, Pricing details, Search terms, and alt text for your images. To manage any other fields for a given language, you need to provide your own translated listing.
+ Adding your own translated listing for an automatically translated language overwrites and disables automatic translation for that language. Deleting your translated listing resumes automated translation for that language.
+ Add a translated listing
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ Click Distribution.
+ Click Create listing or Manage listing.
+ Click Add translated listing.
+ Return to the App listings page and click Update app.
+ You can use this form to edit the translated listing for your app in the language you chose. To change which listing you're editing, go back to the App listings page and choose another listing.
+ Before you can submit your app for review, you need to make sure there are no issues with any translated listings you've added. When there are no issues, you can submit all your translated listings by clicking Submit app.
+ Delete a translated listing
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ Click Distribution.
+ Click Manage listing.
+ Click the listing you want to delete.
+ In the More actions drop-down list, click Delete listing.
+ A. Basic app information
+ 1. App name
+ Your app name is an important part of how you brand yourself to merchants, and how they refer to your app. Follow these requirements when deciding on an app name:
+ The app name can't include any Shopify trademarks, such as "Shopify", or confusingly similar variations or misspellings of any Shopify trademarks.
+ The app name must be 30 characters or fewer.
+ The app name can't be a generic description of your app's functionality, such as "Banner Slider." Your app name should be short and distinct.
+ Your app name needs to match, or be similar, in the App Name fields on the Configuration page and the Submission form in the Partner Dashboard. "Similar" means that any variations of the name contain common words.
+ Note
+ When you create an app, you must also enter an app name in the Partner Dashboard. The app name is displayed in the Shopify admin. This name can be shorter than the name in the app listing so that it fits into the Shopify admin app nav. Refer to App Design Guidelines for more information.
+ 2. App icon
+ You can add and update your app icon from the app submission form. When making your app icon, follow these guidelines:
+ Use JPEG or PNG format for the image.
+ The app icon's dimensions should be 1200px by 1200px.
+ Don't include text in your app icon.
+ Don't include screenshots or photographs in your app icon.
+ Use padding around your app icon. Your logo shouldn't touch the edge of the image.
+ Keep the corners square. The image's corners are automatically rounded when it's displayed.
+ Use bold colors and recognizable patterns.
+ Make it simple and focus on one or two elements. Visual clutter can make an image less effective.
+ Don't include seasonal promotions in the app icon. For example, you shouldn't promote BFCM discounts in the app icon.
+ Download image templates
+ 3. App categorization
+ When merchants visit the Shopify App Store, they can search for apps by using categories, subcategories, and tags.
+ The tags impact your store's discoverability on the App Store. In this field, you must select a primary tag that best describes your apps' core functionality. You can add an additional secondary tag if your app has other core functionality that isn't described by the primary tag.
+ Changes to this field will trigger a review by the Shopify app review team.
+ If your app capabilities change and you want to change how your app is categorized, then you can submit an appeal to change the app categorization by using the link in the app submission form. After the Shopify app review team completes their review, they'll send a response, whether it's approved or rejected.
+ 4. App category details
+ Specific categories require additional structured details about your app. This makes it easier for merchants to identify and compare relevant app features by category.
+ You can select up to 25 structured features per category field in the app submission form. These details can be updated at any time and don't require an appeal for review.
+ We’ve curated the most common features that merchants might be looking for within each category. If your app has more functionality than what's listed for each category, then consider either using your features list to specify the functionality or let us know in this feedback form
+ 5. Languages
+ In the Languages section of your app listing, you need to enter all the languages in which merchants can use your app’s UI within the Shopify admin. The Shopify admin itself can be used in any supported languages. To learn more about translating your app, refer to Internationalization.
+ If any languages listed under the Languages section of the app listing aren't available within your app, then you'll be asked to remove them from the list.
+ Note
+ If the content displayed by your app on a merchant’s storefront is available in multiple languages, then you can list those languages in the app details field.
+ B. App store listing content
+ Your app store listing content should describe your app's features at a high level. When creating your app store listing content, don't reference your other apps and services in your app store listing content.
+ 1. Feature media
+ You must add a feature image or video for the listing header. A feature image or video is a required part of the app listing. It shows merchants more about your app in a highly visible part of your listing.
+ A short video is the best way to showcase the impact of the app on the business and how customers experience the app. If you don't have a video, then you can use a static image instead.
+ A) FEATURE VIDEO GUIDELINES
+ A feature video should promote the core features and functionality of your app and how it interacts with Shopify. Merchants want to understand what to expect from your app and how it will help them run their businesses. An effective promotional video will encourage the merchant to take a deeper look through your app listing to learn more about the features that were introduced in the video.
+ Follow these guidelines when making your feature video:
+ The video should be no longer than 2-3 minutes.
+ Don't include long screencasts of someone using the application. Up to 25% of the video can use screencasts for demoing features, but the video should be promotional, not instructional.
+ Be mindful of any third-party logos or elements that you include in the feature video to avoid potential trademark issues.
+ Choose an eye-catching thumbnail that will make merchants want to watch the video to learn more.
+ B) FEATURE IMAGE GUIDELINES
+ If you don't have a video, then use a static image to highlight your app. Your image should convey the benefit, functionality, or unique value of your app. For example, the image might show the customer experience on the storefront, or how the merchant's workflow or business results are impacted.
+ Follow these guidelines when you're preparing your feature image:
+ Use JPEG or PNG format for the image.
+ The image's dimensions must be 1600px by 900px (16:9).
+ Leave a margin of 100px around the outside edges of the image.
+ Provide alt text for your image. This text appears if your image fails to load and can help people who use assistive devices like screen readers. It also helps with search engine optimization.
+ If you're using text in your image:
+ Localize and translate text for every language that your app listing is available in.
+ Keep the text short, simple, and scannable for both desktop and mobile devices.
+ Don't repeat your app card subtitle in the image.
+ Don’t use the Shopify logo in your image.
+ Avoid using heavily patterned or textured background images. Instead, use one or two colors for the background.
+ Ensure that there is enough contrast between the background and any text. A 4.5:1 contrast ratio is recommended.
+ Make your image simple. An image should have a single point of focus, and use only a few elements. Visual clutter can make an image less effective.
+ Avoid using screenshots of your application that contain many small elements or a lot of text. Crop or simplify screenshots where possible.
+ Download image templates
+ Here are some examples of feature images:
+ Shopify Email
+ Shopify Inbox
+ Shopify Local Delivery
+ 2. Demo store URL
+ Provide a link to a demo store that showcases your app so merchants can see a live demonstration of how the app works. This lets the merchant get a sense of how your app can benefit them.
+ As a Shopify Partner, you can use a free development store as your demo store. If you use a development store, then the store must be owned by the Partner account that you're submitting your app with.
+ Follow these guidelines when providing a demo URL:
+ Use a Shopify store: Use a Shopify development store, or a live store that you own, rather than a marketing page or video. Merchants want to be able to explore how an app functions in a store.
+ Thoughtfully design your demo store: If your demo store is poorly designed, then merchants might negatively associate the design of the store with the quality or aesthetics of your app.
+ Link to the relevant part of the store: Consider linking to a page in your demo store that best demonstrates your app's functionality. For example, if your app impacts only the product page of a store, then link directly to a product page.
+ Provide contextual instructions: Make it easy for merchants to know exactly what your app is impacting within the demo store. If your app is complex, then add text to the demo store to guide merchants through the experience.
+ Tip
+ Development stores are password-protected. However, when merchants visit your demo store from the Shopify App Store, the development store password page won't appear.
+ 3. Screenshots
+ In the Screenshots section, you must provide screenshots to show what your user interface looks like in action. Screenshots provide an opportunity to visually share what your app does in the storefront or the Shopify admin.
+ Follow these guidelines when you're preparing screenshots:
+ a) General screenshot guidelines
+ Provide alt text for all images for accessibility and to improve SEO.
+ Don’t use any personally identifiable information without consent. This includes information like store names, phone numbers, and .myshopify.com URLs.
+ Add annotations or highlighting to draw attention to important elements, such as any links that your app inserts in the Shopify admin.
+ If you add text annotations, then localize and translate the text for every language that your app listing is available in.
+ b) Desktop screenshot guidelines
+ Each screenshot's dimensions should be 1600px by 900px (16:9) for desktop.
+ Include between 3-6 screenshots of your app on desktop.
+ Include at least one screenshot of your app's user interface.
+ Provide alt text for all images for accessibility and to improve SEO.
+ Don't include desktop backgrounds and browser windows in your screenshots. Crop them so your images aren't cluttered and don't distract merchants from your app.
+ If your app is embedded, then don't include sensitive information such as the store name or any user information. You can include the left-hand navigation.
+ c) Mobile screenshot guidelines
+ Each screenshot's dimensions should be 1600px by 900px (16:9).
+ If your app is mobile responsive on the storefront, then include screenshots that show your app's mobile functionality. This helps merchants visualize how your app will look to a customer on their storefront.
+ Your mobile screenshots shouldn't be duplicates of your desktop screenshots. This means they must display the responsiveness of your user interface when viewed on a mobile device.
+ d) Point of sale screenshot guidelines
+ Each screenshot's dimensions should be 1600px by 900px (16:9).
+ If your app is for Shopify Point of Sale or has features that work with it, then you must include a screenshot showing this. This helps merchants specifically looking for point of sale apps understand that yours integrates with it.
+ 4. App introduction
+ The app introduction field gives you 100 characters to explain your app's purpose and main benefit to merchants. The app introduction appears as prominently displayed text on your app store listing.
+ Follow these guidelines when writing your app introduction:
+ Clearly highlight the benefits that merchants can expect from your app. For example, "[App Name] makes personalized advertising campaigns simple, and helps you find new customers."
+ Don't add keywords to the app introduction with the intent of improving search performance.
+ Don't use personal merchant information without consent from the merchant.
+ Don't include data or statistics. You can feel free to share this information on your website and landing pages.
+ The following table shows some good examples and bad examples of app introductions:
+ Examples Reason
+ Do: We package and ship your orders. Fast, simple fulfillment can boost sales and delight customers.
+ Don't: Get your products shipped fast. We'll take care of all the busy work for you.
+ Show specific benefits that drive value for merchants. Avoid generic marketing language.
+ Do: Create print-on-demand custom puzzles. More customization options can help increase product sales.
+ Don't: Custom puzzles. A creative solution to your print-on-demand needs.
+ Tie your unique app offering to a measurable business outcome.
+ Do: Easily create personalized email campaigns. Buyer targeting can increase customer lifetime value.
+ Don't: App Name is a best in class customer platform. Email marketing, text automation, Facebook custom audiences.
+ Show a clear merchant benefit and value proposition. Avoid unsubstantiated claims, keyword stuffing, and incomplete sentences.
+ 5. App details
+ The app details field gives you 500 characters to expand on your app's main benefits. In this field, you should let the merchant know what makes your app unique. The app details should be concise, but informative.
+ Follow these guidelines when writing your app details:
+ Focus on functional elements of your app in your app details, and avoid excessive marketing language.
+ Don't only list features in the app details. Use the Feature list field for listing features instead.
+ Don't include support information such as emails and phone numbers in the app details. Use the Support fields to enter your support information instead.
+ Don't include links and URLs in the app details. The submission form lets you provide links to your website's homepage, your FAQ page, and your pricing information, where you can host whatever additional information.
+ Don't include testimonials in the app details.
+ Don't add keywords to the app details with the intent of improving search performance.
+ Don't include any data or statistics in your app details. Feel free to share this information on your website and landing pages.
+ 6. Feature list
+ The feature list should include a list of the functional features of your app. The content for each listed feature should be short so that merchants can easily scan the list to understand what your app offers. You can use up to 80 characters per feature.
+ When writing your feature list, you should describe the functionality, not the mechanics behind each feature. The following table shows some good examples and bad examples for features:
+ Examples Reason
+ Do: Reports that show you sales data in real time.
+ Don't: Reports that use the latest push technology to offer you sales data with only 250ms of latency.
+ Describe functionality that is meaningful to merchants. Avoid focusing on the technical aspects of a feature.
+ Do: Drag and drop page builder.
+ Don't: Page builder built on the latest React Native technology to ensure the most efficient page building experience.
+ Be concise and informative. Avoid including feature mechanics that aren't relevant to merchants.
+ Do: Customize details like shape and difficulty level in a full-screen experience.
+ Don't: Print-on-demand, product customization, sales analytics, puzzles.
+ Describe a specific, unique feature. Avoid keyword stuffing and incomplete sentences.
+ 7. Integrations
+ The Integrations field lets you list a maximum of six integrations. If your app has more than six integrations, then list the ones that merchants will be most interested in.
+ Don't include the following in your list of supported integrations:
+ Shopify
+ other shopping carts, unless you provide synchronization or cross-platform compatibility
+ other apps in the Shopify App Store, unless your app directly integrates with them
+ C. Resources
+ Privacy policy URL (Required)
+ Data and user privacy are extremely important to merchants, and they value Partners who take security seriously. You need to include a privacy policy for your app.
+ Developer website URL (Optional)
+ Having a website that gives more information about your app can help merchants to decide if they want to install it. This URL needs to be set to the landing page of your developer website. If the URL goes to a special promotional page, then you'll be asked to change it.
+ FAQ URL (Optional)
+ This is a great opportunity to answer frequently asked questions in detail to merchants. This URL must redirect the merchant to a dedicated FAQ page on your website. If the URL redirects to a cloud document or PDF, then you'll be asked to change it.
+ Changelog URL (Optional)
+ A changelog is a great way to show merchants what's new with your app, and show that you're actively supporting and updating your app. The URL must redirect the merchant to a dedicated changelog page on your website.
+ Support portal URL (Optional)
+ You can provide a link directly to your support portal to give merchants a more complete view of the support services that you offer.
+ Tutorial URL (Optional)
+ In order to set merchants up for success, you can provide a link to a relevant tutorial or other onboarding guidance.
+ Additional app documentation (Optional)
+ In this field, you can provide a link to any other additional documentation that would be helpful and relevant to merchants using your app.
+ D. Pricing
+ The pricing section lets you clarify app pricing information for merchants. You're required to provide names for all plan names. Only include pricing information in the designated area of the listing.
+ 1. Pricing details
+ Select your app's primary billing method. There are three primary billing methods that you can use for your app:
+ Free to install Select this option if you won't charge the merchant anything for installing the app. Apps that are free to install can have additional usage charges or charges that are charged outside of the Shopify Billing API. If there are no additional charges, such as commissions or usage charges, then your app will appear as Free in the Shopify App Store. If you do specify additional charges, then your app will appear as Free to install.
+ Recurring charge Select this option if you will charge the merchant each month (every 30 days) or each year that they have the app installed. If you select this option, then you'll be able to add information about the different monthly or yearly plans that you offer.
+ One-time payment Select this option if you will charge the merchant a single fee for installing the app.
+ Note
+ Any of the billing methods above can be combined with additional charges or external account charges. For example, if you charge a $10 one-time charge and $2 per 100 orders, then select One-time charge and provide details about the usage charges in the Additional charges section.
+ Apps with only a free plan
+ You can have a maximum of one free plan. If your app has only one plan for the entire app, and that plan is free, then that plan can't be listed as a recurring charge. For this type of a pricing model (with or without additional charges), select Free to install as your primary billing method.
+ Apps with free and paid plans
+ If you have more than one plan and one of them is free, select Recurring charge as your primary billing method, then specify one of your plans as Free in the Plan pricing section. When your app appears in search results, it will be flagged as Free plan available.
+ Set up an app subscription plan with recurring charges
+ To describe how merchants will be charged for using your app:
+ Enter the length of the free trial period for each of your pricing plans, after which you will begin to charge for the app. If the free trial length is 0 days, then charges begin immediately. When you choose the length of the free trial period for each of your pricing plans, make sure that it's enough time for the merchant to try your app. We recommend a period of 14 days. If you have a free plan, then there won't be any trial days associated with it.
+ Enter the details of your recurring plans. For each plan, specify whether it is free, billed monthly, or billed yearly:
+ If your app charges the merchant monthly, then select Monthly charge and enter the amount that the merchant will be charged every 30-day billing cycle.
+ If you offer a monthly plan that also has a discount option for the merchant to make a one-time yearly payment, then select Monthly charge and enter both the regular monthly charge and the discounted yearly charge. For example, if you have a plan that is $150 per month and you offer a yearly discounted price of $1200 a year, then enter $150 for the amount billed every 30 days and $1200 for the amount billed as one charge per year:
+ If you offer a plan with a recurring charge that has only a yearly charge option, then select Yearly charge and enter the total charge per year. For example, if you have a yearly plan that is $1200, then enter $1200 for the amount billed as one charge per year.
+ Select whether your plan has additional charges, such as usage fees or commissions. Provide a detailed description of these fees so that the merchant can understand how the charges are calculated. Do not enter yearly plan information in this field. Instead, enter yearly plan information either as a yearly charge or a yearly discounted price.
+ Optional: In the Plan details section, enter a name for the plan and a list of features that it includes. Enter each feature on a separate line, without any bullet points or leading characters. Bullet points will be added when the feature list is rendered in the app listing.
+ If you want to add another plan, then click Add another plan.
+ Plans will be displayed from lowest price to highest price in your app listing, regardless of the order in which you specify the plans.
+ Charges outside the Shopify Billing API
+ All app charges must go through the Shopify Billing API unless you have prior approval from Shopify. If you've received approval from Shopify, then select I have approval to charge merchants outside of the Shopify Billing API and provide a link so that merchants can read about the external charges and sign up for any external services that are required.
+ Example pricing details
+ Here's an example of how the pricing details for your app might be presented in your app listing:
+ Desktop view
+ Mobile view
+ 1. A link to a page that describes any charges that are billed outside of Shopify's Billing API.
+ 2. The name of each pricing plan.
+ 3. A free monthly plan.
+ 4. The paid monthly plan price.
+ 5. The discounted yearly price for a monthly plan.
+ 6. A description of any additional charges for this plan.
+ 7. A list of features for this plan.
+ 8. A link to a page that describes the app's pricing in detail.
+ E. App discovery
+ App discovery refers to how merchants discover your app on the Shopify App Store and other Shopify surfaces. This section helps merchants to better understand the value of your app when compared to other apps.
+ 1. App card subtitle
+ The app card subtitle should summarize your app in a concise phrase, and explain the value of your app. The subtitle should help merchants to quickly understand what your app does, and what sets it apart from others.
+ Follow these guidelines when writing your app card subtitle:
+ Don't add keywords to your subtitle with the intent of improving search performance.
+ Don't use personal merchant information without consent from the merchant.
+ Don't include any data or statistics. Feel free to share this information on your website and landing pages.
+ The following table shows some good examples and bad examples for app card subtitles:
+ Examples Reason
+ Do: Avoid lost sales by making pages load faster and improving SEO
+ Don't: Boost Pagespeed in 1 click. Increase conversions, SEO & Sales.
+ Highlight the benefit to merchants instead of the function. Avoid incomplete sentences.
+ Do: Pick products to sell from vetted manufacturers and suppliers
+ Don't: Dropship via Wholesale Distributors, Manufacturers & Suppliers
+ Highlight the benefit to merchants instead of the function.
+ Do: Control which customers access different parts of your store
+ Don't: Access control, for anything in your online store :)
+ Highlight the benefit to merchants instead of the name of the feature.
+ 2. Search terms
+ The Search terms field lets you enter a maximum of five search terms for your app. To help merchants discover your app, include only relevant terms that you want to rank higher when merchants search the Shopify App Store. You must enter at least one search term.
+ Note
+ Only listed apps appear in Shopify App Store search results. By default, apps are listed when they're approved.
+ Follow these guidelines when picking your search terms:
+ Use complete words. For example, use "dropshipping" instead of "dropshi" or another partial form of the word.
+ Include the single, complete form of a term instead of several versions of the same term. For example, if you include "dropshipping" as a search term, then you don't need to include other terms such as "dropship", "shipping," or "drop ship."
+ Don't include "Shopify" in any of your search terms.
+ Don't convey more than one idea in a single search term. For example, "email marketing" is appropriate, but "email marketing for leads" is not.
+ 3. Web search content
+ In this section, you can input a title tag and meta description for your app store listing.
+ The title tag is used by search engines such as Google as the main heading for a search result. The title tag provides important information about where the link will send the user who clicks on the link. It's often the primary piece of information that users read on your search results, so you should make sure to follow best practices for writing influential title tags.
+ The meta description is a quick summary of the app store listing's content. Search engines show it in search results under the title tag. Along with the title tag, the meta description can influence whether users decide to click through to your app store listing. For tips on how to write an effective meta description, you can refer to our blog post about writing an effective meta description.
+ The following image is an example of how the title tag and meta description would appear in Google's search results for your app store listing.
+ F. Merchant install requirements
+ You can specify which merchants can install your app by setting the install requirements in the app submission form. By adding install requirements in the app submission form, you can reduce the number of uninstalls and negative reviews related to merchant eligibility for your app.
+ For example, when a merchant installs an app that they can't use, such as a free shipping app that doesn't work in their country, they will uninstall your app shortly after installing it. They may also be frustrated about the experience and leave a negative review. Both uninstalls and negative reviews affect your ranking in the Shopify App Store.
+ 1. Sales channel requirements
+ If your app embeds features in a particular sales channel, then you only want merchants who use that sales channel to install your app. For example, if a merchant doesn't have an online store, then you want to prevent them from installing your app if it changes the merchant's online store.
+ If your app embeds features in a merchant's online store, then select Merchant must have online store. If your app embeds features in the Shopify Point of Sale (POS) app, then select Merchant must have Shopify Point of Sale.
+ 2. Geography requirements
+ Set the geography requirements to make your app available only to merchants who meet specific geographic criteria. For example, if your app is a tax app that helps merchants in Germany file their taxes, then you should specify that only merchants with a business address in Germany can install your app. You can restrict the installation of your app to merchants who:
+ have a business address in a specific country or countries
+ ship to a specific country or countries
+ accept a specific currency or currencies.
+ For each requirement, you can specify a list of countries or currencies that meet the requirement. For example, if your app works for stores who accept any of USD, CAD or GBP, then you can specify all three acceptable currencies.
+ Note
+ If you specify multiple geographic requirements, then only merchants who meet all of the requirements can install the app.
+ What if a merchant changes their store settings after installation?
+ Within your app, use endpoints and webhooks to check if a merchant changes their store settings after installation. If a merchant does change their settings, then you can notify them within the app or by email.
+ G. Tracking
+ You can track your app listing traffic by entering a Google Analytics or Facebook pixel code for your app listing. You can also retarget merchants who view your app listing by adding a Google remarketing code or an AdRoll retargeting code.
+ H. Contact information
+ Contact information is an important part of your app listing. The information that you enter here helps merchants learn more about your app and contact you with questions or issues. Shopify also uses this information to contact you about your app submission.
+ 1. Review notification email
+ This email is used to notify you when a merchant has left a review on your app. The notification email includes the star rating that the merchant left, the comment that they left in their review, and the name of the merchant's store.
+ 2. App submission contact email
+ This is the email we use to contact you about your app submission to the Shopify App Store. You should enter the email of the person that will be the primary point of contact for making any necessary changes to your app submission.
+ 3. Sales and support
+ a. Support for other languages (Required)
+ If you've added a translated listing to your app listing, then you need to indicate whether you offer phone or email support in the language of the translated listing. You aren't required to offer support in the language of the translated listing, but you must indicate in the listing whether that support is available.
+ b. Email (Required)
+ This is the email that merchants will use to contact you if they have support questions.
+ c. Phone (Optional)
+ Having phone support can boost merchant confidence when selecting your app. If you want to offer phone support for your app, then you need to include a functioning phone number that a merchant can call to get phone support. We'll call this phone number during your app review to make sure it can be reached. If the number can't be reached, then you must remove or update the phone number.
+ I. App review instructions
+ In this section, you can provide instructions on how to test your app during your app review. You also need to include your app's performance ratio. To calculate your app's performance ratio, refer to B. Testing methodology in section 4. App performance of this document.
+ Including instructions on how your app should be used lets us give you valuable feedback if we encounter issues while testing.
+ Test credentials must be provided if your app integrates with third-party platforms. For example, if your app requires account access to a marketplace, then you must provide credentials for an active test account for that specific marketplace. Failure to provide a test account will result in the rejection of your app submission.
+ We require a screencast or video walkthrough when submitting an app for review, showcasing your app's intended functions. This helps us to understand how to use your app.
+ 6. Security and merchant risk
+ Security is a critical part of any web-based business because online apps can be exposed or compromised in many different ways. Before you submit your app, you need to make sure that it's secure so that the merchants who use it won't be at risk.
+ A. Security
+ Caution
+ By January 31, 2024, embedded apps need to load in the new admin.shopify.com domain. Refer to our changelog for details. To resolve this issue, reference our Setting up Iframe protection document and ensure your app is using App bridge 2.0 or later (App bridge 3.0 is recommended).
+ Your app must not collect Shopify user credentials. As explained in Shopify API Authentication, public apps must use OAuth and public embedded apps must use session tokens and OAuth.
+ If your app stores its own credentials, then it must only store salted password hashes instead of actual passwords, as described on the Open Web Application Security Project website.
+ Your app must be protected against common web security vulnerabilities.
+ Your app must have a valid TLS/SSL certificate without any errors.
+ Your app must protect iFrames and prevent domains other than the shop domain from using the app in an iFrame.
+ Your app must not expose network services unnecessarily.
+ Your app must subscribe to mandatory webhooks.
+ Your app must not expose its shared secret. If your secret is inadvertently exposed, then you must rotate the secret immediately.
+ If your app uses offline tokens, then your app must not expose a shop's offline access token.
+ Your app must generate secure tokens, including expirations and search indexing protections, where applicable.
+ Your app must not process payments or orders outside of Shopify's checkout.
+ Your app must not alter or modify Shopify's checkout, except through the APIs and components that Shopify provides for that purpose.
+ Apps using the Admin APIs to capture payments must subscribe to the REST API orders/edited webhook topic, or the GraphQL ORDERS_EDITED webhook topic, to be notified when an order is edited and a secondary payment needs to be captured. When capturing payments using the REST Admin API, your app must include either the parent_id or authorization properties.
+ If your app uses app proxies, then it must verify the authenticity of requests.
+ 7. Data and user privacy
+ Depending on the purpose of your app, it might need to manage and store customer personal data. Make sure that your app meets the current best practices (and in some cases, the legal requirements) that protect customer data and user privacy.
+ A. Data and user privacy
+ If your app gathers, stores, processes, or shares personal data, then it's your responsibility to make sure that it complies with privacy laws.
+ You must include a link to a privacy policy in your app listing to communicate how your app uses data, and to provide transparency and build trust with merchants.
+ If your app handles a significant amount of customer data, then it should have a system in place to manage that data properly, including secure storage and the ability to erase data at the user's request where applicable, as per the data rights of individuals.
+ If your app runs marketing or advertising campaigns that require personal data, then it must have a system for allowing users to provide consent and/or opt-out for marketing promotions where applicable.
+ All public apps must subscribe to mandatory webhooks so that you can receive any data deletion requests that are issued by merchants.
+ Customer data collected by your app through a Shopify hosted service using the Online Store/Point of Sale channels must be synced to the Shopify admin and be made accessible to merchants. More information can be found in the Shopify API License and Terms of Use under section 2.3.17. See Storing customer data for information regarding which customer data must be sent back to the merchant.
+ If your app has an Export Control Classification Number (ECCN) other than EAR99, then you must enter its ECCN number in the Configuration page.
+ If your app processes any protected customer data, starting with the API version 2022-10, you must implement and attest to all protected customer data requirements, including:
+ Declare the app’s specific uses of protected customer data. Declared uses and access to protected customer data are subject to review and approval , based on the intended app functionality, by Shopify before production data access is granted. Non-approved data will be forbidden/redacted from production API replies and webhooks.
+ Submit data protection details about your compliance with the protected customer data requirements.
+ As required by Shopify, participate in data protection reviews to verify your data protection details.
+ 8. Support
+ After you submit your app, you need to support the merchants who use it. There are different ways to do this, such as answering merchant inquiries promptly and publishing detailed help documentation, or providing instructive in-app context and support so that merchants can quickly get the help they need when they use your app.
+ A. Support
+ You must have an email address that merchants can use to contact you if they need help with setting up or using your app. Providing great customer support is an important part of Shopify's own business, and you're expected to provide prompt support to the merchants who use your app as well.
+ Your support contact information and content should be easy to find, and it should include clear instructions that are specific to how your app integrates with Shopify. To learn more about writing effective help documentation, refer to Help documentation in Shopify Polaris.
+ Your Partner Dashboard must have up to date emergency developer contact information in the case that you need to be contacted regarding your app.
+ Specific requirements for certain app configurations
+ Apps are grouped into different categories depending on how they solve problems and meet merchant needs. If your app is in one of the following categories, then it needs to meet the requirements listed below. These requirements are in addition to the General requirements for all apps above.
+ In some cases, an app can have more than one type of configuration. For example, an app could be both a third-party integration and a dropshipping app.
+ 9. Online store
+ An online store app modifies a merchant's storefront and theme by using either Shopify's API or other technical resources.
+ A. Online store
+ If your app modifies the merchant's theme, then you must implement an automated setup process using the theme app extensions framework's deep linking using theme app extensions.
+ To support vintage themes, consider alternative integration methods, such as sharing instructions with merchants that detail how to add and remove your app features in their theme.
+ If you want to forward requests made to a route on an online store's origin to an external origin to display data on a store page, then you need to use app proxies.
+ Your app widget must be displayed properly and without any errors in the Theme Editor and Online Store.
+ If your app adds a visible element to a merchant’s storefront, then you must allow the merchant to preview edits before saving and publishing changes to your app’s visual storefront components.
+ If your app includes app blocks, then your app must allow merchants to add, reposition, or remove app blocks in the theme editor.
+ App blocks must be responsive to the size of the section that they're added to.
+ If your app interacts with a merchant's theme, then you need to ensure that the app also works in the theme editor environment. If necessary, you can set your app to detect the theme editor so that you can adjust your app to work in that environment.
+ Your app must have detailed setup instructions on how to use your app embeds and app blocks.
+ 10. Embedded apps
+ An embedded app uses app extensions and embedded app libraries to let merchants access its features directly in the Shopify admin or the Shopify POS app.
+ A. Embedding into the Shopify admin
+ Your app must use Shopify App Bridge to ensure OAuth redirect requests send the merchant to the embedded version of the app and provide a consistent embedded experience.
+ Apps that take merchants out of the Shopify Admin using one click, or that are used only to log in with no other functions aren't allowed. This doesn't apply to connector apps.
+ The embedded app must have a navigation icon that meets the following requirements:
+ The icon must include a 16px by 16px navigation icon in SVG format, uploaded through the Partner Dashboard.
+ The icon must be a single color with a transparent background.
+ The icon's SVG file should be less than 2KB.
+ The icon's SVG file can contain only the following permitted tags: circle, ellipse, g, line, path, rect, svg, title.
+ The icon's SVG file can contain only the following permitted attributes: cx, cy, d, height, opacity, pathLength, points, r, rx, ry, version, viewBox, width, x1, x2, xmlns, y1, y2, fill-rule, clip-rule.
+ If your app uses bulk action links, then they must be complete, functional, and relevant to their locations in the Shopify admin. You must also make sure that for each bulk action link, the related action is applied to all items that have been selected.
+ Apps must use the latest version of Shopify App Bridge by adding the app-bridge.js script tag to the <head> of each document of your app.
+ If your app uses max modal, formerly known as full screen mode, then it must not launch without a merchant interaction. Max modal can't be launched from the app navigation menu.
+ Max modal, formerly known as full screen mode, is intended to be used for complex editors or other complex use cases. Max modal should be used to improve user experience when launched.
+ Your app must function in incognito mode in Chrome.
+ Use session tokens to authenticate requests between client and your app's backend.
+ Don't use 3rd party cookies or local storage, because your app might not work on certain browsers, such as Safari for iOS, or browsers that block third party cookies.
+ B. Embedding into POS
+ If your app embeds into the Shopify POS app, then any POS actions that it uses (such as cart actions or checkout actions) must be complete, fully functional, and relevant to the Shopify POS app's capabilities.
+ If your app embeds into the Shopify POS app, then your app's user interface must be functioning and accessible from the POS Apps Admin Dashboard.
+ 11. Product sourcing
+ A product sourcing app lets merchants find and sell a wide range of products by providing product discovery and sales features directly in the app.
+ A. Product sourcing
+ Product sourcing apps are exempt from using the Billing API for the sale of goods to their merchants, and can instead use a PCI compliant gateway. However, any other costs associated with the app must be charged using the Billing API.
+ If your app fulfills product orders on behalf of a merchant, then it must not automatically fulfill orders that are in the pending payment state.
+ Your app must add the cost of goods to the Cost field on the product page of the merchant's Shopify admin.
+ Your app must not sell high-risk products. Products that violate Shopify's Acceptable Use Policy and the Terms of Service for Payment Providers are prohibited. Products like cannabis, alcohol, pharmaceutical drugs, weapons and items listed as prohibited businesses are included in this restriction.
+ Your app allow merchant to request fulfillment. Use the FulfillmentRequest resource to allow merchants to request fulfillment from the dropshipping app when an order is created.
+ 12. Mobile app builders
+ A mobile app builder lets merchants create a mobile app based on their online store.
+ A. Mobile app builders
+ When reviewing your app, we test both the mobile app builder and the apps it makes to verify that all requirements are met.
+ The app builder must be converted into a Sales Channel from the App Settings area of the Partner Dashboard. This lets mobile apps that it builds create a checkout.
+ Your app must use Shopify App Bridge version 2.0. If your app is currently using the Embedded App SDK (EASDK), then you need to migrate to use Shopify App Bridge.
+ The app builder must have either a customizable theme builder or include preset themes for merchants to choose from.
+ The app builder must provide detailed instructions on how to create a developer account for either the Apple App Store or the Google Play store.
+ The app builder must include information about the app marketplace submission process for either the Apple App Store or the Google Play store to inform the merchant of wait times and app requirements.
+ Apps made by the app builder must not make any requests to the authenticated Shopify Admin API. The app's client secret and API access token must be stored on a secure web server and not on the mobile device.
+ Apps made by the app builder must not include the OAuth access token. All calls to the Shopify Admin API must be made through a secure web server.
+ 13. Sales channels
+ A sales channel app lets merchants publish their products from their Shopify admin to your platform, whether they're selling online, on mobile apps, or through social media.
+ Overview
+ For a diagram that shows the lifecycle of a sales channel from the merchant's perspective, refer to Building Shopify channels.
+ The key features of a sales channel app are as follows:
+ Building your sales channel: Your sales channel app must use Polaris components and style guide.
+ Onboarding and account connection: Get permission from merchants to install your app, and then connect them to your channel.
+ Product publishing: Import products into your channel, manage product errors, and stay in sync with merchants' product catalogs.
+ Payments and order management: Generate orders for merchants by taking customers to Shopify's checkout with items pre-loaded in the cart using cart permalinks.
+ A. Onboarding and account connection
+ Merchant onboarding
+ Merchants must install sales channel apps using Shopify managed installation or during authorization code grant, and sales channels must embed in the Shopify admin using Shopify App Bridge.
+ After the merchant installs the sales channel app via OAuth, they must be redirected to the account section's account connection component. Connecting to the sales channel account must be done in a modal window in the app's UI and occur outside of Shopify. This process returns the merchant to the channel upon completion.
+ If the sales channel has any qualifying steps, eligibility requirements, or additional onboarding requirements, then these must be included in the account connection form.
+ Account section
+ The sales channel must have an account section where the account connection component is always visible (labelled with your channel name, such as "Sample channel").
+ The account section for the sales channel must let merchants disconnect their account.
+ If there is an approval process for creating an account for the sales channel, then this must be communicated to merchants using the banner component. The app must stay in the pending state while the merchant awaits approval from the channel.
+ Approval or rejection for the sales channel must be communicated to merchants by using a success or warning banner component.
+ The commission section for the sales channel must be created using the card component and the annotated layout. The commission section must state the commission rate. The commission section must state how and when merchants are charged.
+ The sales channel must include a terms and conditions section. Any links in that section must open in a new window.
+ The sales channel must have a help footer that links to a support page in a new window. The support page must include links to documentation and support contact information. The help footer must be visible on every page of the sales channel within Shopify admin.
+ B. Product publishing
+ The sales channel's publishing section must be created by using a card component and the layout shown in the following publishing example:
+ The sales channel's publishing section must show the number of products currently published, and provide links to the Shopify bulk editor to view and manage those products.
+ The sales channel's publishing section must report any products with errors that prevent them from being published on the sales channel:
+ Product issues with the sales channel must be communicated to the merchant using a feedback message banner component and the ResourceFeedback resource.
+ The sales channel must use the ProductListing resource to retrieve products set for publication by the merchant.
+ C. Payments and order management
+ Note
+ As of March 9th, 2020, all sales channels (with the exception of mobile app builders) must have the read_only_own_orders scope applied. The read_only_own_orders scope is added by the review team during the approval process and ensures that a channel can read only the orders it created. Make sure that your channel is requesting only orders it created for a faster review and approval.
+ Shopify supports a variety of ways of building sales channels. The way that you decide to build can determine who is responsible for payment processing, order fulfillment, and refunds.
+ Build a sales channel using cart permalinks
+ When you build a sales channel with cart permalinks, you direct customers who want to buy a specific product from the sales channel directly to a merchant's store checkout to complete the purchase.
+ Take customers to Shopify's checkout with items pre-loaded in the cart.
+ Use the Billing API. For sales attribution, you can use a storefront access token.
+ D. Navigation icon
+ The sales channel must include a 16px by 16px navigation icon in SVG format, uploaded through the Partner Dashboard.
+ The icon must be a single color with a transparent background.
+ The icon's SVG file should be less than 2KB.
+ The icon's SVG file can contain only the following permitted tags: circle, ellipse, g, line, path, rect, svg, title.
+ The icon's SVG file can contain only the following permitted attributes: cx, cy, d, height, opacity, pathLength, points, r, rx, ry, version, viewBox, width, x1, x2, xmlns, y1, y2, fill-rule, clip-rule.
+ 14. Purchase option apps
+ A purchase option app provides merchants and customers with various ways to sell and buy products, beyond the "buy now, pay now, and ship now" experience. For example, merchants can sell a product as a one-time purchase, a recurring subscription, or a pre-order.
+ A. Storefront requirements
+ General principles
+ The purchase option app's customer flow must properly display on both desktop and mobile devices.
+ The purchase option app must be compatible with all supported browser versions specified for the Shopify Theme Store.
+ The purchase option app must support multi-currency so that pricing and discounts shown to customers reflect the correct currency and price rounding rules.
+ The purchase option app must automate theme modifications.
+ The purchase option app must assign the correct purchase option category for each selling plan. If you want to offer a purchase option that doesn't match any of the supported use cases, then set the category field to OTHER and fill out our request form, where we'll review your request for a new purchase option.
+ The purchase option app must use the correct API scopes to reflect functionality. For more information, refer to the purchase option overview.
+ Must not use selling plan and subscription contract APIs for prohibited actions
+ You must provide screenshots or screencasts of your purchase option app functioning on each of the supported browsers.
+ The purchase option app must include an in-product mechanism to allow a merchant's customers to cancel or discontinue their purchase option, for example, pre-order management portal or a cancel link in an email.
+ Apps that offer pre-orders must communicate to a merchant's customers when there's a delay in the stated shipment time.
+ Apps that offer pre-orders obtain customer consent to delays that exceed 30 days if no shipping time is stated and include a mechanism to return the funds in case customer consent is not obtained.
+ Must clearly show a merchant's customers the price of purchase option and when the customer will be charged.
+ Must be able to select a product at the variant level
+ Apps that offer pre-orders must communicate to a merchant's customers when there's a delay in the stated shipment time. Ensure your app emails a merchant's customers when the merchant updates the shipment date to a later date.
+ Product page
+ The purchase option app must clearly show a merchant's customers the price of the purchase option and when the customer will be charged. We recommend that this is done through a standalone widget, as described in the subscription UX guidelines and deferred purchase option UX guidelines.
+ Apps that offer subscriptions must clearly disclose to a merchant's customers the amount charged, the length of the subscription term, the price per delivery, and the unit price for pre-paid items. We recommend that this is done through a standalone widget, as described in the subscription UX guidelines.
+ Cart page
+ The purchase option app must display the selling plan name in the cart page, if the store's codebase is not already doing so.
+ Tip
+ The Shopify Theme Store requires themes to display the selling plan name in the cart. Be sure to check whether the selling_plan.name is already present in the theme's cart.liquid file before attempting to insert it.
+ Post-purchase
+ Apps that offer subscriptions must include navigation to a customer portal, both on the order status page and through a post-purchase email to a merchant's customers so that they're able to manage their subscription.
+ Customer portal
+ The customer portal must give each customer a single login to access subscriptions and their order history.
+ The customer portal must display to each customer all of their purchased subscriptions. Details must include the associated products, delivery frequency, price, and order schedule.
+ The customer portal must include an option for a merchant's customers to cancel their subscription. The subscription app must allow the merchant to clearly communicate conditions of purchase on their storefront's product page and customer portal.
+ The customer portal must provide a merchant's customers with the option to modify the payment method associated with their subscriptions.
+ B. Shopify admin and in-app requirements
+ The purchase option app must use the app extension on the product page. Changes that are made to purchase options from the Shopify admin must be reflected in the app.
+ Merchants need to be able to create and manage purchase options in the Shopify admin using the app extension. This includes letting merchants remove products from a selling plan.
+ Apps that offer subscriptions must include a direct link to orders and customers in the Shopify admin from the purchase option.
+ Links to the subscription app from the orders and customers pages in the Shopify admin must go to the correct subscription resource.
+ 15. Donation distribution apps
+ A donation distribution app collects and distributes funds to a charity on behalf of a merchant.
+ The donation distribution app must use the Billing API or a PCI-compliant third-party gateway when collecting donation funds from merchants through the app’s user interface.
+ If the donation distribution app allows merchants to collect charity donation funds from their customers, then you must provide proof of charitable status in the app's user interface.
+ The donation distribution app must provide proof to a merchant that the funds collected from a merchant's customers are donated to a registered charitable organization. You can't use a tax receipt as proof.
+ The donation distribution app must collect funds from a merchant's customers only through the Shopify checkout.
+ Add a widget to buy the donation product to the product page, cart page or checkout page. This can be implemented using Theme App Extensions or Checkout UI Extensions.
+ Your app must include instructions on how to hide the add-to-cart button for any donation product that is created.
+ The operating cost must be clearly indicated in both the UI and listing.
+ 16. Payments apps
+ A payments app integrates with the Shopify admin to provide payment processing services.
+ A. Requirements for third-party payments apps
+ Third-party payments apps must meet the minimum product requirements in addition to the following requirements:
+ Revenue share agreement: All Partners are required to have a signed revenue share agreement with Shopify. You must sign and submit the agreement before Shopify can approve a payments app to process payments.
+ API Usage: Your payment app must not use any Shopify APIs (including the Checkout API, Admin API, or Subscription APIs) other than the Payments Apps APIs.
+ Payment app compatibility: All Partners must submit screencasts of the app's payment flow for all supported browsers.
+ Cancelling payments: Your app must allow buyers to cancel or abandon the payment and be redirected back to Shopify’s checkout.
+ Buyer flow redirections (off-site payment apps): You must update your app’s buyer flow on desktop and mobile devices to redirect from Shopify’s checkout to your app’s payment flow, and then back to Shopify’s order confirmation page.
+ Off-site payment information: Your payment app must present identical payment information to what is displayed to the buyer at checkout.
+ Off-site redirects: Your payment app must not present any feature upsells from your payment flow. All redirects must be limited to content intended for payment processing only.
+ Redirection after install: Your payments app must redirect back to the Shopify admin (https://{shop}.myshopify.com/services/payments_partners/gateways/${api_key}/settings) after it's installed. After redirecting to that page, the merchant will then immediately be redirected to the payments app's corresponding page in the Shopify admin.
+ Restricted payment methods: Your payment app must not process payment methods that include, but aren't limited to, Apple Pay, Google Pay, Shop Pay, PayPal, and Alipay. Shopify has a direct connection with providers that improves performance and checkout conversion for merchants.
+ For a complete list of prohibited actions, refer to Prohibited actions
+ B. Requirements for testing
+ When you submit your payments app to the Shopify App Store for review, you need to fill out Part I. App review instructions on the app listing with the following testing details:
+ A test store with the payments app installed
+ The required credentials to enable installing the payments app for testing (for example, activation codes and login credentials)
+ Instructions on how to process a test payment and refund
+ A description of specific testing scenarios including installments / deferred payments and 3D Secure authentication (if applicable)
+ C. Naming restrictions
+ To make choosing additional payment methods as straightforward as possible for merchants, you should adhere to the following rules when naming your payments app:
+ The name of the payments app can't contain marketing text: For example, the name “World's Best Provider: Get 50 payment methods” isn't allowed. This is because merchants won't see the name of the payments app until they have chosen the payment method they wish to add to their store.
+ The name of the payment app can't be used by partners to gain a higher listing: There isn't a general alphabetized directory of payments apps for merchants to navigate. Instead merchants will discover payments apps using the payment methods they want to add.
+ You should make sure that the payment methods and locations offered are accurate because this is the only information that's used to surface the app to merchants. If a name appears to have been created with the purpose of gaining a higher listing on an alphabetized list, then it will not be allowed.
+ Note
+ The name of the payments app has minimal impact on whether or not merchants add it to their store. How a merchant discovers a payments app is determined by the payment methods the app offers and the locations where these payment methods are offered.
+ E. Cryptocurrency payments apps
+ Cryptocurrency payments apps enable merchants to accept cryptocurrency as a form of payment. All cryptocurrency payments apps must be accepted into the blockchain app program. Reach out to Partner Support to begin the application process.
+ Given the evolving regulatory landscape in the crypto payment industry, partners are expected to stay up to date on the latest requirements for their payments app, in the markets where they operate. In order to operate a crypto payments gateway on Shopify, your app must have the following functionality:
+ Collect merchant information to meet up-to-date Know Your Customer (KYC) requirements in all applicable jurisdictions. Ensure that the app can be activated and begin to process payments only when KYC has been successful on a merchant. Your app must also refresh KYC on each merchant at regular intervals.
+ Enable transaction and wallet-monitoring programs that monitor for and identify potential illegal activity, including money laundering.
+ Conduct sanctions screenings on merchants and customers (including their wallet IDs) to ensure that such parties aren't sanctioned and aren't located or don't reside in comprehensively sanctioned jurisdictions under the sanctions laws of the United States, United Kingdom, Europe and other applicable jurisdictions.
+ Employ screening methods to prohibit transactions with wallets that are identified through analytics as higher risk, such as sanctions, known hacker groups, exploitation, malware, or other potential risks.
+ Use IP blocking and other reasonable methods to block functionality in jurisdictions as necessary. For example, jurisdictions in which the necessary crypto licenses haven't been obtained or jurisdictions in which crypto transactions are prohibited, and comprehensively sanctioned jurisdictions. This functionality must block both merchants and customers from being able to successfully process a payment or transfer funds from one party to another.
+ Not support payment in any tokens that constitute securities. Your app must monitor regulatory guidance and enforcement actions with respect to the crypto being supported.
+ Crypto payment apps are excluded from being required to use Shopify’s automated refund functionality. If the refund session URL is blank in your payments app extension, then refunds are handled manually through the partner's software.
+ 17. Post Purchase apps
+ A Post Purchase app allows merchants to add a post-purchase page directly into the Shopify checkout in multiple ways. For example, merchants can create an upsell offer or text-based requests like surveys.
+ General requirements
+ The app must redirect customers back to the order confirmation page after accepting a post-purchase request.
+ There can be a maximum of 2 post purchase offers/messages displayed to customers.
+ The app must have the ability for customers to accept or decline post purchase requests.
+ Displaying order tracking information or status functionality is not permitted.
+ The post purchase functionality cannot be used to display promotions or advertisements. An exception to this rule is promotions for the merchant’s own store.
+ Upsell offers requirements
+ Upsell offers must be transparent to customers that they are making a purchase.
+ Customers must be able to select between variants of an upsell product.
+ Upsell offers must be transparent about all costs associated with a customer’s purchase. The app must dynamically reflect any change in cost if the customer adjusts the product’s quantity or variants.
+ Upsell product offers must display the same price as the product in the merchant's store.
+ The app must define the upsell offer text. The app can offer different options for the merchant to select ("Take the deal" / "No thanks", "Buy" / "Decline offer"), but the merchant can not modify this text.
+ Must use App Bridge checkout calloutbanner to inform buyers about the details of a limited time offer.
+ 18. Checkout UI extension apps
+ Checkout UI extension apps enable merchants to add custom UI or content to the checkout process. For example, merchants can add a custom field for order notes, or make product offers at checkout based on what's in the customer's cart.
+ Checkout extension requirements
+ The extension must not request that customers input payment information using a checkout UI extension.
+ The extension can't be used to display promotions or advertisements, unless those promotions are for the merchant’s own store.
+ If the extension affects the order total in any way, such as adding additional products or charges, then the extension must get explicit customer consent before making the changes.
+ Upsell product offers must display the same price as the product in the merchant’s store.
+ Extensions must not add countdown timers to the checkout.
+ Extensions must not collect information, including personally identifiable information, that's already captured by a standard Shopify checkout form field.
+ Extensions must use only the documented APIs that Shopify provides for customizing checkout.
+ Extensions must either request network access or use a metafield if they need to get data into checkout that they can't currently get from Shopify.
+ Extensions using network access must not negatively affect the performance of checkout.
+ Extensions using network access must keep response time to under one second. If the extension requires a response from a network call to render its components, then it must render skeleton components initially, to avoid blocking checkout rendering.
+ 19. Blockchain apps
+ A blockchain app is defined as any application that exposes merchants to blockchain assets or functionality, including but not limited to cryptocurrency, NFT distribution, and tokengating.
+ A. Blockchain app requirements
+ All blockchain app partners must complete the intake form. After submitting the form, you'll receive an automated email response with general resources, and a link to the Blockchain Developer Addendum to the Partner Program Agreement. You're required to execute the Blockchain Developer Addendum prior to submitting your app for review.
+ Apps must ensure that no personal data is written or stored on-chain.
+ Apps can't sell, transfer, or modify fungible tokens unless they are a payments partner that's been approved by the Shopify Payments team.
+ Apps are presently only able to support the primary sales of NFTs on Shopify. All secondary sales must be completed on a 3rd party platform, and must not be represented by products or hosted in the Shopify Admin. A gallery display of NFTs on a Shopify store that links out to an external marketplace is supported.
+ Apps should in no event facilitate the sale or marketing of NFTs that could be classified as one or more of the following:
+ Securities or other regulated financial instruments
+ Activities related to securities or other regulated financial instruments
+ Having secondary-level or transferrable royalties.
+ Caution
+ Royalties should never be dispersed to buyers or recipients of NFTs.
+ B. NFT distribution apps requirements
+ NFT distribution apps include the following types of apps:
+ NFT minting apps: Enable merchants to create and sell NFTs on Shopify.
+ NFT gifting apps: Enable merchants to distribute NFTs for free. For example, you might want to offer free NFTs with a purchase, list an NFT as a product at no cost, or retroactively airdrop to customers.
+ Blockchain apps must identify all NFT variants by automatically populating product metafields.
+ For each fulfilled NFT, blockchain apps must write the blockchain transaction ID to the order's Fulfillment tracking_number field, and a valid block scanner URL for the NFT fulfillment transaction to the order's Fulfillment tracking_url field. Optionally, the name of the blockchain, fork, or network can also be written to the order's Fulfillment tracking_company field, as necessary.
+ App partners must provide a way for customers to acquire a wallet, should they need one. Further, customers must be able to receive full self-custody of their NFTs without any post-purchase fees, unless the NFTs will be minted on a permissioned blockchain that prevents buyers from receiving full self-custody of their NFTs. In such a case, the inability to receive full self-custody must be clearly disclosed to customers before purchase and no post-purchase fees are permitted.
+ App partners must block stores from using any NFT distribution features while Shopify Payments is active, including but not limited to minting, gifting, creating or listing NFT products, until the shop is approved. To determine a shop's approval status, app partners must use the NFT Sales Eligibility API. For more information, refer to NFT distribution.
+ C. Tokengating app requirements
+ Tokengating apps on Shopify enable merchants to gate access to products, promotions, and content based on the contents of a customer’s Web3 wallet.
+ Any orders that contain line items which are either added or discounted as a result of a buyer successfully passing a gate-check must be identified using order metafields.
+ Any products that contain one or more gated variants must be identified using product metafields.
+ Next steps
+ Prepare your app before submitting - Learn our recommended best practices for preparing and testing your app before submitting it for review.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ General requirements for all apps
+ 1. Prohibited and restricted app configurations
+ 2. Installation and setup
+ 3. Functionality and quality
+ 4. App performance
+ 5. App listing
+ 6. Security and merchant risk
+ 7. Data and user privacy
+ 8. Support
+ Specific requirements for certain app configurations
+ 9. Online store
+ 10. Embedded apps
+ 11. Product sourcing
+ 12. Mobile app builders
+ 13. Sales channels
+ 14. Purchase option apps
+ 15. Donation distribution apps
+ 16. Payments apps
+ 17. Post Purchase apps
+ 18. Checkout UI extension apps
+ 19. Blockchain apps
+ Next steps
+ Updates & News
+ Developer changelog

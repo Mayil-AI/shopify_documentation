@@ -1,0 +1,30 @@
+Get access tokens
+ Access token types
+ Installation
+ Client secret / API key
+ Overview
+ Rotate or revoke client credentials
+ Webhooks
+ App extensions
+ Custom data
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Client secrets
+ Your app's client secret is a unique key that authenticates your app when it requests access to a store's data. You can use your client secret to retrieve an access token for a store, or to verify a webhook request is genuine.
+ Retrieve your app's client credentials
+ You can manually retrieve your app's client credentials in the Partner Dashboard.
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of the app you want to retrieve client credentials for.
+ Click Client credentials.
+ View or copy your client ID and client secret.
+ Rotate or revoke your app's client credentials
+ You should rotate the client credentials for your app on a regular basis. To learn how to rotate your app's client secret, refer to Rotate or revoke client credentials.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Retrieve your app's client credentials
+ Rotate or revoke your app's client credentials

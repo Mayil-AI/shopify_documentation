@@ -1,0 +1,205 @@
+APIs
+ Collapse sidebar
+ Payments Apps API
+ Unstable
+ 2024-07 release candidate
+ Overview
+ Authentication
+ GraphQL endpoint
+ Rate limits
+ Status and error codes
+ Payment Processing
+ Platform
+ GraphQL Types
+ Payments Apps API
+ The Payments Apps API enables you to programmatically access your payments app's configuration data. You can use the Payments Apps API to resolve, pend, or reject payments sessions. You can also use the Payments Apps API to reject or resolve captures, refunds, and void sessions.
+ Authentication
+ All Payments Apps API requests require a valid Shopify access token.
+ Public and custom apps created in the Partner Dashboard generate tokens using OAuth. Include your token as a X-Shopify-Access-Token header on all API requests.
+ To keep the platform secure, payments apps need to request specific access scopes during the install process. Only request as much data access as your app needs to work.
+ All requests to the Payments Apps API must be authenticated. Learn more about getting started with authentication and building payments apps.
+ curl
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ curl -X POST \
+ https://{shop}.myshopify.com/payments_apps/api/2022-10/graphql.json \
+ -H 'Content-Type: application/json' \
+ -H 'X-Shopify-Access-Token: {password}' \
+ -d '{
+ "query": "{your_query}"
+ }'
+ GraphQL endpoint
+ The Payments Apps API is available at a single GraphQL endpoint:
+ POST
+ https://{shop_domain}/payments_apps/api/2022-10/graphql.json
+ You can access the Payments Apps API using curl or any HTTP client.
+ Versioning
+ The Payments Apps API is a versioned API. Updates are released quarterly. To keep your app stable, make sure that you specify a supported version in the URL.
+ Usage limitations
+ The Payments Apps API is available only to approved Payments Partners.
+ All apps and services connecting to the Payments Apps API are subject to Shopify's API Terms of Service.
+ The Payments Apps API doesn't support sending additional information back to Shopify.
+ POST
+ https://{shop_domain}/payments_apps/api/2022-10/graphql.json
+ curl
+ 1
+ 12
+ 13
+ # Get the handles for all public API versions
+ curl -X POST \
+ https://{store_name}.myshopify.com/payments_apps/api/2024-04/graphql.json \
+ -H 'Content-Type: application/json' \
+ -H 'X-Shopify-Access-Token: {access_token}' \
+ -d '{
+ "query": "{
+ publicApiVersions {
+ handle
+ }
+ }"
+ }'
+ Rate limits
+ The Payments Apps API enforces rate limits on all requests.
+ {}
+ Request
+ 1 {
+ 2
+    products(first: 1) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          title
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9 }
+ {}
+ Response
+ JSON
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "title": "Hiking backpack"
+ 8
+            }
+ 9
+          }
+ 10
+        ]
+ 11
+      }
+ 12
+    },
+ 13
+    "extensions": {
+ 14
+      "cost": {
+ 15
+        "requestedQueryCost": 3,
+ 16
+        "actualQueryCost": 3,
+ 17
+        "throttleStatus": {
+ 18
+          "maximumAvailable": 1000,
+ 19
+          "currentlyAvailable": 997,
+ 20
+          "restoreRate": 50
+ 21
+        }
+ 22
+      }
+ 23
+    }
+ 24 }
+ Status and error codes
+ All API queries return HTTP status codes that contain more information about the response.
+ 200 OK
+ GraphQL HTTP status codes are different from REST API status codes. Most importantly, the GraphQL API can return a 200 OK response code in cases that would typically produce 4xx or 5xx errors in REST.
+ Error handling
+ The response for the errors object contains additional detail to help you debug your operation.
+ The response for mutations contains additional detail to help debug your query. To access this, you must request userErrors.
+ Properties
+ errors
+ array
+ A list of all errors returned
+ Show error item properties
+ {}
+ Sample 200 error responses
+ Throttled
+ Internal
+ 1 {
+        "message": "Query cost is 2003, which exceeds the single query max cost limit (1000).See https://shopify.dev/concepts/about-apis/rate-limits for more information on how thecost of a query is calculated.To query larger amounts of data with fewer limits, bulk operations should be used instead.See https://shopify.dev/tutorials/perform-bulk-operations-with-admin-api for usage details.",
+ 5
+        "extensions": {
+ 6
+          "code": "MAX_COST_EXCEEDED",
+ 7
+          "cost": 2003,
+ 8
+          "maxCost": 1000,
+ 9
+          "documentation": "https://shopify.dev/api/usage/rate-limits"
+ 10
+        }
+ 11
+      }
+ 12
+    ]
+ 13 }
+ 4xx and 5xx status codes
+ The 4xx and 5xx errors occur infrequently. They are often related to network communications, your account, or an issue with Shopify’s services.
+ Many errors that would typically return a 4xx or 5xx status code, return an HTTP 200 errors response instead. Refer to the 200 OK section above for details.
+ 400 Bad Request
+ The server will not process the request.
+ 402 Payment Required
+ The shop is frozen. The shop owner will need to pay the outstanding balance to unfreeze the shop.
+ 403 Forbidden
+ The shop is forbidden. Returned if the store has been marked as fraudulent.
+ 404 Not Found
+ The resource isn’t available. This is often caused by querying for something that’s been deleted.
+ 423 Locked
+ The shop isn’t available. This can happen when stores repeatedly exceed API rate limits or due to fraud risk.
+ 5xx Errors
+ An internal error occurred in Shopify. Check out the Shopify status page for more information.
+ Didn’t find the status code you’re looking for? View the complete list of API status response and error codes.
+ {}
+ Sample error codes
+ 400
+ 402
+ 403
+ 404
+ 423
+ 500
+ 1 HTTP/1.1 400 Bad Request
+ 2
+    {
+ 3
+      "errors": {
+ 4
+        "query": "Required parameter missing or invalid"
+ 5
+      }
+ 6
+    }
+ Updates & News
+ Developer changelog

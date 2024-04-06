@@ -1,0 +1,55 @@
+Point of Sale app extensions
+ Overview
+ UI Extensions reference
+ Cart extension reference
+ Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Product recommendations extension reference
+ This reference topic describes the fields that Shopify sends to your app for each of the Shopify Point of Sale (POS) product recommendations app extension endpoint calls. The reference topic includes the response fields and possible values for the templates and actions that your app sends to Shopify.
+ Request fields
+ Every request that Shopify sends to your app's extension endpoints contains the request_uuid field:
+ Name Type Required Value
+ request_uuid String ✓ Shopify's unique identifier for the current request for recommendations. This identifier will be provided in all subsequent recommendations_shown and action_taken requests so your app can reconcile these events to the recommendations it provided.
+ Requests sent to the recommendations endpoint and the action_taken endpoint also contain the fields described below.
+ The recommendations request fields
+ Each request to the recommendations endpoint includes the following fields:
+ Name Type Required Value
+ surface String ✓ The surface from which these recommendations will be shown. Possible values: ["cart", "customer_profile", "product_details"]
+ customer_id Number ✓ Shopify's unique identifier for the customer on the cart if the surface is "cart", or the identifier of the customer who's profile is being viewed if surface is "customer_profile". Otherwise, the value will be null.
+ locale String ✓ Used to translate any textual data into the correct language for the POS staff member. Example values: en-US, en.
+ supported_templates Array ✓ Defines a set of data and how that data is rendered in the POS client. Possible values: ["grouped_product_variant_list"].
+ elements Array ✓ The list of elements in the cart if the surface is "cart", or a single element list of the product being viewed if the surface is "product_details". Otherwise, the value will be null. Each element in the list has a product_id if the surface is "product_details", or both a product_id and variant_id if the surface is "cart".
+ The action_taken request fields
+ Shopify might send multiple action_taken requests for the same request_uuid. For example, if multiple products from the same request are added to a cart, then you receive a separate request for each product. The same applies for order_created requests.
+ Each request to the action_taken endpoint includes the following fields:
+ Name Type Required Value
+ action String ✓ The action that was taken by the user. Possible values: ["added_to_cart", "order_created"]
+ order_id Number Shopify's unique identifier for the order that was created. If action is "added_to_cart", this value will not be included in the request.
+ elements Array ✓ The list of recommended elements that were added to the cart. Returns nil for "order_created" actions. Each element in the list has a product_id and possibly a variant_id corresponding to a recommended product or product variant.
+ Response fields
+ In response to the recommendations request described above, your app returns the template and recommendations that should be displayed to the user. Currently, the only supported template is grouped_product_variant_list.
+ After a request to the recommendations endpoint, your app must provide the following fields in the response:
+ Name Type Required Value
+ template String ✓ The chosen template. Must be "grouped_product_variant_list"
+ title String ✓ The text that will be displayed on the tile prompting the users to view the full recommendations details.
+ groups Array ✓ An array of recommendations grouped by a title. Each object has the following fields:
+ title: String Text that appears in Shopify POS describing the group of recommended products and product variants.
+ elements: Array The recommended products and product variants in this group. The product_id value must always be provided. If your app recommends a specific product variant, then the response must supply both product_id and variant_id.
+ If your app does not have any recommendations to show, then it should return an empty array for groups.
+ HTTP status responses
+ The status code for the recommendations requests should return 200. If no recommendations are available, then return an empty array for elements. If an unexpected status code is received, then Shopify POS displays an error to the user.
+ The status code for the recommendations_shown and action_taken requests is ignored because Shopify POS doesn't need any information from the response to these requests.
+ Next steps
+ Learn how to implement the POS product recommendations app extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Request fields
+ Response fields
+ HTTP status responses
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

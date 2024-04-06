@@ -1,0 +1,50 @@
+Overview
+ Marketing
+ Overview
+ Marketing externally
+ Overview
+ Writing a press release
+ Brand asset guidance
+ Marketing internally
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Marketing your app externally
+ Listing your app in the Shopify App Store is just the first step. After your app is live, you can reach merchants through channels outside of the Shopify community to promote your app and build trust with your users.
+ Driving traffic to your app from outside of Shopify can help improve your app's ranking on the Shopify App Store. Also, if your app gets a significant amount of outside traffic, then your app can be listed in the Trending apps section on the app store's homepage.
+ Note
+ If you choose to make your app unlisted, then it won’t show up in Shopify App Store search results, category pages, or the Trending apps list.
+ Webinars
+ Hosting webinars is a great way to engage merchants who want to understand a particular feature or ask any questions they might have about your app. You can use webinars to show merchants new features or best practices for using your app. Webinars can also help you build documentation for your app and figure out issues and areas of growth for your app.
+ There are many tools that you can use to host your own webinars, including GoToWebinar, Adobe Connect, or Google Hangouts. You might also want to consider a service like YouTube Live Events, which will record your webinar and save it for merchants who missed it or are looking for a video tutorial.
+ Video tutorials
+ You can reach a larger audience of Shopify merchants by publishing video tutorials about your app. You can upload your tutorials to a service like YouTube or Vimeo to have them indexed on search engines for specific keywords. Video sharing services will make your videos easily accessible by merchants and let you distribute your videos across other platforms.
+ Videos can also easily be embedded into your documentation or your social media, which can potentially be boosted for additional traffic. You can also use videos in email marketing campaigns to show off new features.
+ Social media marketing
+ After you have created written content, recorded videos, and webinars, you should consider distributing these materials through social media.
+ Social Media retargeting is a popular marketing technique that can help you reach far more people than you could alone. You can use Facebook retargeting to identify and target specific demographics of people who might be interested in your app. Facebook will allow you to create an audience that revolves around a specific target event that you want to occur. This can help you drive engagement, get exposure to your app, or see merchants interact with a specific feature in your app. You should be able to gain insights on who has been viewing your online content and specifically target your marketing efforts to those merchants.
+ You can use Facebook retargeting to create dedicated ads or even boost a post within your actual Facebook page to reach an audience outside of your current scope. You can choose to focus on increasing engagement, clicks to your link, or awareness.
+ Email marketing
+ Email marketing lets you stay in touch with your merchants and keep them engaged. You can send emails about new features, or generate more traffic for your webinars. You can also let your merchants reach you directly by email, which can help increase trust and let you build relationships with your users.
+ Some services will let you collect email addresses from potential merchants, so you can send them more information about your app. Facebook Ads also has the ability to collect email addresses which you can import into these services as part of your email marketing initiatives.
+ You can use email services like AWeber to make email marketing easier.
+ Engage with online communities
+ Being active in external forums can help you access an audience with relevant interests and skillsets. Participating in these forums allows you to build relationships through continuous conversations, and interact with merchants who might be interested in your app. Reaching out to communities in this way can also help build trust with merchants.
+ Consider larger community groups like the Shopify Community forums, Shopify Blogs, or Reddit, where you can actively engage with the merchant community and provide value to them and their business.
+ Write a press release
+ See our guide on writing a press release for your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Webinars
+ Video tutorials
+ Social media marketing
+ Email marketing
+ Engage with online communities
+ Write a press release
+ Updates & News

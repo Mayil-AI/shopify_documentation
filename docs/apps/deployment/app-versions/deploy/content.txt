@@ -1,0 +1,95 @@
+Functions
+ Deployment
+ Overview
+ Deploy a web app
+ App versions
+ Overview
+ Deploy and release app versions
+ Distribution
+ Billing
+ App Store
+ Deploy and release app versions
+ After you change your app configuration or create one or more app extensions, you can release those changes to users by creating and releasing an app version. An app version is a snapshot of your app configuration and all extensions. You can revert to a previous app version at any time by releasing an older app version.
+ Releasing an app version doesn't release your web app. When you're ready to deploy your app to production, you need to deploy your web app to your own hosting solution. For more information, refer to Deploy your web app.
+ If you want to deploy app configuration and extensions to Shopify regularly, then you can integrate Shopify CLI into your CI/CD pipeline to programmatically deploy your app components using the deploy command.
+ Caution
+ This page describes the new process for deploying and releasing app extensions, known as simplified deployment.
+ If you haven't changed your app since September 5, 2023, then your development workflow might need to change. For an overview of the changes from the previous deployment model and how they might impact your workflow, refer to App versions.
+ Create and release an app version
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ The contents of your app version depend on where you create it. You can create an app version using Shopify CLI or the Partner Dashboard. However, to create an app version that updates your CLI-managed extensions, you need to create the app version using Shopify CLI.
+ Before you create a new app version, you might want to preview one or more of your extensions. To learn how to preview and test your app extension, refer to the documentation for your extension type.
+ Some app versions need to be reviewed by Shopify before they can be released. You can submit an app version for review through the Partner Dashboard.
+ You can also set up your CI/CD pipeline to deploy your app configuration and extensions programmatically.
+ Release an app version using Shopify CLI
+ Follow these steps to create an app version using Shopify CLI:
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ After you release your new app version, you can view the version details in the Partner Dashboard, or by running the versions list command in Shopify CLI.
+ Tip
+ If you want to create a version, but avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Release app configuration using the Partner Dashboard
+ Follow these steps to update app configuration and release an app version using the Partner Dashboard:
+ From the Partner Dashboard, go to Apps.
+ Select your app from the list.
+ Click Configuration.
+ In the Configuration page, make your changes.
+ Click Save and release.
+ Note
+ Any configuration in the App settings section of the Configuration page is not versioned. When you save changes to these settings, they go live immediately.
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ After you release your new app version, you can view the version details in the Partner Dashboard, or by running the versions list command in Shopify CLI.
+ Release dashboard-managed extensions using the Partner Dashboard
+ Follow these steps to release an app version that includes changes of dashboard-managed extensions:
+ From the Partner Dashboard, go to Apps.
+ Select your app from the list.
+ Click Versions.
+ From the Versions page, click Create version.
+ Optional: enter a name and message for the version.
+ Click Release. If you don't want to release right away, then you can click Create version.
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ After you release your new app version, you can view the version details in the Partner Dashboard, or by running the versions list command in Shopify CLI.
+ Integrate Shopify CLI into your CI/CD pipeline
+ You can deploy your app configuration and any app extensions that you generated using Shopify CLI in a CI/CD pipeline.
+ Your app configuration and all extensions, including extensions created in the Partner Dashboard, are versioned together as a single app version.
+ Release an existing app version
+ If you created an app version without releasing it, or you want to roll back to a previous app version, then you can release it using Shopify CLI or the Partner Dashboard.
+ Release an existing app version using Shopify CLI
+ Navigate to your app directory.
+ Run one of the following commands. Replace VERSION with the name of the version that you want to release.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app release -- --version=VERSION
+ Tip
+ To look up the name of a previous version, use the versions list command.
+ Release an existing app version through the Partner Dashboard
+ From the Partner Dashboard, go to Apps and then select your app from the list.
+ Click Versions.
+ From the Versions page, select the app version that you want to release.
+ On the app version page, click Release.
+ Submit an app version for review
+ Depending on the extension types included in your app version, your version might need to be reviewed by Shopify. To understand which extension types require a review, refer to the list of extension types.
+ From the Partner Dashboard, go to Apps.
+ Select your app from the list.
+ Click Versions.
+ Select the version that you want to release.
+ Click Submit for review.
+ When Shopify has reviewed and approved the app version, click Release to release the new app version to users.
+ Next steps
+ Learn how to remove an app extension from your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Create and release an app version
+ Release an existing app version
+ Submit an app version for review

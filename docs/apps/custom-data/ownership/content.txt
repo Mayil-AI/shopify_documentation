@@ -1,0 +1,220 @@
+Overview
+ Ownership
+ Metafields
+ Metaobjects
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Ownership
+ Users, developers, and apps can all define metaobjects and metafields on resources in Shopify. For example, a product review app might add metafields to a shop's product resource to keep track of reviews for a product, or a user might create a new custom object to manage the designers that they source pieces from. By default, metafields and metaobjects are owned by Shopify and provide no restrictions to reading, writing, or modifying. In the case of the product review app, another product review app could overwrite the metafield that the app was using to track reviews.
+ Reserved prefixes
+ A reserved prefix is a prefix that your app can add in front of your metafield namespaces and metaobject types. Reserving allows your API client to own that particular prefix for your definitions. This means that your app has access to all definitions with that prefix, and no other app but yours can create or update definitions on any store. If desired, you can also allow other apps to edit values under a definition you have created using a reserved namespace. By default, they will be private to your app.
+ Tip
+ Learn more about metafield access controls and metaobject access control configure this behavior.
+ If you create a metafield or metaobject without a definition under your own reserved namespace or type, then it will be private to your app. To allow users or other apps to read or write metafields in your app's namespaces, you need to create a definition and specify the desired access settings.
+ Create a metafield definition under a reserved namespace
+ You can create metafield definitions under your reserved namespace by prefixing the namespace with $app:. The API layer will resolve this to a full reserved namespace with the following pattern: app--{your-app-id}--{some-namespace}
+ app: The global prefix signifying that this is an app reserved namespace, and that what follows is an app ID.
+ your-app-id: The API client ID associated with your app.
+ some-namespace: The base namespace that you've chosen.
+ For example, if your API client ID was 123456, then your resolved reserved namespace would resolve to look like this:
+ app--123456--some-namespace
+ However, as long as you are using the API layer to read and write metafields, you can use $app:some-namespace.
+ The following example creates a product metafield definition under a reserved namespace:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL Mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+        namespace
+ 7
+        key
+ 8
+        # add other return fields
+ 9
+      }
+ 10
+ 13
+        code
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Ingredients",
+ 4
+      "namespace": "$app:some-namespace",
+ 5
+      "key": "ingredients",
+ 6
+      "description": "A list of ingredients used to make the product.",
+ 7
+      "type": "list.single_line_text_field",
+ 8
+      "ownerType": "PRODUCT"
+ 9
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456108",
+ 5
+        "name": "Ingredients",
+ 6
+        "namespace": "app--123456--some-namespace",
+ 7
+        "key": "ingredients"
+ 8
+      },
+ 9
+      "userErrors": []
+ 10
+    }
+ 11 }
+ Create a metaobject definition under a reserved type
+ You can create metaobject definitions that are owned by your app by using the same syntax as above for metafields for the type of your metaobject.
+ The following example creates a product highlight metaobject definition under a reserved namespace:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation($input: MetaobjectDefinitionCreateInput!) {
+ 2
+    metaobjectDefinitionCreate(definition: $input) {
+ 3
+      metaobjectDefinition {
+ 4
+        id
+ 5
+        type
+ 6
+        fieldDefinitions {
+ 7
+          key
+ 8
+          type {
+ 9
+            name
+ 10
+ 13
+    }
+ 14 }
+ Variables
+ 1 {
+ 2
+    "input" : {
+ 3
+      "type": "$app:product_highlight",
+ 4
+      "access": {
+ 5
+        "admin": "MERCHANT_READ_WRITE",
+ 6
+        "storefront": "PUBLIC_READ",
+ 7
+      },
+ 8
+      "capabilities": { "publishable": { "enabled": true } },
+ 9
+      "fieldDefinitions": [
+ 10
+        { "key": "title", "type": "single_line_text_field" },
+ 11
+        { "key": "description", "type": "multi_line_text_field" },
+ 12
+        { "key": "creative", "type": "file_reference" },
+ 13
+      ],
+ 14
+    }
+ 15 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metaobjectDefinitionCreate": {
+ 4
+        "metaobjectDefinition": {
+ 5
+          "id": "gid://Shopify/MetaobjectDefinition/1",
+ 6
+          "type": "app--123456--product_highlight",
+ 7
+          "fieldDefinitions": [
+ 8
+            {
+ 9
+              "key": "title",
+ 10
+              "type": {
+ 11
+                "name": "single_line_text_field"
+ 12
+              }
+ 13
+            },
+ 14
+            {
+ 15
+              "key": "description",
+ 16
+              "type": {
+ 17
+                "name": "multi_line_text_field"
+ 18
+              }
+ 19
+            },
+ 20
+            {
+ 21
+              "key": "creative",
+ 22
+              "type": {
+ 23
+                "name": "file_reference"
+ 24
+              }
+ 25
+            }
+ 26
+          ]
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+ Next Steps
+ Learn about defining metafields to start defining custom fields.
+ Learn about defining and managing metaobjects.
+ Learn about access controls for your metafield and metaobject definitions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Reserved prefixes
+ Create a metafield definition under a reserved namespace
+ Create a metaobject definition under a reserved type
+ Next Steps
+ Updates & News
+ Developer changelog
+ Partner blog

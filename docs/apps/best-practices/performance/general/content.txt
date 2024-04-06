@@ -1,0 +1,60 @@
+Billing
+ App Store
+ App performance best practices and guidelines
+ Consider the following best practices for optimizing the performance of your app.
+ Include a viewport meta tag
+ If your app can be embedded, then it might be rendered in a WebView when it's accessed from the Shopify mobile app. To define the scale at which your app is rendered on initial load, you should add a meta tag to the HTML file that serves your UI.
+ Meta tag
+ 1 <!-- Ensure the UI is properly scaled in the Shopify Mobile app -->
+ 2 <meta name="viewport" content="width=device-width, initial-scale=1">
+ If you don't add this meta tag, then Shopify injects it for you. This ensures that your app can be used on mobile devices, but it results in your app UI rendering twice: once zoomed out, and once at the correct scale.
+ Avoid parser-blocking scripts
+ Parser-blocking scripts block the construction and rendering of the DOM until the script is loaded, parsed, and executed. They also create congestion on the network and significantly delay page rendering. This impacts metrics like First Contentful Paint and Largest Contentful Paint. You should use defer or async attributes on script tags to avoid this.
+ If the order of execution of the script tags matters, then use defer:
+ 1 <script src="https://cdn.shopify.com/app-code.js" defer></script>
+ 2 <script src="app-code.js" defer></script>
+ If the order of execution doesn't matter, then use async:
+ 1 <script src="https://cdn.shopify.com/app-code.js" async></script>
+ 2 <script src="app-code.js" async></script>
+ Reduce your dependency on external frameworks and libraries
+ If you need to use JavaScript, consider avoiding introducing third-party frameworks, libraries, and dependencies. Instead, use native browser features and modern DOM APIs whenever possible. Including JavaScript libraries in your package can lead to large bundle sizes, slow load times, and a poor experience for customers.
+ Frameworks such as React, Angular, and Vue, and large utility libraries such as jQuery have significant performance costs. A store's load time is degraded even further when multiple apps try to install the same framework multiple times on the same store.
+ Avoid introducing polyfill libraries for very old browsers (anything that doesn't support async/await). If you use a browserslist, then you can target browsers with a > 1% marketshare.
+ Reduce JavaScript usage
+ CSS parses and renders much faster than JavaScript, so wherever possible, you should use CSS features for building interactivity. You can find more information on the internet by searching the phrase “using CSS instead of JavaScript”. One example is the blog 5 things you can do with CSS instead of JavaScript by Juan Martín García.
+ Your minified JavaScript bundle size should ideally be 16 KB or less.
+ Avoid namespace collisions
+ Namespaces allow you to place variables into unique containers so that you can prevent collisions in the global scope. However, JavaScript minifiers rename JavaScript variables to be shorter, which can cause collisions.
+ To avoid namespace collisions in the global scope, wrap JavaScript values in a function scope. Values defined in a function scope are available only within the scope of that function, so there's no risk of collision with other variables that are defined on the global scope.
+ The following example shows you how to wrap minified and renamed JavaScript variables in a function scope:
+ 1 (function () {
+ 2
+    var a; function b() {}
+ 3 })();
+ For example, the Immediately Invoked Function Expression (IIFE) pattern is a JavaScript function that runs as soon as it's defined. The IIFE pattern ensures that script-defined values are scoped to the function that the IIFE creates, so there isn't a risk of values colliding in the global namespace.
+ Load non-critical resources on interaction
+ Your page might contain code for a component or resource that isn't always used. You can load these resources using an import on interaction pattern to avoid loading, parsing, and executing unnecessary code.
+ Defer loading your JavaScript bundle entirely until a user interacts with the parts of your app that require the bundle.
+ Minimize your bundle size
+ To optimize performance, the app entry point should amount to less than 10KB of JavaScript and less than 50KB of CSS on a page, and load itself on interaction. Make sure that you optimize your bundle sizes by minimizing your code.
+ A store's theme is responsible for user interactivity. Your app should change the theme only slightly. If you need to inject more JavaScript, then make sure it loads without blocking the browser.
+ Include remote stylesheets after inline JavaScript tags
+ Browsers can't render a page until the stylesheets are downloaded, parsed, and applied. Inline script tags run only after the stylesheets are loaded. When a remote stylesheet is included before an inline script tag, the stylesheet blocks the script tag from running.
+ Always include the inline script tags before the stylesheets, like in the following example:
+ 1 <script>console.log('hello world')</script>
+ 2 <link href="//example.com/app-css.css" rel="stylesheet">
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Include a viewport meta tag
+ Avoid parser-blocking scripts
+ Reduce your dependency on external frameworks and libraries
+ Reduce JavaScript usage
+ Avoid namespace collisions
+ Load non-critical resources on interaction
+ Minimize your bundle size
+ Include remote stylesheets after inline JavaScript tags
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

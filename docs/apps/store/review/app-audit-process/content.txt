@@ -1,0 +1,20 @@
+App Store ads
+ Security
+ The app audit process
+ Shopify uses an audit process to verify that all apps distributed through the Shopify App Store meet the specified requirements.
+ The requirements for apps in the Shopify ecosystem can be updated without notice to ensure the best possible merchant experience. Even if your app has previously gone through the Shopify App Store review process, the ongoing app audit process verifies that your app continues to meet the most recent requirements.
+ If your app is chosen to be audited, then you'll receive an email with further instructions.
+ Contact throughout the review process
+ During the audit process, an App Review Specialist will contact you at the App submission contact email set in Section D of the app listing. To ensure that you receive these emails, add app-audits@shopify.com and noreply@shopify.com to your allowed senders list in your email service provider’s settings.
+ If you have any questions or would like more information, respond directly to the audit email. The App Review Specialist will stay in contact with you by email until the audit process is complete.
+ If you don’t have access to your Partner account email, then contact Partner support.
+ App audit process
+ When your app is audited, you receive an email notifying you that your app is in the audit process. This email also includes, if applicable, a list of required changes that you need to make to your app. The required changes are always based on the Shopify App Store requirements.
+ If the audit email has a list of changes that you need to make to your app, then you have 30 days to make those changes. After you make the changes, respond to the audit email and describe the changes that you've made. An App Review Specialist will review your app. If the changes you made meet the current requirements, then the audit process ends.
+ Caution
+ If you don't respond to the initial audit email within 7 days, then your app will be demoted. If you fail to make the required changes to your app within 30 days, then your app might be unpublished.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Contact throughout the review process
+ App audit process

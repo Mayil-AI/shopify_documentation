@@ -1,0 +1,35 @@
+Subscription discounts
+ Refunds
+ Offering free trials
+ Viewing charges and earnings
+ Best practices
+ App Store
+ Offer free trials
+ Free trials enable merchants to experiment with apps before they commit to paying for them. Shopify Partners are more likely to recommend apps that they've used before.
+ To help increase your app sales, use the GraphQL Admin API to offer free app trials for merchants to try. You can also use trials to allow affiliate Partners trial access to your app when they build stores on behalf of merchants.
+ Set a free trial duration
+ Free trials delay the start of an app's billing cycle by a number of specified days.
+ You can use the GraphQL Admin API's appSubscriptionCreate mutation to add a free trial. To extend a free trial, use the Admin API's appSubscriptionTrialExtend mutation.
+ Note
+ If a merchant adds an app to their Shopify store during a free trial period, then any app-related charges are included in the merchant's next invoice.
+ Set up free testing
+ Free testing doesn't create an app charge in Shopify. You can identify a development store by querying the GraphQL Admin API's Shop resource. Development stores return the following key/value pair:
+ 1 {
+ 2
+    "plan_name": "affiliate"
+ 3 }
+ We recommend subscribing to the SHOP_UPDATE webhook to get notified if the development store changes to a paid plan. If you receive this webhook, then block access to your app and create an app charge for the paid plan. After the user agrees to the charge, unblock their access to the app.
+ Note
+ If you make your app free for development stores, then contact Shopify Support to get your app listed on our Partner-friendly app list.
+ Limitations
+ Free trials are available only to merchants who agree to a new subscription, and can't be added to existing subscriptions.
+ Next steps
+ Best practices
+ Learn best practices for app billing.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Set a free trial duration
+ Set up free testing
+ Limitations
+ Next steps

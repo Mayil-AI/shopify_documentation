@@ -1,0 +1,60 @@
+Overview
+ Security badges
+ Captcha
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Security badges
+ To help establish customer trust, you can include a security badge in your theme, and link it to Shopify's documentation on Payment Card Industry (PCI) standard compliance. Depending on your theme's color scheme, you can use a light-colored, or dark-colored, version.
+ For example:
+ Add security badges to your theme
+ Security badges are often included in the footer or near the Add to cart button on product pages. However, they can be included anywhere you have access to include HTML.
+ Note
+ You can't add a security badge to the checkout page unless you're working on a Shopify Plus store that has access to checkout.liquid.
+ The following examples show the HTML to include for each version of the badge:
+ Light
+ 1 <a
+ 2
+    href="https://www.shopify.com/security/pci-compliant?utm_medium=shop&utm_source=secure"
+ 3
+    title="This online store is secured by Shopify"
+ 4
+    target="_blank"
+ 5
+    rel="nofollow"
+ 6 >
+ 7
+    <img
+ 8
+      src="https://cdn.shopify.com/s/images/badges/shopify-secure-badge-white.svg"
+ 9
+      alt="Shopify secure badge"
+ 10
+    >
+ 11 </a>
+ Dark
+ 1 <a
+ 2
+    href="https://www.shopify.com/security/pci-compliant?utm_medium=shop&utm_source=secure"
+ 3
+    title="This online store is secured by Shopify"
+ 4
+    target="_blank"
+ 5
+    rel="nofollow"
+ 6 >
+ 7
+    <img
+ 8
+      src="https://cdn.shopify.com/s/images/badges/shopify-secure-badge-dark.svg"
+ 9
+      alt="Shopify secure badge"
+ 10
+    >
+ 11 </a>
+ Tip
+ The image files used for each badge are in .svg format, so they can be resized with no quality loss.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

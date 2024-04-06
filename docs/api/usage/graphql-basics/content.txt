@@ -1,0 +1,325 @@
+Product subscription app extensions
+ GraphQL basics
+ GraphQL has become Shopify's technology of choice for building APIs. If you're used to working with REST APIs, then GraphQL might seem confusing at first. When you begin using GraphQL, you need to change how you think about retrieving and working with data. The following guides introduce you to GraphQL concepts and help you begin experimenting with GraphQL.
+ What is GraphQL?
+ GraphQL is a query language and a runtime system. Clients form requests by using the GraphQL query language, and the GraphQL server executes the request and returns the data in a response. The following are GraphQL request types:
+ Queries: Requests to retrieve data, similar to a GET request in REST
+ Mutations: Requests to create and modify data, similar to a PUT, POST, or DELETE request in REST
+ Unlike REST APIs, which have different endpoints for each resource, a GraphQL API has a single endpoint for all available data. Clients specify the data they need, for both read and write operations, and the server responds with only that data.
+ GraphQL request structures resemble JSON. However, GraphQL requests don't use quotes for field names and don't have colons separating field names and values. Responses are in JSON format.
+ The following is a simple GraphQL query and the JSON response:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    product(id: "gid://shopify/Product/10079785100") {
+ 3
+      title
+ 4
+      handle
+ 5
+      createdAt
+ 6
+    }
+ 7 }
+ JSON response
+ 4
+        "title": "The T-Shirt",
+ 5
+        "handle": "the-t-shirt",
+ 6
+        "createdAt": "2024-01-27T19:24:10Z"
+ 7
+      }
+ 8
+    }
+ 9 }
+ In the JSON response, the structure within the top-level data object mirrors the structure of the corresponding GraphQL request.
+ Additional types
+ In addition to queries and mutations, the GraphQL type system includes the following types:
+ Additional GraphQL types
+ Type Description
+ Scalar
+ Primitive data types such as strings, Booleans, and integers. Can also represent unstructured data like a JSON blob. These are the basic building blocks of the GraphQL schema.
+ GraphQL has the following built-in scalar types:
+ Int: A signed 32-bit integer
+ Float: A signed double-precision floating-point value
+ String: A UTF-8 character sequence
+ Boolean: A true or false Boolean value
+ ID: A unique identifier, which is often used either to refetch an object or as the key for a cache. The value isn't intended to be human-readable.
+ Enum
+ A scalar that's restricted to a set of allowed values.
+ Enums enable you to validate that arguments of this type are one of the allowed values, and communicate through the type system that a field will always be one of a finite set of values.
+ Object
+ A fundamental unit that represents a structured set of data. Object types are collections of readable fields, where each field represents a type in the GraphQL type system and defines the kind of data that you can fetch.
+ Object types are the most common units in a GraphQL schema, and they enable data to be modeled in a structural and relational way.
+ Input object
+ Similar to an object type, but used as input arguments in queries and mutations.
+ Input objects enable you to pass complex, structured data to mutations.
+ The key difference between input object and object types is that input objects are for inputs, or arguments to queries and mutations, and objects are for outputs, or data that you can fetch.
+ Interface
+ An abstract type that defines a specific set of fields that any object implementing the interface must contain.
+ This mechanism ensures that different object types implementing the same interface share common fields, and promotes consistency across the objects.
+ Union
+ A type that can return one of several specific object types that are defined in the schema.
+ Unlike interfaces, unions don't enforce common fields between these object types. The object type that's returned in a specific case is determined at runtime. This is useful when a field could return different object types, and these types don't necessarily share any fields.
+ Refer to an example of the discount union.
+ List An array of another GraphQL type, for example an array of scalars or objects.
+ Benefits of GraphQL over REST
+ Shopify's REST and GraphQL APIs have some similarities. For example, they're versioned, require authentication and explicit access scopes, and enforce rate limits. However, there are several benefits to using GraphQL over REST, summarized in the following table:
+                                                                                                                                                               GraphQL REST
+ Work with multiple resources in a single query or mutation
+ Use GraphQL features like connections, variables, fragments, and aliases for efficient queries and fetch data from multiple types in one request.
+ Work with one resource at a time
+ REST APIs are designed to return a single resource type per endpoint. Fetching associated data often requires multiple calls or chained requests.
+ Request only the data that you need
+ Reduce payload size, improve performance, and reduce over-fetching by requesting the exact data that you need.
+ Limited resource filtering
+ Filter top-level resource properties using the fields parameter. However, filtering isn't available for properties of child resources.
+ Strongly typed and part of a schema
+ GraphQL is strongly typed, which provides for safer data handling through validation and autocompletion.
+ Everything that's available through a GraphQL API is included in its schema.
+ Weakly typed and lacking machine-readable data
+ REST data is weakly typed and has fewer validation guardrails. This can lead to errors or unpredictable results due to incorrect data formatting.
+ Shopify knows what data an app is using
+ Shopify knows which fields each app is using, which makes it easier for us to evolve our APIs over time and focus on resources that the community uses.
+ We can easily mark a part of our schema as deprecated, which is reflected in documentation.
+ Shopify doesn’t know what data an app is using
+ When an app requests a REST endpoint, Shopify has no way of knowing if it's actually using every piece of data that's returned. It’s similar to doing a SELECT * to a SQL database.
+ When Shopify needs to make breaking changes, such as removing an attribute from a response, we can't know which developers the change directly affects. This means that we need to notify all developers who use an endpoint, which creates noise for those who aren't affected.
+ Documentation is a first-class citizen
+ The documentation for a GraphQL API lives side-by-side with the code that constitutes it. Using GraphQL's introspection feature, you can query the schema to explore its contents and documentation.
+ Documentation is secondary
+ Most REST APIs lack embedded metadata. Apps are dependent on external documentation that can become out of sync with the API.
+ Example
+ In GraphQL, you can get information about related objects with a single request to a single endpoint, and scope your request down to only the fields that you need.
+ For example, in the case of an order, you might want to know the total price, the customer's name, metafields, and the title of other variants belonging to the product in the order.
+ Using REST, you need to make a request to the following endpoints and filter out unnecessary data:
+ /orders/{order_id}.json
+ /products/{product_id}/variants.json
+ /customers/{customer_id}/metafields.json
+ Using GraphQL, you can make a single request using connections to get the desired data:
+ Example
+ Endpoint
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    order(id:"gid://shopify/Order/5369369690390") {
+ 3
+      id
+ 4
+      totalPriceSet{
+ 5
+        shopMoney {
+ 6
+          amount
+ 7
+        }
+ 8
+      }
+ 9
+      customer {
+ 10
+        displayName
+ 11
+        metafields (first:10) {
+ 12
+          edges {
+ 13
+            node {
+ 14
+              key
+ 15
+              value
+ 16
+            }
+ 17
+          }
+ 18
+        }
+ 19
+      }
+ 20
+      lineItems (first:10) {
+ 21
+        edges {
+ 22
+          node {
+ 23
+            variant {
+ 24
+              product {
+ 25
+                variants(first:10) {
+ 26
+                  edges {
+ 27
+                    node {
+ 28
+                      title
+ 29
+                    }
+ 30
+                  }
+ 31
+                }
+ 32
+              }
+ 33
+            }
+ 34
+          }
+ 35
+        }
+ 36
+      }
+ 37
+    }
+ 38 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "order": {
+ 4
+        "id": "gid://shopify/Order/5369369690390",
+ 5
+        "totalPriceSet": {
+ 6
+          "shopMoney": {
+ 7
+            "amount": "2099.85"
+ 8
+          }
+ 9
+        },
+ 10
+        "customer": {
+ 11
+          "displayName": "Ayumu Hirano",
+ 12
+          "metafields": {
+ 13
+            "edges": [
+ 14
+              {
+ 15
+                "node": {
+ 16
+                  "key": "birth_date",
+ 17
+                  "value": "1990-02-22"
+ 18
+                }
+ 19
+              }
+ 20
+            ]
+ 21
+          }
+ 22
+        },
+ 23
+        "lineItems": {
+ 24
+          "edges": [
+ 25
+            {
+ 26
+              "node": {
+ 27
+                "variant": {
+ 28
+                  "product": {
+ 29
+                    "variants": {
+ 30
+                      "edges": [
+ 31
+                        {
+ 32
+                          "node": {
+ 33
+                            "title": "Ice"
+ 34
+                          }
+ 35
+                        },
+ 36
+                        {
+ 37
+                          "node": {
+ 38
+                            "title": "Dawn"
+ 39
+                          }
+ 40
+                        }
+ 41
+                      ]
+ 42
+                    }
+ 43
+                  }
+ 44
+                }
+ 45
+              }
+ 46
+            }
+ 47
+          ]
+ 48
+        }
+ 49
+      }
+ 50
+    }
+ 51 }
+ GraphQL concepts
+ Refer to the following guides to learn the fundamentals of GraphQL:
+ Queries
+ Retrieve data from Shopify using queries.
+ Mutations
+ Create and modify Shopify data using mutations.
+ Variables
+ Write reusable requests using variables.
+ Advanced concepts
+ Supercharge your requests using inline fragments, and learn how to build requests that contain multiple queries.
+ Optimized requests
+ Review some tips for refining requests to optimize performance and lower query costs.
+ Additional guides
+ Refer to the following guides to learn more about how GraphQL APIs work at Shopify:
+ Pagination
+ Retrieve consecutive pages of resources using cursor-based pagination.
+ Global IDs
+ Learn about the identifiers that Shopify uses for objects in GraphQL.
+ Bulk operations
+ Read and write high volumes of data and avoid throttling using asynchronous operations.
+ Rate limits
+ Learn about the rate limits for each API.
+ Error handling
+ Learn about detecting and recovering from errors in GraphQL.
+ Tools and resources
+ Explore the following developer tools and resources to learn more about Shopify GraphQL APIs. For a complete list of APIs, and for information about the libraries that you can use to interact with them, explore our API documentation.
+ Shopify Admin API GraphiQL explorer
+ Browse Shopify’s GraphQL Admin API schema and documentation.
+ Shopify Admin API GraphiQL explorer
+ Browse Shopify’s GraphQL Admin API schema and documentation.
+ Shopify Storefront API GraphiQL explorer
+ Browse Shopify’s Storefront API schema and documentation.
+ Shopify GraphiQL app
+ Explore your store's data, and test queries and mutations, using the GraphQL Admin and Storefront APIs.
+ Migrate to GraphQL from REST
+ Learn about the considerations when migrating an app that uses the REST Admin API to the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What is GraphQL?
+ Benefits of GraphQL over REST
+ GraphQL concepts
+ Tools and resources
+ Updates & News
+ Developer changelog

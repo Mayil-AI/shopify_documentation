@@ -1,0 +1,50 @@
+Billing
+ App Store
+ Getting started
+ Get started building customer account UI extensions by setting up your development environment. You'll use Shopify CLI to generate starter code for building your extension and automating common development tasks.
+ General requirements
+ You've created a Partner account.
+ You've created a new development store. The development store must use the Checkout and Customer Accounts Extensibility developer preview, and should be pre-populated with test data, including an order associated with the email address you will use to log in to the customer account experience.
+ You understand how apps fit into Shopify.
+ You've installed Node.js 18 or higher.
+ You've installed a Node.js package manager: either npm, Yarn 1.x, or pnpm.
+ You've installed Git 2.28.0 or higher.
+ You're using the latest version of Chrome or Firefox.
+ Steps
+ Run one of the following commands to create an app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest
+ Select Start by adding your first extension.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --name my-extension
+ Choose Customer account UI.
+ Start your development server to build your app and preview your extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Next steps
+ Learn common use cases for customer account UI extensions with the following tutorials:
+ Inline extensions
+ Build an extension that displays the loyalty points earned from an order and enables customers to leave a review.
+ Order action menu extensions
+ Build an extension on the order action menu that enables customers to report problems with their orders.
+ Full-page extensions
+ Build full-page extensions for customers to add and edit products on a wishlist.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ General requirements
+ Next steps
+ Updates & News

@@ -1,0 +1,220 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Cart API
+ The Cart API allows the UI Extension to interact with the POS cart contents including cart discounts, line items and customer. This API includes numerous functions to add and remove contents to the cart, as well as a subscribable object which allows the UI Extension to receive Cart updates.
+ Receiving cart updates
+ JavaScript
+ React
+ 1 api.cart.subscribable.subscribe((cart) => {
+ 2
+    const cartText = root.createComponent(Text);
+ 3
+    cartText.appendChild('New cart: ', cart);
+ 4 });
+ Params
+ Name Type Description Options
+ newCart Cart Cart object
+ Cart
+ Name Type Description
+ subtotal string Total pretax amount.
+ taxTotal string Appled taxes total.
+ grandTotal string Total cart amount including taxes.
+ note string? Cart note.
+ cartDiscount? Discount? Cart discount.
+ cartDiscounts Discount[]? Array of all cart discounts.
+ customer? Customer? Customer information if added to cart.
+ lineItems LineItem[] Line items array.
+ properties Record Custom key to value object to attribute to cart.
+ Discount
+ Name Type Description
+ amount number Percentage or fixed monetary amount to be deducted.
+ discountDescription string? Discount description.
+ type? string? 'Percentage' or 'Fixed' or 'Code'.
+ Customer
+ Name Type Description
+ id number Customer UUID.
+ email string? Email associated with customer.
+ firstName string? Customer first name.
+ lastName string? Customer last name.
+ note string? Note added to customer profile.
+ lineItem
+ Name Type Description
+ uuid string UUID of line item
+ price number? Line item price
+ quantity number Line item quantity
+ title string? Line item title
+ variantId number? Line item variant UUID
+ productId number? Product UUID
+ discounts Discount[] An array of discounts applied to the line item
+ taxable boolean Line item taxability
+ sku string? Line item SKU
+ vendor string? Line item vendor
+ properties Record Custom key to value object to attribute to line item
+ isGiftCard boolean Boolean to determine if line item is a gift card
+ Cart level actions
+ Note that all of these actions happen asynchronously. If you call multiple actions serially, please make sure you await the completion of the action, before calling the next action. Failure to do this may result in race conditions that cause the Cart to update inconsistently.
+ Apply a cart level discount
+ Note
+ The preferred method of adding a code discount is addCartCodeDiscount.
+ 1 applyCartDiscount(type: CartDiscountType, title: string, amount?: string): Promise<void>
+ Params
+ Name Type Description Options
+ type CartDiscountType Type of discount applied to cart 'Percentage' or 'FixedAmount' or 'Code'
+ title string Cart discount title
+ amount string? Percentage or fixed monetary amount to be deducted Percentage: '0' to '1' Fixed: '0' and higher
+ Apply a cart level discount code
+ 1 addCartCodeDiscount(code: string): Promise<void>
+ Params
+ Name Type Description
+ code string Code to be applied
+ Remove cart level discount
+ 1 removeCartDiscount(): Promise<void>
+ Remove all cart level discounts
+ 1 removeAllDiscounts(disableAutomaticDiscounts: boolean): Promise<void>
+ Params
+ Name Type Description
+ disableAutomaticDiscounts boolean Whether to also disable automatic discounts from reapplying
+ Clear cart
+ 1 clearCart(): Promise<void>
+ Add cart properties
+ 1 addCartProperties(properties: Record<string, string>): Promise<void>
+ Params
+ Name Type Description Options
+ properties Record Custom key to value object to attribute to the cart
+ Remove cart properties
+ 1 removeCartProperties(keys: string[]): Promise<void>
+ Line item level actions
+ Add custom sale to cart
+ 1 addCustomSale(customSale: CustomSale): Promise<void>
+ Params
+ Name Type Description Options
+ customSale CustomSale Custom sale object to add to the cart
+ CustomSale
+ Name Type Description
+ quantity number Custom sale quantity
+ title string Custom sale title
+ price string Custom sale price
+ taxable boolean Custom sale taxability
+ Add line item to cart
+ 1 addLineItem(variantId: number, quantity: number): Promise<void>
+ Params
+ Name Type Description Options
+ variantId number Product variant's numeric ID to add to the cart
+ quantity number Number of this variant to add to the cart
+ Remove line item from cart
+ 1 removeLineItem(uuid: string): Promise<void>
+ Params
+ Name Type Description Options
+ uuid string UUID of the line item
+ Attribute the cart to a staff member
+ 1 setAttributedStaff(staffId?: number): Promise<void>
+ Params
+ Name Type Description Options
+ staffId number? Staff ID to attribute to the cart
+ Attribute a line item to a staff member
+ 1 setAttributedStaffToLineItem(staffId?: number, lineItemUuid: string): Promise<void>;
+ Params
+ Name Type Description Options
+ staffId number? Staff ID to attribute to the line item
+ lineItemUuid string UUID of the line item
+ Add line item properties
+ 1 addLineItemProperties(uuid: string, properties: Record<string, string>): Promise<void>
+ Params
+ Name Type Description Options
+ uuid string UUID of line item
+ properties Record Custom key to value object to attribute to line item
+ Add line item properties to multiple line items
+ 1 bulkAddLineItemProperties(lineItemProperties: SetLineItemPropertiesInput[]): Promise<void>
+ Params
+ Name Type Description
+ lineItemProperties SetLineItemPropertiesInput[] A set of line item properties each associated with a line item UUID. The line item properties are set to the line item whose UUID matches the one provided.
+ SetLineItemPropertiesInput
+ Name Type Description
+ lineItemUuid string The UUID belonging to the line item which should receive the custom properties.
+ properties Record The custom properties to apply to the line item.
+ Remove line item properties
+ 1 removeLineItemProperties(uuid: string, keys: string[]): Promise<void>
+ Params
+ Name Type Description Options
+ uuid string UUID of line item
+ keys string[] Collection of keys to be removed from the line item properties
+ Add line item discount
+ 1 setLineItemDiscount(uuid: string, discountType: CheckoutDiscountType, title: string, amount: string): Promise<void>
+ Params
+ Name Type Description Options
+ uuid string UUID of line item
+ type LineItemDiscountType Type of discount applied to line item 'Percentage' or 'FixedAmount'
+ title string Line item discount title
+ amount string Percentage or fixed monetary amount deducted with the discount Percentage: '0' to '1', Fixed: '0' and higher
+ Add line item discount to multiple line items
+ 1 bulkSetLineItemDiscounts(lineItemDiscounts: SetLineItemDiscountInput[]): Promise<void>
+ Params
+ Name Type Description
+ lineItemDiscounts SetLineItemDiscountInput[] A set of line item discounts associated with a line item UUID. The line item discount will be set to the line item matching the UUID.
+ SetLineItemDiscountInput
+ Name Type Description
+ lineItemUuid string The UUID belonging to the line item which should receive the discount.
+ lineItemDiscount LineItemDiscount The discount to be applied to the line item.
+ LineItemDiscount
+ Name Type Description
+ title string The title of the line item discount.
+ type 'Percentage' 'FixedAmount' The type of discount to be applied to the line item.
+ amount string The percentage or fixed amount for the discount.
+ Remove line item discount
+ 1 removeLineItemDiscount(uuid: string): Promise<void>
+ Params
+ Name Type Description Options
+ uuid string UUID of line item
+ Customer actions
+ Add customer to cart
+ 1 setCustomer(customer: Customer): Promise<void>
+ Params
+ Name Type Description Options
+ customer Customer Existing customer. Note: only the ID field is used.
+ Remove customer from cart
+ 1 removeCustomer(): Promise<void>
+ Add address to existing customer
+ 1 addAddress(address: Address): Promise<void>
+ Params
+ Name Type Description Options
+ address Address Customer address
+ Address
+ Name Type Description
+ address1 string? Street address line 1.
+ address2 string? Street address line 2.
+ city string? City name.
+ company string? Customer company name.
+ firstName string? Customer first name.
+ lastName string? Customer last name.
+ phone string? Customer phone number.
+ province string? Province/State.
+ country string? Country.
+ zip string? Zip code.
+ name string? Customer full name.
+ provinceCode string? Province/State code.
+ countryCode string? Country code.
+ Delete address from existing customer
+ 1 deleteAddress(addressId: number): Promise<void>
+ Params
+ Name Type Description Options
+ addressId number ID of existing address to be deleted
+ Set existing address as default address
+ 1 updateDefaultAddress(addressId: number): Promise<void>
+ Params
+ Name Type Description Options
+ addressId number ID of existing address to be set as default address
+ Hooks
+ Name Description
+ useCartSubscription() A hook utilizing useState and the useStatefulSubscribableCart function to create a component state. This hook returns the latest Cart state which re-renders on change.
+ useStatefulSubscribableCart() A hook utilizing the makeStatefulSubscribable function to allow multiple Cart subscriptions. This hook returns StatefulRemoteSubscribable object with a Cart in it.
+ destroyStatefulSubscribableCart() A function destroying the subscriptions useStatefulSubscribableCart has.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Receiving cart updates
+ Cart level actions
+ Line item level actions
+ Customer actions
+ Hooks
+ Updates & News

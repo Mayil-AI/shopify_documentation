@@ -1,0 +1,50 @@
+Get access tokens
+ Token exchange
+ Authorization code grant
+ Overview
+ Getting started
+ Access token types
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Authorization code grant
+ This guide introduces the authorization code grant flow for apps that are created in the Partner Dashboard.
+ When to use authorization code grant
+ If your app is embedded, then you should use token exchange instead of authorization code grant for token acquisition. You can use Shopify CLI to generate a starter app with boilerplate code that handles authorization using session tokens and token exchange.
+ Note
+ Only the Remix app template supports token exchange at the moment.
+ The following cases show when to use authorization code grant:
+ Your app isn't embedded.
+ Your app is embedded, but doesn't use Shopify CLI to manage access scopes.
+ Introduction to authorization code grant
+ OAuth 2.0 is the industry-standard protocol for authorizing or giving permissions to apps. This differs from authentication, which is the process of verifying the identity of the user or the app. The following video illustrates how authorization code grant works in Shopify. Note that this video was created before token exchange was introduced, and might use the term "OAuth" interchangeably with "authorization code grant."
+ The OAuth flow
+ Shopify uses OAuth 2.0’s authorization code grant flow to issue access tokens on behalf of users. The OAuth flow is used so that users can authorize Shopify apps to access data in a store. For example, an app might be authorized to access orders and product data in a store.
+ The following diagram illustrates the OAuth flow based on the actions of the user, your app, and Shopify:
+ The user makes a request to install the app.
+ The app redirects to Shopify to load the OAuth grant screen and requests the user to authorize the required scopes. Note that for apps that have requested API access scopes via TOML file, the OAuth grant screen may appear before the app redirects to Shopify.
+ The user authorizes the app by consenting to the requested scopes.
+ The app receives an authorization grant. This is a temporary credential representing the authorization.
+ The app requests an access token by authenticating with Shopify and presenting the authorization grant.
+ Shopify authenticates the app, validates the authorization grant, and then issues and returns an access token. The app can now request data from Shopify.
+ The app uses the access token to make requests to the Shopify API.
+ Shopify validates the access token and returns the requested data.
+ Ways to implement authorization code grant
+ Shopify provides multiple resources to help you to authorize your app with authorization code grant. The resource you use depends on whether you're creating a new app, and the language and structure of your app.
+ If you're creating a new app, then Shopify recommends using Shopify CLI to create your app this starter app uses token exchange and session tokens.
+ If you're implementing authorization code grant for an existing app, an app that isn't embedded, or you don't want to use an app template, then consider using a Shopify Admin API library. These libraries provide methods for authenticating with authorization code grant (except Remix, which uses token exchange), and are used by Shopify app templates.
+ You can also implement OAuth without a library. However, using a library makes your implementation faster and your app more secure.
+ If you're creating a new app, then you don't need to do anything else to get started with OAuth.
+ If you're using a library or implementing authorization code grant yourself, then refer to Getting started with authorization code grant for more information.
+ OAuth performance best practices for embedded apps
+ Because authorization is the first interaction that users have with your app UI, you should make sure that it's a positive experience. Refer to our OAuth performance best practices to learn how to make your app authorization process smoother, faster, and more polished.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ When to use authorization code grant
+ Introduction to authorization code grant
+ The OAuth flow
+ Ways to implement authorization code grant
+ OAuth performance best practices for embedded apps

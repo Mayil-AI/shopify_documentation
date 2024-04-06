@@ -1,0 +1,235 @@
+Billing
+ App Store
+ Migrate to fulfillment orders
+ In Shopify, the FulfillmentOrder resource models an end-to-end fulfillment process and is available in both the REST Admin API and the GraphQL Admin API. The FulfillmentOrder resource enables fulfillment data to sync accurately between Shopify and apps.
+ By API version 2023-07, all apps should be using the FulfillmentOrder object to manage fulfillments. Apps using the following REST or GraphQL Admin API resources or objects to fulfill orders are using a legacy workflow that is no longer supported as of API version 2022-07:
+ Order REST or GraphQL.
+ Fulfillment REST or GraphQL.
+ This guide describes how to migrate your app to use fulfillment orders to manage fulfillments.
+ Requirements
+ You've built an order management or fulfillment service app.
+ Your app is using the Fulfillment and Order API resources to fulfill orders, instead of the FulfillmentOrder resource.
+ Note
+ After the migration, FulfillmentOrder operations such as FulfillmentCreateV2 are going to cancel pending/open legacy fulfillments and replace them.
+ This will trigger update callbacks for the cancelled fulfillments. Consider the impact of receiving these callbacks before the migration.
+ For example, you might want to avoid automatically performing actions when the legacy Fulfillment callbacks trigger.
+ Step 1: Determine the permissions your app requires
+ To migrate your app, you need to update your app's permissions. The permissions that you request depend on the type of app that you've built and the access to fulfillment orders associated with the types of locations that your app needs.
+ Types of apps
+ You can create the following types of apps:
+ Type of app Permissions
+ Order management app
+ Manage fulfillment orders assigned to merchant-managed locations:
+ read_merchant_managed_fulfillment_orders
+ write_merchant_managed_fulfillment_orders
+ Manage fulfillment orders assigned to locations managed by other fulfillment services:
+ read_third_party_fulfillment_orders
+ write_third_party_fulfillment_orders
+ Fulfillment service app Manage fulfillment orders assigned to locations belonging to the app:
+ read_assigned_fulfillment_orders
+ write_assigned_fulfillment_orders
+ Note
+ If an app combines the functions of an order management app and a fulfillment service, then the app should request all access scopes to manage all assigned and all unassigned fulfillment orders.
+ Types of locations
+ You can have the following types of locations on a shop:
+ Type of location Description
+ Merchant-managed location A location that's created by the merchant.
+ Fulfillment service-managed location A location that's created by a fulfillment service app.
+ 
+ When an app creates a fulfillment service, a new location is automatically created on the shop and associated with that fulfillment service.
+ Step 2: Update your app's permissions
+ Tip
+ If you configure your app using Shopify CLI, then your app will automatically use Shopify managed installation. You can skip this step.
+ When you've determined the additional permissions your app requires, you can update your app for new installations and existing installations.
+ New installations
+ For new installations, include the additional scopes in the permissions that your app requests as part of authorization code grant.
+ Existing installations
+ For existing installations of your app, you can use the request_granular_access_scopes REST endpoint to request a subset of granular fulfillment order access scopes based on the fulfillment or order access scopes your app is already granted. You should make a request to the request_granular_access_scopes REST endpoint for each shop where your app is installed.
+ If your app has the write_fulfillments access scope, then it can request any of the following access scopes: write_assigned_fulfillment_orders, write_merchant_managed_fulfillment_orders, write_third_party_fulfillment_orders.
+ If your app has the read_fulfillments access scope, then it can request any of the following access scopes: read_assigned_fulfillment_orders,read_merchant_managed_fulfillment_orders, read_third_party_fulfillment_orders.
+ If your app has the write_orders access scope, and it doesn't have the read_fulfillments or write_fulfillments access scopes, it means that it's not a fulfillment service, and it doesn't own a dedicated location. As a result, it doesn't need the read_assigned_fulfillment_orders or write_assigned_fulfillment_orders access scopes. Instead, your app can request the write_merchant_managed_fulfillment_orders and write_third_party_fulfillment_orders access scopes.
+ If your app has the read_orders access scopes, and it doesn't have the read/write_fulfillments access scopes, then it can request the write_merchant_managed_fulfillment_orders and write_third_party_fulfillment_orders access scopes.
+ Caution
+ Only the scopes listed in step 1 can be added to your app by using the request_granular_access_scopes endpoint. Requesting any other scope results in an error. If you have read_fulfillments but not write_fulfillments permission, then you can request only the read_* scopes.
+ The following example request adds a single granular access scope to an existing installation of a fulfillment services app.
+ POST https://{shop}.myshopify.com/admin/request_granular_access_scopes.json
+ REST body
+ 1 {
+ 2
+    "requested_scopes": [
+ 3
+      "write_assigned_fulfillment_orders"
+ 4
+    ]
+ 5 }
+ JSON response
+ 1 HTTP/1.1 200 OK
+ 2 {
+ 3
+    "access_scopes": [
+ 4
+      {
+ 5
+        "handle": "write_fulfillments"
+ 6
+      },
+ 7
+      {
+ 8
+        "handle": "write_assigned_fulfillment_orders"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ The following example request adds fulfillment order access scopes to an existing installation of an order management app.
+ POST https://{shop}.myshopify.com/admin/request_granular_access_scopes.json
+ REST body
+ 1 {
+ 2
+    "requested_scopes": [
+ 3
+      "read_merchant_managed_fulfillment_orders",
+ 4
+      "read_third_party_fulfillment_orders"
+ 5
+    ]
+ 6 }
+ JSON response
+ 1 HTTP/1.1 200 OK
+ 2 {
+ 3
+    "access_scopes": [
+ 4
+      {
+ 5
+        "handle": "read_orders"
+ 6
+      },
+ 7
+      {
+ 8
+        "handle": "read_merchant_managed_fulfillment_orders"
+ 9
+      },
+ 10
+      {
+ 11
+        "handle": "read_third_party_fulfillment_orders"
+ 12
+      }
+ 13
+    ]
+ 14 }
+ The following example request demonstrates an error returned if an app does not have the write_fulfillments access scope but requests the write_assigned_fulfillment_orders access scope.
+ POST https://{shop}.myshopify.com/admin/request_granular_access_scopes.json
+ REST body
+ 1 {
+ 2
+    "requested_scopes": [
+ 3
+      "write_assigned_fulfillment_orders"
+ 4
+    ]
+ 5 }
+ JSON response
+ 1 HTTP/1.1 422 Unprocessable Entity
+ 2 {
+ 3
+    "errors": {
+ 4
+      "requested_scopes": "Missing required scopes: \"write_assigned_fulfillment_orders\" requires \"write_fulfillments\"."
+ 5
+    }
+ 6 }
+ Step 3: Opt in to fulfillment orders as a fulfillment service
+ Legacy fulfillment services are different from fulfillment services that use fulfillment orders in the following ways:
+ Shopify doesn't automatically create pending fulfillments for the fulfillment service when fulfillment is requested.
+ Shopify creates successful fulfillments instead of pending fulfillments for the fulfillment service when a fulfilled order is imported.
+ The communication pattern between Shopify and the app has changed, and no longer relies on fulfillment/create webhooks. Instead, the communication relies on explicit POSTs to the callback URL and the callback URL handles all fulfillment and cancellation requests.
+ Before a fulfillment service can switch to the fulfillment order-based workflow, the fulfillment service should be updated to register a callback URL and to implicitly switch to the new workflow. You can use the REST Admin API's PUT fulfillment_services endpoint or the GraphQL Admin API's fulfillmentServiceUpdate mutation for setting callback_url and fulfillment_orders_opt_in values:
+ Opt-in legacy fulfillment services
+ Endpoint
+ REST
+ GraphQL
+ 1 PUT https://{shop}.myshopify.com/admin/api/{api_version}/fulfillment_services/{fulfillment_service_id}.json
+ Request
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_service": {
+ 3
+      "id": 10,
+ 4
+      "name": "My fulfillment service",
+ 5
+      "callback_url": "https://www.myapp.com/callback_url",
+ 6
+      "inventory_management": true,
+ 7
+      "permits_sku_sharing": true,
+ 8
+      "fulfillment_orders_opt_in": true,
+ 9
+      "tracking_support": true,
+ 10
+      "requires_shipping_method": true,
+ 11
+      "format": "json"
+ 12
+    }
+ 13 }
+ JSON response
+ REST
+ GraphQL
+ 1 {
+ 2
+    "fulfillment_service": {
+ 3
+      "id": 10,
+ 4
+      "name": "My fulfillment service",
+ 5
+      "email": null,
+ 6
+      "service_name": "My fulfillment service",
+ 7
+      "handle": "my-fulfillment-service",
+ 8
+      "fulfillment_orders_opt_in": true,
+ 9
+      "include_pending_stock": false,
+ 10
+      "provider_id": null,
+ 11
+      "location_id": 20,
+ 12
+      "callback_url": "https://www.myapp.com/callback_url",
+ 13
+      "tracking_support": true,
+ 14
+      "inventory_management": true,
+ 15
+      "admin_graphql_api_id": "gid://shopify/ApiFulfillmentService/10"
+ 16
+    }
+ 17 }
+ After you've opted in to the fulfillment order-based workflow, the fulfillment service app should act as it's described in Manage fulfillments as a fulfillment service app section.
+ Note
+ Unless granting the API permissions, order management apps don't need any additional pre-configuration to switch to the fulfillment order based APIs, or to temporarily rollback to the legacy fulfillment workflow.
+ Step 4: Manage fulfillments using fulfillment orders
+ After you've updated your app, and opted in legacy fulfillment services to use fulfillment orders, you can start managing fulfillments using fulfillment orders as an order management app or a fulfillment service app.
+ Next steps
+ Learn more about the benefits of adopting fulfillment orders workflows.
+ Manage fulfillments as an order management app.
+ Manage fulfillments as a fulfillment service app.
+ Learn about the recommended workflow for using Shopify APIs to track orders placed through third-party marketplaces.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Determine the permissions your app requires
+ Step 2: Update your app's permissions
+ Step 3: Opt in to fulfillment orders as a fulfillment service
+ Step 4: Manage fulfillments using fulfillment orders

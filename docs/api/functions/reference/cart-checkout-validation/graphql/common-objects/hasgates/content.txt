@@ -1,0 +1,15 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ HasGates interface
+ unstable
+ Gate subjects associated to the specified resource.
+ Fields
+ gates ([GateSubject!]!)
+ Returns active gate subjects bound to the resource.
+ Argument Description
+ handle ( Handle )
+ The handle of the gate configurations to search for.
+ Types that implement HasGates
+ Product
+ Was this page helpful?

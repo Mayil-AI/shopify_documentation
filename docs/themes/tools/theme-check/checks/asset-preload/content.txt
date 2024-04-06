@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ AssetPreload
+ Encourages preloading of assets using Liquid filters, rather than HTML attributes.
+ Preloading helps to make sure that critical assets are downloaded by the browser as soon as possible for better rendering performance.
+ Liquid provides multiple filters to preload key resources so they can be converted into Link headers automatically. This enables them to be discovered faster, especially when combined with early hints that Shopify supports.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 <link href="{{ 'script.js' | asset_url }}" rel="preload" as="script">
+ 2 <link href="{{ 'style.css' | asset_url }}" rel="preload" as="style">
+ 3 <link href="{{ 'image.png' | asset_url }}" rel="preload" as="image">
+ ✓ Pass
+ 1 {{ 'script.js' | asset_url | preload_tag: as: 'script' }}
+ 2 {{ 'style.css' | asset_url | stylesheet_tag: preload: true }}
+ 3 {{ product.featured_image | image_url: width: 600 | image_tag: preload: true }}
+ Options
+ The following example contains the default configuration for this check:
+ 1 AssetPreload:
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether the check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ It's safe to disable this check. You might want to disable it if you need to preload assets from external domain, and it isn't possible to move them to Shopify because they change frequently or are dynamically generated.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

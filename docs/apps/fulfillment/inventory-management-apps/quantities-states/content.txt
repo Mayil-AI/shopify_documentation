@@ -1,0 +1,1140 @@
+Inventory management apps
+ Overview
+ Quantities and states
+ Order management apps
+ Order routing apps
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ Point of Sale
+ Marketing
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Manage inventory quantities and states
+ This guide shows you how to use the GraphQL Admin API to sync and maintain accurate inventory quantities, and transition products to different inventory states.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_inventory and write_inventory access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Your store has existing products.
+ You're familiar with the different inventory states.
+ You're using API version 2023-01 or higher. To schedule changes to inventory quantities, you need to use API version 2024-01 or higher.
+ Inventory object relationships
+ Before you begin managing inventory quantities and states, it's helpful to understand the relationships between inventory objects. The following diagram illustrates the relationships between inventory objects in the GraphQL Admin API:
+ API object Description
+ ProductVariant Contains merchandising information, such as price, description, and images.
+ 
+ Think of this as the product information that you might want a customer to see. All product variants have a 1:1 relationship with their associated inventory item.
+ InventoryItem Contains information about the physical product, such as its SKU.
+ 
+ Think of this as the backend information used for managing inventory, shipping, and fulfillments. Inventory items are associated with one or many inventory levels. An inventory item has an inventory level for each location where the item is stocked.
+ InventoryLevel The actual quantities of an item that are in a specific inventory state.
+ 
+ Inventory levels connect one inventory item to one location. Each inventory level holds the available quantity for its inventory item at the associated location.
+ Location A geographical location where a merchant does business, such as a retail store or warehouse.
+ 
+ Locations can have many inventory levels. Each location has one inventory level for each inventory item that the location stocks.
+ Step 1: Retrieve IDs for inventory locations and inventory items
+ You can use the locations query to retrieve the IDs of inventory locations and inventory items. To retrieve inventory at fulfillment service app locations, you need to use the shop query instead of the locations query.
+ An inventory level represents the quantities of an inventory item that's associated with a location. An inventory item represents the goods that are available to be shipped to a customer. You'll use the IDs for inventory levels and inventory items to query inventory quantities in the next step.
+ locations query
+ The following example shows how to retrieve the first three locations and their associated inventory levels. The response returns a set of parameterized global IDs.
+ Note
+ The InventoryLevel object has a global ID that contains parameters because the InventoryLevel object is associated with the InventoryItem object.
+ For example, if the InventoryLevel object's ID is 69407473686 and the InventoryItem object's ID is 32889739542550, then the global ID resolves to the following structure: gid://shopify/InventoryLevel/69407473686?inventory_item_id=32889739542550.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    # Retrieves the first three locations on a shop.
+ 3
+    locations(first: 3) {
+ 4
+      edges {
+ 5
+        node {
+ 6
+          # The ID of the location.
+ 7
+                  id
+ 8
+          # Retrieves the first three inventory levels associated with each location.
+ 9
+          inventoryLevels(first: 3) {
+ 10
+            edges {
+ 11
+              node {
+ 12
+                id
+ 13
+              }
+ 14
+            }
+ 15
+ 18
+    }
+ 19 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "locations": {
+ 4
+ 7
+              "id": "gid://shopify/Location/35239591958",
+ 8
+              "inventoryLevels": {
+ 9
+                "edges": [
+ 10
+                  {
+ 11
+                    "node": {
+ 12
+                      "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32889739542550"
+ 13
+                    }
+ 14
+                  },
+ 15
+                  {
+ 16
+                    "node": {
+ 17
+                      "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32897608581142"
+ 18
+                    }
+ 19
+                  },
+ 20
+                  {
+ 21
+                    "node": {
+ 22
+                      "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32897615691798"
+ 23
+                    }
+ 24
+                  }
+ 25
+                ]
+ 26
+              }
+ 27
+            }
+ 28
+          },
+ 29
+          {
+ 30
+            "node": {
+ 31
+              "id": "gid://shopify/Location/52187463702",
+ 32
+              "inventoryLevels": {
+ 33
+                "edges": [
+ 34
+                  {
+ 35
+                    "node": {
+ 36
+                      "id": "gid://shopify/InventoryLevel/86381920278?inventory_item_id=37774670364694"
+ 37
+                    }
+ 38
+                  },
+ 39
+                  {
+ 40
+                    "node": {
+ 41
+                      "id": "gid://shopify/InventoryLevel/86381920278?inventory_item_id=41360314695702"
+ 42
+                    }
+ 43
+                  }
+ 44
+                ]
+ 45
+              }
+ 46
+            }
+ 47
+          },
+ 48
+          {
+ 49
+            "node": {
+ 50
+              "id": "gid://shopify/Location/35259777046",
+ 51
+              "inventoryLevels": {
+ 52
+                "edges": [
+ 53
+                  {
+ 54
+                    "node": {
+ 55
+                      "id": "gid://shopify/InventoryLevel/69427953686?inventory_item_id=32904089010198"
+ 56
+                    }
+ 57
+                  },
+ 58
+                  {
+ 59
+                    "node": {
+ 60
+                      "id": "gid://shopify/InventoryLevel/69427953686?inventory_item_id=37734050430998"
+ 61
+                    }
+ 62
+                  },
+ 63
+                  {
+ 64
+                    "node": {
+ 65
+                      "id": "gid://shopify/InventoryLevel/69427953686?inventory_item_id=37774670364694"
+ 66
+                    }
+ 67
+                  }
+ 68
+                ]
+ 69
+              }
+ 70
+            }
+ 71
+          }
+ 72
+        ]
+ 73
+      }
+ 74
+    }
+ 75 }
+ shop query
+ The following example shows how to retrieve the first three fulfillment service app locations and their associated inventory levels. The response returns a set of parameterized global IDs.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    shop {
+ 3
+      # Retrieves inventory at fulfillment service app locations
+ 4
+      fulfillmentServices {
+ 5
+        location {
+ 6
+          # The ID of the location.
+ 7
+          id
+ 8
+          # Retrieves the first three inventory levels associated with each location
+ 9
+          inventoryLevels(first: 3) {
+ 10
+            edges {
+ 11
+              node {
+ 12
+                id
+ 13
+              }
+ 14
+            }
+ 15
+          }
+    "data": {
+ 3
+      "shop": {
+ 4
+        "fulfillmentServices": [
+ 5
+          {
+ 6
+            "location": {
+ 7
+              "id": "gid://shopify/Location/35239591958",
+ 8
+              "inventoryLevels": {
+ 9
+                "edges": [
+ 10
+                  {
+ 11
+                    "node": {
+ 12
+                      "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32889739542550"
+ 13
+                    }
+ 14
+                  },
+ 15
+                  {
+ 16
+                    "node": {
+ 17
+                      "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32897608581142"
+ 18
+                    }
+ 19
+                  },
+ 20
+                  {
+ 21
+                    "node": {
+ 22
+                      "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32897615691798"
+ 23
+                    }
+ 24
+                  }
+ 25
+                ]
+ 26
+              }
+ 27
+            }
+ 28
+          },
+ 29
+          {
+ 30
+            "location": {
+ 31
+              "id": "gid://shopify/Location/67861446678",
+ 32
+              "inventoryLevels": {
+ 33
+                "edges": []
+ 34
+              }
+ 35
+            }
+ 36
+          }
+ 37
+        ]
+ 38
+      }
+ 39
+    },
+ 40 }
+ Step 2: Query inventory quantities
+ You can use the following queries to retrieve inventory quantities:
+ Query inventory quantities for an item at a specific location
+ Query inventory quantities for an item at multiple locations
+ Query inventory quantities for an item at a specific location
+ You can use the inventoryLevel query to retrieve inventory quantities for an item at a specific location.
+ Each inventory level belongs to one inventory item and has one location. For every location where an inventory item can be stocked, there's an inventory level that represents the inventory item's quantities relating to that location.
+ The following example query retrieves the quantity of an inventory item that's available at a specific location. The response shows 11 items that are available at the location.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    inventoryLevel(id:"gid://shopify/InventoryLevel/69407473686?inventory_item_id=32889739542550") {
+ 3
+      id
+ 4
+      # The quantities field takes an array of inventory states, which include the following: `incoming`, `on_hand`, `available`, `committed`, `reserved`, `damaged`, `safety_stock`, and `quality_control`.
+ 5
+      quantities(names: ["available"]) {
+ 6
+        name
+ 7
+        quantity
+ 8
+      }
+ 9
+      item {
+ 10
+        id
+ 11
+      }
+ 12
+      location {
+ 13
+        id
+ 14
+      }
+ 15
+      createdAt
+ 16
+      updatedAt
+ 17
+      canDeactivate
+ 18
+    "data": {
+ 3
+      "inventoryLevel": {
+ 4
+        "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32889739542550",
+ 5
+        "quantities": [
+ 6
+          {
+ 7
+            "name": "available",
+ 8
+            "quantity": 11
+ 9
+          }
+ 10
+        ],
+ 11
+        "item": {
+ 12
+          "id": "gid://shopify/InventoryItem/32889739542550"
+ 13
+        },
+ 14
+        "location": {
+ 15
+          "id": "gid://shopify/Location/35239591958"
+ 16
+        },
+ 17
+        "createdAt": "2020-05-11T23:37:38Z",
+ 18
+        "updatedAt": "2020-08-28T05:57:20Z",
+ 19
+        "canDeactivate": false
+ 20
+      }
+ 21
+    }
+ 22 }
+ Query inventory quantities for an item at multiple locations
+ You can use the inventoryItem query to retrieve inventory quantities for an item at multiple locations.
+ The following example query retrieves the quantity of an inventory item that are available, on-hand, reserved, and committed at the first five locations. The response shows 72 available items, 101 on-hand items, 0 reserved items, and 29 committed items at the locations.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    inventoryItem(id: "gid://shopify/InventoryItem/32889739542550") {
+ 3
+      # Retrieves the first five inventory levels.
+ 4
+      inventoryLevels(first: 5) {
+ 5
+        edges {
+ 6
+          node {
+ 7
+            # The quantities field takes an array of inventory states, which include the following: `incoming`, `on_hand`, `available`, `committed`, `reserved`, `damaged`, `safety_stock`, and `quality_control`.
+ 8
+            quantities(names: ["available", "on_hand", "reserved", "committed"]) {
+ 9
+              name
+ 10
+              quantity
+ 11
+            }
+ 12
+          }
+ 13
+        }
+      "inventoryItem": {
+ 4
+        "inventoryLevels": {
+ 5
+          "edges": [
+ 6
+            {
+ 7
+              "node": {
+ 8
+                "quantities": [
+ 9
+                  {
+ 10
+                    "name": "available",
+ 11
+                    "quantity": 72
+ 12
+                  },
+ 13
+                  {
+ 14
+                    "name": "on_hand",
+ 15
+                    "quantity": 101
+ 16
+                  },
+ 17
+                  {
+ 18
+                    "name": "reserved",
+ 19
+                    "quantity": 0
+ 20
+                  },
+ 21
+                  {
+ 22
+                    "name": "committed",
+ 23
+                    "quantity": 29
+ 24
+                  }
+ 25
+                ]
+ 26
+              }
+ 27
+            }
+ 28
+          ]
+ 29
+        }
+ 30
+      }
+ 31
+    }
+ 32 }
+ Step 3: Manage inventory quantities
+ You can use the following mutations to manage inventory quantities:
+ Set inventory quantities on hand: Explicitly set the quantity of inventory that's in the on_hand state.
+ Adjust inventory quantities: Add or remove quantities of inventory that are in the available state.
+ Move inventory quantities between states: Transition inventory quantities between the available state and the reserved, damaged, safety_stock, and quality_control states, or between unavailable states (reserved, damaged, safety_stock, and quality_control).
+ Schedule changes to inventory quantities: Create a scheduled change that states the dates associated with upcoming changes to inventory quantities.
+ Note
+ You can't use the Admin API to adjust or move inventory quantities in the committed state. Inventory quantities in the committed state are only affected by the creation and fulfillment of a merchant's orders.
+ Set inventory quantities on hand
+ The on_hand state represents the total number of units that are physically stocked at a location. The on_hand state equals the sum of inventory quantities in the following states:
+ available
+ committed
+ reserved
+ damaged
+ safety_stock
+ quality_control
+ You set inventory in the on_hand state to maintain an accurate count of physical inventory. For example, you might need to set inventory in the on_hand state in the following scenarios:
+ Inventory was received outside of a purchase order
+ A stocktake was completed and inventory needs to be adjusted accordingly
+ You can use the inventorySetOnHandQuantities mutation to set on-hand inventory quantities at a location to a given value. In the reason field in the mutation's input, you can specify one of the following reasons for adjusting on-hand inventory quantities:
+ Reason Description
+ correction Used to correct an inventory error or as a general adjustment reason.
+ cycle_count_available Used to specify an adjusted inventory count due to a discrepancy between the actual inventory quantity and previously recorded inventory quantity.
+ damaged Used to remove units from inventory count due to damage.
+ movement_created Used to specify that an inventory transfer or a purchase order has been created.
+ movement_updated Used to specify that an inventory transfer or a purchase order has been updated.
+ movement_received Used to specify that an inventory transfer or a purchase order has been received.
+ movement_canceled Used to specify that an inventory transfer or a purchase order has been canceled.
+ other Used to specify an alternate reason for the inventory adjustment.
+ promotion Used to remove units from inventory count due to a promotion or donation.
+ quality_control Used to specify that on-hand units that aren't sellable because they're currently in inspection for quality purposes.
+ received Used to specify inventory that the merchant received.
+ reservation_created Used to reserve, or temporarily set aside unavailable units.
+ reservation_deleted Used to remove the number of unavailable units that have been reserved.
+ reservation_updated Used to update the number of unavailable units that have been reserved.
+ restock Used to add a returned unit back to available inventory so the unit can be resold.
+ safety_stock Used to specify that on-hand units are being set aside to help guard against overselling.
+ shrinkage Used when actual inventory levels are less than recorded due to theft or loss.
+ The following example shows how to set the on-hand inventory quantity to 102. The response shows the delta of incrementing the on-hand inventory quantity by 1 because the previous inventory count in the on_hand state was 101.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    inventorySetOnHandQuantities(input: {
+ 3
+      # The reason for adjusting the on-hand inventory quantity.
+ 4
+      reason: "correction",
+ 5
+      # A freeform URI that represents why the inventory change happened. This can be the entity adjusting inventory quantities or the Shopify resource that's associated with the inventory adjustment. For example, a unit in a draft order might have been previously reserved, and a merchant later creates an order from the draft order. In this case, the referenceDocumentUri for the inventory adjustment is the order ID.
+ 6
+      referenceDocumentUri: "gid://shopify/Order/1974482927638",
+ 7
+      # The input that's required to set the on-hand inventory quantity.
+ 8
+      setQuantities: [
+ 9
+        {
+ 10
+          # The ID of the inventory item.
+ 11
+          inventoryItemId: "gid://shopify/InventoryItem/32889739542550",
+ 12
+          # The ID of the location where the inventory is stocked.
+ 13
+          locationId: "gid://shopify/Location/35239591958",
+ 14
+          # The quantity of on-hand inventory to set.
+ 15
+          quantity: 102
+ 16
+        }
+ 17
+      ]
+ 18
+    }
+ 19
+    ) {
+ 20
+      inventoryAdjustmentGroup {
+ 21
+        id
+ 22
+        changes {
+ 23
+          name
+ 24
+          delta
+ 25
+          quantityAfterChange
+ 26
+        }
+ 27
+        reason
+ 28
+        referenceDocumentUri
+ 29
+      },
+ 30
+      userErrors {
+ 31
+        message
+ 32
+        code
+ 33
+        field
+ 34
+      }
+ 35
+    }
+ 36 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "inventorySetOnHandQuantities": {
+ 4
+        "inventoryAdjustmentGroup": {
+ 5
+          "id": "gid://shopify/InventoryAdjustmentGroup/32766566924310",
+ 6
+          "changes": [
+ 7
+            {
+ 8
+              "name": "available",
+ 9
+              // The delta is 1 because there were previously 101 on-hand inventory units, and the request specified setting the on-hand inventory quantity to 102 units.
+ 10
+              "delta": 1,
+ 11
+              // This field always returns `null` immediately after running the mutation. The value of this field is available only after all written adjustments and moves have been processed.
+ 12
+              "quantityAfterChange": null
+ 13
+            }
+ 14
+          ],
+ 15
+          "reason": "Inventory correction",
+ 16
+          "referenceDocumentUri": "gid://shopify/Order/1974482927638"
+ 17
+        },
+ 18
+        "userErrors": []
+ Adjust inventory quantities
+ You can use the inventoryAdjustQuantities mutation to increment or decrement the total amount of inventory that's in the available, damaged, quality_control, reserved, or safety_stock state at a location. For example, a merchant might need to adjust inventory quantities in the following cases:
+ State that needs adjustments Use cases
+ available
+ Inventory was received outside of a purchase order.
+ Inventory needs to be adjusted in alignment with a completed stocktake.
+ damaged
+ Inventory can't be sold due to damage.
+ Inventory isn't usable due to physical deterioration.
+ quality_control
+ Inventory isn't meeting a specified quality grade.
+ Inventory is being measured to meet quality standards.
+ reserved
+ Inventory that is on hold for a customer.
+ Inventory is being sent to a warehouse, but is not yet available.
+ Inventory is allocated to an order by a third-party logistics provider that Shopify is unaware of, which means that the inventory isn't in the committed state.
+ safety_stock
+ Inventory has an extra quantity that's being stored in a warehouse.
+ Inventory is being set aside to insure against fluctuations in demand.
+ The following example shows how to increase the quantity of available inventory units by 2 at a location. The response shows the delta of incrementing the available inventory quantity by 2.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    inventoryAdjustQuantities(input: {
+ 3
+      # The inventory state to receive an adjustment.
+ 4
+      name: "available",
+ 5
+      # The reason for adjusting the inventory quantity of the specified state.
+ 6
+      reason: "correction",
+ 7
+      # A freeform URI that represents why the inventory change happened. This can be the entity adjusting inventory quantities or the Shopify resource that's associated with the inventory adjustment. For example, a unit in a draft order might have been previously reserved, and a merchant later creates an order from the draft order. In this case, the referenceDocumentUri for the inventory adjustment is the order ID.
+ 8
+      referenceDocumentUri: "gid://shopify/Order/1974482927638",
+ 9
+      # The adjustments to the inventory quantity.
+ 10
+      changes: [{
+ 11
+        # The ID of the inventory item.
+ 12
+        inventoryItemId: "gid://shopify/InventoryItem/32889739542550",
+ 13
+        # The ID of the location where the inventory item is stocked.
+ 14
+        locationId: "gid://shopify/Location/35239591958",
+ 15
+        # The inventory adjustment. A positive number (for example, 2) indicates an increase in inventory quantities. A negative number (for example, -2) indicates a decrease in inventory quantities.
+ 16
+        delta: 2,
+ 17
+      }]}) {
+ 18
+      inventoryAdjustmentGroup {
+ 19
+        createdAt
+ 20
+        reason
+ 21
+        app {
+ 22
+          id
+ 23
+        }
+ 24
+        changes {
+ 25
+          name
+ 26
+          delta
+ 27
+          quantityAfterChange
+ 28
+        }
+ 29
+      }
+ 30
+      userErrors {
+ 31
+        field
+ 32
+        message
+ 33
+      }
+ 34
+    }
+ 35 }
+      "inventoryAdjustQuantities": {
+ 4
+        "inventoryAdjustmentGroup": {
+ 5
+          "createdAt": "2022-11-18T00:59:15Z",
+ 6
+          "reason": "Inventory correction",
+ 7
+          "app": {
+ 8
+            "id": "gid://shopify/App/1830279"
+ 9
+          },
+ 10
+          "changes": [
+ 11
+            {
+ 12
+              "name": "available",
+ 13
+              // The available inventory quantity is incremented by 2.
+ 14
+              "delta": 2,
+ 15
+              // This field always returns `null` immediately after running the mutation. The value of this field is available only after all written adjustments and moves have been processed.
+ 16
+              "quantityAfterChange": null
+ 17
+            }
+ 18
+          ]
+ 19
+        },
+ 20
+        "userErrors": []
+ 21
+      }
+ 22
+    }
+ 23 }
+ Move inventory quantities between states
+ You can use the inventoryMoveQuantities mutation to transition inventory quantities between the available state and the reserved, damaged, safety_stock, and quality_control states, or between unavailable states (reserved, damaged, safety_stock, and quality_control).
+ For example, a merchant might need to move inventory quantities between states in the following cases:
+ From state To state Description
+ available reserved Inventory is currently being inspected or repaired. Use draft orders instead of moving inventory manually.
+ 
+ If a merchant is using Shopify POS and needs to set inventory aside for a customer, then you should use a draft order rather than manually moving inventory to the reserved state.
+ available damaged A third-party logistics provider finds and reports damaged inventory.
+ available safety_stock Inventory is being set aside to insure against fluctuations in demand.
+ available quality_control Inventory is being measured to meet quality standards.
+ reserved available A stocktake was completed and inventory needs to be adjusted accordingly.
+ damaged available A previously damaged inventory unit that was set aside has been repaired.
+ safety_stock available Extra inventory is available to help with fluctuations in demand.
+ quality_control available An inventory unit has met quality standards and is ready to be sold.
+ Note
+ Inventory quantities in a reserved, damaged, safety_control, or quality_control state display as Unavailable to merchants that are tracking inventory in the Shopify admin.
+ The following example shows how to move a quantity of 2 inventory units from the available to the reserved state.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    inventoryMoveQuantities(input: {
+ 3
+      # The reason for moving a certain quantity of inventory units to a different state.
+ 4
+      reason: "correction",
+ 5
+      # A freeform URI that represents why the inventory change happened. This can be the entity adjusting inventory quantities or the Shopify resource that's associated with the inventory adjustment. For example, a unit in a draft order might have been previously reserved, and a merchant later creates an order from the draft order. In this case, the referenceDocumentUri for the inventory adjustment is the order ID.
+ 6
+      referenceDocumentUri: "uri://example.com/some/external/reference",
+ 7
+      # The movement of quantities between inventory states
+ 8
+      changes: [{
+ 9
+        inventoryItemId: "gid://shopify/InventoryItem/32889739542550",
+ 10
+        from: {
+ 11
+          # The state that you want to move the inventory quantities from. Valid values: `available`, `reserved`, `damaged`, `safety_stock`, or `quality_control`.
+ 12
+          name: "available",
+ 13
+          # The location where the inventory is stocked.
+ 14
+          locationId: "gid://shopify/Location/35239591958",
+ 15
+        }
+ 16
+        to: {
+ 17
+          # The state that you want to move the inventory quantities to.Valid values: `available`, `reserved`, `damaged`, `safety_stock`, or `quality_control`.
+ 18
+          name: "reserved",
+ 19
+          # The ID of the location where the inventory is stocked.
+ 20
+          locationId: "gid://shopify/Location/35239591958",
+ 21
+          # A freeform URI that represents what changed the inventory quantities. This reference can't be a Shopify global ID (for example, "gid://shopify/Order/123"). This field is used only inside the `from` and / or `to` input when the quantity name isn't "available".
+ 22
+          ledgerDocumentUri: "uri://example.com/some/external/reference"
+ 23
+        }
+ 24
+      # The quantity of inventory units that you want to move to a different state.
+ 25
+      quantity: 2
+ 26
+      }]}) {
+ 27
+      inventoryAdjustmentGroup {
+ 28
+        createdAt
+ 29
+        reason
+ 30
+        app {
+ 31
+          id
+ 32
+        }
+ 33
+        changes {
+ 34
+          name
+ 35
+          delta
+ 36
+          quantityAfterChange
+ 37
+        }
+ 38
+      }
+ 39
+      userErrors {
+ 40
+        field
+ 41
+        message
+ 42
+      }
+ 43
+    }
+ 44 }
+      "inventoryMoveQuantities": {
+ 4
+        "inventoryAdjustmentGroup": {
+ 5
+          "createdAt": "2022-11-18T21:06:46Z",
+ 6
+          "reason": "Inventory correction",
+ 7
+          "app": {
+ 8
+            "id": "gid://shopify/App/1830279"
+ 9
+          },
+ 10
+          "changes": [
+ 11
+            {
+ 12
+              "name": "available",
+ 13
+              // The available inventory quantity is decremented by 2.
+ 14
+              "delta": -2,
+ 15
+              // This field always returns `null` immediately after running the mutation. The value of this field is available only after all written adjustments and moves have been processed.
+ 16
+              "quantityAfterChange": null
+ 17
+            },
+ 18
+            {
+ 19
+              "name": "reserved",
+ 20
+              // The reserved inventory quantity is incremented by 2.
+ 21
+              "delta": 2,
+ 22
+              // This field always returns `null` immediately after running the mutation. The value of this field is available only after all written adjustments and moves have been processed.
+ 23
+              "quantityAfterChange": null
+ 24
+            }
+ 25
+          ]
+ 26
+        },
+ 27
+        "userErrors": []
+ 28
+      }
+ 29
+    }
+ 30 }
+ Schedule changes to inventory quantities
+ You can schedule changes to inventory quantities using the InventorySetScheduledChanges mutation. This involves defining the dates associated with upcoming changes to inventory quantities.
+ For example, if an app user creates a purchase order and adds incoming quantities for a specified inventory item at a location, then they can also create a scheduled change that states the date that the quantities are expected to be transitioning from incoming to available. Information about scheduled changes to inventory quantities can help merchants make better buying or selling decisions.
+ Note
+ The InventorySetScheduledChanges mutation won't automatically change inventory quantities. To change inventory quantities, you still need to use other inventory mutations, such as InventoryAdjustQuantitites, inventorySetOnHandQuantities, or inventoryMoveQuantities.
+ The following example shows how to create a scheduled change that defines the date that quantities are expected to be transitioning from incoming to available.
+ POST https://{shop}.myshopify.com/admin/api/2024-01/graphql.json
+ GraphQL mutation
+ 1 mutation inventorySetScheduledChanges {
+ 2
+    inventorySetScheduledChanges(input: {
+ 3
+      # The reason for moving a certain quantity of inventory units to a different state.
+ 4
+      reason: "correction",
+ 5
+      items: [
+ 6
+        {
+ 7
+          # The ID of the inventory item.
+ 8
+          inventoryItemId: "gid://shopify/InventoryItem/32889739542550",
+ 9
+          # The ID of the location where the inventory is stocked.
+ 10
+          locationId: "gid://shopify/Location/35239591958",
+ 11
+          # A freeform URI that represents what changed the inventory quantities. This reference can't be a Shopify global ID (for example, "gid://shopify/Order/123"). This field is used only inside the `from` and / or `to` input when the quantity name isn't "available".
+ 12
+          ledgerDocumentUri: "uri://example.com/some/external/reference",
+ 13
+          # An array that defines the date that the quantities are expected to be transitioning from one state to another. For example, from `incoming` to `available`.
+ 14
+          scheduledChanges: [
+ 15
+            {
+ 16
+              expectedAt: "2023-12-11T23:37:38Z"
+ 17
+              fromName: "incoming",
+ 18
+              toName: "available"
+ 19
+            }
+ 20
+          ]
+ 21
+        }
+ 22
+      ],
+ 23
+      # A freeform URI that represents why the inventory change happened. This can be the entity adjusting inventory quantities or the Shopify resource that's associated with the inventory adjustment. For example, a unit in a draft order might have been previously reserved, and a merchant later creates an order from the draft order. In this case, the referenceDocumentUri for the inventory adjustment is the order ID.
+ 24
+      referenceDocumentUri: "uri://example.com/some/external/reference"
+ 25
+      }) {
+ 26
+        scheduledChanges {
+ 27
+          expectedAt
+ 28
+          fromName
+ 29
+          toName
+ 30
+          quantity
+ 31
+          ledgerDocumentUri
+ 32
+          inventoryLevel {
+ 33
+            id
+ 34
+            item {
+ 35
+              variant {
+ 36
+                id
+ 37
+                displayName
+ 38
+              }
+ 39
+            }
+ 40
+          location {
+ 41
+            name
+ 42
+            id
+ 43
+          }
+ 44
+        }
+ 45
+      }
+ 46
+      userErrors {
+ 47
+        message
+ 48
+        field
+ 49
+      }
+ 50
+    }
+ 51 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "inventorySetScheduledChanges": {
+ 4
+        "scheduledChanges": [
+ 5
+          {
+ 6
+            "expectedAt": "2023-12-11T23:37:38Z",
+ 7
+            "fromName": "incoming",
+ 8
+            "toName": "available",
+ 9
+            "quantity": 4,
+ 10
+            "ledgerDocumentUri": "uri://example.com/some/external/reference",
+ 11
+            "inventoryLevel": {
+ 12
+              "id": "gid://shopify/InventoryLevel/69407473686?inventory_item_id=32889739542550",
+ 13
+              "item": {
+ 14
+                "variant": {
+ 15
+                  "id": "gid://shopify/ProductVariant/31365818744854",
+ 16
+                  "displayName": "French Bulldog on a swing"
+ 17
+                }
+ 18
+              },
+ 19
+              "location": {
+ 20
+                "name": "180 Switchmen Street",
+ 21
+                "id": "gid://shopify/Location/35239591958"
+ 22
+              }
+ 23
+            }
+ 24
+          }
+ 25
+        ],
+ 26
+        "userErrors": []
+ 27
+      }
+ 28
+    },
+ 29
+    "extensions": {
+ 30
+      "cost": {
+ 31
+        "requestedQueryCost": 14,
+ 32
+        "actualQueryCost": 14,
+ 33
+        "throttleStatus": {
+ 34
+          "maximumAvailable": 1000,
+ 35
+          "currentlyAvailable": 986,
+ 36
+          "restoreRate": 50
+ 37
+        }
+ 38
+      }
+ 39
+    }
+ 40 }
+ Next steps
+ Learn about other types of fulfillment apps that you can create to integrate into order management, fulfillment, and returns workflows.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Inventory object relationships
+ Step 1: Retrieve IDs for inventory locations and inventory items
+ Step 2: Query inventory quantities
+ Step 3: Manage inventory quantities
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

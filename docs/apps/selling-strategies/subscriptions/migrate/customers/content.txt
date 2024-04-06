@@ -1,0 +1,255 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Overview
+ Migrate customer information
+ Migrate existing subscription
+ UX guidelines
+ Deferred purchase options
+ Build a user interface
+ Billing
+ App Store
+ Migrate customer information to Shopify
+ Shopify has built a set of tools to import pay-as-you-go contracts into Shopify without the need to migrate credit cards directly.
+ In this tutorial, you’ll learn how to migrate customer information from the following payment gateways to Shopify:
+ Stripe
+ Braintree
+ PayPal Express
+ Authorize.net
+ Stripe or Braintree will connect as a legacy subscription payment gateway for billing your existing contracts, while all new or updated contracts charge against Shopify Payments. Authorize.net can be setup the same way if you wish to use Shopify Payments after the migration.
+ Other payment gateways will remain the same after the migration.
+ Caution
+ We strongly recommend that you pause any billing in your current application while migrating customer payment methods and contracts. Pausing billing will help you avoid double-billing a contract.
+ Requirements
+ This tutorial assumes that you've already completed the Subscriptions API migration guide.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Configure your payment gateway to work with subscriptions
+ Import any missing customers
+ Create new payment methods for customers
+ Step 1: Configure your payment gateway to work with subscriptions
+ The steps for configuring your payment gateway to work with subscriptions depend on the payment gateway that you're using.
+ Migrate from Stripe
+ Migrate from Braintree
+ Migrate from Authorize.net
+ Migrate from PayPal Express
+ Migrate from Stripe
+ If your primary payment gateway is Shopify Payments and you're migrating from Stripe, then you need to use Stripe's Payment Intents API to connect Stripe as a secondary payment gateway. The process is also compatible with Stripe's Charges API.
+ Caution
+ Customized charge flows, including specialized payment flags, aren't supported and might result in an elevated rate of authorization failures.
+ To connect a merchant's current Stripe account to Shopify as a secondary gateway, redirect the merchant to the following URL:
+ https://admin.shopify.com/store/{shop}/payments/legacy_subscription
+ We recommend that you open the redirect URL in a new browser window so that merchants can return to your migration page when they complete the process.
+ Merchants are redirected to Stripe and asked to initiate the connection process. After merchants successfully initiate the connection process, they're redirected back to the payment settings page and a banner notifies them of a successful connection.
+ Migrate from Braintree
+ If you're migrating from Braintree, and you sell internationally, then you need to consider that Braintree's legacy payment gateway integration doesn't support multi-currency subscription contracts.
+ If your primary payment gateway is Shopify Payments and you're migrating from Braintree, then you need to use Braintree's OAuth to connect Braintree as a secondary payment gateway.
+ To connect a merchant's current Braintree account to Shopify as a secondary gateway, redirect the merchant to the following URL:
+ https://admin.shopify.com/store/{shop}/payments/legacy_subscription_braintree
+ We recommend that you open the redirect URL in a new browser window so that merchants can return to your migration page when they complete the process.
+ Merchants are redirected to Braintree and asked to initiate the connection process. After merchants successfully initiate the connection process, they're redirected back to the payment settings page and a banner notifies them of a successful connection.
+ Braintree uses a separate sandbox account for test mode. To connect to a Sandbox Braintree account, use the following URL:
+ https://admin.shopify.com/store/{shop}/payments/legacy_subscription_braintree?sandbox=true
+ Migrate from Authorize.net
+ If your primary payment gateway is Shopify Payments and you're migrating from Authorize.net, then you need to use Authorize.net's API Login ID and Transaction Key to connect Authorize.net as a secondary payment gateway.
+ To connect a merchant's current Authorize.net account to Shopify as a secondary gateway, redirect the merchant to the following URL:
+ https://admin.shopify.com/store/{shop}/settings/payments/legacy_subscription_authorize_net
+ We recommend that you open the redirect URL in a new browser window so that merchants can return to your migration page when they complete the process.
+ Merchants are redirected to Shopify and asked to enter their credentials for Authorize.net. After merchants successfully enter their credentials, they're redirected back to the payment settings page and a banner notifies them of a successful connection.
+ Checking if your payment gateway is configured for subscriptions
+ Poll the shop setting to determine whether Shopify has successfully established a connection with Stripe, Braintree, or Authorize.net:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    shop {
+ 3
+      features {
+ 4
+        legacySubscriptionGatewayEnabled
+      "shop": {
+ 4
+        "features": {
+ 5
+          "legacySubscriptionGatewayEnabled": true
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9 }
+ Migrate from PayPal Express
+ If you use the PayPal Express payment gateway, then you need to verify that PayPal Express is enabled and the merchant is approved to use reference transactions from PayPal.
+ Poll the shop setting to determine whether Shopify has successfully verified that the PayPal account is ready to be used for subscriptions:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    shop {
+ 3
+      features {
+ 4
+        paypalExpressSubscriptionGatewayStatus
+ 5
+      }
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shop": {
+ 4
+        "features": {
+ 5
+          "paypalExpressSubscriptionGatewayStatus": "ENABLED"
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9 }
+ If the field value is DISABLED, then the merchant must contact PayPal to be approved for reference transactions. The Payments settings page will display a banner to the merchant with instructions. A value of PENDING means that Shopify is still determining the merchant’s eligibility.
+ Determine eligibility to use subscriptions with Shopify
+ The following query verifies that at least one payment gateway allows customers to purchase subscriptions. For stores on a Shopify Plus plan, the query verifies that checkout can display subscription information.
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    shop {
+ 3
+      features {
+ 4
+        eligibleForSubscriptionMigration
+ 5
+      }
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shop": {
+ 4
+        "features": {
+ 5
+          "eligibleForSubscriptionMigration": true
+ 6
+        }
+ Step 2: Import payment methods for customers
+ Tip
+ Follow the Determine customer payment methods status tutorial to know when Shopify successfully processes a payment method.
+ Stripe
+ Braintree
+ PayPal Express
+ Authorize.net
+ You can associate Stripe payment methods with the customers that you import into Shopify by using the CustomerPaymentMethodRemoteCreate mutation.
+ The following example uses a mutation to create a payment method for a customer:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 mutation CreateRemoteCreditCard(
+ 2
+    $customerId: ID!,
+ 3
+    $remoteReference: CustomerPaymentMethodRemoteInput!) {
+ 4
+    customerPaymentMethodRemoteCreate(
+ 5
+      customerId: $customerId,
+ 6
+      remoteReference: $remoteReference
+ 7
+    ) {
+ 8
+      customerPaymentMethod {
+ 9
+        id
+ 10
+        instrument {
+ 11
+          ... on CustomerCreditCard {
+ 12
+            brand
+ 13
+            lastDigits
+ 14
+          }
+ 15
+        }
+ Example input
+ 1 {
+ 2
+    "customerId": "gid://shopify/Customer/1",
+ 3
+    "remoteReference": {
+ 4
+      "stripePaymentMethod": {
+ 5
+        "customerId": "cus_stripe",
+ 6
+        "paymentMethodId": ""
+ 7
+      }
+ 8
+    }
+ 9 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerPaymentMethodRemoteCreate": {
+ 4
+        "customerPaymentMethod": {
+ 5
+          "id": "gid://shopify/CustomerPaymentMethod/5ccb49cf4f4a4a0c75e4351066b761cb",
+ 6
+          "instrument": {
+ 7
+            "brand": "bogus",
+ 8
+            "lastDigits": ""
+ 9
+          }
+    },
+ 13
+    "extensions": {
+ 14
+      "cost": {
+ 15
+        "requestedQueryCost": 11,
+ 16
+        "actualQueryCost": 11
+ 17
+      }
+ 18
+    }
+ 19 }
+ 
+ Note
+ If the Stripe payment method ID isn't available, then Shopify will use the default payment method of the customer.
+ Note: If you have any missing customers, then you can use the customerCreate and customerUpdate mutations to add customers to Shopify. Customer records must include the email address, first name, and last name fields. Shopify uses this data to send automated email messages to customers, such as subscription contracts updates.
+ 
+ Bulk import customers and payment methods
+ You can use bulk operations to import large volumes of customers and payment methods without incurring any API limit costs.
+ Note
+ If the solutions suggested on this page don't adequately resolve your situation, then contact our support team.
+ Next steps
+ Learn how to migrate existing subscription contracts to Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ What you'll learn
+ Step 1: Configure your payment gateway to work with subscriptions
+ Step 2: Import payment methods for customers
+ Bulk import customers and payment methods
+ Next steps
+ Updates & News

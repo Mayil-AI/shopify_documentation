@@ -1,0 +1,60 @@
+TextField
+ Thumbnail
+ Banner
+ Banners inform merchants about important changes or persistent conditions. Use this component if you need to communicate to merchants in a prominent way.
+ Learn more about best practices and guidelines on using Banners.
+ JavaScript
+ React
+ 1 import {extend, Text, Banner} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const banner = root.createComponent(Banner, {
+ 5
+      action: {
+ 6
+        onAction: () => console.log('Pressed the action'),
+ 7
+        content: 'Press me',
+ 8
+      },
+ 9
+      status: 'warning',
+ 10
+      title: 'This is a warning',
+ 11
+      onDismiss: () => console.log('Closed'),
+ 12
+    });
+ 13
+ 14
+    const bannerText = root.createComponent(Text);
+ 15
+    bannerText.appendChild('Here is the warning.');
+ 16
+    banner.appendChild(bannerText);
+ 17
+    root.appendChild(banner);
+ 18
+ 19
+    root.mount();
+ 20 });
+ Props
+ optional = ?
+ Name Type Description
+ action? BannerAction Button to display at bottom of banner.
+ onDismiss? () => void Callback fired when banner is dismissed.
+ status? "success" | "info" | "attention" | "warning" | "new" Visual treatment of the banner based on message purpose.
+ title? string Title of the banner.
+ BannerAction
+ Name Type Description
+ onAction () => void Callback when the Banner action button is pressed.
+ content string Button label text.
+ Guidelines
+ 📱 Do not nest other components other than Text. They will not be rendered. Use nested Text to render text content within the Banner.
+ 📱 Do not nest banners inside horizontal Stacks, Pressables, ResourceItems, Cards, or CardSections. This will result in unintended behavior.
+ ✅ Do 🛑 Don't
+ Place Banners at the top of the page or section they apply to Use too many Banners at one time
+ Use status to provide additional context to the merchant
+ For more guidelines, refer to Polaris' Banner best practices.
+ Was this section helpful?

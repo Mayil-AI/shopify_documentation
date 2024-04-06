@@ -1,0 +1,50 @@
+Delivery and shipping
+ Product offers
+ Payments
+ Thank you and Order status
+ Overview
+ Add a survey
+ UX guidelines
+ Localized UI extensions
+ Test UI extensions
+ Best practices
+ Distribution
+ Billing
+ App Store
+ Thank you and Order status customization
+ The Thank you and Order status pages are shown to customers at the end of checkout and can be customized using checkout UI extensions. This guide introduces how extensions on the pages work, and provides some resources for getting started.
+ How it works
+ You can use a UI extension to add custom content to the Thank you and Order status pages. The Thank you page is displayed to a customer as an initial purchase confirmation after they complete a checkout. If a customer attempts to return to the Thank you page or check their order status later on, then they're shown the Order status page instead.
+ The customer can refresh or revisit the page throughout the order creation and fulfillment process to review the details of their order, and any updates. For example, customers often visit the Order status page after clicking on a link in the order confirmation email.
+ You can use an extension on the Thank you and Order status pages to add custom content such as:
+ Example Description Page(s)
+ Survey requests Ask a customer to complete a survey after they've completed checkout. Thank you
+ Product reviews Ask a customer to complete a feedback form when they revisit their purchase. Order status
+ Upsell offers Prompt a customer to add more products to their initial order after they've completed payment through order editing. Order status
+ Social sharing Display additional social media content at the end of checkout. Thank you and Order status
+ Download links Offer download links for digital goods. Thank you and Order status
+ Getting started
+ Follow the getting started tutorial to learn how to build extensions for the Thank you and Order status pages.
+ Add custom content to Thank you and Order status pages
+ Learn how to add a survey to the Thank you and Order status pages.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building Thank you and Order status page extensions.
+ Checkout UI extensions API reference
+ Consult the API reference for checkout UI targets and their respective types.
+ Components for checkout UI extensions
+ Learn about the components that are available in checkout UI extensions.
+ Checkout extension configuration
+ Learn about the properties that you can configure in your checkout UI extension.
+ UX guidelines for Thank you and Order status pages
+ Improve the quality of your Thank you and Order status pages by following our UX guidelines.
+ Limitations and considerations
+ There's currently no support for APIs that directly mutate an order in this developer preview. You can use fetch to make network calls to web services for your extension needs. For extensions that need to make changes to the order being created, consider making a post-purchase extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Getting started
+ Developer tools and resources
+ Limitations and considerations
+ Updates & News
+ Developer changelog

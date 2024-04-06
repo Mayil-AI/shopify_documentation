@@ -1,0 +1,620 @@
+Theme app extensions framework
+ A theme app extension is a bundle of app blocks, app embed blocks, assets, and snippets.
+ File structure
+ When you create a theme app extension, Shopify adds the following theme-app-extension directory and subdirectories to your app:
+ Theme app extension file structure
+ Newly-generated extension
+ Populated
+ 1 └── extensions
+ 2
+    └── my-theme-app-extension
+ 3
+        ├── assets
+ 4
+        ├── blocks
+ 5
+        ├── snippets
+ 6
+        ├── locales
+ 7
+        ├── package.json
+ 8
+        └── shopify.extension.toml
+ Theme app extension subdirectory descriptions
+ Subdirectory Description
+ assets
+ Contains CSS, JavaScript, and other static app content that gets injected into themes.
+ Apps can load assets using either the JavaScript and stylesheet schema attributes or from the asset_url and asset_img_url Liquid URL filters.
+ blocks Contains app blocks for themes and app embed block Liquid files.
+ snippets Contains Liquid snippet files for the theme app extension, which are bits of code that you can reference in other app blocks and app embed blocks.
+ locales
+ Contains JSON locale files to host merchant-facing and customer-facing translations. These files are similar to theme locale files in their schema and usage. You can include the following file types:
+ Schema locale files: Contains merchant-facing translations. Use these files to translate the settings that appear in the theme editor.
+ Storefront locale files: Contains customer-facing translations. Use these files to translate the text that appears in the storefront when your app block or app embed block is rendered.
+ Note: Merchants can't edit the strings in theme app extension storefront locale files.
+ shopify.extension.toml
+ A configuration file containing basic app configuration settings, including the extension name and type (theme).
+ App blocks for themes
+ Apps that inject inline content on a page extend themes using app blocks. Merchants can add app blocks to a compatible theme section, or as wrapped app blocks that are added at the section level. Create an app block by setting the target in the schema to section.
+ By default, themes don't include app blocks after an app is installed. Merchants need to add the app blocks to the theme from the Apps section of the theme editor.
+ Tip
+ Build app blocks responsively, so that they can adapt to the size of the sections to which they're added.
+ Use app blocks for the following types of apps:
+ Apps that you want to automatically point to dynamic sources, such as product reviews apps and star ratings apps.
+ Apps that merchants might want to reposition on a page.
+ Apps that should span the full width of a page.
+ App block support in themes
+ For app blocks to function, a theme must contain the following:
+ JSON templates.
+ Sections that support and render blocks of type @app.
+ Refer to Dawn's main product section for an example implementation.
+ You can verify whether a theme supports app blocks .
+ Example app block
+ The following example creates a span element with a style attribute. The style value (color: {{ block.settings.color }}) searches inside of schema for a settings key, and then searches for a color key, which contains the "default": "#000000" value. This value then populates the style attribute with the default color #000000, which renders the App blocks let you build powerful integrations with online store themes! text in black.
+ Example app block
+ 1 <span style="color: {{ block.settings.color }}">
+ 2 App blocks let you build powerful integrations with online store themes.
+ 3 </span>
+ 4
+ 5 {% render "app_snippet" %}
+ 6 {% schema %}
+ 7
+    {
+ 8
+      "name": "Hello World",
+ 9
+      "target": "section",
+ 10
+      "enabled_on": {
+ 11
+        "templates": ["index"]
+ 12
+      },
+ 13
+      "stylesheet": "app.css",
+ 14
+      "javascript": "app.js",
+ 15
+      "settings": [
+ 16
+          { "label": "Color", "id": "color", "type": "color", "default": "#000000" }
+ 17
+      ]
+ 18
+    }
+ 19 {% endschema %}
+ Tip
+ For a more complex example, refer to Shopify's product reviews app.
+ Examples of app blocks in a theme
+ The following is an example of an app block added to a section:
+ The following is an example of a wrapped app block:
+ Benefits of app blocks
+ App blocks are flexible. Merchants can use the theme editor to add, remove, and reorder app blocks at the section level for easy customization.
+ An app block can use autofill resource settings to automatically point to dynamic sources and ensure that content remains in sync with its parent section. For example, an app block on the Products page can point to a dynamic source to show data for different products as they display on the page.
+ App embed blocks
+ Apps that don't have a UI component, or that add floating or overlaid elements, extend themes using app embed blocks. Shopify renders and injects app embed blocks before HTML </head> and </body> closing tags. Create an app embed block by setting the target in the schema to either head or body.
+ By default, app embed blocks are deactivated after an app is installed. Merchants need to activate app embed blocks in the theme editor, from Theme Settings > App embeds. However, your app can provide merchants with a deep link, post installation, to activate an app embed block automatically.
+ Use app embed blocks for the following types of apps:
+ Apps that provide a floating or overlaid component to a page, such as chat bubble apps and product image badge apps.
+ Apps that add SEO meta tags, analytics, or tracking pixels.
+ App embed blocks are supported in vintage and in Online Store 2.0 themes, because they don't rely on sections or JSON templates. However, app embed blocks can't point to dynamic sources, because these blocks only have access to the Global Liquid scope for the page on which they're rendered.
+ Example app embed block code
+ Tip
+ For a more complex example, refer to our getting started sample code.
+ Example app embed block
+ 1 <div style="position: fixed; bottom: 0; right: 0">
+ 2
+      {{ "kitten.jpg" | asset_url | img_tag }}
+ 3 </div>
+ 4 {% schema %}
+ 5
+    {
+ 6
+      "name": "App Embed",
+ 7
+      "target": "body",
+ 8
+      "settings": []
+ 9
+    }
+ 10 {% endschema %}
+ Example of an app embed block in a theme
+ Benefits of app embed blocks
+ App embed blocks are supported in vintage and Online Store 2.0 themes. This means any merchant can use your app without you needing to maintain two installation paths: one for vintage themes and one for Online Store 2.0 themes.
+ After installation, merchants can use the theme code editor to configure app embed block settings for a more customized experience.
+ App embed blocks allow you to only load scripts on specific pages, which isn't possible with the ScriptTag REST Admin API or GraphQL Admin API resource. Loading scripts on specific pages minimizes your app's performance impact by limiting it to only the pages where it's needed.
+ Conditional app blocks
+ You can control the visibility of an app block or app embed block based on a custom condition. For example, you might want to limit content based on plan tier, or geographic location.
+ The condition can be included in the block's schema with the available_if attribute, and the state of the condition is stored in an app-data metafield. The metafield can be accessed through the Liquid app object.
+ Note
+ The app metafield must be a boolean type metafield.
+ For example, if you had an app metafield with the namespace of conditional and key of block1, then you might use the following schema:
+ Conditional app block example
+ 1 {% schema %}
+ 2
+   {
+ 3
+     "name": "Conditional App block",
+ 4
+     "target": "section",
+ 5
+     "stylesheet": "app.css",
+ 6
+     "javascript": "app.js",
+ 7
+     "available_if": "{{ app.metafields.conditional.block1 }}",
+ 8
+     "settings": [
+ 9
+        {
+ 10
+          "label": "Colour",
+ 11
+          "id": "colour",
+ 12
+          "type": "color",
+ 13
+          "default": "#000000"
+ 14
+        }
+ 15
+     ]
+ 16
+   }
+ 17 {% endschema %}
+ Schema
+ The schema for app blocks and app embed blocks is similar to the theme section schema. It supports the following attributes, some of which are unique to app blocks and app embed blocks:
+ Schema attributes
+ Attribute Description Required
+ name The title in the theme editor for the app block or app embed block.
+ 
+ Keep app block and app embed block names under 25 characters so they fit in the theme editor sidebar.
+ 
+ Don't include the title of your app in the name of the block. The title of your app displays below the name of the app block or app embed block in app block pickers, the app embeds panel, and the app details panel. Yes
+ target
+ Where the block is located. The possible values are section, head, and body.
+ The value for app blocks is section. The values for app embed blocks are head and body.
+ Yes
+ JavaScript
+ A JavaScript file to load from the assets subdirectory.
+ If the block is present on the page, then you can load this file automatically by adding a <script async> tag in the <head> section of the page.
+ If a merchant adds multiple app blocks or app embed blocks that reference the same JavaScript file to a page, then the file is only included once when the page is loaded.
+ No
+ stylesheet
+ A CSS file to load from the assets subdirectory.
+ If the block is present on the page, then you can load this file automatically by adding a <link rel="stylesheet"> tag in the <head> section of the page.
+ If a merchant adds multiple app blocks or app embed blocks that reference the same stylesheet file to a page, then the file is only included once when the page is loaded.
+ No
+ enabled_on
+ Limit an app block to specific templates and section groups, or limit an app embed block to specific templates.
+ Refer to theme section schema for more details.
+ App blocks and app embed blocks can't be rendered on checkout step pages.
+ You can use only one of enabled_on or disabled_on.
+ No
+ disabled_on
+ Prevent app block from being used in specific templates and section groups, or prevent an app embed block from being used in specific templates.
+ Refer to theme section schema for more details.
+ App blocks and app embed blocks can't be rendered on checkout step pages.
+ You can use only one of enabled_on or disabled_on.
+ No
+ class
+ Additional CSS classes to be included in the wrapping tag element, similar to theme section classes.
+ Theme app extensions will always include the shopify-block class.
+ No
+ tag
+ If set, then a tag wraps the block's output. If not set, then the output is wrapped in a div.
+ No
+ settings
+ Settings that you provide to the merchant for customizing the app block or app embed block. These settings appear in the theme editor when the block is selected. Setting values can be accessed using the settings Liquid object.
+ No
+ default
+ A default setting configuration for the block. Refer to the section schema for an example.
+ No
+ available_if
+ Determines whether the block will be rendered on the storefront and visible in the theme editor.
+ The value must be a reference to an app-data metafield value. If the value of the app-data metafield returns true, then the block is rendered and available in the theme editor.
+ Refer to Conditional app blocks for an example.
+ No
+ Recommendations
+ Review the following recommendations for building theme app extensions:
+ Autofill
+ Deep linking
+ Performance
+ Theme editor compatibility
+ Detecting app blocks and app embed blocks
+ Autofill
+ autofill is an app block setting that's automatically set to dynamic sources when merchants add an app block to a section.
+ App blocks can include settings in the settings schema object, like sections do. You can give settings that reference resources an additional autofill attribute. autofill indicates that Shopify will determine the setting value automatically when merchants add the app block to a section.
+ autofill setting values will be set to one of the following sources:
+ A dynamic source pointing to the parent section's resource setting of the same type.
+ A dynamic source pointing to the template's global resource.
+ Autofill example
+ A featured product section will have a setting of type product, which allows a merchant to choose which product to display as featured. An app block that has a product setting with autofill set will automatically use the featured product.
+ In the following example, block.settings.product will use the section's product setting:
+ Autofill example
+ 1 {{ block.settings.product.handle }}
+ 2
+ 3 {% schema %}
+ 4 {
+ 5
+    ...
+ 6
+         "settings": [
+ 7
+           {
+ 8
+             "type": "product",
+ 9
+             "id": "product",
+ 10
+             "label": "Product",
+ 11
+             "autofill": true
+ 12
+           }
+ 13
+         ],
+ 14
+       ...
+ 15 }
+ 16 {% endschema %}
+ Deep linking
+ Post-installation, your app can provide deep links to help merchants add app blocks or activate app embed blocks directly in a theme. If a merchant clicks a deep link, then they're taken to the theme editor to preview the app block or app embed block before saving.
+ Deep linking simplifies your app's installation because merchants won't need to navigate to the theme editor, find the block, and then act on it. Instead, your app does the work for them. Merchants can preview the block before saving and have more control over what they include in their online store.
+ App block deep linking
+ You can implement a deep link to add an app block to the following locations:
+ Any JSON template. For example, the Default product template.
+ A header, footer, or aside section group. For example, the Header section group.
+ Any main section that supports app blocks. For example, the main-product section.
+ A specific section that supports app blocks by targeting its ID. For example, the Newsletter section on the index.json template.
+ After you add the app block in the theme editor, a coach mark helps the merchant move forward with next steps:
+ Note
+ You can deep link only to sections that support app blocks. Additionally, you can add only one app block at a time with a deep link.
+ App block deep link query parameters
+ App block deep link URL query parameters
+ Query parameter Description
+ {template}
+ The JSON template to which the app block should be added. If not set, then Shopify will default to the index.json template.
+ {uuid}
+ The ID of the theme app extension.
+ Retrieve the SHOPIFY_EXTENSION_NAME_ID value from your project's .env file. This file is only available after you run the deploy command for the first time.
+ {handle}
+ The filename of the block's Liquid file.
+ For example, if the Liquid file is located at theme-app-extension/blocks/app-block.liquid, then the {handle} is app-block.
+ To see this Liquid file in the context of an app block, refer to the theme app extension getting started sample code.
+ {header|footer|aside}
+ The section group to which the app block should be added. Only “header,” “footer,” and “aside” are supported.
+ {sectionID}
+ The ID of the section to which the app block should be added. The sectionID must be prefixed by the string sectionId:
+ Go to JSON templates: Section data for an example of where a section ID can be found in a JSON template file.
+ Example URLs
+ Your app needs to redirect merchants to a URL with populated parameters.
+ Adding and app block to any JSON template
+ The following is the deep link structure for adding an app block to any JSON template in a new Apps section:
+ App block URL
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template=${template}&addAppBlockId={uuid}/{handle}&target=newAppsSection
+ For example, the deep link to add the customer_review.liquid block to the Default product template might look like the following:
+ Adding customer_review block to the Default product template
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template=product&
+ 2 addAppBlockId=8f1f0756-d5fc-4c36-b7f4-b2aa8828ced8/customer_review&target=newAppsSection
+ Tip
+ Your app can target any JSON template in a theme that's published in the Shopify Theme Store. This is because all JSON templates are required to support app blocks in the Apps section.
+ Adding an app block to a section group
+ The following example shows a deep link structure for adding an app block to the header, footer, or aside section group:
+ App block URL
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template={template}&addAppBlockId={uuid}/{handle}&target=sectionGroup:{header|footer|aside}
+ For example, the deep link to add the announcement_bar.liquid block to the Header section group might look like the following:
+ Adding announcement_bar block to the Header section group
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template=product&
+ 2 addAppBlockId=8f1f0756-d5fc-4c36-b7f4-b2aa8828ced8/announcement_bar&
+ 3 target=sectionGroup:header
+ Tip
+ You can verify the availability of a section group, such as header, footer, or aside, in a theme using the read_themes access scope. This allows you to check if a specific section group is used in a theme before providing a merchant with a deep link to it.
+ Adding an app block to the main section
+ The main section is a section with ID="main".
+ The following example shows a deep link structure for adding an app block to the main section of a template:
+ App block URL
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template={template}&
+ 2 addAppBlockId={uuid}/{handle}&target=mainSection
+ For example, the deep link to add the star_rating.liquid block to the main section of the product.json template might look like the following:
+ Adding star_rating block to the main section of the product template
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template=product&
+ 2 addAppBlockId=8f1f0756-d5fc-4c36-b7f4-b2aa8828ced8/star_rating&target=mainSection
+ The following example of a theme's product.json template includes a section with an id of main.
+ templates/product.json
+ 1 {
+ 2
+    "sections": {
+ 3
+      "main": {
+ 4
+        "type": "product",
+ 5
+        "settings": {
+ 6
+          "show_vendor": true
+ 7
+        }
+ 8
+      },
+ 9
+    },
+ 10
+    "order": [
+ 11
+      "main",
+ 12
+    ]
+ 13 }
+ Tip
+ Only the main section of the default product template is required to support app blocks. However, we recommend that all sections that have blocks should support app blocks. You can verify compatibility with the read_themes access scope.
+ Adding an app block to a section using its ID
+ The following example shows a deep link structure for adding an app block to a section by targeting its ID:
+ App block URL
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template={template}&addAppBlockId={uuid}/{handle}&target=sectionId:{sectionId}
+ For example, the deep link to add the form.liquid block to the Newsletter section of the index.json template might look like the following:
+ Adding form block to the Newsletter section of the index.json template
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?template=index&
+ 2 addAppBlockId=8f1f0756-d5fc-4c36-b7f4-b2aa8828ced8/form&
+ 3 target=sectionId:5ac3e115-be8f-4426-a09c-4397a1672899
+ You can find the parameters for the section you want to target in the template’s JSON file. For example, the parameters of the Newsletter of the index.json template are shown below:
+ templates/index.json
+ 1 {
+ 2
+    "sections": {
+ 3
+      "5ac3e115-be8f-4426-a09c-4397a1672899": {
+ 4
+        "type": "newsletter"
+ 5
+      }
+ 6
+    },
+ 7
+    "order": [
+ 8
+      "5ac3e115-be8f-4426-a09c-4397a1672899"
+ 9
+    ]
+ 10 }
+ Tip
+ You can verify the availability of a section ID in a theme using read_themes access scope. This allows you to check if a specific section (for example, Newsletter or Featured product) is used within a theme before providing a merchant with a deep link to it.
+ App block errors and edge cases
+ In the following scenarios, an error message is shown to merchants to guide them with next steps. When possible, you should take steps to prevent these errors.
+ App block errors and edge cases
+ Error scenario How to prevent
+ Section limit has been reached in template or section group
+ This error can’t be prevented. The merchant will be invited to remove a section and try again.
+ Template is not found
+ You can prevent this error by having your app verify the availability of a template, section group, or section with the read_themes access scope.
+ Section is not found
+ If the error occurs, the app block will fall back to be added to the template instead.
+ You can prevent this error by having your app verify the availability of a template, section group, or section with the read_themes access scope.
+ Section group is not found
+ You can prevent this error by having your app verify the availability of a template, section group, or section with the read_themes access scope.
+ Template type is not supported in app block schema
+ You can prevent this error by making sure that your app only deep links to templates that are supported in your app block’s schema.
+ Typo in deep link URL
+ You can prevent this error by testing deep links to confirm they work and don’t contain typos.
+ Template doesn’t have a resource to be rendered
+ This error can’t be prevented. The merchant will be invited to create a resource, such as a product, collection, or blog post, and then try again.
+ Template is liquid
+ You can prevent this error by having your app verify compatibility of a template with the read_themes access scope.
+ Section doesn’t support blocks or app blocks
+ If the error occurs, the app block will fall back to be added to the template instead.
+ You can prevent this error by having your app verify compatibility of a section with the read_themes access scope.
+ Block limit has been reached in a section
+ This error can’t be prevented. The merchant will be invited to remove a block and try again.
+ App embed block deep linking
+ You can implement a deep link to activate an app embed block directly in a theme.
+ App embed block deep link URL query parameters
+ Deep link URL query parameters
+ Query parameter Description
+ context
+ The context in which the app is being activated. The value is apps.
+ {template}
+ The templates on which a block is rendered. If not set, then Shopify will default to the index template.
+ The possible values are product, collection, article, and blog.
+ {uuid}
+ The ID of the theme app extension.
+ Retrieve the SHOPIFY_<EXTENSION_NAME>_ID value from your project's .env file. This file is only available after you run the deploy command for the first time.
+ {handle}
+ The filename of the block's Liquid file.
+ For example, if the Liquid file is located at theme-app-extension/blocks/app-embed.liquid, then the {handle} is app-embed.
+ To see this Liquid file in the context of an app embed block, refer to the theme app extension getting started sample code.
+ App embed block deep linking URL
+ Your app needs to redirect merchants to the following URL, with URL query parameters populated:
+ App embed block URL
+ 1 https://<myshopifyDomain>/admin/themes/current/editor?context=apps&template=${template}&activateAppId={uuid}/{handle}
+ You can retrieve the <myshopifyDomain> value from the Shop REST Admin API resource or the Shop GraphQL Admin API object.
+ Performance
+ All files inside the assets/ folder are automatically served from Shopify's CDN for fast, reliable asset delivery. Reference your assets by using either the javascript and stylesheet schema attributes or using the asset_url and asset_img_url Liquid URL filters.
+ For app embed blocks, take advantage of their ability to only load scripts on specific pages.
+ Theme editor compatibility
+ You need to ensure that the app works in the theme editor environment. If necessary, you can set your app to detect the theme editor, so that you can adjust your app to work in that environment.
+ Detecting app blocks and app embed blocks
+ If you want to identify whether a merchant has added app blocks to their theme, or enabled app embed blocks, you can use the Asset REST Admin API resource to look for blocks that match your app type.
+ Detecting app blocks
+ When a merchant adds an app block to a theme, a reference to the app block is added to the template JSON file.
+ You can identify your app block by the block type, which uses the following syntax:
+ 1 "<block_unique_ID>": {
+ 2
+    "type:": "<partner_name>:\/\/apps\/<app_name>\/blocks\/<block_name>\/<unique_ID>"
+ An app block is given a unique ID, and the type value is appended with a unique ID which identifies the app.
+ The following example contains two app blocks from the same app: one in the main-product section, and one in an apps section.
+ templates/product.json
+ 1 {
+ 2
+    "sections": {
+ 3
+      "main": {
+ 4
+        "type": "main-product",
+ 5
+        "blocks": {
+ 6
+          "title": {
+ 7
+            "type": "title",
+ 8
+            "settings": {
+ 9
+            }
+ 10
+          },
+ 11
+          "dc0a5152-193b-4663-9203-6153357d0c8e": {
+ 12
+            "type": "shopify:\/\/apps\/product-reviews\/blocks\/star_rating\/bae150af-8da8-48b2-9867-398188115e5f",
+ 13
+            "settings": {
+ 14
+              "stars_fill_color": "#44ff00",
+ 15
+              "star_size": 15,
+ 16
+              "text_align": "flex-start",
+ 17
+              "product": "",
+ 18
+              "stars_text_empty": "No reviews"
+ 19
+            }
+ 20
+          },
+ 21
+          ...
+ 22
+        },
+ 23
+        "block_order": [
+ 24
+          "title",
+ 25
+          "dc0a5152-193b-4663-9203-6153357d0c8e"
+ 26
+          ...
+ 27
+        ],
+ 28
+        "settings": {
+ 29
+          ...
+ 30
+        }
+ 31
+      },
+ 32
+      "164193020622fc8e2f": {
+ 33
+        "type": "apps",
+ 34
+        "blocks": {
+ 35
+          "cadef24e-ecf6-49f8-a544-6bb5186af219": {
+ 36
+            "type": "shopify:\/\/apps\/product-reviews\/blocks\/reviews\/bae150af-8da8-48b2-9867-398188115e5f",
+ 37
+            "settings": {
+ 38
+            }
+ 39
+          }
+ 40
+        },
+ 41
+        "block_order": [
+ 42
+          "cadef24e-ecf6-49f8-a544-6bb5186af219"
+ 43
+        ],
+ 44
+        "settings": {
+ 45
+          ...
+ 46
+        }
+ 47
+      }
+ 48
+    },
+ 49
+    ...
+ 50 }
+ Detecting app embed blocks
+ App embed blocks appear in settings_data.json.
+ An app embed block is added to settings_data.json only after it's enabled for the first time. If the app embed block is disabled after it's been enabled, then it remains in settings_data.json, and disabled is set to true.
+ You can identify your app block by the block type, which uses the following syntax:
+ 1 "<block_unique_ID>": {
+ 2
+    "type:": "<partner_name>:\/\/apps\/<app_name>\/blocks\/<block_name>\/<unique_ID>"
+ An app block is given a unique ID, and the type value is appended with a unique ID which identifies the app.
+ config/settings_data.json
+ 1 {
+ 2
+    "current": {
+ 3
+      "sections": {
+ 4
+        ...
+ 5
+      },
+ 6
+      "content_for_index": [
+ 7
+ 8
+      ],
+ 9
+      "blocks": {
+ 10
+        "17878678986028907411": {
+ 11
+          "type": "shopify:\/\/apps\/faceforms-better-pop-ups\/blocks\/app-embed\/f2173231-e611-461d-884b-bd8e6cc2ded4",
+ 12
+          "disabled": false,
+ 13
+          "settings": {
+ 14
+            ...
+ 15
+          }
+    }
+ 19 }
+ File and content size limits
+ Shopify validates theme app extensions when you deploy your extension. If the app's content exceeds any file and content size limits, then the theme app extension fails validation and doesn't update.
+ The following table provides the enforced, and suggested, limits on theme app extensions:
+ Limits
+ App content Limit Enforced or suggested
+ All files in a theme app extension 10 MB Enforced
+ Number of blocks 25 Enforced
+ Number of locale files in the extension 100 Enforced
+ Size of each locale file 15 KB Enforced
+ Size of Liquid across all files 100 KB Enforced
+ Size of CSS (compressed) referenced directly by the schema 100 KB Suggested
+ Size of JS (compressed) referenced directly by the schema 10 KB Suggested
+ Restrictions
+ The following pages and objects can't be used with theme app extensions.
+ Pages
+ Theme app extension app blocks and app embed blocks can't be rendered on checkout pages. This includes all pages that are rendered when a customer initiates a checkout, such as Contact information, Shipping method, Payment method, and Order status.
+ Liquid objects
+ Theme app extensions don't have access to the following Liquid objects or properties:
+ The content_for_header object
+ The content_for_index object
+ The content_for_layout object
+ Any properties of the parent section object, other than id. You can use the id property to interact with the section rendering API.
+ Section Liquid Object
+ App blocks have access to their parent section liquid object. Only the ID property is accessible, which can be used with the section rendering API.
+ Next steps
+ Get started building a theme app extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ File structure
+ App blocks for themes
+ App embed blocks
+ Conditional app blocks
+ Schema
+ Recommendations
+ File and content size limits
+ Restrictions
+ Next steps

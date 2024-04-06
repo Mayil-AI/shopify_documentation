@@ -1,0 +1,55 @@
+Product subscription app extension overview
+ Note
+ Currently, Shopify doesn't have a separate app extension for deferred purchase options. You can create and configure the product subscription app extension for deferred purchase options.
+ The product subscription app extension can be used to render an interface that enables merchants to create and manage purchase options in the Shopify admin. This guide introduces the product subscription app extension and the App Bridge Admin app extension framework, and demonstrates the high-level subscription flow.
+ How the product subscription app extension works
+ Your app interacts with the SellingPlanGroup objects and the product subscription app extension.
+ The Shopify admin renders the interface that enables merchants to create and manage subscriptions or deferred purchase options.
+ Note
+ You can't use the product subscription app extension to modify subscription contracts.
+ Requirements for existing subscription apps
+ If you have an existing subscription app, then you need to meet the following requirements to add the product subscription app extension to your app:
+ Prepare your app for submission to the Shopify App Store.
+ Submit your testing app for review in the Partner Dashboard.
+ If your app meets the requirements, then it will be approved and you can add the product subscription app extension to your existing published app.
+ App Bridge Admin app extension framework
+ The product subscription app extension renders in Shopify using App Bridge Admin. App Bridge Admin enables apps to integrate directly into the Shopify admin, mobile apps, checkout, or Shopify Point of Sale (POS). It includes a set of consistent UI components, and development tools for authoring them.
+ You create app extensions by writing JavaScript, React, or TypeScript to define your app’s behavior and describe your user interface. Shopify securely hosts and renders your user interface seamlessly in the client.
+ With App Bridge Admin, you use session tokens to authenticate your app instead of relying on third-party cookies.
+ When the product subscription app extension appears to the merchant in the Shopify admin, it includes both app-provided and Shopify-provided interface elements, as shown in the following diagram:
+ Containers
+ Containers are interface elements that are used to render your extension with App Bridge Admin components. The product subscription app extension uses the following types of containers:
+ App overlay container: A full-screen container designed for creating or editing subscription plans.
+ App modal container: A smaller overlay used for adding or removing subscription plans. In the app modal container, primary and secondary action buttons are responsible for triggering a custom behavior, such as performing a resource update.
+ App-provided and Shopify-provided interface elements
+ When the product subscription app extension renders to the merchant in the Shopify admin, it includes both app-provided and Shopify-provided interface elements:
+ The App Chrome is an area of a container that can't be directly controlled by the extension. Inside this area, the appearance and behavior of select UI elements, such as the primary and secondary actions, can be configured using the Container API. The Container API allows limited control over App Chrome behaviors.
+ The App Canvas is an area of a container where the app extension's content is rendered.
+ The following images show which interface elements are provided by the app and which are provided by Shopify in the app overlay and app modal containers.
+ Interface elements in the app overlay container
+ Interface elements in the app modal container
+ Extension modes
+ Extension modes represent the state of the extension, and helps Shopify determine which UI to display. The product subscription app extension uses the following modes:
+ Add: Add an existing purchase option to a product or variant.
+ Create: Create a new purchase option.
+ Edit: Edit an existing purchase option.
+ Remove: Remove an existing purchase option from a product or variant.
+ For more information on extension points and how data and UI components are rendered, refer to Extension points.
+ How a product subscription app extension looks in Shopify
+ Shopify renders a product subscription app extension on the product page, which contains a set of extension modes. Apps are responsible for integrating with these extension modes, which will enable merchants to complete their tasks or access app functionality directly in the Shopify admin.
+ Tip
+ Apps can include contextual links to active subscriptions on the Customers and Order detail pages.
+ The following image shows an example product subscription extension that includes the Add, Remove, and Edit modes:
+ If a merchant clicks Add option, then an app overlay appears. Your extension is responsible for rendering the content and creating the subscription plan.
+ Next steps
+ Get started building a product subscription app extension
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How the product subscription app extension works
+ Requirements for existing subscription apps
+ App Bridge Admin app extension framework
+ Extension modes
+ How a product subscription app extension looks in Shopify
+ Next steps
+ Updates & News

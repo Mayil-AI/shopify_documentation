@@ -1,0 +1,415 @@
+APIs
+ Collapse sidebar
+ Checkout UI extensions
+ Unstable
+ 2024-04
+ 2024-01
+ 2023-10
+ 2023-07
+ 2023-04
+ 2024-04
+ Overview
+ Scaffolding an extension
+ Extension Targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Resources
+ Targets Overview
+ Targets
+ APIs
+ Components
+ Configuration
+ How it works
+ Targets
+ Capabilities
+ Storefront API access
+ Network access
+ Block progress
+ Collect buyer consent
+ Metafields
+ Settings definition
+ Example settings definition
+ Error handling
+ API versioning and unified UI extensions
+ Configuration
+ When you create a checkout UI extension, an app extension configuration shopify.extension.toml file is automatically generated in your extension's directory.
+ This guide describes extension targeting, capabilities, metafields, and the settings you can configure in the app extension configuration.
+ How it works
+ You define properties for your checkout UI extension in the extension configuration file. The shopify.extension.toml file contains the extension's configuration, which includes the extension name, targets, metafields, capabilities, and settings.
+ When an extension is published to Shopify, the contents of the settings file are pushed alongside the extension.
+ Tip
+ You can configure more than one type of extension within a configuration file.
+ Learn more
+ App extension configuration
+ Shopify.extension.toml
+ shopify.extension.toml
+ 1 api_version = "2023-07"
+ 2
+ 3 [[extensions]]
+ 4 type = "ui_extension"
+ 5 name = "My checkout extension"
+ 6 handle = "checkout-ui"
+ 7
+ 8 [[extensions.targeting]]
+ 9 target = "purchase.checkout.block.render"
+ 10 module = "./Checkout.jsx"
+ 11
+ 12 [extensions.capabilities]
+ 13 network_access = true
+ 14 block_progress = true
+ 15 api_access = true
+ 16
+ 17 [extensions.capabilities.collect_buyer_consent]
+ 18 sms_marketing = true
+ 19 customer_privacy = true
+ 20
+ 21 [[extensions.metafields]]
+ 22 namespace = "my-namespace"
+ 23 key = "my-key"
+ 24 [[extensions.metafields]]
+ 25 namespace = "my-namespace"
+ 26 key = "my-other-key"
+ 27
+ 28 [extensions.settings]
+ 29 [[extensions.settings.fields]]
+ 30 key = "field_key"
+ 31 type = "boolean"
+ 32 name = "field-name"
+ 33 [[extensions.settings.fields]]
+ 34 key = "field_key_2"
+ 35 type = "number_integer"
+ 36 name = "field-name-2"
+ Targets
+ Targets represent where your checkout UI extension will be injected. You may have one or many targets defined in your app extension configuration using the targeting field.
+ Along with the target, Shopify needs to know which code to execute for it. You specify the path to your code file by using the module property.
+ Supporting a single extension target
+ Your code should have a default export if it only supports a single extension target.
+ Supporting multiple extension targets
+ Single extension target
+ shopify.extension.toml
+ Block.jsx
+ 1 # ...
+ 2
+ 3 [[extensions.targeting]]
+ 4 target = "purchase.checkout.block.render"
+ 5 module = "./Block.jsx"
+ 6
+ 7 # ...
+ Capabilities
+ Defines the capabilities associated with your extension.
+ Property Description
+ api_access Allows your extension to query the Storefront API.
+ network_access Allows your extension make external network calls.
+ block_progress States that your extension might block the buyer's progress.
+ collect_buyer_consent Allows your extension to collect buyer consent for specific policies such as SMS marketing.
+ Capabilities
+ shopify.extension.toml
+ 1 # ...
+ 2
+ 3 [extensions.capabilities]
+ 4 api_access = true
+ 5 network_access = true
+ 6 block_progress = true
+ 7
+ 8 [extensions.capabilities.collect_buyer_consent]
+ 9 sms_marketing = true
+ 10 customer_privacy = true
+ 11
+ 12 # ...
+ Storefront API access
+ The following section describes the use cases of the api_access capability and the Storefront API access scopes.
+ See
+ API access examples
+ When to use Storefront API access
+ API access is used when your extension needs to retrieve data from the Storefront API. For example, you may need to fetch product data, check the product tags on an item in the cart, or convert a product's price to another currency.
+ Tip
+ Shopify handles the authentication for all API calls from an extension.
+ Methods for accessing the Storefront API
+ Enabling the api_access capability allows you to use the Standard API query method and the global fetch to retrieve data from the Storefront API without manually managing token aquisition and refresh.
+ query lets you request a single GraphQL response from the Storefront API.
+ If you prefer to construct GraphQL requests yourself or you would like to use a full-featured GraphQL client such as Apollo or urql, our custom fetch global automatically appends the required access tokens.
+ The GraphQL client of your choice shouldn’t use any DOM APIs, as they aren’t available in a checkout UI extension's Web Worker.
+ Note
+ Both query and fetch will work for calling the Storefront API with the api_access capability enabled. If you are using fetch to get data external to Shopify, refer to the network_access capability.
+ Storefront API access scopes
+ Your extensions will have the following unauthenticated access scopes to the Storefront API:
+ unauthenticated_read_product_publications
+ unauthenticated_read_collection_publications
+ unauthenticated_read_product_listings
+ unauthenticated_read_product_tags
+ unauthenticated_read_selling_plans
+ unauthenticated_read_collection_listings
+ unauthenticated_read_metaobjects
+ Enable Storefront API access
+ shopify.extension.toml
+ 1 # ...
+ 2
+ 3 [extensions.capabilities]
+ 4 api_access = true
+ 5
+ 6 # ...
+ Network access
+ The following section describes use cases for requesting network access, alternatives to requesting network access, and steps for completing a request for network access.
+ Caution
+ If your extension specifies the network_access capability, you must request access in order to publish your extension.
+ When to request network access
+ If you need to get data into checkout that you can't currently get from Shopify, then you should request network access. For example, you might need to fetch additional data to render loyalty points.
+ Alternatives to network access
+ Instead of fetching data with an external network call, consider retrieving the data from a metafield. Your app may be able to use the Admin API to write metafields on the shop, product, or customer ahead of checkout.
+ Retrieving data from metafields during checkout is faster since it won't introduce an external network call. This allows you to rely on Shopify for the uptime, scaling, and durability of the data storage.
+ Complete a request for network access
+ Go to your Partner Dashboard.
+ Click the name of the app that you want to change.
+ Click API access.
+ Under Allow network access in checkout UI extensions, click Allow network access
+ Your request is automatically approved and your app is immediately granted the approval scope that's required for your checkout UI extension to make external network calls.
+ Add network_access = true to the [extensions.capabilities] section of your extension's configuration file.
+ Required CORS headers
+ UI extensions run in a Web Worker but the exact origin they run on may change without notice. When receiving network requests from extensions, your server must support cross-origin resource sharing (CORS) for any origin by always returning this response header:
+ Access-Control-Allow-Origin: *
+ Security considerations
+ When processing HTTP requests on your API server, you cannot guarantee that your own extension will have made every request. When responding with sensitive data, keep in mind that requests could originate from anywhere on the Internet.
+ Your extension can pass a session token to your API server but this only guarantees the integrity of its claims. It does not guarantee the request itself originated from Shopify. For example, your API server could trust the session token's sub claim (the customer ID) but it could not trust a ?customer_id= query parameter.
+ Consider a scenario where your extension retrieves a discount code from your API server and applies it to the checkout. It would not be safe to expose an API endpoint named /get-discount-code if any buyer could make a direct HTTP request and obtain a discount code.
+ App Proxy
+ UI extensions can make fetch requests to App Proxy URLs, but there are some differences and limitations related to the security context within which UI extensions run.
+ UI extension requests made to the App Proxy will execute as CORS requests. See Required CORS headers above for information about requirements related to CORS.
+ UI extension requests made to the App Proxy will not assign the logged_in_customer_id query parameter. Instead use a session token which provides the sub claim for the logged in customer.
+ UI extension requests made to the App Proxy of password protected shops is not supported. Extension requests come from a web worker which does not share the same session as the parent window.
+ The App Proxy doesn't handle all HTTP request methods. Specifically, CONNECT and TRACE are unsupported.
+ Enable network access
+ shopify.extension.toml
+ 1 # ...
+ 2
+ 3 [extensions.capabilities]
+ 4 network_access = true
+ 5
+ 6 # ...
+ Block progress
+ The following section describes blocking the buyer's progress through checkout, and how you can detect whether the merchant has allowed it.
+ See
+ Blocking examples
+ When to request blocking progress
+ If your extension relies on specific input then you might need to block the buyer's progress until they've provided all required information. You can do this with a buyer journey intercept, by returning behavior: 'block'.
+ For example, for some purchases you need to collect and verify a customer's age. For the order to be valid, you need to verify that an age is set and that it's greater than or equal to a minimum value.
+ In order to block checkout progress, your extension must have the block_progress capability.
+ Granting the capability to block progress
+ Setting block_progress in the shopify.extension.toml file informs merchants that your extension blocks the buyer's progress for invalid orders. Merchants can allow or disallow this capability in the checkout editor.
+ Note
+ When running a local extension with the block_progress capability, it will be automatically granted. This simulates a scenario where the merchant has allowed the capability.
+ Detecting the ability to block progress
+ In your extension, look for block_progress in extension.capabilities to see if the merchant has granted the blocking capability.
+ If the merchant declined the permission for your app to block progress, the behavior: 'block' option in the buyer journey intercept will be treated as behavior: 'allow', and checkout will proceed as normal.
+ When developing a local extension, you can remove the block_progress capability from your shopify.extension.toml file to simulate a merchant disallowing the capability.
+ Tip
+ We recommend having some UI to cover cases where you can't block checkout progress. For example, you might want to show a warning rather than block checkout progress when an order doesn't pass validation.
+ Enable progress blocking
+ shopify.extension.toml
+ 1 # ...
+ 2
+ 3 [extensions.capabilities]
+ 4 block_progress = true
+ 5
+ 6 # ...
+ Collect buyer consent
+ If your extension utilizes the ConsentCheckbox or ConsentPhoneField components to render a customized UI for collecting buyer consent, you must first declare that capability in your configuration file.
+ SMS Marketing
+ In order to collect buyer consent for SMS marketing, you'll need to specifically declare this intent using sms_marketing = true in your toml configuration. This corresponds to the policy prop for the Consent components.
+ Customer Privacy
+ In order to collect customer privacy consent, you'll need to add customer_privacy = true in your toml configuration. This will let you use our Customer Privacy API.
+ Collect buyer consent
+ shopify.extension.toml
+ 1 # ...
+ 2
+ 3 [extensions.capabilities.collect_buyer_consent]
+ 4 sms_marketing = true
+ 5 customer_privacy = true
+ 6
+ 7 # ...
+ Metafields
+ Defines the metafields that are available to your extension.
+ Each extension target uses the metafields defined in [[extensions.metafields]] unless they specify their own [[extensions.targeting.metafields]].
+ Supported resource metafield types include:
+ Resource Description
+ cart The cart associated with the current checkout.
+ company The company for B2B checkouts.
+ companyLocation The company's location for B2B checkouts.
+ customer The customer account that is interacting with the current checkout.
+ product The products that the customer intends to purchase.
+ shop The shop that is associated with the current checkout.
+ shopUser The Shop App user that is associated with the current checkout if there is one.
+ variant The product variants that the customer intends to purchase.
+ You retrieve these metafields in your extension by reading appMetafields.
+ Tip
+ You may write to cart metafields by using applyMetafieldsChange with type: "updateCartMetafield".
+ Hook
+ useAppMetafields
+ Hook
+ useApplyMetafieldsChange
+ Metafields
+ Metafields
+ 1 # ...
+ 2
+ 3 # The metafields for the extension
+ 4 [[extensions.metafields]]
+ 5 namespace = "my-namespace"
+ 6 key = "my-key"
+ 7 [[extensions.metafields]]
+ 8 namespace = "my-namespace"
+ 9 key = "my-other-key"
+ 10
+ 11 [[extensions.targeting]]
+ 12 target = "purchase.checkout.actions.render-before"
+ 13 module = "./Actions.jsx"
+ 14
+ 15
+    # For the above target, use these metafields
+ 16
+    [[extensions.targeting.metafields]]
+ 17
+    namespace = "my-namespace"
+ 18
+    key = "my-target-key"
+ 19
+ 20 [[extensions.targeting]]
+ 21 target = "purchase.checkout.shipping-option-item.render-after"
+ 22 module = "./ShippingOptions.jsx"
+ Settings definition
+ The settings for a checkout UI extension define a set of fields that the merchant can set a value for from the checkout editor. You can use validation options to apply additional constraints to the data that the setting can store, such as a minimum or maximum value.
+ Each settings definition can include up to 20 settings.
+ Note
+ All setting inputs are optional. You should code the extension so that it still works if the merchant hasn't set a value for the setting.
+ Properties
+ The following table describes the properties that you can use to define a setting:
+ Property Required? Description Example
+ key Yes The key of the setting. When a merchant configures a value for this setting, the value will be exposed under this key when running your extension
+ "banner_title"
+ type Yes The type of setting.
+ "single_line_text_field"
+ name Yes The name of the setting. name is displayed to the merchant in the checkout editor.
+ "Banner title"
+ description No The description of the setting. description is displayed to the merchant in the checkout editor.
+ "Enter a title for the banner."
+ validations No Constraints on the setting input that Shopify validates.
+ validations:
+ name = "max",
+ value = "25"
+ Supported setting types
+ The setting type determines the type of information that the setting can store. The setting types have built-in validation on the setting input.
+ Settings can have the following types:
+ Type Description Example value
+ boolean A true or false value.
+ true
+ date A date in ISO 8601 format without a presumed time zone.
+ 2022-02-02
+ date_time A date and time in ISO 8601 format without a presumed time zone.
+ 2022-01-01T12:30:00
+ single_line_text_field A single line string.
+ Canada
+ multi_line_text_field A multi-line string.
+ Canada
+ United States
+ Brazil
+ Australia
+ number_integer A whole number in the range of +/-9,007,199,254,740,991.
+ 10
+ number_decimal A number with decimal places in the range of +/-9,999,999,999,999.999999999.
+ 10.4
+ variant_reference A globally-unique identifier (GID) for a product variant.
+ gid://shopify/ProductVariant/1
+ Validation options
+ Each setting can include validation options. Validation options enable you to apply additional constraints to the data that a setting can store, such as a minimum or maximum value, or a regular expression. The setting's type determines the available validation options.
+ You can include a validation option for a setting using the validation name and a corresponding value. The appropriate value depends on the setting type to which the validation applies.
+ The following table outlines the available validation options with supported types for applying constraints to a setting:
+ Validation option Description Supported types Example
+ Minimum length The minimum length of a text value.
+ single_line_text_field
+ multi_line_text_field
+ [[extensions.settings.fields.validations]]
+ name = "min"
+ value = "8"
+ Maximum length The maximum length of a text value.
+ single_line_text_field
+ multi_line_text_field
+ [[extensions.settings.fields.validations]]
+ name = "max"
+ value = "25"
+ Regular expression A regular expression. Shopify supports RE2.
+ single_line_text_field
+ multi_line_text_field
+ [[extensions.settings.fields.validations]]
+ name = "regex"
+ value = "(@)(.+)$"
+ Choices A list of up to 128 predefined options that limits the values allowed for the metafield. single_line_text_field
+ [[extensions.settings.fields.validations]]
+ name = "choices"
+ value = "["red", "green", "blue"]"
+ Minimum date The minimum date in ISO 8601 format. date
+ [[extensions.settings.fields.validations]]
+ name = "min"
+ value = "2022-01-01"
+ Maximum date The maximum date in ISO 8601 format. date
+ [[extensions.settings.fields.validations]]
+ name = "max"
+ value = "2022-03-03"
+ Minimum datetime The minimum date and time in ISO 8601 format. date_time
+ [[extensions.settings.fields.validations]]
+ name = "min"
+ value = "2022-03-03T16:30:00"
+ Maximum datetime The maximum date and time in ISO 8601 format. date_time
+ [[extensions.settings.fields.validations]]
+ name = "max"
+ value = "2022-03-03T17:30:00"
+ Minimum integer The minimum integer number. number_integer
+ [[extensions.settings.fields.validations]]
+ name = "min"
+ value = "9"
+ Maximum integer The maximum integer number. number_integer
+ [[extensions.settings.fields.validations]]
+ name = "max"
+ value = "15"
+ Minimum decimal The minimum decimal number. number_decimal
+ [[extensions.settings.fields.validations]]
+ name = "min"
+ value = "0.5"
+ Maximum decimal The maximum decimal number. number_decimal
+ [[extensions.settings.fields.validations]]
+ name = "max"
+ value = "1.99"
+ Maximum precision The maximum number of decimal places to store for a decimal number. number_decimal
+ [[extensions.settings.fields.validations]]
+ name = "max_precision"
+ value = "2"
+ Example settings definition
+ The following example shows a settings definition that defines a setting named banner_title of type single_line_text_field. When the merchant sets a value for this setting from the checkout editor, Shopify validates that the provided value is between 5 and 20 characters in length
+ Learn more about the settings api by completing our custom banners example.
+ See
+ Settings example code
+ Example settings
+ shopify.extension.toml
+ 1 api_version = "2023-07"
+ 2
+ 3 [[extensions]]
+ 4 type = "ui_extension"
+ 5 name = "My checkout extension"
+ 6 handle = "checkout-ui"
+ 7
+ 8 [extensions.settings]
+ 9
+ 10 [[extensions.settings.fields]]
+ 11 key = "banner_title"
+ 12 type = "single_line_text_field"
+ 13 name = "Banner title"
+ 14 description = "Enter a title for the banner."
+ 15
+ 16 [[extensions.settings.fields.validations]]
+ 17 name = "min"
+ 18 value = "5"
+ 19 [[extensions.settings.fields.validations]]
+ 20 name = "max"
+ 21 value = "20"
+ Updates & News
+ Developer changelog

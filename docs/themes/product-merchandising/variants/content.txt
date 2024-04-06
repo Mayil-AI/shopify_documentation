@@ -1,0 +1,145 @@
+Overview
+ Combined listings
+ Product recommendations
+ Media and images
+ Gift cards
+ Support product variants
+ Products can be broken up into a maximum of three options, and a single combination of those options is a variant. For example, if a t-shirt comes in sizes S, M, and L, and colors Black, White, and Red, then S/Black would be a variant of that product.
+ In this tutorial, you'll learn how to support product variants in your theme.
+ Resources
+ To support product variants, you'll use the following:
+ The product object
+ The variant object
+ Implementing product variants
+ To support variants in your theme, you need to implement the following components:
+ Variant deep link handling: A variant can be linked to directly, so you should ensure that the product information is updated for the "selected" variant when a variant is referenced in a product link.
+ Variant selectors: You should build a variant selector to allow customers to easily browse the available variants of a product. Selecting a variant should update the page with variant-specific information.
+ You might want to add these components to a section that can be included in a JSON product template, or a Liquid product template.
+ Variant deep link handling
+ Variant deep links are product links that contain a ?variant=[variant-id] query parameter, where [variant-id] is the ID of the associated variant. This allows you to link directly to a variant. You can add this functionality to a section that can be included in a JSON product template, or a Liquid product template.
+ When variants are deep-linked, you can access which variant is linked through the selected_variant attribute of the product object. However, a product link won't always contain a deep-linked variant. In these cases, you can default to the selected, first available, or first variant through the selected_or_first_available_variant attribute.
+ After you identify the variant that you want to display, you need to ensure that the following product elements reflect it:
+ Product media
+ Product price
+ Variant selector
+ Example
+ The following example assigns a default variant using product.selected_or_first_available_variant, populates a basic media and price display based on that variant, and selects that variant in a basic variant selector.
+ 1 {% assign current_variant = product.selected_or_first_available_variant %}
+ 2
+ 3 <!-- Product media -->
+ 4 {% assign featured_media = current_variant.featured_media %}
+ 5
+ 6 {% case featured_media.media_type %}
+ 7
+    {% when 'image' %}
+ 8
+      <div class="product-single__media"
+ 9
+        style="padding-top: {{ 1 | divided_by: featured_media.aspect_ratio | times: 100}}%;"
+ 10
+        data-media-id="{{ featured_media.id }}"
+ 11
+      >
+ 12
+        {{ featured_media | image_url: width: 2048 | image_tag }}
+ 13
+      </div>
+ 14
+    {% when 'external_video' %}
+ 15
+      <div class="product-single__media"
+ 16
+        style="padding-top: {{ 1 | divided_by: featured_media.aspect_ratio | times: 100}}%;"
+ 17
+        data-media-id="{{ featured_media.id }}"
+ 18
+      >
+ 19
+        {{ featured_media | external_video_tag }}
+ 20
+      </div>
+ 21
+    {% when 'video' %}
+ 22
+      <div class="product-single__media" data-media-id="{{ featured_media.id }}">
+ 23
+        {{ featured_media | video_tag: controls: true }}
+ 24
+      </div>
+ 25
+    {% when 'model' %}
+ 26
+      <div class="product-single__media"
+ 27
+        style="padding-top: 100%"
+ 28
+        data-media-id="{{ featured_media.id }}"
+ 29
+      >
+ 30
+        {{ featured_media | model_viewer_tag }}
+ 31
+      </div>
+ 32
+    {% else %}
+ 33
+      <div class="product-single__media"
+ 34
+        style="padding-top: 100%;"
+ 35
+        data-media-id="{{ featured_media.id }}"
+ 36
+      >
+ 37
+        {{ featured_media | media_tag }}
+ 38
+      </div>
+ 39 {% endcase %}
+ 40
+ 41 <!-- Product price -->
+ 42 <div class="price">
+ 43
+    <span class="price-reg">{{ current_variant.price | money }}</span>
+ 44
+ 45
+    {% if current_variant.compare_at_price > current_variant.price %}
+ 46
+      <span class="price-sale"><s>{{ current_variant.compare_at_price | money }}</s></span>
+ 47
+    {% endif %}
+ 48 </div>
+ 49
+ 50 <!-- Variant selector -->
+ 51 <select name="id">
+ 52
+    {% for variant in product.variants %}
+ 53
+      <option value="{{ variant.id }}"
+ 54
+        {% if variant == current_variant %}selected="selected"{% endif %}
+ 55
+      >
+ 56
+        {{ variant.title }} - {{ variant.price | money }}
+ 57
+      </option>
+ 58
+    {% endfor %}
+ 59 </select>
+ Variant selectors
+ You can use a single variant selector where each option represents a variant. However, products may have more than one option. For a better buyer experience and to avoid future compatibility issues, we recommend that you present each of these options separately in the UI. To achieve this, you can use the product.options_with_values object to generate a selector for each option. You can then use JavaScript to update the state when a new option value is selected.
+ Note
+ Regardless of the approach you use for variant selection, you need to ensure that when a new variant is selected, the product media and price are updated to reflect the selected variant.
+ Variant selectors should be added to a section that can be included in a JSON product template, or a Liquid product template. They can also be included in product grid or product quick view snippets to allow customers to view variants on other pages, like collections.
+ Tip
+ Refer to the following files in Dawn for an example implementation:
+ product-variant-picker.liquid section
+ global.js asset
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing product variants
+ Variant deep link handling
+ Variant selectors
+ Updates & News

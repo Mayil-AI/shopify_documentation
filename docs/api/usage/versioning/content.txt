@@ -1,0 +1,130 @@
+Authentication
+ Access scopes
+ Versioning
+ Overview
+ Getting updates
+ API health report
+ Global IDs
+ Rate limits
+ Search syntax
+ Response status codes
+ Idempotent requests
+ Bulk operations
+ Pagination
+ GraphQL basics
+ Admin API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify API versioning
+ API versioning allows Shopify to continuously evolve the platform while offering third-party developers a predictable path for feature upgrades and deprecations.
+ To ensure you always know about upcoming API changes, follow the Changelog and always keep your contact information up to date in the Partner Dashboard.
+ Versioned vs. unversioned APIs
+ Versioned APIs Unversioned APIs
+ Admin API (GraphQL and REST)
+ Storefront API
+ Customer Account API
+ Hydrogen
+ Hydrogen React
+ Partner API
+ Payments Apps API
+ Checkout UI extensions
+ Admin UI extensions
+ Function APIs
+ Ajax API
+ Liquid
+ OAuth endpoints (including AccessScope)
+ Any other resources not explicitly listed as versioned
+ Release schedule
+ Shopify releases a new API version every 3 months at the beginning of the quarter. Version names are date-based to be meaningful and semantically unambiguous (for example, 2023-01). Below is an example release schedule for 2023:
+ Stable version Release date Date stable version is supported until
+ 2023-01 January 1, 2023 January 1, 2024
+ 2023-04 April 1, 2023 April 1, 2024
+ 2023-07 July 1, 2023 July 1, 2024
+ 2023-10 October 1, 2023 October 1, 2024
+ Stable versions are released at 5pm UTC.
+ Each stable version is supported for a minimum of 12 months. This means that there are at least 9 months of overlap between two consecutive stable versions. When a new stable version is introduced and contains changes that affect your app, you have 9 months to test and migrate your app to the new version before support for the previous version is removed.
+ Tip
+ When a new version has an impact beyond the API, such as on the online store or the UI of the Shopify admin, a developer preview is made available in your Partner Dashboard. To learn more, see Developer previews.
+ We strongly recommend updating your apps to make requests to the latest stable API version every quarter. However, if your app uses a stable version that is no longer supported, then Shopify falls forward and responds to your request with the same behaviour as the oldest supported stable version. For example, when Shopify removes 2023-07, API requests to version 2023-07 will be served version 2023-10, because that will be the oldest supported stable version.
+ If your request doesn't include a version, then the API also defaults to the oldest supported stable version. However, we do not recommend relying on this behaviour for adopting deprecated changes. As you update your app, you should specify the API version with every request. By making your app version aware, you anchor your code to a specific set of features that are guaranteed to behave in the same way for the supported timeframe.
+ Example version support schedule
+ Making requests to an API version
+ Shopify API versions are explicitly declared in the URLs that your app makes requests to.:
+ REST Admin API URL: /admin/api/{api_version}/{endpoint}.json
+ GraphQL Admin API URL: /admin/api/{api_version}/graphql.json
+ Storefront API URL: /api/{api_version}/graphql.json
+ Payments Apps API URL: /payments_apps/api/{api_version}/graphql.json
+ For example, the following URLs make requests to version 2024-04:
+ Rest Admin API URL: /admin/api/2024-04/products.json
+ GraphQL Admin API URL: /admin/api/2024-04/graphql.json
+ Storefront API URL: /api/2024-04/graphql.json
+ Payments Apps API URL: /payments_apps/api/2024-04/graphql.json
+ There are several supported versions of the APIs available, and you specify the version that you want to use by substituting the version name in the URL. There are three types of API versions: stable, release candidate, and unstable.
+ Shopify's API responses contain the header X-Shopify-API-Version, which returns the API version that was used to execute the request. When you keep your app updated, this matches the API version that's specified in your request. If the returned version is different, then your app is out of date and is using the default API version.
+ Note
+ If you're using the Admin API and writing your app in Ruby, Python or Node, then you can use the official libraries to interact with the Admin API and set the API version easily.
+ Additionally, if you are using any of the Storefront SDKs, note that each new released SDK sets the API version for you. To find out what version of the API is support by each SDK version see the release notes for that version of the SDK.
+ Note: Webhooks are also versioned. To learn how to select a webhook API version, see Versioned webhooks.
+ Release candidates
+ Release candidates let you see what changes are scheduled for release in the next stable version so that you can begin updating your app as early as possible. API release candidates are made available on the same date that we release our stable versions. For example, when version 2023-01 is released on January 1, 2023, the release candidate for version 2023-04 will also become available.
+ Both backwards-incompatible and backwards-compatible changes can be added to the release candidate so that they’re available to you ahead of the stable release. For this reason, we recommend that you don’t use release candidates in production.
+ Unstable API versions
+ There is always an unstable version of the APIs available. The unstable versions contain features and changes that are still in progress, and we make backwards-incompatible and backwards-compatible changes to them regularly. Generally, changes appear in the unstable version before a stable release, but there is no guarantee that changes in the unstable version will eventually be released. A feature might be added to an unstable version but then be removed later.
+ You can use the unstable API versions to test new changes and features early, but you should not use them in production.
+ For example, you can use the following API URLs to make requests to the unstable API:
+ REST Admin API request: https://{shop}.myshopify.com/admin/api/unstable/products.json
+ GraphQL Admin API request: https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ Storefront API request: https://{shop}.myshopify.com/api/unstable/graphql.json
+ Payments Apps API request: https://{shop}.myshopify.com/payments_apps/api/unstable/graphql.json
+ Deprecation practices
+ Part of a Shopify API can be deprecated if it becomes unnecessary, unsafe, or outdated. It's marked as deprecated when it's removed in a newer version of the API. The deprecation is then retroactively applied to previous stable versions of the API. When a deprecation is introduced, any further details and any relevant migration information is announced in the developer changelog.
+ Because each version is supported for a minimum of a year, there are always at least 9 months of overlap between versions for you to update your app to support deprecations.
+ Removing parts of a Shopify API
+ Any fields or types (GraphQL) and properties or resources (REST) that have been deprecated in a release will be removed in a subsequent release. For example, a field that's deprecated in 2023-07 might be removed in 2023-10.
+ Apps using deprecated resources
+ If a public app or sales channel continues to use unsupported resources after the upgrade deadline, it will be delisted from the Shopify App Store. Also, users who install an unsupported public app, unsupported custom app, or unsupported sales channel will see a warning during the installation process.
+ If your app continues to use unsupported API resources, users will be blocked from installing the app for a minimum of 7 days.
+ In the Shopify admin, users will see warning messages indicating that the app is unsupported. These warnings are shown to users only if the app makes calls to unsupported resources after the upgrade deadline. Warnings are removed 7 days after the last use of unsupported resources is detected. Warnings can't be manually removed by you or by the user.
+ Caution
+ If you use the Shopify API in a standalone app that requires updates, such as a desktop app or mobile app, then your users will need to update before the upgrade deadline to ensure their app continues working. This might mean you’ll have to update well ahead of the migration deadline, so that your users then have time to update their apps. Any calls to unsupported resources could result in your app being delisted or users being warned about or blocked from installing your app.
+ GraphQL API deprecation practices
+ When Shopify deprecates a field in a GraphQL API, the change is communicated in one or more of the following ways:
+ The API health report lists which resources require changes.
+ A deprecation warning for the field is shown in API client tools, such as Shopify's GraphQL Explorer:
+ A notice about the deprecation is posted in the the developer changelog.
+ The API reference is updated to identify the deprecated fields and applicable alternatives.
+ If there is an imminent backwards-incompatible change that affects your app, then the emergency developer contact for your app might be contacted about the deprecation.
+ REST API deprecation practices
+ When Shopify deprecates a resource or a property of a resource in the REST Admin API, the change is communicated in one or more of the following ways:
+ The API Health report lists which resources require changes.
+ Calls that include the deprecated behavior return the response header X-Shopify-API-Deprecated-Reason and a link to get more information:
+ ...
+ X-Shopify-Shop-Api-Call-Limit → 1/40
+ X-Shopify-API-Version → 2024-04
+ X-Shopify-API-Deprecated-Reason → https://shopify.dev/api/release-notes/2023-01#metafields-rest
+ Note
+ If individual properties on a resource are deprecated, then GET requests to that resource don't return the deprecation header in the response.
+ A notice about the deprecation is posted in the developer changelog.
+ The REST Admin API reference is updated to identify the affected resource and any action you need to take.
+ If there is an imminent backwards-incompatible change that affects your app, then the emergency developer contact for your app might be contacted about the deprecation.
+ Webhooks
+ Webhook payloads can change between API versions, similar to API response payloads. You can select the API version that you want to use for webhooks, and that version will be used for all webhooks that are sent to your app.
+ When your selected API version becomes unsupported, Shopify falls forward to using the next supported stable version. Webhooks include the X-Shopify-Api-Version request header to indicate the API version that was used to generate the webhook. If this value is different than the version that you selected, then your selected API version is no longer supported.
+ When your app is affected by the webhook changes in a newer API version, you should update your app before support for your selected API version is removed.
+ Learn more about managing webhook versions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Versioned vs. unversioned APIs
+ Release schedule
+ Making requests to an API version
+ Release candidates
+ Unstable API versions
+ Deprecation practices
+ Webhooks
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

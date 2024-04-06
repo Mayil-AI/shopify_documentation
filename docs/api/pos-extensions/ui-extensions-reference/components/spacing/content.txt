@@ -1,0 +1,40 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Spacing
+ Set of spacing constants to be used in the UI Extensions components library.
+ 1 export type VerticalSpacing =
+ 2
+    | 'HalfPoint'
+ 3
+    | 'ExtraSmall'
+ 4
+    | 'Small'
+ 5
+    | 'Medium'
+ 6
+    | 'Large'
+ 7
+    | 'ExtraLarge';
+ 8
+ 9 export type HorizontalSpacing =
+ 10
+    | 'HalfPoint'
+ 11
+    | 'ExtraSmall'
+ 12
+    | 'Small'
+ 13
+    | 'Medium'
+ 14
+    | 'Large'
+ 15
+    | 'ExtraLarge'
+ 16
+    | 'ExtraExtraLarge';
+ Guidelines
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

@@ -1,0 +1,30 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Inspect your Hydrogen app bundle size
+ Deployments might fail because your app's worker bundle exceeds Oxygen’s file size limits. This guide shows you how to inspect the bundle size of your app and trace the dependencies that contribute to it.
+ Step 1: Build your app locally
+ To inspect the bundle size of your app, you need to build it locally with the following command in your terminal:
+ Terminal
+ $ npx shopify hydrogen build
+ The build process outputs the size of the app bundle in the terminal, as well as a summary of the top dependencies and app files that make up the bundle:
+ This summary can give you a quick overview of what contributes to your app bundle size and where to look for potential optimizations. However, it only shows the top heaviest dependencies and application files after filtering out dependencies that are required, such as React and Remix.
+ Step 2: View the full bundle size report
+ To view the full bundle size report, open the HTML file generated at dist/worker/worker-bundle-analyzer.html with any web browser. To do this, copy the file path beginning with file:// that's displayed at the bottom of the build process output, and then paste this path into your browser's address bar.
+ When the file opens, you can view several interactive charts that visualize the app bundle size.
+ By clicking the directories in the chart, you can drill down into the dependencies that contribute to the bundle size.
+ Step 3: Optimize your bundle
+ Once you find the heaviest dependencies for your bundle size, you can start optimizing them. For example, you can try to do the following:
+ Ensure that you're importing only the parts of a package that you need, not the whole package.
+ Find alternative packages on NPM that are smaller in size. Particularly, you can look for packages that are built for the browser instead of Node.js.
+ Replace large third-party API SDKs with raw HTTP requests to the API when possible.
+ Use a CDN to load frontend-only dependencies instead of bundling them with your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Build your app locally
+ Step 2: View the full bundle size report
+ Step 3: Optimize your bundle
+ Updates & News
+ Developer changelog
+ Partner blog

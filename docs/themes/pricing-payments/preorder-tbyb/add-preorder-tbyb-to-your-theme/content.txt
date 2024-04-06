@@ -1,0 +1,870 @@
+Discounts
+ Subscriptions
+ Pre-orders and Try Before You Buy
+ Overview
+ Add pre-orders and TBYB to your theme
+ Pre-orders and TBYB UX guidelines
+ Shop Pay Installments
+ Accelerated checkout
+ B2B
+ Unit pricing
+ Add pre-orders and Try Before You Buy (TBYB) to your theme
+ In this tutorial, you'll learn the basics of how to support pre-orders and TBYB in your theme.
+ Tip
+ Refer to Pre-orders and Try Before You Buy UX guidelines to review user experience considerations that might impact your implementation.
+ Requirements
+ Add a product form to a template. A product form can be added to any template that can access the product object.
+ Resources
+ To support pre-orders or TBYB in your theme, you'll use the following resources:
+ The form object.
+ Objects and object properties that represent selling plan information, including the following:
+ selling_plan_group: A group of selling plans that are available for the product's variants.
+ selling_plan: The details of the selling plan.
+ selling_plan_allocation: Information about how a particular selling plan affects a line item.
+ variant.requires_selling_plan.
+ The /{locale}/cart/change.js endpoint of the Cart AJAX API.
+ Depending on where you're implementing your selling plan functionality, you'll access selling plan information through the following parent objects:
+ Context Example template types Parent object
+ Product and variant listings product variant
+ Variants that have been added to a cart or are part of an order
+ cart
+ customers/order
+ line_item
+ For more information about how to present each of these objects and their attributes, refer to Pre-orders and Try Before You Buy UX guidelines.
+ Implementing pre-orders or TBYB displays
+ To support pre-orders or TBYB in your theme, you need to implement the following components:
+ A selling plan selector on the product page: This selector enables customers to select a selling plan.
+ JavaScript to update the selling plan: Use JavaScript to update the available selling plans when variants are selected, and update the hidden selling plan input as selling plan options are selected.
+ A selling plan display in the cart: Indicate to customers when a selling plan has been applied to a line item. You can also implement a selling plan selector to give the option to add a new selling plan, or to remove or edit the current selling plan.
+ A checkout charge in the cart: Display a checkout charge that represents the amount that customers need to pay during checkout.
+ A selling plan display on the customer order pages: Indicate to customers when a selling plan has been applied to a line item.
+ The selling plan selector on the product page
+ You can add a selling plan selector for products wherever you can access the product form. For example, you might add a selling plan selector to the product template or a section in the template.
+ Selling plan groups and individual selling plans have a similar structure to products and variants. You can view selling plan groups like products, where there are multiple options that comprise an individual selling plan, similar to variant options that comprise an individual variant.
+ You can access the available selling plan options through the selling_plan_groups attribute of the product.
+ Add the following to your product form:
+ For each selling_plan_group, output each of its options inside the product form.
+ To track the ID of the selected selling plan, add an input with an attribute of name="selling_plan". The value should be the ID of the selected selling plan. If there's no selected selling plan, then the value should be empty.
+ Save the product object so that it can be accessed in JavaScript.
+ Example
+ The following is an example of how you can display the selling plan group in your product form. Make sure to add the code inside your product form. The example is referring to the file selling-plans-integration.js. This file is covered in the JavaScript section. The following code is doing the following:
+ Assigning the product and the current variant to be used inside the integration
+ Looping through every selling plan group, and displaying each associated selling plan
+ Adding a pre-orders or TBYB badge to display next to the product price when a buyer is selecting either a pre-order or TBYB
+ Note
+ This example demonstrates how to integrate selling plans into your theme. We recommend customizing this integration to suit your specific needs. The following code can also be used as a theme app block.
+ /assets/selling-plans-integration.liquid
+ 1 {%- assign current_variant = product.selected_or_first_available_variant | default: product.variants.first -%}
+ 2
+ 3 {% if product.selling_plan_groups.size > 0 %}
+ 4
+    <div class="selling_plan_app_container" data-section-id='{{ section.id }}'>
+ 5
+      <script src="{{ 'selling-plans-integration.js' | asset_url }}" defer></script>
+ 6
+      <style>.selling_plan_theme_integration--hidden {display: none;}</style>
+ 7
+      {% for variant in product.variants %}
+ 8
+        {%liquid
+ 9
+          assign variantPrice = variant.price | money_with_currency | escape
+ 10
+          assign variantComparedAtPrice = variant.compare_at_price | money_with_currency | escape
+ 11
+        %}
+ 12
+        {% if variant.selling_plan_allocations.size > 0 %}
+ 13
+          <section data-variant-id='{{ variant.id }}' class='selling_plan_theme_integration {% if variant.id != current_variant.id %}selling_plan_theme_integration--hidden{% endif %}'>
+ 14
+            <fieldset>
+ 15
+              <legend>
+ 16
+                {{ block.settings.supporting_text_title }}
+ 17
+              </legend>
+ 18
+              <div>
+ 19
+                {% unless product.requires_selling_plan %}
+ 20
+                  <div>
+ 21
+                    <label>
+ 22
+                      <input
+ 23
+                        aria-label='One-time purchase. Product price {{ variantPrice }}'
+ 24
+                        type='radio'
+ 25
+                        name="purchaseOption_{{ section.id }}_{{ variant.id }}"
+ 26
+                        {% if variant.available == false %}disabled{% endif %}
+ 27
+                        id='{{ section.id }}_one_time_purchase'
+ 28
+                        data-radio-type='one_time_purchase'
+ 29
+                        data-variant-id='{{ variant.id }}'
+ 30
+                        data-variant-price='{{ variantPrice }}'
+ 31
+                        data-variant-compare-at-price='{{ variantComparedAtPrice }}'
+ 32
+                        checked
+ 33
+                      />
+ 34
+                      One-time purchase
+ 35
+                    </label>
+ 36
+                  </div>
+ 37
+                {% endunless %}
+ 38
+                {% assign group_ids = variant.selling_plan_allocations | map: 'selling_plan_group_id' | uniq %}
+ 39
+                {% for group_id in group_ids %}
+ 40
+                  {%liquid
+ 41
+                     assign group = product | map: 'selling_plan_groups' | where: 'id', group_id | first
+ 42
+                     assign allocations = variant | map: 'selling_plan_allocations' | where: 'selling_plan_group_id', group_id
+ 43
+ 44
+                     if forloop.first
+ 45
+                      assign first_selling_plan_group = true
+ 46
+                    else
+ 47
+                      assign first_selling_plan_group = false
+ 48
+                    endif
+ 49
+                  %}
+ 50
+                  <div>
+ 51
+                    <div>
+ 52
+                      <label>{{ group.name }}</label>
+ 53
+                    </div>
+ 54
+                    <ul>
+ 55
+                      {% for allocation in allocations %}
+ 56
+ 57
+                        {%liquid
+ 58
+                          if forloop.first and product.requires_selling_plan and first_selling_plan_group
+ 59
+                            assign plan_checked = 'checked'
+ 60
+                          else
+ 61
+                            assign plan_checked = nil
+ 62
+                          endif
+ 63
+ 64
+                          assign allocationPrice = allocation.price | money_with_currency | escape
+ 65
+                          assign allocationComparedAtPrice = allocation.compare_at_price | money_with_currency | escape
+ 66
+                        %}
+ 67
+ 68
+                        <li>
+ 69
+                          <label>
+ 70
+                            <input
+ 71
+                              type='radio'
+ 72
+                              {% if variant.available == false %}disabled{% endif %}
+ 73
+                              aria-label='{{ allocation.selling_plan.name }}. Product price {{ allocationPrice }}'
+ 74
+                              name="purchaseOption_{{ section.id }}_{{ variant.id }}"
+ 75
+                              data-radio-type='selling_plan'
+ 76
+                              data-selling-plan-id='{{ allocation.selling_plan.id }}'
+ 77
+                              data-selling-plan-group-id='{{ section.id }}_{{ group_id }}_{{ variant.id }}'
+ 78
+                              data-selling-plan-adjustment='{{ allocation.selling_plan.price_adjustments.size }}'
+ 79
+                              data-variant-price='{{ allocationPrice }}'
+ 80
+                              data-variant-compare-at-price='{{ allocationComparedAtPrice }}'
+ 81
+                              {{ plan_checked }}>
+ 82
+                            {{ allocation.selling_plan.name }}
+ 83
+                          </label>
+ 84
+                        </li>
+ 85
+                      {% endfor %}
+ 86
+                    </ul>
+ 87
+                  </div>
+ 88
+                {% endfor %}
+ 89
+              </div>
+ 90
+            </fieldset>
+ 91
+          </section>
+ 92
+        {% endif %}
+ 93
+      {% endfor %}
+ 94
+    </div>
+ 95
+    <input
+ 96
+      name='selling_plan'
+ 97
+      class='selected-selling-plan-id'
+ 98
+      type='hidden'>
+ 99 {% endif %}
+ JavaScript to update selling plan information
+ JavaScript is used to interact with the theme integration. This makes it possible for a buyer to select a product and add the correct pre-orders or TBYB to their cart. You can create a separate file named selling-plans-integration.js inside the Assets folder of your theme. The following example illustrates how JavaScript can interact with the selling plan liquid integration:
+ /assets/selling-plans-integration.js
+ 1 const hiddenClass = 'selling_plan_theme_integration--hidden';
+ 2
+ 3 class SellingPlansWidget {
+ 4
+    constructor(sellingPlansWidgetContainer) {
+ 5
+      this.enablePerformanceObserver();
+ 6
+      this.sellingPlansWidgetContainer = sellingPlansWidgetContainer;
+ 7
+      this.appendSellingPlanInputs();
+ 8
+      this.updateSellingPlanInputsValues();
+ 9
+      this.listenToVariantChange();
+ 10
+      this.listenToSellingPlanFormRadioButtonChange();
+ 11
+      this.updatePrice();
+ 12
+    }
+ 13
+ 14
+    get sectionId() {
+ 15
+      return this.sellingPlansWidgetContainer.getAttribute('data-section-id');
+ 16
+    }
+ 17
+ 18
+    get shopifySection() {
+ 19
+      return document.querySelector(`#shopify-section-${this.sectionId}`);
+ 20
+    }
+ 21
+ 22
+    /*
+ 23
+      We are careful to target the correct form, as there are instances when we encounter an installment form that we specifically aim to avoid interacting with.
+ 24
+    */
+ 25
+    get variantIdInput() {
+ 26
+      return (
+ 27
+        this.addToCartForms[1]?.querySelector(`input[name="id"]`) ||
+ 28
+        this.addToCartForms[1]?.querySelector(`select[name="id"]`) ||
+ 29
+        this.addToCartForms[0].querySelector(`input[name="id"]`) ||
+ 30
+        this.addToCartForms[0].querySelector(`select[name="id"]`)
+ 31
+      );
+ 32
+    }
+ 33
+ 34
+    get priceElement() {
+ 35
+      return this.shopifySection.querySelector('.price');
+ 36
+    }
+ 37
+ 38
+    get comparedAtPrice() {
+ 39
+      return this.shopifySection.querySelector('.price__sale');
+ 40
+    }
+ 41
+ 42
+    get visibleSellingPlanForm() {
+ 43
+      return this.shopifySection.querySelector(
+ 44
+        `section[data-variant-id^="${this.variantIdInput.value}"]`,
+ 45
+      );
+ 46
+    }
+ 47
+ 48
+    get isVariantAvailable() {
+ 49
+      return this.selectedPurchaseOption.getAttributeNames().includes('disabled');
+ 50
+    }
+ 51
+ 52
+    get sellingPlanInput() {
+ 53
+      return this.shopifySection.querySelector('.selected-selling-plan-id');
+ 54
+    }
+ 55
+ 56
+    get addToCartForms() {
+ 57
+      return this.shopifySection.querySelectorAll('[action*="/cart/add"]');
+ 58
+    }
+ 59
+ 60
+    /*
+ 61
+      To enable the addition of a selling plan to a cart, it's necessary to include an input with the name "selling_plan", which will carry the selling ID as its value. When a buyer clicks on 'add to cart', the appropriate selling plan ID is added to their cart.
+ 62
+    */
+ 63
+    appendSellingPlanInputs() {
+ 64
+      this.addToCartForms.forEach((addToCartForm) => {
+ 65
+        addToCartForm.appendChild(this.sellingPlanInput.cloneNode());
+ 66
+      });
+ 67
+    }
+ 68
+ 69
+    showSellingPlanForm(sellingPlanFormForSelectedVariant) {
+ 70
+      sellingPlanFormForSelectedVariant?.classList?.remove(hiddenClass);
+ 71
+    }
+ 72
+ 73
+    hideSellingPlanForms(sellingPlanFormsForUnselectedVariants) {
+ 74
+      sellingPlanFormsForUnselectedVariants.forEach((element) => {
+ 75
+        element.classList.add(hiddenClass);
+ 76
+      });
+ 77
+    }
+ 78
+ 79
+    /*
+ 80
+      Each product variant comes with a selling plan selection box that the buyer can interact with.
+ 81
+      When a buyer chooses a different variant, we ensure that only the relevant selling plan selection box is displayed.
+ 82
+      This guarantees that only the selling plan associated with the selected variant is shown.
+ 83
+    */
+ 84
+    handleSellingPlanFormVisibility() {
+ 85
+      const sellingPlanFormForSelectedVariant = this.shopifySection.querySelector(
+ 86
+        `section[data-variant-id="${this.variantIdInput.value}"]`,
+ 87
+      );
+ 88
+      const sellingPlanFormsForUnselectedVariants =
+ 89
+        this.shopifySection.querySelectorAll(
+ 90
+          `.selling_plan_theme_integration:not([data-variant-id="${this.variantIdInput.value}"])`,
+ 91
+        );
+ 92
+      this.showSellingPlanForm(sellingPlanFormForSelectedVariant);
+ 93
+      this.hideSellingPlanForms(sellingPlanFormsForUnselectedVariants);
+ 94
+    }
+ 95
+ 96
+    handleVariantChange() {
+ 97
+      this.handleSellingPlanFormVisibility();
+ 98
+      this.updateSellingPlanInputsValues();
+ 99
+      this.listenToSellingPlanFormRadioButtonChange();
+ 100
+    }
+ 101
+ 102
+    /*
+ 103
+      The functions listenToVariantChange() and listenToAddToCartForms() are implemented to track when a product variant is altered or when the product form is updated.
+ 104
+      The identification of the variant is crucial as it dictates which selling plan box should be displayed.
+ 105
+    */
+ 106
+    listenToVariantChange() {
+ 107
+      this.listenToAddToCartForms();
+ 108
+      if (this.variantIdInput.tagName === 'INPUT') {
+ 109
+        const variantIdObserver = new MutationObserver((mutationList) => {
+ 110
+          mutationList.forEach((mutationRecord) => {
+ 111
+            this.handleVariantChange(mutationRecord.target.value);
+ 112
+          });
+ 113
+        });
+ 114
+ 115
+        variantIdObserver.observe(this.variantIdInput, {
+ 116
+          attributes: true,
+ 117
+        });
+ 118
+      }
+ 119
+    }
+ 120
+ 121
+    listenToAddToCartForms() {
+ 122
+      this.addToCartForms.forEach((addToCartForm) => {
+ 123
+        addToCartForm.addEventListener('change', () => {
+ 124
+          this.handleVariantChange();
+ 125
+        });
+ 126
+      });
+ 127
+    }
+ 128
+ 129
+    get regularPriceElement() {
+ 130
+      return this.shopifySection.querySelector('.price__regular');
+ 131
+    }
+ 132
+ 133
+    get salePriceElement() {
+ 134
+      return this.shopifySection.querySelector('.price__sale');
+ 135
+    }
+ 136
+ 137
+    get salePriceValue() {
+ 138
+      return this.salePriceElement.querySelector('.price-item--sale');
+ 139
+    }
+ 140
+ 141
+    get regularPriceValue() {
+ 142
+      return this.salePriceElement.querySelector('.price-item--regular');
+ 143
+    }
+ 144
+ 145
+    get sellingPlanAllocationPrice() {
+ 146
+      return document.getElementById(
+ 147
+        `${this.selectedPurchaseOption.dataset.sellingPlanGroupId}_allocation_price`,
+ 148
+      );
+ 149
+    }
+ 150
+ 151
+    get selectedPurchaseOptionPrice() {
+ 152
+      return this.selectedPurchaseOption.dataset.variantPrice;
+ 153
+    }
+ 154
+ 155
+    get selectedPurchaseOptionComparedAtPrice() {
+ 156
+      return this.selectedPurchaseOption.dataset.variantCompareAtPrice;
+ 157
+    }
+ 158
+ 159
+    get price() {
+ 160
+      return this.sellingPlanAllocationPrices.price ?? null;
+ 161
+    }
+ 162
+ 163
+    /*
+ 164
+      We aim to ascertain whether a compared price exists, which would indicate that the currently selected input has a discount applied to it.
+ 165
+      If a discount is detected, the discounted price is displayed; otherwise, the regular price is shown.
+ 166
+    */
+ 167
+    updatePrice() {
+ 168
+      if (
+ 169
+        !this.selectedPurchaseOptionComparedAtPrice ||
+ 170
+        this.selectedPurchaseOptionComparedAtPrice ===
+ 171
+          this.selectedPurchaseOptionPrice
+ 172
+      ) {
+ 173
+        this.showRegularPrice();
+ 174
+        this.hideSalePrice();
+ 175
+        this.priceElement.classList.remove('price--on-sale');
+ 176
+      } else {
+ 177
+        this.showSalePrice();
+ 178
+        this.hideRegularPrice();
+ 179
+        this.priceElement.classList.add('price--on-sale');
+ 180
+      }
+ 181
+    }
+ 182
+ 183
+    hideSalePrice() {
+ 184
+      this.salePriceElement.style.display = 'none';
+ 185
+    }
+ 186
+ 187
+    hideRegularPrice() {
+ 188
+      this.regularPriceElement.style.display = 'none';
+ 189
+    }
+ 190
+ 191
+    showRegularPrice() {
+ 192
+      this.regularPriceElement.style.display = 'block';
+ 193
+      this.shopifySection.querySelector('.price__sale').style.display = 'none';
+ 194
+    }
+ 195
+ 196
+    showSalePrice() {
+ 197
+      this.salePriceElement.style.display = 'block';
+ 198
+      this.regularPriceValue.innerHTML =
+ 199
+        this.selectedPurchaseOptionComparedAtPrice;
+ 200
+      this.salePriceValue.innerHTML = this.selectedPurchaseOptionPrice;
+ 201
+    }
+ 202
+ 203
+    get sellingPlanInputs() {
+ 204
+      return this.shopifySection.querySelectorAll('.selected-selling-plan-id');
+ 205
+    }
+ 206
+ 207
+    updateSellingPlanInputsValues() {
+ 208
+      this.sellingPlanInputs.forEach((sellingPlanInput) => {
+ 209
+        sellingPlanInput.value = this.sellingPlanInputValue;
+ 210
+      });
+ 211
+    }
+ 212
+ 213
+    get sellingPlanInputValue() {
+ 214
+      return this.selectedPurchaseOption?.dataset.sellingPlanId ?? null;
+ 215
+    }
+ 216
+ 217
+    get selectedPurchaseOption() {
+ 218
+      return this.visibleSellingPlanForm?.querySelector(
+ 219
+        'input[type="radio"]:checked',
+ 220
+      );
+ 221
+    }
+ 222
+ 223
+    set selectedPurchaseOption(selectedPurchaseOption) {
+ 224
+      this._selectedPurchaseOption = selectedPurchaseOption;
+ 225
+    }
+ 226
+ 227
+    handleRadioButtonChange(selectedPurchaseOption) {
+ 228
+      this.selectedPurchaseOption = selectedPurchaseOption;
+ 229
+      this.updateSellingPlanInputsValues();
+ 230
+      this.updatePrice();
+ 231
+    }
+ 232
+ 233
+    listenToSellingPlanFormRadioButtonChange() {
+ 234
+      this.visibleSellingPlanForm
+ 235
+        ?.querySelectorAll('input[type="radio"]')
+ 236
+        .forEach((radio) => {
+ 237
+          radio.addEventListener('change', (event) => {
+ 238
+            this.handleRadioButtonChange(event.target);
+ 239
+          });
+ 240
+        });
+ 241
+    }
+ 242
+ 243
+    enablePerformanceObserver() {
+ 244
+      const performanceObserver = new PerformanceObserver((list) => {
+ 245
+        list.getEntries().forEach((entry) => {
+ 246
+          if (entry.initiatorType !== 'fetch') return;
+ 247
+ 248
+          const url = new URL(entry.name);
+ 249
+          /*
+ 250
+            When a buyer selects a product variant, a fetch request is initiated.
+ 251
+            Upon completion of this fetch request, we update the price to reflect the correct value.
+ 252
+          */
+ 253
+          if (url.search.includes('variant') || url.search.includes('variants')) {
+ 254
+            this.updatePrice();
+ 255
+          }
+ 256
+        });
+ 257
+      });
+ 258
+ 259
+      performanceObserver.observe({entryTypes: ['resource']});
+ 260
+    }
+ 261 }
+ 262
+ 263 document
+ 264
+    .querySelectorAll('.selling_plan_app_container')
+ 265
+    .forEach((sellingPlansWidgetContainer) => {
+ 266
+      new SellingPlansWidget(sellingPlansWidgetContainer);
+ 267
+    });
+ The functions listenToVariantChange() and listenToAddToCartForms() are implemented to track when a product variant is altered or when the product form is updated. The identification of the variant is crucial as it dictates which selling plan box should be displayed. For more information about how to find a variant, refer to our community post.
+ The selling plan display in the cart
+ If a customer selects a selling plan on the product page, then they should see that selection in the cart.
+ Available selected selling plans are accessible through the selling_plan_allocation attribute of the line_item object. The following is an example:
+ /customers/order.liquid
+ 1 {% if line_item.selling_plan_allocation %}
+ 2
+    <p class="selling-plan">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
+ 3 {% endif %}
+ The selling plan selector
+ Rather than just display the selected selling plan, you can give customers the option to add a new selling plan, or to remove or edit the current selling plan. To do this, you should implement a selling plan selector that lists out the available selling plans for the line item's variant, and reflects the currently selected selling plan.
+ You can loop through the selling_plan_allocations attribute of the variant object associated with the line item (line_item.variant) to build out your selector options. You can compare the selected selling plan ID with the ID of the selling plan at the current index of the loop to make sure that the selector reflects the currently selected selling plan.
+ To change the selling plan for a line item, you can use the /{locale}/cart/change.js endpoint of the Cart AJAX API.
+ Example
+ The following example outputs a selling plan selector:
+ 1 <select name="selling-plan" data-line="{{ forloop.index }}" data-quantity="{{ line_item.quantity }}">
+ 2
+    <option value="">One-time purchase</option>
+ 3
+ 4
+    {% for selling_plan_allocation in line_item.variant.selling_plan_allocations %}
+ 5
+      <option
+ 6
+        value="{{ selling_plan_allocation.selling_plan.id }}"
+ 7
+        {% if line_item.selling_plan_allocation.selling_plan.id == selling_plan_allocation.selling_plan.id %}selected="selected"{% endif %}
+ 8
+      >
+ 9
+        {{ selling_plan_allocation.selling_plan.name }}
+ 10
+      </option>
+ 11
+    {% endfor %}
+ 12 </select>
+ The following example illustrates the concept of watching for a change in the selling plan selector and applying those changes through the /cart/change.js endpoint. It isn't completely functional.
+ 1 const sellingPlanSelectors = document.querySelectorAll('[name="selling-plan"]');
+ 2
+ 3 sellingPlanSelectors.forEach(function(element) {
+ 4
+    element.addEventListener('change', function(event) {
+ 5
+      const data = {
+ 6
+        'line': event.target.dataset.line,
+ 7
+        'quantity': event.target.dataset.quantity,
+ 8
+        'id': event.target.value
+ 9
+      }
+ 10
+ 11
+      fetch('/cart/change.js', {
+ 12
+        method: 'POST',
+ 13
+        headers: {
+ 14
+          'Content-Type': 'application/json'
+ 15
+        },
+ 16
+        body: JSON.stringify(data)
+ 17
+      })
+ 18
+      .then(response => {
+ 19
+        // Refresh page, or re-render cart
+ 20
+        console.log(response);
+ 21
+      })
+ 22
+      .catch((error) => {
+ 23
+        console.error('Error:', error);
+ 24
+      });
+ 25
+    });
+ 26 });
+ The checkout charge display in the cart
+ Because pre-order and TBYB can change how much a customer has to pay up front, you should show them how much they'll be charged at checkout. You can calculate this amount using selling_plan.checkout_charge object.
+ You can access a line item's checkout charge through its selling_plan_allocation.
+ The following table outlines the types of checkout charges:
+ Checkout charge type Description
+ percentage A percent value representing the percentage amount of the full price that must be paid up front.
+ price The price to be paid up front, in cents.
+ Note
+ You can't configure checkout charges for subscriptions. Because of this, subscriptions always have a value_type of percentage and value of 100.
+ Example
+ The following example outputs the appropriate line item price depending on whether the line item has a selling plan allocation, and what kind of selling plan it is.
+ 1 {% if item.selling_plan_allocation %}
+ 2
+    {%- assign checkout_charge = item.selling_plan_allocation.selling_plan.checkout_charge -%}
+ 3
+ 4
+    {% if checkout_charge.value_type == 'percentage' %}
+ 5
+      {{ item.original_price | times: checkout_charge.value | divided_by: 100 | money }}
+ 6
+    {% else %}
+ 7
+      {{ checkout_charge.value | money }}
+ 8
+    {% endif %}
+ 9 {% else %}
+ 10
+    {{ item.original_price | money }}
+ 11 {% endif %}
+ Customer order selling plan display
+ When a customer selects a selling plan, they should see the name of that selection on the customer order page.
+ The selected selling plan, if there is one, is accessible through the selling_plan_allocation attribute of the line_item object. The following is an example:
+ /customers/order.liquid
+ 1 {% if line_item.selling_plan_allocation %}
+ 2
+    <p class="selling-plan">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
+ 3 {% endif %}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Resources
+ Implementing pre-orders or TBYB displays
+ The selling plan selector on the product page
+ JavaScript to update selling plan information
+ The selling plan display in the cart
+ The checkout charge display in the cart
+ Customer order selling plan display
+ Updates & News

@@ -1,0 +1,40 @@
+Extension-only apps
+ Extension-only apps are apps that don't have embedded app pages. Because they're made up entirely of extensions, you can host extension-only apps on Shopify.
+ Extension-only apps have a Shopify-populated app URL, which you can optionally change, to build embedded app pages or list your app on the Shopify App Store.
+ Note
+ Extension-only apps must be custom apps.
+ Create an extension-only app
+ Create a new app, give it a name, and choose Start by adding your first extension.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest
+ After you've created your app, you can configure your app, generate extensions, and deploy your app.
+ App extensions that can be included in an extension-only app
+ The following table lists the app extensions that are compatible with extension-only apps.
+ Shopify interface area App extension Create using Description
+ The Shopify admin Admin actions Shopify CLI Add custom modals to resource pages in the Shopify admin.
+ Admin blocks Shopify CLI Add custom cards to resource pages in the Shopify admin.
+ Admin links Partner Dashboard Add quick links to your app from any page in the Shopify admin.
+ Bulk action links Partner Dashboard Add bulk app actions to any resource page in the Shopify admin.
+ Marketing activities Partner Dashboard Enable users to manage promotional campaigns and marketing automations from the Marketing page.
+ Subscription link Partner Dashboard Customize the link that allow users to see the subscription details in your subscription-enabled app.
+ Checkout Checkout UI extensions Shopify CLI Add custom workflows and functionality at defined points in the checkout flow.
+ Shopify Functions Shopify CLI Inject custom code into key areas of the Shopify platform, such as checkout or cart.
+ Post-purchase Shopify CLI Help users increase sales by adding products for purchase after checkout.
+ Customer accounts Customer account UI extensions Shopify CLI Add functionality at defined points in new customer accounts.
+ Flow Triggers Shopify CLI Connect your app to Shopify Flow so that events that occur in your app can trigger workflows.
+ Actions Shopify CLI Connect your app to Shopify Flow so that your app receives data when a workflow action runs.
+ Webhooks Partner Dashboard Improve efficiency by letting Shopify Flow notify your app when your triggers are in use.
+ Shopify Point of Sale (POS) POS UI Extensions Shopify CLI Add custom functionality at defined areas in the POS app.
+ Next steps
+ Learn how to deploy your extensions that you built using Shopify CLI.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Create an extension-only app
+ App extensions that can be included in an extension-only app
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,165 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Toast
+ Note
+ This is a legacy API. Use the latest version of the App Bridge Toast instead.
+ The Toast action set displays a non-disruptive message that appears at the bottom of the interface to provide quick and short feedback on the outcome of an action. Use Toast to convey general confirmation for actions that aren’t critical. For example, you might show a toast message to inform the user that their recent action was successful.
+ You can use the toast action set in the following ways:
+ Plain JavaScript
+ React hook
+ React component
+ Plain JavaScript
+ Example code
+ Create an app and import the Toast module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Toast} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a toast notice
+ Generate a toast notice:
+ 1 const toastOptions = {
+ 2
+    message: 'Product saved',
+ 3
+    duration: 5000,
+ 4 };
+ 5 const toastNotice = Toast.create(app, toastOptions);
+ Create a toast notice with a clickable action
+ Generate a toast notice with a clickable action:
+ 1 const toastOptions = {
+ 2
+    message: 'Product saved',
+ 3
+    duration: 5000,
+ 4
+    action: {
+ 5
+      content: "Click here",
+ 6
+      onAction: () => console.log('👋 Action clicked')
+ 7
+    }
+ 8 };
+ 9 const toastNotice = Toast.create(app, toastOptions);
+ Create a toast error message
+ Generate an error toast notice:
+ 1 const toastOptions = {
+ 2
+    message: 'Error saving',
+ 3
+    duration: 5000,
+ 4
+    isError: true,
+ 5 };
+ 6 const toastError = Toast.create(app, toastOptions);
+ Subscribe to actions
+ You can subscribe to toast actions by calling subscribe. This returns a function that you can call to unsubscribe from the action:
+ 1 const toastNotice = Toast.create(app, {message: 'Product saved'});
+ 2 const showUnsubscribe = toastNotice.subscribe(Toast.Action.SHOW, data => {
+ 3
+    // Do something with the show action
+ 4 });
+ 5
+ 6 const clearUnsubscribe = toastNotice.subscribe(Toast.Action.CLEAR, data => {
+ 7
+    // Do something with the clear action
+ 8 });
+ 9
+ 10 // Unsubscribe
+ 11 showUnsubscribe();
+ 12 clearUnsubscribe();
+ Unsubscribe
+ You call unsubscribe to remove all current subscriptions on the toast message:
+ 1 const toastNotice = Toast.create(app, {message: 'Product saved'});
+ 2 toastNotice.subscribe(Toast.Action.SHOW, data => {
+ 3
+    // Do something with the show action
+ 4 });
+ 5 toastNotice.subscribe(Toast.Action.CLEAR, data => {
+ 6
+    // Do something with the clear action
+ 7 });
+ 8
+ 9 // Unsubscribe
+ 10 toastNotice.unsubscribe();
+ Dispatch show action
+ 1 const toastNotice = Toast.create(app, {message: 'Product saved'});
+ 2 toastNotice.dispatch(Toast.Action.SHOW);
+ Dispatch clear action
+ 1 const toastNotice = Toast.create(app, {message: 'Product saved'});
+ 2 toastNotice.dispatch(Toast.Action.CLEAR);
+ React
+ useToast hook
+ useToast is a hook that accepts no arguments and returns a show method. The show method accepts content and an options object, which contains the rest of the Props.
+ Example code
+ 1 import {Provider, useToast} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyApp {
+ 4
+    // Setup appBridgeConfig...
+ 5
+ 6
+    const {show} = useToast();
+ 7
+ 8
+    return (
+ 9
+      <Provider config={appBridgeConfig}>
+ 10
+        <Button onClick={() => {
+ 11
+          show('Success! 🎉', {duration: 2000, onDismiss: () => console.log('👋 Toast dismissed')})
+ 12
+        }}>Show toast</Button>
+ 13
+      </Provider>
+ 14
+    );
+ 15 }
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ Toast component
+ Toast is a component that accepts props. For more information about options, refer to Props.
+ Example code
+ 1 import {Provider, Toast} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyApp {
+ 4
+    // Setup appBridgeConfig...
+ 5
+ 6
+    return (
+ 7
+      <Provider config={appBridgeConfig}>
+ 8
+        <Toast content="Success! 🎉" />
+ 9
+      </Provider>
+ 10
+    );
+ 11 }
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ Providing additional optional properties:
+ 1 <Toast content="Success! 🎉" duration={2000} onDismiss={myHandler}/>
+ Styling a toast message as an error:
+ 1 <Toast content="Something went wrong! 😔" isError={true} />
+ Props
+ Name Type Description Required
+ content string The content that should appear in the toast message Yes
+ duration number The length of time in milliseconds the toast message should persist. Defaults to 5000.
+ isError boolean Display an error-styled toast
+ onDismiss () => void Callback fired when the dismiss icon is clicked Yes
+ action object An object containing content: String and onAction: Function No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

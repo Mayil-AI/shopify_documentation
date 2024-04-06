@@ -1,0 +1,230 @@
+Common objects
+ Queries
+ Mutations
+ Objects
+ ApiVersion
+ AppliedGiftCard
+ Article
+ ArticleAuthor
+ Attribute
+ AvailableShippingRates
+ Blog
+ Brand
+ BrandColorGroup
+ BrandColors
+ CartCost
+ CartCustomDiscountAllocation
+ CartLineCost
+ Checkout
+ CheckoutBuyerIdentity
+ Collection
+ Fields
+ Connections
+ Queries
+ Implements
+ Comment
+ CommentAuthor
+ Company
+ CompanyContact
+ CompanyLocation
+ ComponentizableCartLine
+ Country
+ CreditCard
+ Currency
+ Domain
+ ExternalVideo
+ Filter
+ FilterValue
+ Fulfillment
+ FulfillmentLineItem
+ FulfillmentTrackingInfo
+ GenericFile
+ Image
+ InContextAnnotation
+ InContextAnnotationType
+ Language
+ Localization
+ Location
+ LocationAddress
+ MailingAddress
+ Market
+ MediaImage
+ MediaPresentation
+ Menu
+ MenuItem
+ Metafield
+ MetaobjectField
+ MetaobjectSEO
+ Model3d
+ Model3dSource
+ MoneyV2
+ Order
+ OrderLineItem
+ Page
+ PageInfo
+ PaymentSettings
+ Product
+ ProductOption
+ ProductPriceRange
+ ProductVariant
+ PurchasingCompany
+ QuantityPriceBreak
+ QuantityRule
+ QueryRoot
+ SelectedOption
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ SellingPlanCheckoutCharge
+ SellingPlanCheckoutChargePercentageValue
+ SellingPlanFixedAmountPriceAdjustment
+ SellingPlanFixedPriceAdjustment
+ SellingPlanGroup
+ SellingPlanGroupOption
+ SellingPlanOption
+ SellingPlanPercentagePriceAdjustment
+ SellingPlanPriceAdjustment
+ SEO
+ ShippingRate
+ Shop
+ ShopPolicy
+ ShopPolicyWithDefault
+ StoreAvailability
+ Swatch
+ Transaction
+ UnitPriceMeasurement
+ UrlRedirect
+ Video
+ VideoSource
+ Customers
+ Metaobjects
+ Search
+ GraphQL Types
+ Collection
+ object
+ Requires unauthenticated_read_product_listings access scope.
+ A collection represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse.
+ Fields
+ description
+ String!
+ non-null
+ Stripped description of the collection, single line with HTML tags removed.
+ Show arguments
+ descriptionHtml
+ HTML!
+ non-null
+ The description of the collection, complete with HTML formatting.
+ handle
+ String!
+ non-null
+ A human-friendly unique string for the collection automatically generated from its title. Limit of 255 characters.
+ id
+ ID!
+ non-null
+ A globally-unique ID.
+ image
+ Image
+ Image associated with the collection.
+ Show fields
+ metafield
+ Metafield
+ Returns a metafield found by namespace and key.
+ Show arguments and fields
+ metafields
+ [Metafield]!
+ non-null
+ The metafields associated with the resource matching the supplied list of namespaces and keys.
+ Show arguments and fields
+ onlineStoreUrl
+ URL
+ The URL used for viewing the resource on the shop's Online Store. Returns null if the resource is currently not published to the Online Store sales channel.
+ seo
+ SEO!
+ non-null
+ The collection's SEO information.
+ Show fields
+ title
+ String!
+ non-null
+ The collection’s name. Limit of 255 characters.
+ trackingParameters
+ String
+ A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+ updatedAt
+ DateTime!
+ non-null
+ The date and time when the collection was last modified.
+ Was this section helpful?
+ YesNo
+ Connections
+ products
+ [Product!]!
+ non-null
+ List of products in the collection.
+ Show arguments and fields
+ Was this section helpful?
+ YesNo
+ Map
+ Fields from
+ CollectionEdge
+ .
+ node
+ PredictiveSearchResult
+ .
+ collections
+ Connections from
+ CollectionConnection
+ .
+ nodes
+ Product
+ .
+ collections
+ Possible types in
+ MenuItemResource
+ MetafieldParentResource
+ MetafieldReference
+ Collection
+ Queries
+ collection
+ (arguments)
+ query
+ Fetch a specific Collection by one of its unique attributes.
+ Show arguments
+ collection
+ ByHandle
+ (arguments)
+ query
+ Find a collection by its handle. Use collection instead.
+ Show arguments
+ collections
+ (arguments)
+ query
+ List of the shop’s collections.
+ Show arguments
+ Was this section helpful?
+ YesNo
+ <?>
+ Collection Queries
+ Collection
+ Queried by
+ collection
+ collections
+ Implements
+ HasMetafields
+ interface
+ Node
+ interface
+ OnlineStorePublishable
+ interface
+ Trackable
+ interface
+ Was this section helpful?
+ YesNo
+ ||-
+ Collection Implements
+ Collection
+ Implements
+ HasMetafields
+ Node
+ OnlineStorePublishable
+ Trackable

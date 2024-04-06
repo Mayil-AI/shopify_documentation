@@ -1,0 +1,110 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ POS
+ Note
+ This is a legacy API. Use the latest version of POS instead.
+ Provides a mechanism for closing the app when it's running in Shopify POS, and for retrieving information about a Shopify POS device.
+ Requirements
+ User and location data are available in all version of Point of Sale Android and iOS.
+ Device data is available in following app version:
+ Point of Sale iOS version 5.36.0 or above
+ Point of Sale Android version 3.29.0 or above
+ Close is available in the following app version:
+ App Bridge version 1.18.0 or above is required
+ Point of Sale iOS version 5.50.0 or above
+ Point of Sale Android version 3.43.0 or above
+ Setup
+ Create an app and import the Pos module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Pos} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Close an app embedded in Shopify POS
+ Create a Pos object that can be used to close the embedded app. You might close the embedded app after the user successfully completes an action to return them to the Shopify POS app.
+ 1 const pos = Pos.create(app);
+ To close the embedded app, use the Pos object to dispatch the CLOSE action.
+ 1 // App Bridge 1.x
+ 2 pos.dispatch(Pos.ActionType.CLOSE);
+ 3
+ 4 // App Bridge 2.x
+ 5 pos.dispatch(Pos.Action.CLOSE);
+ Get POS data
+ POS data is available in the state and accessible through app.getState(). There are several ways to get the data:
+ Option 1: get all state
+ 1 app.getState().then((data) => {
+ 2
+    const {pos} = data;
+ 3 });
+ Option 2: get only pos
+ 1 app.getState('pos').then((pos) => {
+ 2 });
+ Option 3: get only pos user
+ 1 app.getState('pos.user').then((user) => {
+ 2 });
+ Option 4: get only pos location
+ 1 app.getState('pos.location').then((location) => {
+ 2 });
+ Option 5: get only pos device
+ 1 app.getState('pos.device').then((device) => {
+ 2 });
+ Note
+ app.getState() just returns current state. To avoid getting state before it is ready, you may need to subscribe as below:
+ 1 const unsubscribe = app.subscribe(function() {
+ 2
+    app.getState('pos').then(function(pos) {
+ 3
+      if (!pos) {
+ 4
+        return;
+ 5
+      }
+ 6
+      unsubscribe();
+ 7
+    });
+ 8 });
+ Payload
+ POS Payload
+ Key Type Description
+ user User User info.
+ location Location Location info.
+ device Device Device info.
+ User Payload
+ Key Type Description
+ id Number The ID of login user.
+ firstName String The first name of login user.
+ lastName String The last name of login user.
+ email String The email name of login user.
+ accountOwner Boolean Indicate if login user is the shop owner.
+ userType String The type of login user.
+ Location Payload
+ Key Type Description
+ id Number The ID of current location.
+ active Boolean The status of current location.
+ name String The name of current location.
+ locationType String? The type of current location.
+ address1 String? The primary address of current location.
+ address2 String? Any extra information associated with the address (Apartment #, Suite #, Unit #, etc.).
+ zip String? The ZIP or postal code of the address.
+ city String? The name of the city.
+ province String? The province or state of the address.
+ countryCode String? The Country Code in ISO 3166-1 (alpha-2) format.
+ countryName String? The country of the address.
+ phone String? The phone number of the location.
+ Device Payload
+ Key Type Description
+ name String The name of the device
+ serialNumber String The unique ID associated device ID and app ID.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Setup
+ Close an app embedded in Shopify POS
+ Get POS data
+ Payload
+ Updates & News
+ Developer changelog

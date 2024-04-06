@@ -1,0 +1,115 @@
+Implementation considerations
+ Request reference
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale
+ Processing overview
+ Payment processing begins when Shopify makes an HTTP call to your payments app, then your payments app communicates the result asynchronously back to Shopify by using one of our GraphQL mutations. The payment processing ends when the payment is finalized by using the paymentSessionResolve or paymentSessionReject mutation, indicating whether the payment was successful. Once you call either of these mutations, the payment state is final and can't be changed.
+ Payment processing relies on idempotent asynchronous communications over HTTP between Shopify and the payments app. It is crucial that your payments app supports a robust communication strategy by implementing a proper idempotency and retry policy strategy.
+ Offsite payments
+ The following diagram illustrates how a payment flow works between Shopify and an offsite payments app:
+ The customer completes checkout, triggering a request for payment.
+ Shopify initiates the flow by sending a request to the payments app, specifying the amount and currency to be charged.
+ The app responds with an HTTP code 200 (OK) and a redirect URL of a payment page hosted by the Partner's app.
+ Shopify redirects the customer to the redirect URL.
+ The payments app collects the customer’s payment credentials and processes the payment as described in the backend request.
+ The payments app finalizes the payment as resolved or rejected by calling Shopify's GraphQL API, implementing a retry policy as needed. Alternatively, you can set a payment as pending if it's awaiting asynchronous action by the customer, the payment Partner, or a payment network, before finalizing it.
+ Shopify responds with an HTTP code 200 (OK) and the redirect URL to confirm the payment state is updated.
+ The payments app redirects the customer to Shopify, with an HTTP code 301 (Moved permanently).
+ The customer continues to checkout.
+ Learn more about processing a payment with an offsite payments app.
+ Offsite payments with Inventory Confirmation
+ Beta
+ Confirmation for offsite payments is currently in Closed Beta.
+ Shopify is adding the ability for third-party payment providers offering offsite payments to confirm that inventory is still available and that all discount codes and business logic are still valid, before completing a payment. This feature is only available to merchants with access to one page checkout and/or who have upgraded to checkout extensibility.
+ Processing payments using confirm, is very similar to the standard payment processing flow. Payment processing begins when Shopify makes an HTTP call to your payments app. Your app responds with a 200 HTTP status.
+ However, before finalizing the payment, the app must first call the paymentSessionConfirm mutation. After Shopify has responded to the paymentSessionConfirm mutation, Shopify makes an HTTP call to the confirm session URL of the offsite payments app extension, indicating whether the app can proceed with the payment. Once the app has finalized the payment, the app communicates the result to Shopify using the paymentSessionResolve, paymentSessionReject or paymentSessionPending mutation.
+ The following diagram illustrates how a payment flow works between Shopify and a payments app with an offsite payments app extension using confirm:
+ The customer completes checkout, triggering a request for payment.
+ Shopify initiates the flow by sending a request to the payments app, specifying the amount and currency to be charged.
+ The app responds with an HTTP code 200 (OK) and a redirect URL of a payment page hosted by the Partner's app.
+ Shopify redirects the customer to the redirect URL.
+ The payments app collects the customer’s payment credentials.
+ The app calls the paymentSessionConfirm mutation to confirm with Shopify whether the payment request can proceed, implementing a retry policy as needed. Shopify responds, indicating that the request is valid.
+ Based on an inventory check and other business logic, Shopify determines whether the payment can proceed and sends a POST request to the confirm session URL of the offsite payments app extension, delivering the confirmation result.
+ The payments app finalizes the payment as resolved, rejected, or pended by calling Shopify's GraphQL API, implementing a retry policy as needed.
+ Shopify fails the Resolve and Reject mutation calls if Shopify hasn't yet sent a confirmation result to the confirm session URL of the offsite payments app extension. Once Shopify has sent a confirmation result to the Confirm session URL, Shopify won't fail the Resolve and Reject mutation calls, even if Shopify hasn't received a response from the partner.
+ Shopify responds with an HTTP code 200 (OK) and the redirect URL to confirm the payment state is updated.
+ The payments app redirects the customer to Shopify, with an HTTP code 301 (Moved permanently).
+ The customer continues to checkout.
+ Note that if Shopify delivers a negative confirmation result (confirmation_result=false) the payments app must invoke the paymentSessionReject mutation using the CONFIRMATION_REJECTED reason code at step 8. This will happen if the products in the order are no longer available, or something within the checkout has been invalidated during the time the buyer was on your redirect page.
+ Learn more about processing an offsite payment using confirm with an offsite payments app extension.
+ Credit card payments
+ The following diagram illustrates how a payment flow works between Shopify and a credit card payments app:
+ The customer completes checkout, triggering a request for payment.
+ Shopify initiates the flow by sending a request to the payments app, specifying the amount and currency to be charged and the encrypted credit card information.
+ The app responds with an HTTP code 200 (OK), indicating that the request is valid and has been received.
+ The payments app processes the payment with the payment information received in the request.
+ The payments app finalizes the payment as resolved or rejected by calling Shopify's GraphQL API, implementing a retry policy as needed.
+ Shopify responds with an HTTP code 200 (OK) to confirm that the payment state is updated.
+ The customer continues to checkout.
+ Learn more about processing a payment with a credit card payments app.
+ Credit card payments with 3-D Secure
+ Similar to how it works without 3-D Secure, payment processing begins when Shopify makes an HTTP call to your payments app. Your app responds with a 200 HTTP status.
+ If your app supports 3-D Secure and determines that the customer must be redirected for 3-D Secure, then you must communicate to Shopify the URL where the customer is to be redirected. Your app communicates this URL using the paymentSessionRedirect mutation. Shopify renders the URL provided by the app in an iFrame in the customer's browser, and then the app processes the 3-D Secure authentication.
+ If the app has completed the 3-D secure authentication steps and doesn't want to proceed with the payment, then the app calls the paymentSessionReject mutation.
+ If the app wants to proceed with the payment, then the app calls the paymentSessionConfirm mutation. After Shopify has responded to the paymentSessionConfirm mutation, the app redirects the customer and Shopify makes an HTTP call to the confirm session URL of the credit card payments app extension, indicating whether the app can proceed with the payment. Once the app has finalized the payment, the app communicates the result to Shopify using the paymentSessionResolve or paymentSessionReject mutation.
+ Learn more about processing a 3-D Secure authenticated payment with a credit card payments app extension.
+ Successful payment with successful authentication
+ The following diagram illustrates how a payment flow works between Shopify and a payments app with a credit card payments app extension with 3D Secure enabled:
+ The customer completes checkout, triggering a request for payment.
+ Shopify initiates the flow by sending a request to the payments app, specifying the amount and currency to be charged and the encrypted credit card information.
+ The app responds with an HTTP code 200 (OK), indicating that the request is valid and has been received.
+ The payments app determines whether the customer must be redirected for 3-D Secure authentication. If the customer must be redirected, then the app proceeds through the following substeps.
+ The app calls the paymentSessionRedirect mutation to indicate that a redirect is required, implementing a retry policy as needed. Shopify responds, indicating that the request is valid and has been received.
+ Shopify redirects the customer in an iFrame where the 3-D Secure authentication can be performed. The customer might be challenged during the 3-D Secure authentication.
+ Once the payments app has completed the 3-D Secure authentication steps and the authentication hasn't been rejected, the app calls the paymentSessionConfirm mutation to confirm with Shopify whether the payment request can proceed, implementing a retry policy as needed. Shopify responds, indicating that the request is valid and provides a redirect URL for Partners to redirect customers back to Shopify.
+ Note
+ The payments app must navigate to the redirect URL using the parent browsing context and must not attempt to navigate using the top-level browsing context directly.
+ According to its business logic, Shopify determines whether the payment can proceed and sends a POST request to the confirm session URL of the credit card payments app extension, delivering the confirmation result.
+ The app responds with an HTTP code 200 (OK) for the request, indicating that the request is valid and has been received.
+ If Shopify indicates that the payment can proceed, then the payments app processes the payment with the payment information sent in step 2.
+ The payments app finalizes the payment as resolved or rejected by calling Shopify's GraphQL API, implementing a retry policy as needed.
+ Shopify fails the Resolve and Reject mutation calls if Shopify hasn't yet sent a confirmation result to the confirm session URL of the credit card payments app extension. Once Shopify has sent a confirmation result to the Partner's confirm session URL specified by their app extension, Shopify won't fail the Resolve and Reject mutation calls, even if Shopify hasn't received a response from the Partner.
+ Shopify responds with an HTTP code 200 (OK) for the request in step 5.
+ The customer continues to checkout.
+ The customer fails the authentication
+ A customer might fail the authentication due to the following reasons:
+ The customer authentication is rejected. This corresponds to the transStatus value R. The EMVCo specification indicates that the “Issuer is rejecting authentication/verification and request that authorization not be attempted”.
+ There’s been an error preventing the authentication step from being completed.
+ In these cases, the payments app can decide whether to proceed with the payment based on the app user's app configuration. If the payments app doesn't want to proceed with the payment, then it must invoke the paymentSessionReject mutation with AUTHENTICATION_FAILED.
+ Shopify confirms with confirmation_result=false
+ This might happen when Shopify doesn't want to proceed with the payment because some business conditions changed during the time elapsed since the authentication process was initiated through the paymentSessionRedirect mutation by the payments app.
+ In this case, the payments app must invoke the paymentSessionReject mutation using the CONFIRMATION_REJECTED reason code.
+ How to orchestrate redirects and interject a call to Confirm
+ Depending on how the payments app integrates with the 3-D Secure back-end, the payments app might need to provide an intermediate landing page to orchestrate the interactions with the 3-D Secure back-end and, after the customer has completed the 3-D Secure authentication, call the paymentSessionConfirm mutation.
+ Refunds
+ To process a refund, Shopify makes an HTTP call to your app, and your app completes the refund by replying with a GraphQL mutation. This interaction is illustrated in the following diagram:
+ Merchant requests refund.
+ Shopify sends a backend request to the payments app, specifying the refund.
+ The app replies with a 201 and an empty response body.
+ The app finalizes the refund using the refundSessionResolve or refundSessionReject mutation.
+ Shopify updates the refund status.
+ Captures
+ A capture describes the process of how merchants capture funds for an authorized payment. A capture is the second part of a two-part payment flow, and occurs after an authorized payment is finalized. Finalized payments have kind set to authorization. When a merchant wishes to capture the funds on an authorized transaction, Shopify sends a capture request to a payments app, and the app can resolve or reject it.
+ The merchant clicks to capture the authorized payment.
+ Shopify sends a backend request to the payments app, specifying the capture request.
+ The app replies with a 201 and an empty response body.
+ The app finalizes the capture using the captureSessionResolve or captureSessionReject mutation.
+ Shopify updates the payment status.
+ Voids
+ A void describes the process of how merchants void funds for an authorized payment. A void is the second part of a two-part payment flow, and occurs after an authorized payment is finalized. Finalized payments have kind set to authorization. When a merchant wishes to cancel the order for an authorized transaction, Shopify sends a void request to a payments app, and the app can resolve or reject it.
+ The merchant requests to void an authorized payment.
+ Shopify sends a backend request to the payments app, specifying the void request.
+ The app replies with a 201 and an empty response body.
+ The app finalizes the void request using the voidSessionResolve or voidSessionReject mutation.
+ Shopify updates the payment status.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Refunds
+ Captures
+ Voids
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,30 @@
+Best practices
+ App Store
+ Create one-time app purchases
+ A single one-time app charge uses a pricing model similar to purchasing a product, where you make a one-time payment at the time of purchase. Multiple app charges follow a pay-as-you-go pricing model, meaning that when use of a service or product has reached a certain limit, another payment is made to continue using it. In this case, the one time charge represents multiple charges that your app creates.
+ Merchants must approve the pricing plan. After accepting the charges, the merchant is redirected to a URL that you provide.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Step 1: Create the charge
+ Refer to an example of creating a one-time app charge.
+ Make a request to the appPurchaseOneTimeCreate mutation with the following information:
+ name
+ price
+ returnUrl
+ currencyCode
+ Step 2: Monitor updates to one-time app purchases
+ To receive notifications when merchants update their one-time app purchases, subscribe to the GraphQL Admin API's APP_PURCHASES_ONE_TIME_UPDATE webhook topic.
+ Next steps
+ Viewing charges
+ Learn about viewing app charges and earnings.
+ Best practices
+ Learn about app billing best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create the charge
+ Step 2: Monitor updates to one-time app purchases
+ Next steps
+ Updates & News
+ Developer changelog

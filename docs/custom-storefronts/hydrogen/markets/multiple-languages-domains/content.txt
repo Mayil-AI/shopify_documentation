@@ -1,0 +1,265 @@
+Building with the Customer Account API
+ Additional SDKs
+ Setup multilingual and multi-regional storefronts with domains and subdomains
+ In this guide you will learn how to setup your Hydrogen project for supporting multiregion and multilingual storefronts by using domains and subdomains. For example, say you have a storefront that should work in English (EN) and in non-regional French (FR) for different customers.
+ Set up the project to handle requests as follows:
+ Language URL path
+ English ca.hydrogen.shop
+ French hydrogen.fr
+ Requirements
+ You have a working Hydrogen project. See getting started guide.
+ You have setup the regions and languages you chose for your store with Shopify Markets.
+ You're familiar with using the Storefront API with Shopify Markets.
+ Step 1: Create a utility that reads requested host
+ Create a utility function that reads the requested host and return the right Locale object using the Storefronts API's supported language and country codes.
+ Tip
+ You can use the /app/lib/utils.js in the Hydrogen demo store as a point of reference.
+ The following is an example utility function with the following locales en_CA, fr_CA and en_US.
+ utils
+ JavaScript
+ TypeScript
+ /app/lib/utils.js
+ 1 export function getLocaleFromRequest(request) {
+ 2
+    // Get the user request URL
+ 3
+    const url = new URL(request.url);
+ 4
+ 5
+    // Match the URL host
+ 6
+    switch (url.host) {
+ 7
+      case 'ca.hydrogen.shop':
+ 8
+        return {
+ 9
+          language: 'EN',
+ 10
+          country: 'CA',
+ 11
+        };
+ 12
+        break;
+ 13
+      case 'hydrogen.fr':
+ 14
+        return {
+ 15
+          language: 'FR',
+ 16
+          country: 'CA',
+ 17
+        };
+ 18
+        break;
+ 19
+      default:
+ 20
+        return {
+ 21
+          language: 'EN',
+ 22
+          country: 'US',
+ 23
+        };
+ 24
+    }
+ 25 }
+ The Locale object that returned should resemble the following example, which is using the Storefont API's supported language and country codes.
+ 1 import {
+ 2
+    CountryCode,
+ 3
+    LanguageCode,
+ 4 } from '@shopify/storefront-kit-react/storefront-api-types';
+ 5
+ 6 export type Locale = {
+ 7
+    language: LanguageCode;
+ 8
+    country: CountryCode;
+ 9 };
+ Step 2: Add i18n to the storefront client
+ In your server.js, update i18n to the result of the utility function that you used when creating the Hydrogen storefront client.
+ By doing this, you now have the locale available throughout the app for every storefront query.
+ server
+ JavaScript
+ TypeScript
+ /server.js
+ 1 const {storefront} = createStorefrontClient({
+ 2
+    // ...
+ 3
+    i18n: getLocaleFromRequest(request),
+ 4
+    // ...
+ 5 });
+ Step 3: Add @inContext directive to your GraphQL queries
+ To support international pricing and languages in Storefront API, you need to pass the $country and $language with an @inContext directive within any requests.
+ Update your GraphQL queries with inContext directives to include $country and $language. Hydrogen automatically injects these parameters.
+ For example:
+ GraphQL queries
+ Before
+ 1 const FEATURED_QUERY = `#graphql
+ 2
+    query homepage {
+ 3
+      collections(first: 3, sortKey: UPDATED_AT) {
+ 4
+        nodes {
+ 5
+          id
+ 6
+          title
+ 7
+          handle
+ 8
+          image {
+ 9
+            altText
+ 10
+            width
+ 11
+            height
+ 12
+            url
+ 13
+          }
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17
+     `;
+ After
+ 1 const FEATURED_QUERY = `#graphql
+ 2
+    query homepage($country: CountryCode, $language: LanguageCode)
+ 3
+       @inContext(country: $country, language: $language) {
+ 4
+      collections(first: 3, sortKey: UPDATED_AT) {
+ 5
+        nodes {
+ 6
+          id
+ 7
+          title
+ 8
+          handle
+ 9
+          image {
+ 10
+            altText
+ 11
+            width
+ 12
+            height
+ 13
+            url
+ 14
+          }
+ 15
+        }
+ 16
+      }
+ 17
+    }
+ 18
+     `;
+ You don't need to manually provide query variables for country and language. You can make these queries with storefront.query in the data loader and you should see the right language and currencies for each request.
+ JavaScript
+ TypeScript
+ 1 export async function loader({
+ 2
+    context: {storefront},
+ 3 }) {
+ 4
+    return json({
+ 5
+      featureCollections: await storefront.query<{
+ 6
+        collections;
+ 7
+      }>(FEATURED_COLLECTIONS_QUERY),
+ 8
+    });
+ 9 }
+ Hydrogen injects the locale parameters automatically to storefront.query based on what was defined in i18n when creating the client.
+ For example, if a request came from hydrogen.fr, then the country CA and language FR are used as defined in the example utilities function above.
+ The Storefront API returns the correct currency and language if the store was set up in the Shopify admin.
+ Note
+ if you want to override the locale determined by your utility option, you can supply the query variables to the storefront.query:
+ JavaScript
+ TypeScript
+ 1 export async function loader({
+ 2
+    context: {storefront},
+ 3 }) {
+ 4
+    return json({
+ 5
+      featureCollection: await storefront.query(FEATURED_COLLECTIONS_QUERY, {
+ 6
+        variables: {
+ 7
+          country: 'CA',    // Always query back in CA currency
+ 8
+          language: 'FR',   // Always query back in FR language
+ 9
+        }
+ 10
+      }),
+ 11
+    });
+ 12 }
+ Step 4: Make sure redirects are properly url encoded
+ If you have multilingual handles for your product or collection, for example, products/スノーボード, make sure to encode url when making redirects.
+ Link
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.js
+ 1 export async function loader({params, request, context}) {
+ 2
+    const {productHandle} = params; // productHandle = 'スノーボード'
+ 3
+ 4
+    ...
+ 5
+ 6
+    if (noSelectedProductVariant) {
+ 7
+      // Use URL to prevent accidental double url encoding
+ 8
+      const newUrl = new URL(
+ 9
+        `/products/${productHandle}?${firstVariantSearchParams.toString()}`,
+ 10
+        'http://example.com'  // Any domain to satisfy the URL api
+ 11
+      );
+ 12
+ 13
+      // Redirect to '/products/%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89?Size=154cm&Color=Syntax'
+ 14
+      throw redirect(newUrl.pathname + newUrl.search, 302);
+ 15
+    }
+ 16
+ 17
+    ...
+ Next steps
+ Create a country selector: Learn how to setup a country selector to allow users to choose their own country.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a utility that reads requested host
+ Step 2: Add i18n to the storefront client
+ Step 3: Add @inContext directive to your GraphQL queries
+ Step 4: Make sure redirects are properly url encoded
+ Next steps
+ Updates & News

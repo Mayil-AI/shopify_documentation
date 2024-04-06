@@ -1,0 +1,275 @@
+Shipping and delivery
+ Building your app
+ Getting started
+ Add app components
+ Build a user interface
+ Billing
+ App Store
+ Getting started with a deferred purchase option app
+ You're ready to create a new app that helps merchants create deferred purchase options. To get started, you'll set up the foundation of your app.
+ To build a deferred purchase option app, you want to set up required access scopes and pages for the app. You want to have the following pages on the app:
+ A page where merchants can create a deferred purchase option
+ A homepage where merchants can view a list of the deferred purchase options that they created
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Set up required access scopes
+ Create an app page
+ Add navigation for app pages
+ Add the empty state and title bar components to the homepage
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Complete the Create and manage deferred purchase options and Create and manage delivery profiles tutorials.
+ Complete the Create an app tutorial to set up your development environment and scaffold an app.
+ Step 1: Set up required access scopes
+ Your app requires the following access scopes:
+ write_products
+ write_customers
+ write_draft_orders
+ write_purchase_options
+ Navigate your app directory.
+ In the shopify.app.toml file, add the access scopes.
+ shopify.app.toml
+ 1 scopes = "write_products,write_customers,write_draft_orders,write_purchase_options"
+ Step 2: Create new page
+ Create an app page where merchants can create a deferred purchase option. This is an empty page, but you'll add various app components later.
+ In the web/frontend/pages folder, create a new folder purchaseOptions and a new file called new.jsx.
+ web/frontend/pages/purcahseOptions/new.jsx
+ 1 import { Heading, Page } from "@shopify/polaris";
+ 2
+ 3 export default function CreatePurchaseOptionsPage() {
+ 4
+    return (
+ 5
+      <Page>
+ 6
+        <Heading>Create a new deferred purchase option</Heading>
+ 7
+      </Page>
+ 8
+    );
+ 9 }
+ Step 3: Add navigation for app pages
+ Update the navigation links in the App.jsx file. For more information on routing in Shopify's React component library, refer to App Bridge React.
+ In web/frontend/App.jsx, replace the content with the following code:
+ web/frontend/App.jsx
+ 1 import { BrowserRouter } from "react-router-dom";
+ 2 import { NavigationMenu } from "@shopify/app-bridge-react";
+ 3 import Routes from "./Routes";
+ 4 import {
+ 5
+    AppBridgeProvider,
+ 6
+    QueryProvider,
+ 7
+    PolarisProvider,
+ 8 } from "./components";
+ 9
+ 10 export default function App() {
+ 11
+    // Any .tsx or .jsx files in /pages will become a route
+ 12
+    // See documentation for <Routes /> for more info
+ 13
+    const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
+ 14
+ 15
+    return (
+ 16
+      <PolarisProvider>
+ 17
+        <BrowserRouter>
+ 18
+          <AppBridgeProvider>
+ 19
+            <QueryProvider>
+ 20
+              /* Adds a new link on the left navigation bar in the Shopify Admin */
+ 21
+              <NavigationMenu
+ 22
+                navigationLinks={[
+ 23
+                  {
+ 24
+                    label: "Create",
+ 25
+                    destination: "/purchaseOptions/new",
+ 26
+                  },
+ 27
+                ]}
+ 28
+              />
+ 29
+              <Routes pages={pages} />
+ 30
+            </QueryProvider>
+ 31
+          </AppBridgeProvider>
+ 32
+        </BrowserRouter>
+ 33
+      </PolarisProvider>
+ 34
+    );
+ 35 }
+ Step 4: Update app home page
+ Now that you've set up your app pages, you can use Polaris and App Bridge React to build the user interface. You'll add the following components to the index.jsx file:
+ EmptyState is used to display the homepage before merchants create deferred purchase options.
+ TitleBar is used when merchants add additional deferred purchase options.
+ In web/frontend/pages/index.jsx, replace the content with the following code:
+ web/frontend/pages/index.jsx
+ 1 import { useNavigate, TitleBar, Loading } from "@shopify/app-bridge-react";
+ 2 import {
+ 3
+    Card,
+ 4
+    EmptyState,
+ 5
+    Layout,
+ 6
+    Page,
+ 7
+    SkeletonBodyText,
+ 8 } from "@shopify/polaris";
+ 9
+ 10 export default function HomePage() {
+ 11
+    /*
+ 12
+      Add an App Bridge useNavigate hook to set up the navigate function.
+ 13
+      This function modifies the top-level browser URL so that you can
+ 14
+      navigate within the embedded app and keep the browser in sync on reload.
+ 15
+    */
+ 16
+    const navigate = useNavigate();
+ 17
+ 18
+    /*
+ 19
+      These are mock values. Setting these values lets you preview the loading markup and the empty state.
+ 20
+    */
+ 21
+    const isLoading = false;
+ 22
+    const isRefetching = false;
+ 23
+    const purchaseOptions = [];
+ 24
+ 25
+    /* loadingMarkup uses the loading component from AppBridge and components from Polaris  */
+ 26
+    const loadingMarkup = isLoading ? (
+ 27
+      <Card sectioned>
+ 28
+        <Loading />
+ 29
+        <SkeletonBodyText />
+ 30
+      </Card>
+ 31
+    ) : null;
+ 32
+ 33
+    /* Use Polaris Card and EmptyState components to define the contents of the empty state */
+ 34
+    const emptyStateMarkup =
+ 35
+      !isLoading &&  !purchaseOptions?.length ? (
+ 36
+        <Card sectioned>
+ 37
+          <EmptyState
+ 38
+            heading="Create deferred purchase options"
+ 39
+            /* This button will take the user to a create a purchase option page */
+ 40
+            action={{
+ 41
+              content: "Create Purchase Option",
+ 42
+              onAction: () => navigate("/purchaseOptions/new"),
+ 43
+            }}
+ 44
+            image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
+ 45
+ 46
+          >
+ 47
+            <p> Deferred purchase options enable customers to purchase products with deferred payments or deliveries</p>
+ 48
+          </EmptyState>
+ 49
+        </Card>
+ 50
+      ) : null;
+ 51
+ 52
+    /*
+ 53
+      Use Polaris Page and TitleBar components to create the page layout,
+ 54
+      and include the empty state contents set above.
+ 55
+    */
+ 56
+    return (
+ 57
+      <Page>
+ 58
+        <TitleBar
+ 59
+          title="Deferred Purchase"
+ 60
+          primaryAction={{
+ 61
+            content: "Create Purchase Option",
+ 62
+            onAction: () => navigate("/purchaseOptions/new"),
+ 63
+          }}
+ 64
+        />
+ 65
+        <Layout>
+ 66
+          <Layout.Section>
+ 67
+            {loadingMarkup}
+ 68
+            {emptyStateMarkup}
+ 69
+          </Layout.Section>
+ 70
+        </Layout>
+ 71
+      </Page>
+ 72
+    );
+ 73 }
+ Your app's homepage displays the empty state and the title bar:
+ Next steps
+ Create and add app components
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Set up required access scopes
+ Step 2: Create new page
+ Step 3: Add navigation for app pages
+ Step 4: Update app home page
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

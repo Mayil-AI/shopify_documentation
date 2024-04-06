@@ -1,0 +1,135 @@
+Actions
+ Overview
+ Reference
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Lifecycle events
+ Migrating Flow legacy extensions
+ Using complex data types
+ Payments
+ Billing
+ App Store
+ Action reference
+ The guide provides a comprehensive reference on how to customize your Flow action TOML configuration file. It covers all sections and properties of the configuration file, including extension properties, extension fields, reference field types, custom field types, and more.
+ The guide also provides optional sections on adding a custom configuration page, configuring custom validation, and adding a custom return data type.
+ TOML
+ Note
+ Creating Flow extensions using the CLI is an exciting new feature that is currently in development. As with any developing feature, it's important to note that the Flow CLI capabilities will continue to evolve and improve over time. Developers can expect additional functionality, enhancements, and improvements to be added as development progresses.
+ To create Flow extensions using the Shopify CLI, version 3.48 or higher is required.
+ When you create a new action extension through the CLI you get a basic version of the shopify.extension.toml file structure that looks like the following example:
+ File
+ 1 [[extensions]]
+ 2 name = "Place auction bid"
+ 3 type = "flow_action"
+ 4 handle = "place-auction-bid"
+ 5 description = "Your description"
+ 6 runtime_url = "https://{url}.com/api/execute"
+ 7
+ 8 [settings]
+ 9
+ 10
+    [[settings.fields]]
+ 11
+    type = "customer_reference"
+ 12
+    required = true
+ 13
+ 14
+    [[settings.fields]]
+ 15
+    type = "single_line_text_field"
+ 16
+    key = "your-field-key"
+ 17
+    name = "Display name"
+ 18
+    description = "A description of my field"
+ 19
+    required = true
+ Action extension fields
+ These are flow-specific properties for your Flow extension. They're included in the [[extensions]] section of the TOML file.
+ Property name Description Rules
+ name
+ required The name of your extension. This is your task's merchant-facing name in the editor. This name should be human-readable.
+ type
+ required The type of your extension. This should always be set to “flow_action” for Flow actions. - Value must be "flow_action".
+ handle
+ required A unique identifier for your extension. This property can't be changed after you’ve run the dev or deploy command. - Can't exceed 30 characters.
+ - Must be unique across your app's extensions.
+ - Must only contain alphanumeric characters and hyphens.
+ description
+ optional A description of your extension. This description displays in the Flow editor navigation panel.
+ runtime_url
+ required The endpoint where Flow sends your action's payload when your step is being executed at runtime. The payload contains data that you can use to execute the action in your app. - Must be a URL.
+ validation_url
+ optional An endpoint that validates the contents of custom fields in an action payload when an action is saved. This endpoint is required if you want to use a custom configuration page. - Must be a URL.
+ config_page_url
+ optional A route that renders your custom configuration page. - Must be a URL.
+ config_page_preview_url
+ optional An endpoint that provides data about your custom configuration page to display in the automation tool. This endpoint is required if you want to use a custom configuration page. - Must be a URL.
+ schema
+ optional A relative file path to a GraphQL schema definition file that contains custom types that you can use as part of your action. - Must be a relative path to a GraphQL file.
+ return_type_ref
+ optional The name of the type to be returned by the action. This type must be present in the referenced schema file. - Must be a type that's present in the schema file.
+ Action extension fields
+ Extension fields are listed in the [settings] section, with each field using a [[settings.field]] header. These fields render in your action's configuration panel in the Flow editor. You can include two types of fields in your payload schema: reference fields and custom fields. Fields are present to merchants in the same order that they are defined in the TOML file.
+ Property name Description Rules
+ type
+ required The field type. - Accepted custom field types.
+ - Accepted reference field types.
+ key
+ optional A unique key that identifies your field. This key will be sent at runtime along with the value of the field. - Required for custom field types.
+ name
+ optional The field’s merchant-facing name. - Required for custom field types.
+ description
+ optional A description of the field. This will appear in the Flow editor configuration panel.
+ required
+ optional A boolean value to make the field required in the Flow editor. - Must be a boolean value.
+ Supported field types
+ When you create an action, you add the fields that your action endpoint requires merchants to provide. You set up these fields in the [settings] section of the TOML file.
+ Reference field types
+ Reference fields are Shopify resources that can be used by your action. The ID for the resource is usually populated automatically by a workflow trigger, making it easier for your merchants to use. For example, if a workflow is triggered by a customer abandoning their cart, then that customer's ID is populated in the workflow execution environment.
+ Reference type (TOML) Payload key Description
+ customer_reference customer_id The id of the customer. Your app must have the read_customers scope.
+ order_reference order_id The id of the order. Your app must have the read_orders scope.
+ product_reference product_id The id of the product. Your app must have the read_products scope.
+ marketing_activity_reference marketing_activity_id For Shopify marketing automation actions only. Actions that use this property aren't available in Shopify Flow.
+ abandonment_reference abandonment_id The id of the abandonment.
+ Custom field types
+ Custom field types are fields for users to populate as a part of the action configuration. When the action is executed, the user-configured values are passed as a part of the action payload.
+ The following are the available custom field types:
+ Field type Description
+ boolean A Boolean value. This field is represented as a checkbox in the Flow Editor configuration panel.
+ email A text field that has native email validation.
+ single_line_text_field A single line text field.
+ multi_line_text_field A multi-line text field.
+ number_decimal A number field with a decimal point.
+ number_integer An integer number field.
+ url A text field that has native URL validation.
+ Advanced topics
+ Optional: Add a custom configuration page
+ To give merchants a more seamless action configuration experience, and to allow them to manage resources that are external to Shopify Flow, you can embed a page from your app in the Shopify Flow editor. Building a custom configuration page requires creating and hosting an App Bridge-enabled page as a part of your app, which can then be surfaced in to users Shopify Flow. Learn how to build a custom configuration page.
+ A custom configuration page also requires a custom configuration page preview endpoint that provides text and images that describe the custom configuration page to users.
+ If you built a custom configuration page that you want to display to users in the Shopify Flow editor, then you need to provide details about where to access the page and preview data for the page.
+ Under Custom configuration page, select Enable a custom configuration page for this action.
+ In the Destination URL field, enter the URL for the custom configuration page that you created.
+ In the Preview URL field, enter the URL for your custom configuration page preview endpoint.
+ Optional: Configure custom validation
+ If you want to perform custom validation on the contents of the properties that you define as a part of your payload schema, then you can expose an endpoint where Shopify Flow will send the properties and the values that the user sets on save.
+ If you configured a custom configuration page for your action, then this endpoint is required.
+ Under Custom validation, select Enable custom validation for this action. If you enabled a custom configuration page, then this option is automatically selected.
+ In the Validation endpoint field, enter the URL for the custom validation endpoint that you created.
+ Optional: Add a custom return data type
+ To return data from an action, you must provide a schema for the return type using GraphQL's type system (SDL) so that Flow can properly provide the return object in the workflow editor. You can define this schema in any file and link to it from the TOML. For example, a file called schema.graphql can be made in the same directory as the extension that's referring to the SDL.
+ For more information, please consult our complex data types section.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ TOML
+ Supported field types
+ Advanced topics
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

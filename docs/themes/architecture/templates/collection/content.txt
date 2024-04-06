@@ -1,0 +1,110 @@
+collection
+ The collection template renders the collection page, which lists all products within a collection.
+ Tip
+ Refer to the collection template, its banner section, and its product grid section in Dawn for an example implementation.
+ Location
+ The collection template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── collection.json
+ You should include the collection object in your collection template or a section inside of the template.
+ The collection object
+ You can access the Liquid collection object to display the collection details.
+ Usage
+ When working with the collection template, you should familiarize yourself with the following:
+ Filtering collections
+ Sorting products in a collection
+ Paginating products
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Filter collections
+ You can use storefront filtering to filter collections into smaller subsets of products.
+ Sort products in a collection
+ You can choose the order that products are sorted in through the sort_by URL parameter on collection pages:
+ Example
+ 1 https://my-store.myshopify.com/collections/frontpage?sort_by=price-descending
+ Through the collection object, you can access the following:
+ The available options with the sort_options attribute.
+ The currently selected option, if one is selected, with the sort_by attribute.
+ The default option with the default_sort_by attribute.
+ You can output the available options in a <select> element for customers to make their selection, and you can initialize the selector based on the current and default options. When a new selection is made, you should use JavaScript to append the URL parameter and refresh the page.
+ The following is a simple example of a sort order selector, and accompanying JavaScript:
+ Example
+ 1 <select id="sort-by">
+ 2
+    {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+ 3
+ 4
+    {% for option in collection.sort_options %}
+ 5
+      <option value="{{ option.value }}" {% if option.value == sort_by %}selected="selected"{% endif %}>
+ 6
+        {{ option.name }}
+ 7
+      </option>
+ 8
+    {% endfor %}
+ 9 </select>
+ 10
+ 11 <script>
+ 12
+    Shopify.queryParams = {};
+ 13
+ 14
+    // Preserve existing query parameters
+ 15
+    if (location.search.length) {
+ 16
+      var params = location.search.substr(1).split('&');
+ 17
+ 18
+      for (var i = 0; i < params.length; i++) {
+ 19
+        var keyValue = params[i].split('=');
+ 20
+ 21
+        if (keyValue.length) {
+ 22
+          Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26
+ 27
+    // Update sort_by query parameter on select change
+ 28
+    document.querySelector('#sort-by').addEventListener('change', function(e) {
+ 29
+      var value = e.target.value;
+ 30
+ 31
+      Shopify.queryParams.sort_by = value;
+ 32
+      location.search = new URLSearchParams(Shopify.queryParams).toString();
+ 33
+    });
+ 34 </script>
+ Paginate products
+ Products can be accessed through the products attribute of the collection object, and have a limit of 50 per page. For this reason, you should paginate a collection’s products to ensure that they’re all accessible:
+ Example
+ 1 {% paginate collection.products by 20 %}
+ 2
+    {% for product in collection.products %}
+ 3
+      <!-- product info -->
+ 4
+    {% endfor %}
+ 5
+ 6
+    {{ paginate | default_pagination }}
+ 7 {% endpaginate %}
+ Was this section helpful?

@@ -1,0 +1,645 @@
+Billing
+ App Store
+ Import B2B orders
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use apps with B2B features.
+ Note
+ This tutorial describes how to import historical order data. To create and collect payment for B2B orders, refer to the Manage draft orders tutorial instead.
+ A business-to-business (B2B) merchant might run certain B2B operations outside of Shopify, but want to import their non-Shopify B2B orders into Shopify. This can help the B2B merchant to move their B2B business to Shopify without losing historical order data, and enable buyers to review their full order history within their customer account pages on a Shopify storefront.
+ In this tutorial, you'll learn how to import orders with the REST Admin API and associate them with B2B company locations and company contacts.
+ Requirements
+ You've added products to your development store.
+ You've created a company location.
+ You've created a company contact and assigned the company contact a role at the company location.
+ Limitations
+ A B2B merchant must import or create all relevant companies, company locations, company contacts, and products in Shopify before they can import B2B orders. If these resources aren't created in Shopify before the order import, then an error is returned.
+ How it works
+ The B2B order import feature uses the REST Admin API's POST orders endpoint to enable B2B merchants to import B2B orders into Shopify.
+ When you include both company.location_id and customer.id in the request, a B2B order is created and associated with the company location.
+ Caution
+ The customer must have a role assignment to the specified company location. If the customer doesn't have a role assignment to that location, then an error is returned.
+ Line item prices
+ The line_item.price isn't a required parameter for importing B2B orders. When a merchant doesn't add prices to their line items, the API populates the line_item.price automatically based on the variant price.
+ Because this can result in inaccurate order data, you should implement validation logic within the app to ensure that merchants input accurate price data when importing B2B orders.
+ API response
+ When an order is successfully created in a B2B context, the API response includes the following company details:
+ 1 "company": {
+ 2
+    "id": 123,
+ 3
+    "location_id": 12345
+ 4 }
+ Example request
+ The following request creates a B2B order for a company:
+ Import B2B orders
+ Endpoint
+ 1 POST https://{shop}.myshopify.com/admin/api/{api_version}/orders.json
+ Request
+ 1 {
+ 2
+    "order": {
+ 3
+      "line_items": [
+ 4
+        {
+ 5
+          "variant_id": 123,
+ 6
+          "quantity": 1,
+ 7
+      // If the price isn't included, then the price is automatically populated based on the variant price.
+ 8
+          "price": 10.20
+ 9
+        }
+ 10
+      ],
+ 11
+      "customer": {
+ 12
+      // The customer must have a role assignment at the company location. Otherwise, the request returns an error.
+ 13
+        "id": 12345
+ 14
+      },
+ 15
+      "company": {
+ 16
+        "location_id": 123456789
+ 17
+      }
+ 18
+    }
+ 19 }
+ JSON response
+ 1 {
+ 2
+    "order": {
+ 3
+      "id": 987,
+ 4
+      "admin_graphql_api_id": "gid://shopify/Order/987",
+ 5
+      "app_id": 111,
+ 6
+      "browser_ip": null,
+ 7
+      "buyer_accepts_marketing": true,
+ 8
+      "cancel_reason": null,
+ 9
+      "cancelled_at": null,
+ 10
+      "cart_token": null,
+ 11
+      "checkout_id": null,
+ 12
+      "checkout_token": null,
+ 13
+      "client_details": null,
+ 14
+      "closed_at": null,
+ 15
+      // The company field is returned only for B2B orders.
+ 16
+      "company": {
+ 17
+        "id": 222,
+ 18
+        "location_id": 123456789
+ 19
+      },
+ 20
+      "confirmed": true,
+ 21
+      "contact_email": "bo.wang@example.com",
+ 22
+      "created_at": "2023-01-05T15:00:00-05:00",
+ 23
+      "currency": "USD",
+ 24
+      "current_subtotal_price": "10.20",
+ 25
+      "current_subtotal_price_set": {
+ 26
+        "shop_money": {
+ 27
+          "amount": "10.20",
+ 28
+          "currency_code": "USD"
+ 29
+        },
+ 30
+        "presentment_money": {
+ 31
+          "amount": "10.20",
+ 32
+          "currency_code": "USD"
+ 33
+        }
+ 34
+      },
+ 35
+      "current_total_discounts": "0.00",
+ 36
+      "current_total_discounts_set": {
+ 37
+        "shop_money": {
+ 38
+          "amount": "0.00",
+ 39
+          "currency_code": "USD"
+ 40
+        },
+ 41
+        "presentment_money": {
+ 42
+          "amount": "0.00",
+ 43
+          "currency_code": "USD"
+ 44
+        }
+ 45
+      },
+ 46
+      "current_total_duties_set": null,
+ 47
+      "current_total_price": "10.20",
+ 48
+      "current_total_price_set": {
+ 49
+        "shop_money": {
+ 50
+          "amount": "10.20",
+ 51
+          "currency_code": "USD"
+ 52
+        },
+ 53
+        "presentment_money": {
+ 54
+          "amount": "10.20",
+ 55
+          "currency_code": "USD"
+ 56
+        }
+ 57
+      },
+ 58
+      "current_total_tax": "0.00",
+ 59
+      "current_total_tax_set": {
+ 60
+        "shop_money": {
+ 61
+          "amount": "0.00",
+ 62
+          "currency_code": "USD"
+ 63
+        },
+ 64
+        "presentment_money": {
+ 65
+          "amount": "0.00",
+ 66
+          "currency_code": "USD"
+ 67
+        }
+ 68
+      },
+ 69
+      "customer_locale": null,
+ 70
+      "device_id": null,
+ 71
+      "discount_codes": [],
+ 72
+      "email": "bo.wang@example.com",
+ 73
+      "estimated_taxes": false,
+ 74
+      "financial_status": "paid",
+ 75
+      "fulfillment_status": null,
+ 76
+      "gateway": "",
+ 77
+      "landing_site": null,
+ 78
+      "landing_site_ref": null,
+ 79
+      "location_id": null,
+ 80
+      "merchant_of_record_app_id": null,
+ 81
+      "name": "#1001",
+ 82
+      "note": null,
+ 83
+      "note_attributes": [],
+ 84
+      "number": 1,
+ 85
+      "order_number": 1001,
+ 86
+      "order_status_url": "https://{shop}.myshopify.com/33333333/orders/389asdfhk390fasjkl/authenticate?key=349829fjsdakfl",
+ 87
+      "original_total_duties_set": null,
+ 88
+      "payment_gateway_names": [],
+ 89
+      "phone": null,
+ 90
+      "presentment_currency": "USD",
+ 91
+      "processed_at": "2023-01-05T15:00:00-05:00",
+ 92
+      "processing_method": "",
+ 93
+      "reference": null,
+ 94
+      "referring_site": null,
+ 95
+      "source_identifier": null,
+ 96
+      "source_name": "1203919380",
+ 97
+      "source_url": null,
+ 98
+      "subtotal_price": "10.20",
+ 99
+      "subtotal_price_set": {
+ 100
+        "shop_money": {
+ 101
+          "amount": "10.20",
+ 102
+          "currency_code": "USD"
+ 103
+        },
+ 104
+        "presentment_money": {
+ 105
+          "amount": "10.20",
+ 106
+          "currency_code": "USD"
+ 107
+        }
+ 108
+      },
+ 109
+      "tags": "",
+ 110
+      "tax_lines": [],
+ 111
+      "taxes_included": false,
+ 112
+      "test": false,
+ 113
+      "token": "349829fjsdakfl",
+ 114
+      "total_discounts": "0.00",
+ 115
+      "total_discounts_set": {
+ 116
+        "shop_money": {
+ 117
+          "amount": "0.00",
+ 118
+          "currency_code": "USD"
+ 119
+        },
+ 120
+        "presentment_money": {
+ 121
+          "amount": "0.00",
+ 122
+          "currency_code": "USD"
+ 123
+        }
+ 124
+      },
+ 125
+      "total_line_items_price": "10.20",
+ 126
+      "total_line_items_price_set": {
+ 127
+        "shop_money": {
+ 128
+          "amount": "10.20",
+ 129
+          "currency_code": "USD"
+ 130
+        },
+ 131
+        "presentment_money": {
+ 132
+          "amount": "10.20",
+ 133
+          "currency_code": "USD"
+ 134
+        }
+ 135
+      },
+ 136
+      "total_outstanding": "10.20",
+ 137
+      "total_price": "10.20",
+ 138
+      "total_price_set": {
+ 139
+        "shop_money": {
+ 140
+          "amount": "10.20",
+ 141
+          "currency_code": "USD"
+ 142
+        },
+ 143
+        "presentment_money": {
+ 144
+          "amount": "10.20",
+ 145
+          "currency_code": "USD"
+ 146
+        }
+ 147
+      },
+ 148
+      "total_shipping_price_set": {
+ 149
+        "shop_money": {
+ 150
+          "amount": "0.00",
+ 151
+          "currency_code": "USD"
+ 152
+        },
+ 153
+        "presentment_money": {
+ 154
+          "amount": "0.00",
+ 155
+          "currency_code": "USD"
+ 156
+        }
+ 157
+      },
+ 158
+      "total_tax": "0.00",
+ 159
+      "total_tax_set": {
+ 160
+        "shop_money": {
+ 161
+            "amount": "0.00",
+ 162
+            "currency_code": "USD"
+ 163
+        },
+ 164
+        "presentment_money": {
+ 165
+          "amount": "0.00",
+ 166
+          "currency_code": "USD"
+ 167
+        }
+ 168
+      },
+ 169
+      "total_tip_received": "0.00",
+ 170
+      "total_weight": 0,
+ 171
+      "updated_at": "2023-01-05T15:00:00-05:00",
+ 172
+      "user_id": null,
+ 173
+      "billing_address": null,
+ 174
+      "customer": {
+ 175
+        "id": 12345,
+ 176
+        "email": "bo.wang@example.com",
+ 177
+        "accepts_marketing": true,
+ 178
+        "created_at": "2021-01-12T12:06:17-05:00",
+ 179
+        "updated_at": "2022-12-07T15:08:38-05:00",
+ 180
+        "first_name": "Bo",
+ 181
+        "last_name": "Wang",
+ 182
+        "state": "enabled",
+ 183
+        "note": "Company contact at Example Company",
+ 184
+        "verified_email": true,
+ 185
+        "multipass_identifier": null,
+ 186
+        "tax_exempt": false,
+ 187
+        "tags": "wholesale",
+ 188
+        "currency": "USD",
+ 189
+        "phone": "800-555-0101",
+ 190
+        "accepts_marketing_updated_at": "2022-01-11T17:04:08-05:00",
+ 191
+        "marketing_opt_in_level": "single_opt_in",
+ 192
+        "tax_exemptions": [],
+ 193
+        "email_marketing_consent": {
+ 194
+          "state": "subscribed",
+ 195
+          "opt_in_level": "single_opt_in",
+ 196
+          "consent_updated_at": "2022-01-11T17:04:08-05:00"
+ 197
+        },
+ 198
+        "sms_marketing_consent": {
+ 199
+          "state": "not_subscribed",
+ 200
+          "opt_in_level": "single_opt_in",
+ 201
+          "consent_updated_at": null,
+ 202
+          "consent_collected_from": "OTHER"
+ 203
+        },
+ 204
+        "admin_graphql_api_id": "gid://shopify/Customer/12345",
+ 205
+        "default_address": {
+ 206
+          "id": 4545,
+ 207
+          "customer_id": 12345,
+ 208
+          "first_name": "Bo",
+ 209
+          "last_name": "Wang",
+ 210
+          "company": "Example Company",
+ 211
+          "address1": "2050 Monjaboom Blvd",
+ 212
+          "address2": "",
+ 213
+          "city": "Ottawa",
+ 214
+          "province": "Ontario",
+ 215
+          "country": "Canada",
+ 216
+          "zip": "K2P 1L4",
+ 217
+          "phone": "800-555-0101",
+ 218
+          "name": "Bo Wang",
+ 219
+          "province_code": "ON",
+ 220
+          "country_code": "CA",
+ 221
+          "country_name": "Canada",
+ 222
+          "default": true
+ 223
+        }
+ 224
+      },
+ 225
+      "discount_applications": [],
+ 226
+      "fulfillments": [],
+ 227
+      "line_items": [
+ 228
+        {
+ 229
+          "id": 12687574499350,
+ 230
+          "admin_graphql_api_id": "gid://shopify/LineItem/12687574499350",
+ 231
+          "fulfillable_quantity": 1,
+ 232
+          "fulfillment_service": "manual",
+ 233
+          "fulfillment_status": null,
+ 234
+          "gift_card": false,
+ 235
+          "grams": 100,
+ 236
+          "name": "Example product",
+ 237
+          "price": "10.20",
+ 238
+          "price_set": {
+ 239
+              "shop_money": {
+ 240
+                  "amount": "10.20",
+ 241
+                  "currency_code": "USD"
+ 242
+              },
+ 243
+              "presentment_money": {
+ 244
+                  "amount": "10.20",
+ 245
+                  "currency_code": "USD"
+ 246
+              }
+ 247
+          },
+ 248
+          "product_exists": true,
+ 249
+          "product_id": 122,
+ 250
+          "properties": [],
+ 251
+          "quantity": 1,
+ 252
+          "requires_shipping": true,
+ 253
+          "sku": "example-product",
+ 254
+          "taxable": true,
+ 255
+          "title": "Example product",
+ 256
+          "total_discount": "0.00",
+ 257
+          "total_discount_set": {
+ 258
+              "shop_money": {
+ 259
+                  "amount": "0.00",
+ 260
+                  "currency_code": "USD"
+ 261
+              },
+ 262
+              "presentment_money": {
+ 263
+                  "amount": "0.00",
+ 264
+                  "currency_code": "USD"
+ 265
+              }
+ 266
+          },
+ 267
+          "variant_id": 123,
+ 268
+          "variant_inventory_management": null,
+ 269
+          "variant_title": "Example variant",
+ 270
+          "vendor": "B2B merchant",
+ 271
+          "tax_lines": [],
+ 272
+          "duties": [],
+ 273
+          "discount_allocations": []
+ 274
+        }
+ 275
+      ],
+ 276
+      "payment_details": null,
+ 277
+      "payment_terms": null,
+ 278
+      "refunds": [],
+ 279
+      "shipping_address": null,
+ 280
+      "shipping_lines": []
+ 281
+    }
+ 282 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Limitations
+ How it works
+ Example request
+ Updates & News
+ Developer changelog

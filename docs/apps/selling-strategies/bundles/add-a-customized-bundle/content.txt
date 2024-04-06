@@ -1,0 +1,575 @@
+Billing
+ App Store
+ Add a customized bundle
+ This guide shows you how to add a customized bundle using Shopify Functions.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Set up your environment to use functions.
+ Create a cart_transform function.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ You're familiar with the Cart Transform Function API.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Limitations and considerations
+ A bundle can have up to 150 components.
+ After an app has assigned components to a bundle, only that app can manage the components of the bundle.
+ Nested bundles aren't supported. A bundle can't have components and be part of another bundle simultaneously.
+ Step 1: Generate a new extension
+ To create a cart transform extension, you can use Shopify CLI, which generates starter code for building your extension and automates common development tasks.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run the following command to create the app extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template cart_transform --name demo-cart-transform-extension
+ Choose the language that you want to use. For this tutorial, we will use Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $
+    (1) JavaScript
+ $
+    (2) TypeScript
+ $ >  (3) Rust
+ $
+    (4) Wasm
+ Navigate to extensions/demo-cart-transform-extension:
+ Terminal
+ $ cd extensions/demo-cart-transform-extension
+ Step 2: Define the input of your function
+ run.graphql defines the input for the function target. The following example shows an input that retrieves information about buyer's cart like merchandise, quantity etc.
+ Replace the contents of src/run.graphql file with the following code.
+ Customized bundle example
+ src/run.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        id
+ 5
+        quantity
+ 6
+        merchandise {
+ 7
+          __typename
+ 8
+          ... on ProductVariant {
+ 9
+            id
+ 10
+            component_reference: metafield(
+ 11
+              namespace: "custom"
+ 12
+              key: "component_reference"
+ 13
+            ) {
+ 14
+              value
+ 20 }
+ Resolved input
+ 1 {
+ 2
+    "cart": {
+ 3
+      "lines": [
+ 4
+        {
+ 5
+          "id": "gid://shopify/CartLine/1",
+ 6
+          "quantity": 1,
+ 7
+          "merchandise": {
+ 8
+            "__typename": "ProductVariant",
+ 9
+            "id": "gid://shopify/ProductVariant/1099",
+ 10
+            "title": "Something not bundled"
+ 11
+          }
+ 12
+        },
+ 13
+        {
+ 14
+          "id": "gid://shopify/CartLine/4",
+ 15
+          "quantity": 9,
+ 16
+          "merchandise": {
+ 17
+            "__typename": "ProductVariant",
+ 18
+            "id": "gid://shopify/ProductVariant/1111",
+ 19
+            "title": "A neat bundle",
+ 20
+            "component_reference": {
+ 21
+              "value": "[\"gid://shopify/ProductVariant/111\",\"gid://shopify/ProductVariant/222\"]"
+ 22
+            }
+ 23
+          }
+ 24
+        }
+ 25
+      ]
+ 26
+    }
+ 27 }
+ The Function API references provide information on the available fields for the input query.
+ Note
+ CartTransform only supports a subset of cart fields. For the list of supported cart fields, refer to the cart input field.
+ Step 3: Define the business logic of your function
+ In this example, our function will output expand operations for cart lines where merchandise has a metafield referencing other bundle components.
+ Replace the contents of src/run.rs file with the following code.
+ run.rs
+ 1 use run::input::InputCart as Cart;
+ 2 use run::input::InputCartLinesMerchandise::ProductVariant;
+ 3 use run::input::InputCartLinesMerchandiseOnProductVariant;
+ 4 use run::output::CartOperation;
+ 5 use run::output::ExpandOperation;
+ 6 use run::output::ExpandedItem;
+ 7 use shopify_function::prelude::*;
+ 8 use shopify_function::Result;
+ 9
+ 10 #[shopify_function_target(query_path = "src/run.graphql", schema_path = "schema.graphql")]
+ 11 fn run(input: input::ResponseData) -> Result<output::FunctionRunResult> {
+ 12
+      let cart_operations: Vec<CartOperation> = get_expand_cart_operations(&input.cart);
+ 13
+ 14
+      Ok(output::FunctionRunResult {
+ 15
+          operations: cart_operations,
+ 16
+      })
+ 17 }
+ 18
+ 19 // expand operation logic
+ 20
+ 21 fn get_expand_cart_operations(cart: &Cart) -> Vec<CartOperation> {
+ 22
+      let mut result: Vec<CartOperation> = Vec::new();
+ 23
+ 24
+      for line in cart.lines.iter() {
+ 25
+          let variant = match &line.merchandise {
+ 26
+              ProductVariant(variant) => Some(variant),
+ 27
+              _ => None,
+ 28
+          };
+ 29
+          if variant == None {
+ 30
+              continue;
+ 31
+          }
+ 32
+ 33
+          if let Some(merchandise) = &variant {
+ 34
+              let component_references: Vec<ID> = get_component_references(&merchandise);
+ 35
+ 36
+              if component_references.is_empty()
+ 37
+              {
+ 38
+                  continue;
+ 39
+              }
+ 40
+ 41
+              let mut expand_relationships: Vec<ExpandedItem> = Vec::new();
+ 42
+ 43
+              for reference in
+ 44
+                  component_references.iter()
+ 45
+              {
+ 46
+                  let expand_relationship: ExpandedItem = ExpandedItem {
+ 47
+                      merchandise_id: reference.clone(),
+ 48
+                      quantity: 1,
+ 49
+                  };
+ 50
+ 51
+                  expand_relationships.push(expand_relationship);
+ 52
+              }
+ 53
+ 54
+              let expand_operation: ExpandOperation = ExpandOperation {
+ 55
+                  cart_line_id: line.id.clone(),
+ 56
+                  expanded_cart_items: expand_relationships,
+ 57
+                  price: None,
+ 58
+              };
+ 59
+ 60
+              result.push(CartOperation::Expand(expand_operation));
+ 61
+          }
+ 62
+      }
+ 63
+ 64
+      return result;
+ 65 }
+ 66
+ 67 fn get_component_references(variant: &InputCartLinesMerchandiseOnProductVariant) -> Vec<ID> {
+ 68
+      if let Some(component_reference_metafield) = &variant.component_reference {
+ 69
+          return serde_json::from_str(&component_reference_metafield.value).unwrap();
+ 70
+      }
+ 71
+ 72
+      return Vec::new();
+ 73 }
+ Tip
+ Explore more examples in the function-examples repository.
+ Caution
+ Don't rely on cart line attributes to validate the composition of the bundle, as they can be modified by the browser. We recommend using metafields for this purpose instead.
+ Step 4: Update your app access scopes
+ You need to request the write_cart_transforms and write_products access scopes to run the mutations in this guide.
+ In shopify.app.toml in the root of your app, add the write_cart_transforms scope.
+ shopify.app.toml
+ 1 # This file stores configurations for your Shopify app.
+ 2
+ 3 scopes = "write_cart_transforms,write_products"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Restart your app.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Use the URL provided by the CLI to open and re-install your app. You should be prompted to accept the new access scope permissions in your store.
+ Step 5: Create the cartTransform object
+ To activate your function, create a cartTransform object on the store where you installed your app. You can do this using the cartTransformCreate GraphQL mutation.
+ Note
+ You can use curl to make following GraphQL requests. Only use the access token of the app for which you are building this extension.
+ Find the ID of your function by executing the following query:
+ find-function-query.graphql
+ 1 query {
+ 2
+    shopifyFunctions(first: 25) {
+ 3
+      nodes {
+ 4
+        app {
+ 5
+          title
+ 6
+        }
+ 7
+        apiType
+ 8
+        title
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ The result contains a node with your function's ID:
+ find-function-result.json
+ 1 {
+ 2
+    "app": {
+ 3
+      "title": "your-app-name-here"
+ 4
+    },
+ 5
+    "apiType": "cart_transform",
+ 6
+    "title": "your-cart-transform-name",
+ 7
+    "id": "YOUR_FUNCTION_ID_HERE"
+ 8 }
+ Run the following mutation. Replace YOUR_FUNCTION_ID_HERE with the ID of your function:
+ mutation.graphql
+ 1 mutation {
+ 2
+    cartTransformCreate(functionId: "YOUR_FUNCTION_ID_HERE") {
+ 3
+      cartTransform {
+ 4
+        id
+ 5
+        functionId
+ 6
+      }
+ 7
+      userErrors {
+ 8
+        field
+ 9
+        message
+ 10
+      }
+ 11
+    }
+ 12 }
+ You should receive a GraphQL response that includes the ID of the new cartTransform object.
+ Tip
+ If the mutation returns a Could not find Function error, then confirm that the function ID is correct, that you've installed the app on your development store, and that your app has the write_cart_transforms access scope.
+ Step 6: Create metafield definition to store bundle components.
+ mutation.graphql
+ 1 mutation definitionCreate($definition: MetafieldDefinitionInput!) {
+ 2
+      metafieldDefinitionCreate(definition: $definition){
+ 3
+        createdDefinition {
+ 4
+          id
+ 5
+        }
+ 6
+      }
+ 7 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "key": "component_reference",
+ 4
+      "type": "list.variant_reference",
+ 5
+      "namespace": "custom",
+ 6
+      "name": "bundle component reference",
+ 7
+      "ownerType": "PRODUCTVARIANT"
+ 8
+    }
+ 9 }
+ Step 7: Create bundle products along with the components.
+ In this tutorial, we will take the example of a meal bundle which contains a burger and fries.
+ Note
+ You can use curl to make following GraphQL requests. Only use access token of the app for which you are building this extension.
+ Create bundle component products, i.e. burger and fries.
+ mutation.graphql
+ 1 mutation($productInput: ProductInput!) {
+ 2
+    productCreate(input: $productInput) {
+ 3
+      product {
+ 4
+        variants(first: 1) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              id
+ 8
+            }
+ 9
+          }
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "productInput": {
+ 3
+      "status": "ACTIVE",
+ 4
+      "published": true,
+ 5
+      "title": "Burger"
+ 6
+    }
+ 7 }
+ mutation.graphql
+ 1 mutation($productInput: ProductInput!) {
+ 2
+    productCreate(input: $productInput) {
+ 3
+      product {
+ 4
+        variants(first: 1) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              id
+ 8
+            }
+ 9
+          }
+ 10
+        }
+ Variables
+ 1 {
+ 2
+    "productInput": {
+ 3
+      "status": "ACTIVE",
+ 4
+      "published": true,
+ 5
+      "title": "Fries"
+ 6
+    }
+ 7 }
+ Create a bundle parent product, i.e. Meal Bundle. This example sets requires_components on the variant of the bundle to true. This is required when the variants is meant to be sold as a bundle only. It prevents the variant from being sold as a regular product in case the function doesn't output an operation. For example, the variant Meal Bundle should always be sold as a bundle with components and not as a regular product.
+ mutation.graphql
+ 1 mutation($productInput: ProductInput!) {
+ 2
+    productCreate(input: $productInput) {
+ 3
+      product {
+ 4
+        variants(first: 1) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              id
+ 8
+            }
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "productInput": {
+ 3
+      "status": "ACTIVE",
+ 4
+      "published": true,
+ 5
+      "title": "Meal Bundle",
+ 6
+      "variants": [
+ 7
+        {
+ 8
+          "requiresComponents": true,
+ 9
+          "metafields": [
+ 10
+            {
+ 11
+              "namespace": "custom",
+ 12
+              "key": "component_reference",
+ 13
+              "type": "list.variant_reference",
+ 14
+              "value": "[\"gid://shopify/ProductVariant/BURGER_VARIANT_ID\", \"gid://shopify/ProductVariant/FRIES_VARIANT_ID\"]"
+ 15
+            }
+ 16
+          ]
+ 17
+        }
+ 18
+      ],
+ 19
+      "claimOwnership": {
+ 20
+        "bundles": true
+ 21
+      }
+ 22
+    }
+ 23 }
+ Note
+ We are claiming the ownership of the bundle parent product here. This is required if you need to render the product configuration extension in admin.
+ Step 8: Install the extension on a development store
+ Note
+ You can skip this step if you have already reinstalled the app on your store in step 4.
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 9: Preview the function
+ Follow the steps below to test your function on your development store.
+ Navigate to your online storefront.
+ Add the meal bundle product to your cart.
+ Navigate to checkout.
+ You will now see that your meal bundle product is converted into a bundle which includes a burger and fries.
+ Step 10: Deploy the extension
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Next steps
+ Learn how to add a product configuration extension for bundles in the Shopify admin.
+ Learn how to use variables in your input query.
+ Limitations and considerations
+ Step 1: Generate a new extension
+ Step 2: Define the input of your function
+ Step 3: Define the business logic of your function
+ Step 4: Update your app access scopes
+ Step 5: Create the cartTransform object
+ Step 6: Create metafield definition to store bundle components.
+ Step 7: Create bundle products along with the components.
+ Step 8: Install the extension on a development store
+ Step 9: Preview the function
+ Step 10: Deploy the extension
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

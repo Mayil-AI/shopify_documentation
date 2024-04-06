@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CustomProduct object
+ 2024-04 latest
+ A custom product.
+ On this page
+ Fields
+ Fields
+ isGiftCard (Boolean!)
+ Whether the merchandise is a gift card.
+ requiresShipping (Boolean!)
+ Whether the merchandise requires shipping.
+ title (String!)
+ The localized title of the product in the customer’s locale.
+ weight (Float)
+ The weight of the product variant in the unit system specified with weight_unit.
+ weightUnit (WeightUnit!)
+ Unit of measurement for weight.
+ Was this page helpful?

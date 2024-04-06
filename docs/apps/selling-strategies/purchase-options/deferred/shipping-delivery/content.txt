@@ -1,0 +1,70 @@
+Shipping and delivery
+ Overview
+ Manage delivery profiles
+ Building your app
+ Build a user interface
+ Billing
+ App Store
+ Shipping and delivery for deferred purchase options
+ You can use delivery profiles to define shipping rates and delivery destinations for orders with purchase options. This guide explains delivery profiles and their use cases, related webhooks, and limitations.
+ What's a delivery profile?
+ A delivery profile is a set of shipping rates scoped to a set of products or variants that can be shipped from selected locations to zones. You can associate the DeliveryProfile with the SellingPlanGroup object to do the following tasks:
+ Set free shipping for all orders with deferred purchase options
+ Restrict shipping to specific countries
+ Set a flat shipping rate by country for all orders with deferred purchase options
+ The following diagram shows the relationships between different delivery profile objects in the GraphQL Admin API:
+ Objects and descriptions
+ Object Description
+ Delivery profile
+ Shipping settings for a group of product variants.
+ For example, you might have a delivery profile for heavy variants and another for fragile variants.
+ Profile items
+ An array of objects where each object includes a product and a list of associated product variants.
+ For information on how to create deferred purchase options and associate them with products and variants, refer to Manage deferred purchase options.
+ Location groups
+ A set of locations that ship the product variants to the same delivery zones.
+ For example, you might have a location group for the Americas that ships to Canada and Germany, and another location group for Europe that also ships to Canada and Germany.
+ Delivery zones
+ A group of countries where the variants in the delivery profile are shipped to.
+ For example, you might ship products to Canada.
+ Delivery methods
+ The static rates or carrier-calculated rates for the delivery zones.
+ For static rates, you can set conditional rates that take effect only if certain conditions are met. For example, you can specify a condition that applies free shipping when a cart's total is greater than or equal to $100. Shipping rates are surfaced at checkout to the customer.
+ Rates The fixed or dynamic shipping prices that are displayed at checkout.
+ Shipping rates displayed at checkout
+ Customers can buy a product as a one-time purchase ("buy now, pay now, ship now") or as a deferred purchase (pre-order or try before you buy) when both are offered by the merchant.
+ One-time purchases and deferred purchases
+ When a one-time order and a deferred purchase are in the same delivery profile and the products are coming from the same location, the shipping rate for the one-time purchase and the deferred purchase are calculated together.
+ If you want to calculate the shipping rate for the deferred purchase separately from the one-time purchase, then you need to do the following tasks:
+ Use the deliveryProfileCreate mutation to create a separate delivery profile for the deferred purchase option.
+ Associate the SellingPlanGroup object for the deferred purchase to the delivery profile.
+ Shipping rates for multiple deferred purchases
+ Shipping rates are consolidated if multiple deferred purchases are in the cart and the products share the same billing and delivery policies from the same deferred purchase option.
+ If a cart only contains deferred purchases, then the customer will pay the shipping cost when the remaining balance amount is charged.
+ Multiple shipping rates
+ Customers can select a shipping rate for products in the cart if more than one shipping rate is available. The shipping rate is applied to all one-time purchases and deferred purchases. For more information, refer to the limitations.
+ Customers can view the total shipping costs for one-time purchases and the total shipping costs for deferred purchases in the cart.
+ Webhooks
+ There are no webhooks specifically available for your app to receive information about shipping on purchase options. However, if your app needs to react to a shop's delivery profile changes, then you can use the following webhooks.
+ Webhooks
+ Webhook topic Description Payload
+ profiles/create Emitted when a delivery profile is first created { id, }
+ profiles/update Emitted when a delivery profile is updated { id, }
+ profiles/delete Emitted when a delivery profile is deleted { id, }
+ Learn about configuring webhooks for your app.
+ Limitations
+ By default, a product will have the same shipping rate whether it's bought as a one-time purchase or with purchase options.
+ Pickup and local delivery methods aren't supported for purchase options. The delivery methods also don't support one-time purchases if the cart contains a product with a purchase option.
+ Shipping rates that are specific to a purchase option don't display in the Shipping and delivery settings in the Shopify admin. You need to configure shipping rates for purchase options in your app.
+ If the rate is inherited from your delivery profile, then the rate name is Shipping. If you define a purchase option-specific rate using the API, then the defined name is used.
+ Next steps
+ Learn how to manage delivery profiles.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What's a delivery profile?
+ Shipping rates displayed at checkout
+ Webhooks
+ Limitations
+ Next steps
+ Updates & News

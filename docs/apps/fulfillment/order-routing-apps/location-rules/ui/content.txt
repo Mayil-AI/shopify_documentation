@@ -1,0 +1,245 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Build fulfillment constraints
+ Build local pickup delivery option generators
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ Point of Sale
+ Build a location rule user interface
+ Merchants add and manage location rules in the Shopify admin. Shopify uses Admin UI extensions to render the location rule editing experience for the merchant. You can customize this UI for your function's configuration needs, or to meet other requirements of your app.
+ Beta
+ Location rules is a new feature that's only available by request. To develop location rules, you need to contact order-routing-early-access@shopify.com.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Generate starter code for location rule UI extensions.
+ Update the location rule user interface with Admin UI extensions.
+ Requirements
+ You've completed the Add configuration to your location rule function tutorial.
+ You created your app with the Remix app template.
+ Step 1: Create the location rule user interface
+ The following example builds a React-based Admin UI extensions that enables merchants to create and configure a location rule function.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run the following command to create a new location rule UI extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template order_routing_location_rule_ui --name location-rule-ui
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or TypeScript.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript React
+ $
+    (2) JavaScript
+ $
+    (3) TypeScript React
+ $
+    (4) TypeScript
+ Navigate to extensions/location-rule-ui:
+ Terminal
+ $ cd extensions/location-rule-ui
+ Create a new preferredCountry state variable:
+ src/OrderRoutingLocationRule.tsx
+ 1 import { useState } from 'react';
+ 2
+ 3 const defaultValue = data.rule.metafields[0] ? JSON.parse(data.rule.metafields[0].value).countryCode : 'CA';
+ 4 const [preferredCountry, setPreferredCountry] = useState(defaultValue);
+ Update your user interface to provide controls to configure the state variable:
+ src/OrderRoutingLocationRule.tsx
+ 1 <Form onSubmit={handleSubmit} onReset={handleOnReset}>
+ 2
+    <Box padding="none none base none">
+ 3
+      <Select onChange={setPreferredCountry} value={preferredCountry} label='Select your preferred country' options={[{label:'Canada', value:'CA'}, {label:'United States', value: 'US'}]} />
+ 4
+    </Box>
+ 5
+    <Box padding="base none">
+ 6
+      <Text fontWeight="bold">
+ 7
+        Locations in your preferred county will be prioritized over locations in other countries
+ 8
+      </Text>
+ 9
+    </Box>
+ 10 </Form>
+ Use the applyMetafieldsChange API to prepare your changes to be saved to your metafield:
+ src/OrderRoutingLocationRule.tsx
+ 1 const handleSubmit = () => {
+ 2
+    const value = {
+ 3
+      countryCode: preferredCountry
+ 4
+    };
+ 5
+ 6
+    const metafieldsChange = [
+ 7
+      {
+ 8
+        namespace: '$app:location-rule',
+ 9
+        key: 'preferred-country',
+ 10
+        type: 'updateMetafield',
+ 11
+        value: JSON.stringify(value),
+ 12
+        valueType: 'json',
+ 13
+      },
+ 14
+    ];
+ 15
+ 16
+    applyMetafieldsChange(metafieldsChange);
+ 17 };
+ The contents of src/OrderRoutingLocationRule.tsx should look like this:
+ src/OrderRoutingLocationRule.tsx
+ 1 import { useState } from 'react';
+ 2
+ 3 import {
+ 4
+    reactExtension,
+ 5
+    useApi,
+ 6
+    Text,
+ 7
+    Box,
+ 8
+    Form,
+ 9
+    Select,
+ 10 } from '@shopify/ui-extensions-react/admin';
+ 11
+ 12 // The target used here must match the target used in the extension's toml file (./shopify.extension.toml)
+ 13 const TARGET = 'admin.settings.order-routing-rule.render';
+ 14
+ 15 export default reactExtension(TARGET, () => <App />);
+ 16
+ 17 function App() {
+ 18
+    // The useApi hook provides access to several useful APIs like i18n, data and applyMetafieldsChange.
+ 19
+    const {data, applyMetafieldsChange, i18n} = useApi(TARGET);
+ 20
+ 21
+    const defaultValue = data.rule.metafields[0] ? JSON.parse(data.rule.metafields[0].value).countryCode : 'CA';
+ 22
+    const [preferredCountry, setPreferredCountry] = useState(defaultValue);
+ 23
+ 24
+    // Transform your state into metafields and send them back to the admin to batch the
+ 25
+    // changes together with the rest of merchant updates to the routing strategy
+ 26
+    const handleSubmit = () => {
+ 27 const value = {
+ 28
+    countryCode: preferredCountry
+ 29 };
+ 30
+ 31 const metafieldsChange = [
+ 32
+    {
+ 33
+      namespace: '$app:location-rule',
+ 34
+      key: 'preferred-country',
+ 35
+      type: 'updateMetafield',
+ 36
+      value: JSON.stringify(value),
+ 37
+      valueType: 'json',
+ 38
+    },
+ 39 ];
+ 40
+ 41 applyMetafieldsChange(metafieldsChange);
+ 42
+    };
+ 43
+ 44
+    // Reset your state to the default values
+ 45
+    const handleOnReset = () => {
+ 46 console.log('reset');
+ 47
+    };
+ 48
+ 49
+    return (
+ 50 <Form onSubmit={handleSubmit} onReset={handleOnReset}>
+ 51
+    <Box padding="none none base none">
+ 52
+      <Select onChange={setPreferredCountry} value={preferredCountry} label='Select your preferred country' options={[{label:'Canada', value:'CA'}, {label:'United States', value: 'US'}]} />
+ 53
+    </Box>
+ 54
+    <Box padding="base none">
+ 55
+      <Text fontWeight="bold">
+ 56
+        Locations in your preferred county will be prioritized over locations in other countries
+ 57
+      </Text>
+ 58
+    </Box>
+ 59 </Form>
+ 60
+    );
+ 61 }
+ Step 2: Associate the user interface to the location rule
+ To connect the location rule user interface to a location rule function, set the handle property of the extensions.ui setting in your extension config.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Navigate to extensions/location-rule:
+ Terminal
+ $ cd extensions/location-rule
+ Inside of shopify.extension.toml, under the [extensions.ui] heading, add a new key to associate the newly created location rule UI extension with the existing location rule function.
+ shopify.extension.toml
+ 1 [extensions.ui]
+ 2 handle = "location-rule-ui"
+ Restart your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Step 3: Test the location rule user interface
+ You can test your location rule to ensure it's working as expected, and review logs for your function.
+ Before you test the location rule, make sure that you have the following:
+ Two locations in your store in different countries, one of them in Canada and the other one in the US.
+ One product that is stocked on both locations.
+ On the Order routing settings page, click the Edit ✎ button next to your rule.
+ A modal should open showing the custom location rule user interface.
+ Select a different prioritized country.
+ Click Done.
+ In the context bar, click Save.
+ Open your development store.
+ Add products to your cart, including the one that's stocked in your Canada and US locations.
+ Proceed through checkout.
+ In the Shopify admin, and find your new order. This should be assigned to the location in the country you prioritized.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > order-routing-location-rule.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Confirm that the function ran using the configured value.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the location rule user interface
+ Step 2: Associate the user interface to the location rule
+ Step 3: Test the location rule user interface

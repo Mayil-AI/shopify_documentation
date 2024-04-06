@@ -1,0 +1,205 @@
+Overview
+ Getting started
+ Manage marketing activities
+ Connect a marketing app
+ Marketing automations
+ Getting started with marketing activities app extensions
+ You're ready to get started with a marketing activities app extension. You want to add a marketing activities app extension to your app so that merchants can create marketing campaigns from their Shopify admin.
+ In this tutorial, you'll add a marketing activities app extension by providing the extension information, setting up the extension preview, and creating the configuration fields.
+ What you'll learn
+ After you've finished this tutorial, you'll have accomplished the following:
+ Added a marketing activities app extension to your app
+ Hosted the required REST endpoints on your app's domain
+ Provided a preview to enable merchants to see changes in real-time before publishing
+ Created engagements
+ Created and publish a version of your marketing activities app extension
+ Requirements
+ You've created a Partner account and a development store.
+ You can use the development store for testing while you are working on your marketing activity extension.
+ You understand how apps fit into Shopify and the different ways of distributing your app.
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ Step 1: Add a marketing activities app extension
+ From your Partner Dashboard, click Apps.
+ Click the name of the app that you want to change.
+ Click Extensions, and click +Create.
+ Select the Shopify admin tab, and click the Marketing activities card.
+ Provide a name for your extension, and click Save.
+ The draft opens automatically after you create the extension.
+ Provide the following extension information:
+ For Base API path, enter the URL where your app's endpoints are hosted.
+ Specify the Marketing tactic.
+ The marketing tactic determines settings for Marketing platform and Ad format. The selection of the marketing tactic also determines which default fields are included in the marketing activity.
+ Specify if the activity is a marketing automation.
+ Automations are ongoing activities that are triggered by an event or customer action. Marketing activities that are marked as automations appear under the Automations page of the Marketing section in the Shopify admin. Otherwise, marketing activities appear under the Campaigns page.
+ For more information, refer to Creating marketing campaigns.
+ Note
+ If you're building a marketing automation, then you shouldn't integrate your app as a marketing activity app extension. Instead, you should use a marketing automation Flow action extension, which can be used in Shopify marketing automations.
+ Add the configuration fields.
+ Click Save draft.
+ Caution
+ Your latest draft is released the next time you create and release an app version. This includes running the deploy command from Shopify CLI.
+ Configuration fields
+ Configuration fields define the marketing activity form that is displayed to merchants in Shopify admin. You can use the steps below to create configuration fields.
+ Click Create field.
+ On the Add components dialog, select the component that you want to add to your form, and click Add. Each component has different requirements. To learn more about how to configure a component, see the Marketing activities components reference.
+ Enter the required information.
+ Add a divider
+ You can add a divider to group your app's configuration fields into sections. It's best practice to group fields into sections for longer app forms.
+ In the Configuration fields section hover over any blank space in-between the configuration field cards.
+ Click on Add title for divider.
+ Provide a title for the section.
+ Click anywhere outside the title to save the new section. After the section is saved, a blue box appears around the section so you can easily see which fields are grouped. The section title and grouped fields are visible to the merchant.
+ Step 2: Host the required endpoints
+ You need to build REST endpoints on your app's domain. Shopify uses REST calls and structured JSON to communicate with your app. These endpoints need to respond to various actions the merchant can perform with the activity.
+ If you've used Shopify webhooks before, then the implementation requirements are nearly identical from both a security and response time standpoint. Make sure to verify that the request came from Shopify.
+ Preload endpoint
+ An important REST endpoint to set up is the preload endpoint, which allows you to set form defaults as well as provide the corresponding data from previously created activities. Shopify doesn't store the form data, so you are responsible for associating the activity ID with your data models.
+ You can use your app's preload endpoint to render what your app's marketing extension will look like on desktop, mobile, or another device:
+ Preview endpoint
+ You need to provide a preview endpoint for your marketing activities. The preview endpoint is recommended for the best experience of your app, as it allows merchants to see changes in real-time before publishing.
+ The preview can either be an image or a URL, and you can define it with the other REST endpoints.
+ Tip
+ You need to balance which format provides the best experience based on how easy it is for you to dynamically update it any time the form changes. One benefit of using a URL is being able to hover over links to verify the destination is correct.
+ Step 3: Create engagements
+ After you've created marketing events, you can use the marketingEngagementCreate mutation to create a periodic job that sends incremental engagement data about active marketing activities. Engagement data can be sent using any of the previously provided unique identifiers, including the marketingActivityId or remoteId fields, or UTM parameters.
+ Engagements are currently tracked on a daily resolution. You need to supply the date the engagements occurred, and the daily totals for each value. These can be sent incrementally multiple times per day. The most recent value overwrites previously sent values.
+ Note
+ Engagement data is processed asynchronously. There might be a delay between sending the data to the GraphQL Admin API and being able to see it in the app user’s report.
+ Engagement data
+ For each marketing activity, the value of the cumulative field (true or false) should remain the same across all of its engagement data. The cumulative boolean indicates whether each engagement sent is a lifetime value of all metrics or just a daily total for that day.
+ If the value is true, then each engagement is a lifetime value for all metrics up to that occurredOn date.
+ If the value is false, then each engagement is the total metrics for only that occurredOn date.
+ For a full list of metrics that you can send in an engagement, refer to the MarketingEngagementInput input object in the GraphQL Admin API.
+ Example
+ The following example shows how to use the marketingEngagementCreate mutation to send engagement data for a marketing activity:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL mutation
+ 1 mutation marketingEngagementCreate($marketingActivityId: ID!, $marketingEngagement: MarketingEngagementInput!) {
+ 2
+    marketingEngagementCreate(marketingActivityId: $marketingActivityId, marketingEngagement: $marketingEngagement) {
+ 3
+      marketingEngagement {
+ 4
+        clicksCount
+ 5
+        commentsCount
+ 6
+        complaintsCount
+ 7
+        failsCount
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ Variables
+ 1 {
+ 2
+    "marketingActivityId": "gid://shopify/MarketingActivity/135351468054",
+ 3
+    "marketingEngagement": {
+ 4
+      "adSpend": {
+ 5
+        "amount": "20",
+ 6
+        "currencyCode": "USD"
+ 7
+      },
+ 8
+      "clicksCount": 1,
+ 9
+      "commentsCount": 1,
+ 10
+      "complaintsCount": 1,
+ 11
+      "failsCount": 1,
+ 12
+      "favoritesCount": 1,
+ 13
+      "fetchedAt": "2022-01-01",
+ 14
+      "impressionsCount": 1,
+ 15
+      // The `isCumulative` field enables you to control whether you're sending daily running totals, or cumulative metrics since creation.
+ 16
+      "isCumulative": true,
+ 17
+      // The `occurredOn` field that's used to send data should always be after the creation date of the activity.
+ 18
+      "occurredOn": "2022-10-01",
+ 19
+      "sendsCount": 1,
+ 20
+      "sharesCount": 1,
+ 21
+      "uniqueClicksCount": 1,
+ 22
+      "uniqueViewsCount": 1,
+ 23
+      "unsubscribesCount": 1,
+ 24
+      "utcOffset": "-00:00",
+ 25
+      "viewsCount": 1
+ 26
+    }
+ 27 }
+      "marketingEngagementCreate": {
+ 4
+        "marketingEngagement": {
+ 5
+          "clicksCount": 1,
+ 6
+          "commentsCount": 1,
+ 7
+          "complaintsCount": 1,
+ 8
+          "failsCount": 1
+ 9
+        },
+ 10
+        "userErrors": []
+ 11
+      }
+ 12
+    },
+ 13
+    "extensions": {
+ 14
+      "cost": {
+ 15
+        "requestedQueryCost": 10,
+ 16
+        "actualQueryCost": 10
+ 17
+      }
+ 18
+    }
+ 19 }
+ Step 4: Create and release a version
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ From the Partner Dashboard, go to Apps.
+ Select your app from the list.
+ Click Versions.
+ From the Versions page, click Create version.
+ Optional: enter a name and message for the version.
+ Click Release. If you don't want to release right away, then you can click Create version.
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ After you release your new app version, you can view the version details in the Partner Dashboard, or by running the versions list command in Shopify CLI.
+ Next steps
+ Learn how to manage marketing activities.
+ Consult the reference documentation for marketing activities app extensions.
+ Step 1: Add a marketing activities app extension
+ Step 2: Host the required endpoints
+ Step 3: Create engagements
+ Step 4: Create and release a version
+ Next steps

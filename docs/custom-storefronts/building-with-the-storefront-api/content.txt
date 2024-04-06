@@ -1,0 +1,50 @@
+Additional SDKs
+ Building with the Storefront API
+ The Storefront API is the foundational layer of custom storefronts. It provides you the commerce primitives to build custom, scalable, and performant shopping experiences
+ What is the Storefront API?
+ The Storefront API provides access to Shopify's primitives and capabilities such as displaying products and collections, adding items to the cart, calculating contextual pricing, and more.
+ You can use the Storefront API to build unique commerce experiences on any platform, including the web, native apps, games, and social media, using the frontend tools of your choice.
+ When to use the Storefront API
+ The Storefront API helps you create a seamless and engaging shopping experience for your customers by leveraging the robust commerce functionality of Shopify. Headless builds are made efficient and performant with the following resources:
+ Built-in commerce essentials: Leverage the full power of the Shopify admin to manage your back-office products like pricing, inventory, and metafields. Use the Storefront API to deliver performant buyer experiences with optimized cart, contextual pricing, subscriptions, and more.
+ Operate at a global scale: Backed by the infrastructure that supports over 2 million Shopify businesses, build your custom storefront on the platform that's fast, flexible, and feature-rich.
+ Build your way: Bring your own tech stack, requirements, and experience. Build on top of Shopify’s proven Storefront API that serves 1M+ queries per minute.
+ Developer tools: Improve your developer experience by helping you learn about the API.
+ Because the Storefront API uses the Shopify backend, you can focus on building a unique and customized shopping experience with strong brand representation. You can create custom pages, themes, and order management experiences that are fully integrated with a storefront.
+ API versioning
+ The Storefront API is versioned, with new releases four times a year. We strongly recommend updating your apps to make requests to the latest stable API version every quarter. However, if your app uses a stable version that is no longer supported, then Shopify falls forward and responds to your request with the same behavior as the oldest supported stable version.
+ Authentication and authorization
+ There are two methods of authentication for the Storefront API:
+ Public Authentication: The public token is used for client side queries and mutations. As every buyer has a different IP, the token scales to support large amounts of traffic.
+ Private Access: The private token provides authenticated access to the Storefront API and is used for server-side queries and mutations.
+ Caution
+ Unlike public access tokens, private access tokens should be treated as secret and not used on the client-side. We recommend only requesting the scopes that your app needs, to reduce the security risk if the token leaks.
+ Learn more about authentication.
+ What is the Headless channel?
+ Make headless and self-hosted Hydrogen experiences possible in the Headless channel without needing to create a custom app.
+ The Headless channel provides a single place to create and manage access tokens for the Storefront API. You can use the channel to create multiple custom storefronts. Storefronts that you create through the channel automatically include public and private access tokens with shop permission for the Storefront API. In the channel, you can rotate your private access token and manage storefront permissions.
+ Additionally, the channel gives you all of Shopify's channel features, such as product publishing and order attribution, and analytics and reporting sales by channel. Order attribution is at the channel level, not the storefront level.
+ Get started with the Headless channel.
+ Reference
+ Storefront API reference
+ Consult the Storefront API reference for available objects, queries, and mutations.
+ Developer tools
+ Shopify provides tools to help you learn how to use the Storefront API.
+ Storefront API GraphiQL explorer
+ Use the interactive GraphiQL explorer for the Storefront API on a demo shop.
+ Storefront API learning kit
+ A downloadable package of a complete set of sample GraphQL queries to the Storefront API
+ Limitations
+ You can have a maximum of 100 active storefronts and access tokens per shop.
+ Next steps
+ Get started building headless with the Storefront API and start querying data.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What is the Storefront API?
+ When to use the Storefront API
+ API versioning
+ Authentication and authorization
+ What is the Headless channel?
+ Reference
+ Developer tools

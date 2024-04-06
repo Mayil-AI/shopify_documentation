@@ -1,0 +1,40 @@
+Product subscription app extensions
+ BuyerConsent
+ BuyerConsent is used for collecting the buyer's approval for a given policy
+ Example
+ JS
+ React
+ 1 import {extend, BuyerConsent} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const button = root.createComponent(
+ 5
+      BuyerConsent,
+ 6
+      {
+ 7
+        // eslint-disable-next-line no-console
+ 8
+        onChange: (value) => console.log(value),
+ 9
+        policy: 'subscriptions',
+ 10
+        checked: false,
+ 11
+      },
+ 12
+    );
+ 13
+ 14
+    root.appendChild(button);
+ 15 });
+ Props
+ optional = ?
+ Name Type Description
+ checked boolean Whether the checkbox is active.
+ error? string An error label to present with the field.
+ policy "subscriptions" The policy the buyer has to approve
+ onChange (value: boolean) => void Callback when the value changes
+ Was this page helpful?
+ YesNo

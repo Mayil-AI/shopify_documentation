@@ -1,0 +1,50 @@
+App Store
+ Webhook best practices
+ The following guide describes some best practices for working with webhooks.
+ Respond quickly
+ After receiving a webhook using an HTTPS endpoint, it's important to respond to the request with a 200 OK within one to two seconds. There's a five-second timeout for the entire request, and the webhook delivery system expects to establish the connection in less than one second or the request times out.
+ You can install a package like Better Que to store the webhook payload in a queue to process later. This enables your app to respond quickly, and your job can take as long as it needs to complete.
+ Optimize connection management
+ The webhook delivery system uses HTTP Keep-Alive to reuse connections to the same host and endpoint. This reduces network congestion and the latency in subsequent requests. Ensure that you have Keep-Alive enabled for your endpoint to reduce the overhead of receiving concurrent requests.
+ Prepare your endpoint for a burst of requests
+ To prepare your endpoint for a burst of requests, decouple webhook processing from request responses. A common pattern is to store the payload in a message queue for later processing by a background worker. This reduces the chance of the request timing out and having the webhook delivery count as a failure. Storing the webhook and responding immediately ensures that your system is resilient to a high volume of requests.
+ Manage delays
+ In rare circumstances, you might experience delays receiving webhooks. However, webhooks are always sent with the most recent data for the given resource. The payload of the delivered webhook should reflect the most recent attributes for the resource between the time of the webhook's trigger and the webhook's eventual delivery.
+ If receiving webhooks up to a day late might cause issues in your app, then we recommend comparing the timestamp of the webhook to the current date and time.
+ Track failures
+ Use delivery metrics to track any failed webhook deliveries and fix them before they affect users.
+ Recover webhooks
+ If your app goes offline for an extended period of time, you can recover your webhook by re-registering it and importing the missing data.
+ To re-register a webhook, consult the app's code that initially registered the webhook. You can add a check that fetches all the existing webhooks and registers only the ones that you need.
+ To import the missing data, you can fetch data from the outage period and feed it into your webhook processing code.
+ Avoid debounces
+ When you use the includeFields argument in GraphQL or the fields property in REST to specify which fields should be sent by a webhook, you must include a field that always has a unique value. For example, you can include the updated_at field in the includeFields argument.
+ Including a field that always has a unique value prevents the webhook from being dropped as a duplicate, such as in cases when only the id field is requested.
+ Ignore duplicates
+ Although the webhooks API is designed to minimize duplicate webhook events, it's still possible to receive the same event more than once. Your app should handle webhook events using idempotent operations, where receiving the same webhook event a second time in a row doesn't result in different outcomes, unless the underlying data has changed.
+ You can detect duplicate webhook events by looking for identical X-Shopify-Webhook-Id headers, or by comparing the payload directly to the previous state. For example, you could use a callback function to check if the webhook (webhookId) has already been received by looking it up in the receievedWebhooks object. If it has been received, then the function can return early to avoid duplicate processing.
+ Implement reconciliation jobs
+ Your app shouldn't rely solely on receiving data from Shopify webhooks. Because webhook delivery isn't always guaranteed, you should implement reconciliation jobs to periodically fetch data from Shopify.
+ You could do this in the background, or offer reconciliation and syncing options to the merchant. For example the UI of your app could contain a button that triggers a manual reconciliation process by calling the relevant API endpoint, and fetching the requested data.
+ Most query endpoints support both the created_at_min and updated_at_min filter parameters. These filters can be used to build a job that fetches all resources that have been created or updated since the last time the job ran.
+ Build a scalable and reliable system
+ Tracking traffic from Shopify's platform can be overwhelming, especially as you grow your app.
+ If you need to manage large volumes of event notifications to build a scalable and reliable system, then you can configure subscriptions to send webhooks to Amazon EventBridge and Google Cloud Pub/Sub rather than through HTTPS.
+ Next steps
+ Learn about configuring webhooks for your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Respond quickly
+ Optimize connection management
+ Prepare your endpoint for a burst of requests
+ Manage delays
+ Track failures
+ Recover webhooks
+ Avoid debounces
+ Ignore duplicates
+ Implement reconciliation jobs
+ Build a scalable and reliable system
+ Next steps
+ Updates & News
+ Developer changelog

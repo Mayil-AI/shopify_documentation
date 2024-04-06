@@ -1,0 +1,40 @@
+NFT distribution
+ Tokengating
+ Online store
+ Admin
+ Flow
+ Distribution
+ Billing
+ App Store
+ Blockchain
+ Build for blockchain-enabled commerce: discover UI components, robust APIs to develop your next token-powered app, drive loyalty, foster brand collabs, empower communities, and more. In this guide we’ll cover some common terms you’ll encounter, the major categories of blockchain apps on Shopify today, as well as some tools and resources that we’ve developed to help you build better blockchain apps.
+ A blockchain app is defined as any application that exposes merchants to blockchain assets or functionality, including but not limited to cryptocurrency, minting, tokengating, and gifting.
+ All blockchain apps on Shopify must be compliant with the blockchain app requirements.
+ Below are the major categories of blockchain apps being built on Shopify today:
+ NFT distribution
+ Merchants may decide to sell or gift NFTs for a variety of reasons. Merchants who are selling NFTs are required to get approval from Shopify before selling through Shopify Payments. Developers who support merchants with NFT distribution are required to gate this functionality and restrict the ability to mint, gift or list NFTs for sale to approved merchants.
+ Developers listing and minting NFTs on behalf of merchants must comply with the requirements for apps in the Shopify App Store, including the blockchain app Partner requirements, with special attention to the NFT distribution apps requirements.
+ Note
+ Merchants who would like to sell NFTs through Shopify Payments are required to get approval from Shopify before selling. This process is facilitated through an automated application and responses are shared with app developers through the NFT sales eligibility API.
+ Tokengating and loyalty
+ Tokengated commerce lets merchants offer exclusive access to products, discounts, or content on their store, to customers who own a specific NFT (or token). Brands are also using tokengating to form partnerships through collaborative products and collections based on tokens distributed by other brands. These partnerships allow brands to grow their potential audience beyond their own typical customer bases.
+ For more information, check out tokengating.
+ Crypto payments
+ To accept cryptocurrencies, merchants can enable one or more additional payment methods from the Payments page in the Settings section of their Shopify admin. When developing cryptocurrency payments apps, your app must meet the requirements for third-party payments apps, including section E. Cryptocurrency payments apps.
+ For a list of supported cryptocurrency payment processors, and to learn more about Cryptocurrency Payments, see our cryptocurrency help center article.
+ Developer tools and resources
+ Gates GraphQL Admin API
+ Check out the GraphQL Admin API reference to learn more about the Gate object.
+ Blockchain components
+ Integrate Tokengate and Wallet Connect components into your app for seamless storefront tokengating.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ NFT distribution
+ Tokengating and loyalty
+ Crypto payments
+ Developer tools and resources
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

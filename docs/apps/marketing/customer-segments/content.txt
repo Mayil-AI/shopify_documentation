@@ -1,0 +1,60 @@
+Billing
+ App Store
+ Customer segments
+ Segmentation is the process of using criteria to separate data into smaller groups. The GraphQL Admin API enables you to filter out specific customers for marketing, analytics, and reporting purposes.
+ This guide describes what segmentation is, its relationships, and some considerations before you get started.
+ How segments work
+ A segment is a group of members (commonly customers) that meet specific criteria. Segments enable users to conduct marketing activities, access information that helps to inform a business decision, or learn more about certain segment member behaviors.
+ For example, a segment might include members that bought a particular product. A user could then send a targeted email to the members of that segment.
+ Segment members can belong to multiple segments.
+ Anatomy of a segment
+ Each segment contains a query argument, or a precise definition of the segment, indicating the condition or conditions that data must satisfy to be selected. Query arguments act as segment filters.
+ For example, a query can specify segment members that have left a checkout without completing their purchase in the last 30 days. For more information, refer to the query syntax reference.
+ Migrating to customer segments
+ Caution
+ Segmentation is a breaking change that replaces the GraphQL Admin API SavedSearch object and the REST Admin API CustomerSavedSearch resource. If your app uses saved searches, then you need to migrate your app to support segments.
+ To ease the migration from using customerSavedSearches to customer segments, a list of customer segment IDs is automatically created from existing customerSavedSearches. If a customerSavedSearch is unmigratable, then segments aren't created for it.
+ Segments aren't backwards-compatible or connected to saved searches. For example, if a merchant creates or updates new segments, and you haven’t migrated your app to use segments instead of saved searches, then your app won't synchronize the changes that the merchant is making to segments.
+ Behavior of apps that aren't migrated
+ In API versions older than 2022-04, you can continue to create, update, and delete saved searches using the deprecated elements. If a customer saved search is compatible, then Shopify converts saved searches in the backend to segments. You can verify whether a saved search was successfully translated to a segment by querying SegmentMigrations.
+ When a merchant or app updates or deletes a saved search, Shopify attempts to translate the saved search to a segment in the following ways:
+ How Shopify attempts to translate a saved search to a segment
+ Event What happens
+ The saved search is updated and can be converted to a segment.
+ If the segment exists: The segment is updated.
+ If the segment doesn't exist: A new segment is created.
+ The saved search is updated but can't be converted to a segment.
+ If the segment exists: The segment is deleted.
+ If the segment doesn't exist: Nothing.
+ The saved search is deleted.
+ Only the grouping of members (customers) is deleted. Customer data is preserved.
+ If the segment exists: The segment is deleted.
+ If the segment doesn't exist: Nothing.
+ The saved search is updated or deleted.
+ When a segment is updated or deleted, it syncs its associated saved search.
+ The migration table is updated to set the segment_id of the associated saved search to nil.
+ If the saved search is updated in the future, a new segment might be created if the saved search can be converted.
+ Validation behavior of saved searches
+ Validations are introduced as part of the migration from using saved searches to segments.
+ API requests that involve price rules, discount codes, and saved searches are validated. Validations either allow API requests, or block API requests, returning an error. Unmigratable saved searches are blocked.
+ Validation occurs under the following conditions:
+ Price rules or discount codes are created or updated.
+ A saved search that's used in a price rule or a discount code is updated.
+ Limitations
+ A segment can only include members from a single shop.
+ You can query a maximum of 250 segments. The maximum value that first and last arguments accept is 250.
+ You can only manage segments using the GraphQL Admin API. Segments aren't supported in the REST Admin API.
+ Next steps
+ Build a customer segment template extension.
+ Build a customer segment action extension.
+ Learn how to manage customer segments.
+ Migrate from saved searches to customer segments.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How segments work
+ Migrating to customer segments
+ Limitations
+ Next steps
+ Updates & News
+ Developer changelog

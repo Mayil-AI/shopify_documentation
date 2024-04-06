@@ -1,0 +1,195 @@
+Billing
+ App Store
+ Build a discount extension for Shopify POS
+ This tutorial shows you how to use the pos.home.tile.render and pos.home.modal.render extension points to build a simple POS UI extension that quickly applies discounts to items in the cart.
+ You'll develop the scaffolded extension into a smart grid tile that becomes enabled when the cart reaches a total value. When tapped, the tile opens a modal that presents buttons representing available discounts. When tapped, these buttons apply a discount to the cart and present a toast for notification of success.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Enable or disable the tile based on cart contents.
+ Add buttons to the modal that apply a discount and show a toast when tapped.
+ Give your extension a useful description.
+ Deploy your extension to Shopify, create a version, and publish.
+ Requirements
+ You've completed the Getting started with POS UI extensions guide.
+ Sample code
+ The sample code imports some extension components to build the UI. The tile contains the logic to control its enablement based on the cart subtotal. The modal contains the logic to apply discounts based on button tap.
+ You can copy and paste the following code into your index file. You can also update your extension's configuration file following the shopify.extension.toml example.
+ The rest of the tutorial walks through this sample code step-by-step.
+ index
+ JavaScript
+ React
+ index.ts
+ 1 import { extend, Screen, Tile, Button, DiscountType, ScrollView } from '@shopify/retail-ui-extensions';
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const shouldEnable = (subtotal: string): boolean => {
+ 5
+      return Number(subtotal) > 100
+ 6
+    }
+ 7
+ 8
+    // You can use the initial cart value to set up state
+ 9
+    const tile = root.createComponent(Tile, {
+ 10
+      title: 'Discount Example App',
+ 11
+      subtitle: 'Javascript',
+ 12
+      enabled: shouldEnable(api.cart.subscribable.initial.subtotal),
+ 13
+      onPress: api.smartGrid.presentModal
+ 14
+    });
+ 15
+ 16
+    // You can subscribe to changes in the cart to mutate state
+ 17
+    api.cart.subscribable.subscribe((cart) => {
+ 18
+      tile.updateProps({ enabled: shouldEnable(cart.subtotal) });
+ 19
+    })
+ 20
+ 21
+    root.appendChild(tile);
+ 22
+    root.mount();
+ 23 });
+ 24
+ 25 extend('pos.home.modal.render', (root, api) => {
+ 26
+    const onButtonPress = (type: DiscountType, title: string, amount: string) => {
+ 27
+ 28
+      // You can apply a discount through the cart API
+ 29
+      api.cart.applyCartDiscount(type, title, amount);
+ 30
+ 31
+      // You can show a toast to notify the user of something
+ 32
+      api.toast.show('Discount applied');
+ 33
+    };
+ 34
+ 35
+    let mainScreen = root.createComponent(Screen, { name: 'Discounts', title: 'Available Discounts' });
+ 36
+    let scrollView = root.createComponent(ScrollView);
+ 37
+ 38
+ 39
+    const percentageDiscoundButton = root.createComponent(Button, {
+ 40
+      title: '25%',
+ 41
+      onPress: () => { onButtonPress('Percentage', '25% off', '25') }
+ 42
+    });
+ 43
+ 44
+    const fixedAmountDiscountButton = root.createComponent(Button, {
+ 45
+      title: '$10',
+ 46
+      onPress: () => { onButtonPress('FixedAmount', '$10 off', '10') }
+ 47
+    });
+ 48
+ 49
+    scrollView.appendChild(percentageDiscoundButton);
+ 50
+    scrollView.appendChild(fixedAmountDiscountButton);
+ 51
+    mainScreen.appendChild(scrollView);
+ 52
+    root.appendChild(mainScreen);
+ 53
+    root.mount();
+ 54 });
+ Step 1: Enable or disable the tile based on cart contents
+ You can enable or disable the tile based on cart contents by accessing its subscribable.
+ In the tile code, initialize state based on the initial value of the subscribable.
+ index
+ JavaScript
+ React
+ index.ts
+ 1 const tile = root.createComponent(Tile, {
+ 2
+    title: 'Discount Example App',
+ 3
+    subtitle: 'Javascript',
+ 4
+    enabled: shouldEnable(api.cart.subscribable.initial.subtotal),
+ 5
+    onPress: api.smartGrid.presentModal
+ 6 });
+ In the tile code, subscribe to cart changes and mutate state based on the updated cart.
+ index
+ JavaScript
+ React
+ index.ts
+ 1 api.cart.subscribable.subscribe((cart) => {
+ 2
+    tile.updateProps({ enabled: shouldEnable(cart.subtotal) });
+ 3 })
+ Step 2: Add buttons to the modal that apply a discount and display a toast when tapped
+ You can add buttons to the modal that trigger some action on press.
+ Create the buttons on the modal. Note that most components belong in a ScrollView.
+ index
+ JavaScript
+ React
+ index.ts
+ 1 const percentageDiscoundButton = root.createComponent(Button, {
+ 2
+    title: '25%',
+ 3
+    onPress: () => { onButtonPress('Percentage', '25% off', '25') }
+ 4 });
+ 5
+ 6 const fixedAmountDiscountButton = root.createComponent(Button, {
+ 7
+    title: '$10',
+ 8
+    onPress: () => { onButtonPress('FixedAmount', '$10 off', '10') }
+ 9 });
+ 10
+ 11 scrollView.appendChild(percentageDiscoundButton);
+ 12 scrollView.appendChild(fixedAmountDiscountButton);
+ Define an onPress function to apply the discount and show the toast.
+ index
+ 1 const onButtonPress = (type: DiscountType, title: string, amount: string) => {
+ 2
+    api.cart.applyCartDiscount(type, title, amount);
+ 3
+    api.toast.show('Discount applied');
+ 4 };
+ Step 3: Give your extension a useful description
+ Your extension's description will be visible to the merchant when they discover and add it to their POS. When you generate a POS UI Extension from Shopify CLI, the extension description defaults to the name of the extension. You can update the description in the generated toml file (shopify.extension.toml).
+ shopify.extension.toml
+ 1 ...
+ 2 name = "Loyalty discount"
+ 3 description = "A useful description"
+ 4 ...
+ Note
+ name is an internal value that is visible in the Partner Dashboard as the title of an extension on the page that displays the extensions list.
+ Step 4: Deploy and release your extension
+ Refer to Deploy app extensions for more information.
+ Next steps
+ Debug POS UI Extension.
+ Learn more about building with POS UI extensions by exploring the POS UI extension reference.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Sample code
+ Step 1: Enable or disable the tile based on cart contents
+ Step 2: Add buttons to the modal that apply a discount and display a toast when tapped
+ Step 3: Give your extension a useful description
+ Step 4: Deploy and release your extension
+ Next steps
+ Updates & News

@@ -1,0 +1,80 @@
+Product description
+ Overview
+ Description pages
+ Buy now buttons
+ Policies
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Adding shop policies
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You've added product description pages to the marketplace, populated with details pulled from storefronts. Each page has a Buy Now button taking buyers to a shop's online checkout. However, a competitive marketplace might have multiple shops selling the same product.
+ You want to show store policies, which could affect a buyer's decision to purchase from one shop over another. You'll surface store policies on the product pages, because buyers might arrive at the product page without having seen the shop's page.
+ In this tutorial, you'll use the Storefront API's shop object to include a store's terms of service and its refund, shipping, and privacy policies on marketplace product pages.
+ What you'll learn
+ After you finish this tutorial, you'll know how to do the following:
+ Surface shop policies on marketplace product pages
+ Requirements
+ You've completed the tutorial for adding Buy Now buttons.
+ Step 1: Fetch shop policies
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ Since the policies are available using the Storefront API, you can update the existing product query on the product details page to also fetch shop policies.
+ Add the shop policies to the product query.
+ pages/products/[shopid]/[producthandle].js
+ 1 const SHOP_PRODUCT_QUERY = gql`
+ 2
+    query getShopProduct($productHandle: String!) {
+ 3
+      product(handle: $productHandle) {
+ 4
+        // ...
+ 5
+      }
+ 6
+      shop {
+ 7
+        privacyPolicy {
+ 8
+          body
+ 9
+        }
+ 10
+        refundPolicy {
+ 11
+          body
+ 12
+        }
+ 13
+        shippingPolicy {
+ 14
+          body
+ 15
+        }
+ 16
+        termsOfService {
+ 17
+          body
+ 18
+        }
+ 19
+      }
+ 20
+    }
+ 21 `;
+ Use the new information to add shop policies to the product page.
+ You might now have a set of tabs on your product page that surface the product description and shop policies.
+ Next steps
+ Learn how to create marketplace-level cart and checkout functionality.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Fetch shop policies
+ Next steps
+ Updates & News

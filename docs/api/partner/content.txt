@@ -1,0 +1,185 @@
+APIs
+ Collapse sidebar
+ Partner API
+ Unstable
+ 2024-07 release candidate
+ Overview
+ Authentication
+ Endpoints and queries
+ Rate limits
+ Status and error codes
+ Translations
+ App events
+ Common objects
+ Jobs
+ Transactions
+ GraphQL Types
+ GraphQL Partner API
+ The Partner API provides access to data in the Partners Dashboard. Data includes transactions that impact your earnings, app events, and for participating partners, Experts Marketplace opportunities. With this information, you can effectively scale your business by automating front and back-office operations, freeing up time to focus on solutions for Shopify merchants.
+ Authentication
+ There are two pieces of information that you must include to successfully authenticate requests to a Partner API endpoint:
+ Your organization ID. You can find this in the URL of the Partners Dashboard when you're logged in. For example: https://partners.shopify.com/organization-id/api/2021-04/graphql.json
+ A Partner API client access token. The API client access token must belong to the organization that you're querying. You can create a new API client for your organization through the Partner Dashboard. For example: X-Shopify-Access-Token:
+ curl
+ 1
+ 2
+ curl -X POST \
+ https://partners.shopify.com/{organization_id}/api/2021-07/graphql.json \
+ -H 'Content-Type: application/json' \
+ -H 'X-Shopify-Access-Token: {partner_access_token}' \
+ -d '{
+ "query": "{your_query}"
+ }'
+ Endpoints and queries
+ Use GraphiQL explorer through your Partners Dashboard to query the Partner API. The GraphiQL explorer uses your Partner API client to retrieve the requested information from your Partner account.
+ From your Partners Dashboard, navigate to Settings > Partner API clients. Next to the Partner API client that you want to explore, click View GraphiQL explorer.
+ You can also use the GraphiQL explorer to work with the schema and build queries.
+ Queries begin with one of the objects listed under QueryRoot. The QueryRoot is the schema’s entry-point for queries. Queries are equivalent to making a GET request in REST.
+ POST
+ https://partners.shopify.com/{org_id}/api/2024-04/graphql.json
+ You can use cURL or an HTTP client such as Postman or Insomnia to query the Partner API. This example is a basic request using cURL. Replace {organization-id} with the ID for the organization you are querying, and replace {partner-access-token} with your client access token. This request retrieves the last 20 active Experts Marketplace conversations with unread messages.
+ The Partner API is versioned. To keep your app stable, make sure you specify a supported version in the URL.
+ Create a Partner API client
+ You must be an organization owner to create and manage your API client through the Partners Dashboard. Each API client has access only to the data belonging to the organization in which it is created. You need to create an API client for each organization that you want to access using the API. From the Partners Dashboard, navigate to Settings > Partner API clients, and then click Manage Partner API clients.
+ The following permissions can be granted for each API client:
+ View financials: This permission is required to access Transaction resources. These resources represent all of the transactions that impact your Partner earnings.
+ Manage apps: This permission is required to access App resources, including all app-related events such as installs, uninstalls, and charges. This resource represents all of the public and private apps managed by your organization.
+ Manage themes: This permission is required to access the Theme resource. This resource represents all of the Shopify themes managed by your organization.
+ Manage jobs: This permission is required to access Conversation and Job resources. These resources represent Experts Marketplace conversations and jobs owned by your organization.
+ Secure your data by rotating your access token
+ Your access token secures your organization's data. It should be kept secret at all times. If you need to replace your access token, you can generate a secondary token from your Partners Dashboard, Navigate to Settings > Partner API clients, and then click Manage Partner API clients.
+ Usage limitations
+ Transaction information is for analytics purposes only. This information shouldn't be used for accounting or financial reporting.
+ All apps and services connecting to the Partner API are subject to Shopify’s API Terms of Service. Only organization owners can create and manage Partner API clients.
+ POST
+ https://partners.shopify.com/{org_id}/api/2024-04/graphql.json
+ curl
+ 1
+ 2
+ 3
+ 4
+ 20
+ 21
+ 22
+ 23
+ # Get the ID and user name of your 20 most recent unread messages
+ curl -X POST "https://partners.shopify.com/{org_id}/api/2021-07/graphql.json" \
+ -H "Content-Type: application/json" \
+ -H "X-Shopify-Access-Token: {partner-access-token}" \
+ -d '{
+ "query": "{
+ conversations(
+ first: 20,
+ unreadOnly: true,
+ statuses: [ACTIVE]
+ ) {
+ edges {
+ node {
+ id
+ merchantUser {
+ name
+ }
+ }
+ }
+ }
+ }"
+ }'
+ Rate limits
+ The Partner API has a rate limit of four requests per second per Partner API client. After the limit is exceeded, all requests are throttled and return an {"errors": [{"message": "Too many requests"}]} error.
+ {}
+ Request
+ 1 HTTP/1.1 429 Too Many Requests
+ {}
+ Response
+ JSON
+ 1 HTTP/1.1 429 Too Many Requests
+ 2
+    {
+ 3
+      "errors": [{
+ 4
+        "message": "Too many requests",
+ 5
+        "extensions": {
+ 6
+          "code": "429"
+ 7
+        }
+ 8
+      }]
+ 9
+    }
+ Status and error codes
+ All API queries return HTTP status codes that contain more information about the response.
+ 200 OK
+ The GraphQL Partner API can return a 200 OK response code in cases that would typically produce 4xx errors in REST.
+ 200 response codes can return different formats including both strings and objects.
+ Error handling
+ The response for the errors object contains additional detail to help you debug your operation.
+ The response for mutations contains additional detail to help debug your query. To access this, you must request userErrors.
+ Properties
+ errors
+ array
+ A list of all errors returned
+ Show error item properties
+ {}
+ Sample 200 error responses
+ Throttled
+ Internal
+ 1 {
+ 2
+    "errors": [
+ 3
+      {
+ 4
+        "message": "Too many requests",
+ 5
+        "extensions": {
+ 6
+          "code": "429"
+ 7
+        }
+ 8
+      }
+ 9
+    ]
+ 10 }
+ 4xx and 5xx status codes
+ The 4xx and 5xx errors occur infrequently. They are often related to network communications, your account, or an issue with Shopify’s services.
+ Many errors that would typically return a 4xx or 5xx status code, return an HTTP 200 errors response instead. Refer to the 200 OK section above for details.
+ 400 Bad Request
+ The server will not process the request.
+ 401 Unauthorized
+ A call was made with an invalid API client (for example, using tokens that don't exist) or against an invalid Organization (for example, one that's been disabled).
+ 404 Not Found
+ The resource isn’t available. This is often caused by querying for something that’s been deleted.
+ 429 Too Many Requests
+ Too many requests were sent in a given time period.
+ Didn’t find the status code you’re looking for? View the complete list of API status response and error codes.
+ {}
+ Sample error codes
+ 400
+ 401
+ 404
+ 429
+ 1 {
+ 2
+    "errors": [{
+ 3
+      "message": "Maximum query length is 50000 characters",
+ 4
+      "extensions": {
+ 5
+        "code": "400"
+ 6
+      }
+ 7
+    }]
+ 8 }
+ Translations
+ To receive translated error messages when using the Partner API, you need to specify a locale in the Accept-Language HTTP request header when sending queries. This example shows a header that enables error messages to be returned in Spanish when using the Partner API.
+ If the locale is missing or unsupported, then the API returns error messages in English.
+ {}
+ Sample request header for locale
+ json
+ 1 Accept-Language: es

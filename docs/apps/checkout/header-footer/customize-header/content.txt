@@ -1,0 +1,15 @@
+Validation
+ Cart permalinks
+ Styling
+ Header and footer
+ Customize the header
+ Customize the footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Payments
+ Billing
+ App Store
+ Updates & News
+ Developer changelog
+ Partner blog

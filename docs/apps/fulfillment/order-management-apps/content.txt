@@ -1,0 +1,90 @@
+Billing
+ App Store
+ Order management apps
+ Order management apps fulfill orders on behalf of merchants. Apps can automate the fulfillment workflow, or merchants can directly fulfill orders through an app.
+ This guide describes what fulfillment orders are, the lifecycle of a fulfillment order, use cases for order management apps, and some considerations before you get started.
+ Tip
+ If your app uses its own location, such as a third-party warehouse that prepares and ships orders on behalf of the store owner, then refer to Fulfillment service apps.
+ How it works
+ After a customer places an order, a merchant or third-party fulfillment service needs to prepare the items to be delivered to the customer.
+ A fulfillment order represents the strategy for how an order will be fulfilled. Fulfillment orders are represented in the REST Admin API by the FulfillmentOrder resource and in the GraphQL Admin API by the FulfillmentOrder object.
+ The following diagram shows an example lifecycle of fulfilling an order using an order management app:
+ Customers place orders, and receive items after the fulfillment process has completed.
+ Order management apps query orders and inventory levels, and query supported fulfillment order actions that they can take on behalf of the merchant. For example, the app can create a fulfillment order and send a fulfillment request to a merchant or third-party fulfillment service to begin the order fulfillment process.
+ Merchants or third-party fulfillment services approve the fulfillment request, pick and package the products, label the order for shipment, and ship the package with a mail carrier.
+ API objects and relationships
+ Before you start building your order management app, we recommend familiarizing yourself with the following API objects and their relationships.
+ REST Admin API object GraphQL Admin API object Description
+ Order Order Contains information about an order, including an array of the fulfillment orders which include line items that were purchased.
+ FulfillmentOrder FulfillmentOrder An item or a group of items in an order that are to be fulfilled from the same location. There can be more than one fulfillment order for an order at a given location.
+ FulfillmentOrder.line_items FulfillmentOrderLineItem A line item that belongs to a fulfillment order. It associates an order line item with quantities requiring fulfillment from the respective fulfillment order and any warning messages regarding the current fulfillment status.
+ Fulfillment Fulfillment A shipment of one or more items in an order. It includes the line item that the fulfillment applies to, its tracking information, and the location of the fulfillment.
+ FulfillmentService FulfillmentService A third-party warehousing service that prepares and ships orders on behalf of the store owner. Each fulfillment service is associated with its own location. When you create a fulfillment service, a new location is automatically created and associated with it.
+ Location Location A geographical location where a line item can be fulfilled from. A fulfillment service always has its own location, and variants managed by the fulfillment service should always be fulfilled from that location.
+ Statuses
+ Each fulfillment order has a status and a request status:
+ REST Admin API: FulfillmentOrder status and request_status properties
+ GraphQL Admin API: FulfillmentOrderStatus and FulfillmentOrderRequestStatus enums
+ Similarly, each fulfillment has a status:
+ REST Admin API: Fulfillment status property
+ GraphQL Admin API: FulfillmentStatus enum
+ The following diagram shows how a fulfillment order's status and request status changes, and how a fulfillment's status changes, based on the REST Admin API or GraphQL Admin API request that's executed:
+ Use cases
+ Common use cases for order management apps include the following:
+ Helping merchants with advanced shipping workflows
+ Automating the buying of shipping labels
+ Reassigning inventory based on availability
+ Rescheduling upcoming shipments for a different date
+ Webhooks
+ The following table describes the fulfillment order webhooks that your app can subscribe to in API version 2023-01 and higher. For more information, refer to the payloads for fulfillment order webhooks.
+ Webhook topic Description
+ fulfillment_orders/order_routing_complete Occurs when a fulfillment order is created and the order routing has been completed for the order
+ fulfillment_orders/fulfillment_request_submitted Occurs when a merchant requests one or more fulfilment order line items be fulfilled by a fulfilment service
+ fulfillment_orders/fulfillment_request_accepted Occurs when a fulfillment service accepts a merchant's request to fulfill one or more fulfillment order line items
+ fulfillment_orders/fulfillment_request_rejected Occurs when a fulfillment service rejects a merchant's request to fulfill an order
+ fulfillment_orders/placed_on_hold Occurs when a fulfillment order is placed on hold
+ fulfillment_orders/hold_released Occurs when a fulfillment order hold is released
+ fulfillment_orders/scheduled_fulfillment_order_ready Occurs when a scheduled fulfillment order is ready to be fulfilled
+ fulfillment_orders/rescheduled Occurs when a fulfillment order is rescheduled
+ fulfillment_orders/cancellation_request_submitted Occurs when a merchant requests to cancel a fulfillment order after the request was accepted by a fulfillment service
+ fulfillment_orders/cancellation_request_accepted Occurs when a fulfillment service accepts a fulfillment cancellation request from a merchant
+ fulfillment_orders/cancellation_request_rejected Occurs when a fulfillment service rejects a fulfillment cancellation request from a merchant
+ fulfillment_orders/cancelled Occurs when a fulfillment service or merchant cancels a fulfillment order
+ fulfillment_orders/fulfillment_service_failed_to_complete Occurs when a fulfillment service intends to close an assigned fulfillment order that was previously accepted for fulfillment. After this action, the fulfillment order transitions to an incomplete status. To continue the fulfillment process, the merchant or app needs to determine the next course of action.
+ Migrating your app
+ In Shopify, the FulfillmentOrder resource models an end-to-end fulfillment process and is available in both the REST Admin API and the GraphQL Admin API. The FulfillmentOrder resource enables fulfillment data to sync accurately between Shopify and apps.
+ By API version 2023-07, all apps should be using the FulfillmentOrder object to manage fulfillments. Apps using the following REST or GraphQL Admin API resources or objects to fulfill orders are using a legacy workflow that is no longer supported as of API version 2022-07:
+ Order REST or GraphQL.
+ Fulfillment REST or GraphQL.
+ Benefits
+ Migrating your app to the fulfillment orders workflow provides the following benefits:
+ You can fetch the assigned location of a given group of unfulfilled line items to determine where fulfillment should occur.
+ You no longer need to match SKUs or filter out the items on an order that don’t apply to you before you can determine which items you need to fulfill.
+ App users and apps can both add notes to requests, which can improve communication throughout the fulfillment process.
+ The process of making fulfillment and cancellation requests is formalized.
+ Implementing recommended workflows
+ To learn how to migrate your app, refer to Migrate to fulfillment orders.
+ If you maintain a third-party app or Shopify Flow workflow that relies on Order and Fulfillment API resources for order automation, then refer to Track orders placed through third-party marketplaces.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about fulfilling orders.
+ FulfillmentOrder object
+ Consult the GraphQL Admin API reference to learn more about the FulfillmentOrder object.
+ FulfillmentOrder resource
+ Consult the REST Admin API reference to learn more about the FulfillmentOrder resource.
+ Next steps
+ Learn how to manage fulfillments as an order management app.
+ Learn how to create test orders and transactions to validate your app's behavior.
+ Edit existing orders using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Statuses
+ Use cases
+ Webhooks
+ Migrating your app
+ Developer tools and resources
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

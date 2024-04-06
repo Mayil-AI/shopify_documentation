@@ -1,0 +1,20 @@
+Testing
+ Overview
+ Testing assets
+ Testing checklist
+ Review process
+ Theme success
+ Theme revenue share
+ Testing your theme for the Shopify Theme Store
+ To ensure that your theme contains the required Shopify features, and to ensure that it's flexible, resilient, and performant, you should test it before submission.
+ You should test the following:
+ Mandatory features: Add Shopify Theme Store testing assets to your store, and then test your theme using the review checklist to verify that it contains the required features and responds to interactions and inputs as expected.
+ Performance: Ensure that your theme meets Lighthouse performance standards using our testing best practices.
+ Accessibility: Ensure that your theme meets Lighthouse accessibility standards using our testing best practices.
+ Browser compatibility: Verify that your theme supports older browsers using tools like BrowserStack
+ You should also thoroughly review the Theme Store requirements before submission.
+ Other testing tips
+ When you're developing, use Theme Check to analyze and correct your Liquid Code.
+ Test your performance and accessibility scores regularly using the Shopify Lighthouse CI GitHub Action.
+ Disable JavaScript using Chrome DevTools to verify that navigation elements and the product form work without JavaScript.
+ Consider testing your theme with people outside of your organization.

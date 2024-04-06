@@ -1,0 +1,545 @@
+Checkout
+ CollectionListing
+ MobilePlatformApplication
+ Payment
+ Product ResourceFeedback
+ ProductListing
+ JSON
+ The ProductListing resource
+ GET
+ Retrieve product listings that are published to your app
+ GET
+ Retrieve a specific product listing that is published to your app
+ GET
+ Retrieve a count of products that are published to your app
+ GET
+ Retrieve <code>product_ids</code> that are published to your app
+ PUT
+ Create a product listing to publish a product to your app
+ DEL
+ Delete a product listing to unpublish a product from your app
+ ResourceFeedback
+ Shipping and fulfillment
+ Shopify Payments
+ Store properties
+ TenderTransaction
+ Webhooks
+ Deprecated API calls
+ ProductListing
+ Multiple access scopes needed — refer to each endpoint for access scope requirements.
+ A ProductListing resource represents a Product which is available to your sales channel. Merchants can make products available to your sales channel directly from their Shopify admin.
+ You can use this resource to retrieve products that a merchant has published and display them to customers in your marketplace for sale.
+ A ProductListing resource itself is unable to have its attributes modified directly. The attributes of a ProductListing are inherited from the Product resource to which it is associated. Therefore, all attributes of a ProductListing should be considered read-only.
+ A product can have one of the following statuses: active, draft, or archived. Draft and archived are considered non-active statuses. If you create a listing for a non-active product, then the product won't be published immediately. You must change the product status to active to make the product available on a sales channel.
+ If the product is sold exclusively on subscription, then you can create a listing for the product only on an online store.
+ Was this section helpful?
+ YesNo
+ #
+ Endpoints
+ GET
+ /admin/api/2024-04/product_listings.json
+ Retrieve product listings that are published to your app
+ GET
+ /admin/api/2024-04/product_listings/{product_listing_id}.json
+ Retrieve a specific product listing that is published to your app
+ GET
+ /admin/api/2024-04/product_listings/count.json
+ Retrieve a count of products that are published to your app
+ GET
+ /admin/api/2024-04/product_listings/product_ids.json
+ Retrieve <code>product_ids</code> that are published to your app
+ PUT
+ /admin/api/2024-04/product_listings/{product_listing_id}.json
+ Create a product listing to publish a product to your app
+ DEL
+ /admin/api/2024-04/product_listings/{product_listing_id}.json
+ Delete a product listing to unpublish a product from your app
+ The ProductListing resource
+ Properties
+ product_id
+ read-only
+ The unique identifer of the product this listing is for. The primary key for this resource.
+ body_html
+ read-only
+ The description of the product, complete with HTML formatting.
+ created_at
+ read-only
+ The date and time when the product was created. The API returns this in ISO 8601.
+ handle
+ read-only
+ A human-friendly unique string for the Product automatically generated from its title.
+ images
+ read-only
+ A list of image objects, each one representing an image associated with the product.
+ options
+ read-only
+ Custom product property names like "Size", "Color", and "Material".
+ product_type
+ read-only
+ A categorization that a product can be tagged with, commonly used for filtering.
+ published_at
+ read-only
+ The date and time when the product was published. The API returns this in ISO 8601.
+ tags
+ read-only
+ A categorization that a product can be tagged with, commonly used for filtering.
+ title
+ read-only
+ The name of the product.
+ updated_at
+ read-only
+ The date and time when the product was last modified. The API returns this in ISO 8601.
+ variants
+ read-only
+ A list of variant objects, each one representing a slightly different version of the product. For example, if a product comes in different sizes and colors, each size and color permutation (such as "small black", "medium black", "large blue"), would be a variant.
+ To reorder variants, update the product with the variants in the desired order. The position attribute on the variant will be ignored.
+ Show variants properties
+ vendor
+ read-only
+ The name of the vendor of the product.
+ Was this section helpful?
+ YesNo
+ {}
+ The ProductListing resource
+ 1
+ 2
+ 43
+ 44
+ 45
+ 46
+ {
+ "product_id": {
+ "product_id": 1053727709
+ },
+ "body_html": "It's the small iPod with a big idea: Video.",
+ "created_at": "2012-02-15T15:12:21-05:00",
+ "handle": "ipod-nano",
+ "images": [
+ {
+ "src": "http://example.com/burton.jpg"
+ }
+ ],
+ "options": [
+ {
+ "name": "Title"
+ }
+ ],
+ "product_type": "Cult Products",
+ "published_at": "2007-12-31T19:00:00-05:00",
+ "tags": "Emotive, Flash Memory, MP3, Music",
+ "title": "IPod Nano - 8GB",
+ "updated_at": "2012-08-24T14:01:47-04:00",
+ "variants": {
+ "barcode": "1234_pink",
+ "compare_at_price": null,
+ "created_at": "2012-08-24T14:01:47-04:00",
+ "fulfillment_service": "manual",
+ "grams": 567,
+ "weight": 0.2,
+ "weight_unit": "kg",
+ "id": 808950810,
+ "inventory_management": "shopify",
+ "inventory_policy": "continue",
+ "inventory_quantity": 10,
+ "option1": "Pink",
+ "position": 1,
+ "price": 199.99,
+ "product_id": 632910392,
+ "requires_shipping": true,
+ "sku": "IPOD2008PINK",
+ "taxable": true,
+ "title": "Pink",
+ "updated_at": "2012-08-24T14:01:47-04:00"
+ },
+ "vendor": "Apple"
+ }
+ GET
+ Retrieve product listings that are published to your app
+ Requires product_listings access scope.
+ Retrieve product listings that are published to your app. Note: As of version 2019-07, this endpoint implements pagination by using links that are provided in the response header. Sending the page parameter will return an error. To learn more, see Make paginated requests to the REST Admin API.
+ Parameters
+ api_version
+ string
+ required
+ collection_id
+ Filter by products belonging to a particular collection
+ handle
+ Filter by product handle
+ limit
+ ≤ 1000
+ default 50
+ Amount of results
+ product_ids
+ A comma-separated list of product ids
+ updated_at_min
+ Filter by product listings last updated after a certain date and time (formatted in ISO 8601)
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve product listings that are published to your app
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/product_listings.json
+ cURL
+ Remix
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/product_listings.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ {}
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ HTTP/1.1 200 OK
+ {
+ "product_listings": [
+ {
+ "product_id": 632910392,
+ "created_at": "2024-04-01T13:52:26-04:00",
+ "updated_at": "2024-04-01T13:52:26-04:00",
+ "body_html": "<p>It's the small iPod with one very big idea: Video. Now the world's most popular music player, available in 4GB and 8GB models, lets you enjoy TV shows, movies, video podcasts, and more. The larger, brighter display means amazing picture quality. In six eye-catching colors, iPod nano is stunning all around. And with models starting at just $149, little speaks volumes.</p>",
+ "handle": "ipod-nano",
+ "product_type": "Cult Products",
+ "title": "IPod Nano - 8GB",
+ "vendor": "Apple",
+ "available": true,
+ "tags": "Emotive, Flash Memory, MP3, Music",
+ "published_at": "2017-08-31T20:00:00-04:00",
+ "variants": [
+ {
+ "id": 808950810,
+ "title": "Pink",
+ "option_values": [
+ {
+ "option_id": 594680422,
+ "name": "Color",
+ "value": "Pink"
+ }
+ ],
+ "price": "199.00",
+ "formatted_price": "$199.00",
+ "compare_at_price": null,
+ "grams": 567,
+ "requires_shipping": true,
+ "sku": "IPOD2008PINK",
+ "barcode": "1234_pink",
+ "taxable": true,
+ "position": 1,
+ "available": true,
+ "inventory_policy": "continue",
+ "inventory_quantity": 10,
+ "inventory_management": "shopify",
+ "fulfillment_service": "manual",
+ "weight": 1.25,
+ "weight_unit": "lb",
+ "image_id": 562641783,
+ "created_at": "2024-04-01T13:52:26-04:00",
+ "updated_at": "2024-04-01T13:52:26-04:00"
+ GET
+ Retrieve a specific product listing that is published to your app
+ Requires product_listings access scope.
+ Retrieve a specific product listing that is published to your app
+ Parameters
+ api_version
+ string
+ required
+ product_listing_id
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve a specific product listing that is published to your app
+ Path parameters
+ product_listing_id=921728736
+ string
+ required
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/product_listings/921728736.json
+ 1
+ 2
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/product_listings/921728736.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ HTTP/1.1 200 OK
+ {
+ "product_listing": {
+ "product_id": 921728736,
+ "created_at": "2024-04-01T13:52:26-04:00",
+ "updated_at": "2024-04-01T13:52:26-04:00",
+ "body_html": "<p>The iPod Touch has the iPhone's multi-touch interface, with a physical home button off the touch screen. The home screen has a list of buttons for the available applications.</p>",
+ "handle": "ipod-touch",
+ "product_type": "Cult Products",
+ "title": "IPod Touch 8GB",
+ "vendor": "Apple",
+ "available": true,
+ "tags": "",
+ "published_at": "2017-08-31T20:00:00-04:00",
+ "variants": [
+ {
+ "id": 447654529,
+ "title": "Black",
+ "option_values": [
+ {
+ "option_id": 891236591,
+ "name": "Title",
+ "value": "Black"
+ }
+ ],
+ "price": "199.00",
+ "formatted_price": "$199.00",
+ "compare_at_price": null,
+ "grams": 567,
+ "requires_shipping": true,
+ "sku": "IPOD2009BLACK",
+ "barcode": "1234_black",
+ "taxable": true,
+ "position": 1,
+ "available": true,
+ "inventory_policy": "continue",
+ "inventory_quantity": 13,
+ "inventory_management": "shipwire-app",
+ "fulfillment_service": "shipwire-app",
+ "weight": 1.25,
+ "weight_unit": "lb",
+ "image_id": null,
+ "created_at": "2024-04-01T13:52:26-04:00",
+ "updated_at": "2024-04-01T13:52:26-04:00"
+ }
+ ],
+ "images": [],
+ GET
+ Retrieve a count of products that are published to your app
+ Requires product_listings access scope.
+ Retrieve a count of products that are published to your app
+ Parameters
+ api_version
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve a count of products that are published to your app
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/product_listings/count.json
+ cURL
+ 2
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/product_listings/count.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 
+ 3
+ 4
+ HTTP/1.1 200 OK
+ {
+ "count": 2
+ }
+ GET
+ Retrieve <code>product_ids</code> that are published to your app
+ Retrieve product_ids that are published to your app. Maximum 1,000 results per page.
+ Parameters
+ api_version
+ string
+ required
+ limit
+ ≤ 1000
+ default 50
+ Amount of results
+ Was this section helpful?
+ YesNo
+ Examples
+ Retrieve product_ids that are published to your app
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/product_listings/product_ids.json
+ 1
+ 2
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/product_listings/product_ids.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 7
+ HTTP/1.1 200 OK
+ {
+ "product_ids": [
+ 921728736,
+ 632910392
+ ]
+ }
+ PUT
+ Create a product listing to publish a product to your app
+ Requires product_listings access scope.
+ Create a product listing to publish a product to your app
+ Parameters
+ api_version
+ string
+ required
+ product_listing_id
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Create a product listing to publish a product to your app
+ Path parameters
+ product_listing_id=921728736
+ string
+ required
+ Request body
+ product_listing
+ Product_listing resource
+ Show product_listing properties
+ Was this section helpful?
+ YesNo
+ PUT
+ /admin/api/2024-04/product_listings/921728736.json
+ curl -d '{"product_listing":{"product_id":921728736}}' \
+ -X PUT "https://your-development-store.myshopify.com/admin/api/2024-04/product_listings/921728736.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 
+ HTTP/1.1 200 OK
+ {
+ "product_listing": {
+ "product_id": 921728736,
+ "created_at": "2024-04-01T13:52:26-04:00",
+ "updated_at": "2024-04-01T13:52:26-04:00",
+ "body_html": "<p>The iPod Touch has the iPhone's multi-touch interface, with a physical home button off the touch screen. The home screen has a list of buttons for the available applications.</p>",
+ "handle": "ipod-touch",
+ "product_type": "Cult Products",
+ "title": "IPod Touch 8GB",
+ "vendor": "Apple",
+ "available": true,
+ "tags": "",
+ "published_at": "2017-08-31T20:00:00-04:00",
+ "variants": [
+ {
+ "id": 447654529,
+ "title": "Black",
+ "option_values": [
+ {
+ "option_id": 891236591,
+ "name": "Title",
+ "value": "Black"
+ }
+ ],
+ "price": "199.00",
+ "formatted_price": "$199.00",
+ "compare_at_price": null,
+ "grams": 567,
+ "requires_shipping": true,
+ "sku": "IPOD2009BLACK",
+ "barcode": "1234_black",
+ "taxable": true,
+ "position": 1,
+ "available": true,
+ "inventory_policy": "continue",
+ "inventory_quantity": 13,
+ "inventory_management": "shipwire-app",
+ "fulfillment_service": "shipwire-app",
+ "weight": 1.25,
+ "weight_unit": "lb",
+ "image_id": null,
+ "created_at": "2024-04-01T13:52:26-04:00",
+ "updated_at": "2024-04-01T13:52:26-04:00"
+ }
+ ],
+ "images": [],
+ DEL
+ Delete a product listing to unpublish a product from your app
+ Requires product_listings access scope.
+ Delete a product listing to unpublish a product from your app
+ Parameters
+ api_version
+ string
+ required
+ product_listing_id
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Delete a product listing to unpublish a product from your app
+ Path parameters
+ product_listing_id=921728736
+ string
+ required
+ Was this section helpful?
+ YesNo
+ DEL
+ /admin/api/2024-04/product_listings/921728736.json
+ 1
+ 2
+ 3
+ curl -X DELETE "https://your-development-store.myshopify.com/admin/api/2024-04/product_listings/921728736.json" \
+ -H "X-Shopify-Access-Token: {access_token}"
+ 2
+ HTTP/1.1 200 OK
+ 
+ Updates & News
+ Developer changelog

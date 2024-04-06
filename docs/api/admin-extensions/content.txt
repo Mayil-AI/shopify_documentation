@@ -1,0 +1,185 @@
+APIs
+ Collapse sidebar
+ Admin Extensions
+ Unstable
+ 2024-04
+ 2024-01
+ 2023-10
+ 2024-01
+ Overview
+ Overview
+ Getting Started
+ App Authentication
+ Direct API access
+ Custom Protocols
+ Deploying
+ Security
+ API
+ Components
+ Admin UI extensions
+ Admin UI extensions make it possible to surface contextual app functionality within the Shopify Admin interface.
+ Overview
+ Extend the Shopify Admin with UI Extensions.
+ Tutorial
+ Get started building your first admin extension
+ Component APIs
+ See all available components
+ Reference
+ View a list of available extension targets
+ App authentication
+ Make authenticated requests to your app's backend
+ Direct API access
+ Access the Shopify GraphQL API directly
+ Custom protocols
+ Easily construct URLs to navigate to common locations
+ UI reference
+ Figma UI Kit
+ Getting Started
+ Use the Shopify CLI to generate a new extension within your app.
+ If you already have a Shopify app, you can skip right to the last command shown here.
+ Generate an extension
+ CLI
+ 1 # create an app if you don't already have one:
+ 2 npm init @shopify/app@latest --name my-app
+ 3
+ 4 # navigate to your app's root directory:
+ 5 cd my-app
+ 6
+ 7 # generate a new extension:
+ 8 npm run generate extension
+ 9 # follow the steps to create a new
+ 10 # extension in ./extensions.
+ App Authentication
+ Admin UI extensions can also make authenticated calls to your app's backend. When you use fetch() to make a request to your app's configured auth domain or any of its subdomains, an Authorization header is automatically added with a Shopify OpenID Connect ID Token. There's no need to manually manage session tokens.
+ Relative URLs passed to fetch() are resolved against your app's app_url. This means if your app's backend is on the same domain as your app_url, you can make requests to it using fetch('/path').
+ Make requests to your app's backend
+ Get Product Data
+ 1 import {reactExtension, useApi, Text} from '@shopify/ui-extensions-react/admin';
+ 2 import {useEffect, useState} from 'react';
+ 3
+ 4 // Get product info from app backend
+ 5 async function getProductInfo(id) {
+ 6
+    const res = await fetch(`/api/products/${id}`);
+ 7
+    return res.json();
+ 8 }
+ 9
+ 10 const TARGET = 'admin.product-details.block.render';
+ 11
+ 12 export default reactExtension(TARGET, () => <App />);
+ 13
+ 14 function App() {
+ 15
+    // Contextual "input" data passed to this extension:
+ 16
+    const {data} = useApi(TARGET);
+ 17
+    const productId = data.selected?.[0]?.id;
+ 18
+ 19
+    const [productInfo, setProductInfo] = useState();
+ 20
+    useEffect(() => {
+ 21
+      getProductInfo(productId).then(setProductInfo);
+ 22
+    }, [productId]);
+ 23
+ 24
+    return <Text>Info: {productInfo?.title}</Text>;
+ 25 }
+ Direct API access
+ You can make Shopify Admin API requests directly from your extension using the query API or the standard web fetch API!
+ Any fetch() calls from your extension to Shopify's Admin GraphQL API are automatically authenticated by default. These calls are fast too, because Shopify handles requests directly.
+ Direct API requests use online access mode by default. If you want to use offline access mode, you can set the direct_api_mode property to offline in your app TOML file.
+ Note: Direct API can't be used to manage storefront access tokens.
+ Developer guide
+ Learn more about access scopes
+ Query Shopify data
+ Fetch Product data
+ Query Product data
+ 1 import {reactExtension, useApi, Text} from '@shopify/ui-extensions-react/admin';
+ 2 import {useEffect, useState} from 'react';
+ 3
+ 4 async function getProduct(id) {
+ 5
+    const res = await fetch('shopify:admin/api/graphql.json', {
+ 6
+      method: 'POST',
+ 7
+      body: JSON.stringify({
+ 8
+        query: `
+ 9
+          query GetProduct($id: ID!) {
+ 10
+            product(id: $id) {
+ 11
+              title
+ 12
+            }
+ 13
+          }
+ 14
+        `,
+ 15
+        variables: {id},
+ 16
+      }),
+ 17
+    });
+ 18
+    return res.json();
+ 19 }
+ 20
+ 21 const TARGET = 'admin.product-details.block.render';
+ 22
+ 23 export default reactExtension(TARGET, () => <App />);
+ 24
+ 25 function App() {
+ 26
+    // Contextual "input" data passed to this extension:
+ 27
+    const {data} = useApi(TARGET);
+ 28
+ 29
+    const [product, setProduct] = useState();
+ 30
+    useEffect(() => {
+ 31
+      const productId = data.selected?.[0]?.id;
+ 32
+      getProduct(productId).then(({data}) => setProduct(data.product));
+ 33
+    }, [data]);
+ 34
+ 35
+    return <Text strong>The selected product title is {product?.title}</Text>;
+ 36 }
+ Custom Protocols
+ Custom protocols make it easier to navigate to common locations, and construct URLs.
+ Shopify Protocol
+ Use the shopify:admin protocol when you want to construct a URL with a root of the Shopify Admin.
+ App Protocol
+ Extension Protocol
+ Relative Urls
+ Shopify:admin
+ Link to Product Page
+ Fetch data
+ 1 <Link to="shopify:admin/products/1234567890" />;
+ Deploying
+ Use the Shopify CLI to deploy your app and its extensions.
+ Deploy an extension
+ CLI
+ 1 # navigate to your app's root directory:
+ 2 cd my-app
+ 3
+ 4 # deploy your app and its extensions:
+ 5 npm run deploy
+ 6
+ 7 # follow the steps to deploy
+ Security
+ UI Extensions run on a different origin than the Shopify Admin. For network calls to succeed, your server must support cross-origin resource sharing (CORS) for the origin https://extensions.shopifycdn.com.
+ If you have a custom Access-Control-Allow-Origin header set, you must include https://extensions.shopifycdn.com in the list of allowed origins.
+ If you are using the Shopify App Remix Template, this is done automatically for you.

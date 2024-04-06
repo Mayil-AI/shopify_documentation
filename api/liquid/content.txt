@@ -1,0 +1,70 @@
+Collapse sidebar
+ Liquid
+ Overview
+ What is a template language?
+ Variations of Liquid
+ Liquid basics
+ Defining logic with tags
+ Modifying output with filters
+ Referencing objects
+ Resources & tools
+ Basics
+ Tags
+ Filters
+ Objects
+ Liquid reference
+ Liquid is a template language created by Shopify. It's available as an open source project on GitHub, and is used by many different software projects and companies.
+ This reference documents the Liquid tags, filters, and objects that you can use to build Shopify Themes.
+ What is a template language?
+ A template language allows you to create a single template to host static content, and dynamically insert information depending on where the template is rendered. For example, you can create a product template that hosts all of your standard product attributes, such as the product image, title, and price. That template can then dynamically render those attributes with the appropriate content, depending on the current product being viewed.
+ Variations of Liquid
+ The variation of Liquid in this reference extends the open-source version of Liquid for use with Shopify themes. It includes tags, filters, and objects that can be used to render objects specific to Shopify stores and storefront functionality.
+ Shopify also uses slightly different versions of Liquid to render dynamic content for the following features. These variations aren’t included in this reference.
+ Notification templates
+ Shopify Flow
+ Order printer templates
+ Packing slip templates
+ Liquid basics
+ Liquid is used to dynamically output objects and their properties. You can further modify that output by creating logic with tags, or directly altering it with a filter. Objects and object properties are output using one of six basic data types. Liquid also includes basic logical and comparison operators for use with tags.
+ Navigate to
+ Basics
+ Defining logic with tags
+ Liquid tags are used to define logic that tells templates what to do. Text within tag delimiters doesn’t produce visible output when the webpage is rendered.
+ {% %}
+ Curly brace percentage delimiters denote logic and control flow.
+ Navigate to
+ Tags
+ Modifying output with filters
+ Liquid filters are used to modify the output of variables and objects. To apply filters to an output, add the filter and any filter parameters within the output's curly brace delimiters, preceded by a pipe character.
+ Multiple filters can be used on one output. They’re parsed from left to right.
+ {{ | }}
+ Filters are placed within an output tag and denoted by a pipe character.
+ Navigate to
+ Filters
+ Referencing objects
+ Liquid objects represent variables that you can use to build your theme. Object types include, but aren't limited to:
+ Store resources, such as a collection or product and its properties
+ Standard content that is used to power Shopify themes, such as content_for_header
+ Functional elements that can be used to build interactivity, such as paginate and search
+ Objects might represent a single data point, or contain multiple properties. Some products might represent a related object, such as a product in a collection.
+ {{ }}
+ Double curly brace delimiters denote an output.
+ Scope
+ Some objects can be accessed globally, and some are available only in certain contexts. Refer to the specific object reference to find its access scope.
+ Creating variables
+ You can also create your own variables using variable tags. Variables are treated like objects syntactically.
+ Navigate to
+ Objects
+ Resources & tools
+ Liquid Cheat Sheet
+ A simple reference guide to the Liquid language.
+ Theme Check
+ Command line-based linter for themes. Also comes as an official Visual Studio Code extension.
+ Shopify CLI for Themes
+ A powerful command-line tool for building Shopify themes, and exploring Liquid code in a REPL interface.
+ Open source liquid
+ Liquid is an open source project on GitHub.
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

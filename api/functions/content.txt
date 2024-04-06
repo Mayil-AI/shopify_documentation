@@ -1,0 +1,85 @@
+Overview
+ API references
+ Configuration
+ Error handling
+ Discounts
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify Function APIs reference
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ Shopify Functions allow developers to customize the backend logic that powers parts of Shopify. This guide introduces the available APIs for Shopify Functions.
+ Available APIs
+ The following Function APIs are available:
+ Function API Description Extension target Merchant interface
+ Delivery Customization API Rename, reorder, and sort the delivery options available to buyers during checkout. purchase.delivery-customization.run Embedded app pages
+ Order Discount API Create a new type of discount that's applied to all merchandise in the cart. purchase.order-discount.run Embedded app pages
+ Product Discount API Create a new type of discount that's applied to a particular product or product variant in the cart. purchase.product-discount.run Embedded app pages
+ Shipping Discount API Create a new type of discount that's applied to one or more shipping rates at checkout. purchase.shipping-discount.run Embedded app pages
+ Payment Customization API Rename, reorder, and sort the payment methods available to buyers during checkout. purchase.payment-customization.run Embedded app pages
+ Cart Transform API Expand cart line items and update the presentation of cart line items. purchase.cart-transform.run None
+ Cart and Checkout Validation API Provide your own validation of a cart and checkout. purchase.validation.run Admin UI extensions
+ Fulfillment Constraints API Provide your own logic for how Shopify should fulfill and allocate an order. purchase.fulfillment-constraint-rule.run None
+ APIs in developer preview
+ Developer preview
+ The following Function APIs are available only in the Checkout and Customer Accounts Extensibility developer preview.
+ Function API Description Extension target Merchant Interface
+ Order Routing Location Rule API Provide your own ranking of location, for each item, during order routing. purchase.order-routing-location-rule.run Admin UI extensions
+ Discounts Allocator API Provide your own logic for how discounts should be calculated and allocated to a given cart. purchase.discounts-allocator.run None
+ Getting started
+ Learn how to use Shopify Functions by following one of our use case tutorials:
+ Discounts
+ Use Shopify Functions to create a new discount type for users.
+ Payment customizations
+ Use Shopify Functions to hide a payment option offered to customers at checkout.
+ Delivery customizations
+ Use Shopify Functions to rename a delivery option offered to customers at checkout.
+ Cart and checkout validations
+ Use Shopify Functions to block progress on a checkout when the cart line quantities exceed a limit.
+ Order routing location rules
+ Use Shopify Functions to choose a different order location during checkout.
+ Customized bundles
+ Use Shopify Functions to group products together and sell them as a single unit.
+ Fulfillment constraints
+ Use Shopify Functions to customize fulfillment and delivery strategies.
+ API versions
+ Function APIs are versioned. Updates are released quarterly and supported API versions are listed in the release notes.
+ Learn how to update to a new version of a Function API.
+ Shopify plans
+ All plans: Stores on any plan can use public apps that are distributed through the Shopify App Store and contain Shopify Functions.
+ Shopify Plus: Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ Limitations and considerations
+ The following limitations and considerations apply to all functions:
+ Apps can reference only their own functions in GraphQL Admin API mutations, such as discountAutomaticAppCreate and cartTransformCreate. Referencing a function from another app results in a Function not found error.
+ Shopify doesn't allow nondeterminism in functions, which means that you can't use any randomizing or clock functionality in your functions.
+ The compiled function can't exceed 256 kB in size.
+ You can't debug your function by printing out STDOUT, which is reserved for function output. Use STDERR instead.
+ Function logs to STDERR are truncated after 1 kB. Some Wasm toolchains might crash if STDERR fails to write full logs.
+ The logic of the function must execute in a maximum of 11 million instructions, which can be tested locally using function-runner.
+ At runtime, a function can't exceed the following memory limits:
+ Linear memory limit: 10 MB
+ Stack memory limit: 512 kB
+ A function's input cannot exceed 64,000 bytes in size.
+ Refer to input query limitations for more information.
+ A function's output can't exceed 20 kB in size.
+ An app can deploy a maximum of 100 functions.
+ Apps that provide dynamic editing and execution of function code aren't permitted on the Shopify App Store.
+ Network access is supported for some functions, refer to network access for more information. You can also pre-populate data by using metafields on products and customers, or passing data using cart attributes.
+ Next steps
+ Learn about how Shopify Functions work and the benefits of using Shopify Functions.
+ Learn about how data is input to and output from Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Available APIs
+ APIs in developer preview
+ Getting started
+ API versions
+ Shopify plans
+ Limitations and considerations
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,70 @@
+Overview
+ Viewing charges
+ Best practices
+ App Store
+ Charges and earnings overview
+ You can view data on charges and transactions using the following mechanisms:
+ Partner Dashboard
+ GraphQL Admin API
+ App charge data in the Partner Dashboard
+ You can view the following data by page in the Partner Dashboard:
+ Data by page in the Partner Dashboard
+ Page Data
+ App charge overview
+ Recurring app subscription charges
+ Usage-based app subscription charges
+ One-time app charges
+ Store App charges for a specific store
+ Payouts App charges for a specific payout
+ App history App charge details
+ App charge overview page
+ Note
+ In the event of a discrepancy between the overview page and the Payouts page, the information on the Payouts page should be considered the accurate reference.
+ The app charge overview page provides the most comprehensive information regarding charges and earnings. The page provides the following details:
+ Merchant information, including a link to the store where the app is installed
+ The name of the app that the merchant was charged for, including a link to the app
+ The status of the app charge or subscription
+ The list of merchant payment transactions that are associated with the charge
+ Clicking the arrow next to a transaction displays the following details:
+ An itemized list of the Shopify revenue share fee, processing fee, and your net profit as the app's developer
+ A link to the Partner payout that includes the app charge. The payout link isn't applicable to pending payouts.
+ The overview page includes additional charge details for subscription charges.
+ Subscription charge details
+ You can view the following additional details for subscription charges:
+ A description of the charge, such as $15 every 30 days for an app subscription charge.
+ The date on which the charge was created.
+ The charge's status, which can be one of the following:
+ Charge statuses
+ Status Description
+ Pending The merchant hasn't yet approved or declined the charge.
+ Activated
+ The charge is currently active.
+ For some payments, such as wire transfers, Shopify marks the charge as active when the payment is in flight.
+ Declined The merchant declined the charge.
+ Canceled
+ The merchant or the developer canceled the subscription
+ If a payment doesn't go through, then Shopify retries the charge. Only shut off a merchant's app access after Shopify freezes the charge.
+ Frozen The subscription is on hold due to a store subscription non-payment. The charge reactivates after the subscription payments resume.
+ Expired The merchant didn't accept the charge within two non-business days.
+ Transaction data through the GraphQL Admin API
+ You can use the following billing resources on the GraphQL Admin API to view transaction data:
+ Data by GraphQL Admin API resource
+ Transaction data Resource Learn how
+ Single app purchase AppPurchaseOneTime Example
+ Multiple app purchases currentAppInstallation Example
+ Single app subscription currentAppInstallation Example
+ Multiple app subscription AppSubscription Example
+ App usage records for a single subscription AppSubscription Example
+ App usage records for multiple subscriptions currentAppInstallation Example
+ App usage record currentAppInstallation Example
+ Get started
+ Get started viewing app charge and transaction data.
+ View app charges
+ View reportable data on app charges and earnings.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ App charge data in the Partner Dashboard
+ App charge overview page
+ Transaction data through the GraphQL Admin API
+ Get started

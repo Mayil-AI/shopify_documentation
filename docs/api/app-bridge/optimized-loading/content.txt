@@ -1,0 +1,60 @@
+Previous versions
+ Remix app package
+ Partner API
+ Payments Apps API
+ Function APIs
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Optimized loading on mobile devices
+ To improve loading speeds for your app and offer your users a better mobile experience, you can enable mobile optimization on the Partner Dashboard.
+ Note
+ All apps automatically have optimized loading enabled for development and live stores as of December 5th, 2022.
+ Requirements
+ You've created a Partner account and a development store.
+ You have the Shopify Mobile app installed on your mobile phone (ideally, iOS or Android).
+ Test your app in your development store
+ To enable optimized loading for your app:
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ Click Configuration.
+ In the App settings section, in the Embedded app home card, click Manage mobile optimization.
+ Next to Optimized loading for testing on development stores, click Enable.
+ Open the Shopify Mobile app, log into your development store, and launch your app. Your app should load faster and some UI elements, such as the title bar or product picker, will now provide native look and feel.
+ Test your app thoroughly to ensure that all functionality is working as expected.
+ Debug your app
+ If you find that your app isn't behaving as expected while testing it in your development store, take the following steps:
+ Familiarize yourself with how mobile-optimized loading works, and review the list of common issues and fixes.
+ Debug your app (on iOS or Android) to uncover the root cause and fix the problem.
+ If you can't determine the root cause, then ask a question on the Shopify APIs and SDKs section of the Shopify Community
+ Enable mobile optimization in production
+ If your app works as expected in your development environment, then you can enable mobile optimization in production with the following steps:
+ From your Partner Dashboard, click Apps.
+ Click the name of your app.
+ Click Configuration.
+ In the App settings section, in the Embedded app home card, click Manage mobile optimization.
+ Next to Optimized loading for all users on live stores, click Enable.
+ App users on Shopify Mobile will now get the optimized experience.
+ How mobile-optimized loading works
+ By default, embedded applications that are opened from the Shopify Mobile application run inside an iframe, hosted from the Shopify admin. Each time an application is launched, the Shopify admin site must be reloaded, adding a significant amount of time to the application’s load.
+ When you enable direct loading, the app is no longer loaded in an iframe inside of the Shopify admin. Instead, the Shopify Mobile app loads the application directly inside of a native WebView. In this mode, the Shopify App Bridge libraries automatically switch to communicate directly with the Shopify Mobile app. All of the same Shopify App Bridge functionality that is available on the Shopify Admin website is available in a native form in the mobile app.
+ When you use Shopify App Bridge to create UI, such as a resource picker or a modal dialog, the app displays native Android or iOS versions of these elements. This helps create a more deeply integrated and higher-quality user experience for the app when used through the Shopify Mobile app.
+ Common issues and fixes
+ Issue Fix
+ Using window.name or window.top to determine whether your app is running in embedded mode doesn't work. Use the isShopifyEmbedded utility, instead of accessing properties of the window object.
+ Using React Portals to communicate between modal windows doesn't work. Use App Bridge's Modal API.
+ Your app's backend redirects the user to the web version of Shopify Admin Have your app's backend redirect to the app home page and initialize App Bridge.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Test your app in your development store
+ Debug your app
+ Enable mobile optimization in production
+ How mobile-optimized loading works
+ Common issues and fixes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

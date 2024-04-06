@@ -1,0 +1,50 @@
+Product subscription app extensions
+ Purchase Type Card
+ The PurchaseTypeCard component allows users to select whether the shipping rates are applied to one time purchases or recurring purchases.
+ This component is used when creating a shipping discount.
+ Example code
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    PurchaseTypeCard,
+ 4
+    PurchaseType,
+ 5 } from "@shopify/discount-app-components";
+ 6
+ 7 function MyApp() {
+ 8
+    const [purchaseType, setPurchaseType] = useState(
+ 9
+      PurchaseType.OneTimePurchase
+ 10
+    );
+ 11
+ 12
+    return (
+ 13
+      <PurchaseTypeCard
+ 14
+        purchaseType={{ value: purchaseType, onChange: setPurchaseType }}
+ 15
+      />
+ 16
+    );
+ 17 }
+ Properties
+ Name Type Description Required
+ purchaseType Field<PurchaseType> The selected purchase type. Yes
+ PurchaseType
+ Name Value Description
+ OneTimePurchase ONE_TIME_PURCHASE For one time purchases only.
+ Subscription SUBSCRIPTION For subscription purchases only.
+ Both BOTH Eligible for both one time purchase and subscription purchases.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ PurchaseType
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

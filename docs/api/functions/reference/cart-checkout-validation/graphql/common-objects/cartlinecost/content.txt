@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ CartLineCost object
+ 2024-04 latest
+ The cost of the merchandise line that the buyer will pay at checkout.
+ On this page
+ Fields
+ Types that return CartLineCost
+ Fields
+ amountPerQuantity (MoneyV2!)
+ The amount of the merchandise line.
+ compareAtAmountPerQuantity (MoneyV2)
+ The compare at amount of the merchandise line.
+ subtotalAmount (MoneyV2!)
+ The cost of the merchandise line before line-level discounts.
+ totalAmount (MoneyV2!)
+ The total cost of the merchandise line.
+ Types that return CartLineCost
+ CartLine.cost

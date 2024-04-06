@@ -1,0 +1,170 @@
+Overview
+ Commands
+ Install, upgrade, or uninstall
+ VS Code extension
+ Prettier plugin
+ Theme Check
+ Theme editor
+ Code editor
+ Theme Access app
+ Theme Kit
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Install, upgrade, or uninstall Shopify CLI 2.x
+ This reference guide contains information about upgrading Shopify CLI, migrating from a legacy version, and uninstalling Shopify CLI.
+ Deprecated
+ This documentation is for the previous major version of Shopify CLI. Unless specifically instructed, you should use the new version of Shopify CLI (version 3), which provides a more streamlined theme development experience.
+ Shopify CLI 2.x is deprecated, and no longer supported by Shopify.
+ Learn how to migrate to Shopify CLI 3.x.
+ Install Shopify CLI 2.x
+ If you need to, you can install Shopify CLI 2.x. You can install Shopify CLI 2.x on Windows, macOS, or Linux. Use your computer's command line to install Shopify CLI from one of the supported package managers.
+ Requirements
+ To install and run Shopify CLI, you need to have the following installed on your computer:
+ Ruby or Ruby+Devkit using RubyInstaller for Windows 2.7 or higher
+ Git
+ Windows
+ If you want to use Shopify CLI natively on Windows 10, then first make sure that you've installed Ruby+Devkit using RubyInstaller for Windows (version 2.7 or higher).
+ Alternatively, you can use Shopify CLI using Windows Subsystem for Linux, in which case you need to install the following:
+ Windows Subsystem for Linux
+ Ubuntu VM
+ After you install the prerequisites, you can install Shopify CLI as a Ruby gem using the RubyGems.org package manager. In a new terminal window, navigate to your home directory and run the following command:
+ Terminal
+ $ gem install shopify-cli
+ MacOS
+ Shopify CLI is available for macOS through RubyGems.org.
+ RubyGems.org
+ In a new terminal window, navigate to your home directory and run the following command:
+ Terminal
+ $ gem install shopify-cli
+ Linux
+ Shopify CLI is available for Linux distributions through RubyGems.org, as well as through apt or yum.
+ RubyGems.org
+ In a new terminal window, navigate to your home directory and run the following command:
+ Terminal
+ $ gem install shopify-cli
+ apt (Debian, Ubuntu)
+ On Debian-based Linux systems, Shopify CLI is available to install with apt.
+ Download the latest Shopify CLI .deb file from the releases page on GitHub. Note the file’s location for the next step.
+ Run the following command. Make sure to replace /path/to/download/shopify-cli-x.y.z.deb with the path to your file's location.
+ Terminal
+ $ sudo apt install /path/to/download/shopify-cli-x.y.z.deb
+ yum (CentOS 8+, Fedora, Red Hat, SUSE Linux)
+ On RPM-based Linux systems, Shopify CLI is available to install with yum.
+ Download the latest Shopify CLI .rpm file from the releases page on GitHub. Note the file’s location for the next step.
+ Run the following command. Make sure to replace /path/to/download/shopify-cli-x.y.z.rpm with the path to your file's location.
+ Terminal
+ $ sudo yum install /path/to/download/shopify-cli-x.y.z.rpm
+ Verify the installation
+ To verify that Shopify CLI 2.x is installed properly, run the following command:
+ Terminal
+ $ shopify version
+ 
+ The command returns a version number.
+ Upgrade Shopify CLI
+ You can manage upgrades to Shopify CLI with the package manager for your platform. You must use the same package manager to upgrade that you originally used to install Shopify CLI.
+ For extension development, you might also need to update specific node modules manually to use all of the latest features.
+ Homebrew (macOS)
+ Terminal
+ $ brew update
+ $ brew upgrade shopify-cli@2
+ Caution
+ As of Shopify CLI version 3.20.1, running brew upgrade shopify-cli installs Shopify CLI 3.x. If you want to keep using Shopify CLI 2, then you need to install it again using brew install shopify-cli@2.
+ If you install Shopify CLI using this formula, then you need to run commands using the shopify2 program name (for example, shopify2 theme push or shopify2 extension push).
+ apt (Debian, Ubuntu)
+ Download the latest .deb file for Shopify CLI from the releases page.
+ Install the downloaded file and make sure to replace /path/to/download/shopify-cli-x.y.z.deb with the path to your file's location:
+ Terminal
+ $ sudo apt install /path/to/downloaded/shopify-cli-x.y.z.deb
+ yum (CentOS 8+, Fedora, Red Hat, SUSE)
+ Download the latest .rpm file for Shopify CLI from the releases page.
+ Install the downloaded file and make sure to replace /path/to/downloaded/shopify-cli-x.y.x.rpm with the path to your file's location.
+ Terminal
+ $ sudo yum install /path/to/downloaded/shopify-cli-x.y.x.rpm
+ RubyGems (macOS, Linux, Windows 10)
+ Terminal
+ $ gem update shopify-cli
+ Migrate from a legacy version
+ As of version 0.9.0, Shopify CLI is installed and managed as a software package, instead of as a Git repository. If you’re using a version prior to 0.9.0, then you need to perform a one-time migration to keep using the CLI.
+ Complete the following steps to remove the legacy version and reinstall Shopify CLI as a package:
+ Check if you are using the legacy version.
+ Uninstall the legacy Shopify CLI.
+ Install the new version.
+ Re-authenticate the CLI.
+ Check if you are using the legacy version
+ You can determine if you’re using a legacy version by running the following command. If you get a command not found error, then you’re using a legacy version.
+ Terminal
+ $ shopify version
+ Uninstall the legacy Shopify App CLI
+ To uninstall a legacy version of Shopify CLI, complete the following steps:
+ Delete the legacy CLI files.
+ Remove the legacy shopify command from your shell profile.
+ Reload your terminal.
+ Delete the legacy CLI files
+ By default, Shopify CLI was installed in your home directory. All the files are contained in a hidden directory called .shopify-app-cli. Run the following command to delete the directory:
+ Terminal
+ $ rm -rf ~/.shopify-app-cli/
+ Remove the legacy shopify command from your shell profile
+ During the install process, Shopify CLI added a line to your shell configuration. This line could be located in one of the following files in your home directory:
+ ~/.bash_profile
+ ~/.zshrc
+ ~/.bash_login
+ ~/.profile
+ ~/.config/fish/config.fish
+ The line will look similar to one of the following examples. The exact syntax depends on your system. Deleting or commenting out the relevant line in your shell profile removes shopify as a command.
+ 1 # The line won’t look *exactly* like this. `HOME_DIR` will instead be the absolute path to your home directory.
+ 2 if [[ -f /HOME_DIR/.shopify-cli/shopify.sh ]]; then source /HOME_DIR/.shopify-cli/shopify.sh; fi
+ 3
+ 4 # The line might not be wrapped in an `if` statement. Example:
+ 5 [ -f "/HOME_DIR/.shopify-app-cli/shopify.sh" ] && source "/HOME_DIR/.shopify-app-cli/shopify.sh"
+ Reload your terminal
+ For the changes made to your shell profile to take effect, exit your terminal, and start a new one.
+ If you try running shopify, then you should get a command not found error.
+ If you have the shopify_api gem installed, then you might see the following response:
+ 1 shopify command is no longer bundled with shopify_api.
+ 2 if you need these tools, install the shopify_cli gem
+ If so, then you also need to upgrade the shopify_api gem to v9.2.0 or higher to remove a deprecated shopify command that is contained in that gem.
+ If you also have the shopify_app gem (which depends on shopify_api gem), then you need to install or update shopify_api first, and then uninstall the older version.
+ To get a list of the versions of shopify_api currently installed, run the following command:
+ Terminal
+ $ gem list shopify_api
+ To install the latest version, run the following command:
+ Terminal
+ $ gem install shopify_api
+ To uninstall the older version, run the following command. Replace x.y.z with a version number listed from the gem list command. Repeat as needed.
+ Terminal
+ $ gem uninstall shopify_api -v x.y.z
+ Install the new version
+ After you've finished uninstalling the legacy version, you can install the most recent version of Shopify CLI. Follow the installation instructions for your platform.
+ Re-authenticate the CLI
+ To reauthenticate, with Shopify CLI, enter shopify login.
+ Uninstall Shopify CLI
+ Shopify CLI can be removed from your system using the same package manager that you used to install it.
+ Homebrew (macOS)
+ Terminal
+ $ brew uninstall shopify-cli # 2.2x or lower
+ $ brew uninstall shopify-cli@2 # 2.3 or higher
+ apt (Debian, Ubuntu)
+ Terminal
+ $ sudo apt remove shopify-cli
+ yum (CentOS 8+, Fedora, Red Hat, SUSE)
+ Terminal
+ $ sudo yum remove shopify-cli
+ RubyGems (macOS, Linux, Windows 10)
+ Terminal
+ $ gem uninstall shopify-cli
+ Uninstall a legacy version
+ If you’re using a legacy version of Shopify CLI (lower than 0.9.0), then you need to uninstall it manually.
+ Next steps
+ Review the commands for Shopify CLI.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Install Shopify CLI 2.x
+ Upgrade Shopify CLI
+ Migrate from a legacy version
+ Uninstall Shopify CLI
+ Next steps
+ Updates & News
+ Developer changelog

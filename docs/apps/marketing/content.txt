@@ -1,0 +1,70 @@
+Marketing automations
+ SEO
+ Authentication
+ Webhooks
+ App extensions
+ App Store
+ Marketing
+ This guide describes the ways that you can help merchants with marketing their Shopify store, and provides some resources you can explore to extend your app's functionality.
+ How it works
+ After a merchant launches their store, they might want to explore options for increasing traffic and converting visitors into customers. Whether a merchant is selling online or in person, developing a marketing plan can help them to choose marketing tactics that are right for their store.
+ You can help merchants with marketing their Shopify stores in the following ways:
+ Set up a web pixel app extension to collect behavioral data for marketing campaign optimization and analytics.
+ Use customer segments to conduct marketing activities.
+ Set up a marketing activities app extension to enable merchants to manage promotional campaigns and marketing automations from the Marketing page in the Shopify admin using your app.
+ Connect a marketing app to Shopify to create and manage marketing efforts in your app or on a platform outside of Shopify.
+ Manage meta tags for SEO to help customers find an online store in search engines or social media.
+ Web pixel app extension
+ Pixels are JavaScript code snippets that run on the online store and collect behavioral data, referred to as customer events, for marketing campaign optimization and analytics.
+ Web pixel app extensions provide developers with a simplified process for managing and processing behavioral data, by loading pixels in a secure sandbox environment with APIs for subscribing to customer events. Web pixel app extensions provide the following benefits to app users and developers:
+ Eliminate or minimize the need for users to add tracking code
+ Securely access all surfaces, like storefront, checkout and post-purchase pages
+ Control what data the developers have access to
+ Avoid performance and privacy alerts
+ Provide a smaller pixel code libraries with the removal of excess DOM manipulation code
+ For more information, refer to Web pixels.
+ Customer segments
+ A segment is a group of members (commonly customers) that meet specific criteria. Segments enable users to conduct marketing activities, access information that helps to inform a business decision, or learn more about certain segment member behaviors.
+ For example, a segment might include members that bought a particular product. A user could then send a targeted email to the members of that segment.
+ Segment members can belong to multiple segments.
+ For more information, refer to Customer segments.
+ Marketing activities app extension
+ Marketing on Shopify helps merchants find and sell to customers using a variety of means, including content marketing, SEO, and social media. You can add a marketing activities app extension to your app to surface your app directly in the Marketing page in the Shopify admin.
+ Using a marketing activities app extension, you can complete the following tasks:
+ Configure the marketing activity form that's rendered in Shopify admin.
+ Enable app users to preview marketing activities on your platform.
+ Manage a user's marketing onboarding state.
+ Manage the lifecycle of a user's marketing activities.
+ Track a user's marketing activity engagements.
+ For more information, refer to Marketing activities.
+ Connecting a marketing app to Shopify
+ You can use the GraphQL Admin API to create and manage marketing efforts in your app or on a platform outside of Shopify. By integrating with Shopify, apps can connect their data, and app users can access a complete picture of how their marketing efforts are performing.
+ For more information, refer to Connect a marketing app to Shopify.
+ Note
+ You don't need to use a marketing activities app extension to connect a marketing app to Shopify.
+ Marketing automation action
+ Shopify marketing automations is a workflow tool that lets merchants set up marketing automations and campaigns. The Shopify marketing automations tool is built into the Shopify admin.
+ If you want merchants to execute your app's marketing activities based on conditions in their store, then you can create a marketing automation action. When the action is triggered, you can send information about the marketing activity back to Shopify for display and reporting purposes.
+ For more information, refer to Marketing automation actions.
+ Note
+ You don't need to create a marketing activity app extension to create a marketing automation action.
+ Meta tags for SEO
+ You can change the way a product, page, collection, blog, or article appears in search engine results by updating the resource's meta tags. The meta tags are the page title and the meta description, which are part of the resource's search engine listing.
+ For example, when you create a product, the page title and meta description for the product page defaults to the product title and description. You can change these default values by managing metafields with the GraphQL Admin API.
+ For more information, refer to Manage meta tags for SEO.
+ Next steps
+ Learn how you can use web pixels on an online store to collect behavioral data for marketing campaign optimization and analytics.
+ Use segments to conduct marketing activities.
+ Get started with marketing activities to enable merchants to create marketing campaigns from their Shopify admin using your app.
+ Learn how to connect a marketing app to the Shopify platform using the GraphQL Admin API.
+ Use metafields to change the way a store's pages appear in search engine results by updating the meta tags.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Web pixel app extension
+ Customer segments
+ Marketing activities app extension
+ Connecting a marketing app to Shopify
+ Marketing automation action
+ Meta tags for SEO

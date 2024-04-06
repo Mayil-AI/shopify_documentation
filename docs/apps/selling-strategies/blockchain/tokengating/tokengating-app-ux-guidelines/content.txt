@@ -1,0 +1,50 @@
+Billing
+ App Store
+ Tokengating UX guidelines
+ User experience is important to the success of early-adopter merchants and their customers. This guide explains UX guidelines for both the merchant and customer experience.
+ Note
+ These guidelines are only for gating products.
+ Customer experience
+ Customers should clearly understand what is being gated, how they can take action, and what their eligibility status is after they've connected a wallet.
+ Communicate what is required to unlock the gate (ideally visually) before the customer connects their wallet.
+ Provide a path to acquire the required token if the customer doesn’t have it.
+ Communicate clearly what the gate unlocks (reaction).
+ When a product is gated, hide controls that have functionality only when the gate is unlocked (variants, buy buttons, quantity picker).
+ Support as many wallets as possible even if you want to elevate certain wallets in your experience.
+ If the customer's connected wallet doesn't contain an eligible token, then communicate that to them. If the gate requires a combination of tokens, then show which ones the customer is missing.
+ Don’t require multiple wallet connections in a single purchase session. When a wallet is connected, all gates on the storefront should get evaluated against it.
+ If the gated content is no longer available, then communicate that to the customer in gate's locked state. For example, if a gated product is sold out, then show that it’s sold out before the customer connects their wallet.
+ When a gate is unlocked, personalize the experience by displaying the customer's eligible token.
+ Enable the customer to easily disconnect their wallet.
+ Make the tokengating experience feel native to the merchant's storefront by matching styles to their theme.
+ Examples of tokengate states
+ The customer hasn't connected a wallet. The gate is locked and gated content is hidden.
+ The customer has connected a wallet with no valid token. The gate is locked and gated content is hidden.
+ The customer has connected a wallet with a valid token. The gate is unlocked and gated content is revealed (purchase form).
+ Note
+ Use Shopify blockchain components to accelerate your development process and deliver a user experience that adheres to Shopify best practices.
+ Merchant experience
+ Provide merchants with clear instructions, rich previews, and comprehensive error validation. Avoid technical language and operations as much as possible.
+ For the best merchant experience, build your app directly in the Shopify admin, and follow best practices for building Shopify apps.
+ Minimize the use of technical terminology that merchants who are less familiar with blockchain technology might not understand. For example, limit the use of terms such as smart contract, metadata and ERC-1155.
+ When configuring a gate, allow merchants to search token collections with plain language queries and visual search results.
+ Provide as many segmentation options as possible, so that merchants can refine their customer targeting. For example, you could enable merchants to segment customers by trait, token ID, or token combinations.
+ Provide a dynamic preview of your gate in the configuration process.
+ Allow the merchant to customize the styles of any customer-facing components to match their theme.
+ If your tokengating works only on the online store, then make sure that merchants understand the possible issues with publishing the gated product to other channels, such as gate circumvention or failed checkouts.
+ Example merchant admin user experience
+ Token collection search
+ Dynamic gate preview
+ Next steps
+ Get started with tokengating or learn more about UX guidelines:
+ Shopify blockchain components
+ Build a tokengating example app tutorial
+ App Design Guidelines
+ Polaris accessibility guidelines
+ Polaris content guidelines
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Customer experience
+ Merchant experience
+ Next steps

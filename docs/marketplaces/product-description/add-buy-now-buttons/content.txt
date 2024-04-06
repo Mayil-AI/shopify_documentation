@@ -1,0 +1,65 @@
+Product description
+ Overview
+ Description pages
+ Buy now buttons
+ Policies
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Adding Buy Now buttons
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ Your marketplace includes product description pages with sufficient details to drive purchases. You want an option on the page that directs buyers to checkout.
+ In this tutorial, you'll use the Storefront API's cartCreate mutation to create a cart with a single variant. You'll embed a Buy Now button on product pages, which opens a new tab with the URL to the online store for checkout.
+ What you'll learn
+ After you finish this tutorial, you'll know how to do the following:
+ Use the cartCreate mutation to create a new cart for a product purchase
+ Add Buy Now buttons that redirect buyers to a merchant's checkout
+ Requirements
+ You've completed the tutorial for adding product description pages.
+ You're familiar with managing a cart using the Storefront API.
+ Step 1: Add a cartCreate mutation
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ You'll use the Storefront API's cartCreate mutation to create a cart with a single variant, and redirect the buyer to the cart's checkout URL. Since you're immediately redirecting to checkout, you'll only retrieve the checkoutURL field for the cart.
+ Add a cartCreate mutation that accepts an input parameter to hold cart information.
+ pages/products/[shopID]/[productHandle].js
+ 1 const CART_CREATE_MUTATION = gql`
+ 2 mutation cartCreate($input: CartInput) {
+ 3
+    cartCreate(input: $input) {
+ 4
+      cart {
+ 5
+        checkoutUrl
+ 6
+      }
+ 7
+      userErrors {
+ 8
+        code
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+    }
+ 13 }
+ 14 `;
+ Step 2: Add a Buy Now button
+ You can now create a buy now button which calls the GraphQL function and redirects to the returned checkout URL.
+ Your product description page might now look something like the following, and clicking the Buy Now button should open the checkout in a new tab.
+ Next steps
+ Learn how to surface a shop's policies in the context of a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Add a `cartCreate` mutation
+ Step 2: Add a Buy Now button

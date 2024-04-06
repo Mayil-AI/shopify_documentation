@@ -1,0 +1,170 @@
+Adding shop pages
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You've made it easy for buyers to find the shops on your marketplace through the homepage. Now you want your marketplace to provide shop details and their products, in dedicated shop pages.
+ In this tutorial, you'll learn how to create dynamic routing that directs buyers to a unique URL for each shop in the marketplace. When buyers select a shop from the homepage, they can see store details and products that the merchant has published to your channel app.
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Add unique URLS for the shop in your marketplace
+ Display store details and products on a single page for the shop
+ Requirements
+ You've completed the Shop discovery tutorials.
+ You're familiar with custom storefronts.
+ Step 1: Query the shop from the channel app GraphQL API
+ Query the shop field to retrieve the shop domain and Storefront Access Token by ID.
+ pages/shops/[id].js
+ 1 const SHOP_QUERY = gql`
+ 2
+    query Shop($id: ID!) {
+ 3
+      shop(id: $id) {
+ 4
+        id
+ 5
+        domain
+ 6
+        storefrontAccessToken
+ 7
+      }
+ 8
+    }
+ 9 `;
+ Step 2: Display shop information
+ Using the Storefront Access Token obtained above, you can create a GraphQL client to retrieve shop data from the Storefront API.
+ For example, the following query returns the shop's name and description, along with the url and host of the shop's primary domain.
+ pages/shops/[id].js
+ 1 const SHOP_DETAILS_QUERY = gql`
+ 2
+    query ShopDetails {
+ 3
+      shop {
+ 4
+        name
+ 5
+        description
+ 6
+        primaryDomain {
+ 7
+          url
+ 8
+          host
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 `;
+ The shop page might now look something like the following:
+ Step 3: Display shop products
+ Retrieve a list of products from the shop and render them in a paginated list to help buyers navigate the content. For pagination, your queries to the Storefront API will accept the first, last, before, and after arguments. You'll retrieve product details and the page information and cursor, which are required for pagination.
+ The response body returns the product details, and the page info and cursor that are required for pagination.
+ pages/shops/[id].js
+ 1 const SHOP_PRODUCTS_QUERY = gql`
+ 2
+    query ShopProducts(
+ 3
+      $first: Int
+ 4
+      $last: Int
+ 5
+      $before: String
+ 6
+      $after: String
+ 7
+    ) {
+ 8
+      products(
+ 9
+        first: $first
+ 10
+        last: $last
+ 11
+        before: $before
+ 12
+        after: $after
+ 13
+      ) {
+ 14
+        pageInfo {
+ 15
+          hasNextPage
+ 16
+          hasPreviousPage
+ 17
+        }
+ 18
+        edges {
+ 19
+          cursor
+ 20
+          node {
+ 21
+            id
+ 22
+            title
+ 23
+            images(first: 1) {
+ 24
+              edges {
+ 25
+                node {
+ 26
+                  id
+ 27
+                  altText
+ 28
+                  originalSrc
+ 29
+                }
+ 30
+              }
+ 31
+            }
+ 32
+            onlineStoreUrl
+ 33
+            priceRange {
+ 34
+              minVariantPrice {
+ 35
+                amount
+ 36
+                currencyCode
+ 37
+              }
+ 38
+              maxVariantPrice {
+ 39
+                amount
+ 40
+                currencyCode
+ 41
+              }
+ 42
+            }
+ 43
+          }
+ 44
+        }
+ 45
+      }
+ 46
+    }
+ 47 `;
+ The following are examples of the types of pages that you can build using this information:
+ Next steps
+ Learn how to surface a shop's product categories in the context of a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Query the shop from the channel app GraphQL API
+ Step 2: Display shop information
+ Step 3: Display shop products

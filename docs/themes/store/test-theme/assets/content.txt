@@ -1,0 +1,75 @@
+Testing
+ Overview
+ Testing assets
+ Testing checklist
+ Review process
+ Theme success
+ Theme revenue share
+ Testing assets
+ To test your theme, you need store data that enables you to test certain cases.
+ Shopify provides a few CSV datasets that help you to test these cases in your theme. Import the following CSVs into your store:
+ The theme review team product CSV. This is the CSV that the theme review team uses to test your theme for acceptance to the theme store.
+ The performance test product CSV. This is the same CSV that you might use to run a Lighthouse audit. You should include this CSV so your store contains a large enough volume of products and collections for certain tests.
+ Some features require additional setup before they can be tested in your store.
+ Additional setup
+ Due to the limitations of the CSV import process, you need to modify some product data and set up some features manually before you can test your theme:
+ Inventory quantities
+ Local pickup
+ Unit pricing
+ Rich media
+ Selling plans
+ Shop Pay Installments
+ Inventory quantities
+ If your test environment has multiple locations set up, then your store won't import product inventory quantities from CSV files. Instead, all product quantities default to zero.
+ Follow the steps below to configure inventory quantities for testing:
+ Adjust the inventory quantity on all products, except for Bowtie (Rich Product Media). Leave this product as sold out. You should set up varying quantities for different product variants.
+ Update one product with two options so that each has a different quantity and availability. For example, you can use Socks (two options) and set some variants' quantities to zero, or use the following table as a reference. After setup, this product should have some sold out and unavailable variants.
+ S/M M/L Kids
+ Geometric 0 N/A N/A
+ Hotdog 4 N/A N/A
+ Dog 3 10 N/A
+ Cat 5 0 N/A
+ Plain white N/A 6 N/A
+ Paw N/A N/A 6
+ Local pickup
+ To test the local pickup banner on your product page, you need to enable local pickup:
+ Enable locations in your store.
+ Add five or more locations.
+ Enable local pickup in your store.
+ Disable the local pickup option for one location.
+ Create a product with 5 variants, or use the Enamel pin (1 option) product.
+ Set up the quantity and availability for each variant:
+ Variant 1: available and in stock at all locations
+ Variant 2: available and in stock only in one location
+ Variant 3: available in two locations, sold out in one of the locations
+ Variant 4: available and in stock only in one location that doesn't offer pickup
+ Variant 5: sold out at all locations
+ Unit pricing
+ To test unit pricing on your products, you need to change or override your store settings, and add unit prices to products:
+ Enable unit pricing in one of the following ways:
+ Set up a store located in Germany. To test unit pricing in an existing store, you can change your store address to a valid German address in your store details.
+ Contact Partner Support to request a unit pricing beta flag for your test store. A beta flag bypasses store settings.
+ Add a product with multiple variants, or use any of the multi-variant products that you imported. Set up different unit prices for each variant.
+ Rich media
+ CSV import doesn’t support rich media. You need to add media to a product to test these features.
+ Use the Bowtie (product rich media) product and add the following media:
+ Two 3D objects. You can use Shopify sample models.
+ One YouTube video
+ One Vimeo video
+ One MP4 video
+ Set all variants of this product to zero, so that you can preview the rich media on the collection page. Setting a quantity for the variant defaults the product card image to the variant image instead of the rich media.
+ Selling plans
+ Selling plans can only be created and applied to products by an app. To test selling plan elements in your theme, you need to install a subscription app to verify that selling plans are appearing correctly on your theme.
+ Shop pay installments
+ Enable Shop Pay Installments in one of the following ways:
+ Set up a store with a US address
+ Contact Partner Support to request a Shop Pay Installments beta flag for your test store. A beta flag bypasses store settings.
+ Add a product with multiple variants and varying prices, or use the Socks (2 options) product that you imported.
+ Follow on Shop
+ Enable the Follow on Shop button in one of the following ways:
+ Install the Shop sales channel and activate Shopify Payments test mode.
+ Contact Partner Support to request a Follow on Shop beta flag for your test store. A beta flag bypasses store settings.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

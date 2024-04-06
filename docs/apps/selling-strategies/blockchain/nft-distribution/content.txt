@@ -1,0 +1,75 @@
+NFT distribution
+ Overview
+ Check NFT sales eligibility
+ Merchant eligibility
+ UX guidelines
+ Tokengating
+ Online store
+ Admin
+ Flow
+ Payments
+ Billing
+ App Store
+ NFT Distribution
+ Merchants might decide to sell or gift NFTs. Currently, NFTs are most popularly being used to demonstrate ownership of media such as digital art, but they have many other uses for both merchants and customers. Merchants might consider using NFTs on their Shopify store in the following ways:
+ Sell NFTs through their Shopify store.
+ Offer free NFTs to reward their customers for purchases, engagement, and loyalty.
+ Offer exclusive products, discounts, or early access to product launches based on ownership of certain NFTs through tokengated commerce.
+ Increase potential audience through tokengated collaborations with other brands through your online stores, or in person events.
+ Create customer segments based on NFT ownership for marketing acquisition and retention campaigns.
+ Provide a certificate of authenticity or an NFT receipt with a customer’s purchase.
+ NFTs and blockchain technology are continually evolving, and the full impact and use cases are still being explored.
+ Merchants who are selling NFTs are required to get approval from Shopify before selling through Shopify Payments. Developers who support merchants with NFT distribution are required to gate this functionality and restrict the ability to mint, gift, or list NFTs for sale to approved merchants.
+ Learn more about merchant eligibility.
+ Developers listing and minting NFTs on behalf of merchants
+ Developers who support merchants in minting, gifting, or listing NFTs for sale must meet the following requirements:
+ Block merchants from listing NFTs while Shopify Payments is active in the shop until the merchant is SellApproved (sellApproved: true) and/or GiftingApproved (giftingApproved: true).
+ The NFT Sales Eligibility Application form is enabled for NFT Distribution apps, with no further development work required. Merchants using Shopify Payments who haven't yet completed the application are prompted with the application after installing an NFT distribution app, and the results are reflected in the NFT Sales Eligibility API.
+ Comply with the blockchain app requirements.
+ Review best practices for designing merchant and customer NFT distribution experiences provided in the NFT distribution UX guidelines.
+ All NFT variants must have a programmatic representation of their NFT status using product metafields with the following specifications
+ NFT distribution product metafields requirements
+ Any products that contain one or more NFT variants must list the NFT variant IDs within the Product object using product metafields.
+ The following code example uses the productUpdate mutation to update a product metafields with variant IDs:
+ NFT product metafields GraphQL mutation
+ GraphQL mutation
+ Input
+ $ mutation($input: ProductInput!) {
+ $
+    productUpdate(input: $input) {
+ $
+      product {
+ $
+        metafields(first: 100) {
+ $
+          edges {
+ $
+            node {
+ $
+              namespace
+ $
+              key
+ $
+              value
+ $
+            }
+ $
+          }
+ $
+        }
+ $
+      }
+ $
+    }
+ $ }
+ Next steps
+ Learn how to check a merchant's eligibility to sell NFTs by using the GraphQL Admin API.
+ Learn more about how merchant’s are leveraging NFTs.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Developers listing and minting NFTs on behalf of merchants
+ NFT distribution product metafields requirements
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,105 @@
+Admin
+ Overview
+ Embedded app home
+ Admin action and block extensions
+ Admin links
+ Overview
+ Getting started
+ Flow
+ Payments
+ Fulfillment
+ App Store
+ Getting started with admin link extensions
+ In this guide, you'll learn how to configure the following types of admin link extensions:
+ Admin links: Link to pages of your app throughout the Shopify admin.
+ Bulk action links: Link to relevant pages of your app when users select multiple items from an index table.
+ Navigation links: Link to your embedded app's navigation items.
+ Note
+ Navigation links is no longer the recommended way of linking to embedded navigation items. Instead, we recommend that you use App Bridge's Navigation Menu API, which allows for localization and runtime control.
+ Each app extension is independent. You can choose to configure only the type of extension that you need, depending on your app's features and requirements.
+ Requirements
+ You've created a Partner account and a development store.
+ You understand how apps fit into Shopify and the different ways of distributing your app.
+ You've created an app.
+ Add an admin link
+ When you add an admin link for your app, the link displays in the More actions menu on the Shopify admin pages that you specify. Users can then access your app to complete a task directly.
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of the app that you want to create links for.
+ Click Extensions.
+ Click Create +.
+ Under Shopify admin, click the Admin links card.
+ Enter information in the following fields:
+ Extension Name: The name of your extension. This name is used to manage your extension internally. It won't display to users.
+ Link label: The text that displays to the user. The label should be task-oriented, and not just the name of your app.
+ Link target URL: The URL where your app is hosted.
+ Page to show link: The page where this link should display to the user. Try to place the link only where it makes logical sense for the user. In general, avoid adding admin links to every page of the Shopify admin.
+ Tip
+ Use the Preview section to understand how your admin link will display to users.
+ Click Create.
+ The admin link is deployed to your production app and is immediately available to users that have installed your app on their store.
+ Optional: To add more admin links, click Create + and repeat the relevant steps in this procedure.
+ Examples
+ The following are examples that you can references to better understand how and when to use admin links:
+ The Order Printer app uses an admin link on order pages to let users print invoices:
+ The Digital Downloads app uses an admin link on product pages to let users add digital attachments:
+ Tracking incoming admin links
+ You can track incoming admin links with parameters that identify the store or resource where your app is used. For example, each admin link includes a URL parameter that contains the store URL. This URL identifies the unique store or resource that's using your app.
+ Example: https://my-app-link-target.com/example?shop=johns-apparel.myshopify.com.
+ When your admin link is on a detail page, such as the Order Details page, the link also includes a URL parameter that contains the unique resource ID for the item on that page:
+ Example: ?id=3295398979&shop=johns-apparel.myshopify.com
+ Add a bulk action link
+ You can make your apps accessible to users wherever action drop-down lists are available in the Shopify admin.
+ From the Partner Dashboard, click Apps.
+ Click the name of the app that you want to create links for.
+ Click Extensions.
+ Click Create +.
+ Under Shopify admin, click the Bulk action links card.
+ Enter information in the following fields:
+ Extension Name: The name of your extension. This name is used to manage your extension internally. It won't display to users.
+ Link label: The text that displays to the user. The label should be task-oriented, and not just the name of your app.
+ Link target URL: The URL where your app is hosted.
+ Page to show link: The page of the where the More actions drop-down list should display. Try to place the link only where it makes logical sense for the user. In general, avoid adding admin links to every page of the Shopify admin.
+ Tip
+ Use the Preview section to understand how your admin link will display to users.
+ Click Create.
+ The bulk action link is deployed to your production app and is immediately available to users that have installed your app on their store.
+ Optional: To add more bulk action links, click Create + and repeat the relevant steps in this procedure.
+ Example
+ When a user selects multiple orders on the Orders page of the Shopify admin, the Actions drop-down menu displays. You can use the Actions menu to prompt users to use your app when they complete a bulk action:
+ Add navigation links
+ Note
+ Navigation links is no longer the recommended way of linking to embedded navigation items. Instead, we recommend that you use App Bridge's Navigation Menu API, which allows for localization and runtime control.
+ You can add navigation links to display your app's navigation items consistently across devices.
+ From the Partner Dashboard, click Apps.
+ Click the name of the app you want to create links for.
+ Click Configuration.
+ In the App settings section, in the Embedded app home card, click Manage navigation.
+ From the Navigation bar page, click Add navigation link.
+ Enter information in the following fields, and click Add link:
+ Name: Enter a title for the menu item. This title will be displayed to users.
+ Link: Enter your subpage URL. The URL must be from the same source as your app.
+ The menu item is added to your list.
+ Optional: To add more navigation links, click Add navigation link, and repeat step 7.
+ Optional: To upload a navigation icon, click Upload icon.
+ Optional: To reorganize your navigation menu item’s order, drag each item to your desired order, or use the arrow buttons.
+ Optional: To remove a navigation link, click the trash can icon.
+ Tip
+ You can use the Preview section to see what your admin link will look like.
+ Click Save.
+ The navigation configuration is deployed to your production app and is immediately available to merchants that have installed your app on their store.
+ Caution
+ If you click Reset extension, then you are permanently deleting all active menu items in your live production app. If you're making this change, make sure that merchants will have alternate ways to access your app’s subpages as needed, such as on-page links or another navigation structure.
+ Next steps
+ Learn about admin action and block extensions, which enable your app to create workflows and UX that users can access directly on the page.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Add an admin link
+ Add a bulk action link
+ Add navigation links
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

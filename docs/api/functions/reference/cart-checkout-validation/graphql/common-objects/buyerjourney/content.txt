@@ -1,0 +1,15 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ BuyerJourney object
+ 2024-04 latest
+ On this page
+ Fields
+ Types that return BuyerJourney
+ Fields
+ step (BuyerJourneyStep)
+ Types that return BuyerJourney
+ Input.buyerJourney
+ Was this page helpful?
+ YesNo
+ Updates & News

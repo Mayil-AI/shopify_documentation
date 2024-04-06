@@ -1,0 +1,75 @@
+Overview
+ API references
+ Configuration
+ Error handling
+ Discounts
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shopify Functions error handling
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ This guide describes the reasons that functions fail, how you can debug production failures, and a complete list of errors that can occur when running functions.
+ How it works
+ Functions can fail by raising an exception, exceeding memory or time limits, or returning data that doesn't match the schema of the specific Function API.
+ Monitoring lifecycle
+ The following diagram shows the activities that happen when monitoring functions:
+ App users receive error notifications and share error reports with developers.
+ App developers monitor functions in their Partner Dashboard.
+ Error reports
+ When a function is executed and an error occurs, a warning notification is displayed in the customization page of the Shopify admin. The warning notification contains information about when errors started occurring. It also includes a link that enables store admin users to share information about function runs with the developer.
+ After an app user has shared an error report, the developer receives an email notification.
+ If you're working in a development store, then all details for failed and successful function runs are visible by default. You don't need to share the error report for the run details to display in the Partner Dashboard.
+ Sharing error reports
+ When the user shares an error report from the Shopify admin, you can access it from the app's Extensions section in your Partner Dashboard.
+ Note
+ You can access error details only if the user shares an error report after an error occurs.
+ Share a test error report
+ When a function is executed and an error occurs, a warning notification is displayed on the relevant page in the Shopify admin. For example, if you've executed a discount function, then the warning notification appears on the Discounts page.
+ The warning notification contains information about when errors started occurring. It also includes a link that enables users to share information with developers about function runs that failed.
+ From your Shopify admin, navigate to the page associated with your executed function.
+ Click the warning notification.
+ Click Share the error reports with <developer-name>.
+ Choose whether to include every time the customization ran within the last 24 hours.
+ Click Share.
+ You'll receive an email notification.
+ Note
+ Sharing the last 24 hours of runs includes successful executions and is limited to the last 10,000 runs.
+ Access the error report
+ From your Partner Dashboard, go to Apps.
+ Click the app that you deployed your function to.
+ Click Extensions.
+ Click the name of your function.
+ In the Total errors box, click Error runs.
+ All of the function runs that failed display in a list.
+ From the list, click the failed function run that you shared.
+ You can view the error report.
+ Debugging
+ You can debug errors from the app's Extensions section in your Partner Dashboard. After the app user has consented to send the execution logs, you can inspect the details of each individual error.
+ Note
+ Functions are deterministic, which means that any time they execute with a given input, they will always return the same output. Because of this, you can copy the input in an error report and accurately reproduce the failing execution locally using the function runner or a unit test.
+ Input (STDIN): The JSON formatted input that you can copy to your clipboard. For illustrative purposes, the input in the screenshot has been omitted.
+ Output (STDOUT): Contains the output, if the function returned output
+ Logs (STDERR): Contains the STDERR logs of the function
+ Error message: Contains the final message sent to STDERR before the function failed
+ Caution
+ Function logs to STDERR are truncated after 1 kB. Some Wasm toolchains might crash if STDERR fails to write full logs.
+ List of errors
+ The following table provides a complete list of errors that can occur when running your function:
+ Error name Description
+ TimeoutError Shopify stopped the function after it ran for over 10 milliseconds (ms).
+ RunError The function raised an exception.
+ InstructionCountLimitExceededError Shopify stopped the function after it exceeded the maximum instruction count of 11 million instructions.
+ StackMemoryLimitExceededError Shopify stopped the function after it exceeded the maximum stack size of 512kb.
+ LinearMemoryLimitExceededError Shopify stopped the function after it exceeded the maximum linear memory size of 10mb.
+ InvalidOutputError The function returned malformed or invalid output. This might occur because you printed debugging information to STDOUT, which is reserved for function output. If that's the case, then use STDERR instead.
+ UnsupportedError The generated Wasm doesn't conform to Shopify Functions standards.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Error reports
+ Debugging
+ List of errors

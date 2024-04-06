@@ -1,0 +1,110 @@
+Troubleshooting
+ Theme Store
+ Support B2B customers in your theme
+ Many merchants conduct business-to-business (B2B) commerce, where they sell directly to other companies.
+ To help manage B2B transactions, merchants can create companies. A company can be associated with one or more customers, and can have one or more locations. For an individual transaction, a B2B customer must select a location for the transaction to be associated with.
+ Tip
+ To learn about the merchant experience in setting up B2B, visit the Shopify Help Center.
+ In this tutorial, you'll learn how to support B2B customers with a location picker.
+ Resources
+ To support B2B customers in your theme, you'll use the following objects and object properties that contain B2B information:
+ company
+ company_location
+ customer.b2b?
+ customer.company_available_locations
+ customer.current_company
+ customer.current_location
+ Implementing a company location picker
+ If the current customer is a B2B customer, then you should give them the ability to choose the company location that they're purchasing for with a location picker.
+ Your location picker code should do the following:
+ Check whether the customer is a B2B customer using customer.b2b?
+ If customer.b2b? is true, then display the following:
+ The current company and location of the customer.
+ If customer.company_available_locations has a size greater than 1, then display a list of the currently unselected locations.
+ Example
+ 1 {% if customer.b2b? %}
+ 2
+    <div>
+ 3
+      <h2>Welcome, {{ customer.name }} from {{ customer.current_company.name }}!</h2>
+ 4
+ 5
+      <p>You are purchasing for the {{ customer.current_location.name }} location.</p>
+ 6
+ 7
+      {% if customer.company_available_locations.size > 1 %}
+ 8
+        <h3>Select a different location:</h3>
+ 9
+ 10
+        <ul>
+ 11
+          {% for location in customer.company_available_locations %}
+ 12
+            {% unless location.current? %}
+ 13
+              <li>
+ 14
+                <a href="{{ location.url_to_set_as_current }}">{{ location.name }}</a>
+ 15
+              </li>
+ 16
+            {% endunless %}
+ 17
+          {% endfor %}
+ 18
+        </ul>
+ 19
+      {% endif %}
+ 20
+    </div>
+ 21 {% endif %}
+ Show content based on company or location
+ You can show content conditionally based on the current company or location of the customer.
+ Example
+ 1 {% if customer.current_company.name == 'Shopify' %}
+ 2
+    <h3>Delivery and installation included.</h3>
+ 3 {% endif %}
+ Show content to B2B customers only
+ Dedicated B2B stores might want to show certain online store content only to verified B2B customers.
+ You might want to hide the following elements from customers who aren't logged in as a B2B customer:
+ Product prices
+ The cart icon in the header
+ Add to cart buttons
+ Other calls to action in the product page
+ You can adapt your theme content for your B2B customers directly from the theme editor. Alternatively, you can use the Liquid customer.b2b? property to render content for verified B2B customers. In this example, customer.b2b? is used to conditionally hide the product price:
+ Example
+ 1 {%- if customer.b2b? -%}
+ 2
+    // code for price here
+ 3 {%- endif -%}
+ Where logged out customers would usually see pricing, you can instead show a prompt to log in:
+ Example
+ 1 {%- if customer.b2b? -%}
+ 2
+    // code for price here
+ 3 {%- else -%}
+ 4
+    <a href="{{ routes.account_login_url }}">Log in to see the price</a>
+ 5 {%- endif -%}
+ You can also use this property to render content only for logged out customers. In this example, customer.b2b? is used to conditionally show an inquiry form.
+ Example
+ 1 {%- unless customer.b2b? -%}
+ 2
+    // code for inquiry form here
+ 3 {%- endunless -%}
+ Note
+ If you're using a theme from the Shopify Theme Store, and you want to keep your theme eligible for automatic upgrades, then you should avoid editing your theme code to conditionally hide elements. Instead, you can hide the section or block that contains the content that you want to conditionally display, and then add a new Custom Liquid section or block that conditionally displays the element. For example, to show or hide the product price on the product page, you can copy the contents of the price block into the Custom Liquid block in your main product page section and use customer.b2b? as shown in the example.
+ Some areas, such as the cart icon in the header, might not be configured as individual sections or blocks. As a result, it might not be possible to avoid making changes to the theme code in these cases.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing a company location picker
+ Show content based on company or location
+ Show content to B2B customers only
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

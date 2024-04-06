@@ -1,0 +1,135 @@
+APIs
+ Collapse sidebar
+ App Bridge Library
+ Overview
+ Getting started
+ Your first API call
+ React
+ TypeScript
+ Global variable
+ Direct API access
+ Next steps
+ Resources
+ APIs
+ Web Components
+ React Components
+ React Hooks
+ App Bridge
+ App Bridge is the JavaScript SDK for Embedded Apps, providing access to data and UI rendering within the Shopify Admin. App Bridge integrates directly into standard Web Platform APIs you're already familiar with, making it easy to build and maintain performant apps on the Shopify platform.
+ For more information about the motivation behind App Bridge, refer to Shopify's platform is the Web platform.
+ Anchor to section titled 'Getting started'
+ Getting started
+ If you created your app using the Shopify Remix App template, then your app is already set up with App Bridge. If not, you can add App Bridge to your app by including the app-bridge.js script tag and your apiKey as seen in the example.
+ The app-bridge.js script loads directly from Shopify and automatically keeps itself up-to-date so you can start building right away.
+ Setup
+ CDN-hosted
+ 1 <head>
+ 2
+    <meta name="shopify-api-key" content="%SHOPIFY_API_KEY%" />
+ 3
+    <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+ 4 </head>
+ Your first API call
+ The following example uses Resource Picker to open a UI component that enables users to browse, find, and select products from their store using a familiar experiences.
+ Resource Picker
+ 1 <!DOCTYPE html>
+ 2
+ 3 <head>
+ 4
+    <meta name="shopify-api-key" content="%SHOPIFY_API_KEY%" />
+ 5
+    <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+ 6 </head>
+ 7
+ 8 <body>
+ 9
+    <button id="open-picker">Open resource picker</button>
+ 10
+    <script>
+ 11
+      document
+ 12
+        .getElementById('open-picker')
+ 13
+        .addEventListener('click', async () => {
+ 14
+          const selected = await shopify.resourcePicker({type: 'product'});
+ 15
+          console.log(selected);
+ 16
+        });
+ 17
+    </script>
+ 18 </body>
+ React
+ Shopify App Bridge provides a companion npm library for React components and hooks, available at @shopify/app-bridge-react.
+ For more information about the React library, see the documentation on React components and React hooks.
+ Installation
+ npm
+ yarn
+ 1 npm install @shopify/app-bridge-react
+ TypeScript
+ Shopify App Bridge provides a companion npm library for TypeScript types, available at @shopify/app-bridge-types.
+ If you're using the React library, then the types package is already included.
+ Installation
+ The @shopify/app-bridge-types package can be installed using yarn or npm.
+ Configuration
+ Installation
+ npm
+ yarn
+ 1 npm install --save-dev @shopify/app-bridge-types
+ Global variable
+ After App Bridge is set up in your app, you have access to the shopify global variable. This variable exposes various App Bridge functionalities, such as displaying toast notifications or retrieving app configuration details.
+ To explore all the functionality available on the shopify global variable:
+ Open the Chrome developer console while in the Shopify admin.
+ Switch the frame context to your app's iframe.
+ Enter shopify in the console.
+ Direct API access
+ You can make requests to the Admin API directly from your app using the standard web fetch API!
+ Any fetch() calls from your app to Shopify's Admin GraphQL API are automatically authenticated by default. These calls are fast too, because Shopify handles requests directly.
+ Direct API access is disabled by default. It can be enabled in your app TOML file, along with whether you want to use direct API access with online access or offline access mode.
+ Learn more about API access modes
+ Configuration guide
+ Query Shopify data
+ Fetch Product data
+ 1 const res = await fetch('shopify:admin/api/graphql.json', {
+ 2
+    method: 'POST',
+ 3
+    body: JSON.stringify({
+ 4
+      query: `
+ 5
+        query GetProduct($id: ID!) {
+ 6
+          product(id: $id) {
+ 7
+            title
+ 8
+          }
+ 9
+        }
+ 10
+      `,
+ 11
+      variables: {id: 'gid://shopify/Product/1234567890'},
+ 12
+    }),
+ 13 });
+ 14
+ 15 const {data} = await res.json();
+ 16 console.log(data);
+ Next steps
+ Now that you've initialized your app, you can use any Shopify App Bridge features.
+ Support
+ If you need help using Shopify App Bridge, please visit our API & SDK forum. It is the best place to discuss libraries and get support. If you have a specific bug report or feature request for App Bridge, please visit the App Bridge issue tracker on GitHub.
+ Resources
+ Polaris
+ Use Polaris to create a familiar and consistent user experience.
+ App Design Guidelines
+ Follow our UX guidelines when you're designing your app to ensure that they're predictable and easy to use.
+ API and SDK forum
+ Visit our API & SDK forum if you need help using Shopify App Bridge.
+ Updates & News
+ Developer changelog
+ Partner blog

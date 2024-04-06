@@ -1,0 +1,140 @@
+Testing
+ Review process
+ Theme success
+ Overview
+ Prohibited actions
+ Managing theme reviews
+ Brand asset guidance
+ Updating your theme
+ Removing a theme
+ Theme revenue share
+ Updating your theme
+ After you've first published a theme on the Theme Store, you begin the iterative process of considering merchant feedback, persistently innovating your build through regular quality assurance testing, and actively integrating the updates required by Shopify.
+ To avoid update fatigue for merchants, you must have a minimum of four weeks between updates. New themes on the Shopify Theme Store are an exception, and can have an update every two weeks for the first two months.
+ As a Shopify Theme Partner, you're required to provide ongoing updates to your theme to remain on the Shopify Theme Store.
+ The following sections describe the theme update process and the types of updates.
+ Theme update process
+ You can submit your updates for review as ZIP files through your Partner Dashboard. Each update should have a version number, determined by the content of the update, and release notes.
+ The theme review team primarily reviews theme updates during Eastern Standard Time (EST) hours, Monday through Friday. If you need to make a crucial update, then try to submit it earlier in the week, and earlier in the business day. Submitting a theme update outside of EST business hours might impact how quickly merchants receive and apply your updates.
+ Updates mandated by Shopify might be required by a deadline to accommodate a feature’s release date.
+ After your update has been successfully reviewed and published, you receive an automatic notification email.
+ Note
+ Only one Theme Store listing, the listing for the latest version, appears in the theme store. This means that all reviews appear under in the same listing, regardless of the theme version they were submitted for. This also means that you can't charge a different price for different theme versions.
+ Update types
+ Depending on the contents of the new theme version, a merchant's theme can be updated in the following ways:
+ A manual update
+ An automated update
+ Because each update type uses a unique update process, you should group changes based on update types as much as possible. Specifically, automated updates are more merchant-friendly as they require no manual action. Therefore, grouping changes can help to ensure that a greater number of merchants who have purchased your theme receive as many automatic updates as possible.
+ Manual updates
+ The theme review team publishes a theme update as a manual update if it contains at least one of the following code changes:
+ A setting ID is changed or removed
+ A setting type is changed or removed
+ The min value for a setting of type range is increased
+ The max value for a setting of type range is decreased
+ A section or block is removed
+ These changes can significantly impact the merchant's experience, because they can invalidate current settings, or require the merchant to review and adjust their theme configuration. For example, changing the ID of a setting is equivalent to removing the current setting and adding a new one with the default value, which can lead to a poor merchant experience and should be avoided.
+ When an update is published as a manual update, merchants are shown a notification on the Online store > Themes page letting them know that they can update their theme. The updated theme is installed as an unpublished theme in their theme library. Merchants can review this unpublished theme before they publish it in their store. The parent theme is not modified.
+ Automated updates
+ If a theme update doesn't contain any changes that would categorize it as a manual update, then it's published as an automatic update. In this case, the new version of the theme replaces the current published version that merchant has installed, without creating a new theme.
+ A theme is automatically updated only if all theme files, except settings_data.json and any JSON files in the /templates directory, are in their original state. If a theme can't be automatically updated, then merchants are shown a notification on the Online store > Themes page letting them know that they can apply the update to an unpublished copy of their theme to be reviewed and published.
+ Considerations for new versions
+ Consider the following, and the associated merchant impact, when creating new versions:
+ If you change an existing setting so that the merchant's value is no longer valid, then the merchant's value will be reset to the default, as specified in your new version. To create less friction for existing merchants, you should keep the same default settings when possible.
+ If you change the class of a section or change a CSS class name, then a merchant's custom CSS might be invalidated. You should avoid renaming existing classes unless necessary, and document any of these changes in your release notes.
+ Caution
+ Reducing certain limits or section availability can break and invalidate existing themes, and make themes ineligible for an update. Theme versions can't be submitted to the Theme Store if they include any of the following updates:
+ Reducing the number of instances to any section file by changing the section limit.
+ Reducing the limit of blocks in a section.
+ Adding section restrictions to section groups using disabled_on or enabled_on.
+ Adding restrictions that prevent sections from appearing on certain templates.
+ Versioning
+ Theme versions help merchants easily identify which theme they have, so that they can determine which features are available, or if there are more recent versions to update to.
+ When building your version string, you should use semantic versioning in the format of X.Y.Z.
+ Component Description
+ X
+ Represents a major version that introduces or modifies features that aren't backwards compatible, such as the following:
+ Modifying a settings value.
+ Removing a setting, section, or block.
+ Adding a global setting.
+ For example, you might move from 1.4.8 to 2.0.0.
+ Y
+ Represents a minor version that introduces or modifies features that are backwards compatible, such as the following:
+ Modifying the label or default value of an existing setting.
+ Adding a section or block.
+ Changing the visual design, or functionality, of an existing section or block without changing their setting schema.
+ For example, you might move from 1.4.8 to 1.5.0.
+ Z
+ Represents a maintenance version that fixes bugs or security issues, or makes non-visual code improvements.
+ For example, you might move from 1.4.8 to 1.4.9.
+ The theme version can be included in the theme through theme metadata.
+ Release notes
+ For each theme version, you need to have release notes that highlight the main features of the version.
+ The main audience for release notes is merchants, so the language you use should reflect that. Release notes aren't intended to be a changelog, but rather a curated list of items that will impact merchants, or their buyers. As such, any user-facing changes should be included, and developer-facing changes should be excluded. You should also include only information related to the current release.
+ Include release notes in your theme
+ To include release notes with your theme, create a markdown file in the root of your theme's ZIP called release-notes.md.
+ Note
+ The release-notes.md file is required only after a theme has been published to the Theme Store. You should exclude this file during the review process.
+ The file's contents should contain the following components:
+ Component Description
+ Description A summarized description of the most important changes in this version.
+ List of changes
+ A list of changes contained in the version. Changes can fall under one of the following headings:
+ Added
+ Changed
+ Removed
+ Security
+ Other fixes and improvements
+ Changes should be listed in bullet point under their respective heading. Each heading should be treated as an H3, so needs to be preceded by ###. For example, ### Added.
+ If there are specific changes that you want to bring attention to, then you can prepend the change with Important:. For example:
+ - Important: This is an important change.
+ When the release notes are rendered, these important changes will be visually highlighted.
+ Example
+ release-notes.md
+ We’ve added the ability to add Shop Pay Installment payment options for your customers, removed the Instagram section, and changed how the social media section works.
+ 
+ ### Added
+ 
+ - Important: Added search faceted filtering
+ - Added selling plans to cart notifications
+ 
+ ### Changed
+ 
+ - Important: Changed default social media sharing image with the one from the Shopify admin. You can add a default image to be used when a featured image for the page can't be found.
+ 
+ ### Removed
+ 
+ - Removed the Instagram section since the API has been deprecated with no suitable replacement. From now on you'll need to switch to using an app to display your Instagram feed.
+ 
+ ### Security
+ 
+ - Fixed security issues
+ 
+ ### Fixes and other improvements
+ 
+ - The collection page sidebar is now aligned with the utility bar
+ - The products in the collection 'list-view' no longer have a long blue outline when viewed on an iOS device
+ - Fixed the 'forgot your password' link on the customer login page
+ - Fixed collection list pagination displaying incorrectly with large collection sets
+ Urgent updates
+ An urgent update is a theme update that merchants require immediately to run their business without interruption. Urgent updates can be either manual or automated. The urgency is meant to alert the theme review team that the update is more critical than a regular update.
+ Typically, only updates that address an issue with the purchase flow are considered urgent. The purchase flow is the process that a customer undertakes when making a purchase, starting from the product page and continuing to checkout through the dynamic checkout button, or continuing from the cart to checkout through the checkout call-to-action or dynamic checkout buttons.
+ If you have an update that you deem to be important that doesn't affect the purchase flow, then you can consult your Theme Partner Manager before you submit the update.
+ Adding theme styles
+ A theme style is a collection of theme setting defaults that enable merchants to easily change the general look and feel of the theme through the theme editor when getting started.
+ Complete the following steps to update your theme so that it includes a theme style:
+ Edit your theme code to add a new style.
+ Submit a new ZIP file through the Partner Dashboard as a theme update.
+ Include the new preset demo URL in the internal note.
+ After you've completed the update, you can edit your demo store details in the Partner Dashboard. For example, you can add demo store screenshots and preset accent colors.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Theme update process
+ Update types
+ Considerations for new versions
+ Versioning
+ Release notes
+ Urgent updates
+ Adding theme styles
+ Updates & News
+ Developer changelog

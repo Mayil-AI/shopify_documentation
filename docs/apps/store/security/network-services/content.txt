@@ -1,0 +1,15 @@
+Secure tokens
+ Shortened URLs
+ Exposing network services unnecessarily
+ To help ensure the security of your app, you must not expose any services publicly that aren't necessary for the functionality of your app. Common services that shouldn't be exposed include MySQL, Redis, Memcached, and Elasticsearch. During the app review process, we identify publicly accessible services by using the security tool Nmap to identify open ports.
+ If our scan detects unexpected open ports when we review your app, then you'll be notified and asked to re-evaluate whether the services need to be publicly accessible. If the services do need to be publicly accessible, then you'll be given a Google form, where you must explain the following:
+ what services are running on the detected open ports
+ why each service is necessary to the proper functioning of your application
+ why the service must be publicly accessible
+ what steps you have taken to ensure that having the service publicly accessible is safe for Shopify merchants and buyers
+ If you're unsure how modify a service or your host configuration to make services inaccessible publicly, the following links explain the solution for common hosting providers:
+ Amazon Web Services
+ Google Cloud Platform
+ Microsoft Azure
+ Digital Ocean
+ Was this page helpful?

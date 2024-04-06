@@ -1,0 +1,20 @@
+FunctionRunResult
+ Input
+ Scalars
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ FunctionRunResult object
+ unstable
+ The run target result.
+ Fields
+ displayableErrors ([DisplayableError!])
+ The list of displayable errors.
+ lineDiscounts ([LineDiscount!])
+ The list of applied line discounts.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

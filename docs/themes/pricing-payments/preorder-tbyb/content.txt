@@ -1,0 +1,30 @@
+Discounts
+ Subscriptions
+ Pre-orders and Try Before You Buy
+ Overview
+ Add pre-orders and TBYB to your theme
+ Pre-orders and TBYB UX guidelines
+ Shop Pay Installments
+ Accelerated checkout
+ B2B
+ Unit pricing
+ Pre-orders and Try Before You Buy (TBYB)
+ Merchants are able to offer various options for purchasing goods and services at checkout through a pre-order or TBYB app. For example, customers can pre-order a product delivery, pay nothing upfront, and have it delivered a month later. Only once delivered will the customer be charged.
+ Tip
+ To be eligible to use Shopify subscriptions, merchants must meet the qualifying criteria.
+ How it works
+ To enable pre-orders, apps create selling plan groups, within which they create selling plans. These selling plans are linked to products and product variants. For example, a selling plan group called "Pre-order" can offer selling plans that enable the customer to choose the amount they pay at the time of purchase. Merchants can offer multiple optional selling plans to customers, or specify a required selling plan for a product, such as "pre-order-only" offers.
+ Implementing pre-orders and TBYB in a theme
+ You can use Liquid and JavaScript to integrate pre-orders and TBYB into your theme. You should also review the UX guidelines for pre-orders and TBYB to ensure a great user experience.
+ Add pre-orders and TBYB to your theme
+ Learn more about how to integrate pre-orders and TBYB into your theme.
+ Pre-orders and TBYB UX guidelines
+ Learn how to build a pre-order or TBYB experience and style components in your theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Implementing pre-orders and TBYB in a theme
+ Updates & News
+ Developer changelog
+ Partner blog

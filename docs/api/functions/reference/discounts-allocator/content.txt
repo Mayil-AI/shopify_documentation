@@ -1,0 +1,70 @@
+Discounts Allocator API
+ Overview
+ GraphQL reference
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Discounts Allocator Function API
+ Developer preview
+ This Function API is available only in the Discounts Allocator developer preview.
+ The Discounts Allocator Function API enables you to have a higher degree of customization when you define discount allocation strategies. With this API, you can implement custom logic to distribute discounts across line items.
+ Example use cases
+ Shopify Plus
+ Only custom apps on the Shopify Plus plan can use the Discounts Allocator Function API.
+ Example Description
+ Maximum discount per cart Set a maximum discount amount that can be applied to a cart, for example, a maximum discount of $500 per cart.
+ Maximum times to apply a discount per cart Set a limit on the number of times that a specific discount can be applied to a cart, for example, discount code ABC can be applied up to three times per cart.
+ Maximum discounts to apply per cart Set a limit on the number of discounts that can be applied to an order, for example, a maximum of five per order.
+ Same product line item discount stacking Allow more than one discount to apply to the same product line item. For example, get one product discounted with both 20% off and $5 off from different discounts.
+ Rank discounts in priority Set the order in which multiple discounts are applied, for example, a 10% discount is applied before a $5 off product discount.
+ Apply order discounts multiplicatively Apply multiple discounts to an order in a multiplicative manner, for example, a 10% discount followed by a 20% discount results in a total discount of 28%.
+ Allocate free line items proportionally Apply discounts to line items proportionally, where each item in the cart receives an equal percentage of the total discount
+ Allocate free line items based on a weighted distribution Apply discounts to line items based on the proportion of each item's price to the total price of all items.
+ Apply discounts to the least expensive item Apply the discount to the lowest-priced item in the cart, for example, a 20% discount applied to the least expensive item in the cart.
+ Set up
+ Create an app and grant it the write_discounts_allocator_functions access scope.
+ Use the discountsAllocatorFunctionRegister mutation to register your Discounts Allocator Function. After you've registered your Discounts Allocator Function, your development store starts using it during checkout.
+ If you need to unregister your Discounts Allocator Function, then use the discountsAllocatorFunctionUnregister mutation.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Discounts Allocator API reference
+ Consult the GraphQL reference for the Discounts Allocator API.
+ Limitations and considerations
+ Only one allocator is supported per shop.
+ The Discounts Allocator Function only reduces product and order discounts.
+ Only stores on a Shopify Plus plan can use custom apps that contain a Discounts Allocator Function.
+ Shopify shows errors for discount codes only. Errors lock checkout, and the buyer has to remove the discount code to proceed through checkout.
+ Error Messages
+ The following error messages are available to use with the Discounts Allocator Function:
+ Error code Error message
+ DISCOUNT_ALREADY_APPLIED Discount already applied.
+ DISCOUNT_CODE_APPLICATION_FAILED Discount code isn't working right now. Please contact us for help.
+ HIGHER_VALUE_DISCOUNT_APPLIED Higher value discount applied.
+ MAXIMUM_DISCOUNT_CODE_LIMIT_REACHED Maximum number of discount codes limit reached.
+ DISCOUNT_NOT_FOUND Discount not found.
+ CURRENTLY_INACTIVE Discount is inactive.
+ USAGE_LIMIT_REACHED Discount usage limit has been reached.
+ CUSTOMER_USAGE_LIMIT_REACHED Given customer does not qualify for the discount.
+ CUSTOMER_NOT_ELIGIBLE Customer usage limit has been reached.
+ QUANTITY_NOT_IN_RANGE Quantity of items does not qualify for the discount.
+ PURCHASE_NOT_IN_RANGE Purchase amount of items does not qualify for the discount.
+ NO_ENTITLED_LINE_ITEMS Discount does not apply to any of the given line items.
+ NO_ENTITLED_SHIPPING_LINES No applicable shipping lines.
+ INCOMPATIBLE_PURCHASE_TYPE Purchase type does not qualify for the discount.
+ Note
+ Shopify shows violations for only code discounts. Errors lock checkout, and the buyer has to remove the discount code to proceed through checkout. Custom error messages aren't currently supported. If errors are returned with custom reason / message, then the error won't display and the discount won't be added.
+ Checkout Error Code Reference Subscription Discount Rejection Reason Reference
+ Next steps
+ Learn how to build a Discounts Allocator Function.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Set up
+ Developer tools and resources
+ Limitations and considerations
+ Error Messages
+ Next steps

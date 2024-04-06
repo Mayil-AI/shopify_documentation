@@ -1,0 +1,165 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Theme Kit command reference
+ This reference lists the Theme Kit commands for creating, configuring, updating, deploying, downloading, and removing themes.
+ Note
+ If you're using PowerShell, then you need to include quotations around the URL if it follows a single dash. This is especially important if you're using the short form in the command. For example, theme get --list -p=[password] -s="my-store.myshopify.com" will work but theme get --list -p=[password] -s=my-store.myshopify.com won't.
+ Get help from the command line
+ If you want information about Theme Kit commands while you are working, then you can get help by running the following commands:
+ Get a list of all commands and flags
+ Terminal
+ $ theme help
+ Get a list of all the flags for a command
+ Terminal
+ $ theme [command] --help
+ Using environments
+ All Theme Kit commands can be run with a selected environment from the configuration. This allows multiple configurations to be held in the same config file.
+ To use environments, you must specify them by name with the --env flag or -e for short. The default environment is development. For example, if you want to deploy to your production environment, then you can run the following command:
+ Terminal
+ $ theme deploy --env=production
+ To deploy to multiple environments, you can pass additional --env flags:
+ Terminal
+ $ theme deploy --env=staging --env=production
+ Get
+ Sets up your theme on your local machine by creating a config file and downloading the theme that you request.
+ The theme get --list command returns a list of themes and IDs that exist on the store specified:
+ Terminal
+ $ theme get --list --password=[your-theme-kit-password] --store="[your-store.myshopify.com]"
+ After you've retrieved the theme ID, you can run the following command. Make sure to also replace your-password with your Theme password and your-store with your store's domain name:
+ Terminal
+ $ theme get --password=[your-theme-kit-password] --store="[your-store.myshopify.com]" --themeid=[your-theme-id]
+ Running the theme get command outputs a config.yml file in the current directory with the following contents:
+ 1 development:
+ 2
+    password: [your-theme-kit-password]
+ 3
+    theme_id: "[your-theme-id]"
+ 4
+    store: [your-store].myshopify.com
+ Required flags
+ Short version Long version Description
+ -p --password The Theme password used to connect Theme Kit to your store.
+ -s --store The domain name of the store.
+ -t --themeid The ID of the theme.
+ Optional flag
+ Flag Description
+ --live Sets the theme ID to the published theme.
+ New
+ Creates a new theme on the specified Shopify store, initializes your configuration using your Theme password and new theme ID, and generates and uploads default templates to make your theme valid.
+ Terminal
+ $ theme new --password=[your-theme-kit-password] --store="[your-store.myshopify.com]" --name="Dramatic Theme"
+ Required flags
+ Short version Long version Description
+ -p --password The Theme password used to connect Theme Kit to your store.
+ -s --store The domain name of the store.
+ -n --name The name of your new theme.
+ Optional flag
+ Flag Description
+ --dir The location for the new theme files. The directory must exist before running the new command.
+ Configure
+ Creates or updates configuration files.
+ Terminal
+ $ theme configure --password=[your-theme-kit-password] --store="[your-store.myshopify.com]" --themeid=[your-theme-id]
+ Running the theme configure command outputs a config.yml file in the current directory with the following contents:
+ 1 development:
+ 2
+    password: [your-theme-kit-password]
+ 3
+    theme_id: "[your-theme-id]"
+ 4
+    store: [your-store].myshopify.com
+ Required flags
+ Short version Long version Description
+ -p --password The Theme password used to connect Theme Kit to your store.
+ -s --store The domain name of the store.
+ -t --themeid The ID of the theme.
+ Optional flag
+ Flag Description
+ --live Sets the theme ID to the published theme.
+ Open
+ Opens the preview page for your theme in your browser and prints out the URL for your reference.
+ Terminal
+ $ theme open --env=production # opens http://your-store.myshopify.com?preview_theme_id=[your-theme-id]
+ Optional flags
+ Short version Long version Description
+ -a --allenvs Runs open for each environment in your config file.
+ -b --browser Specifies the name of the browser to open the URL, matching the name of the browser on your system.
+ -E --edit Opens the web editor for the theme.
+ Not applicable --hidepb Hides the preview bar when opening the preview page.
+ Watch
+ Instructs Theme Kit to watch for any changes made to your local files, and automatically pushes updates to your theme in the connected Shopify store.
+ Both the changes and the status of the upload are logged to the terminal. To close the watch connection, type ctrl + c.
+ Optional flags
+ Short version Long version Description
+ -a --allenvs Runs watch for each environment in your config file.
+ -n --notify The file path or URL. The file path is to a file that you want updated on idle. The URL path is where you want a webhook posted to report on file changes.
+ Not applicable --allow-live Allows Theme Kit to make changes to the live theme.
+ Using --notify with a URL
+ Supplying the --notify flag with a URL will send a payload. For example, if a change is made to the file assets/app.js, then the URL will receive a POST request with the following payload:
+ 1 {
+ 2
+    "files": [
+ 3
+      "assets/app.js"
+ 4
+    ]
+ 5 }
+ Integration with other tools
+ To help integrate watch with a reloading tool such as LiveReload, you can provide the optional --notify flag with a file path that you want to have updated when the workers have gone idle.
+ For example, if you have LiveReload watching for updates made to a file at /tmp/theme.update, then you can use the following command:
+ Terminal
+ $ theme watch --notify=/tmp/theme.updatetheme watch --notify=/tmp/theme.update
+ Deploy
+ Replaces your theme in the connected Shopify store with what's in your current project directory.
+ Terminal
+ $ theme deploy
+ If you provide file names in the command, then only the specified files are replaced. For example, if you want to deploy only the 404.liquid and article.liquid templates, then you can use the following command:
+ Terminal
+ $ theme deploy templates/404.liquid templates/article.liquid
+ How it works
+ Any files that are in the connected Shopify store, but aren't on your local disk, will be removed from Shopify.
+ Any files that are on both your local disk and in the connected Shopify store will be updated.
+ Any files that are on only your local disk will be uploaded to the connected Shopify store.
+ Theme Kit calculates a checksum for each file and only updates assets if you’ve made changes to them locally.
+ Optional flags
+ Short version Long version Description
+ Not applicable --allow-live Allows Theme Kit to deploy the file changes if your theme is currently live on the connected Shopify store.
+ -a --allenvs Runs deploy for each environment in your config file.
+ -n --nodelete Runs deploy without removing files from Shopify.
+ Download
+ Downloads files from your theme.
+ If you use the download command without any file names, then the entire theme is downloaded. If you provide some file names in the command, then only the specified files are downloaded.
+ For example, if you want to download only the 404.liquid and article.liquid templates, then you can use the following command:
+ Terminal
+ $ theme download templates/404.liquid templates/article.liquid
+ Similar to the deploy command, Theme Kit will skip downloading any unchanged files.
+ Optional flag
+ Flag Description
+ --live Sets the theme ID to the published theme.
+ Remove
+ Deletes theme files both locally and in the connected Shopify store.
+ Unlike the other file operation commands, the remove command requires file names. This prevents you from accidentally deleting your entire theme.
+ For example, if you want to delete the 404.liquid and article.liquid templates, then you can use the following command:
+ Terminal
+ $ theme remove templates/404.liquid templates/article.liquid
+ Note
+ You might not be able to remove some files from the connected Shopify store because they're required to serve a valid theme.
+ Next steps
+ Familiarize yourself with the configuration variables available and their accepted values in Theme Kit.
+ Learn how to identify and resolve common issues in Theme Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Get help from the command line
+ Using environments
+ Get
+ New
+ Configure
+ Open
+ Watch
+ Deploy
+ Download
+ Remove
+ Next steps
+ Updates & News

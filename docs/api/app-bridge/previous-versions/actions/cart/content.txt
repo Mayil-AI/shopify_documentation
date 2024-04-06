@@ -1,0 +1,640 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Cart
+ Note
+ This is a legacy API. Use the latest version of POS instead.
+ Requirements
+ These actions require the following app versions:
+ Point of Sale iOS v5.11.0 or above
+ Point of Sale Android v3.3.2 or above
+ Note
+ Cart features are only available when opening an embedded app through a link on Point of Sale while editing the cart. To learn more about how to check for cart features, see Features.
+ Setup
+ Create an app and import the Cart module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import { Cart } from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a cart
+ Create a cart and subscribe to cart updates:
+ 1 var cart = Cart.create(app);
+ 2 cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 3
+    console.log('[Client] cart update', payload);
+ 4 });
+ Handling error
+ 1 app.error(function (data: Error.ErrorAction) {
+ 2
+    console.info('[client] Error received: ', data);
+ 3 });
+ Feature Detection
+ Cart actions are available only on the Shopify Point of Sale app, so it’s a good idea to check if an action is available before you call it. This makes sure that you're able to display the appropriate UI when a feature is or is not available. To learn more about Feature Detection, see Features.
+ The following example shows how you could use Feature Detection with cart actions by requesting if Cart.Action.FETCH is available and using the result to alter your UI.
+ Start off by requesting if the cart group is available:
+ 1 app.featuresAvailable([Group.Cart]).then(function (state) {...});
+ The promise block resolves to a state object containing the status of the cart actions. Query for Cart.Action.FETCH and then Dispatch inside that object. If it's true, follow the instructions below for Fetch cart. If it's false, the cart action is not available in this context. Using this approach, it’s possible to distinguish between an empty cart and a context where cart is not available.
+ 1 app.featuresAvailable(Group.Cart).then(function (state) {
+ 2
+    var _ref = state.Cart && state.Cart[Cart.Action.FETCH],
+ 3
+        Dispatch = _ref.Dispatch;
+ 4
+ 5
+    if (Dispatch) {
+ 6
+      cart.dispatch(Cart.Action.FETCH);
+ 7
+    } else {
+ 8
+      var toastOptions = {
+ 9
+        message: 'Cart is not available',
+ 10
+        duration: 5000,
+ 11
+        isError: true
+ 12
+      };
+ 13
+      var toastError = Toast.create(app, toastOptions);
+ 14
+      toastError.dispatch(Toast.Action.SHOW);
+ 15
+    }
+ 16 });
+ Update cart
+ Group Cart
+ Action UPDATE
+ Action Type APP::CART::UPDATE
+ Description Retrieves the latest state of the currently active cart from Shopify POS.
+ Subscribing to this action provides you with cart updates.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] fetchCart', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 // ...
+ 6 // Call other Cart actions
+ NoteAttribute Payload
+ Key Type Description
+ name String The name of the attribute.
+ value String The value of the attribute.
+ Response
+ Key Type Description
+ subtotal String The total cost of the current cart including discounts, but before taxes and shipping. Value is based on the shop's existing currency settings.
+ taxTotal String The sum of taxes for the current cart. Value is based on the shop's existing currency settings.
+ grandTotal String The total cost of the current cart, after taxes and discounts have been applied. Value is based on the shop's existing currency settings.
+ customer Customer? The customer associated to the current cart.
+ lineItems Array[LineItem] A list of lineItem objects.
+ noteAttributes Array[NoteAttribute]? A list of objects containing cart properties.
+ cartDiscount Discount? The current discount applied to the entire cart.
+ note String? A note associated with the cart.
+ Fetch cart
+ Group Cart
+ Action FETCH
+ Action Type APP::CART::FETCH
+ Description Requests the currently active cart from Shopify POS.
+ A cart needs to call fetch before receiving data in Cart.Action.UPDATE:
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] fetchCart', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.FETCH);
+ Set customer
+ Group Cart
+ Action SET_CUSTOMER
+ Action Type APP::CART::SET_CUSTOMER
+ Description Sets a customer on the current cart.
+ This is the customer that will be attached to the cart and subsequent order. You can either set a customer with an existing customer ID or create a new customer.
+ Existing customer with ID:
+ 1 var customerPayload = {
+ 2
+      id: 123
+ 3 };
+ New customer:
+ 1 var customerPayload = {
+ 2
+      email: 'voisin@gmail.com',
+ 3
+      firstName: 'Sandrine',
+ 4
+      lastName: 'Voisin',
+ 5
+      note: 'First customer of 2019',
+ 6 };
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] setCustomer', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.SET_CUSTOMER, {
+ 6
+    data: customerPayload
+ 7 });
+ Request
+ Key Type Description
+ data Customer The customer data.
+ Customer Payload
+ Key Type Description
+ id Number? The ID of existing customer.
+ email String? The email for new customer.
+ firstName String? The first name for new customer.
+ lastName String? The last name for new customer.
+ note String? The note for new customer.
+ Add customer address
+ Group Cart
+ Action ADD_CUSTOMER_ADDRESS
+ Action Type APP::CART::ADD_CUSTOMER_ADDRESS
+ Description Adds a new address on the customer associated with the current cart.
+ Note
+ A customer must exist on the cart for this action to be successful.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] addCustomerAddress', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.ADD_CUSTOMER_ADDRESS, {
+ 6
+    data: {
+ 7
+      address1: '528 Old Weston Road',
+ 8
+      address2: 'Apartment 201',
+ 9
+      city: 'Toronto',
+ 10
+      company: 'Eliteweb Inc.',
+ 11
+      country: 'Canada',
+ 12
+      countryCode: 'CA',
+ 13
+      firstName: 'Sandrine',
+ 14
+      lastName: 'Voisin',
+ 15
+      name: 'Sandrine Voisin',
+ 16
+      phone: '416 684 1787',
+ 17
+      province: 'Ontario',
+ 18
+      provinceCode: 'ON',
+ 19
+      zip: 'M6N 3B1',
+ 20
+    }
+ 21 });
+ Request
+ Key Type Description
+ data Address The data for creating a new address.
+ Address Payload
+ Key Type Description
+ address1 String? The customer's primary address.
+ address2 String? Any extra information associated with the address (Apartment #, Suite #, Unit #, etc.).
+ city String? The name of the customer's city.
+ company String? The company name associated with address.
+ firstName String? The first name of the customer.
+ lastName String? The last name of the customer.
+ phone String? The phone number of the customer.
+ province String? The province or state of the address.
+ country String? The country of the address.
+ zip String? The ZIP or postal code of the address.
+ name String? The name of the address.
+ provinceCode String? The acronym of the province or state.
+ countryCode String? The Country Code in ISO 3166-1 (alpha-2) format.
+ Update customer address
+ Group Cart
+ Action UPDATE_CUSTOMER_ADDRESS
+ Action Type APP::CART::UPDATE_CUSTOMER_ADDRESS
+ Description Updates a new address on the customer associated with the current cart.
+ Note
+ The first parameter is the index of the customer address you're updating. If there is no address at that index, this action will not be successful.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] updateCustomerAddress', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.UPDATE_CUSTOMER_ADDRESS, {
+ 6
+    index: 0,
+ 7
+    data: {
+ 8
+      address1: '528 Old Weston Road',
+ 9
+      address2: 'Apartment 201',
+ 10
+      city: 'Toronto',
+ 11
+      company: 'Eliteweb Inc.',
+ 12
+      country: 'Canada',
+ 13
+      countryCode: 'CA',
+ 14
+      firstName: 'Sandrine',
+ 15
+      lastName: 'Voisin',
+ 16
+      name: 'Sandrine Voisin',
+ 17
+      phone: '416 684 1787',
+ 18
+      province: 'Ontario',
+ 19
+      provinceCode: 'ON',
+ 20
+      zip: 'M6N 3B1',
+ 21
+    }
+ 22 });
+ Request
+ Key Type Description
+ index Number The index of the address to update.
+ data Address The fields of the address to update.
+ Remove customer
+ Group Cart
+ Action REMOVE_CUSTOMER
+ Action Type APP::CART::REMOVE_CUSTOMER
+ Description Removes a customer from the current cart.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] removeCustomer', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.REMOVE_CUSTOMER);
+ Set discount
+ Group Cart
+ Action SET_DISCOUNT
+ Action Type APP::CART::SET_DISCOUNT
+ Description Sets a discount on the current cart.
+ You can apply a discount to the entire cart, which will affect all line items. There are several different types of discounts. See below for an example of each type.
+ Flat amount discount:
+ 1 var discountPayload = {
+ 2
+    amount: 1,
+ 3
+    discountDescription: "$1 off discount",
+ 4
+    type: 'flat',
+ 5 }
+ Percentage discount:
+ Note
+ The amount is a float value where 1.0 is a 100% discount and 0.0 is a 0% discount.
+ 1 var discountPayload = {
+ 2
+    amount: 0.5,
+ 3
+    discountDescription: "50% off discount",
+ 4
+    type: 'percent',
+ 5 }
+ Discount code discount:
+ 1 var discountPayload = {
+ 2
+    discountCode: 'HOLIDAYSALE50',
+ 3 }
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] setDiscount', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.SET_DISCOUNT, {
+ 6
+    data: discountPayload
+ 7 });
+ Discount Amount Payload
+ Key Type Description
+ amount Number The discount amount to be applied to the subtotal of the cart as a flat value or total percentage discount. flat discount amounts must be greater than 0. Discounts greater than the subtotal of the cart will be reduced to the subtotal amount. percent discount amounts must be between 0.0 and 1.0.
+ discountDescription String? A description of the discount being applied. Defaults to Discount, if not supplied.
+ type String? The discount type. The options are flat or percent. Defaults to flat, if not supplied.
+ Discount Code Payload
+ Key Type Description
+ discountCode String The discount code to apply to the current cart.
+ Request
+ Key Type Description
+ data DiscountAmount | DiscountCode The type of discount to apply to the current cart.
+ Remove discount
+ Group Cart
+ Action REMOVE_DISCOUNT
+ Action Type APP::CART::REMOVE_DISCOUNT
+ Description Removes a discount from the current cart.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] removeDiscount', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.REMOVE_DISCOUNT);
+ Set cart properties
+ Group Cart
+ Action SET_PROPERTIES
+ Action Type APP::CART::SET_PROPERTIES
+ Description Adds additional properties to the current cart.
+ Note
+ Each key/value pair in the payload is a single property.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] setProperties', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.SET_PROPERTIES, {
+ 6
+    data: {
+ 7
+      referral: 'Shopify',
+ 8
+      userID: '1234',
+ 9
+    }
+ 10 });
+ Request
+ Key Type Description
+ data Object The key-value pairs of properties to add to the current cart.
+ Remove cart properties
+ Group Cart
+ Action REMOVE_PROPERTIES
+ Action Type APP::CART::REMOVE_PROPERTIES
+ Description Removes one or more properties from the current cart.
+ Note
+ When removing properties, reference the key of the property. In the example above, two properties were set on the cart, with keys referral and userID. Pass in either of those values to remove them.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] removeProperties', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.REMOVE_PROPERTIES, {
+ 6
+    data: ['referral', 'userID']
+ 7 });
+ Request
+ Key Type Description
+ data Array[String] A list of properties to remove from the current cart.
+ Add line item
+ Group Cart
+ Action ADD_LINE_ITEM
+ Action Type APP::CART::ADD_LINE_ITEM
+ Description Adds a new line item to the current cart.
+ Line items can be added to the cart in two different ways: as a variant of a product, or as a quick sale item (usually used for one-off sales on items not backed by a variant).
+ Quick Sale line item:
+ 1 var lineItemPayload = {
+ 2
+    price: 20,
+ 3
+    quantity: 1,
+ 4
+    title: 'Bab Low - Blue Jay // White Soles',
+ 5
+    taxable: true
+ 6 };
+ Variant line item:
+ 1 var lineItemPayload = {
+ 2
+    variantId: 1234,
+ 3
+    quantity: 1
+ 4 };
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] addLineItem', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.ADD_LINE_ITEM, {
+ 6
+    data: lineItemPayload
+ 7 });
+ Line item Payload
+ Key Type Description
+ price Number? The price of the line item. Required if a variantId is not provided. Must be greater than or equal to 0.
+ quantity Number The amount of items to add. Defaults to 1 if not provided. Must be greater than 0.
+ title String? The name of the product, defaults to "Quick sale" if not supplied.
+ variantId Number? The unique ID of the variant being added. If not included, the product will be considered a custom sale.
+ discount DiscountAmount? A discount to apply to the line item.
+ taxable Boolean? A flag that indicates if the line item changes the taxes of the cart. Defaults to true if not provided. Only available to be set on custom sale items.
+ properties Array[NoteAttribute]? A list of objects containing item properties.
+ Request
+ Key Type Description
+ data LineItem The data for creating a new line item in the current cart.
+ Update line item
+ Group Cart
+ Action UPDATE_LINE_ITEM
+ Action Type APP::CART::UPDATE_LINE_ITEM
+ Description Updates an existing line item quantity in the cart.
+ Note
+ The first parameter is the index of the line item to update. If there is no line item at that index, this action will not be successful. Only the quantity property can be updated.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] updateLineItem', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.UPDATE_LINE_ITEM, {
+ 6
+    index: 0,
+ 7
+    data: {
+ 8
+      quantity: 100,
+ 9
+    }
+ 10 });
+ Line item update payload
+ Key Type Description
+ quantity Number The amount of items to add. Must be greater than 0.
+ Request
+ Key Type Description
+ index Number Index of line item to update
+ data Line Item Update The data for updating a line item at the specified index.
+ Remove line item
+ Group Cart
+ Action REMOVE_LINE_ITEM
+ Action Type APP::CART::REMOVE_LINE_ITEM
+ Description Removes an existing line item from the cart.
+ Note
+ The first parameter is the index of the line item to remove. If there is no line item at that index, this action will not be successful.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] removeLineItem', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.REMOVE_LINE_ITEM, {
+ 6
+    index: 0
+ 7 });
+ Request
+ Key Type Description
+ index Number The index of line item to remove.
+ Set line item discount
+ Group Cart
+ Action SET_LINE_ITEM_DISCOUNT
+ Action Type APP::CART::SET_LINE_ITEM_DISCOUNT
+ Description Sets the discount on a line item in the current cart.
+ Unlike cart discounts, line item discounts can't use discount codes. They support only flat amount discounts and percentage discounts.
+ Note
+ The first parameter is the index of the line item to applying the discount to. If there is no line item at that index, this action will not be successful.
+ Flat amount discount:
+ 1 var discountPayload = {
+ 2
+    amount: 1,
+ 3
+    discountDescription: "$1 off discount",
+ 4
+    type: 'flat',
+ 5 }
+ Percentage discount:
+ Note
+ The amount is a float value where 1.0 is a 100% discount and 0.0 is a 0% discount.
+ 1 var discountPayload = {
+ 2
+    amount: 0.5,
+ 3
+    discountDescription: "50% off discount",
+ 4
+    type: 'percent',
+ 5 }
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] setLineItemDiscount', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.SET_LINE_ITEM_DISCOUNT, {
+ 6
+    index: 0,
+ 7
+    data: discountPayload
+ 8 });
+ Request
+ Key Type Description
+ index Number The index of the line item to apply the discount to.
+ data DiscountAmount The discount to apply to the line item.
+ Remove line item discount
+ Group Cart
+ Action REMOVE_LINE_ITEM_DISCOUNT
+ Action Type APP::CART::REMOVE_LINE_ITEM_DISCOUNT
+ Description Removes a line item discount in the current cart.
+ Note
+ The first parameter is the index of which line item we're removing a discount from. If there is no line item at that index then this action will not be successful.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] removeLineItemDiscount', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.REMOVE_LINE_ITEM_DISCOUNT, {
+ 6
+    index: 0
+ 7 });
+ Request
+ Key Type Description
+ index Number The index of the line item to remove the discount from.
+ Set line item properties
+ Group Cart
+ Action SET_LINE_ITEM_PROPERTIES
+ Action Type APP::CART::SET_LINE_ITEM_PROPERTIES
+ Description Adds a property to a given line item in the current cart.
+ Note
+ The first parameter is the index of which line item we're setting properties on. If there is no line item at that index then this action will not be successful.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] setLineItemProperties', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.SET_LINE_ITEM_PROPERTIES, {
+ 6
+    index: 0,
+ 7
+    data: {
+ 8
+      referral: 'Shopify',
+ 9
+      userID: '1234',
+ 10
+    }
+ 11 });
+ Note
+ Each key/value pair in the payload is a single property.
+ Request
+ Key Type Description
+ data Object The key-value pairs of properties to add to the specified line item.
+ Remove line item properties
+ Group Cart
+ Action REMOVE_LINE_ITEM_PROPERTIES
+ Action Type APP::CART::REMOVE_LINE_ITEM_PROPERTIES
+ Description Removes a property from a given line item in the current cart.
+ Note
+ The first parameter is the index of which line item we're removing properties from. If there is no line item at that index then this action will not be successful.
+ When removing properties, reference the key of property. In the properties that were set on the cart above, the keys were: referral and userID. You can pass in either of those values to remove them.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] removeLineItemProperties', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.REMOVE_LINE_ITEM_PROPERTIES, {
+ 6
+    index: 0,
+ 7
+    data: ['referral', 'userID']
+ 8 });
+ Request
+ Key Type Description
+ index Number The index of the line item to remove properties from.
+ data Array[String] A list of properties to remove from the specified line item.
+ Clear cart
+ Group Cart
+ Action CLEAR
+ Action Type APP::CART::CLEAR
+ Description Remove all line items from the current cart.
+ 1 var unsubscriber = cart.subscribe(Cart.Action.UPDATE, function (payload) {
+ 2
+    console.log('[Client] clear', payload);
+ 3
+    unsubscriber();
+ 4 });
+ 5 cart.dispatch(Cart.Action.CLEAR);
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Setup
+ Create a cart
+ Handling error
+ Feature Detection
+ Update cart
+ Fetch cart
+ Set customer
+ Add customer address
+ Update customer address
+ Remove customer
+ Set discount
+ Remove discount
+ Set cart properties
+ Remove cart properties
+ Add line item
+ Update line item
+ Remove line item
+ Set line item discount
+ Remove line item discount
+ Set line item properties
+ Remove line item properties
+ Clear cart
+ Updates & News
+ Developer changelog

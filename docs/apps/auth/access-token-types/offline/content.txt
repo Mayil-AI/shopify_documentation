@@ -1,0 +1,20 @@
+Get access tokens
+ Access token types
+ Online tokens
+ Offline tokens
+ Generate access tokens for admin custom apps
+ Delegate tokens
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Offline access tokens
+ When you create an API access token for the Shopify Admin API, you can choose between two access modes: offline and online. Offline is the default access mode when none is specified. Tokens with offline access mode are meant for long-term access to a store, where no user interaction is involved. Offline access mode is ideal for background work in response to webhooks, or for maintenance work in backgrounded jobs.
+ Installation
+ When offline mode is requested and the app is not already installed in a store, the user installing the app must have access to all required scopes or the installation will fail.
+ Authorization
+ Authorizing an app multiple times with offline access returns the same access token each time. After obtaining offline access to a store, it's necessary to reauthorize an app only after it has been uninstalled, or when it needs additional access scopes.
+ Revoking access
+ The access tokens created with the offline access mode are permanent. They are revoked only when the app is uninstalled from a store.
+ Was this page helpful?

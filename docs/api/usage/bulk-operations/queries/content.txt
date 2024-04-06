@@ -1,0 +1,750 @@
+Search syntax
+ Response status codes
+ Idempotent requests
+ Bulk operations
+ Exports and queries
+ Imports and mutations
+ Pagination
+ GraphQL basics
+ Admin API
+ App Bridge
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Perform bulk operations with the GraphQL Admin API
+ With the GraphQL Admin API, you can use bulk operations to asynchronously fetch data in bulk. The API is designed to reduce complexity when dealing with pagination of large volumes of data. You can bulk query any connection field that's defined by the GraphQL Admin API schema.
+ Instead of manually paginating results and managing a client-side throttle, you can instead run a bulk query operation. Shopify’s infrastructure does the hard work of executing your query, and then provides you with a URL where you can download all of the data.
+ The GraphQL Admin API supports querying a single top-level field, and then selecting the fields that you want returned. You can also nest connections, such as variants on products.
+ Apps are limited to running a single bulk operation at a time per shop. When the operation is complete, the results are delivered in the form of a JSONL file that Shopify makes available at a URL.
+ Note
+ Bulk operations are only available through the GraphQL Admin API. You can't perform bulk operations with the REST Admin API or the Storefront API.
+ Bulk query overview
+ The complete flow for running bulk queries is covered later, but below are some small code snippets that you can use to get started quickly.
+ Step 1. Submit a query
+ Run a bulkOperationRunQuery mutation and specify what information you want from Shopify.
+ The following mutation queries the products connection and returns each product's ID and title.
+ POST /admin/api/2020-04/graphql.json
+ 1 mutation {
+ 2
+    bulkOperationRunQuery(
+ 3
+     query: """
+ 4
+      {
+ 5
+        products {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              id
+ 9
+              title
+ 10
+            }
+      }
+ 14
+      """
+ 15
+    ) {
+ 16
+      bulkOperation {
+ 17
+        id
+ 18
+        status
+ 19
+      }
+ 20
+      userErrors {
+ 21
+        field
+ 22
+        message
+ 23
+      }
+ 24
+    }
+ 25 }
+ View response
+ Step 2. Wait for the operation to finish
+ To retrieve data, you need to wait for the operation to finish. You can determine when a bulk operation has finished by using a webhook or by polling the operation's status.
+ Tip
+ Subscribing to the webhook topic is recommended over polling as it limits the number of redundant API calls.
+ Option A. Subscribe to the bulk_operations/finish webhook topic
+ Note
+ Using webhooks with bulk operations is only available in Admin API version 2021-10 and higher.
+ You can use the webhookSubscriptionCreate mutation to subscribe to the bulk_operations/finish webhook topic in order to receive a webhook when any operation finishes - in other words, it has completed, failed, or been cancelled.
+ For full setup instructions, refer to Configuring webhooks.
+ POST /admin/api/2021-10/graphql.json
+ 1 mutation {
+ 2
+    webhookSubscriptionCreate(
+ 3
+      topic: BULK_OPERATIONS_FINISH
+ 4
+      webhookSubscription: {
+ 5
+        format: JSON,
+ 6
+        callbackUrl: "https://12345.ngrok.io/"}
+ 7
+    ) {
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+      webhookSubscription {
+ 13
+        id
+ View response
+ After you've subscribed to the webhook topic, Shopify sends a POST request to the specified URL any time a bulk operation on the store (both queries and mutations) finishes.
+ Example webhook response
+ 1 {
+ 2
+    "admin_graphql_api_id": "gid://shopify/BulkOperation/720918",
+ 3
+    "completed_at": "2019-08-29T17:23:25Z",
+ 4
+    "created_at": "2019-08-29T17:16:35Z",
+ 5
+    "error_code": null,
+ 6
+    "status": "completed",
+ 7
+    "type": "query",
+ 8 }
+ You now must retrieve the bulk operation's data URL by using the node field and passing the admin_graphql_api_id value from the webhook payload as its id:
+ POST /admin/api/2021-10/graphql.json
+ 1 query {
+ 2
+    node(id: "gid://shopify/BulkOperation/720918") {
+ 3
+      ... on BulkOperation {
+ 4
+        url
+ 5
+        partialDataUrl
+ 6
+      }
+ 7
+    }
+ 8 }
+ View response
+ For more information on how webhooks work, refer to Webhooks.
+ Note
+ Webhook delivery isn't always guaranteed, so you might still need to poll for the operation's status to check when it's finished.
+ Option B. Poll your operation’s status
+ While the operation is running, you can poll to see its progress using the currentBulkOperation field. The objectCount field increments to indicate the operation's progress, and the status field returns whether the operation is completed.
+ POST /admin/api/2020-04/graphql.json
+ 1 query {
+ 2
+    currentBulkOperation {
+ 3
+      id
+ 4
+      status
+ 5
+      errorCode
+ 6
+      createdAt
+ 7
+      completedAt
+ 8
+      objectCount
+ 9
+      fileSize
+ 10
+      url
+ 11
+      partialDataUrl
+ 12
+    }
+ 13 }
+ View response
+ Step 3. Retrieve your data
+ When an operation is completed, a JSONL output file is available for download at the URL specified in the url field. If the query produced no results, then the url field will return null.
+ See Download result data for more details on the files we return and JSONL file format for how to parse them.
+ Bulk query workflow
+ Below is the high-level workflow for creating a bulk query:
+ Identify a potential bulk operation.
+ You can use a new or existing query, but it should potentially return a lot of data. Connection-based queries work best.
+ Test the query by using the Shopify GraphiQL app.
+ Write a new mutation document for bulkOperationRunQuery.
+ Include the query as the value for the query argument in the mutation.
+ Run the mutation.
+ Wait for the bulk operation to finish by either:
+ Subscribing to a webhook topic that sends a webhook payload when the operation is finished.
+ Polling the bulk operation until the status field shows that the operation is no longer running.
+ You can check the operation's progress using the objectCount field in currentBulkOperation.
+ Download the JSONL file at the URL provided in the url field.
+ Identify a potential bulk query
+ Identify a new or existing query that could return a lot of data and would benefit from being a bulk operation. Queries that use pagination to get all pages of results are the most common candidates.
+ The example query below retrieves some basic information from a store's first 50 products that were created on or after January 1, 2019.
+ 1 {
+ 2
+    products(query: "created_at:>=2020-01-01 AND created_at:<2020-05-01", first: 50) {
+ 3
+      edges {
+ 4
+        cursor
+ 5
+        node {
+ 6
+          id
+ 7
+          createdAt
+ 8
+          updatedAt
+ 9
+          title
+ 10
+          handle
+ 11
+          descriptionHtml
+ 12
+          productType
+ 13
+          options {
+ 14
+            name
+ 15
+            position
+ 16
+            values
+ 17
+          }
+ 18
+          priceRange {
+ 19
+            minVariantPrice {
+ 20
+              amount
+ 21
+              currencyCode
+ 22
+            }
+ 23
+            maxVariantPrice {
+ 24
+              amount
+ 25
+              currencyCode
+ 26
+            }
+ 27
+          }
+ 28
+        }
+ 29
+      }
+ 30
+      pageInfo {
+ 31
+        hasNextPage
+ 32
+      }
+ 33
+    }
+ 34 }
+ Tip
+ Use the Shopify GraphiQL app to run this query against your development store. The query used in a bulk operation requires the same permissions as it would when run as a normal query, so it's important to run the query first and ensure it succeeds without any access denied errors.
+ Write a bulk operation
+ To turn the query above into a bulk query, use the bulkOperationRunQuery mutation. It’s easiest to begin with a skeleton mutation without the query value:
+ 1 mutation {
+ 2
+    bulkOperationRunQuery(
+ 3
+      query:"""
+ 4
+      """
+ 5
+    ) {
+ 6
+      bulkOperation {
+ 7
+        id
+ 8
+        status
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ The triple quotes (""") define a multi-line string in GraphQL.
+ The bulk operation's ID is returned so you can poll the operation.
+ The userErrors field is returned to retrieve any error messages.
+ Paste the original sample query into the mutation, and then make a couple of minor optional changes:
+ The first argument is optional and ignored if present, so it can be removed.
+ The cursor and pageInfo fields are also optional and ignored if present, so they can be removed.
+ 1 mutation {
+ 2
+    bulkOperationRunQuery(
+ 3
+      query:"""
+ 4
+      {
+ 5
+        products(query: "created_at:>=2020-01-01 AND created_at:<2020-05-01") {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              id
+ 9
+              createdAt
+ 10
+              updatedAt
+ 11
+              title
+ 12
+              handle
+ 13
+              descriptionHtml
+ 14
+              productType
+ 15
+              options {
+ 16
+                name
+ 17
+                position
+ 18
+                values
+ 19
+              }
+ 20
+              priceRange {
+ 21
+                minVariantPrice {
+ 22
+                  amount
+ 23
+                  currencyCode
+ 24
+                }
+ 25
+                maxVariantPrice {
+ 26
+                  amount
+ 27
+                  currencyCode
+ 28
+                }
+ 29
+              }
+ 30
+            }
+ 31
+          }
+ 32
+        }
+ 33
+      }
+ 34
+      """
+ 35
+    ) {
+ 36
+      bulkOperation {
+ 37
+        id
+ 38
+        status
+ 39
+      }
+ 40
+      userErrors {
+ 41
+        field
+ 42
+        message
+ 43
+      }
+ 44
+    }
+ 45 }
+ If the mutation is successful, then the response looks similar to the example below:
+ 1 {
+ 2
+    "data": {
+ 3
+      "bulkOperationRunQuery": {
+ 4
+        "bulkOperation": {
+ 5
+          "id": "gid:\/\/shopify\/BulkOperation\/1",
+ 6
+          "status": "CREATED"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    },
+ 11
+    ...
+ 12 }
+ Wait for the bulk operation to finish
+ To retrieve data, you need to wait for the operation to finish. You can determine when a bulk operation has finished by using a webhook or by polling the operation's status.
+ Option A. Use the bulk_operations/finish webhook topic
+ Use the webhookSubscriptionCreate mutation to subscribe to the bulk_operations/finish webhook topic. For full setup instructions, refer to Configuring webhooks.
+ POST /admin/api/2021-10/graphql.json
+ 1 mutation {
+ 2
+    webhookSubscriptionCreate(
+ 3
+      topic: BULK_OPERATIONS_FINISH
+ 4
+      webhookSubscription: {
+ 5
+        format: JSON,
+ 6
+        callbackUrl: "https://12345.ngrok.io/"}
+ 7
+    ) {
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+      webhookSubscription {
+ 13
+        id
+ 14
+      }
+ 15
+    }
+ 16 }
+ After you've subscribed, you'll receive a webhook any time a bulk operation on the store (both queries and mutations) finishes (for example, completes, fails, or is cancelled). Refer to the REST Admin API reference for details on the webhook payload.
+ Once you receive the webhook, you must retrieve the bulk operation's data URL by querying the node field and passing in the ID given by admin_graphql_api_id in the webhook payload:
+ POST /admin/api/2021-10/graphql.json
+ 1 query {
+ 2
+    node(id: "gid://shopify/BulkOperation/1") {
+ 3
+      ... on BulkOperation {
+ 4
+        url
+ 5
+        partialDataUrl
+ 6
+      }
+ 7
+    }
+ 8 }
+ Option B. Poll a running bulk operation
+ Another way to determine when the bulk operation has finished is to query the currentBulkOperation field:
+ 1 {
+ 2
+    currentBulkOperation {
+ 3
+      id
+ 4
+      status
+ 5
+      errorCode
+ 6
+      createdAt
+ 7
+      completedAt
+ 8
+      objectCount
+ 9
+      fileSize
+ 10
+      url
+ 11
+      partialDataUrl
+ 12
+    }
+ 13 }
+ The field returns the latest bulk operation created (regardless of its status) for the authenticated app and shop. If you want to look up a specific operation by ID, then you can use the node field:
+ 1 {
+ 2
+    node(id: "gid://shopify/BulkOperation/1") {
+ 3
+      ... on BulkOperation {
+ 4
+        id
+ 5
+        status
+ 6
+        errorCode
+ 7
+        createdAt
+ 8
+        completedAt
+ 9
+        objectCount
+ 10
+        fileSize
+ 11
+        url
+ 12
+        partialDataUrl
+ 13
+      }
+ 14
+    }
+ 15 }
+ You can adjust your polling intervals based on the amount of data that you expect. For example, if you’re currently making pagination queries manually and it takes one hour to fetch all product data, then that can serve as a rough estimate for the bulk operation time. In this situation, a polling interval of one minute would probably be better than every 10 seconds.
+ To learn about the other possible operation statuses, refer to the BulkOperationStatus reference.
+ Check an operation's progress
+ Although polling is useful for checking whether an operation is complete, you can also use it to check the operation's progress by using the objectCount field. This field provides you with a running total of all the objects processed by your bulk operation. You can use the object count to validate your assumptions about how much data should be returned.
+ 1 {
+ 2
+    currentBulkOperation {
+ 3
+      status
+ 4
+      objectCount
+ 5
+      url
+ 6
+    }
+ 7 }
+ For example, if you’re trying to query all products created in a single month and the object count exceeds your expected number, then it might be a sign that your query conditions are wrong. In that case, you might want to cancel your current operation and run a new one with a different query.
+ Download result data
+ Only once an operation is finished running will there be result data available.
+ If an operation successfully completes, the url field will contain a URL where you can download the data. If an operation fails but some data was retrieved before the failure occurred, then a partially complete output file is available at the URL specified in the partialDataUrl field. In either case, the URLs return will be signed (authenticated) and will expire after one week.
+ Now that you've downloaded the data, it's time to parse it according to the JSONL format.
+ The JSONL data format
+ Normal (non-bulk) GraphQL responses are JSON. The response structure mirrors the query structure, which results in a single JSON object with many nested objects. Most standard JSON parsers require the entire string or file to be read into memory, which can cause issues when the responses are large.
+ Since bulk operations are specifically designed to fetch large datasets, we’ve chosen the JSON Lines (JSONL) format for the response data so that clients have more flexibility in how they consume the data. JSONL is similar to JSON, but each line is its own valid JSON object. To avoid issues with memory consumption, the file can be parsed one line at a time by using file streaming functionality, which most languages have.
+ Each line in the file is a node object returned in a connection. If a node has a nested connection, then each child node is extracted into its own object on the next line. For example, a bulk operation might use the following query to retrieve a list of products and their nested variants:
+ 1 {
+ 2
+    products {
+ 3
+ 6
+          variants {
+ 7
+            edges {
+ 8
+              node {
+ 9
+                id
+ 10
+                title
+ 11
+              }
+ 12
+            }
+ 13
+          }
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17 }
+ In the JSONL results, each product object is followed by each of its variant objects on a new line. The order of each connection type is preserved and all nested connections appear after their parents in the file. Because connections are no longer nested in the response data structure, the bulk operation result automatically includes the __parentId field, which is a reference to an object's parent. This field doesn’t exist in the API schema, so you can't explicitly query it.
+ 1 {"id":"gid://shopify/Product/1921569226808"}
+ 2 {"id":"gid://shopify/ProductVariant/19435458986123","title":"52","__parentId":"gid://shopify/Product/1921569226808"}
+ 3 {"id":"gid://shopify/ProductVariant/19435458986040","title":"70","__parentId":"gid://shopify/Product/1921569226808"}
+ 4 {"id":"gid://shopify/Product/1921569259576"}
+ 5 {"id":"gid://shopify/ProductVariant/19435459018808","title":"34","__parentId":"gid://shopify/Product/1921569259576"}
+ 6 {"id":"gid://shopify/Product/1921569292344"}
+ 7 {"id":"gid://shopify/ProductVariant/19435459051576","title":"Default Title","__parentId":"gid://shopify/Product/1921569292344"}
+ 8 {"id":"gid://shopify/Product/1921569325112"}
+ 9 {"id":"gid://shopify/ProductVariant/19435459084344","title":"36","__parentId":"gid://shopify/Product/1921569325112"}
+ 10 {"id":"gid://shopify/Product/1921569357880"}
+ 11 {"id":"gid://shopify/ProductVariant/19435459117112","title":"47","__parentId":"gid://shopify/Product/1921569357880"}
+ Note
+ The GraphQL Admin API doesn't serially process the contents of the JSONL file. Avoid relying on a particular sequence of lines and object order to achieve a desired result.
+ Example
+ Most programming languages have the ability to read a file one line at a time to avoid reading the entire file into memory. This feature should be taken advantage of when dealing with the JSONL data files.
+ Here's a simple example in Ruby to demonstrate the proper way of loading and parsing a JSONL file:
+ 1 # Efficient: reads the file a single line at a time
+ 2 File.open(file) do |f|
+ 3
+    f.each do |line|
+ 4
+      JSON.parse(line)
+ 5
+    end
+ 6 end
+ 7
+ 8 # Inefficient: reads the entire file into memory
+ 9 jsonl = File.read(file)
+ 10
+ 11 jsonl.each_line do |line|
+ 12
+    JSON.parse(line)
+ 13 end
+ To demonstrate the difference using a 100MB JSONL file, the "good" version would consume only 2.5MB of memory while the "bad" version would consume 100MB (equal to the file size).
+ Other languages:
+ NodeJS: readline
+ Python: built-in iterator
+ PHP: fgets
+ Operation failures
+ Bulk operations can fail for any of the reasons that a regular GraphQL query would fail, such as not having permission to query a field. For this reason, we encourage you to run the query normally first to make sure that it works. You'll get much better error feedback than when a query fails within a bulk operation.
+ When a bulk operation fails, some data might be available to download, the status field returns FAILED, and the errorCode field includes one of the following codes:
+ ACCESS_DENIED: there are missing access scopes. Run the query normally (outside of a bulk operation) to get more details on which field is causing the issue.
+ INTERNAL_SERVER_ERROR: something went wrong on our server and we've been notified of the error. These errors might be intermittent, so you can try submitting the query again.
+ TIMEOUT: one or more query timeouts occurred during execution. Try removing some fields from your query so that it can run successfully. These timeouts might be intermittent, so you can try submitting the query again.
+ To learn about the other possible operation error codes, refer to the BulkOperationErrorCode reference.
+ Canceled operations
+ If bulk operations have stalled, then they might be canceled by Shopify. After bulk operations are canceled, a status of CANCELED is returned. You can retry canceled bulk operations by submitting the query again.
+ Note
+ When using the bulk_operations/finish webhook, the error_code and status fields in the webhook payload will be lowercase. For example, failed instead of FAILED.
+ Canceling an operation
+ To cancel an in-progress bulk operation, use the bulkOperationCancel mutation with the operation ID.
+ 1 mutation {
+ 2
+    bulkOperationCancel(id: "gid://shopify/BulkOperation/1") {
+ 3
+      bulkOperation {
+ 4
+        status
+ 5
+      }
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ Rate limits
+ You can run only one bulk operation of each type (bulkOperationRunMutation or bulkOperationRunQuery) at a time per shop. This limit is in place because operations are asynchronous and long-running. To run a subsequent bulk operation for a shop, you need to either cancel the running operation or wait for it to finish.
+ How bulk operations fit within the Admin API rate limits
+ Bulk operations are initiated by you, the API consumer, by supplying a query string within the bulkOperationRunQuery mutation. Shopify then executes that query string asynchronously as a bulk operation.
+ This distinction between the bulkOperationRunQuery mutation and the bulk query string itself determines how rate limits apply as well: any GraphQL requests made by you count as normal API requests and are subject to rate limits, while the bulk operation query execution is not.
+ In the following example, you would be charged the cost of the mutation request (as with any other mutation), but not for the query for product titles that you want Shopify to run as a bulk operation:
+ 1 mutation {
+ 2
+    bulkOperationRunQuery(
+ 3
+     query: """
+ 4
+      {
+ 5
+        products {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              title
+ 9
+            }
+ 10
+          }
+ 11
+        }
+ 12
+      }
+ 13
+      """
+ 14
+    ) {
+ 15
+      bulkOperation {
+ 16
+        id
+ 17
+      }
+ 18
+    }
+ 19 }
+ Since you're only making low-cost requests for creating operations, polling their status, or canceling them, bulk operations are a very efficient way to query data compared to standard pagination queries.
+ Operation restrictions
+ A bulk operation query needs to include a connection. If your query doesn’t use a connection, then it should be executed as a normal synchronous GraphQL query.
+ Bulk operations have some additional restrictions:
+ Maximum of five total connections in the query.
+ Connections must implement the Node interface
+ The top-level node and nodes fields can't be used.
+ Maximum of two levels deep for nested connections. For example, the following is invalid because there are three levels of nested connections:
+ 1 {
+ 2
+    products {
+ 3
+      edges {
+          variants { # nested level 1
+ 7
+            edges {
+ 8
+              node {
+ 9
+                id
+ 10
+                images { # nested level 2
+ 11
+                  edges {
+ 12
+                    node {
+ 13
+                      id
+ 14
+                      metafields { # nested level 3 (invalid)
+ 15
+                        edges {
+ 16
+                          node {
+ 17
+                            value
+ 18
+                          }
+ 19
+                        }
+ 20
+                      }
+ 21
+                    }
+ 22
+                  }
+ 23
+                }
+ 24
+              }
+ 25
+            }
+ 26
+          }
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+ The bulkOperationRunQuery mutation will validate the supplied queries and provide errors by using the userErrors field.
+ It’s hard to provide exhaustive examples of what’s allowed and what isn’t given the flexibility of GraphQL queries, so try some and see what works and what doesn’t. If you find useful queries which aren’t yet supported, then let us know on the forums so we can collect common use cases.
+ Next steps
+ Consult our reference documentation to learn more about creating and managing bulk operations.
+ Learn how bulk import large volumes of data asychronously.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Bulk query overview
+ Bulk query workflow
+ Download result data
+ The JSONL data format
+ Operation failures
+ Canceling an operation
+ Rate limits
+ Operation restrictions
+ Next steps

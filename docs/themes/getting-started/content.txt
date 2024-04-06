@@ -1,0 +1,105 @@
+Themes
+ Overview
+ Getting started
+ Overview
+ Create a theme
+ Customize a theme
+ Architecture
+ Developer tools
+ Best practices
+ Integrating apps
+ Theme Store
+ Shopify themes overview
+ A theme determines the way that a Shopify online store looks, feels, and functions for merchants and their customers.
+ Shopify themes are built using Shopify's theme templating language, Liquid, along with HTML, CSS, JavaScript, and JSON. Using these languages, developers can create any look and feel that their clients want. Shopify provides several tools and best practices to accelerate the development process.
+ As a developer, you can build a custom theme for a specific merchant, customize a theme to meet a merchant's needs, or build a theme to sell in the Shopify Theme Store. You can also build apps that extend the functionality of a theme.
+ Anatomy of a Shopify theme
+ A theme controls the organization, features, and style of a merchant's online store. Theme code is organized with a standard directory structure of files specific to Shopify themes, as well as supporting assets such as images, stylesheets, and scripts.
+ As a theme developer, you should optimize the organization, features, and style of your themes for specific market segments or use cases. The best themes are made with a specific merchant profile in mind. Learn more about considerations and best practices for designing your theme.
+ If you're building a theme for the Shopify Theme Store, then you need to meet certain requirements in terms of the layout options that your theme offers, your theme's style, and the features that you include.
+ Markup and features
+ The organization of each page is determined by the following components.
+ The layout file
+ The template assigned to the resource being displayed
+ The section groups added to the template
+ The sections added to the template or section groups
+ The blocks that each section contains
+ Each theme should include different types of templates to display different types of content, such as the home page and products. You can also create multiple templates for the same resource type to allow for variations within the online store.
+ Features can be introduced to themes in Liquid template files, sections, blocks, and snippets. You can implement theme features using Liquid, CSS, and JavaScript. The features included in the theme inform how customers can interact with the content on an online store. For example, your theme needs to allow customers to add products to a cart by providing a Liquid form tag with a product type.
+ Supporting assets
+ You can add supporting assets to your theme to control the presentation of components and features, or to store reusable pieces of code that can be used across components.
+ For example, you need to add assets to style the theme. These resources help to define the aesthetic of the online store and how content sections are styled to express the merchant’s brand. The style of a theme is defined by the CSS and JavaScript applied to layout, template, and section files. Liquid and HTML that you want to reuse across your theme can be stored in snippets. Theme CSS and JavaScript is stored in the assets directory of the theme.
+ In addition, you can translate your theme into different languages using locale files. Locale files contain a set of translations for text strings that are used throughout the theme, and are stored in the locales directory of the theme.
+ Allowing for merchant customization
+ Merchants can customize their theme from the Shopify admin by using the Shopify theme editor. You can offer different theme customization options, which enable merchants to create their desired customer experience without editing code:
+ You can make your theme templates modular by using sections and blocks.
+ You can create settings to allow the merchant to control the appearance or behavior of the theme. Merchants can set dynamic values for settings by using dynamic sources.
+ Theme distribution
+ Themes can be distributed in the following ways:
+ By bundling the theme directory as a ZIP file, which can then be uploaded by the merchant in their Shopify admin.
+ By uploading your theme to a GitHub repository, and then connecting a branch of the repository to a theme in the Shopify admin.
+ By pushing a theme to a store using Shopify CLI.
+ Building your business with Shopify themes
+ As a Shopify Partner, there are several ways that you can earn money when working with Shopify themes.
+ Theme customization
+ The most common theme-related task for developers is theme customization, where an existing theme is altered to meet a merchant’s needs. Customization jobs range from minor tweaks to major overhauls.
+ You can apply to offer theme customization services through the Shopify Partner Directory.
+ Learn more about the Partner Directory.
+ Building bespoke themes and stores
+ Developers can build themes from scratch. This can be a major undertaking, and the work is usually commissioned by a single merchant with very specific requirements.
+ You can offer theme building as a service through the Shopify Partner Directory. You can charge your clients a fee that you both agree upon to build their theme.
+ If you're building a theme for a client who is moving to Shopify for the first time, then you can use a development store to build their store and build or customize their theme. After you hand off the store to the merchant, you receive a recurring commission.
+ Learn more about building stores for merchants.
+ Building for the Shopify Theme Store
+ The Shopify Theme Store is one of the first stops in a merchant’s journey to launching their online store. As a Partner, you can create themes for the Shopify Theme Store and reach an international audience of millions of entrepreneurs.
+ To be accepted into to the Shopify Theme Store, themes must meet strict technical, maintenance, and support requirements. You should review these requirements before you start developing a theme for the store.
+ Learn more about submitting a theme to the Shopify Theme Store.
+ Caution
+ If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be substantively different from Dawn so that it provides added value for users. Learn about the ways that you can use Dawn.
+ Building apps that integrate with themes
+ As an app developer, you can build an app that extends the functionality of a merchant's theme. You can build a custom app for a specific client, or submit an app to the Shopify App Store.
+ Learn more about building apps that integrate with themes.
+ Getting started tutorials
+ To start building or customizing your first theme, use one of our getting started tutorials.
+ Build a new theme
+ Follow this tutorial to learn how to set up your development environment and build a new theme using our reference theme, Dawn.
+ Customize a theme
+ Follow this tutorial to learn how to access a merchant's store, and make theme customizations to represent each merchant's unique brand.
+ Tools, best practices, and references
+ Review the following resources, tools, and best practices to optimize your theme building process.
+ Tools
+ Shopify provides a range of tools to help you build Shopify themes faster.
+ You can use Shopify-provided tools to build and edit themes locally, access Shopify infrastructure, version-control your theme, and test it for performance, accessibility, and code quality. You can also use Dawn, Shopify's source-available reference theme, as a starting point for your own theme, or to explore how different features can be implemented using Shopify's theme-building best practices.
+ Explore tools for building Shopify Themes.
+ Best practices
+ To optimize your theme development experience, Shopify has established a set of best practices that you can refer to when developing your theme and any surrounding toolchains and processes. Our best practices include the following:
+ Designing and coding a theme - To create an optimal customer experience, and to keep your merchant's stores fast, accessible, and discoverable, you need to consider many factors. While building Dawn, Shopify developers identified several principles and best practices that you can follow to design and build an optimized theme.
+ Tooling - As your team grows and develops, you can review our best practices around version control and file transformation.
+ Working on merchant stores - When you're developing or customizing a theme for a merchant, you should keep certain best practices in mind around security, use of tools, and collaboration.
+ Review our best practices and guiding principles for theme development.
+ References
+ You can use the following references while developing your theme.
+ Liquid reference
+ Explore the official reference for the Liquid template language.
+ Ajax API for themes
+ Learn about the endpoints that Shopify provides to interact with your theme.
+ Customer privacy API
+ Review our JavaScript API that lets you build consent collection mechanisms into your theme.
+ Section rendering API
+ Review our AJAX API that lets you update page content without reloading an entire page.
+ Liquid Cheat Sheet
+ Consult this interactive reference guide to the Liquid template language.
+ Liquid Code Examples
+ Build Shopify themes faster with this library of ready-to-use Liquid components.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Anatomy of a Shopify theme
+ Theme distribution
+ Building your business with Shopify themes
+ Getting started tutorials
+ Tools, best practices, and references
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

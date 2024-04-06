@@ -1,0 +1,125 @@
+APIs
+ Components
+ Versions
+ Cart extension reference
+ Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ POS UI extension reference
+ The UI Extensions library enables individuals to build extensions that use interface elements and behaviors that mirror the look and feel of the POS retail experience. These elements render natively, providing the performance and accessibility inherent to a native app. POS UI extensions are available for the smart grid.
+ This reference documentation represents the latest version of Shopify's components and APIs. If you're using an older version of the POS UI Extensions library, then some features mentioned in the documentation might not be available to you.
+ Note
+ Shopify constantly works on adding new features to POS UI extensions. You can visit the changelog to make sure you're using the latest version of POS UI extensions.
+ POS UI extension points
+ POS UI extensions provide a set of extension points that you can use to build your extension. For more information, refer to Extension points.
+ POS UI extension APIs
+ Every extension point has access to APIs. These APIs are a part of a larger API object that gets passed into the extend() function. You can use these APIs to interact with the POS. Note that if you're using React, you also have access to the useExtensionApi() hook. When using this hook, you can pass in the extension point to get the correct API object type returned from the hook. Not all APIs are available on every extension point. The following table includes all the available APIs, and the extension points that include them.
+ If an API fails to perform an action, then it will throw an error. You can use a try/catch block to handle this scenario.
+ API Description Extension Points
+ CartApi Allows the extension to receive data and interact with the cart on Shopify POS. pos.home.tile.render pos.home.modal.render
+ ConnectivityApi Allows the extension to access POS device connectivity information. pos.home.tile.render pos.home.modal.render
+ DeviceApi Allows the extension to access POS device information. pos.home.modal.render
+ LocaleApi Allows the extension to receive the current locale, and locale updates. pos.home.tile.render pos.home.modal.render
+ SessionApi Allows the extension to receive information on the current session, as well as request a session token. pos.home.tile.render pos.home.modal.render
+ NavigationApi Allows the extension to navigate between different screens. pos.home.modal.render
+ ProductSearchApi Allows the extension to search for products and variants that are available at the store location. pos.home.modal.render
+ SmartGridApi Allows the extension to present the pos.home.modal.render extension point. pos.home.tile.render
+ ScannerApi Allows the extension to access scanner data and available scanning sources supported by the device. pos.home.modal.render
+ Example
+ In the example below, the extend function receives the API object. The UI Extension can then use the cart API to apply a cart discount when the user taps the extended SmartGrid tile.
+ JavaScript
+ React
+ 1 import {extend, Tile, TileProps} from '@shopify/retail-ui-extensions';
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps: TileProps = {
+ 5
+      title: 'My app',
+ 6
+      subtitle: 'A test app',
+ 7
+      enabled: true,
+ 8
+      onPress: async () => {
+ 9
+        try {
+ 10
+          await api.cart.applyCartDiscount(
+ 11
+            'FixedAmount',
+ 12
+            'Black Friday Discount',
+ 13
+            '10.00'
+ 14
+          );
+ 15
+        } catch {
+ 16
+          // Couldn't apply the discount.
+ 17
+        }
+ 18
+      }
+ 19
+    }
+ 20
+ 21
+    const tile = root.createComponent(Tile, tileProps);
+ 22
+ 23
+    root.appendChild(tile);
+ 24
+    root.mount();
+ 25 });
+ POS UI extension components
+ POS UI extensions provide a set of components that you can use to build your extension. These components are available for the pos.home.tile.render and pos.home.modal.render extension points. If an extension fails to render, then the tile or the modal will show an error screen. Currently, it's not possible to view the render error, but this functionality will become available soon.
+ Note
+ Figma UI kit is available to help you design your extension.
+ Tile extension components
+ When developing a tile extension, you will use the Tile component. This is the one component available on the pos.home.tile.render extension point.
+ Modal extension components
+ Modals have a variety of components that you can use to build an interface. The following components are available for the pos.home.modal.render extension point:
+ Badge
+ Banner
+ Button
+ CameraScanner
+ DateField
+ DatePicker
+ Dialog
+ EmailField
+ FormattedTextField
+ Icon
+ Image
+ List
+ Navigator
+ NumberField
+ PinPad
+ RadioButtonList
+ Screen
+ ScrollView
+ SearchBar
+ Section
+ SegmentedControl
+ Selectable
+ Spacing
+ Stack
+ Stepper
+ Text
+ TextArea
+ TextField
+ TimeField
+ TimePicker
+ Modal extension guidelines
+ The root component of a modal extension should be either a Navigator or a Screen.
+ Use the Navigator component when you want to navigate between screens. Use the Screen component when you want to display a single screen.
+ Unless a Screen is a full-screen List, a Screen component should have a ScrollView as its root component. This allows you to scroll content that doesn't fit on the screen.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ POS UI extension points
+ POS UI extension APIs
+ Example
+ POS UI extension components

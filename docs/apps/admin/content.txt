@@ -1,0 +1,30 @@
+Admin
+ Overview
+ Embedded app home
+ Admin action and block extensions
+ Admin links
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Overview
+ The Shopify admin is where users configure their stores and manage their businesses. Integrating your app with the admin gives users functionality that feels familiar and can be easily found.
+ This guide explains the different ways that you can integrate your app with the Shopify admin.
+ Embedded app home
+ The embedded app home is the main location where users interact with your app. Here, apps have the largest surface to display their UX and the greatest amount of freedom to create custom experiences. This includes the ability to create navigation links to an app's sub-pages, spawn new modals, and use Shopify App Bridge to trigger the contextual save bar and prevent users from accidentally discarding unsaved changes.
+ Admin actions
+ Admin action extensions enable your app to embed transactional workflows that display as modals. These actions let users interact with your app directly from key pages of the Shopify admin, such as the Products, Customers, and Orders pages. You can also create actions that become available when users select multiple resources in an index table, for example, selecting multiple products on the Products index page.
+ Admin blocks
+ Admin block extensions let your app embed contextual experiences that display as cards on key pages of the admin, such as the Products, Customers, and Orders pages. Blocks enable your app to persistently display relevant information to users. They also let users edit your app's data and other product data. After the admin block extensions are built and deployed, users have the option to add your app's block to resource pages and edit its location on the pages.
+ Admin links
+ Admin link extensions create links from resource pages in the Shopify admin to related pages of your app. You should use them sparingly because they have the potential to disrupt user workflows with slow, full-page navigations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Embedded app home
+ Admin actions
+ Admin blocks
+ Admin links
+ Updates & News
+ Developer changelog
+ Partner blog

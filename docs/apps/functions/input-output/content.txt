@@ -1,0 +1,145 @@
+Variables in input queries
+ Network access
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Function input and output
+ This guide introduces how data is input to and output from Shopify Functions.
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ How it works
+ Shopify Functions query input data from the schema of a Function API. The output is also defined by the same Function API schema. Function output is a declarative object which represents operations for Shopify to execute.
+ Shopify passes input as JSON to your function using STDIN, and your function writes output as JSON to Shopify using STDOUT. Refer to the WebAssembly API for details.
+ Input
+ You can specify what input your function needs using an input query. For example, the structure of the JSON in the input example matches the shape of the following query:
+ run.graphql
+ 1 {
+ 2
+    cart {
+ 3
+      buyerIdentity {
+ 4
+        email
+ 5
+      }
+ 6
+    }
+ 7 }
+ When you create a function, Shopify CLI generates a GraphQL file for your input query. You can edit the query to request the exact data you need. Each target implemented in your function extension can have a unique input query.
+ Input example
+ The following example shows an input that retrieves a customer's email:
+ input.json
+ 1 {
+ 2
+    "cart": {
+ 3
+      "buyerIdentity": {
+ 4
+        "email": "hello@example.com"
+ 5
+      }
+ 6
+    }
+ 7 }
+ The Function API references provide information on the available fields for the input query.
+ Output
+ Each Function API extension target specifies the shape of the function's output using a GraphQL type. For example, there's a FunctionRunResult definition for the purchase.order-discount.run target of the Order Discount API.
+ Note
+ Functions created in API version 2023-07 or earlier can use the FunctionResult type, which is available for backwards compatibility.
+ If a function discounts an order by $50.00, then it could return the following output:
+ output.json
+ 1 {
+ 2
+    "discounts": [
+ 3
+      {
+ 4
+        "message": "$50.00 off",
+ 5
+        "targets": [
+ 6
+          {
+ 7
+            "orderSubtotal": {
+ 8
+              "excludedVariantIds": []
+ 9
+            }
+ 10
+          }
+ 11
+        ],
+ 12
+        "value": {
+ 13
+          "fixedAmount": {
+ 14
+            "value": 50
+ 15
+          }
+    ],
+ 19
+    "discountApplicationStrategy": "FIRST"
+ 20 }
+ The Function API references provide information on available targets, and their associated output GraphQL type.
+ GraphQL schema
+ Each Function API has a GraphQL schema representation, which you can use to improve your development workflow. For example, a GraphQL schema can be used with:
+ The VSCode GraphQL plugin
+ Language-specific code generation tools, such as graphql_client for Rust
+ On creation, each function includes a copy of the GraphQL schema in the schema.graphql file.
+ Generating the latest schema
+ If you're using an unstable API version, then the GraphQL schema might have changed since you created the function or last generated the schema. If you change your target API version, then the Function API schema might have changed between versions.
+ To generate the latest GraphQL schema for your function, use the function schema command. This command outputs the latest schema based on your function's API type and version to the schema.graphql file:
+ Terminal
+ $ npm run --silent shopify app function schema
+ You can output the generated GraphQL schema to STDOUT by passing the --stdout flag:
+ Terminal
+ $ npm run --silent shopify app function schema --stdout
+ You can also save the output to a different file or pipe it into a code generation tool, if needed:
+ Terminal
+ $ npm run --silent shopify app function schema --stdout > <FILE_PATH>
+ API versions
+ Function APIs are versioned. Updates are released quarterly and supported API versions are listed in the release notes. You can update to a new version of a Function API by completing the following steps:
+ Update the version of the API specified in your configuration file:
+ shopify.extension.toml
+ 1 api_version = "2023-10"
+ Generate the latest schema.
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Limitations
+ The following limitations apply to input queries:
+ The maximum size for an input query, excluding comments, is 3000 bytes.
+ Metafields with values exceeding 10,000 bytes in size will not be returned.
+ Input query variables of list type cannot exceed 100 elements.
+ Function input queries can have a maximum calculated query cost of 30. The following table describes the input query field costs for functions:
+ Field Example Cost value
+ Any field that returns a Metafield object metafield on a Product object 3
+ Any field on a Metafield object value 0
+ hasAnyTag 3
+ hasTags 3
+ Any field on a HasTagResponse object hasTag 0
+ inAnyCollection 3
+ inCollections 3
+ Any field on a CollectionMembership object isMember 0
+ Other leaf nodes id or sku on a ProductVariant object 1
+ Next steps
+ Learn how input queries and metafields work in Shopify Functions.
+ Learn how to use variables in input queries with Shopify Functions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Input
+ Output
+ GraphQL schema
+ API versions

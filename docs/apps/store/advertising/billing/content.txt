@@ -1,0 +1,35 @@
+Ad permissions
+ Frequently asked questions
+ Security
+ Ad billing for the Shopify App Store
+ Each time someone clicks on one of your ads, a charge is added to your balance. You get billed for the charges from App Store ads either every 30 days or when your balance across all ad campaigns exceeds $100. Your bill will be in US dollars.
+ To pay your bill, you can use a valid credit card from Visa, Mastercard, or American Express. You can't use a prepaid credit card. If there is a problem with charging your credit card, then your ads will be put on hold until the problem is resolved.
+ Reviewing invoices for App Store ads
+ To view invoices for App Store ads, go to Settings > Ad billing in your Partner Dashboard. Each invoice includes all ads that incurred charges during the period of the invoice.
+ How ads are billed
+ Since search ads use Cost Per Click (CPC) bidding, you're charged only when someone clicks on your ad. The amount that you're charged is always the same as the bid amount that you specified for the keyword that triggered your ad. To learn more about how CPC billing works, refer to Pricing.
+ Clicks can sometimes be reprocessed, which can cause a report for a given period of time to be different from the last time you viewed it. This can also cause your bill for one period of time to be slightly different from a previous bill for the same period of time. There are a few different reasons why clicks are reprocessed:
+ Shopify identified bot clicks that were not filtered before. These are removed retroactively, and the related charges are credited back to advertisers.
+ An ad impression was followed by a click, but that click occurred after the data processing window for the current billing cycle. This click and the associated ad spend are counted at the time of the impression event, not at the time of the click. But the click will be billed in your next billing cycle, even though it's attributed to the ad impression within the previous billing cycle.
+ Ad credits
+ In some cases, Shopify gives you ad credits during special promotions. When you redeem an ad credit, the credit is automatically applied towards the cost of App Store ads. You can also use your ad credit to test keywords and find an optimal bid per click for each keyword.
+ Redeem an ad credit
+ Go to Settings > Ad billing to see if you're currently eligible for an ad credit.
+ Add a credit card, then click Save.
+ Click Redeem credit.
+ Note
+ After all of your available ad credit has been applied to your App Store ads, Shopify starts charging ads to the credit card that you added.
+ After you redeem an ad credit, you'll see your remaining available credit on the Ad billing page in your Partner Dashboard. If your ad credit is applied during a billing cycle, then the invoice for that cycle shows the amount of ad credit that was used.
+ Taxes
+ Taxes are charged automatically, depending on the business address that you specified on the Settings page in your Partner Dashboard. If you're located in a jurisdiction where taxes are applied to advertising purchases, then you will see the tax amount on your invoice. "Shopify Inc" is a Canada-based business entity that's used by Shopify to charge taxes.
+ You can include a VAT or tax number on invoices by adding it as a note under Settings > Invoices in your Partner Dashboard.
+ Note
+ Shopify can't provide advice about taxes. If you have any questions about how taxes are applied to advertising purchases, then you should contact a local tax authority or a tax accountant.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Reviewing invoices for App Store ads
+ How ads are billed
+ Ad credits
+ Taxes
+ Updates & News

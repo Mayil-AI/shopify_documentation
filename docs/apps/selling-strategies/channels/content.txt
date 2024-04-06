@@ -1,0 +1,80 @@
+B2B
+ Channels
+ Overview
+ Getting started
+ Scheduled publishing
+ Distribution
+ Billing
+ App Store
+ Building Shopify channels
+ A channel is an app that allows merchants to reach new customers on platforms outside of their online store to make a sale. You can build sales channel apps to connect merchants to customers on marketplaces, advertising platforms, and more.
+ Sales channel app flow
+ The following diagram illustrates how all the features of sales channel apps come together to support the merchant experience of your sales channel app:
+ The merchant clicks to install the sales channel app.
+ The merchant connects to the sales channel app on the OAuth grant screen.
+ The merchant connects to the sales channel app account using the account connection component. If the merchant doesn't have an account, then they're prompted to sign up. Authentication happens in a pop-up provided by the app's interface outside of Shopify.
+ If additional steps need to be completed, or the merchant needs to wait for their account to be approved, then this can be completed as part of onboarding.
+ After the merchant is approved, the approved state is communicated to the merchant using a banner component.
+ The app prompts the merchant to agree to any commissions or fees. Use the Billing API to make charging for your sales channel app.
+ Merchant publishes products to the sales channel app. The sales channel app reads the product catalog and stays in sync using the relevant webhooks. Product publishing errors are reported in the admin using resource feedback.
+ Orders are created in the Shopify admin.
+ Creating and managing checkouts
+ Note
+ You can't use the Checkout API to create a new checkout user experience for an individual store.
+ When building a sales channel app, you can create and manage checkouts using one of the following methods:
+ Create cart permalinks to take customers directly to a store checkout with a pre-loaded cart
+ Use an SDK that's powered by the Storefront API, such as the JavaScript Buy, iOS Buy, and Android Buy SDK
+ For information on carts and checkouts on marketplaces, refer to Cart and checkout.
+ Creating a great user experience using Polaris
+ A sales channel app should look and feel native to Shopify’s admin experience, as it lives within the admin as an iframe.
+ The first step to designing a great channel experience is to understand your merchant’s workflows. From there, you can create wireframes or sketches to facilitate feedback discussions around the user experience. After you’ve aligned on an experience that will be Beta-tested with merchants, you can design using the Polaris framework.
+ Using Polaris increases merchant engagement and saves them time by using familiar components and patterns. For more information, refer to Polaris components and best practices.
+ Billing for your app
+ You can use Shopify's Billing API to charge merchants for your sales channel app. When using the Billing API, you can either charge merchants a recurring monthly subscription, or take a commission on sales by creating usage charges. For more information, refer to App billing.
+ Sales channel app requirements
+ The following requirements apply to all sales channel apps:
+ All sales channel apps are submitted for approval to the Shopify app review team.
+ Your app introduces a destination or platform for customers to discover products outside of the online store.
+ Customers are eventually directed to a sale.
+ You need to own and operate the destination or platform where products are sold.
+ After the sales channel app is live, you intend to onboard several hundred Shopify merchants in the first year after launch.
+ Build requirements
+ All types of sales channel apps have the following features:
+ Onboarding and account connection: You can get permission from merchants to install your app, connect their accounts, and qualify them through channel requirements.
+ Product publishing: You can import products into your channel, manage product errors, and stay in sync with merchants' product catalogs.
+ Payments and order management: You can generate orders and complete payments for merchants on your channel.
+ Link to the marketplace in the channel interface: After merchants upload their products to a marketplace, make sure they know how to navigate to where their products are hosted. You can provide a link to the marketplace in the form of a button or information in the instructions:
+ Sales channels apps built with cart permalinks
+ The following tables lists the build requirements for sales channel apps that are built with cart permalinks.
+ Build requirements
+ General requirements
+ Pre-approval required? No
+ PPA Addendum required? No
+ App approval process required? Needs to meet the general requirements for apps and sales channel apps.
+ Onboarding and account connection
+ Connect using OAuth ✔
+ Shopify App Bridge ✔
+ Shopify Polaris ✔
+ Product publishing
+ List products using the ProductListing resource ✔
+ Manage errors with the ResourceFeedback resource ✔
+ Payments and orders
+ Checkout build complexity Low. Take customers to Shopify's checkout with items pre-loaded in the cart.
+ Payment processing requirements No
+ Receiving payments Use the Billing API. For sales attribution, you can use a storefront access token.
+ Revenue share Refer to the Shopify Partner revenue share agreement.
+ Next steps
+ Get started building a sales channel app
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Sales channel app flow
+ Creating and managing checkouts
+ Creating a great user experience using Polaris
+ Billing for your app
+ Sales channel app requirements
+ Build requirements
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

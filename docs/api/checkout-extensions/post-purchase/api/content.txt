@@ -1,0 +1,205 @@
+Components
+ JWT specification
+ Customer account UI extensions
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Post-purchase extension points API
+ ExtensionPoints
+ Post-purchase checkout extensions allow developers and Plus merchants to add a post-purchase page directly into the Shopify checkout. The page appears after the order is confirmed, but before the Order status page. Post-purchase checkout extensions can use the ShouldRender and Render extension points. For more information, refer to the post-purchase checkout extensions overview.
+ Name Type Description
+ Checkout::PostPurchase::Render RenderExtension<PostPurchaseRenderApi<Imported>, AllComponents> The Render extension point is used to render the section in the post-purchase page. Also, it provides additional functionality, such as communicating with Shopify to add items to the initial purchase.
+ Checkout::PostPurchase::ShouldRender (api: PostPurchaseShouldRenderApi<Imported>) => PostPurchaseShouldRenderResult<Imported> The ShouldRender extension point is used to determine whether a post-purchase page should be shown to the customer. It also allows data to be pre-cached and used when the page renders.
+ PostPurchaseShouldRenderApi
+ Input given to the ShouldRender extension point (Checkout::PostPurchase::ShouldRender).
+ Name Type Description
+ inputData InputData Input data given to the extension point.
+ storage Storage General purpose storage for extensions.
+ RenderExtension
+ A type of extension point that is capable of rendering UI into Checkout natively. This type of extension point receives an object to manipulate the UI as its first argument, and additional data and methods as a second argument. The object that can manipulate the UI is referred to as a RemoteRoot, and is provided by the remote-ui library on which UI Extensions' rendering capabilities are built.
+ Type Description
+ (root: RemoteRoot<AllowedComponents, true>, input: Input): RenderResult<Input> | void Input type for RenderExtension.
+ RenderResult
+ The output expected from the ShouldRender extension point.
+ Name Type Description
+ update? (input: Partial<Input<Autocomplete>>) => void Whether the post-purchase page is requested.
+ PostPurchaseRenderApi
+ Input given to the render extension point (Checkout::PostPurchase::Render).
+ Name Type Description
+ inputData InputData Input data given to the extension point.
+ storage Storage General purpose storage for extensions.
+ calculateChangeset (changeset: Readonly<Changeset> | string) => Promise<CalculateChangesetUnprocessedResult | CalculateChangesetProcessedResult> Returns the calculations that would result from the provided changeset being applied. Used to provide cost-clarity for buyers.
+ applyChangeset (changeset: string, options: ApplyChangesetOptions<>) => Promise<ApplyChangesetResult> Requests a changeset to be applied to the initial purchase, and to charge the buyer with the difference in total price, if any.
+ done () => Promise<void> Indicates that the extension has finished running. Redirects customers to the Order status page.
+ ApplyChangesetResult
+ Requests a changeset to be applied to the initial purchase, and to charge the buyer with the difference in total price if any.
+ Name Type Description
+ errors ChangesetError[] Represents an error occurred while calculating or applying a changeset.
+ status "processed" | "partially_processed" | "unprocessed" An enum representing the result of attempting to apply or calculate a changeset.
+ changesetApplicationsRemaining number How many changesets can still be applied to the initial purchase.
+ ApplyChangesetOptions
+ Name Type Description
+ buyerConsentToSubscriptions? boolean
+ CalculateChangesetProcessedResult
+ Returns a CalculatedPurchase for processed changeset.
+ Name Type Description
+ errors ChangesetError[] Empty array of errors.
+ status "processed" Always returns processed.
+ calculatedPurchase CalculatedPurchase Returns CalculatedPurchase.
+ CalculatedPurchase
+ Represents the updated state of the initial purchase.
+ Name Type Description
+ subtotalPriceSet MoneyBag<> Updated total price of the purchase with discounts but before shipping, taxes, and tips.
+ totalPriceSet MoneyBag<> Updated final price of the purchase.
+ addedTaxLines AddedTaxLine[] Array of AddedTaxLine.
+ updatedLineItems UpdatedLineItem[] Array of UpdatedLineItem.
+ addedShippingLines AddedShippingLine[] Array of AddedShippingLine.
+ totalOutstandingSet MoneyBag<> The amount left unpaid after the update.
+ AddedShippingLine
+ Represents a shipping line that was added after a changeset was calculated.
+ Name Type Description
+ priceSet MoneyBag<> The shipping line price.
+ presentmentTitle string The customer facing line title.
+ UpdatedLineItem
+ Represents the updated state of a line item after a changeset has been calculated including any added line items.
+ Name Type Description
+ totalPriceSet MoneyBag<> The discounted total price.
+ priceSet MoneyBag<> The price per quantity
+ productId number The product ID.
+ variantId number The variant ID.
+ sellingPlanId? number The selling plan ID.
+ productHandle string The product slug in kebab-case.
+ quantity number How many items are being purchased in this line.
+ AddedTaxLine
+ Represents the information about the tax charged on the associated line item.
+ Name Type Description
+ priceSet MoneyBag<> The tax amount.
+ rate number The tax rate to be applied.
+ title string The name of the tax.
+ CalculateChangesetUnprocessedResult
+ Returns an array of ChangesetError, when the changeset can't be processed.
+ Name Type Description
+ errors ChangesetError[] Array of errors.
+ status "unprocessed" Always returns unprocessed.
+ calculatedPurchase? never Not returned for unprocessed result.
+ ChangesetError
+ Represents an error occurred while calculating or applying a changeset.
+ Name Type Description
+ code "payment_required" | "insufficient_inventory" | "changeset_already_applied" | "unsupported_payment_method" | "invalid_request" | "server_error" | "buyer_consent_required" | "subscription_vaulting_error" | "subscription_contract_creation_error" | "subscription_no_shipping_address_error" | "subscription_limit_error" | "order_released_error" An error code corresponding to an error that occurred while calculating or applying a changeset. Useful for grouping errors that can be handled similarily.
+ message string The error description.
+ Changeset
+ A list of requested changes to be made to the initial purchase.
+ Name Type Description
+ changes (AddVariantChange | AddShippingLineChange | SetMetafieldChange | AddSubscriptionChange)[] A change request.
+ AddSubscriptionChange
+ Requests a subscription to be added to the initial purchase.
+ Name Type Description
+ type "add_subscription" A fixed value of "add_subscription".
+ variantId number The product variant to add.
+ sellingPlanId number The selling plan to apply.
+ initialShippingPrice number The shipping line price without taxes for the first shipping cycle.
+ recurringShippingPrice number The shipping line price without taxes for the recurring shipping cycles.
+ quantity number The quantity of the specified variant.
+ shippingOption ShippingOption Additional information concerning shipping.
+ discount? ExplicitDiscount Refer to ExplicitDiscount.
+ ShippingOption
+ Name Type Description
+ title? string
+ presentmentTitle? string
+ SetMetafieldChange
+ Requests to set a metafield on the initial purchase. If a metafield with the same namespace and key pair already exists, then its contents are replaced.
+ Name Type Description
+ key string The metafield key.
+ namespace string The metafield namespace.
+ value string | number The metafield value.
+ valueType "integer" | "string" | "json_string" The metafield value type.
+ type "set_metafield" A fixed value of "set_metafield".
+ AddShippingLineChange
+ Requests a shipping line to be added to the initial purchase.
+ Name Type Description
+ type "add_shipping_line" A fixed value of "add_shipping_line".
+ price number The shipping line price without taxes.
+ title? string The merchant-facing line title.
+ presentmentTitle? string The buyer-facing line title.
+ AddVariantChange
+ Requests a variant to be added to the initial purchase.
+ Name Type Description
+ type "add_variant" A fixed value of "add_variant".
+ variantId number The product variant to add.
+ quantity number The quantity of the specified variant.
+ discount? ExplicitDiscount Refer to ExplicitDiscount.
+ ExplicitDiscount
+ Requests to attach an explicit discount to a compatible change.
+ Name Type Description
+ value number The discount value.
+ valueType "percentage" | "fixed_amount" The discount type.
+ title string The reason for adding the discount.
+ Storage
+ General-purpose, key-value browser storage for extensions.
+ Name Type Description
+ initialData unknown Data in the storage during the first load (read-only).
+ update (data: any) => Promise<void> Updates the storage to the value that it's given.
+ InputData
+ The data given as input to both extension points.
+ Name Type Description
+ extensionPoint string Identifier for the extension point.
+ initialPurchase Purchase Initial purchase.
+ locale string Checkout customer locale.
+ shop Shop Shop where the checkout/order is from.
+ token string JWT representing the input_data payload. For more information, refer to JWT specification.
+ version string Post Purchase API version.
+ Shop
+ The shop where the extension is running.
+ Name Type Description
+ id number The shop's unique identifier.
+ domain string The primary domain of the shop (ending with “.myshopify.com”).
+ metafields Metafield[] Only public listed metafields are available.
+ Purchase
+ Represents the initial purchase's state when the extension is loaded.
+ Name Type Description
+ referenceId string Initial purchase's unique identifier.
+ customerId? string The unique identifier of the buyer.
+ destinationCountryCode? string The unique identifier of the country for shipping.
+ totalPriceSet MoneyBag The total price of the purchase, including shipping, taxes and discounts.
+ lineItems LineItem[] Items being purchased.
+ LineItem
+ The items purchased.
+ Name Type Description
+ product Product Product being purchased.
+ quantity number The amount of items for the line.
+ totalPriceSet MoneyBag<> The total price of the line item, with line discounts.
+ sellingPlanId? number The selling plan's unique identifier
+ Product
+ The product for purchase.
+ Name Type Description
+ id number The product's unique identifier.
+ title string The product title.
+ variant Variant Variant being purchased.
+ metafields Metafield<>[] Only public listed metafields are available.
+ Variant
+ The product variant for purchase.
+ Name Type Description
+ id number The variant's unique identifier.
+ title string The variant title.
+ metafields Metafield<>[] Only public listed metafields are available.
+ Metafield
+ The metafields associated with a resource. You'll need to individually request which metafields you need in the configuration file.
+ Name Type Description
+ key string The metafield key.
+ namespace string The metafield namespace.
+ value string | number The metafield value.
+ valueType "integer" | "string" | "json_string" The metafield value type.
+ MoneyBag
+ Represents an amount in both shop and presentment currencies.
+ Name Type Description
+ shopMoney Money Amount in shop currency.
+ presentmentMoney Money Amount in presentment currency.
+ Money
+ A list of requested changes to be made to the initial purchase.
+ Name Type Description
+ amount string The actual amount.
+ currencyCode string In ISO 4217 format.
+ Was this page helpful?
+ YesNo
+ Updates & News

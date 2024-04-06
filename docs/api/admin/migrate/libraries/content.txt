@@ -1,0 +1,520 @@
+Overview
+ Learn how to migrate
+ Update API calls in your app
+ New product model
+ App Bridge
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Update API calls in your app
+ Many API client libraries that you might use to call the Shopify Admin API support both REST and GraphQL. However, you need to make updates to your code that uses these libraries. Some updates that you need to make might include the following:
+ Switching from a REST client to a GraphQL client
+ Changing the API endpoint
+ Updating the method
+ Adding your query or mutation and specifying the fields to return
+ Destructuring or digging into the response
+ You don't need to update your authentication or session handling to update from REST to GraphQL.
+ Use the following examples to understand the changes that you need to make for each API library.
+ This guide doesn't explain all of the changes that you need to make to your app to use GraphQL instead of REST. For example, you need to update your error handling and pagination logic. Learn more about considerations when migrating from REST to GraphQL.
+ shopify-api-js
+ The following examples show you how to update your calls to GraphQL when reading or writing data using the shopify-api-js library.
+ Reading data
+ The following requests retrieve information about a product. To convert the REST version of this request to GraphQL, you need to make the following changes in your code.
+ Update Description
+ Change the client type
+ Remix: Instead of creating an admin.rest client or using REST resource classes like admin.rest.resources.Product, create an admin.graphql client.
+ Non-Remix: Instead of creating a shopify.clients.Rest client or using REST resource classes like shopify.rest.Product, create a shopify.clients.GraphQL client.
+ Change the method Instead of using the get method on the REST client or the find, all, or count method on the resource class, use the query method on the GraphQL client.
+ Add a query
+ Pass a query to the client, requesting the information that you want to retrieve.
+ Instead of specifying the path to the resource (like 'products/1234') or the ID to the find method, write a GraphQL query that retrieves the desired resource and its fields.
+ If you're retrieving a resource by its ID, then use the GraphQL API global ID (GID) for the resource (like "gid://shopify/Product/1234") instead of a simple ID.
+ Destructure the response
+ GraphQL responses are typically nested within a data object. The structure of the data mirrors the structure of the query. To make the data easier to work with, destructure the object that's returned.
+ You can also access properties of the object using dot notation (response.body.data.product).
+ Read
+ REST
+ Remix: resource classes
+ Remix: REST client
+ Generic: resource classes
+ Generic: REST client
+ 1 const {admin, session} = await authenticate.admin(request);
+ 2
+ 3 const product = await admin.rest.resources.Product.find({
+ 4
+    session,
+ 5
+    id: 1234,
+ 6 });
+ 7
+ 8 console.log(product);
+ GraphQL
+ Remix
+ Generic
+ 1 const {admin} = await authenticate.admin(request);
+ 2
+ 3 // Create a GraphQL client instead of creating a REST client
+ 4 // or using REST resource classes
+ 5 //
+ 6 // Pass a GraphQL mutation in the request body
+ 7 // instead of using REST resources or passing a path and data to the post method
+ 8 const response = await admin.graphql(
+ 9
+    `#graphql
+ 10
+    query {
+ 11
+      product(id: "gid://shopify/Product/1234") {
+ 12
+        title
+ 13
+        description
+ 14
+      }
+ 15
+    }`,
+ 16 );
+ 17
+ 18 // Destructure the response
+ 19 const body = await response.json();
+ 20 const product = body.data?.product;
+ Writing data
+ The following requests create a new product. To convert the REST version of this request to GraphQL, you need to make the following changes in your code.
+ Update Description
+ Change the client type
+ Remix: Instead of creating an admin.rest client or using REST resource classes like admin.rest.resources.Product, create an admin.graphql client.
+ Non-Remix: Instead of creating a shopify.clients.Rest client or using REST resource classes like shopify.rest.Product, create a shopify.clients.GraphQL client.
+ Change the method Instead of using the post, put, or delete method on the REST client, or the save or delete method on the resource class, use the query method on the GraphQL client.
+ Add a mutation
+ Instead of specifying the path to the resource (like 'products'), or the data to the resource's new method, write a GraphQL mutation that creates or updates the desired resource and specifies the fields to be returned.
+ Destructure the response
+ GraphQL responses are typically nested within a data object, and the structure of the data often mirrors the structure of the mutation. To make the data easier to work with, destructure the object that's returned.
+ You can also access properties of the object using dot notation (response.body.data.productCreate.product).
+ Read userErrors Extract the userErrors array from the response. If the mutation wasn't completed, then this information is returned in this array. Learn about how error handling differs in GraphQL.
+ Write
+ REST
+ Remix: resource classes
+ Remix: REST client
+ Generic: resource classes
+ Generic: REST client
+ 1 const { admin, session } = await authenticate.admin(request);
+ 2
+ 3 const product = new admin.rest.resources.Product({ session });
+ 4 product.title = "My new product";
+ 5
+ 6 await product.save({
+ 7
+    update: true,
+ 8 });
+ GraphQL
+ Remix
+ Generic
+ 1 const {admin} = await authenticate.admin(request);
+ 2
+ 3 // Create a GraphQL client instead of creating a REST client
+ 4 // or using REST resource classes
+ 5 //
+ 6 // Pass a GraphQL mutation in the request body
+ 7 // instead of using REST resources or passing a path and data to the post method
+ 8 const response = await admin.graphql(
+ 9
+    `#graphql
+ 10
+    mutation {
+ 11
+      productCreate(input: {title: "My new product"}) {
+ 12
+        product {
+ 13
+          id
+ 14
+        }
+ 15
+      }
+ 16
+    }`,
+ 17 );
+ 18
+ 19 // Destructure the response
+ 20 const body = await response.json();
+ 21 const product = body.data?.productCreate?.product;
+ shopify-api-ruby
+ The following examples show you how to update your calls to GraphQL when reading or writing data using the shopify-api-ruby library.
+ Reading data
+ The following requests retrieve information about a product. To convert the REST version of this request to GraphQL, you need to make the following changes in your code.
+ Update Description
+ Change the client type Instead of creating a shopify.clients.Rest client or using REST resource classes like shopify.rest.Product.find, create a shopify.clients.GraphQL client.
+ Change the method Instead of using the get method on the REST client or the find, all, or count method on the resource class, use the query method on the GraphQL client.
+ Add a query
+ Pass a query to the client, requesting the information that you want to retrieve.
+ Instead of specifying the path to a resource (like 'products/1234'), or passing an ID to a resource method, write a GraphQL query that retrieves the desired resource and its fields.
+ If you're retrieving a resource by its ID, then use the GraphQL API global ID (GID) for the resource (like "gid://shopify/Product/1234") instead of a simple ID.
+ Destructure the response
+ GraphQL responses are typically nested within a data object. The structure of the data mirrors the structure of the query. To make the data easier to work with, destructure the object that's returned.
+ You can also access properties of the object using bracket notation. In the provided Ruby example, the product data is accessed with result.body["data"]["product"].
+ Read
+ REST
+ Using resource classes
+ Using the REST client
+ 1 product = ShopifyAPI::Product.find('product-id')
+ 2
+ 3 puts product.attributes
+ GraphQL
+ 1 # Create a GraphQL client instead of creating a REST client
+ 2 # or using REST resource classes
+ 3 client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
+ 4
+ 5 # Pass a GraphQL query in the request body
+ 6 # instead of using REST resources or passing a path
+ 7 query = <<~QUERY
+ 8
+    query($id: ID!) {
+ 9
+      product(id: $id) {
+ 10
+        id
+ 11
+        title
+ 12
+        description
+ 13
+      }
+ 14
+    }
+ 15 QUERY
+ 16
+ 17 # Use a GID instead of a simple ID
+ 18 variables = {
+ 19
+    id: "gid://shopify/Product/1234"
+ 20 }
+ 21
+ 22 # Use the query method on the GraphQL client
+ 23 result = client.query(query: query, variables: variables)
+ 24
+ 25 # Destructure the response
+ 26 product = result.body["data"]["product"]
+ 27 puts product
+ Writing data
+ The following requests create a new product. To convert the REST version of this request to GraphQL, you need to make the following changes in your code.
+ Update Description
+ Change the client type Instead of creating a ShopifyAPI::Clients::Rest::Admin client or using REST resource classes like ShopifyAPI::Product, create a ShopifyAPI::Clients::Graphql::Admin client.
+ Change the method Instead of using the post, put, or delete method on the REST client, or the save or delete method on the resource class, use the query method on the GraphQL client.
+ Add a mutation
+ Instead of specifying the path to the resource (like 'products'), or the data to the resource's new method, write a GraphQL mutation that creates or updates the desired resource and specifies the fields to be returned.
+ Destructure the response
+ GraphQL responses are typically nested within a data object, and the structure of the data often mirrors the structure of the mutation. To make the data easier to work with, destructure the object that's returned.
+ You can also access properties of the object using dot notation (result.body["data"]["productCreate"]).
+ Read userErrors Extract the userErrors array from the response. If the mutation wasn't completed, then this information is returned in this array. Learn about how error handling differs in GraphQL.
+ Write
+ REST
+ Using resource classes
+ Using the REST client
+ 1 product_properties = {
+ 2
+    title: "My new product"
+ 3 }
+ 4 product = ShopifyAPI::Product.new(from_hash: product_properties)
+ 5 product.save!
+ GraphQL
+ 1 # Create a GraphQL client instead of creating a REST client
+ 2 # or using REST resource classes
+ 3 client = ShopifyAPI::Clients::Graphql::Admin.new(session: session)
+ 4
+ 5 # Pass a GraphQL mutation in the request body
+ 6 # instead of using REST resources or passing a path and data to the post method
+ 7 mutation = <<~MUTATION
+ 8
+    mutation($input: ProductInput!) {
+ 9
+      productCreate(input: $input) {
+ 10
+        product {
+ 11
+          id
+ 12
+          title
+ 13
+        }
+ 14
+        userErrors {
+ 15
+          field
+ 16
+          message
+ 17
+ 20 MUTATION
+ 21
+ 22 variables = {
+ 23
+    input: {
+ 24
+      title: "My new product"
+ 25
+    }
+ 26 }
+ 27
+ 28 # Use the query method on the GraphQL client
+ 29 result = client.query(query: mutation, variables: variables)
+ 30
+ 31 # Destructure the response
+ 32 product_create = result.body["data"]["productCreate"]
+ 33 puts product_create["product"]
+ 34 puts product_create["userErrors"]
+ Node Fetch / Axios
+ The following examples show you how to update your calls to GraphQL when reading or writing data using the Node Fetch or Axios libraries.
+ Reading data
+ The following requests retrieve information about a product. To convert the REST version of this request to GraphQL, you need to make the following changes in your code.
+                                                                                                                                       Update Description
+ Change the endpoint Instead of a resource-specific endpoint (/products/1234.json), use the generic GraphQL endpoint for the store. Information about the resource that you want to retrieve is passed in the request body.
+ Change the method Instead of using GET, use POST for all requests.
+ Add a query
+ In the request body, query the resource (for example, product).
+ Instead of using a simple ID (1234), use the GraphQL API global ID (GID) for the resource (gid://shopify/Product/1234).
+ Specify the fields that you want to return in the request body.
+ Destructure the response
+ GraphQL responses are typically nested within a data object. The structure of the data mirrors the structure of the query. To make the data easier to work with, destructure the object that's returned.
+ You can also access properties of the object using dot notation (body.data.product).
+ Read
+ REST
+ Node Fetch
+ Axios
+ 1 (async () => {
+ 2
+    const url = 'https://shop.myshopify.com/admin/api/2023-10/products/1234.json';
+ 3
+ 4
+    const options = {
+ 5
+      method: 'GET',
+ 6
+      headers: {
+ 7
+          'Content-Type': 'application/json',
+ 8
+          'X-Shopify-Access-Token': 'YOUR-ACCESS-TOKEN'
+ 9
+      }
+ 10
+    }
+ 11
+ 12
+    const response = await fetch(url, options);
+ 13
+    const data = await response.json();
+ 14
+    console.log(data);
+ 15 })();
+ GraphQL
+ Node Fetch
+ Axios
+ 1 (async () => {
+ 2
+ 3
+    // Update to the GraphQL endpoint
+ 4
+    const url = 'https://shop.myshopify.com/admin/api/2023-10/graphql.json';
+ 5
+ 6
+    // Add a query with the fields that you want to retrieve
+ 7
+    // Use a GID instead of a simple ID
+ 8
+    const query = {
+ 9
+      query: `
+ 10
+      {
+ 11
+        product(id: "gid://shopify/Product/1234") {
+ 12
+          title
+ 13
+          description
+ 14
+        }
+ 15
+      }`
+ 16
+    };
+ 17
+ 18
+    const options = {
+ 19
+ 20
+      // Use POST instead of GET
+ 21
+      method: 'POST',
+ 22
+      headers: {
+ 23
+          'Content-Type': 'application/json',
+ 24
+          'X-Shopify-Access-Token': 'YOUR-ACCESS-TOKEN'
+ 25
+      },
+ 26
+ 27
+      // Pass the query in the request body
+ 28
+      body: JSON.stringify({
+ 29
+        query: query
+ 30
+      })
+ 31
+    }
+ 32
+ 33
+    const response = await fetch(url, options);
+ 34
+ 35
+    // Destructure the response
+ 36
+    const { data: { product } } = await response.json();
+ 37
+    console.log(product);
+ 38 })();
+ Writing data
+ The following requests create a new product. To convert the REST version of this request to GraphQL, you need to make the following changes in your code.
+ Tip
+ The same changes need to be made when updating from a POST, PUT, or DELETE REST call.
+                                Update Description
+ Change the endpoint Instead of a resource-specific endpoint (/products/1234.json), use the generic GraphQL endpoint for the store. The details for the update that you want to make is now part of a GraphQL mutation that's passed in the request body.
+ Change the method If you're using a PUT or DELETE method, then update the method to POST.
+ Add a query Add a GraphQL mutation in the request body. In this example, we're creating a new product.
+ Add query variables
+ Pass the details for the resource that you want to create or update as query variable.
+ If you're updating or deleting a resource, then instead of using a simple ID (1234), use the GraphQL API global ID (GID) for the resource (gid://shopify/Product/1234).
+ Destructure the response
+ GraphQL responses are typically nested within a data object. The structure of the data mirrors the structure of the query. To make the data easier to work with, destructure the object that's returned.
+ You can also access properties of the object using dot notation (body.data.product).
+ Read userErrors Extract the userErrors array from the response. If the mutation wasn't completed, then this information is returned in this array. Learn about how error handling differs in GraphQL.
+ Write
+ REST
+ Node Fetch
+ Axios
+ 1 (async () => {
+ 2
+    const url = 'https://your-store-name.myshopify.com/admin/api/2023-10/products.json';
+ 3
+ 4
+    const options = {
+ 5
+      method: 'POST',
+ 6
+      headers: {
+ 7
+          'Content-Type': 'application/json',
+ 8
+          'X-Shopify-Access-Token': 'YOUR-ACCESS-TOKEN'
+ 9
+      },
+ 10
+      body: JSON.stringify({product: {title: "My new product"}})
+ 11
+    }
+ 12
+ 13
+    const response = await fetch(url, options);
+ 14
+    const { product } = await response.json();
+ 15
+    console.log(product);
+ 16 })();
+ GraphQL
+ Node Fetch
+ Axios
+ 1 (async () => {
+ 2
+ 3
+    // Update to the GraphQL endpoint
+ 4
+    const url = 'https://your-store-name.myshopify.com/admin/api/2023-10/graphql.json';
+ 5
+ 6
+    // Add a mutation and include the fields that you want to be returned in the response
+ 7
+    const query = `
+ 8
+      mutation productCreate($input: ProductInput!) {
+ 9
+        productCreate(input: $input) {
+ 10
+          product {
+ 11
+            id
+ 12
+          }
+ 13
+          userErrors {
+ 14
+            field
+ 15
+            message
+ 16
+          }
+ 17
+        }
+ 18
+      }`
+ 19
+ 20
+    const options = {
+ 21
+      method: 'POST',
+ 22
+      headers: {
+ 23
+          'Content-Type': 'application/json',
+ 24
+          'X-Shopify-Access-Token': 'YOUR-ACCESS-TOKEN'
+ 25
+      },
+ 26
+ 27
+      // Pass the query in the request body
+ 28
+      // Pass the content for the new object as input variables
+ 29
+      body: JSON.stringify({
+ 30
+        query: query,
+ 31
+        variables: {
+ 32
+          input: {
+ 33
+            title: "My new product"
+ 34
+          }
+ 35
+        }
+ 36
+      })
+ 37
+    }
+ 38
+ 39
+    const response = await fetch(url, options);
+ 40
+ 41
+    // Destructure the response
+ 42
+    const { data: { productCreate: { product, userErrors } } } = await response.json();
+ 43
+    console.log(product);
+ 44
+ 45
+    // Read errors from the response
+ 46
+    console.log(userErrors);
+ 47 })();
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ shopify-api-js
+ shopify-api-ruby
+ Node Fetch / Axios
+ Updates & News
+ Developer changelog

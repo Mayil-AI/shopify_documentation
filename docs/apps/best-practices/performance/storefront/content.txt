@@ -1,0 +1,80 @@
+Billing
+ App Store
+ Storefront performance
+ You should optimize your app to minimize its impact on storefront performance. A fast storefront leads to higher conversion rates, more repeat business, and better search engine rankings.
+ Testing storefront performance
+ Learn how Shopify tests the impact of your app on storefront performance, and how you can run similar tests.
+ How Shopify tests storefront performance
+ For apps that affect storefronts directly, Shopify tests the app's effect on store performance by measuring the Lighthouse score before and after the app is installed. We calculate a weighted average of score from the following pages:
+                                                                                                               The pages that are used to calculate the performance impact of apps on the storefront, and their weights.
+ Page Weight
+ Home page 17%
+ Most visited product page 40%
+ Most visited collection page 43%
+ The difference in the score before and after the app is installed indicates whether the app improves or worsens store performance. To meet Shopify App Store requirements, your app must demonstrate low or no impact on store performance consistently across actual merchant stores over time.
+ Testing your app
+ Use the following procedure to determine the impact of your app on storefront performance.
+ Step 1: Retrieve testing URLs
+ To test your store performance, you need to retrieve a testable home page URL, product page URL, and collection page URL.
+ For accurate measurements, start with a clean install of a supported Shopify theme, such as Dawn, without your app or any other apps installed.
+ In the Shopify admin, navigate to Online Store > Themes.
+ Right click on the View your store button, and then select Copy link address from the context menu.
+ This is a shareable link to your store's home page that can be accessed by PageSpeed Insights, even if your store is password-protected.
+ Paste the URL into a text editor so you can use it later.
+ Home page URL
+ 1 https://your-store.myshopify.com/?key=f5c4757ff9e0e7b352a30856456b5a7470663ea75c1f7ddb10e385366656ecb2&preview_theme_id=
+ Retrieve the path to the product page that you want to test. To find the path, navigate to the product page in your browser. Copy the segment of the URL after .myshopify.com. This will generally be something like /product/your-product-name.
+ To build your testable product page link, edit the home page URL that you retrieved. Paste the path to your product page into the URL between .myshopify.com and ?key=:
+ Home page URL
+ 1 https://your-store.myshopify.com/?key=f5c4757ff9e0e7b352a30856456b5a7470663ea75c1f7ddb10e385366656ecb2&preview_theme_id=
+ Product page URL
+ 1 https://your-store.myshopify.com/product/your-product-name?key=f5c4757ff9e0e7b352a30856456b5a7470663ea75c1f7ddb10e385366656ecb2&preview_theme_id=
+ Retrieve the path to the collection page that you want to test. To find the path, navigate to the collection page in your browser. Copy the segment of the URL after .myshopify.com. This will generally be something like /collection/your-collection-name.
+ To build your testable collection page link, edit the home page URL that you retrieved. Paste the path to your collection page into the URL between .myshopify.com and ?key=:
+ Home page URL
+ 1 https://your-store.myshopify.com/?key=f5c4757ff9e0e7b352a30856456b5a7470663ea75c1f7ddb10e385366656ecb2&preview_theme_id=
+ Collection page URL
+ 1 https://your-store.myshopify.com/collection/your-collection-name?key=f5c4757ff9e0e7b352a30856456b5a7470663ea75c1f7ddb10e385366656ecb2&preview_theme_id=
+ Step 2: Retrieve your starting performance scores
+ On PageSpeed Insights, paste the home page URL that you retrieved in Retrieve testing URLs.
+ Click Analyze.
+ If PageSpeed Insights indicates that it's attempting to test using a simplified version of the URL, then click Run with original URL.
+ When the results appear, select the Mobile tab if it isn't already selected. Record the Performance score. This is your starting performance score for the store's home page.
+ Repeat steps one through three for your product page and collection page URLs.
+ Now that you have a starting performance score for your home, product, and collection pages, calculate the weighted average performance score using the weights for each page type. You can do this using a weighted average calculator.
+ Note
+ Lighthouse scores can vary between runs. Consider running these tests frequently during your development, and averaging your scores across a few consecutive Lighthouse tests before submission.
+ Step 3: Retrieve your ending performance score and calculate your performance impact
+ Install your app on your test store. Configure the most frequently used app features with typical required assets. Verify that it loads correctly and that you're able to preview it on the storefront.
+ On PageSpeed Insights, repeat the steps from Retrieve starting performance scores.
+ Using the three ending performance scores that you retrieved, calculate the weighted average performance score using the weights for each page type.
+ Subtract your starting performance score from your ending performance score. This is the impact on Lighthouse performance score due to your app. For example:
+ Starting performance score: 92
+ Ending performance score: 87
+ The ending performance score (87) minus starting performance score (92) equals -5, so the final speed score impact of your app is -5 points.
+ Optimizing storefront performance
+ Learn how to optimize your app's storefront performance.
+ Use theme app extensions
+ Theme app extensions allow developers to extend themes in a way that protects theme code integrity and provides better app development and user experiences.
+ Apps built using the theme app extension framework don't edit theme code, which decreases the risk of introducing breaking changes to the theme, makes it easier to iterate on the content of the integration, and provides for a better user experience.
+ All files inside the assets/ folder are automatically served from the Shopify CDN for fast, reliable asset delivery. Reference your assets by using either the javascript and stylesheet schema attributes or using the asset_url and asset_img_url Liquid URL filters.
+ Use app embed blocks to take advantage of their ability to only load scripts on specific pages. This minimizes your app's performance impact by only loading resources where they're needed.
+ Host assets on Shopify servers
+ Deliver as much as you can from the Shopify content delivery network (CDN). Using the same host for your assets avoids unnecessary HTTP connections and allows the server to prioritize delivery of blocking resources using HTTP/2 prioritization.
+ In a Shopify context, you can do this by using the fileGraphQL resource to host your static files on Shopify's servers and have them delivered by our globally available CDN.
+ CDNs are accelerated web servers with built-in caching, compression, fast performance, and global distribution. Using Shopify’s CDN also reduces network congestion.
+ Learn more about using Shopify CDN for better performance.
+ Additional resources
+ To learn more about optimizing for storefront performance, review the following guides on our web performance blog:
+ Optimize your images for a Shopify storefront using the Liquid template language
+ Improve performance by removing image transitions
+ Lazy loading images
+ Preconnecting and preloading resource hints
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Testing storefront performance
+ Optimizing storefront performance
+ Additional resources
+ Updates & News
+ Developer changelog

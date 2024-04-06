@@ -1,0 +1,110 @@
+Config
+ Overview
+ settings_schema.json
+ settings_data.json
+ Locales
+ settings_data.json
+ The settings_data.json file contains the setting values for a theme based on the settings included in settings_schema.json.
+ For example, you can use the following theme setting to allow a merchant to choose a color for the page background:
+ config/settings_schema.json
+ 1 {
+ 2
+    "name": "Colors",
+ 3
+    "settings": [
+ 4
+      {
+ 5
+        "type": "color",
+ 6
+        "id": "color_page_bg",
+ 7
+        "label": "Page background",
+ 8
+        "default": "#FFFFFF"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ This adds an entry for color_page_bg in settings_data.json:
+ config/settings_data.json
+ 1 ...
+ 2 "color_page_bg": "#FFFFFF"
+ 3 ...
+ Tip
+ In this example, the value of color_page_bg is #FFFFFF due to the default setting attribute.
+ Any time that the value of color_page_bg is changed in the theme editor, settings_data.json is updated with the new value.
+ Location
+ The settings_data.json file is located in the config directory of the theme:
+ 1 └── theme
+ 2
+      ...
+ 3
+      ├── config
+ 4
+          ├── settings_data.json
+ 5
+          └── settings_schema.json
+ 6
+      └── locales
+ Schema
+ The settings_data.json file has the following parent objects:
+ Object Description Required
+ current Contains all of the setting values that are currently saved in the theme editor. Yes
+ presets Contains an object for each theme style. Each object is in the same format as current. Yes
+ platform_customizations Contains setting values for platform-controlled settings. No - this object is added by Shopify if a merchant uses a platform-controlled setting.
+ For example:
+ 1 {
+ 2
+    "current": {
+ 3
+      "color_page_bg": "#FFFFFF",
+ 4
+      ...
+ 5
+    },
+ 6
+    "presets": {
+ 7
+      "preset-name": {
+ 8
+        "color_page_bg": "#000000",
+ 9
+        ...
+ 10
+      }
+ 11
+    }
+ 12 }
+ Usage
+ When you're working with the settings_data.json file, you should familiarize yourself with the following concepts:
+ Theme styles
+ Platform-controlled settings
+ Limitations
+ Theme styles
+ A theme style is a collection of theme setting defaults that enable merchants to easily change the general look and feel of the theme through the theme editor when getting started.
+ Selecting a theme style updates the current object to use the associated theme style values. However, only values from presentational settings are updated.
+ Presentational settings
+ Presentational settings are settings that are related to a visual aspect of the theme. Examples of presentational settings include the color and font applied to text, or whether a specific element is visible.
+ The following input types are presentational settings. Values for these settings are overwritten when switching theme styles.
+ checkbox
+ color
+ color_background
+ color_scheme
+ color_scheme_group
+ font_picker
+ number
+ radio
+ range
+ select
+ Platform-controlled settings
+ In the theme editor, Shopify exposes a custom CSS setting at the theme and section level. Any custom CSS the merchant adds at the theme level is stored in the platform-customizations object's custom_css attribute.
+ This setting is intended to enable users to customize the look and feel of their storefront without editing theme code. As a theme developer, you shouldn't add this setting, or edit the value of this setting after it's set. Instead, you should use dedicated CSS assets and stylesheet Liquid tags, and introduce customization options for CSS in these areas using theme settings.
+ Limitations
+ The settings_data.json file size can't exceed 1.5MB.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Schema

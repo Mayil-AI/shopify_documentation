@@ -1,0 +1,175 @@
+Overview
+ Managing app configuration files
+ CI/CD
+ Existing apps
+ Migrate to 3.x
+ Moving a dashboard-managed app to Shopify CLI
+ Polaris
+ Development stores
+ API libraries
+ GraphiQL for the Admin API
+ Best practices
+ Design guidelines
+ Checkout
+ Customer accounts
+ Selling strategies
+ App Store
+ App configuration
+ You can configure your apps locally with TOML files, then link them to apps in your Partner Dashboard and deploy your changes using Shopify CLI. You can also configure most of this configuration through the Partner Dashboard. The configuration in the Partner Dashboard always reflects the active version of your app.
+ Learn more about managing app configuration files.
+ Caution
+ The shopify app config push Shopify CLI command is no longer supported. If you're using this command in your workflow, follow these steps to update app configuration with the deploy command.
+ App configuration file example
+ shopify.app.config-name.toml
+ 1 name = "Example App"
+ 2 client_id = "a61950a2cbd5f32876b0b55587ec7a27"
+ 3 application_url = "https://www.app.example.com/"
+ 4 embedded = true
+ 5 handle = "example-app"
+ 6
+ 7 [access_scopes]
+ 8 scopes = "read_products"
+ 9
+ 10 [access.admin]
+ 11 direct_api_mode = "online"
+ 12
+ 13 [auth]
+ 14 redirect_urls = [
+ 15
+    "https://app.example.com/api/auth/callback",
+ 16
+    "https://app.example.com/api/auth/oauth/callback",
+ 17 ]
+ 18
+ 19 [webhooks]
+ 20 api_version = "2024-01"
+ 21 [webhooks.privacy_compliance]
+ 22 customer_deletion_url = "https://app.example.com/api/webhooks/customer_deletion"
+ 23 customer_data_request_url = "https://app.example.com/api/webhooks/customer_request"
+ 24 shop_deletion_url = "https://app.example.com/api/webhooks/deletion"
+ 25
+ 26 [app_proxy]
+ 27 url = "https://app.example.com/api/proxy"
+ 28 subpath = "store-pickup"
+ 29 prefix = "apps"
+ 30
+ 31 [pos]
+ 32 embedded = false
+ 33
+ 34 [app_preferences]
+ 35 url = "https://www.app.example.com/preferences"
+ 36
+ 37 [build]
+ 38 automatically_update_urls_on_dev = false
+ 39 include_config_on_deploy = true
+ Reference
+ Global
+ Property Required? Value Description
+ name Yes string The name of your app.
+ handle No string The URL slug of your embedded app home, for example https://admin.shopify.com/store/your-store-name/apps/your-app-handle/app.
+ 
+ Warning: Updating the handle changes the admin URL that appears when you access your app from the side menu. As a result, any embedded app admin links will be broken.
+ client_id Yes string The app's public identifier.
+ application_url Yes string matching a valid URL The URL of your app.
+ 
+ Note: If you're building an extension-only app, then your application_url will be set to https://shopify.dev/apps/default-app-home by default.
+ embedded Yes boolean Embedded apps let users interact with your app without leaving the context of Shopify.
+ access_scopes
+ Define the permissions your app requests, as well as how the permissions are requested.
+ Property Required? Value Description
+ scopes Yes string matching a comma-separated list of scopes Any access scopes that your app will request access to during the authorization process.
+ use_legacy_install_flow No boolean When omitted or false, scopes are saved in your app's configuration, and are automatically requested when the app is installed on a store or when you update the scopes value. This is referred to as Shopify managed installation.
+ 
+ When true, the legacy installation flow requests scopes through a URL parameter during the OAuth flow. The legacy installation flow is still supported, but isn't recommended because your app can end up with different scopes for each installation.
+ access
+ Settings for defining the ways that your app can access Shopify APIs.
+ admin
+ Property Required? Value Description
+ direct_api_mode No string matching online or offline The access mode that Direct API access will use.
+ 
+ When online, Direct API access is enabled and uses an online access token.
+ 
+ When offline, Direct API access is enabled and uses an offline access token.
+ 
+ When omitted, defaults to online.
+ embedded_app_direct_api_access No boolean Whether your embedded app has access to Direct API access for calling Admin GraphQL APIs.
+ 
+ When omitted or false, Direct API access is disabled for embedded apps.
+ 
+ When true, Direct API is enabled and uses the mode defined by direct_api_mode.
+ auth
+ Property Required? Value Description
+ redirect_urls Yes array of strings matching a valid URL Users are redirected to these URLs as part of authorization code grant. You must include at least one redirect URL before making your app public. Learn more about redirection URLs.
+ webhooks
+ Property Required? Value Description
+ api_version Yes string matching a valid Shopify version (example: 2022-10) The API version used to serialize webhooks and cloud service events.
+ privacy_compliance
+ Endpoints for webhooks that manage the requests to view or erase customer personal information. These are mandatory webhooks for public apps.
+ Property Required? Value Description
+ customer_deletion_url No string matching a valid URL Your app's endpoint for deleting customer information
+ customer_data_request_url No string matching a valid URL Your app's endpoint for a customer data request
+ shop_deletion_url No string matching a valid URL Your app's endpoint for deleting shop information
+ Note
+ The following is the structure of a Google Cloud Pub/Sub URL:
+ pubsub://{project-id}:{topic-id}
+ Where {project-id} is the ID of your Google Cloud Platform project, and {topic-id} is the ID of the topic that you set up in Google Cloud Pub/Sub.
+ The structure of an EventBridge ARN will be similar to the following example:
+ arn:aws:events:<aws_region>::event-source/aws.partner/shopify.com/<app_id>/<event_source_name>
+ app_proxy
+ Let Shopify act as a proxy when sending requests to your app. Learn more about app proxy.
+ Property Required? Value Description
+ url Yes if app_proxy defined string matching a valid URL URL of your app proxy server
+ subpath Yes if app_proxy defined string The combination of prefix and subpath defines where the app proxy is accessed from a merchant's shop.
+ prefix Yes if app_proxy defined string matching a, apps,community, or tools The combination of prefix and subpath defines where the app proxy is accessed from a merchant's shop.
+ pos
+ Property Required? Value Description
+ embedded No boolean Load your app in Shopify POS using Shopify App Bridge. Learn more.
+ preferences
+ Property Required? Value Description
+ url No string matching a valid URL URL for your app's preferences page
+ build
+ Settings for running your app through Shopify CLI.
+ Property Required? Value Description
+ automatically_update_urls_on_dev No boolean When true, your app URL and redirect URLs will be automatically updated on dev. This is useful when using the built-in tunnel for development.
+ 
+ When false, your URLs won't be updated on dev. Recommended for production apps.
+ 
+ When omitted, you will be prompted to choose an option on dev.
+ include_config_on_deploy No boolean When true, your local app configuration will be included in the app version created on deploy. Recommended for all apps.
+ 
+ When omitted or false, your app configuration won't be updated on deploy. The active configuration will be re-used in the new app version. Not recommended, since you can only update app configuration from the Partner Dashboard.
+ dev_store_url No string matching a valid store URL The name of the dev store used to preview your app.
+ Migrate from config push
+ The shopify app config push Shopify CLI command is no longer supported. Instead, you can release your app configuration and extensions together with the deploy command.
+ Migrate interactively
+ If you use the shopify app config push command without the --force flag, then follow these steps to migrate to the deploy command:
+ Upgrade Shopify CLI to the latest version.
+ Remove all references to the shopify app config push command in any scripts or aliases.
+ When you're ready to deploy both app configuration and all extensions, run the deploy command.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Shopify CLI will ask if you want to start including app configuration on deploy. Answer Yes, always, and your choice will be saved in your app configuration file.
+ Continue the rest of the deploy flow to release a new app version to users.
+ Push your app configuration file to source control, so all contributors use the same app configuration. This ensures that the app and Shopify CLI commands behave the same way in each contributor's environment.
+ Update your CI/CD workflow
+ If you use the shopify app config push with the --force flag, follow these steps to migrate to the deploy command:
+ Upgrade Shopify CLI to the latest version.
+ Remove all references to the shopify app config push command.
+ Add the line include_config_on_deploy = true to the [build] section in your app configuration file. Once set, both app configuration and extensions will be included when you deploy.
+ shopify.app.config-name.toml
+ 1 [build]
+ 2 include_config_on_deploy = true
+ Add the deploy command with the --force flag to your workflow, if it's not there already. Refer to the example workflows for more details.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ App configuration file example
+ Reference
+ Migrate from config push
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

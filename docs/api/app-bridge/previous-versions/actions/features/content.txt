@@ -1,0 +1,250 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Features
+ The Features action set enables you to get a list of features are available in the current app context, and to request features that are not currently available.
+ You can use the features action in the following ways:
+ Plain JavaScript
+ React hooks
+ Plain JavaScript
+ Using the plain JavaScript approach, there are two ways to work with features.
+ Check feature availability with App.featuresAvailable()
+ Dispatch a feature request action for a specific feature
+ Example code
+ Import the createApp function from @shopify/app-bridge and the Features from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Features, Group, Scanner} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Subscribe to feature availability updates
+ 1 app.subscribe(Features.Action.UPDATE, function () {
+ 2
+    // This callback is a reminder that a feature's availability has
+ 3
+    // changed.
+ 4
+    // Call `app.featuresAvailable()` to get all available features
+ 5 });
+ App.featuresAvailable()
+ Calling app.featuresAvailable() returns a promise that evaluates to the entire set of available features for the app. An object containing groups, the actions within each group, and the permissions for each action (Dispatch and Subscribe), represents the feature set.
+ It will look like this:
+ 1 {
+ 2
+    cart: {
+ 3
+      dispatch: true,
+ 4
+      subscribe: true,
+ 5
+    }
+ 6
+    ...
+ 7 }
+ If Dispatch is equal to true, then you will be able to send that type of action within your app. Likewise if Subscribe is equal to true, then you will be able to subscribe to dispatches of that type of action.
+ If a group is not present in the state then it can be assumed that all actions contained in that group are also not available.
+ 1 app.featuresAvailable().then(function (state) {
+ 2
+    /* All actions will be in the state object:
+ 3
+    {
+ 4
+      Cart: {...},
+ 5
+      Button: {...},
+ 6
+      Modal: {...},
+ 7
+      ...
+ 8
+      Scanner: {...},
+ 9
+      Share: {...}
+ 10
+    } */
+ 11 });
+ If you want to limit your resulting state to a subset of groups, then pass in a group parameter.
+ 1 app.featuresAvailable(Group.Cart).then(function (state) {
+ 2
+    // state will contain only Cart actions
+ 3
+    /*
+ 4
+    {
+ 5
+      Cart: {
+ 6
+        FETCH: {
+ 7
+          Dispatch: false,
+ 8
+          Subscribe: false
+ 9
+        },
+ 10
+        REMOVE_LINE_ITEM_PROPERTIES: {
+ 11
+          Dispatch: false,
+ 12
+          Subscribe: false
+ 13
+        }
+ 14
+        ...
+ 15
+      }
+ 16
+    } */
+ 17 });
+ Multiple group filters are also supported by using ...rest parameters.
+ 1 app.featuresAvailable(Group.Cart, Group.Button, Group.Modal).then(function (state) {
+ 2
+    // state will contain only Cart, Button, and Modal actions
+ 3
+    /*
+ 4
+    {
+ 5
+      Cart: {...},
+ 6
+      Button: {...},
+ 7
+      Modal: {...}
+ 8
+    } */
+ 9 });
+ Cart
+ If you experience feature availability errors while trying to access Cart actions on Point of Sale, try wrapping that code in a subscription to Features.Action.UPDATE.
+ 1 // Subscribe to the features update action as early as possible
+ 2 const unsubscribe = app.subscribe(Features.Action.UPDATE, function () {
+ 3
+    app.featuresAvailable(Group.Cart).then((features) => {
+ 4
+      const hasFetchCart = features.Cart[Cart.Action.FETCH];
+ 5
+      if (hasFetchCart) {
+ 6
+        unsubscribe();
+ 7
+        // Do something
+ 8
+      }
+ 9
+    });
+ 10 });
+ Features Update action
+ Group Features
+ Action UPDATE
+ Action Type APP::FEATURES::UPDATE
+ Description Dispatches when a feature's available state changes.
+ Response
+ Key Type Description
+ Main Object The availability state of the features in the main context.
+ Modal Object The availability state of the features in the modal context.
+ Features Request action
+ Group Features
+ Action REQUEST
+ Action Type APP::FEATURES::REQUEST
+ Description Requests for a feature to be enabled. May result in an authorization dialog to appear, depending on the platform it is dispatched on.
+ If an action is not available when you call app.featuresAvailable(), then you can use the APP::FEATURES::REQUEST action to request either a group of actions or a single action inside a group to be enabled. This is particularly useful when the app is running on a mobile device and requesting a hardware feature, such as the scanner, that needs authorization from the user.
+ The workflow for enabling a feature includes two parts: subscribing to APP::FEATURES::REQUEST::UPDATE and dispatching APP::FEATURES::REQUEST. APP::FEATURES::REQUEST is the input and APP::FEATURES::REQUEST::UPDATE is the output.
+ Requesting Camera Scanner actions:
+ 1 var features = Features.create(app);
+ 2 features.subscribe(Features.Action.REQUEST_UPDATE, function (payload) {
+ 3
+    if (payload.feature[Scanner.Action.OPEN_CAMERA]) {
+ 4
+      var Dispatch = payload.feature[Scanner.Action.OPEN_CAMERA].Dispatch;
+ 5
+      console.log("Camera Scanner has been ".concat(Dispatch ? "enabled" : "disabled"));
+ 6
+    }
+ 7 });
+ 8 features.dispatch(Features.Action.REQUEST, {
+ 9
+    feature: Group.Scanner,
+ 10
+    action: Scanner.Action.OPEN_CAMERA
+ 11 });
+ Request
+ Key Type Description
+ feature String The feature group that you would like to enable.
+ action String? An optional action within the group to enable. All actions within the group will be enabled if an action is not specified.
+ Features Request Update action
+ Group Features
+ Action UPDATE
+ Action Type APP::FEATURES::UPDATE
+ Description Dispatches with the result of a features request action.
+ Response
+ Key Type Description
+ feature Object The new state of the requested feature.
+ Application context
+ Shopify App Bridge applications can be opened in different places. We refer to each of these places as a context. Each context makes a set of features available to the application. Different contexts can provide different feature sets.
+ For instance, the Modal context has a different set of features available than the Main context.
+ Note
+ The Main context is the default when running an embedded app using Shopify App Bridge. The context cannot be set externally, since it's determined automatically.
+ To check which context an application is in, you can use app.getState(). Read more about app.getState.
+ 1 app.getState('context').then(function (context) {
+ 2
+    console.log('Context is: ', context); // Context is: Main
+ 3 });
+ React
+ With App Bridge React, you have two hooks that simplify using the feature action set.
+ useFeaturesAvailable
+ useFeatureRequest
+ useFeaturesAvailable hook
+ The useFeaturesAvailable hook accepts a feature name (or a list of feature names) and returns an object with information about its avaiable actions. If the hook receives no arguments, it returns an object with information about all of the features in App Bridge.
+ Example code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import {useFeaturesAvailable} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const {ContextualSaveBar} = useFeaturesAvailable('ContextualSaveBar');
+ 5
+ 6
+    if(ContextualSaveBar.dispatch) {
+ 7
+      ContextualSaveBar.dispatch(ContextualSaveBar.Action.SHOW)
+ 8
+    }
+ 9
+ 10
+    ...
+ 11 }
+ useFeatureRequest hook
+ The useFeatureRequest hook enables you to request a group of actions, or a single action inside of a group, to be enabled. This is particularly useful when the app is running on a mobile device and requests a hardware feature, such as the scanner, that needs authorization from the user.
+ Example code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import {Scanner} from '@shopify/app-bridge/actions';
+ 2 import {useFeatureRequest, useAppBridge} from '@shopify/app-bridge-react';
+ 3
+ 4 function MyComponent {
+ 5
+    const app = useAppBridge()
+ 6
+    const scannerFeature = useFeatureRequest('Scanner');
+ 7
+ 8
+    if(scannerFeature['APP::SCANNER::OPEN::CAMERA'].Dispatch) {
+ 9
+      app.dispatch(Scanner.Action.OPEN_CAMERA)
+ 10
+    }
+ 11 }
+ Props
+ The useFeaturesAvailable hook accepts a single feature or a list of features.
+ The useFeatureRequest accepts a single feature.
+ Name Type Description Required
+ feature "AuthCode", "Button", "ButtonGroup", "Cart", "Client", "ContextualSaveBar", "Error", "Features", "FeedbackModal", "Fullscreen", "LeaveConfirmation", "Link", "Menu", "Modal", "Navigation", "Performance", "Pos", "Print", "ResourcePicker", "Scanner", "SessionToken", "Share", "TitleBar", "Toast" Name of the feature to check permissions for No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog

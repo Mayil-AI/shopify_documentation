@@ -1,0 +1,90 @@
+Product subscription app extensions
+ Combination Card
+ The CombinationCard component enables app users to select other discount classes this discount can combine with.
+ Example code
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    CombinationCard,
+ 4
+    DiscountClass,
+ 5 } from "@shopify/discount-app-components";
+ 6
+ 7 function MyApp() {
+ 8
+    const [combinesWith, setCombinesWith] = useState({
+ 9
+      orderDiscounts: false,
+ 10
+      productDiscounts: false,
+ 11
+      shippingDiscounts: false,
+ 12
+    });
+ 13
+ 14
+    return (
+ 15
+      <CombinationCard
+ 16
+        combinableDiscountTypes={{
+ 17
+          value: combinesWith,
+ 18
+          onChange: setCombinesWith,
+ 19
+        }}
+ 20
+        combinableDiscountCounts={{
+ 21
+          orderDiscountsCount: 0,
+ 22
+          productDiscountsCount: 3,
+ 23
+          shippingDiscountsCount: 0,
+ 24
+        }}
+ 25
+        discountClass={DiscountClass.Product}
+ 26
+        discountDescriptor="Spring Sale - 20% off"
+ 27
+        discountId="gid://Shopify/DiscountNode/123456"
+ 28
+      />
+ 29
+    );
+ 30 }
+ Properties
+ Name Type Description Required
+ discountClass DiscountClass The class of the current discount (product, order or shipping). Yes
+ discountDescriptor string The discount title for automatic discounts, or the discount code for code discounts. Yes
+ combinableDiscountTypes Field<CombinableDiscountTypes> Used for setting which discount classes can be combined with the discount Yes
+ combinableDiscountCounts CombinableDiscountCounts Counts of existing combinable discounts on the shop. No
+ discountId string The Shopify GID of the current discount. No
+ CombinableDiscountCounts
+ Name Value Description
+ productDiscountsCount number The total number of combinable product discounts for the current shop.
+ orderDiscountsCount number The total number of combinable order discounts for the current shop.
+ shippingDiscountsCount number The total number of combinable shipping discounts for the current shop.
+ DiscountClass
+ Name Value Description
+ Product PRODUCT The discount applies to specific products or product variants.
+ Order ORDER The discount applies to the entire order.
+ Shipping SHIPPING The discount applies to shipping rates.
+ Supported combinations
+ DiscountClass Can combine with
+ PRODUCT PRODUCT, SHIPPING
+ ORDER SHIPPING
+ SHIPPING PRODUCT, ORDER
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ CombinableDiscountCounts
+ DiscountClass
+ Supported combinations
+ Updates & News
+ Developer changelog
+ Partner blog

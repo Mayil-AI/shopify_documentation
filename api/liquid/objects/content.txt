@@ -1,0 +1,5205 @@
+Resources & tools
+ Basics
+ Tags
+ Filters
+ Objects
+ additional_checkout_buttons
+ address
+ all_country_option_tags
+ all_products
+ app
+ article
+ articles
+ block
+ blog
+ blogs
+ brand
+ brand_color
+ canonical_url
+ cart
+ checkout
+ collection
+ collections
+ color
+ color_scheme
+ color_scheme_group
+ comment
+ company
+ company_address
+ company_location
+ content_for_additional_checkout_buttons
+ content_for_header
+ content_for_index
+ content_for_layout
+ country
+ country_option_tags
+ currency
+ current_page
+ current_tags
+ customer
+ discount
+ discount_allocation
+ discount_application
+ external_video
+ filter
+ filter_value
+ filter_value_display
+ focal_point
+ font
+ forloop
+ form
+ form_errors
+ fulfillment
+ generic_file
+ gift_card
+ group
+ handle
+ image
+ image_presentation
+ images
+ line_item
+ link
+ linklist
+ linklists
+ localization
+ location
+ market
+ measurement
+ media
+ metafield
+ metaobject
+ metaobject_definition
+ metaobject_system
+ model
+ model_source
+ money
+ order
+ page
+ page_description
+ page_image
+ page_title
+ pages
+ paginate
+ part
+ pending_payment_instruction_input
+ policy
+ powered_by_link
+ predictive_search
+ predictive_search_resources
+ product
+ product_option
+ product_option_value
+ quantity_price_break
+ quantity_rule
+ rating
+ recipient
+ recommendations
+ request
+ robots
+ routes
+ rule
+ script
+ scripts
+ search
+ section
+ selling_plan
+ selling_plan_allocation
+ selling_plan_allocation_price_adjustment
+ selling_plan_checkout_charge
+ selling_plan_group
+ selling_plan_group_option
+ selling_plan_option
+ selling_plan_price_adjustment
+ settings
+ shipping_method
+ shop
+ shop_locale
+ sitemap
+ sort_option
+ store_availability
+ swatch
+ tablerowloop
+ tax_line
+ template
+ theme
+ transaction
+ transaction_payment_details
+ unit_price_measurement
+ user
+ user_agent
+ variant
+ video
+ video_source
+ Objects
+ Liquid objects represent variables that you can use to build your theme. Object types include store resources, standard Shopify content, and functional elements that help you to build interactivity.
+ Objects might represent a single data point, or contain multiple properties. Some properties might represent a related object, such as a product in a collection.
+ Note
+ Liquid objects are also often referred to as Liquid variables.
+ Usage
+ Objects, along with their properties, are wrapped in curly brace delimiters {{ }}.
+ For example, the product object contains a property called title that can be used to output the title of a product.
+ Object access
+ The way that you access an object depends on the object and the context in which you want to access it. An object might be accessed in the following ways:
+ Globally: The object can be accessed directly in any Liquid theme file, excluding checkout.liquid and Liquid asset files.
+ In a template: The object can be accessed directly in specific templates, or in sections or blocks included in the template. For example, you can access the product object directly in a product template, or a section referenced in a product template.
+ Through a parent object: Many objects are returned by another object, or as a property of a parent object. For example, you can access article objects through the global articles object, or through the articles property of the blog object.
+ Refer to each object to learn about how it can be accessed.
+ Creating
+ You can also create your own variables using variable tags. Variables are treated like objects syntactically.
+ additional_checkout_buttons
+ object
+ Returns true if a store has any payment providers with offsite checkouts, such as PayPal Express Checkout.
+ Use additional_checkout_buttons to check whether these payment providers exist, and content_for_additional_checkout_buttons to show the associated checkout buttons. To learn more about how to use these objects, refer to Accelerated checkout.
+ 1 {% if additional_checkout_buttons %}
+ 2
+    {{ content_for_additional_checkout_buttons }}
+ 3 {% endif %}
+ Map
+ Directly accessible in
+ Global
+ additional_checkout_buttons
+ Was this section helpful?
+ YesNo
+ address
+ object
+ An address, such as a customer address or order shipping address.
+ Tip
+ Use the format_address filter to output an address according to its locale.
+ Properties
+ address1
+ string
+ address2
+ string
+ city
+ string
+ company
+ string
+ country
+ country
+ country_code
+ string
+ first_name
+ string
+ id
+ number
+ last_name
+ string
+ name
+ string
+ phone
+ string
+ province
+ string
+ province_code
+ string
+ street
+ string
+ summary
+ string
+ url
+ string
+ zip
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "address1": "150 Elgin Street",
+ 3
+    "address2": "8th floor",
+ 4
+    "city": "Ottawa",
+ 5
+    "company": "Polina's Potions, LLC",
+ 6
+    "country": {},
+ 7
+    "country_code": "CA",
+ 8
+    "first_name": null,
+ 9
+    "id": 56174706753,
+ 10
+    "last_name": null,
+ 11
+    "name": "",
+ 12
+    "phone": "416-123-1234",
+ 13
+    "province": "Ontario",
+ 14
+    "province_code": "ON",
+ 15
+    "street": "150 Elgin Street, 8th floor",
+ 16
+    "summary": "150 Elgin Street, 8th floor, Ottawa, Ontario, Canada",
+ 17
+    "url": "/account/addresses/56174706753",
+ 18
+    "zip": "K2P 1L4"
+ 19 }
+ Was this section helpful?
+ YesNo
+ all_country_option_tags
+ object
+ Creates an <option> tag for each country.
+ An attribute called data-provinces is set for each <option>, and contains a JSON-encoded array of the country or region's subregions. If a country doesn't have any subregions, then an empty array is set for its data-provinces attribute.
+ Tip
+ To return only the countries and regions included in the store's shipping zones, use the country_option_tags object.
+ You can wrap the all_country_option_tags object in <select> tags to build a country option selector.
+ 1 <select name="country">
+ 2
+    {{ all_country_option_tags }}
+ 3 </select>
+ Map
+ Directly accessible in
+ Global
+ all_country_option_tags
+ Was this section helpful?
+ YesNo
+ all_products
+ object
+ All of the products on a store.
+ Note
+ The all_products object has a limit of 20 unique handles per page. If you want more than 20 products, then consider using a collection instead.
+ You can use all_products to access a product by its handle. This returns the product object for the specified product. If the product isn't found, then empty is returned.
+ Map
+ Directly accessible in
+ Global
+ all_products
+ Was this section helpful?
+ YesNo
+ app
+ object
+ An app. This object is usually used to access app-specific information for use with theme app extensions.
+ Properties
+ metafields
+ Was this section helpful?
+ YesNo
+ article
+ object
+ An article, or blog post, in a blog.
+ Properties
+ author
+ string
+ comment_post_url
+ string
+ comments
+ array of comment
+ comments_count
+ number
+ comments_enabled?
+ boolean
+ content
+ string
+ created_at
+ string
+ excerpt
+ string
+ excerpt_or_content
+ string
+ handle
+ string
+ id
+ string
+ image
+ image
+ metafields
+ moderated?
+ boolean
+ published_at
+ string
+ tags
+ array of string
+ template_suffix
+ string
+ title
+ string
+ updated_at
+ string
+ url
+ string
+ user
+ user
+ Object
+ Map
+ 1 {
+ 2
+    "author": "Polina Waters",
+ 3
+    "comment_post_url": "/blogs/potion-notions/how-to-tell-if-you-have-run-out-of-invisibility-potion/comments",
+ 4
+    "comments": [],
+ 5
+    "comments_count": 1,
+ 6
+    "comments_enabled?": true,
+ 7
+    "content": "<p>We've all had this problem before: we peek into the potions vault to determine which potions we are running low on, and the invisibility potion bottle looks completely empty.</p>\n<p>...</p>\n<p> </p>",
+ 8
+    "created_at": "2022-04-14 16:56:02 -0400",
+ 9
+    "excerpt": "And where to buy <strong>more</strong>!",
+ 10
+    "excerpt_or_content": "And where to buy <strong>more</strong>!",
+ 11
+    "handle": "potion-notions/how-to-tell-if-you-have-run-out-of-invisibility-potion",
+ 12
+    "id": 556510085185,
+ 13
+    "image": {},
+ 14
+    "metafields": {},
+ 15
+    "moderated?": true,
+ 16
+    "published_at": "2022-04-14 16:56:02 -0400",
+ 17
+    "tags": [],
+ 18
+    "template_suffix": "",
+ 19
+    "title": "How to tell if you're out of invisibility potion",
+ 20
+    "updated_at": "2022-06-04 19:27:33 -0400",
+ 21
+    "url": {},
+ 22
+    "user": {}
+ 23 }
+ Templates using article
+ object
+ Theme architecture
+ article template
+ Was this section helpful?
+ YesNo
+ articles
+ object
+ All of the articles across the blogs in the store.
+ You can use articles to access an article by its handle.
+ Map
+ Directly accessible in
+ Global
+ articles
+ Was this section helpful?
+ YesNo
+ block
+ object
+ The content and settings of a section block.
+ Sections and blocks are reusable modules of content that make up templates.
+ You can include a maxiumum of 50 blocks in a section. To learn more about using blocks, refer to the Building with sections and blocks.
+ Properties
+ id
+ string
+ settings
+ shopify_attributes
+ string
+ type
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "id": "column1",
+ 3
+    "settings": "array",
+ 4
+    "shopify_attributes": "data-shopify-editor-block=\"{\"id\":\"column1\",\"type\":\"column\"}\"",
+ 5
+    "type": "column"
+ 6 }
+ Was this section helpful?
+ YesNo
+ blog
+ object
+ Information about a specific blog in the store.
+ Properties
+ all_tags
+ array of string
+ articles
+ array of article
+ articles_count
+ number
+ comments_enabled?
+ boolean
+ handle
+ string
+ id
+ number
+ metafields
+ array of metafield
+ moderated?
+ boolean
+ next_article
+ article
+ previous_article
+ article
+ tags
+ array of string
+ template_suffix
+ string
+ Map
+ 1 {
+ 2
+    "all_tags": [],
+ 3
+    "articles": [],
+ 4
+    "articles_count": 3,
+ 5
+    "comments_enabled?": true,
+ 6
+    "handle": "potion-notions",
+ 7
+    "id": 78580613185,
+ 8
+    "metafields": {},
+ 9
+    "moderated?": true,
+ 10
+    "next_article": {},
+ 11
+    "previous_article": {},
+ 12
+    "tags": [],
+ 13
+    "template_suffix": "",
+ 14
+    "title": "Potion Notions",
+ 15
+    "url": "/blogs/potion-notions"
+ 16 }
+ Templates using blog
+ object
+ Theme architecture
+ blog template
+ Theme architecture
+ article template
+ Was this section helpful?
+ YesNo
+ blogs
+ object
+ All of the blogs in the store.
+ You can use blogs to access a blog by its handle.
+ Map
+ Directly accessible in
+ Global
+ blogs
+ Was this section helpful?
+ YesNo
+ brand
+ object
+ The brand assets for the store.
+ Properties
+ colors
+ cover_image
+ image
+ favicon_url
+ image
+ logo
+ image
+ metafields
+ short_description
+ string
+ slogan
+ string
+ square_logo
+ image
+ Object
+ Map
+ 1 {
+ 2
+    "colors": {},
+ 3
+    "cover_image": {},
+ 4
+    "favicon_url": {},
+ 5
+    "logo": {},
+ 6
+    "metafields": {},
+ 7
+    "short_description": "Canada's foremost retailer for potions and potion accessories. Try one of our award-winning artisanal potions, or find the supplies to make your own!",
+ 8
+    "slogan": "Save the toil and trouble!",
+ 9
+    "square_logo": {}
+ 10 }
+ Was this section helpful?
+ YesNo
+ brand_color
+ object
+ The colors defined as part of a store's brand assets.
+ To access a brand color, specify the following:
+ The brand color group: either primary or secondary
+ The color role: Whether the color is a background or foreground (contrasting) color
+ The 0-based index of the color within the group and role
+ Map
+ Returned by
+ brand.colors
+ brand_color
+ Was this section helpful?
+ YesNo
+ canonical_url
+ object
+ The canonical URL for the current page.
+ To learn about canonical URLs, refer to Google's documentation.
+ Map
+ Directly accessible in
+ Global
+ canonical_url
+ Was this section helpful?
+ YesNo
+ cart
+ object
+ A customer’s cart.
+ Properties
+ attributes
+ cart_level_discount_applications
+ array of discount_application
+ checkout_charge_amount
+ number
+ currency
+ discount_applications
+ array of discount_application
+ duties_included
+ boolean
+ empty?
+ boolean
+ item_count
+ number
+ items
+ array of line_item
+ items_subtotal_price
+ number
+ note
+ string
+ original_total_price
+ number
+ requires_shipping
+ boolean
+ taxes_included
+ boolean
+ total_discount
+ number
+ total_price
+ number
+ total_weight
+ number
+ Deprecated Properties
+ discounts
+ array of discount
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "attributes": {},
+ 3
+    "cart_level_discount_applications": [],
+ 4
+    "checkout_charge_amount": "380.25",
+ 5
+    "currency": {},
+ 6
+    "discount_applications": [],
+ 7
+    "discounts": [],
+ 8
+    "duties_included": false,
+ 9
+    "empty?": false,
+ 10
+    "item_count": 2,
+ 11
+    "items": [],
+ 12
+    "items_subtotal_price": "422.49",
+ 13
+    "note": "Hello this is a note",
+ 14
+    "original_total_price": "424.99",
+ 15
+    "requires_shipping": true,
+ 16
+    "taxes_included": false,
+ 17
+    "total_discount": "44.74",
+ 18
+    "total_price": "380.25",
+ 19
+    "total_weight": 0
+ 20 }
+ Templates using cart
+ object
+ Theme architecture
+ cart template
+ Was this section helpful?
+ YesNo
+ checkout
+ object
+ A customer's checkout.
+ Deprecated
+ The checkout object will be deprecated for the Information, Shipping, and Payment pages on August 13, 2024. Merchants who have customized these pages using checkout.liquid need to upgrade to Checkout Extensibility before August 13, 2024.
+ Learn how to build checkout extensions that extend the functionality of Shopify checkout.
+ You can access the checkout object on the Order status page.
+ Shopify Plus merchants can access the checkout object in the checkout.liquid layout.
+ Properties
+ applied_gift_cards
+ array of gift_card
+ attributes
+ billing_address
+ address
+ buyer_accepts_marketing
+ boolean
+ cart_level_discount_applications
+ array of discount_application
+ currency
+ string
+ customer
+ customer
+ discount_applications
+ array of discount_application
+ discounts_amount
+ array of discount_application
+ discounts_savings
+ array of discount_application
+ email
+ string
+ gift_cards_amount
+ number
+ id
+ number
+ item_count
+ number
+ line_items
+ array of line_item
+ line_items_subtotal_price
+ number
+ name
+ number
+ note
+ string
+ order
+ order
+ order_id
+ string
+ order_name
+ string
+ order_number
+ string
+ requires_shipping
+ boolean
+ shipping_address
+ address
+ shipping_method
+ shipping_method
+ shipping_price
+ number
+ tax_lines
+ array of tax_line
+ tax_price
+ number
+ total_price
+ number
+ transactions
+ array of transaction
+ Deprecated Properties
+ cancelled
+ boolean
+ deprecated
+ discount
+ discount
+ deprecated
+ discounts
+ array of discount
+ deprecated
+ financial_status
+ string
+ deprecated
+ fulfilled_at
+ string
+ deprecated
+ fulfilled_line_items
+ array of line_item
+ deprecated
+ fulfillment_status
+ string
+ deprecated
+ unavailable_line_items
+ array of line_item
+ deprecated
+ unfulfilled_line_items
+ array of line_item
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "applied_gift_cards": [],
+ 3
+    "attributes": {},
+ 4
+    "billing_address": {},
+ 5
+    "buyer_accepts_marketing": false,
+ 6
+    "cart_level_discount_applications": [],
+ 7
+    "currency": "CAD",
+ 8
+    "customer": {},
+ 9
+    "discount_applications": [],
+ 10
+    "discounts_amount": 4224,
+ 11
+    "discounts_savings": -4224,
+ 12
+    "email": "cornelius.potionmaker@gmail.com",
+ 13
+    "gift_cards_amount": 0,
+ 14
+    "id": 29944051400769,
+ 15
+    "line_items": [],
+ 16
+    "line_items_subtotal_price": 42249,
+ 17
+    "name": "#29944051400769",
+ 18
+    "note": null,
+ 19
+    "order": null,
+ 20
+    "order_id": null,
+ 21
+    "order_name": "#29944051400769",
+ 22
+    "order_number": "#29944051400769",
+ 23
+    "requires_shipping": true,
+ 24
+    "shipping_address": {},
+ 25
+    "shipping_method": {},
+ 26
+    "shipping_price": 0,
+ 27
+    "tax_lines": [],
+ 28
+    "tax_price": 0,
+ 29
+    "total_price": 38025,
+ 30
+    "transactions": []
+ 31 }
+ Templates using checkout
+ object
+ Theme architecture
+ checkout template
+ Was this section helpful?
+ YesNo
+ collection
+ object
+ A collection in a store.
+ Properties
+ all_products_count
+ number
+ all_tags
+ array of string
+ all_types
+ array of string
+ all_vendors
+ array of string
+ current_type
+ string
+ current_vendor
+ string
+ default_sort_by
+ string from a set of values
+ description
+ string
+ featured_image
+ image
+ filters
+ array of filter
+ handle
+ string
+ id
+ number
+ image
+ image
+ metafields
+ array of metafield
+ next_product
+ product
+ previous_product
+ product
+ products
+ array of product
+ products_count
+ number
+ published_at
+ string
+ sort_by
+ string
+ sort_options
+ array of sort_option
+ tags
+ array of string
+ template_suffix
+ string
+ title
+ string
+ url
+    "all_products_count": 10,
+ 3
+    "all_tags": [
+ 4
+      "Burning",
+ 5
+      "dried",
+ 6
+      "extracts",
+ 7
+      "fresh",
+ 8
+      "ingredients",
+ 9
+      "plant",
+ 10
+      "supplies"
+ 11
+    ],
+ 12
+    "all_types": [
+ 13
+      "Animals & Pet Supplies",
+ 14
+      "Baking Flavors & Extracts",
+ 15
+      "Cooking & Baking Ingredients",
+ 16
+      "Dried Flowers",
+ 17
+      "Fruits & Vegetables",
+ 18
+      "Seasonings & Spices",
+ 19
+      "Water"
+ 20
+    ],
+ 21
+    "all_vendors": [
+ 22
+      "Clover's Apothecary",
+ 23
+      "Polina's Potent Potions",
+ 24
+      "Ted's Apothecary Supply"
+ 25
+    ],
+ 26
+    "current_type": null,
+ 27
+    "current_vendor": null,
+ 28
+    "default_sort_by": "created-ascending",
+ 29
+    "description": "Brew your own potions at home using our fresh, ethically-sourced ingredients.",
+ 30
+    "featured_image": {},
+ 31
+    "filters": {},
+ 32
+    "handle": "ingredients",
+ 33
+    "id": 266168401985,
+ 34
+    "image": {},
+ 35
+    "metafields": {},
+ 36
+    "next_product": null,
+ 37
+    "previous_product": null,
+ 38
+    "products": {},
+ 39
+    "products_count": 1,
+ 40
+    "published_at": "2022-04-19 09:52:18 -0400",
+ 41
+    "sort_by": "",
+ 42
+    "sort_options": [],
+ 43
+    "tags": [
+ 44
+      "Burning"
+ 45
+    ],
+ 46
+    "template_suffix": "eight-products-per-page",
+ 47
+    "title": "Ingredients",
+ 48
+    "url": {}
+ 49 }
+ Templates using collection
+ object
+ Theme architecture
+ collection template
+ Was this section helpful?
+ YesNo
+ collections
+ object
+ All of the collections on a store.
+ Iterate over the collections
+ You can iterate over collections to build a collection list.
+ Access a specific collection
+ You can use collections to access a collection by its handle.
+ Map
+ Directly accessible in
+ Global
+ collections
+ Was this section helpful?
+ YesNo
+ color
+ object
+ A color from a color setting.
+ Tip
+ Use color filters to modify or extract properties of a color object.
+ Properties
+ alpha
+ number
+ blue
+ number
+ green
+ number
+ hue
+ number
+ lightness
+ number
+ red
+ number
+ rgb
+ string
+ rgba
+ string
+ saturation
+ number
+ Referencing color settings directly
+ When a color setting is referenced directly, the hexidecimal color code is returned.
+ Object
+ Map
+ 1 {
+ 2
+    "alpha": 1,
+ 3
+    "blue": 180,
+ 4
+    "green": 79,
+ 5
+    "hue": 227,
+ 6
+    "lightness": 45,
+ 7
+    "red": 51,
+ 8
+    "rgb": "51 79 180",
+ 9
+    "rgba": "51 79 180 / 1.0",
+ 10
+    "saturation": 56
+ 11 }
+ Was this section helpful?
+ YesNo
+ color_scheme
+ object
+ A color_scheme from a color_scheme setting.
+ Tip
+ To learn about color scheme groups in themes, refer to color_scheme_group setting.
+ Properties
+ id
+ string
+ settings
+ Referencing color_scheme settings directly
+ When a color_scheme setting is referenced directly, the color scheme ID is returned.
+ Object
+ 1 {
+ 2
+    "id": "background-2",
+ 3
+    "settings": {}
+ 4 }
+ Was this section helpful?
+ YesNo
+ color_scheme_group
+ object
+ A color_scheme_group from a color_scheme_group setting.
+ Tip
+ To learn about color schemes in themes, refer to color_scheme setting.
+ Referencing color_scheme_group settings directly
+ Object
+ 1 {}
+ Was this section helpful?
+ YesNo
+ comment
+ object
+ An article comment.
+ Properties
+ author
+ string
+ content
+ string
+ created_at
+ string
+ email
+ string
+ id
+ number
+ status
+ string
+ updated_at
+ 1 {
+ 2
+    "author": "Cornelius",
+ 3
+    "content": "Wow, this is going to save me a fortune in invisibility potion!",
+ 4
+    "created_at": "2022-06-05 19:33:57 -0400",
+ 5
+    "email": "cornelius.potionmaker@gmail.com",
+ 6
+    "id": 129089273921,
+ 7
+    "status": "published",
+ 8
+    "updated_at": "2022-06-05 19:33:57 -0400",
+ 9
+    "url": "/blogs/potion-notions/how-to-tell-if-you-have-run-out-of-invisibility-potion#129089273921"
+ 10 }
+ Was this section helpful?
+ YesNo
+ company
+ object
+ A company that a customer is purchasing for.
+ To learn about B2B in themes, refer to Support B2B customers in your theme.
+ Properties
+ available_locations
+ array of company_location
+ id
+ number
+ metafields
+ array of metafield
+ name
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "available_locations": [],
+ 3
+    "id": 98369,
+ 4
+    "metafields": {},
+ 5
+    "name": "Cornelius' Custom Concoctions"
+ 6 }
+ Was this section helpful?
+ YesNo
+ company_address
+ object
+ The address of a company location.
+ To learn about B2B in themes, refer to Support B2B customers in your theme.
+ Properties
+ address1
+ string
+ address2
+ string
+ attention
+ string
+ city
+ string
+ country
+ country
+ country_code
+ string
+ first_name
+ string
+ id
+ number
+ last_name
+ string
+ province
+ string
+ province_code
+ string
+ street
+ string
+ zip
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "address1": "99 Cauldron Lane",
+ 3
+    "address2": "Unit 4B",
+ 4
+    "attention": "Cornelius' Custom Concoctions",
+ 5
+    "city": "Edinburgh",
+ 6
+    "country": {},
+ 7
+    "country_code": "GB",
+ 8
+    "first_name": "Cornelius",
+ 9
+    "id": 65,
+ 10
+    "last_name": "Potionmaker",
+ 11
+    "province": null,
+ 12
+    "province_code": null,
+ 13
+    "street": "99 Cauldron Lane, Unit 4B",
+ 14
+    "zip": "EH95 1AF"
+ 15 }
+ Was this section helpful?
+ YesNo
+ company_location
+ object
+ A location of the company that a customer is purchasing for.
+ To learn about B2B in themes, refer to Support B2B customers in your theme.
+ Properties
+ company
+ company
+ current?
+ boolean
+ id
+ number
+ metafields
+ array of metafield
+ name
+ string
+ shipping_address
+ company_address
+ tax_registration_id
+ number
+ url_to_set_as_current
+    "company": {},
+ 3
+    "current?": false,
+ 4
+    "id": 98369,
+ 5
+    "metafields": {},
+ 6
+    "name": "99 Cauldron Lane",
+ 7
+    "shipping_address": {},
+ 8
+    "tax_registration_id": null,
+ 9
+    "url_to_set_as_current": "https://polinas-potent-potions.myshopify.com/company_location/update?location_id=98369&return_to=/resource"
+ 10 }
+ Was this section helpful?
+ YesNo
+ content_for_additional_checkout_buttons
+ object
+ Returns checkout buttons for any active payment providers with offsite checkouts.
+ Use additional_checkout_buttons to check whether these payment providers exist, and content_for_additional_checkout_buttons to show the associated checkout buttons. To learn more about how to use these objects, refer to Accelerated checkout.
+ 1 {% if additional_checkout_buttons %}
+ 2
+    {{ content_for_additional_checkout_buttons }}
+ 3 {% endif %}
+ Map
+ Directly accessible in
+ Global
+ content_for_additional_checkout_buttons
+ Was this section helpful?
+ YesNo
+ content_for_header
+ object
+ Dynamically returns all scripts required by Shopify.
+ Include the content_for_header object in your layout files between the <head> and </head> HTML tags.
+ You shouldn't try to modify or parse the content_for_header object because the contents are subject to change, which can change the behaviour of your code.
+ Note
+ The content_for_header object is required in theme.liquid.
+ Map
+ Directly accessible in
+ Global
+ content_for_header
+ Was this section helpful?
+ YesNo
+ content_for_index
+ object
+ Dynamically returns the content of sections to be rendered on the home page.
+ If you use a Liquid index template (templates/index.liquid), then you must include {{ content_for_index }} in the template. This object can't be used in JSON index templates.
+ Map
+ Directly accessible in
+ Global
+ content_for_index
+ Was this section helpful?
+ YesNo
+ content_for_layout
+ object
+ Dynamically returns content based on the current template.
+ Include the content_for_layout object in your layout files between the <body> and </body> HTML tags.
+ Note
+ The content_for_layout object is required in theme.liquid.
+ Map
+ Directly accessible in
+ Global
+ content_for_layout
+ Was this section helpful?
+ YesNo
+ country
+ object
+ A country supported by the store's localization options.
+ To learn how to use the country object to offer localization options in your theme, refer to Support multiple currencies and languages.
+ Properties
+ available_languages
+ array of shop_locale
+ continent
+ string
+ currency
+ currency
+ iso_code
+ string
+ market
+ market
+ name
+ string
+ popular?
+ boolean
+ unit_system
+ string from a set of values
+ Referencing the country object directly
+ When the country object is referenced directly, country.name is returned.
+ Rendering a flag image
+ When the country object is passed to the image_url filter, a CDN URL for that country’s flag is returned. All country’s flags are SVGs, normalized to an aspect ratio of 4:3.
+ Object
+ Map
+ 1 {
+ 2
+    "available_languages": [],
+ 3
+    "continent": "North America",
+ 4
+    "currency": {},
+ 5
+    "iso_code": "CA",
+ 6
+    "market": {},
+ 7
+    "name": "Canada",
+ 8
+    "popular?": false,
+ 9
+    "unit_system": "metric"
+ 10 }
+ Was this section helpful?
+ YesNo
+ country_option_tags
+ object
+ Creates an <option> tag for each country and region that's included in a shipping zone on the Shipping page of the Shopify admin.
+ An attribute called data-provinces is set for each <option>, and contains a JSON-encoded array of the country or region's subregions. If a country doesn't have any subregions, then an empty array is set for its data-provinces attribute.
+ Tip
+ To return all countries and regions included in the store's shipping zones, use all_country_option_tags.
+ You can wrap the country_option_tags object in <select> tags to build a country option selector.
+ Map
+ Directly accessible in
+ Global
+ country_option_tags
+ Was this section helpful?
+ YesNo
+ currency
+ object
+ Information about a currency, like the ISO code and symbol.
+ Properties
+ iso_code
+ string
+ name
+ string
+ symbol
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "iso_code": "CAD",
+ 3
+    "name": "Canadian Dollar",
+ 4
+    "symbol": "$"
+ 5 }
+ Was this section helpful?
+ YesNo
+ current_page
+ object
+ The current page number.
+ The current_page object has a value of 1 for non-paginated resources.
+ Map
+ Directly accessible in
+ Global
+ current_page
+ Was this section helpful?
+ YesNo
+ current_tags
+ object
+ The currently applied tags.
+ You can add tags to articles and products. Article tags can be used to filter a blog page to show only articles with specific tags. Similarly, product tags can be used to filter a collection page to show only products with specific tags.
+ Map
+ Directly accessible in
+ blog
+ collection
+ current_tags
+ Templates using current_tags
+ object
+ Theme architecture
+ blog template
+ Theme architecture
+ collection template
+ Was this section helpful?
+ YesNo
+ customer
+ object
+ A customer of the store.
+ The customer object is directly accessible globally when a customer is logged in to their account. It's also defined in the following contexts:
+ The customers/account template
+ The customers/addresses template
+ The customers/order template
+ When accessing checkout.customer
+ When accessing gift_card.customer
+ When accessing order.customer
+ Outside of the above contexts, if the customer isn't logged into their account, the customer object returns nil.
+ Properties
+ accepts_marketing
+ boolean
+ addresses
+ array of address
+ addresses_count
+ number
+ b2b?
+ boolean
+ company_available_locations
+ array of company_location
+ current_company
+ company
+ current_location
+ company_location
+ default_address
+ address
+ email
+ string
+ first_name
+ string
+ has_account
+ boolean
+ id
+ number
+ last_name
+ string
+ last_order
+ order
+ name
+ string
+ orders
+ array of order
+ orders_count
+ number
+ phone
+ string
+ tags
+ array of string
+ tax_exempt
+ boolean
+ total_spent
+ number
+ Check whether the customer object is defined
+ When using the customer object outside of customer-specific templates or objects that specifically return a customer, you should check whether the customer object is defined.
+ Object
+ Map
+ 1 {
+ 2
+    "accepts_marketing": true,
+ 3
+    "addresses": [],
+ 4
+    "addresses_count": 4,
+ 5
+    "b2b?": false,
+ 6
+    "company_available_locations": [],
+ 7
+    "current_company": {},
+ 8
+    "current_location": null,
+ 9
+    "default_address": {},
+ 10
+    "email": "cornelius.potionmaker@gmail.com",
+ 11
+    "first_name": "Cornelius",
+ 12
+    "has_account": true,
+ 13
+    "id": 5625411010625,
+ 14
+    "last_name": "Potionmaker",
+ 15
+    "last_order": {},
+ 16
+    "name": "Cornelius Potionmaker",
+ 17
+    "orders": [],
+ 18
+    "orders_count": 1,
+ 19
+    "phone": "+441314960905",
+ 20
+    "tags": [
+ 21
+      "newsletter"
+ 22
+    ],
+ 23
+    "tax_exempt": false,
+ 24
+    "total_spent": "56.00"
+ 25 }
+ Templates using customer
+ object
+ Theme architecture
+ customers/account template
+ Theme architecture
+ customers/addresses template
+ Theme architecture
+ customers/order template
+ Was this section helpful?
+ YesNo
+ discount
+ deprecated
+ A discount applied to a cart, line item, or order.
+ Deprecated
+ Deprecated because not all discount types and details are captured.
+ The discount object has been replaced by the discount_allocation and discount_application objects.
+ Properties
+ amount
+ number
+ code
+ string
+ savings
+ number
+ title
+ string
+ total_amount
+ number
+ total_savings
+ number
+ type
+ string from a set of values
+ Object
+ Map
+ 1 {
+ 2
+    "amount": "40.00",
+ 3
+    "code": "DIY",
+ 4
+    "savings": "-40.00",
+ 5
+    "title": "DIY",
+ 6
+    "total_amount": "40.00",
+ 7
+    "total_savings": "-40.00",
+ 8
+    "type": "PercentageDiscount"
+ 9 }
+ Was this section helpful?
+ YesNo
+ discount_allocation
+ object
+ Information about how a discount affects an item.
+ To learn about how to display discounts in your theme, refer to Discounts.
+ Properties
+ amount
+ number
+ discount_application
+ discount_application
+ Object
+ Map
+ 1 {
+ 2
+    "amount": "40.00",
+ 3
+    "discount_application": "DiscountApplicationDrop"
+ 4 }
+ Was this section helpful?
+ YesNo
+ discount_application
+ object
+ Information about the intent of a discount.
+ To learn about how to display discounts in your theme, refer to Discounts.
+ Properties
+ target_selection
+ string from a set of values
+ target_type
+ string from a set of values
+ title
+ string
+ total_allocated_amount
+ number
+ type
+ string from a set of values
+ value
+ number
+ value_type
+    "target_selection": "explicit",
+ 3
+    "target_type": "line_item",
+ 4
+    "title": "Bloodroot discount!",
+ 5
+    "total_allocated_amount": "2.50",
+ 6
+    "type": "script",
+ 7
+    "value": "2.5",
+ 8
+    "value_type": "fixed_amount"
+ 9 }
+ Was this section helpful?
+ YesNo
+ external_video
+ object
+ Information about an external video from YouTube or Vimeo.
+ Tip
+ Use the external_video_tag filter to output the video in an HTML <iframe> tag. Use the external_video_url filter to specify parameters for the external video player.
+ Properties
+ alt
+ string
+ aspect_ratio
+ number
+ external_id
+ string
+ host
+ string from a set of values
+ number
+ preview_image
+ image
+ Object
+ Map
+ 1 {
+ 2
+    "alt": "Potion beats",
+ 3
+    "aspect_ratio": "1.77",
+ 4
+    "external_id": "vj01PAffOac",
+ 5
+    "host": "youtube",
+ 6
+    "id": 22015756402753,
+ 7
+    "media_type": "external_video",
+ 8
+    "position": 1,
+ 9
+    "preview_image": {}
+ 10 }
+ Was this section helpful?
+ YesNo
+ filter
+ object
+ A storefront filter.
+ To learn about supporting filters in your theme, refer to Support storefront filtering.
+ Properties
+ active_values
+ array of filter_value
+ false_value
+ filter_value
+ inactive_values
+ array of filter_value
+ label
+ string
+ max_value
+ filter_value
+ min_value
+ filter_value
+ operator
+ string from a set of values
+ param_name
+ string
+ presentation
+ string from a set of values
+ range_max
+ number
+ true_value
+ filter_value
+ type
+ string from a set of values
+ url_to_remove
+ string
+ values
+ array of filter_value
+ Object
+ Map
+ 1 {
+ 2
+    "active_values": [],
+ 3
+    "inactive_values": [],
+ 4
+    "label": "Strength",
+ 5
+    "operator": "OR",
+ 6
+    "param_name": "filter.v.option.strength",
+ 7
+    "presentation": "text",
+ 8
+    "type": "list",
+ 9
+    "url_to_remove": "/resource?q=potion",
+ 10
+    "values": []
+ 11 }
+ Was this section helpful?
+ YesNo
+ filter_value
+ object
+ A specific value of a filter.
+ To learn about supporting filters in your theme, refer to Support storefront filtering.
+ Properties
+ active
+ boolean
+ count
+ number
+ label
+ string
+ param_name
+ string
+ swatch
+ swatch
+ url_to_add
+ string
+ url_to_remove
+ string
+ value
+ string
+ Deprecated Properties
+ display
+ filter_value_display
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "active": false,
+ 3
+    "count": 1,
+ 4
+    "display": null,
+ 5
+    "label": "High",
+ 6
+    "param_name": "filter.v.option.strength",
+ 7
+    "swatch": null,
+ 8
+    "url_to_add": "/resource?filter.v.option.strength=High&q=potion",
+ 9
+    "url_to_remove": "/resource?q=potion",
+ 10
+    "value": "High"
+ 11 }
+ Was this section helpful?
+ YesNo
+ filter_value_display
+ deprecated
+ The visual representation of a filter value.
+ Deprecated
+ Deprecated in favor of the swatch drop.
+ Properties
+ type
+ string from a set of values
+ value
+ Map
+ Returned by
+ filter_value.display
+ filter_value_display
+ Was this section helpful?
+ YesNo
+ focal_point
+ object
+ The focal point for an image.
+ The focal point will remain visible when the image is cropped by the theme. Learn more about supporting focal points in your theme.
+ Tip
+ Use the image_tag filter to automatically apply focal point settings to an image on the storefront. This applies the focal point using the object-position CSS property.
+ Properties
+ x
+ number
+ y
+ number
+ Referencing the focal_point object directly
+ When a focal_point object is referenced directly, the coordinates are returned as a string, in the format X% Y%.
+ Map
+ Returned by
+ image_presentation.focal_point
+ focal_point
+ Was this section helpful?
+ YesNo
+ font
+ object
+ A font from a font_picker setting.
+ You can use the font object in Liquid assets or inside a style tag to apply font setting values to theme CSS.
+ Tip
+ Use font filters to modify properties of the font object, load the font, or obtain font variants.
+ Properties
+ baseline_ratio
+ number
+ fallback_families
+ string
+ family
+ string
+ style
+ string
+ system?
+ boolean
+ variants
+ array of font
+ weight
+ number
+ Object
+ 1 {
+ 2
+    "baseline_ratio": 0.133,
+ 3
+    "fallback_families": "sans-serif",
+ 4
+    "family": "Assistant",
+ 5
+    "style": "normal",
+ 6
+    "system?": false,
+ 7
+    "variants": {},
+ 8
+    "weight": "400"
+ 9 }
+ Was this section helpful?
+ YesNo
+ forloop
+ object
+ Information about a parent for loop.
+ Properties
+ first
+ last
+ boolean
+ length
+ number
+ parentloop
+ forloop
+ rindex
+ number
+ rindex0
+ number
+ Use the forloop object
+ Object
+ Map
+ 1 {
+ 2
+    "first": true,
+ 3
+    "index": 1,
+ 4
+    "index0": 0,
+ 5
+    "last": false,
+ 6
+    "length": 4,
+ 7
+    "rindex": 3
+ 8 }
+ Was this section helpful?
+ YesNo
+ form
+ object
+ Information about a form created by a form tag.
+ Properties
+ address1
+ string
+ address2
+ string
+ author
+ string
+ body
+ string
+ city
+ string
+ company
+ string
+ country
+ string
+ email
+ string
+ errors
+ form_errors
+ first_name
+ string
+ id
+ string
+ last_name
+ string
+ message
+ string
+ name
+ string
+ password_needed
+ boolean
+ phone
+ string
+ posted_successfully?
+ boolean
+ province
+ string
+ set_as_default_checkbox
+ string
+ zip
+ string
+ Object
+ 1 {
+ 2
+    "address1": "12 Phoenix Feather Alley",
+ 3
+    "address2": "1",
+ 4
+    "author": null,
+ 5
+    "body": null,
+ 6
+    "city": "Calgary",
+ 7
+    "company": null,
+ 8
+    "country": "Canada",
+ 9
+    "email": null,
+ 10
+    "errors": null,
+ 11
+    "first_name": "Cornelius",
+ 12
+    "id": "new",
+ 13
+    "last_name": "Potionmaker",
+ 14
+    "password_needed?": false,
+ 15
+    "phone": "44 131 496 0905",
+ 16
+    "posted_successfully?": true,
+ 17
+    "province": "Alberta",
+ 18
+    "set_as_default_checkbox": "<input type='checkbox' id='address_default_address_new' name='address[default]' value='1'>",
+ 19
+    "zip": "T1X 0L4"
+ 20 }
+ Was this section helpful?
+ YesNo
+ form_errors
+ object
+ The error category strings for errors from a form created by a form tag.
+ The following table outlines the strings that can be returned and the reason that they would be:
+ Form property name Return reason
+ author There were issues with required name fields.
+ body There were issues with required text content fields.
+ email There were issues with required email fields.
+ form There were general issues with the form.
+ password There were issues with required password fields.
+ Properties
+ messages
+ array of string
+ translated_fields
+ array of string
+ Output form errors
+ You can output the name of the field related to the error, and the error message, by using the error as a key to access the translated_fields and messages properties.
+ 1 <ul>
+ 2
+    {% for error in form.errors %}
+ 3
+      <li>
+ 4
+        {% if error == 'form' %}
+ 5
+          {{ form.errors.messages[error] }}
+ 6
+        {% else %}
+ 7
+          {{ form.errors.translated_fields[error] }} - {{ form.errors.messages[error] }}
+ 8
+        {% endif %}
+ 9
+      </li>
+ 10
+    {% endfor %}
+ 11 </ul>
+ Object
+ Map
+ 1 {
+ 2
+    "messages": {},
+ 3
+    "translated_fields": {}
+ 4 }
+ Was this section helpful?
+ YesNo
+ fulfillment
+ object
+ An order fulfillment, which includes information like the line items being fulfilled and shipment tracking.
+ Properties
+ created_at
+ string
+ fulfillment_line_items
+ array of line_item
+ item_count
+ number
+ tracking_company
+ string
+ tracking_number
+ string
+ tracking_numbers
+ array of string
+ tracking_url
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "created_at": "2022-06-15 17:08:30 -0400",
+ 3
+    "fulfillment_line_items": [
+ 4
+      {
+ 5
+        "quantity": 2,
+ 6
+        "line_item": "LineItemDrop"
+ 7
+      },
+ 8
+      {
+ 9
+        "quantity": 1,
+ 10
+        "line_item": "LineItemDrop"
+ 11
+      }
+ 12
+    ],
+ 13
+    "item_count": 3,
+ 14
+    "tracking_company": "Canada Post",
+ 15
+    "tracking_number": "01189998819991197253",
+ 16
+    "tracking_numbers": [
+ 17
+      "01189998819991197253"
+ 18
+    ],
+ 19
+    "tracking_url": "https://www.canadapost.ca/track-reperage/en#/search?searchFor=01189998819991197253"
+ 20 }
+ Was this section helpful?
+ YesNo
+ generic_file
+ object
+ A file from a file_reference type metafield that is neither an image or video.
+ Tip
+ To learn about metafield types, refer to Metafield types.
+ Properties
+ alt
+ string
+ id
+ number
+ media_type
+ string
+ position
+ number
+ preview_image
+ image
+ url
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "alt": null,
+ 3
+    "id": 21918386454593,
+ 4
+    "media_type": "generic_file",
+ 5
+    "position": null,
+ 6
+    "preview_image": {},
+ 7
+    "url": "//polinas-potent-potions.myshopify.com/cdn/shop/files/disclaimer.pdf?v=9043651738044769859"
+ 8 }
+ Was this section helpful?
+ YesNo
+ gift_card
+ object
+ A gift card that's been issued to a customer or a recipient.
+ Properties
+ balance
+ number
+ code
+ string
+ currency
+ string
+ customer
+ customer
+ enabled
+ boolean
+ expired
+ boolean
+ expires_on
+ string
+ initial_value
+ number
+ last_four_characters
+ string
+ message
+ string
+ pass_url
+ string
+ product
+ product
+ properties
+ qr_identifier
+ string
+ recipient
+ recipient
+ send_on
+ string
+ template_suffix
+ string
+ url
+    "balance": 5000,
+ 3
+    "code": "WCGX 7X97 K9HJ DFR8",
+ 4
+    "currency": "CAD",
+ 5
+    "customer": {},
+ 6
+    "enabled": true,
+ 7
+    "expired": false,
+ 8
+    "expires_on": null,
+ 9
+    "initial_value": 5000,
+ 10
+    "last_four_characters": "DFR8",
+ 11
+    "message": null,
+ 12
+    "send_on": null,
+ 13
+    "pass_url": "https://polinas-potent-potions.myshopify.com/v1/passes/pass.com.shopify.giftcardnext/94af7fbe55d010130df8d8bc4a338d36/",
+ 14
+    "product": {},
+ 15
+    "properties": {},
+ 16
+    "qr_identifier": "shopify-giftcard-v1-3TKWJKJBM3X7PBRK",
+ 17
+    "recipient": null,
+ 18
+    "template_suffix": null,
+ 19
+    "url": "https://checkout.shopify.com/gift_cards/56174706753/0011c591fc720d0a51b80cdb694f969e"
+ 20 }
+ Templates using gift_card
+ object
+ Theme architecture
+ gift_card.liquid template
+ Was this section helpful?
+ YesNo
+ group
+ object
+ A group of rules for the robots.txt file.
+ Tip
+ You can customize the robots.txt file with the robots.txt.liquid template.
+ Properties
+ rules
+ array of rule
+ sitemap
+ sitemap
+ user_agent
+ user_agent
+ Object
+ Map
+ 1 {
+ 2
+    "rules": [],
+ 3
+    "sitemap": {},
+ 4
+    "user_agent": {}
+ 5 }
+ Was this section helpful?
+ YesNo
+ handle
+ object
+ The handle of the resource associated with the current template.
+ The handle object will return a value only when the following templates are being viewed:
+ article
+ blog
+ collection
+ page
+ product
+ If none of the above templates are being viewed, then nil is returned.
+ Map
+ Directly accessible in
+ Global
+ handle
+ Was this section helpful?
+ YesNo
+ image
+ object
+ An image, such as a product or collection image.
+ To learn about the image formats that Shopify supports, visit the Shopify Help Center.
+ Tip
+ Use the image_url and image_tag filters to display images on the storefront.
+ Properties
+ alt
+ string
+ aspect_ratio
+ number
+ attached_to_variant?
+ boolean
+ height
+ number
+ id
+ number
+ media_type
+ string
+ position
+ number
+ presentation
+ image_presentation
+ preview_image
+ image
+ product_id
+ number
+ src
+ string
+ variants
+ array of variant
+ width
+ number
+ Referencing the image object directly
+ When an image object is referenced directly, the image's relative URL path is returned.
+ Object
+ Map
+ 1 {
+ 2
+    "alt": "Charcoal",
+ 3
+    "aspect_ratio": 1.50016818028927,
+ 4
+    "attached_to_variant?": false,
+ 5
+    "height": 2973,
+ 6
+    "id": 29355706875969,
+ 7
+    "position": 1,
+ 8
+    "product_id": 6790277595201,
+ 9
+    "src": {},
+ 10
+    "variants": [],
+ 11
+    "width": 4460
+ 12 }
+ Was this section helpful?
+ YesNo
+ image_presentation
+ object
+ The presentation settings for an image.
+ Properties
+ focal_point
+ focal_point
+ Map
+ Returned by
+ image.presentation
+ image_presentation
+ Was this section helpful?
+ YesNo
+ images
+ object
+ All of the images that have been uploaded to a store.
+ You can access images from the images array by their filename.
+ Map
+ Directly accessible in
+ Global
+ images
+ Was this section helpful?
+ YesNo
+ line_item
+ object
+ A line in a cart, checkout, or order. Each line item represents a product variant.
+ Properties
+ discount_allocations
+ array of discount_allocation
+ error_message
+ string
+ final_line_price
+ number
+ final_price
+ number
+ fulfillment
+ fulfillment
+ fulfillment_service
+ string
+ gift_card
+ boolean
+ grams
+ number
+ id
+ number
+ image
+ image
+ item_components
+ array of line_item
+ key
+ string
+ line_level_discount_allocations
+ array of discount_allocation
+ line_level_total_discount
+ number
+ message
+ string
+ options_with_values
+ original_line_price
+ number
+ original_price
+ number
+ product
+ product
+ product_id
+ number
+ properties
+ quantity
+ number
+ requires_shipping
+ boolean
+ selling_plan_allocation
+ selling_plan_allocation
+ sku
+ string
+ successfully_fulfilled_quantity
+ number
+ tax_lines
+ array of tax_line
+ taxable
+ boolean
+ title
+ string
+ unit_price
+ number
+ unit_price_measurement
+ unit_price_measurement
+ url
+ string
+ url_to_remove
+ string
+ variant
+ variant
+ variant_id
+ number
+ vendor
+ string
+ Deprecated Properties
+ discounts
+ array of discount
+ deprecated
+ line_price
+ number
+ deprecated
+ price
+ number
+ deprecated
+ total_discount
+ number
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "discount_allocations": [],
+ 3
+    "discounts": [],
+ 4
+    "error_message": "",
+ 5
+    "final_line_price": "74.97",
+ 6
+    "final_price": "24.99",
+ 7
+    "fulfillment": {},
+ 8
+    "fulfillment_service": "manual",
+ 9
+    "gift_card": false,
+ 10
+    "grams": 0,
+ 11
+    "id": 10974183882817,
+ 12
+    "image": {},
+ 13
+    "item_components": null,
+ 14
+    "key": 10974183882817,
+ 15
+    "line_level_discount_allocations": [],
+ 16
+    "line_level_total_discount": "0.00",
+ 17
+    "line_price": "74.97",
+ 18
+    "message": "",
+ 19
+    "options_with_values": [
+ 20
+      {
+ 21
+        "name": "Title",
+ 22
+        "value": "Default Title"
+ 23
+      }
+ 24
+    ],
+ 25
+    "original_line_price": "74.97",
+ 26
+    "original_price": "24.99",
+ 27
+    "price": "24.99",
+ 28
+    "product": {},
+ 29
+    "product_id": 6792596455489,
+ 30
+    "properties": {},
+ 31
+    "quantity": 3,
+ 32
+    "requires_shipping": true,
+ 33
+    "selling_plan_allocation": null,
+ 34
+    "sku": "",
+ 35
+    "successfully_fulfilled_quantity": 2,
+ 36
+    "tax_lines": [],
+ 37
+    "taxable": true,
+ 38
+    "title": "Bloodroot (whole)",
+ 39
+    "total_discount": "0.00",
+ 40
+    "unit_price": "49.98",
+ 41
+    "unit_price_measurement": {
+ 42
+      "measured_type": "weight",
+ 43
+      "quantity_value": "500.0",
+ 44
+      "quantity_unit": "g",
+ 45
+      "reference_value": 1,
+ 46
+      "reference_unit": "kg"
+ 47
+    },
+ 48
+    "url": {},
+ 49
+    "url_to_remove": null,
+ 50
+    "variant": {},
+ 51
+    "variant_id": 39888235757633,
+ 52
+    "vendor": "Clover's Apothecary"
+ 53 }
+ Was this section helpful?
+ YesNo
+ link
+ object
+ A link in a menu.
+ To learn about how to implement navigation in a theme, refer to Add navigation to your theme.
+ Properties
+ active
+ boolean
+ child_active
+ boolean
+ child_current
+ boolean
+ current
+ boolean
+ handle
+ string
+ levels
+ number
+ links
+ array of link
+ object
+ title
+ string
+ type
+ string from a set of values
+ url
+    "active": false,
+ 3
+    "child_active": false,
+ 4
+    "child_current": false,
+ 5
+    "current": false,
+ 6
+    "handle": {},
+ 7
+    "levels": 0,
+ 8
+    "links": [],
+ 9
+    "object": {},
+ 10
+    "title": {},
+ 11
+    "type": "page_link",
+ 12
+    "url": "/pages/contact"
+ 13 }
+ Was this section helpful?
+ YesNo
+ linklist
+ object
+ A menu in a store.
+ To learn about how to implement navigation in a theme, refer to Add navigation to your theme.
+ Properties
+ handle
+ string
+ levels
+ number
+ links
+ array of link
+ title
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "handle": "main-menu",
+ 3
+    "levels": 2,
+ 4
+    "links": [],
+ 5
+    "title": "Main menu"
+ 6 }
+ Was this section helpful?
+ YesNo
+ linklists
+ object
+ All of the menus in a store.
+ You can access a specific menu through the linklists object using the menu's handle.
+ Map
+ Directly accessible in
+ Global
+ linklists
+ Was this section helpful?
+ YesNo
+ localization
+ object
+ Information about the countries and languages that are available on a store.
+ The localization object can be used in a localization form.
+ To learn about how to offer localization options in your theme, refer to Support multiple currencies and languages.
+ Properties
+ available_countries
+ array of country
+ available_languages
+ array of shop_locale
+ country
+ country
+ language
+ shop_locale
+ market
+ market
+ Object
+ Map
+ 1 {
+ 2
+    "available_countries": [],
+ 3
+    "available_languages": [],
+ 4
+    "country": {},
+ 5
+    "language": {},
+ 6
+    "market": {}
+ 7 }
+ Was this section helpful?
+ YesNo
+ location
+ object
+ A store location.
+ Tip
+ The location object is defined only if one or more locations has local pickup enabled.
+ Properties
+ address
+ address
+ id
+ number
+ latitude
+ number
+ longitude
+ number
+ metafields
+ name
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "address": {},
+ 3
+    "id": 62002462785,
+ 4
+    "latitude": 43.6556377,
+ 5
+    "longitude": -79.38681079999999,
+ 6
+    "metafields": {},
+ 7
+    "name": "123 Edward Street"
+ 8 }
+ Was this section helpful?
+ YesNo
+ market
+ object
+ A group of one or more regions of the world that a merchant is targeting for sales.
+ To learn more about markets, refer to Shopify Markets. To make sure that visitors interact with the optimal version of a store using Shopify Markets, refer to Detect and set a visitor's optimal localization.
+ Properties
+ handle
+ string
+ id
+ string
+ metafields
+ array of metafield
+ Object
+ Map
+ 1 {
+ 2
+    "handle": "ca",
+ 3
+    "id": 6157828161,
+ 4
+    "metafields": {}
+ 5 }
+ Was this section helpful?
+ YesNo
+ measurement
+ object
+ A measurement from one of the following metafield types:
+ dimension
+ volume
+ weight
+ Tip
+ To learn about metafield types, refer to Metafield types.
+ Properties
+ type
+ string from a set of values
+ unit
+ string
+ value
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "type": "volume",
+ 3
+    "unit": "mL",
+ 4
+    "value": "500.0"
+ 5 }
+ Was this section helpful?
+ YesNo
+ media
+ object
+ An abstract media object that can represent the following object types:
+ image
+ model
+ video
+ external_video
+ The media object can be returned by the product.media array or a file_reference metafield.
+ You can use media filters to generate URLs and media displays. To learn about how to use media in your theme, refer to Support product media.
+ Note
+ Each media type has unique properties in addition to the general media properties. To learn about these additional properties, refer to the reference for each type.
+ Properties
+ alt
+ string
+ id
+ number
+ media_type
+ string from a set of values
+ position
+ number
+ preview_image
+ image
+ Object
+ Map
+ 1 {
+ 2
+    "alt": "Dandelion milk",
+ 3
+    "id": 21772527435841,
+ 4
+    "media_type": "image",
+ 5
+    "position": 1,
+ 6
+    "preview_image": {}
+ 7 }
+ Was this section helpful?
+ YesNo
+ metafield
+ object
+ A metafield attached to a parent object.
+ To learn about how to access a metafield on a specific object, refer to Access metafields.
+ Metafields support multiple data types, which determine the kind of information that's stored in the metafield. You can also output the metafield content in a type-specific format using metafield filters.
+ Note
+ You can't create metafields in Liquid. Metafields can be created in only the following ways:
+ In the Shopify admin
+ Through an app
+ Note
+ Metafields of type integer, json_string, and string are older implementations that don't have the properties noted on this page, and aren't compatible with metafield filters. To learn more, refer to Deprecated metafields.
+ Properties
+ list?
+ boolean
+ type
+ string from a set of values
+ value
+ Access metafields
+ The access path for metafields consists of two layers:
+ namespace - A grouping of metafields to prevent conflicts.
+ key - The metafield name.
+ Given this, you can access the metafield object with the following syntax:
+ 1 {{ resource.metafields.namespace.key }}
+ Accessing metafields of type json
+ The value property of metafields of type json returns a JSON object. You can access the properties of this object directly in Liquid, either by name or 0-based index. You can also iterate through the properties.
+ Accessing metafields of type list
+ The value property of metafields of type list returns an array. You can iterate through the array to access the values.
+ 
+ 
+ If the list is of type single_line_text_field, then you can access the items in the array directly in Liquid using a 0-based index.
+ Determining the length of a list metafield
+ The way that you determine the length of a list metafield depends on its type:
+ Reference types: Use the count property to determine the list length.
+ Non-reference types: These lists are rendered as arrays. Use the size filter to determine the number of items in the array.
+ Deprecated metafields
+ Deprecated metafields are older metafield types with limited functionality. The following metafield types are deprecated:
+ integer
+ json_string
+ string
+ These metafield types don't have the same metafield object properties mentioned in the previous sections. Instead, they return the metafield value directly.
+ The following table outlines the value type for each deprecated metafield type:
+ Metafield type Value type
+ integer An integer
+ json_string A JSON object
+ string A string
+ Object
+ Map
+ 1 {
+ 2
+    "list?": false,
+ 3
+    "type": "single_line_text_field",
+ 4
+    "value": "Take with a meal."
+ 5 }
+ Was this section helpful?
+ YesNo
+ metaobject
+ object
+ A metaobject entry, which includes the values for a set of fields. The set is defined by the parent metaobject_definition.
+ Properties
+ system
+ metaobject_system
+ Access metaobjects individually
+ The access path for a metaobject consists of two layers:
+ type - The type of the parent metaobject definition.
+ handle - The unique handle of the metaobject.
+ Given this, you can access a metaobject with the following syntax:
+ 1 {{ shop.metaobjects.type.handle }}
+ You can also use square bracket notation:
+ 1 {{ shop.metaobjects['type']['handle'] }}
+ A metaobjects's field values can be accessed using the key of the desired field:
+ 1 {{ shop.metaobjects.testimonials.homepage.title }}
+ 2 {{ shop.metaobjects['highlights']['washable'].image.value }}
+ Note
+ When the publishable capability is enabled, a metaobject can only be accessed if its status is active. If its status is draft, then the return value is nil.
+ Usage in metaobject templates
+ Within a metaobject template, the metaobject Liquid object represents the metaobject drop being rendered by the template. You can access it directly as {{ metaobject }}.
+ Here's a basic example of accessing a field within the associated metaobject template:
+ 1 {{ metaobject.title.value }}
+ In this example, replace title with the key of the field you want to access. This will output the value of that field for the current metaobject.
+ Map
+ Directly accessible in
+ metaobject
+ metaobject
+ Returned by
+ shop.metaobjects
+ Templates using metaobject
+ object
+ Theme architecture
+ metaobject template
+ Was this section helpful?
+ YesNo
+ metaobject_definition
+ object
+ A metaobject_definition defines the structure of a metaobject type for the store, which consists of a merchant-defined set of field definitions.
+ One or more corresponding metaobject objects contain values for the fields specified in the metaobject definition.
+ Properties
+ values
+ array of metaobject
+ values_count
+ number
+ Loop over entries of a metaobject definition
+ If a metaobject definition has multiple metaobject entries, then you can loop over them using the values property. You can loop over a maximum of 50 entries in a metaobject definition. For example, you can display the field author for each metaobject using the following forloop:
+ 1 {% for testimonial in shop.metaobjects.testimonials.values %}
+ 2
+    {{ testimonial.author.value }}
+ 3 {% endfor %}
+ Note
+ When the publishable capability is enabled, loops return only metaobjects with a status of active. Metaobjects with a status of draft are skipped.
+ Was this section helpful?
+ YesNo
+ metaobject_system
+ object
+ Basic information about a metaobject. These properties are grouped under the system object to avoid collisions between system property names and user-defined metaobject fields.
+ Properties
+ handle
+ string
+ id
+ number
+ type
+ string
+ url
+ string
+ Using the metaobject_system object
+ You can access the metaobject_system object and its properties through the metaobject's system property. You can use the following syntax:
+ 1 {{ shop.metaobjects.testimonials["home_page"].system.id }}
+ You can also access metaobject_system properties when iterating over a list of metaobjects:
+ 1 {% for metaobject in product.metafields.custom.mixed_metaobject_list.value %}
+ 2
+    {% if metaobject.system.type == "testimonial" %}
+ 3
+      {% render 'testimonial' with metaobject as testimonial %}
+ 4
+    {% else %}
+ 5
+      {{ metaobject.system.handle }}
+ 6
+    {% endif %}
+ 7 {% endfor %}
+ Map
+ Returned by
+ metaobject.system
+ metaobject_system
+ Was this section helpful?
+ YesNo
+ model
+ object
+ A 3D model uploaded as product media.
+ Tip
+ Use the model_viewer_tag filter to output a Google model viewer component for the model.
+ Properties
+ alt
+ string
+ number
+ preview_image
+ image
+ sources
+ array of model_source
+ Object
+ Map
+ 1 {
+ 2
+    "alt": "Potion bottle",
+ 3
+    "id": 22064203137089,
+ 4
+    "media_type": "model",
+ 5
+    "position": 1,
+ 6
+    "preview_image": {},
+ 7
+    "sources": []
+ 8 }
+ Was this section helpful?
+ YesNo
+ model_source
+ object
+ A model source file.
+ Properties
+ format
+ string
+ mime_type
+ 1 {
+ 2
+    "format": "glb",
+ 3
+    "mime_type": "model/gltf-binary",
+ 4
+    "url": "https://cdn.shopify.com/3d/models/o/eb9388299ce0557c/WaterBottle.glb"
+ 5 }
+ Was this section helpful?
+ YesNo
+ money
+ object
+ A money value, in the the customer's local (presentment) currency.
+ Tip
+ Use money filters to output a formatted price.
+ Properties
+ currency
+ currency
+ Referencing money objects directly
+ When a money object is referenced directly, the money value in cents is returned.
+ Object
+ Map
+ 1 {
+ 2
+    "currency": {}
+ 3 }
+ Was this section helpful?
+ YesNo
+ order
+ object
+ An order.
+ Properties
+ attributes
+ billing_address
+ address
+ cancel_reason
+ string from a set of values
+ cancel_reason_label
+ string
+ cancelled
+ boolean
+ cancelled_at
+ string
+ cart_level_discount_applications
+ array of discount_application
+ confirmation_number
+ string
+ created_at
+ string
+ customer
+ customer
+ customer_order_url
+ string
+ customer_url
+ string
+ discount_applications
+ array of discount_application
+ email
+ string
+ financial_status
+ string from a set of values
+ financial_status_label
+ fulfillment_status
+ string
+ fulfillment_status_label
+ string from a set of values
+ id
+ string
+ item_count
+ number
+ line_items
+ array of line_item
+ line_items_subtotal_price
+ number
+ metafields
+ name
+ string
+ note
+ string
+ order_number
+ number
+ order_status_url
+ string
+ phone
+ string
+ pickup_in_store?
+ boolean
+ shipping_address
+ address
+ shipping_methods
+ array of shipping_method
+ shipping_price
+ number
+ subtotal_line_items
+ array of line_item
+ subtotal_price
+ number
+ tags
+ array of string
+ tax_lines
+ array of tax_line
+ tax_price
+ number
+ total_discounts
+ number
+ total_duties
+ number
+ total_net_amount
+ number
+ total_price
+ number
+ total_refunded_amount
+ number
+ transactions
+ array of transaction
+ Deprecated Properties
+ discounts
+ discount
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "attributes": {},
+ 3
+    "billing_address": {},
+ 4
+    "cancel_reason": null,
+ 5
+    "cancel_reason_label": null,
+ 6
+    "cancelled": false,
+ 7
+    "cancelled_at": null,
+ 8
+    "cart_level_discount_applications": [],
+ 9
+    "confirmation_number": "0YMJHPM8U",
+ 10
+    "created_at": "2022-04-29 11:15:46 -0400",
+ 11
+    "customer": {},
+ 12
+    "customer_order_url": "https://shopify.com/56174706753/account/orders/4295688749121?locale=en",
+ 13
+    "customer_url": "https://polinas-potent-potions.myshopify.com/account/orders/8be02e56c658bcd1f034d28c496fddd9",
+ 14
+    "discount_applications": [],
+ 15
+    "discounts": null,
+ 16
+    "email": "cornelius.potionmaker@gmail.com",
+ 17
+    "financial_status": "paid",
+ 18
+    "financial_status_label": "Paid",
+ 19
+    "fulfillment_status": "partial",
+ 20
+    "fulfillment_status_label": "Partial",
+ 21
+    "id": 4295688749121,
+ 22
+    "item_count": 6,
+ 23
+    "line_items": [],
+ 24
+    "line_items_subtotal_price": "492.93",
+ 25
+    "metafields": {},
+ 26
+    "name": "#1001",
+ 27
+    "note": null,
+ 28
+    "order_number": 1001,
+ 29
+    "order_status_url": "https://polinas-potent-potions.myshopify.com/56174706753/orders/8be02e56c658bcd1f034d28c496fddd9/authenticate?key=4f9baf2b8ebd0f75ec73eb9bac6e4519",
+ 30
+    "phone": null,
+ 31
+    "pickup_in_store?": false,
+ 32
+    "shipping_address": {},
+ 33
+    "shipping_methods": [],
+ 34
+    "shipping_price": "0.00",
+ 35
+    "subtotal_line_items": [],
+ 36
+    "subtotal_price": "492.93",
+ 37
+    "tags": [],
+ 38
+    "tax_lines": [],
+ 39
+    "tax_price": "0.00",
+ 40
+    "total_discounts": "0.00",
+ 41
+    "total_duties": null,
+ 42
+    "total_net_amount": "492.93",
+ 43
+    "total_price": "492.93",
+ 44
+    "total_refunded_amount": "0.00",
+ 45
+    "transactions": []
+ 46 }
+ Templates using order
+ object
+ Theme architecture
+ customers/order template
+ Was this section helpful?
+ YesNo
+ page
+ object
+ A page on a store.
+ Properties
+ author
+ string
+ content
+ string
+ handle
+ string
+ id
+ number
+ metafields
+ published_at
+ string
+ template_suffix
+ string
+ title
+ 1 {
+ 2
+    "author": null,
+ 3
+    "content": "<p>Polina's Potent Potions was started by Polina in 1654.</p>\n<p>We use all-natural locally sourced ingredients for our potions.</p>",
+ 4
+    "handle": "about-us",
+ 5
+    "id": 83536642113,
+ 6
+    "metafields": {},
+ 7
+    "published_at": "2022-05-04 17:47:03 -0400",
+ 8
+    "template_suffix": "",
+ 9
+    "title": "About us",
+ 10
+    "url": {}
+ 11 }
+ Templates using page
+ object
+ Theme architecture
+ page template
+ Was this section helpful?
+ YesNo
+ page_description
+ object
+ The meta description of the current page.
+ The page_description object can be used to provide a brief description of a page for search engine listings and social media previews.
+ To learn about where to edit the meta description for a page, visit the Shopify Help Center.
+ Map
+ Directly accessible in
+ Global
+ page_description
+ Was this section helpful?
+ YesNo
+ page_image
+ object
+ An image to be shown in search engine listings and social media previews for the current page.
+ The resource's featured image for product and collection pages, and blog posts, is used. For all other pages, or pages where there's no featured image, the social sharing image is used.
+ Open Graph fallback tags
+ The page_image object can be used for creating Open Graph og:image meta tags.
+ If a theme doesn't include og:image tags for a page, then Shopify automatically generates the following tags using the page_image object:
+ og:image
+ og:image:secure_url
+ og:image:width
+ og:image:height
+ Map
+ Directly accessible in
+ Global
+ page_image
+ Was this section helpful?
+ YesNo
+ page_title
+ object
+ The page title of the current page.
+ The page_title object can be used to specify the title of page for search engine listings and social media previews.
+ To learn about where to edit the title for a page, visit the Shopify Help Center.
+ Map
+ Directly accessible in
+ Global
+ page_title
+ Was this section helpful?
+ YesNo
+ pages
+ object
+ All of the pages on a store.
+ You can access a specific page through the pages object using the page's handle.
+ Paginate the pages object
+ You can paginate the pages object, allowing you to iterate over up to 50 pages at a time.
+ Map
+ Directly accessible in
+ Global
+ pages
+ Was this section helpful?
+ YesNo
+ paginate
+ object
+ Information about the pagination inside a set of paginate tags.
+ Tip
+ Use the default_pagination filter to output pagination links.
+ Properties
+ current_offset
+ number
+ current_page
+ number
+ items
+ number
+ next
+ part
+ page_param
+ string
+ page_size
+ number
+ pages
+ number
+ parts
+ array of part
+ previous
+ part
+ Object
+ 1 {
+ 2
+    "current_offset": 10,
+ 3
+    "current_page": 3,
+ 4
+    "items": 17,
+ 5
+    "next": {},
+ 6
+    "page_param": "page",
+ 7
+    "page_size": 5,
+ 8
+    "pages": 4,
+ 9
+    "parts": [],
+ 10
+    "previous": {}
+ 11 }
+ Was this section helpful?
+ YesNo
+ part
+ object
+ A part in the navigation for pagination.
+ Properties
+ is_link
+ boolean
+ title
+ string
+ url
+ string
+ Create pagination navigation with part
+ You can create a pagination navigation by iterating over each part of a paginate object.
+ Object
+ Map
+ 1 {
+ 2
+    "is_link": true,
+ 3
+    "title": "2",
+ 4
+    "url": "/collections/all?page=2"
+ 5 }
+ Was this section helpful?
+ YesNo
+ pending_payment_instruction_input
+ object
+ Header-value pairs that make up the list of payment information specific to the payment method. This information can be be used by the customer to complete the transaction offline.
+ Properties
+ header
+ string
+ value
+ string
+ Map
+ Returned by
+ transaction.buyer_pending_payment_instructions
+ pending_payment_instruction_input
+ Was this section helpful?
+ YesNo
+ policy
+ object
+ A store policy, such as a privacy or return policy.
+ Properties
+ body
+ string
+ id
+ string
+ Map
+ 1 {
+ 2
+    "body": "<p>We have a 30-day return policy, which means you have 30 days after receiving your item to request a return. ...</p>",
+ 3
+    "id": 23805034561,
+ 4
+    "title": "Refund policy",
+ 5
+    "url": "/policies/refund-policy"
+ 6 }
+ Was this section helpful?
+ YesNo
+ powered_by_link
+ object
+ Creates an HTML link element that links to a localied version of shopify.com, based on the locale of the store.
+ Map
+ Directly accessible in
+ Global
+ powered_by_link
+ Was this section helpful?
+ YesNo
+ predictive_search
+ object
+ Information about the results from a predictive search query through the Predictive Search API.
+ Note
+ The predictive_search object returns results only when rendered in a section using the Predictive Search API and the Section Rendering API. To learn about how to include predictive search in your theme, refer to Add predictive search to your theme.
+ Properties
+ performed
+ boolean
+ resources
+ predictive_search_resources
+ terms
+ string
+ types
+ array of string
+ Object
+ 1 {
+ 2
+    "performed": true,
+ 3
+    "resources": {},
+ 4
+    "terms": "potion",
+ 5
+    "types": []
+ 6 }
+ Was this section helpful?
+ YesNo
+ predictive_search_resources
+ object
+ Contains arrays of objects for each resource type that can be returned by a predictive search query.
+ You can check whether any resources of a specific type were returned using the size filter.
+ 1 {% if predictive_search.resources.articles.size > 0 %}
+ 2
+    {% for article in predictive_search.resources.articles %}
+ 3
+      {{ article.title }}
+ 4
+    {% endfor %}
+ 5 {% endif %}
+ Properties
+ articles
+ array of article
+ collections
+ array of collection
+ pages
+ array of page
+ products
+ array of product
+ Object
+ Map
+ 1 {
+ 2
+    "articles": [],
+ 3
+    "collections": [],
+ 4
+    "pages": [],
+ 5
+    "products": []
+ 6 }
+ Was this section helpful?
+ YesNo
+ product
+ object
+ A product in the store.
+ Properties
+ available
+ boolean
+ collections
+ array of collection
+ compare_at_price
+ number
+ compare_at_price_max
+ number
+ compare_at_price_min
+ number
+ compare_at_price_varies
+ boolean
+ content
+ string
+ created_at
+ string
+ description
+ string
+ featured_image
+ image
+ featured_media
+ media
+ first_available_variant
+ variant
+ gift_card?
+ boolean
+ handle
+ string
+ has_only_default_variant
+ boolean
+ id
+ number
+ images
+ array of image
+ media
+ array of media
+ metafields
+ options
+ array of string
+ options_by_name
+ options_with_values
+ array of product_option
+ price
+ number
+ price_max
+ number
+ price_min
+ number
+ price_varies
+ boolean
+ published_at
+ string
+ quantity_price_breaks_configured?
+ boolean
+ requires_selling_plan
+ boolean
+ selected_or_first_available_selling_plan_allocation
+ selling_plan_allocation
+ selected_or_first_available_variant
+ variant
+ selected_selling_plan
+ selling_plan
+ selected_selling_plan_allocation
+ selling_plan_allocation
+ selected_variant
+ variant
+ selling_plan_groups
+ array of selling_plan_group
+ tags
+ array of string
+ template_suffix
+ string
+ title
+ string
+ type
+ string
+ url
+ string
+ variants
+ array of variant
+ vendor
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "available": true,
+ 3
+    "collections": [],
+ 4
+    "compare_at_price": "25.00",
+ 5
+    "compare_at_price_max": "25.00",
+ 6
+    "compare_at_price_min": "25.00",
+ 7
+    "compare_at_price_varies": false,
+ 8
+    "content": "<h3>Are you low on health? Well we've got the potion just for you!</h3>\n<p>Just need a top up? Almost dead? In between? No need to worry because we have a range of sizes and strengths!</p>",
+ 9
+    "created_at": "2022-04-13 14:46:16 -0400",
+ 10
+    "description": "<h3>Are you low on health? Well we've got the potion just for you!</h3>\n<p>Just need a top up? Almost dead? In between? No need to worry because we have a range of sizes and strengths!</p>",
+ 11
+    "featured_image": {},
+ 12
+    "featured_media": {},
+ 13
+    "first_available_variant": {},
+ 14
+    "gift_card?": false,
+ 15
+    "handle": "health-potion",
+ 16
+    "has_only_default_variant": false,
+ 17
+    "id": 6786188247105,
+ 18
+    "images": [],
+ 19
+    "media": [],
+ 20
+    "metafields": {},
+ 21
+    "options": [
+ 22
+      "Size",
+ 23
+      "Strength"
+ 24
+    ],
+ 25
+    "options_by_name": {},
+ 26
+    "options_with_values": [],
+ 27
+    "price": "10.00",
+ 28
+    "price_max": "22.00",
+ 29
+    "price_min": "10.00",
+ 30
+    "price_varies": true,
+ 31
+    "published_at": "2022-04-13 14:53:34 -0400",
+ 32
+    "quantity_price_breaks_configured?": false,
+ 33
+    "requires_selling_plan": false,
+ 34
+    "selected_or_first_available_selling_plan_allocation": {},
+ 35
+    "selected_or_first_available_variant": {},
+ 36
+    "selected_selling_plan": null,
+ 37
+    "selected_selling_plan_allocation": null,
+ 38
+    "selected_variant": null,
+ 39
+    "selling_plan_groups": [],
+ 40
+    "tags": [
+ 41
+      "healing"
+ 42
+    ],
+ 43
+    "template_suffix": "",
+ 44
+    "title": "Health potion",
+ 45
+    "type": {},
+ 46
+    "url": {},
+ 47
+    "variants": [],
+ 48
+    "vendor": "Polina's Potent Potions"
+ 49 }
+ Templates using product
+ object
+ Theme architecture
+ product template
+ Was this section helpful?
+ YesNo
+ product_option
+ object
+ A product option, such as size or color.
+ Properties
+ name
+ string
+ position
+ number
+ selected_value
+ string
+ values
+ array of product_option_value
+ Object
+ Map
+ 1 {
+ 2
+    "name": "Size",
+ 3
+    "position": 1,
+ 4
+    "selected_value": {},
+ 5
+    "values": []
+ 6 }
+ Was this section helpful?
+ YesNo
+ product_option_value
+ object
+ A product option value, such as "red" for the option "color".
+ Properties
+ id
+ number
+ name
+ string
+ product_url
+ string
+ selected
+ boolean
+ swatch
+ swatch
+ variant
+ variant
+ Object
+ Map
+ 1 {
+ 2
+    "id": 1433802440769,
+ 3
+    "name": "Red",
+ 4
+    "product_url": {},
+ 5
+    "selected": true,
+ 6
+    "swatch": {},
+ 7
+    "variant": {}
+ 8 }
+ Was this section helpful?
+ YesNo
+ quantity_price_break
+ object
+ The per-unit price of a variant when purchasing the minimum quantity or more.
+ Properties
+ minimum_quantity
+ number
+ price
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "minimum_quantity": "10",
+ 3
+    "price": "20.00"
+ 4 }
+ Was this section helpful?
+ YesNo
+ quantity_rule
+ object
+ A variant order quantity rule.
+ If no rule exists, then a default value is returned.
+ This rule can be set as part of a B2B catalog.
+ Note
+ The default quantity rule is min=1,max=null,increment=1.
+ Properties
+ increment
+ number
+ max
+ number
+ min
+ number
+ The variant order quantity rule
+ Object
+ Map
+ 1 {
+ 2
+    "min": 5,
+ 3
+    "max": 100,
+ 4
+    "increment": 5
+ 5 }
+ Was this section helpful?
+ YesNo
+ rating
+ object
+ Information for a rating type metafield.
+ Tip
+ To learn about metafield types, refer to Metafield types.
+ Properties
+ rating
+ number
+ scale_max
+ number
+ scale_min
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "rating": "4.5",
+ 3
+    "scale_max": "5.0",
+ 4
+    "scale_min": "0.0"
+ 5 }
+ Was this section helpful?
+ YesNo
+ recipient
+ object
+ A recipient that is associated with a gift card.
+ Properties
+ email
+ string
+ name
+ string
+ nickname
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "email": "cornelius.potionmaker@gmail.com",
+ 3
+    "name": "Cornelius Potionmaker",
+ 4
+    "nickname": "Cornelius"
+ 5 }
+ Templates using recipient
+ object
+ Theme architecture
+ gift_card.liquid template
+ Was this section helpful?
+ YesNo
+ recommendations
+ object
+ Product recommendations for a specific product based on sales data, product descriptions, and collection relationships.
+ Product recommendations become more accurate over time as new orders and product data become available. To learn more about how product recommendations are generated, refer to Product recommendations.
+ Note
+ The recommendations object returns products only when rendered in a section using the Product Recommendations API and the Section Rendering API. To learn about how to include product recommendations in your theme, refer to Show product recommendations.
+ Properties
+ intent
+ string
+ performed?
+ boolean
+ products
+ array of product
+ products_count
+ number
+ Object
+ 1 {
+ 2
+    "products": [],
+ 3
+    "products_count": 4,
+ 4
+    "performed?": true
+ 5 }
+ Was this section helpful?
+ YesNo
+ request
+ object
+ Information about the current URL and the associated page.
+ Properties
+ design_mode
+ boolean
+ host
+ string
+ locale
+ shop_locale
+ origin
+ string
+ page_type
+ string from a set of values
+ path
+ string
+ visual_preview_mode
+ boolean
+ Object
+ Map
+ 1 {
+ 2
+    "design_mode": false,
+ 3
+    "host": "polinas-potent-potions.myshopify.com",
+ 4
+    "locale": {},
+ 5
+    "origin": "https://polinas-potent-potions.myshopify.com",
+ 6
+    "page_type": "index",
+ 7
+    "path": "/",
+ 8
+    "visual_preview_mode": false
+ 9 }
+ Was this section helpful?
+ YesNo
+ robots
+ object
+ The default rule groups for the robots.txt file.
+ Tip
+ You can customize the robots.txt file with the robots.txt.liquid template.
+ Properties
+ default_groups
+ array of group
+ Object
+ Map
+ 1 {
+ 2
+    "default_groups": []
+ 3 }
+ Templates using robots
+ object
+ Theme architecture
+ robots.txt.liquid template
+ Was this section helpful?
+ YesNo
+ routes
+ object
+ Allows you to generate standard URLs for the storefront.
+ Using the routes object instead of hardcoding URLs helps ensure that your theme supports multiple languages, as well as any possible changes in URL format.
+ Properties
+ account_addresses_url
+ string
+ account_login_url
+ string
+ account_logout_url
+ string
+ account_recover_url
+ string
+ account_register_url
+ string
+ account_url
+ string
+ all_products_collection_url
+ string
+ cart_add_url
+ string
+ cart_change_url
+ string
+ cart_clear_url
+ string
+ cart_update_url
+ string
+ cart_url
+ string
+ collections_url
+ string
+ predictive_search_url
+ string
+ product_recommendations_url
+ string
+ root_url
+ string
+ search_url
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "account_addresses_url": "/account/addresses",
+ 3
+    "account_login_url": "/account/login",
+ 4
+    "account_logout_url": "/account/logout",
+ 5
+    "account_recover_url": "/account/recover",
+ 6
+    "account_register_url": "/account/register",
+ 7
+    "account_url": "/account",
+ 8
+    "all_products_collection_url": "/collections/all",
+ 9
+    "cart_add_url": "/cart/add",
+ 10
+    "cart_change_url": "/cart/change",
+ 11
+    "cart_clear_url": "/cart/clear",
+ 12
+    "cart_update_url": "/cart/update",
+ 13
+    "cart_url": "/cart",
+ 14
+    "collections_url": "/collections",
+ 15
+    "predictive_search_url": "/search/suggest",
+ 16
+    "product_recommendations_url": "/recommendations/products",
+ 17
+    "root_url": "/",
+ 18
+    "search_url": "/search"
+ 19 }
+ Was this section helpful?
+ YesNo
+ rule
+ object
+ A rule for the robots.txt file, which tells crawlers which pages can, or can't, be accessed.
+ A rule consists of a directive, which can be either Allow or Disallow, and a value of the associated URL path.
+ For example:
+ Disallow: /policies/
+ You can output a rule directly, instead of referencing each of its properties.
+ Tip
+ You can customize the robots.txt file with the robots.txt.liquid template.
+ Properties
+ directive
+ string
+ value
+    "directive": "Disallow",
+ 3
+    "value": "/policies/"
+ 4 }
+ Was this section helpful?
+ YesNo
+ script
+ object
+ Information about a Shopify Script.
+ Caution
+ Shopify Scripts will be sunset on August 28, 2025. Migrate your existing scripts to Shopify Functions before this date.
+ Tip
+ To learn more about Shopify Scripts and the Script Editor, visit the Shopify Help Center.
+ Properties
+ id
+ number
+ name
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "id": 209584193,
+ 3
+    "name": "10% off Whole bloodroot"
+ 4 }
+ Was this section helpful?
+ YesNo
+ scripts
+ object
+ The active scripts, of each script type, on the store.
+ Caution
+ Shopify Scripts will be sunset on August 28, 2025. Migrate your existing scripts to Shopify Functions before this date.
+ There can be only one active script of each type. Currently, the only type accessible in Liquid is cart_calculate_line_items.
+ Tip
+ To learn more about Shopify Scripts and the Script Editor, visit the Shopify Help Center.
+ Properties
+ cart_calculate_line_items
+ script
+ Object
+ Map
+ 1 {
+ 2
+    "cart_calculate_line_items": {}
+ 3 }
+ Was this section helpful?
+ YesNo
+ search
+ object
+ Information about a storefront search query.
+ To learn about storefront search and how to include it in your theme, refer to Storefront search.
+ Properties
+ default_sort_by
+ string
+ filters
+ array of filter
+ performed
+ boolean
+ results
+ results_count
+ number
+ sort_by
+ sort_options
+ array of sort_option
+ terms
+ string
+ types
+ array of string
+ Object
+ Map
+ 1 {
+ 2
+    "default_sort_by": "relevance",
+ 3
+    "filters": {},
+ 4
+    "performed": true,
+ 5
+    "results": [],
+ 6
+    "results_count": 15,
+ 7
+    "sort_by": "relevance",
+ 8
+    "sort_options": [],
+ 9
+    "terms": "potion",
+ 10
+    "types": [
+ 11
+      "article",
+ 12
+      "page",
+ 13
+      "product"
+ 14
+    ]
+ 15 }
+ Templates using search
+ object
+ Theme architecture
+ search template
+ Was this section helpful?
+ YesNo
+ section
+ object
+ The properties and settings of a section.
+ Tip
+ To learn about sections and using them in a theme, refer to Sections.
+ Properties
+ blocks
+ array of block
+ id
+ string
+ index
+ number
+ index0
+ number
+ location
+ string
+ settings
+ Object
+ 1 {
+ 2
+    "blocks": [],
+ 3
+    "id": "template--14453298921537__cart-items",
+ 4
+    "settings": {}
+ 5 }
+ Was this section helpful?
+ YesNo
+ selling_plan
+ object
+ Information about the intent of how a specific selling plan affects a line item.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ checkout_charge
+ selling_plan_checkout_charge
+ description
+ string
+ group_id
+ string
+ id
+ number
+ name
+ string
+ options
+ array of selling_plan_option
+ price_adjustments
+ array of selling_plan_price_adjustment
+ recurring_deliveries
+ boolean
+ selected
+ boolean
+ Object
+ Map
+ 1 {
+ 2
+    "checkout_charge": {},
+ 3
+    "description": null,
+ 4
+    "group_id": "f6f782040b07aa2353008932051a8d9bef0536d0",
+ 5
+    "id": 610435137,
+ 6
+    "name": "Delivery every 1 Week",
+ 7
+    "options": [],
+ 8
+    "price_adjustments": [],
+ 9
+    "recurring_deliveries": true,
+ 10
+    "selected": true
+ 11 }
+ Was this section helpful?
+ YesNo
+ selling_plan_allocation
+ object
+ Information about how a specific selling plan affects a line item.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ checkout_charge_amount
+ number
+ compare_at_price
+ number
+ per_delivery_price
+ number
+ price
+ number
+ price_adjustments
+ array of selling_plan_allocation_price_adjustment
+ remaining_balance_charge_amount
+ number
+ selling_plan
+ selling_plan
+ selling_plan_group_id
+ string
+ unit_price
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "checkout_charge_amount": "13.50",
+ 3
+    "compare_at_price": "15.00",
+ 4
+    "per_delivery_price": "13.50",
+ 5
+    "price": "13.50",
+ 6
+    "price_adjustments": [],
+ 7
+    "remaining_balance_charge_amount": "0.00",
+ 8
+    "selling_plan": {},
+ 9
+    "selling_plan_group_id": "f6f782040b07aa2353008932051a8d9bef0536d0",
+ 10
+    "unit_price": null
+ 11 }
+ Was this section helpful?
+ YesNo
+ selling_plan_allocation_price_adjustment
+ object
+ The resulting price from the intent of the associated selling_plan_price_adjustment.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ position
+ number
+ price
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "position": 1,
+ 3
+    "price": "13.50"
+ 4 }
+ Was this section helpful?
+ YesNo
+ selling_plan_checkout_charge
+ object
+ Information about how a specific selling plan affects the amount that a customer needs to pay for a line item at checkout.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ value
+ number
+ value_type
+ string from a set of values
+ Object
+ Map
+ 1 {
+ 2
+    "value": 100,
+ 3
+    "value_type": "percentage"
+ 4 }
+ Was this section helpful?
+ YesNo
+ selling_plan_group
+ object
+ Information about a specific group of selling plans that include any of a product's variants.
+ Selling plans are grouped based on shared selling plan option names.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ app_id
+ string
+ id
+ number
+ name
+ string
+ options
+ array of selling_plan_group_option
+ selling_plan_selected
+ boolean
+ selling_plans
+ array of selling_plan
+ Object
+ Map
+ 1 {
+ 2
+    "app_id": "294517",
+ 3
+    "id": "f6f782040b07aa2353008932051a8d9bef0536d0",
+ 4
+    "name": "Health potion",
+ 5
+    "options": [],
+ 6
+    "selling_plan_selected": false,
+ 7
+    "selling_plans": []
+ 8 }
+ Was this section helpful?
+ YesNo
+ selling_plan_group_option
+ object
+ Information about a specific option in a selling plan group.
+ Properties
+ name
+ string
+ position
+ number
+ selected_value
+ string
+ values
+ array of string
+ Object
+ Map
+ 1 {
+ 2
+    "name": "1 Week(s), 4 Week(s)",
+ 3
+    "position": 1,
+ 4
+    "selected_value": null,
+ 5
+    "values": [
+ 6
+      "1 Week(s)",
+ 7
+      "4 Week(s)"
+ 8
+    ]
+ 9 }
+ Was this section helpful?
+ YesNo
+ selling_plan_option
+ object
+ Information about a selling plan's value for a specific selling_plan_group_option.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ name
+ string
+ position
+ number
+ value
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "name": "1 Week(s), 4 Week(s)",
+ 3
+    "position": 1,
+ 4
+    "value": "1 Week(s)"
+ 5 }
+ Was this section helpful?
+ YesNo
+ selling_plan_price_adjustment
+ object
+ Information about how a selling plan changes the price of a variant for a given period of time.
+ To learn about how to support selling plans in your theme, refer to Purchase options.
+ Properties
+ order_count
+ number
+ position
+ number
+ value
+ number
+ value_type
+ string from a set of values
+ Object
+ Map
+ 1 {
+ 2
+    "order_count": null,
+ 3
+    "position": 1,
+ 4
+    "value": 10,
+ 5
+    "value_type": "percentage"
+ 6 }
+ Was this section helpful?
+ YesNo
+ settings
+ object
+ Allows you to access all of the theme's settings from the settings_schema.json file.
+ Tip
+ To learn about the available setting types, refer to Input settings.
+ Reference a setting value
+ Map
+ Directly accessible in
+ Global
+ settings
+ Was this section helpful?
+ YesNo
+ shipping_method
+ object
+ Information about the shipping method for an order.
+ Properties
+ discount_allocations
+ array of discount_allocation
+ handle
+ string
+ id
+ string
+ original_price
+ number
+ price
+ number
+ tax_lines
+ array of tax_line
+ title
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "handle": "shopify-Standard-0.00",
+ 3
+    "id": "shopify-Standard-0.00",
+ 4
+    "original_price": "0.00",
+ 5
+    "price": "0.00",
+ 6
+    "tax_lines": [],
+ 7
+    "title": "Standard"
+ 8 }
+ Was this section helpful?
+ YesNo
+ shop
+ object
+ Information about the store, such as the store address, the total number of products, and various settings.
+ Properties
+ accepts_gift_cards
+ boolean
+ address
+ address
+ brand
+ brand
+ collections_count
+ number
+ currency
+ string
+ customer_accounts_enabled
+ boolean
+ customer_accounts_optional
+ boolean
+ description
+ string
+ domain
+ string
+ email
+ string
+ enabled_currencies
+ array of currency
+ enabled_payment_types
+ array of string
+ id
+ string
+ metafields
+ metaobjects
+ money_format
+ currency
+ money_with_currency_format
+ currency
+ name
+ string
+ password_message
+ string
+ permanent_domain
+ string
+ phone
+ string
+ policies
+ array of policy
+ privacy_policy
+ policy
+ products_count
+ number
+ published_locales
+ array of shop_locale
+ refund_policy
+ policy
+ secure_url
+ string
+ shipping_policy
+ policy
+ subscription_policy
+ policy
+ terms_of_service
+ policy
+ types
+ array of string
+ url
+ string
+ vendors
+ array of string
+ Deprecated Properties
+ enabled_locales
+ array of shop_locale
+ deprecated
+ locale
+ shop_locale
+ deprecated
+ taxes_included
+ boolean
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "accepts_gift_cards": true,
+ 3
+    "address": {},
+ 4
+    "brand": {},
+ 5
+    "collections_count": 7,
+ 6
+    "currency": "CAD",
+ 7
+    "customer_accounts_enabled": true,
+ 8
+    "customer_accounts_optional": true,
+ 9
+    "description": "Canada's foremost retailer for potions and potion accessories. Try one of our award-winning artisanal potions, or find the supplies to make your own!",
+ 10
+    "domain": "polinas-potent-potions.myshopify.com",
+ 11
+    "email": "polinas.potent.potions@gmail.com",
+ 12
+    "enabled_currencies": [],
+ 13
+    "enabled_locales": [],
+ 14
+    "enabled_payment_types": [
+ 15
+      "american_express",
+ 16
+      "apple_pay",
+ 17
+      "diners_club",
+ 18
+      "discover",
+ 19
+      "google_pay",
+ 20
+      "master",
+ 21
+      "paypal",
+ 22
+      "shopify_pay",
+ 23
+      "visa"
+ 24
+    ],
+ 25
+    "id": 56174706753,
+ 26
+    "locale": "en",
+ 27
+    "metafields": {},
+ 28
+    "metaobjects": {},
+ 29
+    "money_format": "${{amount}}",
+ 30
+    "money_with_currency_format": "${{amount}} CAD",
+ 31
+    "name": "Polina's Potent Potions",
+ 32
+    "password_message": "Our store will be opening when the moon is in the seventh house!!",
+ 33
+    "permanent_domain": "polinas-potent-potions.myshopify.com",
+ 34
+    "phone": "416-123-1234",
+ 35
+    "policies": [],
+ 36
+    "privacy_policy": {},
+ 37
+    "products_count": 19,
+ 38
+    "published_locales": [],
+ 39
+    "refund_policy": {},
+ 40
+    "secure_url": "https://polinas-potent-potions.myshopify.com",
+ 41
+    "shipping_policy": {},
+ 42
+    "subscription_policy": null,
+ 43
+    "taxes_included": false,
+ 44
+    "terms_of_service": {},
+ 45
+    "types": [
+ 46
+      "",
+ 47
+      "Animals & Pet Supplies",
+ 48
+      "Baking Flavors & Extracts",
+ 49
+      "Container",
+ 50
+      "Cooking & Baking Ingredients",
+ 51
+      "Dried Flowers",
+ 52
+      "Fruits & Vegetables",
+ 53
+      "Gift Cards",
+ 54
+      "Health",
+ 55
+      "Health & Beauty",
+ 56
+      "Invisibility",
+ 57
+      "Love",
+ 58
+      "Music & Sound Recordings",
+ 59
+      "Seasonings & Spices",
+ 60
+      "Water"
+ 61
+    ],
+ 62
+    "url": "https://polinas-potent-potions.myshopify.com",
+ 63
+    "vendors": [
+ 64
+      "Clover's Apothecary",
+ 65
+      "Polina's Potent Potions",
+ 66
+      "Ted's Apothecary Supply"
+ 67
+    ]
+ 68 }
+ Was this section helpful?
+ YesNo
+ shop_locale
+ object
+ A language in a store.
+ To learn how to offer localization options in your theme, refer to Support multiple currencies and languages.
+ Properties
+ endonym_name
+ string
+ iso_code
+ string
+ name
+ string
+ primary
+ boolean
+ root_url
+    "endonym_name": "English",
+ 3
+    "iso_code": "en",
+ 4
+    "name": "English",
+ 5
+    "primary": true,
+ 6
+    "root_url": "/"
+ 7 }
+ Was this section helpful?
+ YesNo
+ sitemap
+ object
+ The sitemap for a specific group in the robots.txt file.
+ The sitemap provides information about the pages and content on a site, and the relationships between them, which helps crawlers crawl a site more efficiently.
+ Tip
+ To learn more about sitemaps, refer to Google's documentation.
+ The sitemap object consists of a Sitemap directive, and a value of the URL that the sitemap is hosted at. For example:
+ Sitemap: https://your-store.myshopify.com/sitemap.xml
+ Tip
+ You can customize the robots.txt file with the robots.txt.liquid template.
+ Properties
+ directive
+ string
+ value
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "directive": "Sitemap",
+ 3
+    "value": "https://polinas-potent-potions.myshopify.com/sitemap.xml"
+ 4 }
+ Was this section helpful?
+ YesNo
+ sort_option
+ object
+ A sort option for a collection or search results page.
+ Properties
+ name
+ string
+ value
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "name": "Alphabetically, A-Z",
+ 3
+    "value": "title-ascending"
+ 4 }
+ Was this section helpful?
+ YesNo
+ store_availability
+ object
+ A variant's inventory information for a physical store location.
+ If a location doesn't stock a variant, then there won't be a store_availability for that variant and location.
+ Note
+ The store_availability object is defined only if one or more locations has local pickup enabled.
+ Properties
+ available
+ boolean
+ location
+ location
+ pick_up_enabled
+ boolean
+ pick_up_time
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "available": true,
+ 3
+    "location": {},
+ 4
+    "pick_up_enabled": true,
+ 5
+    "pick_up_time": "Usually ready in 24 hours"
+ 6 }
+ Was this section helpful?
+ YesNo
+ swatch
+ object
+ Color and image for visual representation. Available for product option values and filter values.
+ Properties
+ color
+ color
+ image
+ image
+ Object
+ Map
+ 1 {
+ 2
+    "color": {},
+ 3
+    "image": null
+ 4 }
+ Was this section helpful?
+ YesNo
+ tablerowloop
+ object
+ Information about a parent tablerow loop.
+ Properties
+ col
+ number
+ col0
+ number
+ col_first
+ boolean
+ col_last
+ boolean
+ first
+ last
+ boolean
+ length
+ number
+ rindex
+ number
+ rindex0
+ number
+ row
+ number
+ Object
+ 1 {
+ 2
+    "col": 1,
+ 3
+    "col0": 0,
+ 4
+    "col_first": true,
+ 5
+    "col_last": false,
+ 6
+    "first": true,
+ 7
+    "index": 1,
+ 8
+    "index0": 0,
+ 9
+    "last": false,
+ 10
+    "length": 5,
+ 11
+    "rindex": 5,
+ 12
+    "rindex0": 4,
+ 13
+    "row": 1
+ 14 }
+ Was this section helpful?
+ YesNo
+ tax_line
+ object
+ Information about a tax line of a checkout or order.
+ Properties
+ price
+ number
+ rate
+ number
+ rate_percentage
+ number
+ title
+    "price": 1901,
+ 3
+    "rate": 0.05,
+ 4
+    "rate_percentage": 5,
+ 5
+    "title": "GST"
+ 6 }
+ Was this section helpful?
+ YesNo
+ template
+ object
+ Information about the current template.
+ Properties
+ directory
+ string
+ name
+ string from a set of values
+ suffix
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "directory": null,
+ 3
+    "name": "product",
+ 4
+    "suffix": null
+ 5 }
+ Was this section helpful?
+ YesNo
+ theme
+ deprecated
+ Information about the current theme.
+ Deprecated
+ Deprecated because the values of this object's properties are subject to change, so can't be relied on within the theme.
+ If you want to link to the theme editor for the published theme, then you can use the URL path /admin/themes/current/editor.
+ While this object is deprecated in Liquid and shouldn't be used, you can still access it through the REST Admin API.
+ Properties
+ id
+ number
+ name
+ string
+ role
+    "id": 124051750977,
+ 3
+    "name": "Dawn",
+ 4
+    "role": "main"
+ 5 }
+ Was this section helpful?
+ YesNo
+ transaction
+ object
+ A transaction associated with a checkout or order.
+ Properties
+ amount
+ number
+ buyer_pending_payment_instructions
+ array of pending_payment_instruction_input
+ buyer_pending_payment_notice
+ string
+ created_at
+ string
+ gateway
+ string
+ gateway_display_name
+ string
+ id
+ number
+ kind
+ string from a set of values
+ name
+ string
+ payment_details
+ transaction_payment_details
+ receipt
+ string
+ show_buyer_pending_payment_instructions?
+ boolean
+ status
+ string from a set of values
+ status_label
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "amount": "380.25",
+ 3
+    "created_at": "2022-06-15 19:13:14 -0400",
+ 4
+    "gateway": "shopify_payments",
+ 5
+    "gateway_display_name": "Shopify payments",
+ 6
+    "id": 5432242176065,
+ 7
+    "kind": "sale",
+ 8
+    "name": "c29944051400769.",
+ 9
+    "payment_details": {
+ 10
+      "credit_card_number": "•••• •••• •••• 4242",
+ 11
+      "credit_card_company": "Visa",
+ 12
+      "credit_card_last_four_digits": "4242",
+ 13
+      "receiver_info": null
+ 14
+    },
+ 15
+    "receipt": "#☠1☢\n---\nid: pi_3LB5Oh2m9fH5ulsO18aKrXyL\nobject: payment_intent\namount: 38025\namount_capturable: 0\namount_received: 38025\ncanceled_at: \ncancellation_reason: \ncapture_method: automatic\ncharges:\n  object: list\n  data:\n  - id: ch_3LB5Oh2m9fH5ulsO1KncBePo\n    object: charge\n    amount: 38025\n    application_fee: fee_1LB5Oi2m9fH5ulsOrVcBjr4k\n    balance_transaction:\n      id: txn_3LB5Oh2m9fH5ulsO1JtjGSxy\n      object: balance_transaction\n      exchange_rate: \n    captured: true\n    created: 1655334796\n    currency: cad\n    failure_code: \n    failure_message: \n    fraud_details: {}\n    livemode: false\n    metadata:\n      shop_id: '56174706753'\n      shop_name: Polina's Potent Potions\n      transaction_fee_total_amount: '791'\n      transaction_fee_tax_amount: '0'\n      payments_charge_id: '2076986474561'\n      order_transaction_id: '5432242176065'\n      manual_entry: 'false'\n      order_id: c29944051400769.1\n      email: cornelius.potionmaker@gmail.com\n    outcome:\n      network_status: approved_by_network\n      reason: \n      risk_level: normal\n      risk_score: 15\n      seller_message: Payment complete.\n      type: authorized\n    paid: true\n    payment_intent: pi_3LB5Oh2m9fH5ulsO18aKrXyL\n    payment_method: pm_1LB5Oh2m9fH5ulsOk67EqrsK\n    payment_method_details:\n      card:\n        brand: visa\n        checks:\n          address_line1_check: pass\n          address_postal_code_check: pass\n          cvc_check: pass\n        country: US\n        description: Visa Classic\n        ds_transaction_id: \n        exp_month: 1\n        exp_year: 2029\n        fingerprint: KE6OIQsc8EspGDeW\n        funding: credit\n        iin: '424242'\n        installments: \n        issuer: Stripe Payments UK Limited\n        last4: '4242'\n        mandate: \n        moto: \n        network: visa\n        network_token: \n        network_transaction_id: '541168454791087'\n        three_d_secure: \n        wallet: \n      type: card\n    refunded: false\n    source: \n    status: succeeded\n    mit_params:\n      network_transaction_id: '541168454791087'\n  has_more: false\n  total_count: 1\n  url: \"/v1/charges?payment_intent=pi_3LB5Oh2m9fH5ulsO18aKrXyL\"\nconfirmation_method: manual\ncreated: 1655334795\ncurrency: cad\nlast_payment_error: \nlivemode: false\nmetadata:\n  shop_id: '56174706753'\n  shop_name: Polina's Potent Potions\n  transaction_fee_total_amount: '791'\n  transaction_fee_tax_amount: '0'\n  payments_charge_id: '2076986474561'\n  order_transaction_id: '5432242176065'\n  manual_entry: 'false'\n  order_id: c29944051400769.1\n  email: cornelius.potionmaker@gmail.com\nnext_action: \npayment_method: pm_1LB5Oh2m9fH5ulsOk67EqrsK\npayment_method_types:\n- card\nsource: \nstatus: succeeded\n",
+ 16
+    "show_buyer_pending_payment_instructions?": null,
+ 17
+    "status": "success",
+ 18
+    "status_label": "Success"
+ 19 }
+ Was this section helpful?
+ YesNo
+ transaction_payment_details
+ object
+ Information about the payment methods used for a transaction.
+ Properties
+ credit_card_company
+ string
+ credit_card_last_four_digits
+ string
+ credit_card_number
+ string
+ gift_card
+ gift_card
+ Object
+ Map
+ 1 {
+ 2
+    "credit_card_number": "•••• •••• •••• 4242",
+ 3
+    "credit_card_company": "Visa",
+ 4
+    "credit_card_last_four_digits": "4242"
+ 5 }
+ Was this section helpful?
+ YesNo
+ unit_price_measurement
+ object
+ Information about how units of a product variant are measured. It's used to calculate unit prices.
+ Note
+ Unit prices are available only to stores located in Germany and France.
+ Properties
+ measured_type
+ string from a set of values
+ quantity_unit
+ string
+ quantity_value
+ number
+ reference_unit
+ string
+ reference_value
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "measured_type": "weight",
+ 3
+    "quantity_value": "500.0",
+ 4
+    "quantity_unit": "g",
+ 5
+    "reference_value": 1,
+ 6
+    "reference_unit": "kg"
+ 7 }
+ Was this section helpful?
+ YesNo
+ user
+ object
+ The author of a blog article.
+ Tip
+ The information returned by the user object can be edited on the Account page of the Shopify admin.
+ Properties
+ account_owner
+ boolean
+ bio
+ string
+ email
+ string
+ first_name
+ string
+ homepage
+ string
+ image
+ image
+ last_name
+ string
+ name
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "account_owner": false,
+ 3
+    "bio": "Polina got her first cauldron at the tender age of six, and she has been passionate about potions ever since!!",
+ 4
+    "email": "polinas.potent.potions@gmail.com",
+ 5
+    "first_name": "Polina",
+ 6
+    "homepage": null,
+ 7
+    "image": {},
+ 8
+    "last_name": "Waters",
+ 9
+    "name": "Polina Waters"
+ 10 }
+ Was this section helpful?
+ YesNo
+ user_agent
+ object
+ The user-agent, which is the name of the crawler, for a specific group in the robots.txt file.
+ The user_agent object consists of a User-agent directive, and a value of the name of the user-agent. For example:
+ User-agent: *
+ Tip
+ You can customize the robots.txt file with the robots.txt.liquid template.
+ Properties
+ directive
+ string
+ value
+ string
+ Object
+ Map
+ 1 {
+ 2
+    "directive": "User-agent",
+ 3
+    "value": "*"
+ 4 }
+ Was this section helpful?
+ YesNo
+ variant
+ object
+ A product variant.
+ Properties
+ available
+ boolean
+ barcode
+ string
+ compare_at_price
+ number
+ featured_image
+ image
+ featured_media
+ media
+ id
+ number
+ image
+ image
+ incoming
+ boolean
+ inventory_management
+ string
+ inventory_policy
+ string from a set of values
+ inventory_quantity
+ number
+ matched
+ boolean
+ metafields
+ next_incoming_date
+ string
+ options
+ string
+ price
+ number
+ product
+ product
+ quantity_price_breaks
+ array of quantity_price_break
+ quantity_price_breaks_configured?
+ boolean
+ quantity_rule
+ quantity_rule
+ requires_selling_plan
+ boolean
+ requires_shipping
+ boolean
+ selected
+ boolean
+ selected_selling_plan_allocation
+ selling_plan_allocation
+ selling_plan_allocations
+ array of selling_plan_allocation
+ sku
+ string
+ store_availabilities
+ array of store_availability
+ taxable
+ boolean
+ title
+ string
+ unit_price
+ number
+ unit_price_measurement
+ unit_price_measurement
+ url
+ string
+ weight
+ number
+ weight_in_unit
+ number
+ weight_unit
+ string
+ Deprecated Properties
+ option1
+ string
+ deprecated
+ option2
+ string
+ deprecated
+ option3
+ string
+ deprecated
+ Object
+ Map
+ 1 {
+ 2
+    "available": true,
+ 3
+    "barcode": "",
+ 4
+    "compare_at_price": null,
+ 5
+    "featured_image": null,
+ 6
+    "featured_media": null,
+ 7
+    "id": 39897499729985,
+ 8
+    "image": null,
+ 9
+    "incoming": false,
+ 10
+    "inventory_management": "shopify",
+ 11
+    "inventory_policy": "deny",
+ 12
+    "inventory_quantity": 5,
+ 13
+    "matched": true,
+ 14
+    "metafields": {},
+ 15
+    "next_incoming_date": null,
+ 16
+    "option1": "S",
+ 17
+    "option2": "Low",
+ 18
+    "option3": null,
+ 19
+    "options": [],
+ 20
+    "price": "10.00",
+ 21
+    "product": {},
+ 22
+    "quantity_price_breaks": [],
+ 23
+    "quantity_rule": {},
+ 24
+    "requires_selling_plan": false,
+ 25
+    "requires_shipping": true,
+ 26
+    "selected": false,
+ 27
+    "selected_selling_plan_allocation": null,
+ 28
+    "selling_plan_allocations": [],
+ 29
+    "sku": "",
+ 30
+    "store_availabilities": [],
+ 31
+    "taxable": true,
+ 32
+    "title": "S / Low",
+ 33
+    "unit_price": null,
+ 34
+    "unit_price_measurement": null,
+ 35
+    "url": {},
+ 36
+    "weight": 500,
+ 37
+    "weight_in_unit": 500,
+ 38
+    "weight_unit": "g"
+ 39 }
+ Was this section helpful?
+ YesNo
+ video
+ object
+ Information about a video uploaded as product media or a file_reference metafield.
+ Tip
+ Use the video_tag filter to output the video in an HTML <video> tag.
+ Properties
+ alt
+ string
+ aspect_ratio
+ number
+ duration
+ number
+ id
+ number
+ media_type
+ string
+ position
+ number
+ preview_image
+ image
+ sources
+ array of video_source
+ Object
+ Map
+ 1 {
+ 2
+    "alt": "Potion beats",
+ 3
+    "aspect_ratio": 1.779,
+ 4
+    "duration": 34801,
+ 5
+    "id": 22070396551233,
+ 6
+    "media_type": "video",
+ 7
+    "position": 2,
+ 8
+    "preview_image": {},
+ 9
+    "sources": []
+ 10 }
+ Was this section helpful?
+ YesNo
+ video_source
+ object
+ Information about the source files for a video.
+ Properties
+ format
+ string from a set of values
+ height
+ number
+ mime_type
+ string
+ url
+ string
+ width
+ number
+ Object
+ Map
+ 1 {
+ 2
+    "format": "mp4",
+ 3
+    "height": 1080,
+ 4
+    "mime_type": "video/mp4",
+ 5
+    "url": "https://cdn.shopify.com/videos/c/vp/4edc28a708b7405093a927cebe794f1a/4edc28a708b7405093a927cebe794f1a.HD-1080p-7.2Mbps.mp4",
+ 6
+    "width": 1920
+ 7 }
+ Was this section helpful?
+ YesNo
+ Updates & News

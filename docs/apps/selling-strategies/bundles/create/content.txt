@@ -1,0 +1,315 @@
+Billing
+ App Store
+ Create a bundle app
+ The Shopify bundles sample app is an example of how to build a bundle app, and shows an implementation of a cart_transform function to update the cart. It also shows how to do merge and expand transformations, and offers guidance on UI extensions to render bundles.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Install the Shopify bundles sample app.
+ Model a bundle by creating metafields on variants, creating a bundle parent product variant, and defining the bundle on child product variants.
+ Enable the bundle through extensions.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ Step 1: Install the Shopify bundles sample app
+ The sample app is currently published under the Shopify organization, and available for installation on stores.
+ Navigate to the Shopify bundles sample app's installation URL, and enter your development store's storefront URL into the text box.
+ You're redirected to the Shopify admin for the store and prompted to install the app.
+ Click Install app.
+ Step 2: Model a bundle
+ You model a bundle by creating metafields on variants, creating a bundle parent product variant, and defining the bundle on child product variants.
+ Create metafields on product variants
+ In the Shopify admin, go to Settings.
+ Click Custom data in the side navigation.
+ Note
+ The button might say Metafields depending on your store's settings.
+ Under Metafields, click Variants.
+ Click Add definition to create the following metafield definitions and click Save:
+ component_reference metafield definition:
+ Field Value
+ Name component_reference
+ Namespace and key custom.component_reference (Don't change the default)
+ Description Components included in Bundle
+ Select type Product Variant - List of product variants
+ component_quantities metafield definition:
+ Field Value
+ Name component_quantities
+ Namespace and key custom.component_quantities (Don't change the default)
+ Description Quantity of components included in Bundle
+ Select type Integer - List of values
+ Validation Minimum value - 1
+ component_parents metafield definition:
+ Field Value
+ Name component_parents
+ Namespace and key custom.component_parents (Don't change the default)
+ Description Child component parent definition
+ Select type JSON
+ Rules Refer to the JSON rules example.
+ JSON rules
+ 1 {
+ 2
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+ 3
+    "title": "Bundle component parents",
+ 4
+    "description": "A definition of the bundle a child belongs to",
+ 5
+    "type": "array",
+ 6
+    "items": {
+ 7
+      "type": "object",
+ 8
+      "properties": {
+ 9
+        "id": {
+ 10
+          "description": "ID of bundle parent product variant: gid://shopify/ProductVariant/<id number>",
+ 11
+          "type": "string"
+ 12
+        },
+ 13
+        "component_reference": {
+ 14
+          "type": "object",
+ 15
+          "properties": {
+ 16
+            "value": {
+ 17
+              "description": "Array of product variant IDs: [gid://shopify/ProductVariant/<id number>]",
+ 18
+              "type": "array",
+ 19
+              "items": {
+ 20
+                "type": "string"
+ 21
+              },
+ 22
+              "minItems": 1,
+ 23
+              "uniqueItems": true
+ 24
+            }
+ 25
+          }
+ 26
+        },
+ 27
+        "component_quantities": {
+ 28
+          "type": "object",
+ 29
+          "properties": {
+ 30
+            "value": {
+ 31
+              "description": "Array of quantities of product variants defined in component_reference: [1]",
+ 32
+              "type": "array",
+ 33
+              "items": {
+ 34
+                "type": "integer"
+ 35
+              },
+ 36
+              "minItems": 1
+ 37
+            }
+ 38
+          }
+ 39
+        }
+ 40
+      }
+ 41
+    },
+ 42
+    "required": [
+ 43
+      "id",
+ 44
+      "component_reference",
+ 45
+      "component_quantities"
+ 46
+    ]
+ 47 }
+ Create a bundle parent product variant
+ Create a product that represents the bundle with the following requirements:
+ At least one available in inventory
+ Price is more than 0
+ At least one option, since you'll need access to the product variant.
+ After saving the product, click Edit next to the variant of the option. This will be a bundle parent product variant.
+ Scroll to the Metafields section of the variant edit page.
+ Open up the product variants that will be included in the bundle in separate browser tabs.
+ Note
+ You'll need access to the product variant IDs of the bundled products while defining them. The product variant IDs can be found in the URL of the product variant: https://admin.shopify.com/store/<your store>/products/<product ID>/variants/<product variant ID>.
+ On the parent product variant page, click the component_reference field under Metafields.
+ Select the product variants that will be bundled, and then click Save.
+ Select the component_quantities field under Metafields.
+ Note
+ Add a quantity for each component_reference in the bundle. The order matters, as the quantity entered will correspond with the component_reference entered.
+ Click Save on the parent product variant page.
+ Caution
+ Don't exit this page, as you'll need the ID from the URL.
+ Define the bundle on child product variants
+ Complete the following steps for each children product variant defined in component_reference in the previous step:
+ On the child product variant page, click the component_parents field under Metafields.
+ Using the JSON schema defined, build the bundle definition.
+ Note
+ The component_reference and component_quantities values must match the values defined on the parent in the previous step.
+ Example
+ 1 [
+ 2
+    {
+ 3
+      "id": "gid://shopify/ProductVariant/<ID of parent product variant>",
+ 4
+      "component_reference": {
+ 5
+        "value": [
+ 6
+          "gid://shopify/ProductVariant/<ID of first child product variant>",
+ 7
+          "gid://shopify/ProductVariant/<ID of second child product variant>"
+ 8
+        ]
+ 9
+      },
+ 10
+      "component_quantities": {
+ 11
+        "value": [
+ 12
+          <quantity of first product variant in bundle>,
+ 13
+          <quantity of second product variant in bundle>
+ 14
+        ]
+ 15
+      }
+ 16
+    }
+ 17 ]
+ Step 3: Enable the bundle through extensions
+ The bundle-cart-transform extension uses the cart_transform function in Shopify to update the cart. The sample app uses the extension to do two transformations:
+ Merge the bundle
+ Expand the bundle
+ Merge the bundle
+ If the extension detects all of the components of a given bundle in the cart at checkout, then the extension returns merge operations to Shopify that combine the respective components and present the given parent_product_variant.
+ In the reference app, the merge functionality reads over all of the product_variants, and looks for the metafield with the following properties: namespace: "custom", key: "component_parents".
+ This query is defined in extensions/bundle-cart-transform/input.graphql:
+ Query
+ 1 query Input {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        id
+ 5
+        quantity
+ 6
+        merchandise {
+ 7
+          ... on ProductVariant {
+ 8
+            id
+ 9
+            component_parents: metafield(
+ 10
+              namespace: "custom"
+ 11
+              key: "component_parents"
+ 12
+            ) {
+ 13
+              value
+ 14
+            }
+ 15
+          }
+ 16
+ 19 }
+ component_parents is a metafield on product_variant with the content type JSON. Its value is an array of objects defining the bundle rules. For the merge function to work in the sample app, each child belonging to a bundle must have component_parents defined. A bundle rule has the following shape:
+ Bundle rule
+ 1 {
+ 2
+    "id": <Bundle parent ProductVariant ID>,
+ 3
+    "component_reference": {
+ 4
+      "value": <Array of Bundle children ProductVariant IDs>
+ 5
+    },
+ 6
+    "component_quantities": {
+ 7
+      "value": <Array of quantities for children ProductVariant IDs>
+ 8
+    }
+ 9 }
+ For example, you might have a bundle that contains two shirts and one pair of pants. The bundle parent product_variant ID is 6, the shirt product_variant ID included in the bundle is 3 and the pants product_variant ID included in the bundle is 4.
+ The following example shows the value of the component_parents metafield that must belong to both the shirt product_variant and pants product_variant for the merge functionality in the extension to work.
+ Example
+ 1 [
+ 2
+    {
+ 3
+      "id": "gid://shopify/ProductVariant/6",
+ 4
+      "component_reference": {
+ 5
+        "value": [
+ 6
+          "gid://shopify/ProductVariant/3",
+ 7
+          "gid://shopify/ProductVariant/4"
+ 8
+        ]
+ 9
+      },
+ 10
+      "component_quantities": {
+ 11
+        "value": [
+ 12
+          2,
+ 13
+          1
+ 14
+        ]
+ 15
+      }
+ 16
+    }
+ 17 ]
+ The order of the component_reference and the component_quantities match up. In the example, the first component_quantities value (2) matches with the first component_reference value (gid://shopify/ProductVariant/3) because two shirts are required for the bundle to be complete.
+ Notice that the extension uses Shopify's product_variant GIDs. The ID of the product_variant must be prepended with gid://shopify/ProductVariant/ to denote that it's a product_variant ID.
+ Rendering bundles in storefront
+ Bundles apps are responsible for managing product variants and options. Bundles apps need to create user interface product management flows to do the following:
+ Create a new product. At least one bundle configuration must be created.
+ Update an existing product.
+ These pages must be implemented using Shopify App Bridge.
+ Creating an app block
+ If your bundles app needs to customize the storefront, then you need to create an app block that encapsulates that logic.
+ Learn how to create an app block using theme app extensions.
+ Next steps
+ Learn more about how Shopify Functions work and the benefits of using Shopify Functions.
+ Consult the API references for Shopify Functions.
+ Learn how to use variables in your input query.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Install the Shopify bundles sample app
+ Step 2: Model a bundle
+ Step 3: Enable the bundle through extensions
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

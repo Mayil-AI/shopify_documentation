@@ -1,0 +1,60 @@
+Customer engagement
+ Markets
+ Site navigation and search
+ SEO
+ Overview
+ Metadata
+ hreflang tags
+ robots.txt
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Use hreflang tags in your theme
+ This guide describes how to use hreflang tags in your theme to allow search engines to surface regionalized and translated content.
+ How it works
+ When search engines crawl websites, they look for hreflang tags to determine the language and region that the website is intended for, and then use that to serve the correct URL based on a user's language and location.
+ For example, if a store has a default URL of your-store.myshopify.com, and a Spanish language version of es.your-store.myshopify.com, then including hreflang tags in your theme will ensure that a customer located in Spain, or with a Spanish language setting, will be served the Spanish URL.
+ hreflang tags in theme.liquid
+ An hreflang tag is a link element that identifies a localized URL of a website. You should add a unique hreflang tag for each language or region URL that exists, and they should be included in the <head>, which is commonly found in theme.liquid:
+ layout/theme.liquid
+ 1 <head>
+ 2
+    <!-- head element content -->
+ 3
+ 4
+    <link rel="alternate" hreflang="en" href="your-store.myshopify.com" />
+ 5
+    <link rel="alternate" hreflang="es" href="es.your-store.myshopify.com" />
+ 6 </head>
+ The following examples show how to add hreflang tags to collection and product pages:
+ layout/theme.liquid
+ 1 <head>
+ 2
+    <!-- head element content -->
+ 3
+ 4
+    <link rel="alternate" hreflang="en" href="your-store.myshopify.com/collections/{collection-name}" />
+ 5
+    <link rel="alternate" hreflang="es" href="es.your-store.myshopify.com/collections/{collection-name}" />
+ 6 </head>
+ layout/theme.liquid
+ 1 <head>
+ 2
+    <!-- head element content -->
+ 3
+ 4
+    <link rel="alternate" hreflang="en" href="your-store.myshopify.com/products/{product-name}" />
+ 5
+    <link rel="alternate" hreflang="es" href="es.your-store.myshopify.com/products/{product-name}" />
+ 6 </head>
+ Next steps
+ Learn more about using hreflang tags in multilingual stores.
+ Refer to Google's documentation to learn more about hreflang tags and how to use them.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ hreflang tags in theme.liquid
+ Next steps
+ Updates & News

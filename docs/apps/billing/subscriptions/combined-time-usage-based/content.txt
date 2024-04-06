@@ -1,0 +1,240 @@
+Viewing charges and earnings
+ Best practices
+ App Store
+ Create a combined time and usage-based subscription
+ You can implement a pricing model for your app that combines a recurring, time-based subscription plan with charges based on use with. Combined plans are supported for 30-day billing intervals.
+ Merchants must approve the pricing plan. After accepting the charges, the merchant is redirected to a URL that you provide.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Step 1: Create the subscription
+ Make a request to the appSubscriptionCreate mutation with the following information:
+ name
+ returnURL
+ terms
+ Merchants review the terms of the subscription when they accept the pricing plan.
+ cappedAmount
+ The cappedAmount is the maximum that a merchant is billed for during the 30-day billing cycle. The currencyCode must be one of the supported currencies.
+ The following mutation is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    appSubscriptionCreate(
+ 3
+      name: "Super Duper Capped Pricing Plan",
+ 4
+      returnUrl: "http://super-duper.shopifyapps.com",
+ 5
+      lineItems: [
+ 6
+        {
+ 7
+          plan: {
+ 8
+            appUsagePricingDetails: {
+ 9
+              terms: "$1 for 100 emails",
+ 10
+              cappedAmount: {
+ 11
+                amount: 20.00,
+ 12
+                currencyCode: USD
+ 13
+              }
+ 14
+            }
+ 15
+          }
+ 16
+        },
+ 17
+        {
+ 18
+          plan: {
+ 19
+            appRecurringPricingDetails: {
+ 20
+              price: {
+ 21
+                amount: 10.00,
+ 22
+                currencyCode: USD
+ 23
+              }
+ 24
+            }
+ 25
+          }
+ 26
+        }
+ 27
+      ]
+ 28
+    ) {
+ 29
+      userErrors {
+ 30
+        field,
+ 31
+        message
+ 32
+      },
+ 33
+      confirmationUrl,
+ 34
+      appSubscription {
+ 35
+        id,
+ 36
+        lineItems {
+ 37
+          id,
+ 38
+          plan {
+ 39
+            pricingDetails {
+ 40
+              __typename
+ 41
+            }
+ 42
+          }
+ 43
+        }
+ 44
+      }
+ 45
+    }
+ 46 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "appSubscriptionCreate": {
+ 4
+        "userErrors": [],
+ 5
+        "confirmationUrl": "https://{shop}.myshopify.com/admin/charges/4028497976/confirm_recurring_application_charge?signature=BAh7BzoHaWRsKwc4AB7wOhJhdXRvX2FjdGl2YXRlVA%3D%3D--987b3537018fdd69c50f13d6cbd3fba468e0e9a6",
+ 6
+        "appSubscription": {
+ 7
+          "id": "gid://shopify/AppSubscription/4028497976",
+ 8
+          "lineItems": [
+ 9
+            {
+ 10
+              "id": "gid://shopify/AppSubscriptionLineItem/4028497976?v=1&index=0",
+ 11
+              "plan": {
+ 12
+                "pricingDetails": {
+ 13
+                  "__typename": "AppRecurringPricing"
+ 14
+                }
+ 15
+              }
+ 16
+            },
+ 17
+            {
+ 18
+              "id": "gid://shopify/AppSubscriptionLineItem/4028497976?v=1&index=1",
+ 19
+              "plan": {
+ 20
+                "pricingDetails": {
+ 21
+                  "__typename": "AppUsagePricing"
+ 22
+                }
+ 23
+              }
+ 24
+            }
+ 25
+          ]
+ 26
+        }
+ 27
+      }
+ 28
+    },
+ 29
+    ...
+ 30 }
+ Shopify uses the payload's AppSubscription.id and the AppSubscriptionLineItem.id to generate data for app usage records.
+ Step 2: Create an app usage record
+ After you've created the usage pricing plan and the merchant has accepted the plan, you can create a usage record with the appUsageRecordCreate mutation. The usage record needs to include the AppSubscriptionLineItem.id of the AppSubscription object that the appSubscriptionCreate mutation returns.
+ The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    appUsageRecordCreate(
+ 3
+      subscriptionLineItemId: "gid://shopify/AppSubscriptionLineItem/4019585080?v=1&index=0",
+ 4
+      description: "Super Mega Plan 1000 emails",
+ 5
+      price: {
+ 6
+        amount: 1.00,
+ 7
+        currencyCode: USD
+ 8
+      }
+ 9
+    ) {
+ 10
+      userErrors {
+ 11
+        field,
+ 12
+        message
+ 13
+      },
+ 14
+      appUsageRecord {
+ 15
+        id
+ 16
+      }
+ 2
+    "data": {
+ 3
+      "appUsageRecordCreate": {
+ 4
+        "userErrors": [],
+ 5
+        "appUsageRecord": {
+ 6
+          "id": "gid://shopify/AppUsageRecord/14518231"
+    },
+ 10
+    ...
+ 11 }
+ Step 3: Monitor app usage limits
+ Merchants can use the Shopify admin to change their subscription's capped amount. The capped amount is the maximum amount of usage to bill for within the 30-day billing cycle.
+ To receive a notification when merchants change the capped amount, subscribe to the GraphQL Admin API's APP_SUBSCRIPTIONS_UPDATE webhook topic.
+ To receive a notification when merchants reach or exceed 90% of their capped amount, subscribe to the GraphQL Admin API's APP_SUBSCRIPTIONS_APPROACHING_CAPPED_AMOUNT webhook topic.
+ Step 4: Monitor subscription status changes
+ To receive a notification when a subscription status changes, such as when a charge is successful, subscribe to the GraphQL Admin API's APP_SUBSCRIPTION_UPDATE webhook topic.
+ Next steps
+ Discounts
+ Learn about offering subscription discounts.
+ Capped amount
+ Learn how to update the maximum amount that merchants can be charged for a subscription.
+ Prorated and deferred charges
+ Learn how Shopify handles prorating and deferring app subscription charges.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create the subscription
+ Step 2: Create an app usage record
+ Step 3: Monitor app usage limits
+ Step 4: Monitor subscription status changes

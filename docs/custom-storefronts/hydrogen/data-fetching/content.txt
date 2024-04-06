@@ -1,0 +1,195 @@
+Data fetching
+ Shopify API data
+ Third-party API data
+ Pagination
+ GraphiQL
+ Caching
+ Markets
+ SEO
+ Storefronts
+ Environments
+ Deployments
+ Build your storefront
+ Debugging and testing
+ Migrate and upgrade
+ Hydrogen API reference
+ Fetch Shopify API data in Hydrogen
+ Hydrogen uses Remix loader functions to handle all queries to the Storefront API, Customer Account API, and third-party data sources.
+ Loading data efficiently is important to keeping your Hydrogen app fast and performant. Follow these examples and best practices to ensure your Hydrogen storefront is delivering the fastest experience for customers.
+ Query Shopify APIs
+ Hydrogen provides built-in API clients for the Storefront API and the Customer Account API.
+ Query the Storefront API
+ The following is an example of how the /products/:handle route can query the Storefront API and then render that product data in a component.
+ Tip
+ This example demonstrates a simple version of this pattern. However, it can be extended to cover more complex behaviors, including more robust error handling, GraphQL query fragments and directives, deferred loading for non-critical data, server-side caching for non-personalized data, and more.
+ Query product data from the Storefront API
+ JavaScript
+ TypeScript
+ /app/routes/products.$productHandle.jsx
+ 1 import {useLoaderData} from '@shopify/remix-oxygen';
+ 2
+ 3 // Fetch and return API data with a Remix loader function
+ 4 export async function loader({params, context}) {
+ 5
+    const {handle} = params;
+ 6
+    const {storefront} = context;
+ 7
+    const {product} = await storefront.query(PRODUCT_QUERY, {
+ 8
+      variables: {handle},
+ 9
+    });
+ 10
+    return {product};
+ 11 }
+ 12
+ 13 // Render the component using data returned by the loader
+ 14 export default function Product() {
+ 15
+    const {product} = useLoaderData();
+ 16
+    return (
+ 17
+      <h1>{product.title}</h1>
+ 18
+    )
+ 19 }
+ 20
+ 21 // Query the product title by its ID
+ 22 const PRODUCT_QUERY = `#graphql
+ 23
+    product(handle: $handle) {
+ 24
+      title
+ 25
+    }`
+ Query the Customer Account API
+ The following is an example of how the /account/order/:id route can query the Customer Account API to display information about a single order. This example assumes that a customer is logged in.
+ Query customer order data from the Customer Account API
+ JavaScript
+ TypeScript
+ app/routes/account.orders.$id.tsx
+ 1 import {useLoaderData} from '@shopify/remix-oxygen';
+ 2
+ 3 // Fetch and return API data with a Remix loader function
+ 4 export async function loader({params, context}) {
+ 5
+    const orderId = atob(params.id);
+ 6
+ 7
+    const {data, errors} = await context.customerAccount.query(
+ 8
+      CUSTOMER_ORDER_QUERY,
+ 9
+      {
+ 10
+        variables: {orderId},
+ 11
+      },
+ 12
+    );
+ 13
+ 14
+    if ((errors && errors.length) || !(data && data.order)) {
+ 15
+      throw new Error('Order not found');
+ 16
+    }
+ 17
+ 18
+    return {order: data.order};
+ 19 }
+ 20
+ 21 // Render the component using data returned by the loader
+ 22 export default function Order() {
+ 23
+    const {order} = useLoaderData();
+ 24
+ 25
+    if (order) {
+ 26
+      return (
+ 27
+        <h1>{order.name}</h1>
+ 28
+      )
+ 29
+    }
+ 30 }
+ 31
+ 32 // Query the order name by its ID
+ 33 const CUSTOMER_ORDER_QUERY = `#graphql
+ 34
+    query Order($orderId: ID!) {
+ 35
+      order(id: $orderId) {
+ 36
+        name
+ 37
+      }
+ 38
+    }`
+ Caching loaded data
+ Hydrogen caches Storefront API data by default. It also includes a set of utilities to customize caching rules for individual API queries. Consult the Hydrogen caching docs for more details about configuring server-side cache rules, including creating your own custom caching rules.
+ Note
+ To avoid storing Personally Identifiable Information (PII) or other sensitive data, the Customer Account API client doesn't cache any requests. Caching this information could lead to unauthorized access or data breaches, compromising user privacy and security.
+ The following simplified example shows how to cache data for longer when querying for the product title, which is an API resource that typically doesn't change frequently:
+ Customizing caching in loader functions
+ JavaScript
+ TypeScript
+ /app/routes/products.$productHandle.jsx
+ 1 import {useLoaderData} from '@shopify/remix-oxygen';
+ 2
+ 3 export async function loader({params, context}) {
+ 4
+    const {handle} = params;
+ 5
+    const {storefront} = context;
+ 6
+    const {product} = await storefront.query(PRODUCT_QUERY, {
+ 7
+      variables: {handle},
+ 8
+      // Pass a `cache` option with your query to customize API request caching.
+ 9
+      cache: storefront.CacheLong()
+ 10
+    });
+ 11
+    return {product};
+ 12 }
+ 13
+ 14 export default function Product() {
+ 15
+    const {product} = useLoaderData();
+ 16
+    return (
+ 17
+      <h1>{product.title}</h1>
+ 18
+    )
+ 19 }
+ 20
+ 21 const PRODUCT_QUERY = `#graphql
+ 22
+    product(handle: $handle) {
+ 23
+      id
+ 24
+      title
+ 25
+    }`
+ Next steps
+ Learn more about caching Shopify API data with Hydrogen
+ Paginate your Hydrogen data queries to work with large product collections
+ Explore the Storefront API with Hydrogen’s built-in GraphiQL client
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Query Shopify APIs
+ Caching loaded data
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

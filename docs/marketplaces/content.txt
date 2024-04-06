@@ -1,0 +1,40 @@
+Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Build a marketplace with Shopify
+ Add commerce to any platform with Shopify’s Marketplace Kit. This collection of APIs and documentation allows you to integrate with Shopify and build selected commerce features or a world-class marketplace on any surface.
+ Start building
+ Build requirements and first steps
+ Ship faster with step-by-step tutorials
+ Marketplace Kit has everything you need to hit the ground running and offer commerce to your customers within months.
+ Explore tutorials
+ Get APIs for commerce tasks
+ A set of APIs for developing, maintaining, and growing commerce on your platform.
+ Run with ready-to-use code
+ Use pre-written code snippets for merchant setup, product listings, and more.
+ Build what you need
+ Follow the guides only for the features you want to add, and let Shopify take care of the rest.
+ Explore what makes up a marketplace
+ Dive into the features you can add to your platform.
+ Product listings
+ Customize how products show up on your surfaces and what information is displayed to customers.
+ Storefronts
+ Build a home for merchant’s brand to show their full inventory, with rich detail and media.
+ Checkout
+ Take customers to the merchant's store or directly to Shopify's secure web checkout to complete purchase.
+ Connect Shopify to your platform with a sales channel
+ Invite Shopify merchants to add their products to your new marketplace by creating a sales channel in the Shopify admin.
+ Explore sales channels
+ Component library
+ Sales channels are assembled from pre-designed UI components to save you time during the build process.
+ Experience principles
+ Shopify is a large ecosystem so it’s vital that you maintain the experiences merchants are familiar with.
+ Content guidelines
+ Since you’ll be building within Shopify, our design and content systems apply. They help merchants feel confident in their actions.
+ Share thoughts and ask questions
+ Join the developer community and share your experience building with Marketplace Kit.
+ Join GitHub community
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,205 @@
+Checkout
+ CollectionListing
+ MobilePlatformApplication
+ Payment
+ Product ResourceFeedback
+ ProductListing
+ ResourceFeedback
+ JSON
+ The ResourceFeedback resource
+ POST
+ Create a new ResourceFeedback
+ GET
+ Receive a list of all ResourceFeedbacks
+ Shipping and fulfillment
+ Shopify Payments
+ Store properties
+ TenderTransaction
+ Webhooks
+ Deprecated API calls
+ ResourceFeedback
+ Requires resource_feedbacks access scope.
+ The ResourceFeedback resource lets your app report the status of shops and their resources. For example, if your app is a marketplace channel, then you can use resource feedback to alert merchants that they need to connect their marketplace account by signing in.
+ Resource feedback notifications are displayed to the merchant on the home screen of their Shopify admin, and in the product details view for any products that are published to your app.
+ This resource should be used only in cases where you're describing steps that a merchant is required to complete. If your app offers optional or promotional set-up steps, or if it makes recommendations, then don't use resource feedback to let merchants know about them.
+ Sending feedback on a shop
+ You can send resource feedback on a shop to let the merchant know what steps they need to take to make sure that your app is set up correctly. Feedback can have one of two states: requires_action or success. You need to send a requires_action feedback request for each step that the merchant is required to complete.
+ If there are multiple set-up steps that require merchant action, then send feedback with a state of requires_action as merchants complete prior steps. And to remove the feedback message from the Shopify admin, send a success feedback request.
+ Important
+ Sending feedback replaces previously sent feedback for the Shop. Unlike REST-style APIs, you don't need to make a PATCH or PUT request to update any previously sent feedback. Send a new POST request to push the latest state of a shop or its resources to Shopify.
+ Formatting the resource feedback message field
+ If the feedback state is requires_action, then you can send a string message that communicates the action to be taken by the merchant.
+ The string must be a single message up to 100 characters long and must end with a period. You need to adhere to the message formatting rules or your requests will fail:
+ [Explanation of the problem]. [Suggested action].
+ 
+ Examples:
+ [Your app name] is not connected. Connect your account to use this sales channel. [Learn more]
+ [Your app name] is not configured. Agree to the terms and conditions to use this app. [Learn more]
+ 
+ Both Your app name and Learn more (a button which directs merchants to your app) are automatically populated in the Shopify admin.
+ Setting feedback permissions
+ Add the write_resource_feedbacks permission to your requested scopes.
+ Was this section helpful?
+ YesNo
+ #
+ Endpoints
+ POST
+ /admin/api/2024-04/resource_feedback.json
+ Create a new ResourceFeedback
+ GET
+ /admin/api/2024-04/resource_feedback.json
+ Receive a list of all ResourceFeedbacks
+ The ResourceFeedback resource
+ Properties
+ created_at
+ DateTime when the resource feedback record was stored by Shopify. Type: ISO 8601 UTC DateTime as string with year, month (or week), day, hour, minute, second, time zone.
+ updated_at
+ DateTime when the resource feedback record was last updated by Shopify. Type: ISO 8601 UTC DateTime as string with year, month (or week), day, hour, minute, second, time zone.
+ resource_id
+ read-only
+ Unique id of the resource.
+ resource_type
+ read-only
+ Type of resource for which feedback is returned. eg. Shop, Product.
+ state
+ Indicates the state that the Shop or resource is in, from the perspective of your app. Valid values are requires_action, or success.
+ messages
+ A concise set of copy strings to be displayed to merchants, to guide them in resolving problems your app encounters when trying to make use of their Shop and its resources.
+ Required only when state is requires_action. Disallowed when state is success.
+ Content restrictions for Shop feedback: one message up to 100 characters long.
+ feedback_generated_at
+ The time at which the payload is constructed. Used to help determine whether incoming feedback is outdated compared to feedback already received, and if it should be ignored upon arrival. Type: ISO 8601 UTC datetime as string with year, month [or week], day, hour, minute, second, millisecond, and time zone.
+ Note
+ If you queue a Feedback API payload for delivery at a later time, do not update this value when the API call is actually made; ensure that the current time is set when building the payload.
+ Was this section helpful?
+ YesNo
+ {}
+ The ResourceFeedback resource
+ 1
+ 2
+ 3
+ 9
+ 10
+ 11
+ {
+ "created_at": "2024-04-01 17:24:55 UTC",
+ "updated_at": "2024-04-01 17:24:55 UTC",
+ "resource_id": 321,
+ "resource_type": "Shop",
+ "state": "requires_action",
+ "messages": [
+ "is not connected. Connect your account to use this sales channel."
+ ],
+ "feedback_generated_at": "2024-04-01T17:24:55.185604Z"
+ }
+ POST
+ Create a new ResourceFeedback
+ Creates shop resource feedback.
+ Parameters
+ api_version
+ string
+ required
+ feedback_generated_at
+ required
+ An ISO 8601 date and time indicating when the feedback was generated by your app.
+ messages
+ required
+ An array containing a single message. See Formatting the resource feedback message field for formatting requirements.
+ state
+ required
+ Must be one of the following values:
+ Show state properties
+ Was this section helpful?
+ YesNo
+ Examples
+ Create a shop feedback record indicating a problem specific to your app
+ Request body
+ resource_feedback
+ Resource_feedback resource
+ Show resource_feedback properties
+ Create a shop feedback record indicating the Shop is usable by your app
+ Sending an invalid feedback payload returns an error
+ Sending outdated feedback (previous feedback payload has a greater resource_updated_at value) returns an error
+ Was this section helpful?
+ YesNo
+ POST
+ /admin/api/2024-04/resource_feedback.json
+ cURL
+ Remix
+ Ruby
+ Node.js
+ PHP
+ 1
+ 2
+ 3
+ 4
+ 5
+ curl -d '{"resource_feedback":{"state":"requires_action","messages":["is not connected. Connect your account to use this sales channel."],"feedback_generated_at":"2024-04-01T17:31:37.134822Z"}}' \
+ -X POST "https://your-development-store.myshopify.com/admin/api/2024-04/resource_feedback.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 12
+ 13
+ 14
+ 15
+ HTTP/1.1 202 Accepted
+ {
+ "resource_feedback": {
+ "created_at": "2024-04-01T13:31:37-04:00",
+ "updated_at": "2024-04-01T13:31:37-04:00",
+ "resource_id": 548380009,
+ "resource_type": "Shop",
+ "resource_updated_at": null,
+ "messages": [
+ "is not connected. Connect your account to use this sales channel."
+ ],
+ "feedback_generated_at": "2024-04-01T13:31:37-04:00",
+ "state": "requires_action"
+ }
+ }
+ GET
+ Receive a list of all ResourceFeedbacks
+ Returns a list (zero or one) of resource feedback objects.
+ Important
+ Note that ids are not returned as part of this request. Records are immutable except when POST replaces them.
+ Parameters
+ api_version
+ string
+ required
+ Was this section helpful?
+ YesNo
+ Examples
+ Get a list of resource feedback records for a specific shop
+ Was this section helpful?
+ YesNo
+ GET
+ /admin/api/2024-04/resource_feedback.json
+ cURL
+ Remix
+ Ruby
+ Node.js
+ PHP
+ 1
+ 2
+ 3
+ curl -X GET "https://your-development-store.myshopify.com/admin/api/2024-04/resource_feedback.json" \
+ 16
+ 17
+ HTTP/1.1 200 OK
+ {
+ "resource_feedback": [
+ {
+ "created_at": "2024-04-01T13:31:37-04:00",
+ "updated_at": "2024-04-01T13:31:37-04:00",
+ "resource_id": 548380009,
+ "resource_type": "Shop",
+ "resource_updated_at": null,
+ "messages": [
+ "is not connected. Connect your account to use this sales channel."
+ ],
+ "feedback_generated_at": "2024-04-01T12:31:37-04:00",
+ "state": "requires_action"
+ }
+ ]
+ }
+ Updates & News

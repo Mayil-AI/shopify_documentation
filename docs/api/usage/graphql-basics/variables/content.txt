@@ -1,0 +1,105 @@
+Product subscription app extensions
+ GraphQL variables
+ You can simplify GraphQL queries and mutations by extracting data into separate variables. GraphQL variables let you reuse the same requests with different arguments.
+ Variable structure
+ GraphQL requests can be split into query and variable sections.
+ Query section
+ In the query section, GraphQL variables begin with the $ symbol and are declared after the query or mutation keyword, similar to passing an argument to a function.
+ When you declare a variable, you need to specify its type, such as CustomerInput. This lets GraphQL know that you intend to refer to this type by this variable name later in the actual query.
+ For example, the following query declares an $input variable and passes it to the input argument:
+ GraphQL mutation with an input variable
+ 1 mutation($input: CustomerInput!) {
+ 2
+    customerCreate(input: $input) { ... }
+ 3 }
+ Variable section
+ In the variable section, variables are defined as a JSON object.
+ The following JSON object defines the $input variable for the query section:
+ Input variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "firstName": "Ayumu",
+ 4
+      "lastName": "Hirano",
+ 5
+      "email": "ayumu@example.com"
+ 6
+    }
+ 7 }
+ Simplify the customer creation request
+ The following example simplifies the customerCreate mutation example by using variables, resulting in an abstracted mutation that can be reused to create multiple customers.
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation ($input: CustomerInput!) {
+ 2
+    customerCreate(input: $input)
+ 3
+    {
+ 4
+      customer {
+ 5
+        id
+ 6
+        displayName
+ 7
+      }
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+    }
+ 13 }
+ Input variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "firstName": "Ayumu",
+ 4
+      "lastName": "Hirano",
+ 5
+      "email": "ayumu@example.com"
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerCreate": {
+ 4
+        "customer": {
+ 5
+          "id": "gid://shopify/Customer/1310038130710",
+ 6
+          "displayName": "Ayumu Hirano"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    }
+ 11
+    ...
+ 12 }
+ Next steps
+ Learn how to optimize your GraphQL implementation further with inline fragments and multi-query requests.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Variable structure
+ Simplify the customer creation request
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

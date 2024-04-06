@@ -1,0 +1,555 @@
+Ajax API
+ Overview
+ Reference
+ Cart
+ Product
+ Product recommendations
+ Predictive search
+ Section Rendering API
+ Customer Privacy API
+ Storefront API
+ Product Recommendations API reference
+ The Product Recommendations API can be used to recommend related products for a given product. To learn more about how recommendations are made and the associated limitations, refer to Product recommendations.
+ To learn how to show product recommendations in your theme, refer to Product recommendations.
+ All Ajax API requests should use locale-aware URLs to give visitors a consistent experience.
+ Note
+ The Shopify Search & Discovery app enables users to customize product recommendation and search results, which can impact results from storefront search and the Ajax Product Recommendations API. To learn about how these results can be impacted, visit the Shopify Help Center.
+ GET /{locale}/recommendations/products.json
+ The following example request retrieves the recommended products for a specific product:
+ 1 GET /{locale}/recommendations/products.json?product_id={product-id}&intent={intent}
+ Query parameters
+ Query parameter Required Description
+ product_id Yes The unique product ID of the product that you want to show recommended products for.
+ limit No
+ Limits the number of results.
+ The value can range from 1 to 10, and the default is 10.
+ intent No
+ The recommendation intent that is used to generate product recommendations. You can use intent to generate product recommendations on various pages across the online store, according to different strategies. Learn more about recommendation intents.
+ The accepted values are related and complementary. The default value is related.
+ Example request object
+ 1 {
+ 2
+    "product_id": "1234567890123",
+ 3
+    "limit": 4,
+ 4
+    "intent": "related"
+ 5 }
+ Example request using Fetch
+ 1 fetch(window.Shopify.routes.root + "recommendations/products.json?product_id=1234567890123&limit=4&intent=related")
+ 2
+    .then(response => response.json())
+ 3
+    .then(({ products }) => {
+ 4
+      if (products.length > 0) {
+ 5
+        const firstRecommendedProduct = products[0];
+ 6
+ 7
+        alert(
+ 8
+          `The title of the first recommended product is: ${firstRecommendedProduct.title}`
+ 9
+        );
+ 10
+      }
+ 11
+    }
+ 12 );
+ Products response
+ The following example is a response to a successful request to the /{locale}/recommendations/products.json endpoint:
+ Example product response
+ 1 {
+ 2
+    "intent": "related",
+ 3
+    "products": [
+ 4
+      {
+ 5
+        "id": 35,
+ 6
+        "title": "Gorgeous Silk Coat",
+ 7
+        "handle": "gorgeous-silk-coat",
+ 8
+        "description": null,
+ 9
+        "published_at": "2019-02-26T11:34:58-05:00",
+ 10
+        "created_at": "2019-02-26T11:34:58-05:00",
+ 11
+        "vendor": "Marge Group",
+ 12
+        "type": "Outdoors",
+ 13
+        "tags": [],
+ 14
+        "price": 380000,
+ 15
+        "price_min": 380000,
+ 16
+        "price_max": 790000,
+ 17
+        "available": true,
+ 18
+        "price_varies": true,
+ 19
+        "compare_at_price": null,
+ 20
+        "compare_at_price_min": 0,
+ 21
+        "compare_at_price_max": 0,
+ 22
+        "compare_at_price_varies": false,
+ 23
+        "variants": [
+ 24
+          {
+ 25
+            "id": 69,
+ 26
+            "title": "Small Aluminum Knife",
+ 27
+            "option1": "Small Aluminum Knife",
+ 28
+            "option2": null,
+ 29
+            "option3": null,
+ 30
+            "sku": "",
+ 31
+            "requires_shipping": true,
+ 32
+            "taxable": true,
+ 33
+            "featured_image": null,
+ 34
+            "available": true,
+ 35
+            "name": "Gorgeous Silk Coat - Small Aluminum Knife",
+ 36
+            "public_title": "Small Aluminum Knife",
+ 37
+            "options": [
+ 38
+              "Small Aluminum Knife"
+ 39
+            ],
+ 40
+            "price": 790000,
+ 41
+            "weight": 9500,
+ 42
+            "compare_at_price": null,
+ 43
+            "inventory_management": "shopify",
+ 44
+            "barcode": null
+ 45
+          },
+ 46
+          {
+ 47
+            "id": 70,
+ 48
+            "title": "Heavy Duty Bronze Shoes",
+ 49
+            "option1": "Heavy Duty Bronze Shoes",
+ 50
+            "option2": null,
+ 51
+            "option3": null,
+ 52
+            "sku": "",
+ 53
+            "requires_shipping": true,
+ 54
+            "taxable": true,
+ 55
+            "featured_image": null,
+ 56
+            "available": true,
+ 57
+            "name": "Gorgeous Silk Coat - Heavy Duty Bronze Shoes",
+ 58
+            "public_title": "Heavy Duty Bronze Shoes",
+ 59
+            "options": [
+ 60
+              "Heavy Duty Bronze Shoes"
+ 61
+            ],
+ 62
+            "price": 380000,
+ 63
+            "weight": 2200,
+ 64
+            "compare_at_price": null,
+ 65
+            "inventory_management": "shopify",
+ 66
+            "barcode": null
+ 67
+          }
+ 68
+        ],
+ 69
+        "images": [],
+ 70
+        "featured_image": null,
+ 71
+        "options": [
+ 72
+          {
+ 73
+            "name": "Color or something",
+ 74
+            "position": 1,
+ 75
+            "values": [
+ 76
+              "Small Aluminum Knife",
+ 77
+              "Heavy Duty Bronze Shoes"
+ 78
+            ]
+ 79
+          }
+ 80
+        ],
+ 81
+        "url": "/products/gorgeous-silk-coat?pr_choice=default&pr_prod_strat=copurchase&pr_rec_pid=35&pr_ref_pid=17&pr_seq=alternating"
+ 82
+      },
+ 83
+      {
+ 84
+        "id": 13,
+ 85
+        "title": "Gorgeous Wooden Computer",
+ 86
+        "handle": "gorgeous-wooden-computer",
+ 87
+        "description": null,
+ 88
+        "published_at": "2019-02-26T11:34:15-05:00",
+ 89
+        "created_at": "2019-02-26T11:34:15-05:00",
+ 90
+        "vendor": "Purdy Inc",
+ 91
+        "type": "Garden",
+ 92
+        "tags": [],
+ 93
+        "price": 930000,
+ 94
+        "price_min": 930000,
+ 95
+        "price_max": 1730000,
+ 96
+        "available": true,
+ 97
+        "price_varies": true,
+ 98
+        "compare_at_price": null,
+ 99
+        "compare_at_price_min": 0,
+ 100
+        "compare_at_price_max": 0,
+ 101
+        "compare_at_price_varies": false,
+ 102
+        "variants": [
+ 103
+          {
+ 104
+            "id": 25,
+ 105
+            "title": "Mediocre Silk Bottle",
+ 106
+            "option1": "Mediocre Silk Bottle",
+ 107
+            "option2": null,
+ 108
+            "option3": null,
+ 109
+            "sku": "",
+ 110
+            "requires_shipping": true,
+ 111
+            "taxable": true,
+ 112
+            "featured_image": null,
+ 113
+            "available": true,
+ 114
+            "name": "Gorgeous Wooden Computer - Mediocre Silk Bottle",
+ 115
+            "public_title": "Mediocre Silk Bottle",
+ 116
+            "options": [
+ 117
+              "Mediocre Silk Bottle"
+ 118
+            ],
+ 119
+            "price": 1730000,
+ 120
+            "weight": 5700,
+ 121
+            "compare_at_price": null,
+ 122
+            "inventory_management": "shopify",
+ 123
+            "barcode": null
+ 124
+          },
+ 125
+          {
+ 126
+            "id": 26,
+ 127
+            "title": "Lightweight Paper Shirt",
+ 128
+            "option1": "Lightweight Paper Shirt",
+ 129
+            "option2": null,
+ 130
+            "option3": null,
+ 131
+            "sku": "",
+ 132
+            "requires_shipping": true,
+ 133
+            "taxable": true,
+ 134
+            "featured_image": null,
+ 135
+            "available": true,
+ 136
+            "name": "Gorgeous Wooden Computer - Lightweight Paper Shirt",
+ 137
+            "public_title": "Lightweight Paper Shirt",
+ 138
+            "options": [
+ 139
+              "Lightweight Paper Shirt"
+ 140
+            ],
+ 141
+            "price": 930000,
+ 142
+            "weight": 6600,
+ 143
+            "compare_at_price": null,
+ 144
+            "inventory_management": "shopify",
+ 145
+            "barcode": null
+ 146
+          }
+ 147
+        ],
+ 148
+        "images": [],
+ 149
+        "featured_image": null,
+ 150
+        "options": [
+ 151
+          {
+ 152
+            "name": "Color or something",
+ 153
+            "position": 1,
+ 154
+            "values": [
+ 155
+              "Mediocre Silk Bottle",
+ 156
+              "Lightweight Paper Shirt"
+ 157
+            ]
+ 158
+          }
+ 159
+        ],
+ 160
+        "url": "/products/gorgeous-wooden-computer?pr_choice=default&pr_prod_strat=description&pr_rec_pid=13&pr_ref_pid=17&pr_seq=alternating"
+ 161
+      }
+ 162
+    ]
+ 163 }
+ Error responses
+ When a request to the /{locale}/recommendations/products.json endpoint is unsuccessful, one of the following error responses is returned:
+ Invalid parameter
+ Product not found
+ Invalid parameter
+ In the absence of a product_id parameter, the endpoint returns the following error:
+ 1 {
+ 2
+    "status": 422,
+ 3
+    "message": "Invalid parameter error",
+ 4
+    "description": "A product_id value is missing"
+ 5 }
+ If intent isn't one of related or complementary, then the endpoint returns the following error:
+ 1 {
+ 2
+    "status": 422,
+ 3
+    "message": "Invalid parameter error",
+ 4
+    "description": "The intent parameter must be one of related, complementary"
+ 5 }
+ Product not found
+ If the product_id is for a product that doesn't exist, or that isn't published in the Online store channel, then the endpoint returns the following error:
+ 1 {
+ 2
+    "status": 404,
+ 3
+    "message": "Product not found",
+ 4
+    "description": "No product with id <product_id> is published in the online store"
+ 5 }
+ GET /{locale}/recommendations/products
+ The following example request retrieves the HTML from a section rendered with product recommendations for a specific product.
+ 1 GET /{locale}/recommendations/products?product_id={product-id}&section_id=product-recommendations
+ Query parameters
+ Query parameter Required Description
+ product_id Yes The unique product ID of the product that you want to show recommended products for.
+ limit No
+ Limits the number of results.
+ The value can range from 1 to 10, and the default is 10.
+ section_id Yes The unique section ID of the section file that you want to render with product recommendations.
+ intent No
+ The recommendation intent that is used to generate product recommendations. You can use intent to generate product recommendations on various pages across the online store, according to different strategies. Learn more about recommendation intents.
+ The following values are accepted: related, complementary. The default value is related.
+ Example request object
+ 1 {
+ 2
+    "product_id": "1234567890123",
+ 3
+    "limit": 4,
+ 4
+    "section_id": "product-recommendations",
+ 5
+    "intent": "related"
+ 6 }
+ Example request using Fetch
+ 1 const productRecommendationsSection = document.querySelector('.product-recommendations');
+ 2
+ 3 fetch(window.Shopify.routes.root + "recommendations/products?product_id=12345690123&limit=4&section_id=product-recommendations&intent=related")
+ 4
+   .then(response => response.text())
+ 5
+   .then((text) => {
+ 6
+      const html = document.createElement('div');
+ 7
+      html.innerHTML = text;
+ 8
+      const recommendations = html.querySelector('.product-recommendations');
+ 9
+ 10
+      if (recommendations && recommendations.innerHTML.trim().length) {
+ 11
+        productRecommendationsSection.innerHTML = recommendations.innerHTML;
+ 12
+      }
+ 13
+   });
+ Section response
+ The response to a successful request to the /{locale}/recommendations/products endpoint.
+ The section response contains the HTML of the provided section rendered with the recommendations object containing the recommended products for the specified product.
+ For example, the following section would generate the following section response:
+ Example section
+ 1 {%- if recommendations.performed? -%}
+ 2
+    <div id="product-recommendations">
+ 3
+      {%- if recommendations.products_count > 0 -%}
+ 4
+        {% if recommendations.intent == 'related' %}
+ 5
+          <h2>You may also like</h2>
+ 6
+        {% elsif recommendations.intent == 'complementary' %}
+ 7
+          <h2>Pair it with</h2>
+ 8
+        {% endif %}
+ 9
+ 10
+        <ul>
+ 11
+          {%- for product in recommendations.products -%}
+ 12
+            <li class="grid__item small--one-half medium-up--one-quarter">
+ 13
+              <a href="{{ product.url }}">
+ 14
+                <span>{{ product.title }}</span>
+ 15
+                <span>{{ product.price | money }}</span>
+ 16
+              </a>
+ 17
+            </li>
+ 18
+          {%- endfor -%}
+ 19
+        </ul>
+ 20
+      {%- endif -%}
+ 21
+    </div>
+ 22 {%- endif -%}
+ Example section response
+ 1 <div id="product-recommendations">
+ 2
+    <h2>You may also like</h2>
+ 3
+ 4
+    <ul>
+ 5
+      <li class="grid__item small--one-half medium-up--one-quarter">
+ 6
+        <a href="/products/gorgeous-silk-coat?pr_choice=default&pr_prod_strat=copurchase&pr_rec_pid=35&pr_ref_pid=17&pr_seq=alternating">
+ 7
+          <span>Gorgeous Silk Coat</span>
+ 8
+          <span>$380.00</span>
+ 9
+        </a>
+ 10
+      </li>
+ 11
+      ...
+ 12
+    </ul>
+ 13 </div>
+ Error responses
+ When a request to the /{locale}/recommendations/products endpoint is unsuccessful, one of the following error status codes is returned:
+ Status code Description
+ 404
+ Product not found - The provided product ID doesn't exist, or doesn't belong to a product published on the Online store channel.
+ Section not found - The provided section ID wasn't found in the theme.
+ 422
+ Invalid parameter error - The product_id query parameter was missing.
+ Invalid parameter error - The intent parameter must be one of related, complementary.
+ Tracking conversions for product recommendations
+ The url property for each product in the products response contains URL parameters that lets you build a conversion funnel that can be tracked by using reports in Shopify. Similarly, the Liquid url property returned for recommendations.products contains this tracking information as well. The URL uses the following format:
+ 1 /products/gorgeous-wooden-computer?pr_choice=default&pr_prod_strat=description&pr_rec_pid=13&pr_ref_pid=17&pr_seq=alternating
+ To learn more about product recommendation reports, see Product recommendation conversion over time.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ GET /{locale}/recommendations/products.json
+ GET /{locale}/recommendations/products
+ Tracking conversions for product recommendations

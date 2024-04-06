@@ -1,0 +1,65 @@
+Delivery and shipping
+ Product offers
+ Payments
+ Thank you and Order status
+ Overview
+ Add a survey
+ UX guidelines
+ Localized UI extensions
+ Test UI extensions
+ Best practices
+ Distribution
+ Billing
+ App Store
+ UX guidelines for Thank you and Order status customizations
+ This guide introduces UX guidelines for Thank you and Order status customizations.
+ Choosing placement
+ Before getting started, you first need to decide whether you want your extension to show up at a static target, or a dynamic target. Read the target framework to learn more. Choosing the right target approach is key to providing a great customer experience.
+ In the example above, purchase.thank-you.block.render is a dynamic extension point, which a merchant can place wherever they want. In this instance, the extension adds a post-checkout survey extension in OrderStatus1 above the customer information, because the survey feedback should be captured directly after the buying experience.
+ Choosing components
+ To understand the complete list of components needed to create a Thank you and Order status extension, you should first understand the extension's possible states.
+ An extension has four possible states:
+ Loading state. Learn more about requesting network access scope.
+ Loaded (default) state
+ Processing state
+ Submitted state
+ Note
+ The submitted state doesn't need a success banner because the addition of the survey to the page indicates that the extension was rendered.
+ Component list
+ To create the four possible states of a post-checkout survey extension, you need all the components listed in the following chart.
+ Component Preview Tips
+ SkeletonText Try to reflect the actual content's dimensions to keep placement from shifting when the content loads.
+ View View is a generic container component. Its contents will always be the same size, so this component can be useful in layout components like Grid, BlockStack, and InlineStack that would otherwise stretch their children to fit.
+ Heading Allow merchants to customize the header content and make it configurable from the checkout editor.
+ Text Allow merchants to customize the text content and make it configurable from the checkout editor.
+ ChoiceList Use choice lists to present a list of choices where customers can make a single selection or multiple selections. If possible, enable merchants to customize the `OptionList` content.
+ Button Use secondary buttons here, reserving the primary button for the main call to actions (such as "Continue shopping").
+ Banner Use secondary buttons here, reserving the primary button for the main call to actions (such as "Continue shopping").
+ Choosing a layout
+ When using a nested layout, you need only the following structural component:
+ Component Preview Tips
+ BlockStack BlockStack components can be nested with themselves or with other components.
+ Use the BlockStack component to vertically stack elements on top of each other.
+ Nesting BlockStack
+ Spacing between the heading and content should be set to base to keep it consistent with nested components. To address different spacing values, you can nest a BlockStock inside of another BlockStack component, as shown in the following image:
+ Post-checkout survey UX guidelines
+ To help merchants gain customer trust and to provide a great post-checkout experience, follow these guidelines when designing a post-checkout survey app extension.
+ Display only one survey per session
+ Limit content so that customers aren't overwhelmed with information after they've completed their order.
+ Give merchants control over survey content
+ Merchants know their customers best and should have the flexibility to create surveys that relate to the shopping journey of their customers.
+ Next steps
+ Use a Checkout UI extension to add a post-checkout survey to the Thank you and Order status pages.
+ Explore UX guidelines for the entire checkout experience.
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Choosing placement
+ Choosing components
+ Choosing a layout
+ Post-checkout survey UX guidelines
+ Next steps
+ Updates & News

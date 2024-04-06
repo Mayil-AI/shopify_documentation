@@ -1,0 +1,50 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ LocalTime object
+ 2024-04 latest
+ Represents limited information about the current time relative to the parent object.
+ On this page
+ Fields
+ Types that return LocalTime
+ Fields
+ date (Date!)
+ The current date relative to the parent object.
+ dateTimeAfter (Boolean!)
+ Returns true if the current date and time is at or past the given date and time, and false otherwise.
+ Argument Description
+ dateTime ( DateTimeWithoutTimezone! ) required
+ The date and time to compare against, assumed to be in the timezone of the parent object.
+ dateTimeBefore (Boolean!)
+ Returns true if the current date and time is before the given date and time, and false otherwise.
+ Argument Description
+ dateTime ( DateTimeWithoutTimezone! ) required
+ The date and time to compare against, assumed to be in the timezone of the parent timezone.
+ dateTimeBetween (Boolean!)
+ Returns true if the current date and time is between the two given date and times, and false otherwise.
+ Argument Description
+ endDateTime ( DateTimeWithoutTimezone! ) required
+ The upper bound time to compare against, assumed to be in the timezone of the parent timezone.
+ startDateTime ( DateTimeWithoutTimezone! ) required
+ The lower bound time to compare against, assumed to be in the timezone of the parent timezone.
+ timeAfter (Boolean!)
+ Returns true if the current time is at or past the given time, and false otherwise.
+ Argument Description
+ time ( TimeWithoutTimezone! ) required
+ The time to compare against, assumed to be in the timezone of the parent timezone.
+ timeBefore (Boolean!)
+ Returns true if the current time is at or past the given time, and false otherwise.
+ Argument Description
+ time ( TimeWithoutTimezone! ) required
+ The time to compare against, assumed to be in the timezone of the parent timezone.
+ timeBetween (Boolean!)
+ Returns true if the current time is between the two given times, and false otherwise.
+ Argument Description
+ endTime ( TimeWithoutTimezone! ) required
+ The upper bound time to compare against, assumed to be in the timezone of the parent timezone.
+ startTime ( TimeWithoutTimezone! ) required
+ The lower bound time to compare against, assumed to be in the timezone of the parent timezone.
+ Types that return LocalTime
+ Shop.localTime
+ Was this page helpful?
+ YesNo

@@ -1,0 +1,520 @@
+Additional SDKs
+ Manage customer accounts with the Storefront API
+ Note
+ As of January 2024, the Customer Account API is generally available. It's now the recommended cross-platform method for managing customer data. Learn more about getting started with the Customer Account API.
+ You can create customers and update customer accounts using the Storefront API.
+ This guide covers how to create and activate a customer, and generate a customer access token. It also shows you how to accomplish common tasks like associating an address with a customer and recovering a customer's password.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You're familiar with querying products and collections.
+ Step 1: Create a customer
+ You create a customer using the customerCreate mutation. You can use this mutation to create a sign-up form on your storefront that, when completed, provides the customer with an account on the Shopify store.
+ If the mutation is successful, then a welcome email is sent to the customer with the information that their account has been activated.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation customerCreate($input: CustomerCreateInput!) {
+ 2
+    customerCreate(input: $input) {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+      customer {
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "email": "user@example.com",
+ 4
+      "password": "HiZqFuDvDdQ7"
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerCreate": {
+ 4
+        "customerUserErrors": [],
+ 5
+        "customer": {
+ 6
+          "id": "Z2lkOi8vc2hvcGlmeS9DdXN0b21lci8xNzk4OTQ5MTA5ODI="
+ 7
+ 10 }
+ Step 2: Activate a customer
+ If you run the customerCreate mutation on an inactivated customer account, then an account activation email is sent to the customer. The email includes an account activation link to Shopify where the customer can activate their account. You can use the link's activation URL to activate the customer.
+ If you pass an existing customer to the customerCreate mutation, then the mutation returns the following error:
+ 1 {
+ 2
+    "customerUserErrors": [
+ 3
+      {
+ 4
+        "code": "CUSTOMER_DISABLED",
+ 5
+        "field": null,
+ 6
+        "message": "We have sent an email to example.customer@example.com, please click the link included to verify your email address."
+ 7
+      }
+ 8
+    ]
+ 9 }
+ In this case, the customer account already exists, but it's disabled and needs to be activated.
+ If your app is a custom storefront, then you can update the merchant's notification templates to link to the area of your app where the customer creates a password. You can append the activation URL to the link as a URL parameter.
+ When your app has the activation URL, you can activate the customer's account by using either the customerActivate mutation or the customerActivateByUrl mutation.
+ Update the account invite template
+ You can update the Customer account invite email template so that it links to wherever in your storefront the customer can enter a new password. Include {{ customer.account_activation_url }} as a URL parameter at the end of the link.
+ From the Shopify admin, go to Settings > Notifications.
+ In the Customers notifications section, click the Customer account invite email template.
+ In the template editor, update the Activate your account link to point to your storefront's account activation page.
+ Pass the activation URL as a URL parameter by appending ?activation_url={{ customer.account_activation_url }}. For example:
+ 1 <td class="button__cell"><a href="https://www.my-app-domain.com/activate/?activation_url={{ customer.account_activation_url }}" class="button__text">Activate your account</a></td>
+ In the email notifications, the Activate your account link is rendered with the customer's unique password reset URL:
+ 1 <a href="https://www.my-app-domain.com/reset/?reset_url=https://a-merchant-store.myshopify.com/account/activate/3298995959864/e692decd24f9e5c6afe6200cd76b0aa4-1580934846">Activate your account</a>
+ customerActivate mutation
+ You can use the customerActivate mutation to send the customer's new password and an activation token to Shopify. The activation token is included in the account activation URL:
+ 1 <a href="https://example.myshopify.com/account/activate/<customer_id>/<activation_token>">Activate your account</a>
+ Tip
+ To activate an account without needing to extract the activation token from the URL, use the customerActivateByUrl mutation.
+ The customerActivate mutation takes the activationToken from the Shopify account activation URL and sends it to Shopify along with the customer's password.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
+ 2
+    customerActivate(id: $id, input: $input) {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+      customer {
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ Variables
+ 1 {
+ 2
+    "id": "Z2lkOi8vU2hvcGlmeS9FeGFtcGxlLzE=",
+ 3
+    "input": {
+ 4
+      "activationToken": "ae0f1d2e179c9571122a0595a6ac8125",
+ 5
+      "password": "HiZqFuDvDdQ7"
+ 6
+    }
+ 7 }
+ customerActivateByUrl mutation
+ You can use the customerActivateByUrl mutation to send the customer's password and activation URL to Shopify. With this method, you don't need to parse the activation URL to extract the activation token.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation($activationUrl: URL!, $password: String!){
+ 2
+    customerActivateByUrl(
+ 3
+      activationUrl: $activationUrl,
+ 4
+      password: $password
+ 5
+    ) {
+ 6
+      customer { id }
+ 7
+      customerUserErrors { code field message }
+ 8
+    }
+ 9 }
+ Variables
+ 1 {
+ 2
+    "activationUrl": "https://a-merchant-store.myshopify.com/account/activate/2198995959864/66741d7259ddfcd54962e2f4989a28b0-1581021688",
+ 3
+    "password": "dihwlDJ37^&j"
+ 4 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerActivateByUrl": {
+ 4
+        "customer": {
+ 5
+          "id": "Z2lkOi8vc2hvcGlmeS9DdXN0b21lci8yMTk4OTk1OTU5ODY0",
+ 6
+        },
+ 7
+        "customerUserErrors": []
+ 8
+      }
+ 9
+    }
+ 10 }
+ The following diagram shows the customer account activation workflow using the customerActivateByUrl mutation:
+ iOS Universal Links
+ If you're using iOS Universal Links, then the Shopify account activation URL redirects to your native app. The app receives the activation URL as a request parameter.
+ Step 3: Create an access token
+ After the customer account is created on your store, the customer can log in to their account. To log in a customer, you need to exchange their credentials for a customer access token. With an access token, you can query for customer accounts and perform update actions, such as associating an address with the customer.
+ To create a customer access token, you can use the customerAccessTokenCreate mutation.
+ Alternatively, if you have a valid Multipass token for a customer, then you can exchange it for a customer access token by using the customerAccessTokenCreateWithMultipass mutation.
+ customerAccessTokenCreate mutation
+ You can use the customerAccessTokenCreate mutation to create a customer access token.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+ 2
+    customerAccessTokenCreate(input: $input) {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+      customerAccessToken {
+ 9
+        accessToken
+ 10
+        expiresAt
+ 11
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "email": "user@example.com",
+ 4
+      "password": "HiZqFuDvDdQ7"
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerAccessTokenCreate": {
+ 4
+        "customerUserErrors": [],
+ 5
+        "customerAccessToken": {
+ 6
+          "accessToken": "5df718033d4765153f76470badab4c7c",
+ 7
+          "expiresAt": "2018-02-27T20:23:18Z"
+ 8
+        }
+ 9
+      }
+ 10
+    }
+ 11 }
+ customerAccessTokenCreateWithMultipass mutation
+ When you redirect a Multipass customer to a store, the customerAccessTokenCreateWithMultipass mutation lets you generate an access token without the customer needing to provide their credentials.
+ If the customer doesn't exist in Shopify, then a new customer is created with the Multipass credentials.
+ The following mutation exchanges a Multipass token for a customer access token:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation($multipassToken: String!) {
+ 2
+    customerAccessTokenCreateWithMultipass(multipassToken: $multipassToken) {
+ 3
+      customerAccessToken { accessToken expiresAt }
+ 4
+      customerUserErrors { code field message }
+ 5
+    }
+ 6 }
+ Variables
+ 1 {
+ 2
+    "multipassToken": "RwANseawzCPlSobjxHTjCnHhnPOGgPJ-ruJ_fofUBO0pVn4ZDH6X1vxPVg6iPJD44OIXyEuD9V6TcP6a7eXGt5SN1npgO_OkyrFuR68BOeTJEkdvwTepNnqQklUGHYmG8CeR-9dk_utQnmQLRvpUKUSD6IVrTl9onyx09YIWRY7w67alquHdqF_mazvnl0Gv-Lp5-rqyTaMSKRpOxQCw0PX4z0ZTsG0mel9VW12N5I7yUOM8lpvi0y7LuFHqmzGOzTixGFcVGdp5ib_tca3Q54rbIHMYlo8Arz_ooUkkn8xeX8E-YwmqHSaePWOGjaliyPhT0NAckT8rI1ywdxw1x7mncvtisgfqmPlzTITT845r87zi1q4wbRlGf1pWzOMGD4xkVFmlPFIm_YNhKKuCE6XQmnaQ3Jh-q2a-4Yw26SuHpCImm70eeoBdWIJEs6bEz6AUlilBGg7NeAKj_jQNgYypJ0GJyFIXUipa8VpQa1b_NS4IRyircaVj_i1F0rcnaZgkeZiOqHYdeKwxGtp-8XowHMeSrnG8P3N_ON_SXIDJOXXkKf3rrGDCmJciFbDKjcC0Xf1vFRcj_fwpPm0zLQ=="
+ 3 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerAccessTokenCreateWithMultipass": {
+ 4
+        "customerAccessToken": {
+ 5
+          "accessToken": "59fa4a5971e010ba63fdb19dbe21d671",
+ 6
+          "expiresAt": "2020-03-20T14:34:43Z"
+ 7
+        },
+ 8
+        "customerUserErrors": []
+ The following diagram shows the workflow for viewing orders using the customerAccessTokenCreateWithMultipass mutation:
+ The following diagram shows the checkout workflow using the customerAccessTokenCreateWithMultipass mutation:
+ Step 4: Update an address
+ When you have a customer access token, you can use it to associate or update an address for the customer.
+ The following example shows how to use the customerAddressCreate mutation to create a new address for a customer:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
+ 2
+    customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+      customerAddress {
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ Variables
+ 1 {
+ 2
+    "customerAccessToken": "e40e9017997a60ed8a6d7bf1f441d743",
+ 3
+    "address": {
+ 4
+      "lastName": "Doe",
+ 5
+      "firstName": "John",
+ 6
+      "address1": "123 Test Street",
+ 7
+      "province": "QC",
+ 8
+      "country": "Canada",
+ 9
+      "zip": "H3K0X2",
+ 10
+      "city": "Montreal"
+ 11
+    }
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerAddressCreate": {
+ 4
+        "customerUserErrors": [],
+ 5
+        "customerAddress": {
+ 6
+          "id": "Z2lkOi8vc2hvcGlmeS9NYWlsaW5nQWRkcmVzcy8yMTg3MDUxOTkxMTA/bW9kZWxfbmFtZT1DdXN0b21lckFkZHJlc3MmY3VzdG9tZXJfYWNjZXNzX3Rva2VuPWU0MGU5MDE3OTk3YTYwZWQ4YTZkN2JmMWY0NDFkNzQz"
+ 7
+ 10 }
+ Step 5: Recover and reset passwords
+ You can use the customerRecover mutation to implement a password recovery flow on your custom storefront. The mutation requires the customer's email address and is used to send an email with a link to reset the password.
+ The following mutation recovers the customer's password. In response to a successful mutation, an email is sent with a reset password link. Clicking the link directs the customer to the Shopify account reset URL.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation customerRecover($email: String!) {
+ 2
+    customerRecover(email: $email) {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+    }
+ 9 }
+ Variables
+ 1 {
+ 2
+    "email": "user@example.com"
+ 3 }
+ customerReset mutation
+ If you're using iOS Universal Links, then the redirect URL for the Shopify account reset redirects to your native app. In this case, you can use the customerReset mutation to send the customer's new password and reset token to Shopify. The reset token is included in the account reset redirect URL.
+ Tip
+ To update a customer's password without needing the customer's ID, use the customerResetByUrl mutation.
+ The following mutation takes the reset token from the Shopify account reset URL and sends it to Shopify along with the customer's new password:
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation customerReset($id: ID!, $input: CustomerResetInput!) {
+ 2
+    customerReset(id: $id, input: $input) {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+      customer {
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ Variables
+ 1 {
+ 2
+    "id": "Z2lkOi8vU2hvcGlmeS9FeGFtcGxlLzE=",
+ 3
+    "input": {
+ 4
+      "resetToken": "ae0f1d2e179c9571122a0595a6ac8125",
+ 5
+      "password": "HiZqFuDvDdQ7"
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerReset": {
+ 4
+        "customerUserErrors": [],
+ 5
+        "customer": {
+ 6
+          "id": "Z2lkOi8vc2hvcGlmeS9DdXN0b21lci8xNzk4OTQ5MTA5ODI="
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10 }
+ customerResetByUrl mutation
+ The customerResetByUrl mutation updates a customer's password by identifying the customer by their unique password-reset URL. This is the URL that's generated by the customer.reset_password_url Liquid variable.
+ The benefit of using customerResetByUrl over customerReset is that you don't need the customer's ID to identify the customer.
+ To pass the password-reset URL to your storefront, include customer.reset_password_url in the password reset email template.
+ Update the password reset template
+ Update the Customer account password reset email template so that it links to wherever in your storefront the customer can enter a new password. Include {{ customer.reset_password_url }} as a URL parameter at the end of the link.
+ From the Shopify admin, go to Settings > Notifications.
+ In the Customers notifications section, click Customer account password reset email template.
+ In the template editor, update the Reset your password link to point to your storefront's password reset page.
+ Pass the password reset URL as a URL parameter by appending ?reset_url={{ customer.reset_password_url }}:
+ 1 <td class="button__cell"><a href="https://www.my-app-domain.com/reset/?reset_url={{ customer.reset_password_url }}" class="button__text">Reset your password</a></td>
+ In the email notifications, the Reset your password link is rendered with the customer's unique password reset URL:
+ 1 <a href="https://www.my-app-domain.com/reset/?reset_url=https://a-merchant-store.myshopify.com/account/reset/2198995959864/e692decd24f9e5c6afe6200cd76b0aa4-1580934624">Reset your password</a>
+ Send a password recovery email
+ To let a customer enter a new password, use the customerRecover mutation to send a password reset email to them:
+ 1 mutation sendPasswordRecoverEmail {
+ 2
+    customerRecover(email: "greg.piotrowski1@teleworm.us") {
+ 3
+      customerUserErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+    }
+ 9 }
+ Use the reset URL to reset the password
+ When a customer clicks the password reset link and is directed to your storefront, get the password reset URL from the request parameters.
+ Use the customerResetByUrl mutation to reset the customer's password. Pass the password reset URL as the resetUrl argument, and the customer's new password as the password argument.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation resetPasswordByUrl($resetUrl: URL!, $password: String!) {
+ 2
+    customerResetByUrl(resetUrl: $resetUrl, password: $password) {
+ 3
+      customer { id }
+ 4
+      customerUserErrors { code field message}
+ 5
+    }
+ 6 }
+ Variables
+ 1 {
+ 2
+    "resetUrl": "https://a-merchant-store.myshopify.com/account/reset/2198995959864/e692decd24f9e5c6afe6200cd76b0aa4-1580934624",
+ 3
+    "password": "DV]C34QN67"
+ 4 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "customerResetByUrl": {
+ 4
+        "customer": {
+ 5
+          "id": "Z2lkOi8vc2hvcGlmeS9DdXN0b21lci8yMTk4OTk1OTU5ODY0"
+ 6
+        },
+ 7
+        "customerUserErrors": []
+ Next steps
+ Retrieve metafields with the Storefront API to access additional information from different types of resources.
+ Support multiple languages on a storefront with the Storefront API.
+ Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a customer
+ Step 2: Activate a customer
+ Step 3: Create an access token
+ Step 4: Update an address
+ Step 5: Recover and reset passwords
+ Next steps
+ Updates & News

@@ -1,0 +1,180 @@
+Overview
+ Theme app extensions
+ Other integration methods
+ Verify theme support
+ Manage media
+ Verify theme support
+ Before you start integrating your app, determine the method required for integrating an app with an online store by verifying whether its published theme supports app blocks.
+ Tip
+ If a theme doesn't currently support app blocks, and you maintain the theme or a store where the theme is used, then you can also consider migrating the theme to support app blocks.
+ Verification criteria
+ To verify whether a theme supports app blocks, you need to determine the following:
+ Whether the template where your app is injected supports JSON.
+ The main section in the template.
+ Whether the section where your app is injected has a block of type @app in its schema.
+ For an example, refer to Shopify's sample product reviews app.
+ To see a theme that uses JSON templates and supports app blocks in several sections, refer to Shopify's reference theme, Dawn.
+ Requirements
+ Your app will need to request the read_themes REST Admin API access scope.
+ Verify support for app blocks
+ You can use the following code to verify that a theme supports app blocks. The code uses Shopify's Node library, which provides support for JavaScript apps to access the Shopify REST Admin API.
+ 1 import {shopifyApi} from '@shopify/shopify-api';
+ 2
+ 3 // Create library object
+ 4 const shopify = shopifyApi({
+ 5
+    // The next four values are typically read from environment variables for added security
+ 6
+    apiKey: 'APIKeyFromPartnerDashboard',
+ 7
+    apiSecretKey: 'APISecretFromPartnerDashboard',
+ 8
+    scopes: ['read_products'],
+ 9
+    hostName: 'cloudflare-tunnel-address',
+ 10
+    ...
+ 11 });
+ 12
+ 13 // Specify the name of the template the app will integrate with
+ 14 const APP_BLOCK_TEMPLATES = ['product', 'collection', 'index'];
+ 15
+ 16 // Retrieve the session ID from an authenticated request
+ 17 const sessionId = await shopify.session.getCurrentId({
+ 18
+      isOnline: true,
+ 19
+      rawRequest: req,
+ 20
+      rawResponse: res
+ 21 })
+ 22
+ 23 // Use the `sessionId` to retrieve the session from the app's session storage
+ 24 // The application must provide `getSessionFromStorage()`
+ 25 const session = await getSessionFromStorage(sessionId);
+ 26
+ 27 // Create a new client for the specified shop
+ 28 const client = new shopify.clients.Rest({
+ 29
+      session,
+ 30 })
+ 31
+ 32 // Use `client.get` to request a list of themes on the shop
+ 33 const {body:{themes}} = await client.get({
+ 34
+    path: 'themes',
+ 35 });
+ 36
+ 37 // Find the published theme
+ 38 const publishedTheme = themes.find((theme) => theme.role === 'main');
+ 39
+ 40 // Retrieve a list of assets in the published theme
+ 41 const {body:{assets}} = await client.get({
+ 42
+    path: `themes/${publishedTheme.id}/assets`
+ 43 });
+ 44
+ 45 // Check if JSON template files exist for the template specified in APP_BLOCK_TEMPLATES
+ 46 const templateJSONFiles = assets.filter((file) => {
+ 47
+    return APP_BLOCK_TEMPLATES.some(template => file.key === `templates/${template}.json`);
+ 48 })
+ 49
+ 50 if (templateJSONFiles.length > 0 && (templateJSONFiles.length === APP_BLOCK_TEMPLATES.length)) {
+ 51
+    console.log('All desired templates support sections everywhere!')
+ 52 } else if (templateJSONFiles.length) {
+ 53
+    console.log('Only some of the desired templates support sections everywhere.')
+ 54 }
+ 55
+ 56 // Retrieve the body of JSON templates and find what section is set as `main`
+ 57 const templateMainSections = (await Promise.all(templateJSONFiles.map(async (file, index) => {
+ 58
+    const {body:{asset}} = await client.get({
+ 59
+      path: `themes/${publishedTheme.id}/assets`,
+ 60
+      query: { "asset[key]": file.key }
+ 61
+    })
+ 62
+ 63
+    const json = JSON.parse(asset.value)
+ 64
+    const main = Object.entries(json.sections).find(([id, section]) => id === 'main' || section.type.startsWith("main-"))
+ 65
+    if (main) {
+ 66
+      return assets.find((file) => file.key === `sections/${main[1].type}.liquid`);
+ 67
+    }
+ 68 }))).filter((value) => value)
+ 69
+ 70
+ 71 // Request the content of each section and check if it has a schema that contains a
+ 72 // block of type '@app'
+ 73 const sectionsWithAppBlock = (await Promise.all(templateMainSections.map(async (file, index) => {
+ 74
+    let acceptsAppBlock = false;
+ 75
+    const {body:{asset}} = await client.get({
+ 76
+      path: `themes/${publishedTheme.id}/assets`,
+ 77
+      query: { "asset[key]": file.key }
+ 78
+    })
+ 79
+ 80
+    const match = asset.value.match(/\{\%\s+schema\s+\%\}([\s\S]*?)\{\%\s+endschema\s+\%\}/m)
+ 81
+    const schema = JSON.parse(match[1]);
+ 82
+ 83
+    if (schema && schema.blocks) {
+ 84
+      acceptsAppBlock = schema.blocks.some((b => b.type === '@app'));
+ 85
+    }
+ 86
+ 87
+    return acceptsAppBlock ? file : null
+ 88 }))).filter((value) => value)
+ 89
+ 90 if (templateJSONFiles.length > 0 && (templateJSONFiles.length === sectionsWithAppBlock.length)) {
+ 91
+    console.log('All desired templates have main sections that support app blocks!');
+ 92 } else if (sectionsWithAppBlock.length) {
+ 93
+    console.log('Only some of the desired templates support app blocks.');
+ 94 } else {
+ 95
+    console.log("None of the desired templates support app blocks");
+ 96 }
+ Specify the method for integrating the app
+ App integration methods
+ App block support Integration method
+ Yes Skip POST requests made to the ScriptTag REST Admin API or GraphQL Admin API resource.
+ No
+ Make POST requests to the ScriptTag REST Admin API or GraphQL Admin API resource, or provide instructions to add code using a custom Liquid section or block, or the custom CSS setting
+ Provide onboarding instructions
+ You need to provide merchants with post-installation instructions about onboarding your app.
+ To learn more about writing effective help documentation, refer to Help documentation in Shopify Polaris and to the theme app extension onboarding instruction guidelines.
+ App block support and onboarding instruction examples
+ App block support Onboarding
+ Yes
+ Provide merchants with instructions about using the app block.
+ For example, document instructions for adding the app block to the theme.
+ No
+ Provide merchants with instructions about any configurations required to integrate the app.
+ For example, document instructions for copying and pasting a code snippet to a page.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Verification criteria
+ Requirements
+ Verify support for app blocks
+ Specify the method for integrating the app
+ Provide onboarding instructions
+ Updates & News

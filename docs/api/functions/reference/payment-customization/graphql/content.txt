@@ -1,0 +1,95 @@
+Payment Customization API
+ Overview
+ GraphQL reference
+ Overview
+ Common objects
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Configuration
+ Payment Customization API reference
+ The Payment Customization API enables you to rename, reorder, and sort the payment methods available to buyers during checkout.
+ Extension targets
+ The Payment Customization API exposes the following targets:
+ Target Output type Description
+ purchase.payment-customization.run FunctionRunResult Outputs the list of operations to apply to payment methods
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Payment Customization API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      cost {
+ 4
+        subtotalAmount {
+ 5
+          amount
+ 6
+          currencyCode
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10
+    paymentMethods {
+ 11
+      id
+ 12
+    }
+ 13 }
+ The following example shows the resulting input to the query:
+ input.json
+ 1 {
+ 2
+    "cart": {
+ 3
+      "cost": {
+ 4
+        "subtotalAmount": {
+ 5
+          "amount": 200,
+ 6
+          "currencyCode": "CAD"
+ 7
+        }
+ 8
+      }
+ 9
+    },
+ 10
+    "paymentMethods": {
+ 11
+      "id": "gid://shopify/PaymentCustomizationPaymentMethod/1"
+ 12
+    }
+ 13 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.payment-customization.run target.
+ Example
+ The following function result hides a payment method:
+ output.json
+ 1 {
+ 2
+    "operations": {
+ 3
+      "hide": {
+ 4
+        "paymentMethodId": "gid://shopify/PaymentCustomizationPaymentMethod/1"
+ 5
+      }
+ 6
+    }
+ 7 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult

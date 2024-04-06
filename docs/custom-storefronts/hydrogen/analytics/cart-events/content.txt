@@ -1,0 +1,255 @@
+Skip to Content
+ Open Main Navigation
+ shopify.dev docs
+ On this page
+ Track cart events in Hydrogen with Shopify analytics
+ In addition to tracking page views in Hydrogen, you can trigger a Shopify analytics event when a user adds a product to their cart.
+ While page view events rely on collecting analytics data from Remix loader functions, add-to-cart events, which mutate API state, are tracked in Remix action functions. Consult Hydrogen’s built-in cart component for an example of an Add to Cart button that uses a Remix action.
+ Note
+ Add-to-cart analytics are currently only supported for Hydrogen apps. Using a Hydrogen storefront token with non-Hydrogen storefronts to make Storefront API requests might lead to unpredictable results.
+ Requirements
+ Anchor link to section titled "Requirements"
+ You’ve created a Hydrogen app and connected it to your Shopify store.
+ You've already created a usePageAnalytics custom hook. This custom React hook is used when collecting both page view and cart events.
+ Step 1: Collect analytics data from cart actions
+ Anchor link to section titled "Step 1: Collect analytics data from cart actions"
+ From any nested route's action function, return a JSON object containing the analytics data you want to collect. These objects should have the same key name across all actions, in this example analytics.
+ In the following example code, the cart action returns an analytics object containing the event type and the cart ID:
+ File
+ JavaScript
+ TypeScript
+ /app/routes/cart.jsx
+ 1 // Import Hydrogen's list of supported page types
+ 2 import {AnalyticsPageType} from '@shopify/hydrogen';
+ 3
+ 4 export async function action({context}) {
+ 5
+    const {session} = context;
+ 6
+    const cartId = await session.get('cartId');
+ 7
+    return json({
+ 8
+      analytics: {
+ 9
+        pageType: AnalyticsPageType.cart,
+ 10
+        cartId,
+ 11
+      },
+ 12
+    });
+ 13 }
+ Step 2: Create a wrapper function to handle cart analytics
+ Anchor link to section titled "Step 2: Create a wrapper function to handle cart analytics"
+ You can use Hydrogen's CartForm component to know when to send analytics after an interaction. For example, you might want to send an add-to-cart analytics event after getting a successful response from the fetcher request. This wrapper component handles add-to-cart analytics.
+ The wrapper reuses the usePageAnalytics custom hook used to track Hydrogen page views. It also uses several built-in Hydrogen utilities:
+ Utility Description
+ AnalyticsEventName The list of accepted event types.
+ getClientBrowserParameters A function that returns information about the user's browser.
+ sendShopifyAnalytics A function that handles sending data to Shopify analytics.
+ The following example code creates a new AddToCartAnalytics component that can be added to Hydrogen’s CartForm component. It then uses React’s useEffect hook to collect the analytics data when the form is submitted and send it to Shopify analytics.
+ File
+ JavaScript
+ TypeScript
+ /app/components/AddToCartButton.jsx
+ 1 import {
+ 2
+    AnalyticsEventName,
+ 3
+    CartForm,
+ 4
+    getClientBrowserParameters,
+ 5
+    sendShopifyAnalytics,
+ 6 } from '@shopify/hydrogen';
+ 7 import {useEffect} from 'react';
+ 8 // Reuse the utility for tracking page view data
+ 9 import {usePageAnalytics} from '../../utils';
+ 10
+ 11 function AddToCartAnalytics({
+ 12
+    fetcher,
+ 13
+    children,
+ 14 }) {
+ 15
+    // IMPORTANT: It’s up to you to ensure you have tracking consent
+ 16
+    // before updating this value to true.
+ 17
+    const hasUserConsent = false;
+ 18
+ 19
+    // Action response data
+ 20
+    const fetcherData = fetcher.data;
+ 21
+    // Form input data
+ 22
+    const formData = fetcher.formData;
+ 23
+    // Page view data from loaders
+ 24
+    const pageAnalytics = usePageAnalytics({hasUserConsent});
+ 25
+ 26
+    useEffect(() => {
+ 27
+      if (formData) {
+ 28
+        const cartData = {};
+ 29
+        const cartInputs = CartForm.getFormInput(formData);
+ 30
+ 31
+        // Parse `analytics` data passed by CartForm
+ 32
+        try {
+ 33
+          if (cartInputs.inputs.analytics) {
+ 34
+            const dataInForm = JSON.parse(
+ 35
+              String(cartInputs.inputs.analytics),
+ 36
+            );
+ 37
+            Object.assign(cartData, dataInForm);
+ 38
+          }
+ 39
+        } catch {
+ 40
+          // do nothing
+ 41
+        }
+ 42
+ 43
+        // If the cart action responded, send the analytics data
+ 44
+        if (Object.keys(cartData).length && fetcherData) {
+ 45
+          const addToCartPayload = {
+ 46
+            ...getClientBrowserParameters(),
+ 47
+            ...pageAnalytics,
+ 48
+            ...cartData,
+ 49
+            cartId: fetcherData.cart.id,
+ 50
+          };
+ 51
+ 52
+          sendShopifyAnalytics({
+ 53
+            eventName: AnalyticsEventName.ADD_TO_CART,
+ 54
+            payload: addToCartPayload,
+ 55
+          });
+ 56
+        }
+ 57
+      }
+ 58
+    }, [fetcherData, formData, pageAnalytics]);
+ 59
+    return <>{children}</>;
+ 60 }
+ Step 3: Add the wrapper function to CartForm
+ Anchor link to section titled "Step 3: Add the wrapper function to CartForm"
+ In your <AddToCartButton> component, include the wrapper function inside CartForm, along with a hidden input containing the analytics data. <AddToCartAnalytics/> takes a fetcher prop provided by <CartForm/>.
+ The hidden input should use a consistent key name, in this case analytics. Hidden input values must be strings, so you should stringify the JSON object when adding it to the form element.
+ Add To Cart button example with analytics data as a hidden input
+ JavaScript
+ TypeScript
+ /app/components/AddToCartButton.jsx
+ 1 export function AddToCartButton({
+ 2
+    children,
+ 3
+    lines,
+ 4
+ 5
+    // Pass analytics data with a `productAnalytics` component prop
+ 6
+    productAnalytics
+ 7 }) {
+ 8
+    const analytics = {
+ 9
+      products: [productAnalytics]
+ 10
+    };
+ 11
+ 12
+    return (
+ 13
+      <CartForm
+ 14
+        route="/cart"
+ 15
+        inputs={
+ 16
+          {lines}
+ 17
+        }
+ 18
+        action={CartForm.ACTIONS.LinesAdd}
+ 19
+      >
+ 20
+        {(fetcher) => {
+ 21
+          return (
+ 22
+            // Wrapper component uses `fetcher` provided by CartForm
+ 23
+            <AddToCartAnalytics fetcher={fetcher}>
+ 24
+ 25
+              {/* Hidden input with analytics data */}
+ 26
+              <input
+ 27
+                type="hidden"
+ 28
+                name="analytics"
+ 29
+                {/* Hidden input values must be stringified */}
+ 30
+                value={JSON.stringify(analytics)}
+ 31
+              />
+ 32
+              <button
+ 33
+                type="submit"
+ 34
+                disabled={disabled ?? fetcher.state !== 'idle'}
+ 35
+              >
+ 36
+                {children}
+ 37
+              </button>
+ 38
+            </AddToCartAnalytics>
+ 39
+          );
+ 40
+        }}
+ 41
+      </CartForm>
+ 42
+    );
+ 43 }
+ Next steps
+ Anchor link to section titled "Next steps"
+ Validate that analytics data is flowing
+ Track page view events with Shopify analytics
+ Was this page helpful?
+ YesNo

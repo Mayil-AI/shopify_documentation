@@ -1,0 +1,360 @@
+Segment query language reference
+ Datasets
+ Blockchain
+ Liquid
+ Ajax API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Segment query language reference
+ Use ShopifyQL to query the GraphQL Admin API for segmentation data. Segmentation data represents data subsets, which users have created according to some criteria.
+ Segmentation data corresponds to saved search queries in the Shopify admin. For example, a user can save a segment for customers that are subscribed to email marketing. These customers are the segment members.
+ The following guide explains the syntax for forming queries.
+ Note
+ Segment queries don't support all ShopifyQL syntax.
+ Segment queries
+ Segmentation queries in API requests are precise definitions of segments. The queries indicate the condition or conditions that data must satisfy to be selected. The syntax performs a similar function to WHERE statements in SQL. Query syntax acts as a filter to determine the data returned.
+ For example, a segment query can retrieve segment members that have left a checkout without completing their purchase in the last 30 days.
+ You can query a maximum of 250 segments. The maximum value that first and last arguments accept is 250.
+ Query syntax
+ Segment queries are composed of a clause, or multiple clauses, specifying facts about the segment. The clauses specify a segment by applying a condition to an attribute using an operator.
+ An individual clause consists of the following components:
+ <attribute>: The properties that define all items in a specific category.
+ <operator>: A reserved character pattern that performs tasks such as comparisons and arithmetic operations.
+ <condition>: The state required for data to be either selected or filtered out.
+ Clause format
+ The following is the query clause format:
+ 1 <clause> ::=  <attribute> <operator> <condition>
+ For example, in the following clause, email_subscription_status is the attribute, = is the operator, and SUBSCRIBED is the condition:
+ Segment query example
+ 1 email_subscription_status = 'SUBSCRIBED'
+ You can also group clauses.
+ Attributes
+ An attribute's data type determines the valid operators and conditions for defining segment queries.
+ The following are supported attributes and their data types:
+ Attribute data types
+ Attribute Data type Description
+ abandoned_checkout_date Date The date of the segment member's abandoned checkout.
+ anniversary() Function The segment member with a yearly recurring date, such as a birth date.
+ amount_spent Float The total amount spent (all time).
+ companies Integer The company ID for which the segment member is configured as B2B customer.
+ created_by_app_id Integer The app ID that created the segment member.
+ customer_cities Enum The segment member's city.
+ customer_countries Enum The segment member's country or region (shipping/billing).
+ customer_account_status Enum The segment member's account status.
+ customer_added_date Date The date when the segment member was added as a customer on Shopify.
+ customer_language String The segment member's language.
+ customer_regions Enum The segment member's region.
+ customer_tags String
+ The segment member's assigned customer tags.
+ Tag existence isn't validated.
+ email_domain String The segment member's email domains.
+ email_subscription_status Enum The segment member's email subscription status.
+ first_order_date Date The date of the segment member's first order.
+ last_order_date Date The date of the segment member's last order.
+ number_of_orders Integer The number of the segment member's orders (all time).
+ predicted_spend_tier Enum The segment member's predicted spend tier.
+ products_purchased() Function The products that the segment member purchased (all time).
+ product_subscription_status Enum The segment member's status for product subscriptions.
+ sms_subscription_status Enum The segment member's status for SMS subscriptions.
+ shopify_email.bounced() Function The segment member whose email was returned to the server that sent it.
+ shopify_email.clicked() Function The segment member who clicked on any link or image in the email.
+ shopify_email.delivered() Function The segment member for whom the server has accepted the email.
+ shopify_email.marked_as_spam() Function The segment member who reported the email using its mail client’s “Mark as Spam”, “Report”, or “Junk” feature.
+ shopify_email.opened() Function The segment member who opened the email on their email client.
+ shopify_email.unsubscribed() Function The segment member who requested removal from the organization's email address list and can no longer be mailed.
+ Boolean attributes
+ Boolean attributes support specific operators and conditions.
+ Note
+ The Segmentation API doesn't currently include Boolean-type attributes.
+ Operators
+ Operator Description Example
+ = Is boolean_attribute = true
+ != Is not boolean_attribute != true
+ Conditions
+ Condition Description Example
+ true True boolean_attribute = true
+ false False boolean_attribute = false
+ Date attributes
+ Date attributes support specific operators and conditions.
+ Operators
+ Date operators act on complete 24-hour days and default to a shop's time zone.
+ For example, a New York shop (GMT-4) with the following query would include customers who last ordered between midnight (T00:00:00) on May 30th, 2020 to midnight on May 31st, 2020 in the shop's timezone.
+ 1 last_order_date = 2020-05-30
+ In SQL, with UTC-based times, this would look like the following:
+ 1 last_order_date >= 2020-05-30T04:00:00 AND last_order_date < 2020-05-31T04:00:00
+ The following segment query would include customers who last ordered from midnight on May 31st:
+ 1 last_order_date > 2020-05-30
+ The following are supported operators for date-type attributes.
+ Operators Description Examples
+ = Equal-to last_order_date = 2020-05-30
+ != Not-equal-to last_order_date != 2020-05-30
+ > After last_order_date > 2020-05-30
+ >= On or after last_order_date >= 2020-05-30
+ < Before last_order_date < 2020-05-30
+ <= On or before last_order_date <= 2020-05-30
+ BETWEEN {condition1} AND {condition2} Equivalent to condition1 <= n <= condition2 BETWEEN 2020-02-30 AND 2020-03-30
+ Conditions
+ Date-type attributes accept specific conditions.
+ {ABSOLUTEDATE}
+ Language-sensitive formatted dates aren't accepted.
+ Format Examples
+ yyyy-mm-dd Represents an absolute date without time
+ {DATEOFFSET}
+ Syntactic sugar for an absolute date without time. For example, if the date is May 15th 2021, then -7d is syntactic sugar for 2021-05-07.
+ The following are examples of {dateOffset}:
+ Format Description Examples
+ {+/-} {#} d Number of days last_order_date > -7d
+ {+/-} {#} w Number of weeks last_order_date >= -2w
+ {+/-} {#} m Number of months last_order_date = -1m
+ {+/-} {#} y Number of years last_order_date < -1y
+ {NAMEDDATE}
+ Syntactic sugar for an absolute date without time.
+ {namedDate} supports the following operators:
+ 1 =, !=, >, >=, <, <=, BETWEEN
+ When using the BETWEEN operator, condition types can be mixed.
+ 1 last_order_date BETWEEN 2021-01-01 AND today
+ 1 last_order_date BETWEEN 2020-01-01 AND -7d
+ Format Description Examples
+ today Date when the query is run or segment is queried last_order_date = today
+ last_order_date > today
+ last_order_date < today
+ yesterday Previous day last_order_date = yesterday
+ last_order_date < yesterday
+ 12_months_ago 12 months ago last_order_date > 12_months_ago
+ 90_days_ago 90 days ago last_order_date > 90_days_ago
+ 30_days_ago 30 days ago last_order_date > 30_days_ago
+ 7_days_ago 7 days ago last_order_date > 7_days_ago
+ last_order_date = 7_days_ago
+ {ABSOLUTEDATETIME}
+ In some cases, users might want finer segment granularity, such as the segment of customers that participated in a timed flash sale. The segmentation query syntax supports an absolute datetime in place of an absolute date.
+ Note
+ Assistive features for adding a time component aren't supported. Users are required to type these out manually.
+ Format Description Examples
+ yyyy-mm-ddTHH:mm:ss Represents an absolute date with time in the shop's timezone last_order_date > 2020-05-30T16:00:00
+ Times default to a shop's timezone. For example, a New York shop (GMT-4) with the following query would include customers means last_order_date > 2020-05-30T20:00:00 in UTC.
+ Notes
+ Only 24h format is supported. For example, HH needs to be be <= 23 (24h = 00:00:00).
+ Leading zeros are required, for example, 23:00:00.
+ Time-only syntax is not supported. For example, the following syntax is invalid:
+ 1 last_order_date BETWEEN 1pm AND 3pm
+ You can't extend {namedDate} or {dateOffset} with a time-specifier.
+ Enum attributes
+ Enum attributes support specific operators and conditions.
+ Operators
+ Operators Description Example
+ = Equal-to customer_account_status = 'DISABLED'
+ != Not-equal-to customer_account_status != 'DISABLED'
+ Conditions
+ Conditions accept UTF-8 characters and must be wrapped with single quotes ', similar to the ENUM type in MySQL.
+ Conditions only accept a value chosen from a list of permitted values.
+ Conditions are case-sensitive and whitespaces are syntactically significant.
+ Single quotes within a condition must be escaped (ie. '\'VIP\'').
+ For Segmentation, we're using multiple clauses with connectors to specify multiple values.
+ Float attributes
+ Float attributes support specific operators and conditions. The underlying data type is a float64 (double-precision floating-point format).
+ Operators
+ Operators Description Example
+ = Equal-to amount_spent = 10.99
+ != Not-equal-to amount_spent != 10.99
+ > Greater than amount_spent > 10.99
+ >= Greater than or equal to amount_spent >= 10.99
+ < Less than amount_spent < 10.99
+ <= Less than or equal to amount_spent <= 10.99
+ BETWEEN {value1} AND {value2} Equivalent to value1 <= n <= value2 amount_spent BETWEEN 100 AND 1000.99
+ Conditions
+ Conditions accept float (float64) and integer numbers.
+ Integers automatically get converted to floating point (ie. 99 => 99.0).
+ Operators and functions returning a Float, for example COUNT, SUM, MAX, and MEDIAN, aren't supported for querying segments.
+ FORMATTING AND SEPARATORS
+ A decimal point (.) is used as a decimal separator, by default.
+ Thousand separators, such as commas and spaces, aren't supported.
+ Language-sensitive formatted numbers aren't supported.
+ Function attributes
+ A Function returns a typed value that indicates the <operator> and <condition> that you can use.
+ For segmentation queries, functions are typically used to abstract subqueries on evented data and create multi-value pseudo-attributes as their return type. An example is products_purchased().
+ Syntax
+ Function names accept the same characters as regular filters, using lowercase alphanumerical and underscore (snake_case()).
+ Parameters are optional. However, the parentheses of a parameters list is required.
+ Parameters can either be named or not, but you can't have a mix of named and unnamed parameters.
+ Support
+ The segmentation query syntax has limited support for function-type attributes.
+ products_purchased()
+ This function returns a Boolean. Supported <operator> values are = and !=.
+ For example,
+ 1 products_purchased() != true
+ 2 products_purchased(id: 2012162031638) = true
+ 3 products_purchased(tag: 'Sports wear') = true
+ 4 products_purchased(id: (2012162031638, 1012132033639) = false
+ Named parameters
+ ID (OPTIONAL)
+ 1 products_purchased(id: ID | List<ID>) = true
+ Where ID is a single value and List<ID> is a set of comma-separated values wrapped in parenthesis. An implicit OR between values is applied for lists.
+ Each ID is a product ID.
+ Notes
+ A single value in a list is valid.
+ Multiple values must be provided as a list. For example (1012132033639, 2012162031638, 32421429314657).
+ A list can contain up to 500 IDs.
+ For example,
+ 1 products_purchased(id: 1012132033639) = true
+ 2 products_purchased(id: (1012132033639, 2012162031638, 32421429314657)) = true
+ 3 products_purchased(id: (1012132033639)) = true
+ Omitting the id parameter returns results for all products.
+ TAG (OPTIONAL)
+ 1 products_purchased(tag: String) = true
+ Where tag is a product tag.
+ Notes
+ A single tag can be provided.
+ For example,
+ 1 products_purchased(tag: 'Sports wear') = true
+ SINCE (OPTIONAL)
+ 1 products_purchased(id: ID | List<ID>, since: Date?) = true
+ Where
+ 1 -- (inclusive)
+ 2 Date = {absoluteDate} | {dateOffset} | {namedDate}
+ This parameter is the start date of when the product was purchased.
+ For example,
+ 1 products_purchased(id: 1012132033639, since: 2022-01-01) = false
+ 2 products_purchased(id: 1012132033639, since: -3m) = false
+ 3 products_purchased(tag: 'Sports wear', since: 12_months_ago) = false
+ 4 products_purchased(id: 1012132033639, since: 12_months_ago, until: today) = false
+ UNTIL (OPTIONAL)
+ 1 products_purchased(id: ID | List<ID>, until: Date?) = true
+ Where
+ 1 -- (inclusive)
+ 2 Date = {absoluteDate} | {dateOffset} | {namedDate}
+ This parameter is the end date of when the product was purchased.
+ For example,
+ 1 products_purchased(id: 1012132033639, until: 2022-01-01) = true
+ 2 products_purchased(id: 1012132033639, until: -3m) = true
+ 3 products_purchased(tag: 'Sports wear', until: yesterday) = false
+ 4 products_purchased(id: 1012132033639, since: 12_months_ago, until: yesterday) = true
+ Omitting the since and until parameters returns results from all time.
+ shopify_email.EVENT()
+ Shopify Email functions enable segmenting on Shopify Email events. They are namespaced under the shopify_email. prefix. The following events are supported:
+ bounced
+ clicked
+ delivered
+ marked_as_spam
+ opened
+ unsubscribed
+ All of these functions accept the same named parameters and return a Boolean. Supported <operator> values are = and !=.
+ For example,
+ 1 shopify_email.opened() = true
+ 2 shopify_email.opened(activity_id: 5240029206) = false
+ 3 shopify_email.opened(activity_id: 5240029206) != true
+ Named parameters
+ ACTIVITY_ID (OPTIONAL)
+ 1 shopify_email.EVENT(activity_id: ID | List<ID>) = true
+ Where ID is a single value and List<ID> is a set of comma-separated values wrapped in parenthesis. An implicit OR between values is applied for lists.
+ Each ID is a marketing activity ID to filter on.
+ Notes
+ A single value in a list is valid.
+ Multiple values must be provided as a list. For example (5240029206, 1932881090, 3250045832).
+ A list can contain up to 500 IDs.
+ For example,
+ 1 shopify_email.delivered(activity_id: 5240029206) = true
+ 2 shopify_email.opened(activity_id: (5240029206, 1932881090, 3250045832)) = true
+ 3 shopify_email.unsubscribed(activity_id: (5240029206)) = true
+ Omitting the activity_id parameter returns results for all Shopify Email activities.
+ SINCE (OPTIONAL)
+ 1 shopify_email.EVENT(activity_id: ID | List<ID>, since: Date?) = true
+ Where
+ 1 -- (inclusive)
+ 2 Date = {absoluteDate} | {dateOffset} | {namedDate}
+ This parameter is the start date for the Shopify Email event.
+ For example,
+ 1 shopify_email.delivered(activity_id: 5240029206, since: 2022-01-01) = false
+ 2 shopify_email.marked_as_spam(activity_id: 5240029206, since: -3m) = false
+ 3 shopify_email.bounced(activity_id: 5240029206, since: 12_months_ago, until: today) = false
+ UNTIL (OPTIONAL)
+ 1 shopify_email.EVENT(activity_id: ID | List<ID>, until: Date?) = true
+ Where
+ 1 -- (inclusive)
+ 2 Date = {absoluteDate} | {dateOffset} | {namedDate}
+ This parameter is the end date for the Shopify Email event.
+ For example,
+ 1 shopify_email.delivered(activity_id: 5240029206, until: 2022-01-01) = true
+ 2 shopify_email.marked_as_spam(activity_id: 5240029206, until: -3m) = true
+ 3 shopify_email.bounced(activity_id: 5240029206, since: 12_months_ago, until: yesterday) = true
+ Omitting the since and until parameters returns results from all time.
+ Integer attributes
+ Integer attributes are int64 types that support specific operators and conditions.
+ Operators
+ Operators Description Example
+ = Equal-to number_of_orders  = 10
+ != Not-equal-to number_of_orders  != 10
+ > Greater than number_of_orders  > 10
+ >= Greater than or equal to number_of_orders  >= 10
+ < Less than number_of_orders  < 10
+ <= Less than or equal to number_of_orders  <= 10
+ BETWEEN {value1} AND {value2} Equivalent to value1 <= n <= value2 number_of_orders  BETWEEN 100 AND 1000
+ Conditions
+ Conditions accept only integer numbers.
+ Floats aren't valid.
+ Minimum value of -9,223,372,036,854,775,808.
+ Maximum value of 9,223,372,036,854,775,807, inclusive.
+ Operators and functions returning a Float, for example COUNT, SUM, MAX, and MEDIAN, aren't supported for querying segments.
+ FORMATTING AND SEPARATORS
+ Thousand separators, such as commas and spaces, aren't supported.
+ Language-sensitive formatted numbers aren't supported.
+ List attributes
+ List attributes represent multi-value attributes. The values in the list have a type.
+ The arguments the operator admits will depend on the type of the values within the list. An example is customer_tags, which is a multi-value list of strings. Its full type is therefore List<String>.
+ Lists support the following operators and conditions.
+ Operators
+ Operators Description Example
+ CONTAINS Allows you to specify a single value in a WHERE clause. The clause is true if the value matches an entry in the preceding list attribute. customer_tags CONTAINS 'vip'
+ 
+ customer_cities CONTAINS 'US-CA-LosAngeles'
+ NOT CONTAINS True complement of CONTAINS. The clause is true if the value does not match an entry in the preceding list attribute. customer_tags NOT CONTAINS 'vip'
+ 
+ customer_cities NOT CONTAINS 'US-CA-LosAngeles'
+ Conditions
+ The semantics of CONTAINS as applied to a LIST is that the arguments must be a subset of the preceding list attribute.
+ Segmentation queries currently use multiple clauses with connectors to specify multiple values, rather than a multi-argument form.
+ LIST<STRING> CONDITIONS
+ String conditions accept UTF-8 characters and must be wrapped with single quotes ', similar to the ENUM type in MySQL.
+ Conditions are NOT case-sensitive and whitespaces are syntactically significant.
+ Single quotes within a condition must be escaped (ie. '\'VIP\'').
+ LIST<ID> CONDITIONS
+ ID is an alias for an unsigned integer. The underlying data type is a uint64.
+ Conditions don't have to be wrapped in single quotes '.
+ String attributes
+ String attributes support specific operators and conditions.
+ Operators
+ Operators Description Example
+ = Equal-to customer_email_domain = 'example.com'
+ != Not-equal-to customer_email_domain != 'example.com'
+ Conditions
+ Conditions accept UTF-8 characters and must be wrapped around single quotes '.
+ Conditions are case-sensitive and whitespaces are syntactically significant.
+ Single quotes within a condition must be escaped. For example, '\'VIP\'').
+ Conditions can be empty strings. The API verifies that the attribute exists and is an empty string.
+ All operators/functions returning a String, such as CONCAT, SUBSTR, LOWER, UPPER, and TRUNCATE, are not supported for querying segments.
+ Grouped clauses
+ The following are syntax examples of grouped clauses.
+ Multiple clauses with same connector(s)
+ Two clauses linked with AND
+ 1 email_subscription_status = 'SUBSCRIBED' AND customer_countries CONTAINS 'CA'
+ Two clauses linked with OR
+ 1 email_subscription_status = 'SUBSCRIBED' OR customer_countries CONTAINS 'CA'
+ Invalid query: Too many clauses (>10)
+ 1 customer_countries CONTAINS 'CA' OR customer_countries CONTAINS 'FR' OR customer_countries CONTAINS 'MX' OR customer_countries CONTAINS 'AU' OR customer_countries CONTAINS 'AX' OR customer_countries CONTAINS 'AZ' OR customer_countries CONTAINS 'FI' OR customer_countries CONTAINS 'BE' OR customer_countries CONTAINS 'TH' OR customer_countries CONTAINS 'ES' OR customer_countries CONTAINS 'BR'
+ Multiple clauses with different connectors
+ By default AND takes precedence over OR. Parenthesis are optional. For example, the following queries are equivalent.
+ 1 email_subscription_status = 'SUBSCRIBED' AND customer_countries CONTAINS 'CA' OR amount_spent > 999.99
+ 1 (email_subscription_status = 'SUBSCRIBED' AND customer_countries CONTAINS 'CA') OR amount_spent > 999.99
+ Change implicit order of precedence: OR now takes precedence over AND
+ 1 email_subscription_status = 'SUBSCRIBED' AND (customer_countries CONTAINS 'CA' OR amount_spent > 999.99)
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Segment queries
+ Query syntax
+ Clause format
+ Attributes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,75 @@
+Overview
+ Marketing
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ Managing app reviews in the Shopify App Store
+ After a merchant installs your app, they can leave a review for it. Positive reviews can encourage merchants to use your app and increase the number of installs it gets. If your app is listed on the Shopify App Store, then positive reviews can make your app appear higher in search results or on category pages. Reviews are also an important part of getting featured on the Shopify App Store.
+ When a merchant leaves a review for your app, they rate it on a scale of 1 to 5 and leave a comment. To leave a review, the merchant must have installed your app to their store. After a merchant uninstalls an app, they have 45 days to leave a review before the privilege is revoked.
+ Note
+ Merchants are able to see ratings and reviews for your app on its app store listing, as well as an overall rating for your app. The overall rating is a weighted average that favors recent reviews so that it better reflects the most recent version of your app. This rating is recalculated whenever a new review is made or unpublished.
+ Some apps have AI-powered review summaries on the app listing, which help merchants understand an app's value based on the experience other merchants have with the app. To qualify for an AI-powered review summary, your app needs at least 100 reviews that contain body text, and at least a 4.0+ rating. Review summaries aren't updated in real time, and can take up to 14 days to appear on the app listing.
+ How to ask for an app review
+ You can ask merchants to leave reviews as long as you don't encourage them to leave a good review. You should use neutral language, and never attach a review with an offer. For example:
+ "We value feedback! It helps us make our product better and keeps us energized. Let us know how we’re doing."
+ To appropriately ask for an app review, we recommend the following actions:
+ Include in-product messaging where it makes sense: Avoid placing content in a location that blocks scrolling or inhibits a workflow. This might make merchants feel like they have to leave a review to continue using the app.
+ Ask for reviews following a support interaction: Merchants might appreciate the care you’ve put into helping them out and might want to share their experience.
+ Allow merchants to say no to requests to leave reviews: If you give merchants the option to not be asked again to leave a review, then they will appreciate being heard.
+ You can include a link to the reviews section of your app listing page by adding #modal-show=ReviewListingModal to the end of your app listing URL:
+ https://apps.shopify.com/[your-app]#modal-show=ReviewListingModal
+ How not to ask for an app review
+ The following examples illustrate inappropriate ways to request feedback in an app review:
+ "Like our service? Leave us a positive review!": This only motivates merchants with a favourable perception of your services.
+ "Get one month free by leaving us a review!": If you’re giving something to someone for free, then you’re influencing them to leave a positive review.
+ "Positive feedback keeps us going! Help by leaving a review now!": Even though you’re just asking for a review, you're suggesting that the review should be positive.
+ Requesting for feedback in these ways violates the Partner Program Agreement. You should never explicitly ask for positive reviews.
+ Replying to app reviews
+ Replying to app reviews can help you engage with merchants, identify issues, and encourage merchants to improve the rating they gave to your app. Replying to reviews can also show potential merchants how engaged you are as a developer, which can encourage them to download your app.
+ You can reply to app reviews if you have an owner account or if you have a staff account with the Manage public listings permission. You can change an account's permissions from the Partner Dashboard.
+ Steps
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of your app.
+ On the app page, in the Latest merchant feedback section, click View and reply to reviews.
+ Go to any review and click Reply. If you don't see the review you're looking for, then click View all reviews to see more reviews.
+ Enter your reply, then click Submit reply.
+ Notifications
+ When a merchant leaves a review on your app, you receive an email notification with the merchant's rating, their review, and the name of their store. You can set which email address receives review notifications in the Contact information section of your app listing.
+ When you reply to a review, the merchant who left the review is notified. They can then decide to edit the review itself, including the rating, which will then replace the original review and rating on your app listing page.
+ You receive an email notification when a merchant edits their original review. You can edit your response at any time, even if the merchant hasn't updated their review. Only your latest response will be shown on the app listing page.
+ Recommendations for replying to reviews
+ Although you can reply to every review, consider replying first to reviews that have the lowest star rating, or that mention an issue the merchant has experienced. Prompt replies can help engage the merchant in a meaningful conversation.
+ Ideally, your response should address the merchant’s review in a clear and concise way, and the language you use should be consistent with your brand. If possible, personalize the response for the merchant instead of giving them a generic response.
+ However, make sure to not share any personal or financial information. Anyone who visits your app listing can see your responses, so make sure every response is professional and respectful, and doesn't include any technical jargon, marketing language, or spam.
+ For more best practices, refer to the Replying to Reviews in the Shopify App Store blog post.
+ Managing negative reviews
+ Negative reviews can be helpful at identifying issues with your app. They can also be an opportunity to show how you respond to negative feedback in review replies and demonstrate your team's merchant support skills. Merchants will appreciate a solid reply to negative feedback.
+ If a merchant leaves a negative review because of a bug or other issue, then you should work with the merchant to fix the issue.
+ Circumstances where Shopify will intervene
+ Sometimes, negative reviews are not helpful. In specific circumstances, we'll intervene and potentially remove reviews from app listings. We'll investigate reviews that include the following:
+ Inappropriate content: The review contains swearing, slurs, or threats. We won't remove reviews that contain false claims.
+ Personal information: The review contains phone numbers, email addresses, mailing addresses, or other personal information. We won't remove reviews that contain only a first name, or a first name and a last initial.
+ Conflict of interest: The review was written by a merchant who was offered something in exchange for a review. We'll also remove reviews left by app developers and affiliated employees on either their own app or on a competing app.
+ Duplication: The review has been posted multiple times, whether from the same account or more than one account.
+ If you find a review that meets any of the criteria above, then contact Partner Support.
+ Prohibited actions involving app reviews
+ The following actions are prohibited and can lead to you having your non-compliant reviews removed, or having your app demoted in ranking, removed from promotional surfaces, or unpublished from the Shopify App Store. Learn more about Shopify’s policies for App Store reviews.
+ Note
+ While the table below presents a series of important guidelines, it's not intended to be comprehensive. For information on prohibited actions that are specific to merchant experiences, unsolicited marketing, and requirement violations, see Prohibited actions on the Shopify App Store.
+ Prohibited action Description
+ Asking for positive reviews Asking for positive reviews creates a bias in the call-to-action of leaving a review and goes against our Partner Program Agreement.
+ Sending unsolicited emails that ask for reviews This practice is in violation of several spam legislations, such as the Canadian Anti-Spam Legislation (CASL) and CAN-SPAM in the United States. It’s also in violation of the Partner Program Agreement. Ask merchants if they want to receive emails from you and make sure that you are asking at a moment that makes sense for them.
+ Asking merchants to edit or revise negative reviews Every review is proof of you having an active and engaged user base. Positive reviews verify your app’s value, while constructive reviews provide helpful feedback on how you can improve your app. Never retaliate against a merchant for leaving honest negative reviews.
+ Leaving or paying for fake reviews on your own app or another app Never attempt to boost your sales by creating fake reviews that deceive merchants. You should also never leave or pay for fake reviews on a competitor's app to create a competitive advantage.
+ Incentivizing merchants to leave reviews (C-3) Don’t offer a discount or other benefit in exchange for leaving a review.
+ Asking for reviews at an inappropriate time Merchants can’t provide a genuine review of your app if they haven’t spent enough time with it. Don't ask for reviews when a merchant is onboarding or installing your app. Give the merchant time to create an informed opinion before they provide a review.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How to ask for an app review
+ How not to ask for an app review
+ Replying to app reviews
+ Managing negative reviews
+ Prohibited actions involving app reviews
+ Updates & News

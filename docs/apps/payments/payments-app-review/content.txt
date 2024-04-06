@@ -1,0 +1,55 @@
+Get approved
+ Build a payments app
+ Onboard a merchant to a payments app
+ Fulfillment
+ Point of Sale
+ Payments app submission and review process
+ Note
+ Our payments platform is available by invitation only while we continue to build out our Payments Apps API. Shopify will open the payments platform to new applications in the future.
+ Before a payments app can be approved on Shopify’s payments platform, three reviews are required:
+ Payments Partner application review
+ Payments app extension review
+ Payments app review
+ Payments Partner application review
+ The Partner applies to become a Payments Partner.
+ Partners should take time to review the “Additional Terms Applicable to Payments Developers” section of the Shopify Partner Program Agreement. If you aren't a Shopify Partner yet, then you must sign up to be a Partner.
+ We grant the Partner access to build a payments app.
+ If you've been approved to be a Payments Partner, then you'll be granted access to Shopify’s payments ecosystem. You'll need to sign a revenue share agreement, which we provide in an email when you're approved.
+ The Partner creates a new app in the Partner Dashboard or Shopify CLI.
+ Note
+ Payments apps must adhere to technical requirements and provide a high-quality merchant experience as described in the minimum product requirements.
+ Payments app extension review
+ The Partner creates and configures the payments app extension.
+ The Partner submits the payments app extension for review.
+ We review the payments app extension.
+ If the app extension is approved, then the Partner can publish the app extension.
+ Note
+ Publishing the app extension isn't the same as approving and publishing the app itself. Before you can publish your app and have it be able to process payments, the app needs to go through the app review process for final approval. For more information on the difference between an app and an app extension, refer to app extensions.
+ The Partner selects a distribution method for the app in the Partner Dashboard.
+ The Partner tests the payments app extension on a development store.
+ If we reject your payments app extension, then we'll send you an email indicating next steps. Make sure that you check the business email for your Partner account, as well as the email address included in your Payments Platform application. After making the required changes, you can resubmit your app extension.
+ Payments app review
+ Before this step of the review process, you must sign the payments app revenue share agreement. The link to the agreement is included in your payments platform application acceptance email. If you're unable to locate the agreement, then contact Partner Support. If you submit your app for review before you sign and submit the revenue share agreement, then your app will be rejected.
+ The Partner submits the app for review.
+ We review the app.
+ If we approve the app, then the Partner can publish the app. Refer to onboarding a merchant to a payments app to learn about ways that a merchant can discover your payments app.
+ Optional: If the app needs to be changed before it can be approved, then the Partner reconfigures the payments app extension and submits a new version of the payments app extension for approval.
+ Payments app lifecycle
+ A payments apps can go through four states. Each of these states defines by whom and how your app can be installed, and the general visibility of the app for merchants.
+ Development: The default state of a payments app is Development, after your first extension version is approved and published. The payments app can then be installed on dev stores for testing purposes.
+ Hidden: The payment app enters Hidden state after the app is approved and published by the app review team. The payments app isn't discoverable to merchants through the admin, but can now be installed by merchants by sharing the installation URL available in your dashboard.
+ Generally Available: The payments app enters Generally Available state by request if it meets certain criteria, such as being used by at least 50 Shopify stores and has processed over 1,000,000 USD. The payments app is now discoverable from the store admin as an alternative payment provider for all merchants in supported countries. It will also appear in the public payments brochure.
+ Not Installable: If the payments app fails to meet the minimum product requirements, it will be put into Not Installable state. In this state, the app isn't discoverable to merchants through the admin. The installation URL is removed from your dashboard, and it cannot be used for installation. The app can't be installed on any new shop, but shops that had the app installed previously will still be able to use it.
+ Development Hidden Generally Available Not Installable
+ Visible as an alternative payments provider? only on dev stores only if installed yes only if installed
+ Can process payments? only in test mode yes yes yes
+ Has an installation URL? no yes yes no
+ Visible on Shopify.com? no no yes no
+ You can view the state of your payment app extension in the App section of the Partner Dashboard by clicking Edit draft next to your payments app extension.
+ Next steps
+ Build an offsite payments app, and learn how to version and publish your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Payments app lifecycle
+ Next steps

@@ -1,0 +1,35 @@
+Product subscription app extensions
+ ButtonGroup
+ A button group is meant to wrap around two or more buttons, passed as children. The button group will stack these buttons along the inline axis, and add the necessary spacing between them.
+ Example
+ JS
+ React
+ 1 import {extend, ButtonGroup, Button} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const buttonGroup = root.createComponent(ButtonGroup, undefined, [
+ 5
+      root.createComponent(Button, undefined, 'Cancel'),
+ 6
+      root.createComponent(Button, undefined, 'Submit'),
+ 7
+    ]);
+ 8
+ 9
+    root.appendChild(buttonGroup);
+ 10 });
+ Best practices
+ Only use buttons that follow the best practices outlined in the Button component
+ Group together calls to action that have a relationship
+ Too many calls to action can cause customers to be unsure of what to do next
+ Be thoughtful about how multiple buttons will look and work on small screens
+ Related components
+ Button: Buttons are used for actions, such as “Add”, “Continue”, or “Pay now”, or “Save”.
+ Link: Link makes text interactive so customers can perform an action, such as navigating to another location.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Best practices
+ Related components
+ Updates & News

@@ -1,0 +1,40 @@
+Components
+ Theming
+ Analytics
+ Liquid
+ Ajax API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Blockchain components
+ Beta
+ Blockchain components are in early access and may be unstable, potentially requiring frequent version upgrades. Please report any issues or feedback using our GitHub repository
+ @shopify/connect-wallet and @shopify/tokengate are React UI components that integrate into your app for seamless storefront tokengating.
+ Components
+ Connect wallet
+ Allows a user to connect their crypto wallet to a Shopify storefront.
+ Tokengate
+ Presents the gate configuration and buyer eligibility status based on the connected wallet.
+ Libraries
+ Gate context client library on NPM
+ Stores gate context information for use in Shopify functions.
+ Principles
+ Shopify blockchain components are designed with a few guiding principles in mind.
+ Customizable
+ Components come in a default theme that offers a neutral starting point. You can also create a custom theme with style variables, enabling users to match the blockchain elements of their storefront to their theme. Learn more about component theming.
+ Native
+ Components are built to optimally integrate blockchain-based data and workflows with the Shopify platform, leveraging the latest Shopify APIs and resources.
+ Accessible
+ Components are designed with inclusivity in mind, using plain language, clear error handling, a simple and accessible user interface, and resources to get started or learn more.
+ Reliable
+ Components are tested extensively across major platforms and operating systems, and work robustly on mobile and desktop. Any issues can be reported on our GitHub repository.
+ Flexible
+ Components can be modified and extended to meet developer needs, and all source code is available in a public repository.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Components
+ Libraries
+ Principles
+ Updates & News
+ Developer changelog

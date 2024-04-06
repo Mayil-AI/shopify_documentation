@@ -1,0 +1,65 @@
+Layouts
+ Templates
+ Sections
+ Overview
+ Section schema
+ Section assets
+ Integrate with the theme editor
+ Blocks
+ Section groups
+ Config
+ Theme Store
+ Section assets
+ Sections can bundle their own JavaScript and stylesheet assets using the following section-specific Liquid tags:
+ {% javascript %}
+ {% stylesheet %}
+ You need to use these tags only if your section is meant to be installed on multiple themes or shops. Otherwise, you should include the JavaScript or CSS styles that your section needs in your theme's assets directory.
+ Caution
+ Liquid isn't rendered in {% javascript %} or {% stylesheet %} tags. Including Liquid code can cause syntax errors, or prevent styles from being applied.
+ Tip
+ If you want to use an existing asset from your theme in a section, then you can include it using the asset_url filter with either the script_tag filter or stylesheet_tag filter. If an asset has already been included in a parent layout or template, then you don't need to include it again.
+ javascript
+ The {% javascript %} tag can be used to include JavaScript for a section:
+ 1 {% javascript %}
+ 2 document.querySelector('.slideshow').slideshow();
+ 3 {% endjavascript %}
+ Caution
+ Each section can only have one {% javascript %} tag. Having more than one will result in an error.
+ The content from {% javascript %} tags across all sections is concatenated into a single file by Shopify, and then injected into the theme through the content_for_header Liquid object. The file is asynchronously loaded through a <script> tag with the defer attribute.
+ The content from each {% javascript %} tag is wrapped in a self-executing anonymous function so that any variables are defined within a closure, and runtime exceptions won't affect other sections.
+ Instance specific JavaScript
+ Bundled assets are only injected once for each section, not for each instance of a section. If you need instance-specific JavaScript, then add data-attributes to your section markup and reference those attributes in your JavaScript. For example:
+ /sections/slideshow.liquid
+ 1 <div class="slideshow-wrapper" data-slide-speed="{{ section.settings.speed }}">
+ 2
+    <!-- slideshow content -->
+ 3 </div>
+ 4
+ 5 {% javascript %}
+ 6
+    var slideshowSpeed = parseInt(document.querySelector('.slideshow-wrapper').dataset.slideSpeed);
+ 7 {% endjavascript %}
+ stylesheet
+ The {% stylesheet %} tag can be used to include CSS styles for a section:
+ 1 <div class="slideshow-wrapper" data-slide-speed="{{ section.settings.speed }}">
+ 2
+    <!-- slideshow content -->
+ 3 </div>
+ 4
+ 5 {% stylesheet %}
+ 6 .slideshow-wrapper {
+ 7
+    // your styles
+ 8 }
+ 9 {% endstylesheet %}
+ Caution
+ Each section can only have one {% stylesheet %} tag. Having more than one will result in an error.
+ The content from {% stylesheet %} tags across all sections is concatenated into a single file by Shopify, and then injected into the theme through the content_for_header global Liquid object.
+ Instance specific styles
+ Bundled assets are only injected once for each section, not for each instance of a section. If you need instance-specific CSS, then use an inline <style> tag.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ javascript
+ stylesheet
+ Updates & News

@@ -1,0 +1,40 @@
+Delivery and shipping
+ Product offers
+ Overview
+ Pre-purchase
+ Overview
+ Build a pre-purchase offer
+ UX guidelines
+ Post-purchase
+ Payments
+ Thank you and Order status
+ App Store
+ Pre-purchase product offers
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ A pre-purchase product offer is an additional sales opportunity that's displayed to customers before they complete checkout. This guide introduces how pre-purchase product offers work, and describes the available resources that you can use to build pre-purchase product offers.
+ How it works
+ You can use a checkout UI extension to build a pre-purchase product offer. The following example shows a pre-purchase product offer that renders at the purchase.checkout.block.render target:
+ Getting started
+ Follow the getting started tutorial to learn how to build a pre-purchase experience.
+ Build a pre-purchase product offer
+ Build a pre-purchase upsell offer that prompts the customer to add a product to their order.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building pre-purchase experiences.
+ Checkout UI extensions API reference
+ Consult the API reference for checkout UI targets and their respective types.
+ Components for checkout UI extensions
+ Learn about the components that are available in checkout UI extensions.
+ Checkout extension configuration
+ Learn about the properties that you can configure in your checkout UI extension.
+ UX guidelines for pre-purchase product offers
+ Explore UX guidelines that you can refer to when building pre-purchase product offers.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Getting started
+ Developer tools and resources
+ Updates & News
+ Developer changelog
+ Partner blog

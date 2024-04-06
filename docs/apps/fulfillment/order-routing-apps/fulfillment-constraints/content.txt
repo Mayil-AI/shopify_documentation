@@ -1,0 +1,270 @@
+Build fulfillment constraints
+ Build local pickup delivery option generators
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ App Store
+ Getting started with building fulfillment constraints
+ You can use fulfillment constraints to customize fulfillment and delivery strategies throughout the fulfillment process. In this tutorial, you'll use Shopify Functions to create a function which ensures that certain products that are purchased together are always fulfilled from a specific store location.
+ Scenario
+ You have three products which can be sold individually. The products are fulfilled from your warehouse location, which has been set as a shipping origin within your shipping profile. You want to group and ship the three products in a special package only when they're purchased together. The grouping of the products should only be assembled at your physical store location in Ottawa.
+ The function you'll build in this tutorial adjusts the fulfillment location for the three products only when they are purchased together.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Generate starter code for Shopify Functions.
+ Use GraphQL to define the input of your function.
+ Deploy functions to the Shopify platform.
+ Setup your app to register your fulfillment constraint rule with your Shopify store.
+ Review logs for your function.
+ Requirements
+ You've created a Partner account.
+ You've created a development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Create the fulfillment constraint rule function
+ To create your fulfillment constraint rule function, you can use Shopify CLI to generate a starter function, specify the inputs for your function using an input query, and implement your function logic using Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new fulfillment constraint rule extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template fulfillment_constraints --name my-fulfillment-constraint-function
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ $
+    (3) Rust
+ $
+    (4) Wasm
+ Tip
+ Shopify Functions support any language that compiles to WebAssembly (Wasm), such as Rust, AssemblyScript, or TinyGo. You specify the Wasm template option when you're using a language other than Rust and can conform to the Wasm API. Learn more about the Wasm API.
+ Navigate to extensions/my-fulfillment-constraint-function:
+ Terminal
+ $ cd extensions/my-fulfillment-constraint-function
+ Replace the contents of src/run.graphql file with the following code:
+ run.graphql defines the input for the function. For this function, you need access to the cart object to determine the products in the checkout. You also need access to the location in which you want the products to be fulfilled from. In this case, you're looking for a location with a certain name.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ 3
+      deliverableLines {
+ 4
+        id
+ 5
+        merchandise  {
+ 6
+          __typename
+ 7
+          ...on ProductVariant {
+ 8
+            id
+ 9
+            product {
+ 10
+              hasAnyTag(tags: ["Promotional candle"])
+ 11
+            }
+ 12
+          }
+    }
+ 16
+    locations(names: ["Ottawa Store"]) {
+ 17
+      id
+ 18
+      name
+ 19
+    }
+ 20 }
+ Tip
+ If a store has many locations, then running this query can result in a big input to parse. To optimize performance, consider using the identifier and names input options to fetch only relevant locations.
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ The function logic constructs a MustFulfillFrom fulfillment constraint for all products with the Promotional candle tag when three or more products exist, and fulfills the order from the Ottawa Store location.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 /**
+ 4 * @typedef {import("../generated/api").RunInput} RunInput
+ 5 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 6 */
+ 7
+ 8 /**
+ 9 * @type {FunctionRunResult}
+ 10 */
+ 11 const NO_CHANGES = {
+ 12
+    operations: [],
+ 13 };
+ 14
+ 15 /**
+ 16 * @param {RunInput} input
+ 17 * @returns {FunctionRunResult}
+ 18 */
+ 19 export function run(input) {
+ 20
+    let deliverableLineIds = [];
+ 21
+ 22
+    // Find deliverable cart line ids of all products with the specific tag.
+ 23
+    for (const deliverableLine of input.cart.deliverableLines) {
+ 24
+      if (deliverableLine.merchandise.__typename == "ProductVariant" &&
+ 25
+        deliverableLine.merchandise.product.hasAnyTag) {
+ 26
+ 27
+        deliverableLineIds.push(deliverableLine.id);
+ 28
+      }
+ 29
+    }
+ 30
+ 31
+    // Short-circuit and return no operations unless we have at least three tagged products.
+ 32
+    if (deliverableLineIds.length < 3) { return NO_CHANGES; }
+ 33
+ 34
+    // Find the location representing our Ottawa store.
+ 35
+    let ottawaLocation = input.locations.find(location => location.name == "Ottawa Store");
+ 36
+ 37
+    // Short-circuit and return no operations if the fulfillment location does not exist.
+ 38
+    if (ottawaLocation === undefined) { return NO_CHANGES; }
+ 39
+ 40
+    // Construct the operations, including our MustFulfillFrom fulfillment constraint.
+ 41
+    let operations = [
+ 42
+      {
+ 43
+        mustFulfillFrom: {
+ 44
+          deliverableLineIds: deliverableLineIds,
+ 45
+          locationIds: [ottawaLocation.id]
+ 46
+        }
+ 47
+      }
+ 48
+    ];
+ 49
+ 50
+    // Return the operation.
+ 51
+    return { operations: operations };
+ 52 };
+ If you're using Rust, then build the function's Wasm module:
+ Terminal
+ $ cargo wasi build --release
+ If you encounter any errors, then ensure that you've installed Rust and cargo-wasi.
+ Step 2: Preview the function on a development store
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 3: Test the fulfillment constraint rule
+ You can test your fulfillment constraint rule to ensure it's working as expected, and review logs for your function.
+ Find the ID of your function by executing the following query:
+ find-function-query.graphql
+ 1 query {
+ 2
+    shopifyFunctions(first: 25) {
+ 3
+      nodes {
+ 4
+        app {
+ 5
+          title
+ 6
+        }
+ 7
+        apiType
+ 8
+        title
+ 9
+        id
+ 10
+      }
+ 11
+    }
+ 12 }
+ The result contains a node with your function's ID:
+ find-function-result.json
+ 1 {
+ 2
+    "app": {
+ 3
+      "title": "your-app-name-here"
+ 4
+    },
+ 5
+    "apiType": "fulfillment_constraints",
+ 6
+    "title": "my-fulfillment-constraint-function",
+ 7
+    "id": "YOUR_FUNCTION_ID_HERE"
+ 8 }
+ From within your app, use the ID of your function to invoke the fulfillmentConstraintRuleCreate mutation to register the FulfillmentConstraintRule. The app needs to be the same app that deployed the function.
+ From your development store's admin, set up the Ottawa Store location along with three or more products with the Promotional candle tag.
+ Open your development store and build a cart containing three or more of the products you created, and then proceed through checkout.
+ Open your development store's admin, and find your new order. The products should be assigned to your Ottawa Store location. If you change one of the product's inventory locations, then checkout won't return any shipping rates and buyers won't be able to complete checkout.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > fulfillment-constraints.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Learn more about how Shopify Functions work and the benefits of using Shopify Functions.
+ Consult the API references for Shopify Functions.
+ Learn how to use variables in your input query.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Scenario
+ What you'll learn
+ Requirements
+ Step 1: Create the fulfillment constraint rule function
+ Step 2: Preview the function on a development store
+ Step 3: Test the fulfillment constraint rule
+ Next steps
+ Updates & News
+ Developer changelog

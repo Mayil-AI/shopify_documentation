@@ -1,0 +1,30 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ RequiredLayoutThemeObject
+ Makes sure that the theme.liquid layout file contains the required {{ content_for_header }} and {{ content_for_layout }} objects.
+ Options
+ The following example contains the default configuration for this check:
+ 1 RequiredLayoutThemeObject:
+ 2
+    enabled: true
+ 3
+    severity: error
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Auto-correction
+ Theme Check can correct this error using the --auto-correct flag. When the flag is specified, Theme Check automatically adds any missing tags to theme.liquid. The {{ content_for_header }} object is added before the closing </head> tag, and the {{ content_for_layout }} object is added before the closing </body> tag.
+ Disabling this check
+ This check is safe to disable.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Options
+ Auto-correction
+ Disabling this check
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

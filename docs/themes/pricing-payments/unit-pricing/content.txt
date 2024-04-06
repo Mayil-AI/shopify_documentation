@@ -1,0 +1,55 @@
+Troubleshooting
+ Theme Store
+ Unit pricing
+ If a merchant sells products in specific quantities or measurements, they might need to display a price per unit for those products. For example, if a product is sold in weights of 500g, 1kg, and 1.5kg, a merchant might want to show the price per 100g for each variant.
+ In this tutorial, you'll learn how to display unit prices for product variants.
+ Tip
+ Unit prices are available only to stores located in Germany or France. Unit prices can be added to products through the Shopify admin.
+ Resources
+ To display unit prices in your theme, you'll use the following:
+ The unit_price_measurement object
+ The unit_price property
+ Depending on where you're implementing your unit price display, you'll access unit price information through the associated parent object:
+ Context Example template types Parent object
+ Variants that have been added to a cart or are part of an order
+ cart
+ customers/order
+ line_item
+ Product and variant listings
+ product
+ collection
+ variant
+ Implementing unit price displays
+ You should add support for unit prices wherever you have a price display. Common locations include:
+ The collection template
+ The product template
+ The cart template
+ The customers/order template
+ You can include this code in the relevant template or a section in the template.
+ Your code should do the following:
+ Check whether the variant or line item has a unit price measurement using variant.unit_price_measurement or line_item.unit_price_measurement.
+ If the variant or line item uses a unit price measurement, display the unit price, the reference value, and the reference unit.
+ Example
+ variant
+ line_item
+ 1 {% if variant.unit_price_measurement %}
+ 2
+    {{ variant.unit_price | money }}
+ 3
+ 4
+    {% if variant.unit_price_measurement.reference_value != 1 %}
+ 5
+      {{ variant.unit_price_measurement.reference_value }}
+ 6
+    {% endif %}
+ 7
+ 8
+    {{ variant.unit_price_measurement.reference_unit }}
+ 9 {% endif %}
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing unit price displays
+ Updates & News
+ Developer changelog

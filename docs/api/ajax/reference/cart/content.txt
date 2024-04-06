@@ -1,0 +1,1445 @@
+Ajax API
+ Overview
+ Reference
+ Cart
+ Product
+ Product recommendations
+ Predictive search
+ Section Rendering API
+ Customer Privacy API
+ Storefront API
+ Cart API reference
+ The Cart API is used to interact with a cart during a customer's session. This guide shows how to use the Cart API to update cart line items, add cart attributes and notes, and generate shipping rates.
+ All Ajax API requests should use locale-aware URLs to give visitors a consistent experience.
+ Note
+ For simplicity, the code examples in this guide don't always use a callback.
+ POST /{locale}/cart/add.js
+ Use the POST /{locale}/cart/add.js endpoint to add one or multiple variants to the cart.
+ In the following example, quantity is the amount of the variant that you want to add and id is the variant ID of that variant. You can add multiple variants to the cart by appending more objects in the items array.
+ Below is a simplified POST request using the fetch API. The formData object is built in JavaScript, so the Content-Type should be set to application/json in the headers object. The response is the JSON of the line items associated with the added variants. If an item is already in the cart, then quantity is equal to the new quantity for that item.
+ Example request
+ 1 let formData = {
+ 2
+   'items': [{
+ 3
+    'id': 36110175633573,
+ 4
+    'quantity': 2
+ 5
+    }]
+ 6 };
+ 7
+ 8 fetch(window.Shopify.routes.root + 'cart/add.js', {
+ 9
+    method: 'POST',
+ 10
+    headers: {
+ 11
+      'Content-Type': 'application/json'
+ 12
+    },
+ 13
+    body: JSON.stringify(formData)
+ 14 })
+ 15 .then(response => {
+ 16
+    return response.json();
+ 17 })
+ 18 .catch((error) => {
+ 19
+    console.error('Error:', error);
+ 20 });
+ Response
+ 1 {
+ 2
+    "items": [
+ 3
+      {
+ 4
+        "id": 36110175633573,
+ 5
+        "title": "Red Rain Coat - Small",
+ 6
+        "key": "794864229:03af7a8cb59a4c3c45595c76fa8cb53c",
+ 7
+        "price": 12900,
+ 8
+        "line_price": 12900,
+ 9
+        "quantity": 2,
+ 10
+        "sku": null,
+ 11
+        "grams": 0,
+ 12
+        "vendor": "Shopify",
+ 13
+        "properties": null,
+ 14
+        "variant_id": 794864229,
+ 15
+        "gift_card": false,
+ 16
+        "url": "/products/red-rain-coat?variant=794864229",
+ 17
+        "featured_image": {
+ 18
+          "url": "http://cdn.shopify.com/s/files/1/0040/7092/products/red-rain-coat.jpeg?v=1402604893",
+ 19
+          "aspect_ratio": 1,
+ 20
+          "alt": "Red rain coat with a hood"
+ 21
+        },
+ 22
+        "image": "http://cdn.shopify.com/s/files/1/0040/7092/products/red-rain-coat.jpeg?v=1402604893",
+ 23
+        "handle": "red-rain-coat",
+ 24
+        "requires_shipping": true,
+ 25
+        "product_title": "Red Rain Coat",
+ 26
+        "product_description": "A bright red rain coat for rainy days!",
+ 27
+        "product_type": "Coat",
+ 28
+        "variant_title": "Red",
+ 29
+        "variant_options": [
+ 30
+          "Red"
+ 31
+        ],
+ 32
+        "options_with_values": [
+ 33
+          {
+ 34
+            "name": "Color",
+ 35
+            "value": "Red"
+ 36
+          }
+ 37
+        ]
+ 38
+      }
+ 39
+    ]
+ 40 }
+ Alternatively, you can use the FormData constructor and target the desired add-to-cart form:
+ 1 let addToCartForm = document.querySelector('form[action$="/cart/add"]');
+ 2 let formData = new FormData(addToCartForm);
+ 3
+ 4 fetch(window.Shopify.routes.root + 'cart/add.js', {
+ 5
+    method: 'POST',
+ 6
+    body: formData
+ 7 })
+ 8 .then(response => {
+ 9
+    return response.json();
+ 10 })
+ 11 .catch((error) => {
+ 12
+    console.error('Error:', error);
+ 13 });
+ Response
+ The response for a successful POST request is a JSON object of the line items associated with the added items.
+ If an added item was already in the cart, then the quantity is equal to the new quantity for that cart line item. However, if the same items have differing prices, properties, or selling plans, then they'll be split into their own line items.
+ Tip
+ Changes in price are typically the result of automatic discounts or Shopify Scripts.
+ Example data
+ 1 items: [
+ 2
+    {
+ 3
+      id: 36323170943141,
+ 4
+      quantity: 1
+ 5
+    },
+ 6
+    {
+ 7
+      id: 36323170943141,
+ 8
+      selling_plan: 6717605,
+ 9
+      quantity: 1
+ 10
+    }
+ 11 ]
+ Response
+ 1 {
+ 2
+    "items": [
+ 3
+      {
+ 4
+        "id": 36323170943141,
+ 5
+        "properties": null,
+ 6
+        "quantity": 1,
+ 7
+        "variant_id": 36323170943141,
+ 8
+        "key": "36323170943141:b15f59bb6d406f2f45dc383a5493bdb8",
+ 9
+        "title": "Great Granola Bar",
+ 10
+        "price": 2000,
+ 11
+        "original_price": 2000,
+ 12
+        "discounted_price": 2000,
+ 13
+        "line_price": 2000,
+ 14
+        "original_line_price": 2000,
+ 15
+        "total_discount": 0,
+ 16
+        "discounts": [],
+ 17
+        "sku": "",
+ 18
+        "grams": 0,
+ 19
+        "vendor": "shopify",
+ 20
+        "taxable": true,
+ 21
+        "product_id": 5680114172069,
+ 22
+        "product_has_only_default_variant": true,
+ 23
+        "gift_card": false,
+ 24
+        "final_price": 2000,
+ 25
+        "final_line_price": 2000,
+ 26
+        "url": "/products/great-granola-bar?variant=36323170943141",
+ 27
+        "featured_image": {
+ 28
+          "aspect_ratio": 1.504,
+ 29
+          "alt": "Great Granola Bar",
+ 30
+          "height": 1277,
+ 31
+          "url": "https://cdn.shopify.com/s/files/1/0401/3218/2181/products/fallon-michael-h2UH2674Bg4-unsplash.jpg?v=1600796940",
+ 32
+          "width": 1920
+ 33
+        },
+ 34
+        "image": "https://cdn.shopify.com/s/files/1/0401/3218/2181/products/fallon-michael-h2UH2674Bg4-unsplash.jpg?v=1600796940",
+ 35
+        "handle": "great-granola-bar",
+ 36
+        "requires_shipping": true,
+ 37
+        "product_type": "",
+ 38
+        "product_title": "Great Granola Bar",
+ 39
+        "product_description": "The great granola bar, everyone has been talking about it. Subscribe when you can!",
+ 40
+        "variant_title": null,
+ 41
+        "variant_options": [
+ 42
+          "Default Title"
+ 43
+        ],
+ 44
+        "options_with_values": [
+ 45
+          {
+ 46
+            "name": "Title",
+ 47
+            "value": "Default Title"
+ 48
+          }
+ 49
+        ],
+ 50
+        "line_level_discount_allocations": [],
+ 51
+        "line_level_total_discount": 0
+ 52
+      },
+ 53
+      {
+ 54
+        "id": 36323170943141,
+ 55
+        "properties": null,
+ 56
+        "quantity": 1,
+ 57
+        "variant_id": 36323170943141,
+ 58
+        "key": "36323170943141:322e2af74da821ca095964e07b7270b5",
+ 59
+        "title": "Great Granola Bar",
+ 60
+        "price": 1700,
+ 61
+        "original_price": 1700,
+ 62
+        "discounted_price": 1700,
+ 63
+        "line_price": 1700,
+ 64
+        "original_line_price": 1700,
+ 65
+        "total_discount": 0,
+ 66
+        "discounts": [],
+ 67
+        "sku": "",
+ 68
+        "grams": 0,
+ 69
+        "vendor": "shopify",
+ 70
+        "taxable": true,
+ 71
+        "product_id": 5680114172069,
+ 72
+        "product_has_only_default_variant": true,
+ 73
+        "gift_card": false,
+ 74
+        "final_price": 1700,
+ 75
+        "final_line_price": 1700,
+ 76
+        "url": "/products/great-granola-bar?selling_plan=6717605/u0026variant=36323170943141",
+ 77
+        "featured_image": {
+ 78
+          "aspect_ratio": 1.504,
+ 79
+          "alt": "Great Granola Bar",
+ 80
+          "height": 1277,
+ 81
+          "url": "https://cdn.shopify.com/s/files/1/0401/3218/2181/products/fallon-michael-h2UH2674Bg4-unsplash.jpg?v=1600796940",
+ 82
+          "width": 1920
+ 83
+        },
+ 84
+        "image": "https://cdn.shopify.com/s/files/1/0401/3218/2181/products/fallon-michael-h2UH2674Bg4-unsplash.jpg?v=1600796940",
+ 85
+        "handle": "great-granola-bar",
+ 86
+        "requires_shipping": true,
+ 87
+        "product_type": "",
+ 88
+        "product_title": "Great Granola Bar",
+ 89
+        "product_description": "The great granola bar, everyone has been talking about it. Subscribe when you can!",
+ 90
+        "variant_title": null,
+ 91
+        "variant_options": [
+ 92
+          "Default Title"
+ 93
+        ],
+ 94
+        "options_with_values": [
+ 95
+          {
+ 96
+            "name": "Title",
+ 97
+            "value": "Default Title"
+ 98
+          }
+ 99
+        ],
+ 100
+        "line_level_discount_allocations": [],
+ 101
+        "line_level_total_discount": 0,
+ 102
+        "selling_plan_allocation": {
+ 103
+          "price_adjustments": [
+ 104
+            {
+ 105
+              "position": 1,
+ 106
+              "price": 1700
+ 107
+            }
+ 108
+          ],
+ 109
+          "price": 1700,
+ 110
+          "compare_at_price": 2000,
+ 111
+          "per_delivery_price": 1700,
+ 112
+          "selling_plan": {
+ 113
+            "id": 6717605,
+ 114
+            "name": "Delivered every week",
+ 115
+            "description": null,
+ 116
+            "options": [
+ 117
+              {
+ 118
+                "name": "Delivery every",
+ 119
+                "position": 1,
+ 120
+                "value": "1 Week(s)"
+ 121
+              }
+ 122
+            ],
+ 123
+            "recurring_deliveries": true,
+ 124
+            "price_adjustments": [
+ 125
+              {
+ 126
+                "order_count": null,
+ 127
+                "position": 1,
+ 128
+                "value_type": "percentage",
+ 129
+                "value": 15
+ 130
+              }
+ 131
+            ]
+ 132
+          }
+ 133
+        }
+ 134
+      }
+ 135
+    ]
+ 136 }
+ Error responses
+ If the exact quantity specified for one of the items can't be added to the cart (for example, you are trying to add 9 items, 2 are already in the cart, and 10 are in stock), then no items are added the cart. The JSON formatted error returned is:
+ 1 {
+ 2
+    "status": 422,
+ 3
+    "message": "Cart Error",
+ 4
+    "description": "You can't add more Messenger Bag to the cart."
+ 5 }
+ The error code is:
+ 422 (Unprocessable Entity)
+ If the product is entirely sold out, then the following error is returned:
+ The product '#{item.name}' is already sold out.
+ If the product is not sold out, but all of its stock is in the cart, then the following error is returned:
+ All #{item.inventory_quantity} #{item.name} are in your cart.
+ Add line item properties
+ You can add a variant to the cart with line item properties using the properties property. Its value must be an object of key-value pairs.
+ Request data
+ 1 items: [
+ 2
+    {
+ 3
+      quantity: 1,
+ 4
+      id: 794864229,
+ 5
+      properties: {
+ 6
+        'First name': 'Caroline'
+ 7
+      }
+ 8
+    }
+ 9 ]
+ Response
+ 1 {
+ 2
+    "items": [
+ 3
+      {
+ 4
+        "id": 794864229,
+ 5
+        "quantity": 1,
+ 6
+        // ...
+ 7
+        "properties" : {
+ 8
+          "First name": "Caroline"
+ 9
+        }
+ 10
+      }
+ 11
+    ]
+ 12 }
+ Add a selling plan
+ You can add a variant with a selling plan to the cart using the selling_plan parameter. Its value must be the selling plan ID.
+ Request data
+ 1 items: [
+ 2
+    {
+ 3
+      quantity: 1,
+ 4
+      id: 794864229,
+ 5
+      selling_plan: 183638
+ 6
+    }
+ 7 ]
+ Response
+ 1 {
+ 2
+    "items": [
+ 3
+      {
+ 4
+        "id": 794864229,
+ 5
+        // ...
+ 6
+        "selling_plan_allocation": {
+ 7
+          "price": 3120,
+ 8
+          "compare_at_price": 3900,
+ 9
+          "per_delivery_price": 3120,
+ 10
+          "selling_plan": {
+ 11
+            "id": 183638,
+ 12
+            "name": "Pay every month, delivery every month | save 20%",
+ 13
+            "description": "No commitment · Auto-renews · Skip or cancel anytime",
+ 14
+            "options": [{
+ 15
+              "name": "Delivery Frequency",
+ 16
+              "position": 1,
+ 17
+              "value": "Month"
+ 18
+            }, {
+ 19
+              "name": "Billing Frequency",
+ 20
+              "position": 2,
+ 21
+              "value": "Month"
+ 22
+            }],
+ 23
+            "recurring_deliveries": true
+ 24
+          }
+ 25
+        }
+ 26
+      }
+ 27
+    ]
+ 28 }
+ GET /{locale}/cart.js
+ Use the GET /{locale}/cart.js endpoint to get the cart as JSON.
+ All monetary properties are returned in the customer's presentment currency. To check the customer's presentment currency, you can use the currency field in the response. To learn more about selling in multiple currencies, refer to Migrate your app to support multi-currency.
+ Responses
+ JSON of a cart
+ 1 {
+ 2
+    "token": "5c61e70d147ead8a1f46c3b3a15df7ef",
+ 3
+    "note": "Hello!",
+ 4
+    "attributes": {
+ 5
+      "Gift wrap": "Yes"
+ 6
+    },
+ 7
+    "original_total_price": 3399,
+ 8
+    "total_price": 2925,
+ 9
+    "total_discount": 474,
+ 10
+    "total_weight": 500,
+ 11
+    "item_count": 2,
+ 12
+    "items": [
+ 13
+      {
+ 14
+        "id": 39897499729985,
+ 15
+        "properties": {},
+ 16
+        "quantity": 1,
+ 17
+        "variant_id": 39897499729985,
+ 18
+        "key": "39897499729985:b1fca88d0e8bf5290f306f808785f744",
+ 19
+        "title": "Health potion - S / Low",
+ 20
+        "price": 900,
+ 21
+        "original_price": 900,
+ 22
+        "discounted_price": 900,
+ 23
+        "line_price": 900,
+ 24
+        "original_line_price": 900,
+ 25
+        "total_discount": 0,
+ 26
+        "discounts": [],
+ 27
+        "sku": "",
+ 28
+        "grams": 500,
+ 29
+        "vendor": "Polina's Potent Potions",
+ 30
+        "taxable": true,
+ 31
+        "product_id": 6786188247105,
+ 32
+        "product_has_only_default_variant": false,
+ 33
+        "gift_card": false,
+ 34
+        "final_price": 900,
+ 35
+        "final_line_price": 900,
+ 36
+        "url": "/products/health-potion?selling_plan=610435137&variant=39897499729985",
+ 37
+        "featured_image": {
+ 38
+          "aspect_ratio": 1.5,
+ 39
+          "alt": "Health potion",
+ 40
+          "height": 1233,
+ 41
+          "url": "https://cdn.shopify.com/s/files/1/0561/7470/6753/files/science-beakers-blue-light-new.jpg?v=1683744744",
+ 42
+          "width": 1850
+ 43
+        },
+ 44
+        "image": "https://cdn.shopify.com/s/files/1/0561/7470/6753/files/science-beakers-blue-light-new.jpg?v=1683744744",
+ 45
+        "handle": "health-potion",
+ 46
+        "requires_shipping": true,
+ 47
+        "product_type": "Health",
+ 48
+        "product_title": "Health potion",
+ 49
+        "product_description": "Are you low on health? Well we've got the potion just for you!\nJust need a top up? Almost dead? In between? No need to worry because we have a range of sizes and strengths!",
+ 50
+        "variant_title": "S / Low",
+ 51
+        "variant_options": [
+ 52
+          "S",
+ 53
+          "Low"
+ 54
+        ],
+ 55
+        "options_with_values": [
+ 56
+          {
+ 57
+            "name": "Size",
+ 58
+            "value": "S"
+ 59
+          },
+ 60
+          {
+ 61
+            "name": "Strength",
+ 62
+            "value": "Low"
+ 63
+          }
+ 64
+        ],
+ 65
+        "line_level_discount_allocations": [],
+ 66
+        "line_level_total_discount": 0,
+ 67
+        "quantity_rule": {
+ 68
+          "min": 1,
+ 69
+          "max": null,
+ 70
+          "increment": 1
+ 71
+        },
+ 72
+        "has_components": false,
+ 73
+        "selling_plan_allocation": {
+ 74
+          "price_adjustments": [
+ 75
+            {
+ 76
+              "position": 1,
+ 77
+              "price": 900
+ 78
+            }
+ 79
+          ],
+ 80
+          "price": 900,
+ 81
+          "compare_at_price": 1000,
+ 82
+          "per_delivery_price": 900,
+ 83
+          "selling_plan": {
+ 84
+            "id": 610435137,
+ 85
+            "name": "Delivery every 1 Week",
+ 86
+            "description": null,
+ 87
+            "options": [
+ 88
+              {
+ 89
+                "name": "1 Week(s), 4 Week(s)",
+ 90
+                "position": 1,
+ 91
+                "value": "1 Week(s)"
+ 92
+              }
+ 93
+            ],
+ 94
+            "recurring_deliveries": true,
+ 95
+            "fixed_selling_plan": false,
+ 96
+            "price_adjustments": [
+ 97
+              {
+ 98
+                "order_count": null,
+ 99
+                "position": 1,
+ 100
+                "value_type": "percentage",
+ 101
+                "value": 10
+ 102
+              }
+ 103
+            ]
+ 104
+          }
+ 105
+        }
+ 106
+      },
+ 107
+      {
+ 108
+        "id": 39888235757633,
+ 109
+        "properties": {},
+ 110
+        "quantity": 1,
+ 111
+        "variant_id": 39888235757633,
+ 112
+        "key": "39888235757633:264890389795b468fe7b11339ff91c08",
+ 113
+        "title": "Whole bloodroot",
+ 114
+        "price": 2499,
+ 115
+        "original_price": 2499,
+ 116
+        "discounted_price": 2025,
+ 117
+        "line_price": 2025,
+ 118
+        "original_line_price": 2499,
+ 119
+        "total_discount": 474,
+ 120
+        "discounts": [
+ 121
+          {
+ 122
+            "amount": 250,
+ 123
+            "title": "Bloodroot discount!"
+ 124
+          },
+ 125
+          {
+ 126
+            "amount": 224,
+ 127
+            "title": "Ingredient Sale"
+ 128
+          }
+ 129
+        ],
+ 130
+        "sku": "",
+ 131
+        "grams": 0,
+ 132
+        "vendor": "Clover's Apothecary",
+ 133
+        "taxable": true,
+ 134
+        "product_id": 6792596455489,
+ 135
+        "product_has_only_default_variant": true,
+ 136
+        "gift_card": false,
+ 137
+        "final_price": 2249,
+ 138
+        "final_line_price": 2249,
+ 139
+        "url": "/products/bloodroot-whole?variant=39888235757633",
+ 140
+        "featured_image": {
+ 141
+          "aspect_ratio": 1.5,
+ 142
+          "alt": "Whole bloodroot",
+ 143
+          "height": 2973,
+ 144
+          "url": "https://cdn.shopify.com/s/files/1/0561/7470/6753/products/sweet-potato-pile.jpg?v=1650644893",
+ 145
+          "width": 4460
+ 146
+        },
+ 147
+        "image": "https://cdn.shopify.com/s/files/1/0561/7470/6753/products/sweet-potato-pile.jpg?v=1650644893",
+ 148
+        "handle": "bloodroot-whole",
+ 149
+        "requires_shipping": true,
+ 150
+        "product_type": "Fruits & Vegetables",
+ 151
+        "product_title": "Whole bloodroot",
+ 152
+        "product_description": "",
+ 153
+        "variant_title": null,
+ 154
+        "variant_options": [
+ 155
+          "Default Title"
+ 156
+        ],
+ 157
+        "options_with_values": [
+ 158
+          {
+ 159
+            "name": "Title",
+ 160
+            "value": "Default Title"
+ 161
+          }
+ 162
+        ],
+ 163
+        "line_level_discount_allocations": [
+ 164
+          {
+ 165
+            "amount": 250,
+ 166
+            "discount_application": {
+ 167
+              "type": "script",
+ 168
+              "key": "10a5c368-efe2-4d60-9082-9e6c298759e8",
+ 169
+              "title": "Bloodroot discount!",
+ 170
+              "description": null,
+ 171
+              "value": "2.5",
+ 172
+              "created_at": "2023-11-07T18:21:24.074Z",
+ 173
+              "value_type": "fixed_amount",
+ 174
+              "allocation_method": "across",
+ 175
+              "target_selection": "explicit",
+ 176
+              "target_type": "line_item",
+ 177
+              "total_allocated_amount": 250
+ 178
+            }
+ 179
+          }
+ 180
+        ],
+ 181
+        "line_level_total_discount": 250,
+ 182
+        "quantity_rule": {
+ 183
+          "min": 1,
+ 184
+          "max": null,
+ 185
+          "increment": 1
+ 186
+        },
+ 187
+        "has_components": false,
+ 188
+        "unit_price": 4050,
+ 189
+        "unit_price_measurement": {
+ 190
+          "measured_type": "weight",
+ 191
+          "quantity_value": "500.0",
+ 192
+          "quantity_unit": "g",
+ 193
+          "reference_value": 1,
+ 194
+          "reference_unit": "kg"
+ 195
+        }
+ 196
+      }
+ 197
+    ],
+ 198
+    "requires_shipping": true,
+ 199
+    "currency": "CAD",
+ 200
+    "items_subtotal_price": 3149,
+ 201
+    "cart_level_discount_applications": [
+ 202
+      {
+ 203
+        "type": "automatic",
+ 204
+        "key": "468373bf-8996-41ee-b735-790f915179f9",
+ 205
+        "title": "Ingredient Sale",
+ 206
+        "description": "",
+ 207
+        "value": "10.0",
+ 208
+        "created_at": "2023-11-07T18:20:58.649Z",
+ 209
+        "value_type": "percentage",
+ 210
+        "allocation_method": "across",
+ 211
+        "target_selection": "all",
+ 212
+        "target_type": "line_item",
+ 213
+        "total_allocated_amount": 224
+ 214
+      }
+ 215
+    ]
+ 216 }
+ JSON of an empty cart
+ 1 {
+ 2
+    "token": "5c61e70d147ead8a1f46c3b3a15df7ef",
+ 3
+    "note": null,
+ 4
+    "attributes": {},
+ 5
+    "original_total_price": 0,
+ 6
+    "total_price": 0,
+ 7
+    "total_discount": 0,
+ 8
+    "total_weight": 0,
+ 9
+    "item_count": 0,
+ 10
+    "items": [],
+ 11
+    "requires_shipping": false,
+ 12
+    "currency": "CAD",
+ 13
+    "items_subtotal_price": 0,
+ 14
+    "cart_level_discount_applications": []
+ 15 }
+ Tip
+ If you want to empty an existing cart, then use the /{locale}/cart/clear endpoint.
+ POST /{locale}/cart/update.js
+ Use the POST /{locale}/cart/update.js endpoint to update the cart's line item quantities, note, or attributes. You can submit a serialized cart form, or submit separate updates to a cart's line items, note, or attributes.
+ Update line item quantities
+ To update line item quantities, you can make a POST request with an updates object. The updates object must contain key-value pairs where the value is the desired quantity, and the key is one of the following:
+ The line item's variant_id
+ The line item's key
+ 1 let updates = {
+ 2
+    794864053: 2,
+ 3
+    794864233: 3
+ 4 };
+ 5
+ 6 fetch(window.Shopify.routes.root + 'cart/update.js', {
+ 7
+    method: 'POST',
+ 8
+    headers: {
+ 9
+      'Content-Type': 'application/json'
+ 10
+    },
+ 11
+    body: JSON.stringify({ updates })
+ 12 })
+ 13 .then(response => {
+ 14
+    return response.json();
+ 15 })
+ 16 .catch((error) => {
+ 17
+    console.error('Error:', error);
+ 18 });
+ A cart can have multiple line items that share the same variant_id. For example, when variants have different line item properties, or automatic discounts create variants at different prices. Because of this, it's recommended to use the line item key to ensure that you're only changing the intended line item.
+ Note
+ If you use the variant ID, then the key can be either an integer or a string. However, if you use the line item key, then the key needs to be a string.
+ The following POST request yields the same result:
+ 1 var formData = new FormData();
+ 2 formData.append("updates[794864053]", 2);
+ 3 formData.append("updates[794864233]", 3);
+ 4
+ 5 fetch(window.Shopify.routes.root + 'cart/update.js', {
+ 6
+    method: 'POST',
+ 7
+    body: formData
+ 8 })
+ 9 .then(response => response.json())
+ 10 .then(data => console.log(data));
+ The /{locale}/cart/update.js endpoint adds new line items to the cart if the variant_id provided doesn't match any line item already in the cart. However, if the variant_id matches multiple line items, then the first matching line item is updated.
+ Tip
+ Use the change.js endpoint when changing line items that are already in the cart, and the add.js endpoint when adding new line items.
+ You can remove items from the cart by setting the quantity to 0:
+ 1 let updates = {
+ 2
+    794864053: 0,
+ 3
+    794864233: 0
+ 4 };
+ 5
+ 6 fetch(window.Shopify.routes.root + 'cart/update.js', {
+ 7
+    method: 'POST',
+ 8
+    headers: {
+ 9
+      'Content-Type': 'application/json'
+ 10
+    },
+ 11
+    body: JSON.stringify({ updates })
+ 12 })
+ 13 .then(response => {
+ 14
+    return response.json();
+ 15 })
+ 16 .catch((error) => {
+ 17
+    console.error('Error:', error);
+ 18 });
+ You can also submit an array of numbers to /{locale}/cart/update.js, provided the size of the array matches the number of line items in the cart. Each number in the array sets the quantity for the corresponding line item in the cart. For example, if you have 3 line items in the cart with quantities 1, 2, and 3, and you want to change those quantities to 3, 2, and 1, then you can use the following:
+ 1 fetch(window.Shopify.routes.root + 'cart/update.js', {
+ 2
+    method: 'POST',
+ 3
+    headers: {
+ 4
+      'Content-Type': 'application/json'
+ 5
+    },
+ 6
+    body: JSON.stringify({ updates: [3, 2, 1] })
+ 7 })
+ 8 .then(response => response.json())
+ 9 .then(data => console.log(data));
+ Update the cart note
+ To update the cart note, you can make a POST request with a note character string:
+ 1 {
+ 2
+    note: 'This is a note about my order'
+ 3 }
+ Update cart attributes
+ To update cart attributes, you can make a POST request with an attributes object. The attributes object must contain key-value pairs where the key is the name of the attribute you want to update, and the value is the attribute value:
+ 1 {
+ 2
+    attributes: {
+ 3
+      'Gift wrap': 'Yes'
+ 4
+    }
+ 5 }
+ The following POST request yields the same result:
+ 1 var formData = new FormData();
+ 2 formData.append("attributes[Gift wrap]", "Yes");
+ 3
+ 4 fetch(window.Shopify.routes.root + 'cart/update.js', {
+ 5
+    method: 'POST',
+ 6
+    body: formData
+ 7 })
+ 8 .then(response => response.json())
+ 9 .then(data => console.log(data));
+ Response
+ The JSON of the cart.
+ Error responses
+ If a variant ID is provided that either doesn't exist or isn't available in the online store channel, then the endpoint returns the following error:
+ 1 {
+ 2
+    "status": 404,
+ 3
+    "message": "Cart Error"
+ 4
+    "description": "Cannot find variant"
+ 5 }
+ When a new variant is added to the cart and the quantity exceeds what's available, the result is a 422 error:
+ 1 {
+ 2
+    "status": 422,
+ 3
+    "message": "Cart Error",
+ 4
+    "description": "You can only add 8 Messenger Bag to the cart."
+ 5 }
+ Caution
+ The update.js endpoint doesn't validate the quantity on variants that are already in the cart. This means that it's possible to add more inventory than is available.
+ POST /{locale}/cart/change.js
+ Use the /{locale}/cart/change.js endpoint to change the quantity, properties, and selling_plan properties of a cart line item. Only items already in your cart can be changed, and you can change only one line item at a time.
+ Identify the line item to change
+ The POST data requires either an id or line property to identify the line item to be changed.
+ The id property
+ The value of the id property can be one of the following:
+ The line item's variant_id
+ The line item's key
+ Variant ID
+ Line item key
+ 1 {
+ 2
+    'id': 794864053,
+ 3
+    'quantity': 3
+ 4 }
+ A cart can have multiple line items that share the same variant_id. For example, when variants have different line item properties, or automatic discounts create variants at different prices. Because of this, it's recommended to use the line item key to ensure that you're only changing the intended line item.
+ Note
+ If you use the variant ID, then the id value can be either an integer or a string. However, if you use the line item key, then the id value needs to be a string.
+ The line property
+ A cart can have multiple line items that share the same variant_id. For example, when variants have different line item properties, or automatic discounts create variants at different prices. To account for this, you can use the line property when updating the cart.
+ The value of line is the 1-based index position of the item in the cart.
+ 1 {
+ 2
+    'line': 1,
+ 3
+    'quantity': 3
+ 4 }
+ Update quantities
+ The value of thequantity property represents the new quantity you want for the line item. It must be an integer.
+ 1 {
+ 2
+    'line': 2,
+ 3
+    'quantity': 1
+ 4 }
+ You can remove a line item by setting the quantity to 0:
+ 1 {
+ 2
+    'line': 2,
+ 3
+    'quantity': 0
+ 4 }
+ Update properties
+ The properties property sets the line item properties. Its value must be an object of key-value pairs.
+ 1 {
+ 2
+    'line': 2,
+ 3
+    'properties': { 'gift_wrap': true }
+ 4 }
+ Whenever a POST request includes properties, it overwrites the entire properties object. Any key-value pairs that were already in the properties object are erased.
+ It's not possible to set a line item's properties property to an empty object once a value is set. If you need to remove all line item properties, then you need to remove the entire line item.
+ Tip
+ You can visually hide line item properties at checkout by creating private properties. This technique might be an alternative to removing a line item when managing properties.
+ Update selling plans
+ The selling_plan property sets the line item selling plan. Its value must be one of the following:
+ The selling plan ID: To set a specific selling plan for the line item.
+ null or an empty string: To remove any selling plan from the line item.
+ Add selling plan
+ Remove selling plan
+ 1 {
+ 2
+    'line': 2,
+ 3
+    'quantity': 2,
+ 4
+    'selling_plan': 183638
+ 5 }
+ Note
+ When specifying the selling_plan property, consider the following:
+ You can use only the line property for identifying the line item.
+ You should always specify the quantity property. If the quantity isn't specified, then it's assumed to be 1.
+ Response
+ The JSON of the cart.
+ Error responses
+ If the item that you're attempting to change isn't already in the cart, then /{locale}/cart/change.js doesn't add it. Instead, it returns a 404 error.
+ POST /{locale}/cart/clear.js
+ Use the POST /{locale}/cart/clear.js endpoint to set all quantities of all line items in the cart to zero.
+ Response
+ The JSON of an empty cart. This does not remove cart attributes or the cart note.
+ 1 {
+ 2
+    "token": "1d19a32178501c44ef2223d73c54d16d",
+ 3
+    "note": null,
+ 4
+    "attributes": {},
+ 5
+    "total_price": 0,
+ 6
+    "total_weight": 0,
+ 7
+    "item_count": 0,
+ 8
+    "items": [],
+ 9
+    "requires_shipping": false
+ 10 }
+ Generate shipping rates
+ Use the POST /{locale}/cart/prepare_shipping_rates.json and GET /{locale}/cart/async_shipping_rates.json endpoints to generate shipping rates:
+ The POST /{locale}/cart/prepare_shipping_rates.json endpoint initiates the process of calculating shipping rates for the cart given a destination.
+ The GET /{locale}/cart/async_shipping_rates.json endpoint returns the shipping rates results if the calculations have finished.
+ Example prepare_shipping_rates call
+ 1 /{locale}/cart/prepare_shipping_rates.json?shipping_address%5Bzip%5D=K1N+5T2&shipping_address%5Bcountry%5D=Canada&shipping_address%5Bprovince%5D=Ontario
+ Response
+ null
+ Example async_shipping_rates call
+ 1 /{locale}/cart/async_shipping_rates.json?shipping_address%5Bzip%5D=K1N+5T2&shipping_address%5Bcountry%5D=Canada&shipping_address%5Bprovince%5D=Ontario
+ View response
+ GET /{locale}/cart/shipping_rates.json
+ Use the GET /{locale}/cart/shipping_rates.json to get estimated shipping rates.
+ Note
+ The recommended method to generate shipping rates is to use the POST /{locale}/cart/prepare_shipping_rates.json and GET /{locale}/cart/async_shipping_rates.json endpoints because it might take a while for shipping rates to be returned. The GET /{locale}/cart/shipping_rates.json endpoint is subject to throttling.
+ 1 /{locale}/cart/shipping_rates.json?shipping_address%5Bzip%5D=K1N+5T2&shipping_address%5Bcountry%5D=Canada&shipping_address%5Bprovince%5D=Ontario
+ View response
+ Private properties and attributes
+ Private line item properties and private cart attributes are used when you need to attach information to either cart line items or the entire cart, and you don't want the properties and attributes to be visible to the online store's visitors.
+ Both private properties and private cart attributes are visually hidden at checkout, but are visible on the Order details page in the Shopify admin.
+ Caution
+ If you hide private line item properties on the storefront, then you must modify your theme's codebase.
+ Private line item properties
+ To make a line item property private, prepend an underscore (_) to the key. For example, to add a variant to cart with a private _foo property using the /{locale}/cart/add.js endpoint:
+ 1 items: [
+ 2
+    {
+ 3
+      'quantity': 2,
+ 4
+      'id': 794864229,
+ 5
+      'properties': {
+ 6
+        '_foo': 'bar'
+ 7
+      }
+ 8
+    }
+ 9 ]
+ The properties property can have a mix of private and public line item properties:
+ 1 items: [
+ 2
+    {
+ 3
+      quantity: 2,
+ 4
+      id: 794864229,
+ 5
+      properties: {
+ 6
+        '_foo': 'bar',
+ 7
+        'gift_wrap': true
+ 8
+      }
+ 9
+    }
+ 10 ]
+ Hide properties in a theme
+ Private line item properties are available in the Liquid line_item.properties object and Ajax API. To hide private properties on the storefront, you must modify the theme's codebase.
+ In the following example, all properties items that begin with _ in Liquid are filtered out:
+ Liquid
+ 1 {% for property in line_item.properties %}
+ 2
+    {% assign first_character_in_key = property.first | slice: 0 %}
+ 3
+    {% unless first_character_in_key == '_' %}
+ 4
+      {{ property.first }}: {{ property.last }}
+ 5
+    {% endunless %}
+ 6 {% endfor %}
+ Private cart attributes
+ To make a cart attribute private, append a double underscore (__) to an attribute name.
+ Private cart attributes are not available in the Liquid cart.attributes object or the Ajax API. This means there is no code modification required to hide them in theme files. Private cart attributes also do not affect the page rendering, which allows for more effective page caching.
+ Bundled section rendering
+ Bundled section rendering allows you to request the HTML markup for up to five sections you might want to update based on an initial call to the Cart API, within that same call.
+ Bundled section rendering is available for the following Cart API endpoints:
+ /{locale}/cart/add
+ /{locale}/cart/change
+ /{locale}/cart/clear
+ /{locale}/cart/update
+ Request sections
+ To request sections, you can include a sections parameter in your API call data:
+ Example
+ 1 items: [
+ 2
+    {
+ 3
+     id: 36110175633573,
+ 4
+     quantity: 2
+ 5
+    }
+ 6 ],
+ 7 sections: "cart-items,cart-icon-bubble,cart-live-region-text,cart-footer"
+ Note
+ The sections parameter can be a comma-separated list or an array, similar to when using the Section Rendering API directly.
+ By default, sections are rendered in the context of the current page, based on the HTTP Referer header. However, you can specify any other page using the sections_url parameter. The sections_url must begin with a / and can include query parameters like q and page.
+ Example
+ 1 sections: "cart-items,cart-icon-bubble,cart-live-region-text,cart-footer",
+ 2 sections_url: "/cart?some_param=foo"
+ The HTML for the requested sections is included under the sections key of the returned JSON. Each section can be identified by the same ID that was passed in the request.
+ Example
+ 1 {
+ 2
+    attributes: {},
+ 3
+    cart_level_discount_applications: [],
+ 4
+    currency: "CAD",
+ 5
+    item_count: 1,
+ 6
+    items: [{…}],
+ 7
+    items_subtotal_price: 100100,
+ 8
+    note: null,
+ 9
+    original_total_price: 100100,
+ 10
+    requires_shipping: true,
+ 11
+    sections: {
+ 12
+      cart-items: "<div id=\"shopify-section-template--14199693705272_…9930913703934\" defer=\"defer\"></script>\n\n\n\n\n</div>",
+ 13
+      cart-icon-bubble: "<div id=\"shopify-section-cart-icon-bubble\" class=\"…ss=\"visually-hidden\">1 item</span>\n  </div></div>",
+ 14
+      cart-live-region-text: "<div id=\"shopify-section-cart-live-region-text\" cl…opify-section\">New subtotal: $1,001.00 CAD\n</div>",
+ 15
+      cart-footer: "<div id=\"shopify-section-template--14199693705272_…   </div>\n    </div>\n  </div>\n</div>\n\n\n\n\n\n\n</div>"
+ 16
+    },
+ 17
+    token: "9ee5d43a08fb9a779828e42a4b6aa09a",
+ 18
+    total_discount: 0,
+ 19
+    total_price: 100100,
+ 20
+    total_weight: 1000,
+ 21 }
+ Error response
+ Sections are rendered after the data modifications from the request are completed. Because of this, rendering errors don't affect the response status of the API call. Sections that fail to render are returned as null, so you should account for this possibility.
+ Passing invalid values for the sections or sections_url parameters, such as a sections_url that doesn't begin with /, causes the entire request to return an HTTP 400 Bad Request status. However, this doesn’t mean that the rest of the request didn’t succeed.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ POST /{locale}/cart/add.js
+ GET /{locale}/cart.js
+ POST /{locale}/cart/update.js
+ POST /{locale}/cart/change.js
+ POST /{locale}/cart/clear.js
+ Generate shipping rates
+ Private properties and attributes
+ Bundled section rendering
+ Updates & News
+ Developer changelog

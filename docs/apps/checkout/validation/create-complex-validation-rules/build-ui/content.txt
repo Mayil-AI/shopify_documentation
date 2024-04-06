@@ -1,0 +1,420 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Distribution
+ Billing
+ App Store
+ Build a validation user interface
+ Merchants install and manage Cart and Checkout Validation Functions in Shopify admin. Shopify uses Admin UI extensions to render the validation settings experience for the merchant. You can customize this UI for your function's configuration needs, or to meet other requirements of your app.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Generate starter code for a validation settings UI extension.
+ Create a validation user interface with Admin UI Extensions.
+ Requirements
+ You created your app with the Remix app template.
+ You've completed the Add configuration to your validation function tutorial.
+ Your app has the read_products access scope. Learn how to configure your access scopes using Shopify CLI.
+ Step 1: Create the validation user interface
+ The following example builds a React-based Admin UI extensions that enables merchants to create and configure a validation function.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run the following command to create a new validation rule UI extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template validation_settings_ui --name validation-settings
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript React or TypeScript React.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript React
+ $
+    (2) JavaScript
+ $
+    (3) TypeScript React
+ $
+    (4) TypeScript
+ Navigate to extensions/validation-settings:
+ Terminal
+ $ cd extensions/validation-settings
+ Replace the src/ValidationSettings.jsx or src/ValidationSettings.tsx file with the following code.
+ File
+ JavaScript
+ TypeScript
+ src/ValidationSettings.jsx
+ 1 import { useState } from "react";
+ 2
+ 3 import {
+ 4
+    reactExtension,
+ 5
+    useApi,
+ 6
+    Section,
+ 7
+    NumberField,
+ 8
+    Box,
+ 9
+    InlineStack,
+ 10
+    Text,
+ 11
+    BlockStack,
+ 12
+    Banner,
+ 13
+    Image,
+ 14
+    FunctionSettings,
+ 15 } from "@shopify/ui-extensions-react/admin";
+ 16
+ 17 const TARGET = "admin.settings.validation.render";
+ 18
+ 19 export default reactExtension(
+ 20
+    TARGET,
+ 21
+    async (api) => {
+ 22
+      const configuration = JSON.parse(
+ 23
+        api.data.validation?.metafields?.[0]?.value ?? "{}"
+ 24
+      );
+ 25
+ 26
+      const products = await getProducts();
+ 27
+ 28
+      return (
+ 29
+        <ValidationSettings
+ 30
+          configuration={configuration}
+ 31
+          products={products}
+ 32
+        />
+ 33
+      );
+ 34
+    }
+ 35 );
+ 36
+ 37 function ValidationSettings({
+ 38
+    configuration,
+ 39
+    products,
+ 40 }) {
+ 41
+    const [errors, setErrors] = useState([]);
+ 42
+ 43
+    const {
+ 44
+      applyMetafieldChange,
+ 45
+    } = useApi(TARGET);
+ 46
+ 47
+    const settings = {};
+ 48
+ 49
+    products.forEach(({ variants }) => {
+ 50
+      variants.forEach(({ id }) => {
+ 51
+        const limit = configuration[id] ?? 5;
+ 52
+        settings[id] = limit;
+ 53
+      });
+ 54
+    });
+ 55
+ 56
+    return (
+ 57
+      <FunctionSettings
+ 58
+        onError={(errors) => {
+ 59
+          setErrors(errors.map((e) => e.message));
+ 60
+        }}
+ 61
+      >
+ 62
+        <Box paddingBlockEnd="large">
+ 63
+          {errors.length
+ 64
+            ? errors.map((error, i) => (
+ 65
+                <Banner
+ 66
+                  key={i}
+ 67
+                  title="Errors were encountered"
+ 68
+                  dismissible
+ 69
+                  tone="critical"
+ 70
+                >
+ 71
+                  <Box>{error}</Box>
+ 72
+                </Banner>
+ 73
+              ))
+ 74
+            : ""}
+ 75
+            <BlockStack gap="large">
+ 76
+              {// display each product and variant's settings
+ 77
+              products.map(({ title, variants }) => {
+ 78
+                return (
+ 79
+                  <Section heading={title} key={title}>
+ 80
+                    <BlockStack paddingBlock="large">
+ 81
+                      <InlineStack>
+ 82
+                        <Box minInlineSize="10%" />
+ 83
+                        <Box minInlineSize="5%">
+ 84
+                          <Text fontWeight="bold">Variant Name</Text>
+ 85
+                        </Box>
+ 86
+                        <Box minInlineSize="50%">
+ 87
+                          {" "}
+ 88
+                          <Text fontWeight="bold">Limit</Text>
+ 89
+                        </Box>
+ 90
+                      </InlineStack>
+ 91
+                      {variants.map((variant) => {
+ 92
+                        const limit = settings[variant.id];
+ 93
+                        return (
+ 94
+                          <InlineStack columnGap="none" key={variant.id}>
+ 95
+                            <Box minInlineSize="5%">
+ 96
+                              {variant.imageUrl && (
+ 97
+                                <Image
+ 98
+                                  alt={variant.title}
+ 99
+                                  source={variant.imageUrl}
+ 100
+                                />
+ 101
+                              )}
+ 102
+                            </Box>
+ 103
+                            <Box minInlineSize="5%">
+ 104
+                              <Text>{variant.title}</Text>
+ 105
+                            </Box>
+ 106
+                            <Box minInlineSize="50%">
+ 107
+                              <NumberField
+ 108
+                                value={limit}
+ 109
+                                min={0}
+ 110
+                                max={99}
+ 111
+                                label="Set a limit"
+ 112
+                                defaultValue={String(limit)}
+ 113
+                                onChange={async (value) => {
+ 114
+                                  setErrors([]);
+ 115
+                                  const newSettings = {
+ 116
+                                    ...settings,
+ 117
+                                    [variant.id]: value,
+ 118
+                                  };
+ 119
+ 120
+                                  const results = await applyMetafieldChange({
+ 121
+                                    type: "updateMetafield",
+ 122
+                                    namespace: "$app:my-validation-namespace",
+ 123
+                                    key: "my-configuration-key",
+ 124
+                                    value: JSON.stringify(newSettings),
+ 125
+                                  });
+ 126
+ 127
+                                  if (results.type === "error") {
+ 128
+                                    setErrors([results.message]);
+ 129
+                                  }
+ 130
+                                }}
+ 131
+                              />
+ 132
+                            </Box>
+ 133
+                          </InlineStack>
+ 134
+                        );
+ 135
+                      })}
+ 136
+                    </BlockStack>
+ 137
+                  </Section>
+ 138
+                );
+ 139
+              })}
+ 140
+            </BlockStack>
+ 141
+        </Box>
+ 142
+      </FunctionSettings>
+ 143
+    );
+ 144 }
+ 145
+ 146 async function getProducts() {
+ 147
+    const query = `#graphql
+ 148
+      query FetchProducts {
+ 149
+        products(first: 5) {
+ 150
+          nodes {
+ 151
+            title
+ 152
+            variants(first: 5) {
+ 153
+              nodes {
+ 154
+                id
+ 155
+                title
+ 156
+                image(maxHeight: 100) {
+ 157
+                  url
+ 158
+                }
+ 159
+              }
+ 160
+            }
+ 161
+          }
+ 162
+        }
+ 163
+      }`;
+ 164
+ 165
+    const results = await fetch("shopify:admin/api/graphql.json", {
+ 166
+      method: "POST",
+ 167
+      body: JSON.stringify({ query }),
+ 168
+    }).then((res) => res.json());
+ 169
+ 170
+    return results?.data?.products?.nodes?.map(({ title, variants }) => {
+ 171
+      return {
+ 172
+        title,
+ 173
+        variants: variants.nodes.map((variant) => ({
+ 174
+          title: variant.title,
+ 175
+          id: variant.id,
+ 176
+          imageUrl: variant?.image?.url,
+ 177
+        })),
+ 178
+      };
+ 179
+    });
+ 180 }
+ Step 2. Link the user interface to the validation
+ Go to your validation folder:
+ Terminal
+ $ cd extensions/cart-checkout-validation
+ Add the following to your shopify.extension.toml:
+ File
+ shopify.extension.toml
+ 1 [extensions.ui]
+ 2
+      handle = "validation-settings"
+ Step 3. Test the validation user interface
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ To build and preview your app, either start or restart your server with the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Press p to open the developer console.
+ In the developer console page, click on the preview link for the validation settings extension.
+ Go to Settings > Checkout in Shopify admin.
+ In the Checkout rules section, click on Add rule and add your validation.
+ Confirm the user interface looks and works as intended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the validation user interface
+ Step 2. Link the user interface to the validation
+ Step 3. Test the validation user interface
+ Updates & News

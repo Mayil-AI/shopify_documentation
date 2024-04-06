@@ -1,0 +1,45 @@
+App Store ads
+ Security
+ Common app review problems
+ Apps often need to be updated or re-submitted for a few common reasons.
+ Resubmitting your app slows down the review process. To avoid delays, before submitting your app, learn how you can avoid these problems with the solutions in the following table.
+ Category Reason Solution Failure requires app re-submit
+ Billing
+ Pricing information isn’t accurate
+ Merchants aren’t able to upgrade or downgrade pricing plans
+ App doesn’t use the required Shopify Billing API
+ Make sure your pricing information is up-to-date on your submission form.
+ Allow merchants the ability to switch between pricing plans.
+ Use the Shopify Billing API to process all charges associated with your app.
+ No
+ Installation
+ When the app is installed, it doesn’t immediately redirect to the OAuth grant screen
+ The app returns a fatal error after installation
+ The app doesn’t re-install properly
+ Test that your app successfully obtains an access token
+ If you're using authorization code grant, make sure your redirect URL works correctly. The app must redirect merchants to the UI after it’s installed.
+ Test re-installation. Your app should re-install for merchants who’ve previously installed it.
+ Yes
+ Embedding
+ The app switches between embedded and not embedded versions
+ Use Shopify App Bridge, if your app is embedded. This allows redirects to take merchants to the embedded version of the app.
+ Use session token authentication, if your app is embedded. This lets merchants interact with your app without continually providing their login information.
+ Yes
+ User interface
+ The app interface is broken and unusable upon installation
+ The app has web errors such as 404s, 500s, and 300s
+ Make sure the UI is operational so that merchants can interact with it.
+ Make sure your error messages are clear and informative.
+ Yes
+ App Testing
+ The app is submitted without proper testing instructions or credentials
+ App must be a finished product and in a stable state
+ Ensure that you include testing information and test credentials in the app submission form. Include a short screencast of how your app should work.
+ Ensure that you properly test your app for bugs and ensure your app is a complete, finished product.
+ Yes Varies
+ Online store apps
+ The app isn't using theme app extensions.
+ The app isn't showing widgets properly on the storefront
+ Modifications to an online store theme must use theme app extensions.
+ Widgets must be shown without error in the online store
+ Yes

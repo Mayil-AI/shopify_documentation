@@ -1,0 +1,270 @@
+Distribution
+ Billing
+ App Store
+ Manage metafield definitions
+ Metafield definitions enable you to include data validation for metafields, and enable users to add metafield values for resources in the Shopify admin. This guide shows you how to manage metafield definitions using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ You're using the GraphQL Admin API version 2021-10 or higher.
+ Your app has access to the namespace and the owner type that you want to associate with the metafield definition. You can only create metafield definitions for namespaces and owner types that you have access to.
+ Step 1: Create a metafield definition
+ You can create a metafield definition using the metafieldDefinitionCreate mutation. You can create only one metafield definition at a time.
+ The following example creates a metafield definition called Ingredients for the PRODUCT owner type, which stores multi-line text, such as a list of ingredients used to make the product.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+        namespace
+ 7
+        key
+ 8
+        # add other return fields
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+        code
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Ingredients",
+ 4
+      "namespace": "bakery",
+ 5
+      "key": "ingredients",
+ 6
+      "description": "A list of ingredients used to make the product.",
+ 7
+      "type": "multi_line_text_field",
+ 8
+      "ownerType": "PRODUCT"
+ 9
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456108",
+ 5
+        "name": "Ingredients",
+ 6
+        "namespace": "bakery",
+ 7
+        "key": "ingredients"
+ 8
+      },
+ 9
+      "userErrors": []
+ 10
+    }
+ 11 }
+ Step 2: Retrieve a metafield definition
+ You can use the metafieldDefinition query to retrieve a metafield definition.
+ The following example retrieves a metafield definition by using its ID:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    metafieldDefinition(id: $id) {
+ 3
+      name
+ 4
+      namespace
+ 5
+      key
+ 6
+      description
+ 7
+      ownerType
+ 8
+      type {
+ 9
+        name
+ 10
+      }
+ 11
+    }
+ 12 }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/MetafieldDefinition/18776120"
+ 3 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metafieldDefinition": {
+ 4
+        "name": "Expiry Date",
+ 5
+        "namespace": "food",
+ 6
+        "key": "expiry_date",
+ 7
+        "description": "The expiry date.",
+ 8
+        "ownerType": "PRODUCT",
+ 9
+        "type": {
+ 10
+          "name": "date"
+ 11
+        }
+ 12
+      }
+ 13
+    }
+ 14 }
+ Step 3: Update a metafield definition
+ You can use the metafieldDefinitionUpdate mutation to update a metafield definition. You can update only the name and description of a metafield definition.
+ The following example changes a metafield definition's name from Pizza size to Pizza size (inches):
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation UpdateMetafieldDefinition($definition: MetafieldDefinitionUpdateInput!) {
+ 2
+    metafieldDefinitionUpdate(definition: $definition) {
+ 3
+      updatedDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+        namespace
+ 7
+        key
+ 8
+        # add other return fields
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+        code
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Pizza size (inches)",
+ 4
+      "namespace": "bakery",
+ 5
+      "key": "pizzasize",
+ 6
+      "ownerType": "PRODUCT"
+ 7
+    }
+ 8 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionUpdate": {
+ 3
+      "updatedDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456109",
+ 5
+        "name": "Pizza size (inches)",
+ 6
+        "namespace": "bakery",
+ 7
+        "key": "pizza_size"
+ 8
+      },
+ 9
+      "userErrors": []
+ 10
+    }
+ 11 }
+ Step 4 (Optional): Delete a metafield definition
+ To delete a metafield definition, use the metafieldDefinitionDelete mutation. You can also set an option that, when selected, deletes all metafields that use that definition.
+ The following example deletes the metafield definition for bakery.ingredients, and also deletes all metafields that use the definition.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation DeleteMetafieldDefinition {
+ 2
+    metafieldDefinitionDelete(id: $id, deleteAllAssociatedMetafields: $deleteAllAssociatedMetafields) {
+ 3
+      deletedDefinitionId
+ 4
+      userErrors {
+ 5
+        field
+ 6
+        message
+ 7
+        code
+ 8
+      }
+ 9
+    }
+ 10 }
+ Variables
+ 1 {
+ 2
+    "id": "gid://shopify/MetafieldDefinition/18710584",
+ 3
+    "deleteAllAssociatedMetafields": true
+ 4 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionDelete": {
+ 3
+      "deletedDefinitionId": "gid://shopify/MetafieldDefinition/18710584",
+ 4
+      "userErrors": []
+ 5
+    }
+ 6 }
+ Next steps
+ Learn how to manage validation options using the GraphQL Admin API.
+ Learn how to create automated collections with metafield definition conditions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a metafield definition
+ Step 2: Retrieve a metafield definition
+ Step 3: Update a metafield definition
+ Step 4 (Optional): Delete a metafield definition
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

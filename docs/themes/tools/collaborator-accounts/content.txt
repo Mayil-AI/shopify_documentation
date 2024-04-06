@@ -1,0 +1,55 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Collaborator accounts
+ As a Shopify Partner, you can use collaborator accounts to access merchant stores directly through your own Partner Dashboard or using the Shopify app. Collaborator accounts give you access to only the sections of a store that a merchant wants you to access, and don't count toward a store's staff limit. Any stores that you have access to by using a collaborator account are labeled as Managed stores in your Partner Dashboard.
+ If you're building or customizing a theme for a merchant, then you can use a collaborator account with the Themes permission to create and manage themes in the merchant's store.
+ Prerequisites
+ To request collaborator access to a store, you need a Shopify Partner account.
+ Limitations
+ You need to log in to the store through the Stores section of your Partner Dashboard instead of logging in directly to the store.
+ Request access
+ If you want a collaborator account for a client's store, then you need to send a request to the store owner through your Partner Dashboard. You can also send your client the Shopify Help Center page on collaborator permissions to explain how collaborator accounts work.
+ If you already have a staff account for the client's store or have been invited by the store owner to activate a staff account, but not yet activated it, then your request for a collaborator account prompts the store owner to update your current account permissions to reflect those of your collaborator account.
+ As an additional layer of security, merchants can set up a 4-digit collaborator request code for their Shopify store. When a store has the code set up, you need to enter the code when you request access as a collaborator. If you enter an incorrect code, then you see an error in the Partner Dashboard and your request isn't sent to the merchant.
+ From your Partner Dashboard, click Stores.
+ Click Add store.
+ In the Store type section, select Managed store.
+ Enter the URL of the Shopify store that you want to access.
+ If the Shopify store requires a collaborator request code, then enter the code.
+ In the Permissions section, select the sections of the store that you want to access, or check Full access. The account owner can change these permissions after your account is created.
+ If you want to include a message to the store owner in your request, then enter a message in the Add a message section.
+ Click Save.
+ After you submit a request, the store owner receives an email about the request and a notification on their Shopify Home.
+ Cancel a pending access request
+ If you requested access to a store but need to cancel the request, then you can do so through your Partner Dashboard.
+ From your Partner Dashboard, click Stores.
+ Beside the store with the access request that you want to cancel, click Cancel request.
+ Click Cancel access request.
+ View your managed stores
+ You can view the stores that you've requested access to on the Stores page in your Partner Dashboard. There is no limit to the number of managed stores that you can have, but you can have only up to 10 pending requests open at a time.
+ If your access to a store is removed, then you can remove the store from your Stores list by clicking Remove from list.
+ Manage access to a store
+ Partner organizations often have access to multiple development stores and managed stores, and have multiple staff members who perform different tasks in the organization. To increase oversight over your staff members and maintain merchant security, you can limit access to stores in your Partner organization to only the staff members who need to access them. Learn more about managing access to merchant stores.
+ Remove your access to a store
+ If you no longer need to work on a client's store, then you can remove your access to the store. Removing your access deletes your collaborator account from the store.
+ If you need to do more work on the store after you remove access, then you'll need to request access to the client's store again.
+ After your access to a store is removed, you can remove the store from your Stores list by clicking Remove from list.
+ From your Partner Dashboard, click Stores.
+ Find the store you want to remove your access from in the list.
+ Click Remove access, and then click Remove store.
+ Next steps
+ Create or customize a theme for the merchant
+ Connect to the merchant's store using Shopify CLI
+ Connect to the merchant's store using the Shopify GitHub integration
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Prerequisites
+ Limitations
+ Request access
+ Cancel a pending access request
+ View your managed stores
+ Manage access to a store
+ Remove your access to a store
+ Next steps

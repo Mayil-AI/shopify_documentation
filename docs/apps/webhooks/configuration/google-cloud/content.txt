@@ -1,0 +1,355 @@
+App Store
+ Google Cloud Pub/Sub webhook delivery
+ Integrate your app with Google Cloud Pub/Sub consume events at your app's own pace and handle large volumes of webhook traffic without getting overwhelmed.
+ This tutorial shows you how to use Google Cloud Pub/Sub to manage webhook events for your app.
+ Note
+ Shopify has verified support for Google Cloud Pub/Sub, but hasn't verified support for Pub/Sub Lite.
+ Requirements
+ You're familiar with how webhooks work.
+ You're familiar with the webhooks best practices.
+ You're authenticated with the GraphQL Admin API or REST Admin API.
+ You've created an app.
+ You've set up a Google Cloud Pub/Sub project.
+ You've created at least one topic in the project.
+ You're using API version 2021-07 or higher.
+ For more information on creating projects and topics, refer to Google's Pub/Sub quickstart guide.
+ Step 1: Retrieve your Shopify service account address
+ To integrate your app with Google Cloud Pub/Sub, you need to get the Shopify service account address from the Partner Dashboard. You'll add the address to a Google Cloud Pub/Sub topic.
+ Navigate to your app's settings page in the Partner Dashboard or Shopify admin:
+ Partner Dashboard
+ Shopify admin
+ In your Partner Dashboard, go to Apps.
+ Click the name of your app.
+ Click Configuration.
+ Under Google Cloud Platform - Pub/Sub, copy the Shopify service account address.
+ Step 2: Add the service account address to Google Cloud Pub/Sub
+ In the Google Cloud Console, go to Pub/Sub > Topics.
+ Next to a topic, click ⋮ and then click View permissions.
+ Click ADD PRINCIPAL.
+ Paste the Shopify service account address that you retrieved from the Partner Dashboard into the New principals text box.
+ In the Role drop-down list, select Pub/Sub and Pub/Sub Publisher.
+ Click Save.
+ You can now add webhook subscriptions to the Google Cloud Pub/Sub topic using Shopify's APIs.
+ Step 3: Create and manage subscriptions
+ Subscribe to webhooks after you've integrated your app with Google Cloud Pub/Sub. You can subscribe to, update, and delete webhook subscriptions.
+ Note
+ Webhook data is divided by topic. Refer to the GraphQL Admin API or REST Admin API reference for the complete list of supported webhook topics.
+ Some topics also support sub-topics.
+ The following examples show you how to subscribe to, update, and delete a webhook with GraphQL and REST.
+ Subscribe to a webhook
+ The following examples show you how to subscribe to webhooks using GraphQL and REST.
+ GraphQL
+ REST
+ Use the pubSubWebhookSubscriptionCreate mutation to create a new webhook subscription using GraphQL, with the following values:
+ Set pubSubProject to the ID of your Google Cloud Platform project
+ Set pubSubTopic to the ID of the topic that you set up in Google Cloud Pub/Sub.
+ Note
+ If you test webhooks using Shopify CLI's webhook trigger, then the following is the equivalent Google Cloud Pub/Sub address:
+ pubsub://{project-id}:{topic-id}
+ Where {project-id} is the ID of your Google Cloud Platform project, and {topic-id} is the ID of the topic that you set up in Google Cloud Pub/Sub.
+ Request: POST /admin/api/2024-04/graphql.json
+ 1 mutation pubSubWebhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $webhookSubscription: PubSubWebhookSubscriptionInput!) {
+ 2
+    pubSubWebhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {
+ 3
+      userErrors {
+ 4
+        field
+ 5
+        message
+ 6
+      }
+ 7
+      webhookSubscription {
+ 8
+        id
+ 9
+        format
+ 10
+        includeFields
+ 11
+        metafieldNamespaces
+ 12
+        topic
+ 13
+        endpoint {
+ 14
+          ... on WebhookPubSubEndpoint {
+ 15
+            pubSubProject
+ 16
+            pubSubTopic
+ 17
+          }
+ 18
+        }
+ Update a webhook subscription
+ Update a webhook subscription using GraphQL and REST.
+ GraphQL
+ REST
+ Use the pubSubWebhookSubscriptionUpdate mutation to update a webhook subscription, with the following values:
+ Set pubSubProject to the ID of your Google Cloud Platform project.
+ Set pubSubTopic to the ID of the topic that you set up in Google Cloud Pub/Sub.
+ Request: POST /admin/api/2024-04/graphql.json
+ 1 mutation UpdatePubSub($id: ID!, $webhookSubscription: PubSubWebhookSubscriptionInput!) {
+ 2
+    pubSubWebhookSubscriptionUpdate(id: $id, webhookSubscription: $webhookSubscription) {
+ 3
+      userErrors {
+ 4
+        field
+ 5
+        message
+ 6
+      }
+ 7
+      webhookSubscription {
+ 8
+        id
+ 9
+        format
+ 10
+        includeFields
+ 11
+        metafieldNamespaces
+ 12
+        topic
+ 13
+        endpoint {
+ 14
+          ... on WebhookPubSubEndpoint {
+ 15
+            pubSubProject
+ 16
+            pubSubTopic
+ 17
+          }
+ 18
+        }
+ 19
+      }
+ 20
+    }
+ 21 }
+ Delete a webhook subscription
+ Delete a webhook subscription using GraphQL and REST.
+ GraphQL
+ REST
+ Use the webhookSubscriptionDelete mutation mutation to delete webhook subscriptions for Google Cloud Pub/Sub with GraphQL.
+ Google Cloud Pub/Sub message structure
+ During webhook serialization, Google Cloud Pub/Sub messages have the following structure:
+ Google Cloud Pub/Sub message structure
+ 1 {
+ 2
+    "data": "string",
+ 3
+    "attributes": {
+ 4
+      "string": "string",
+ 5
+      ...
+ 6
+    },
+ 7
+    "messageId": "string",
+ 8
+    "publishTime": "string",
+ 9
+    "orderingKey": "string"
+ 10 }
+ Google Cloud Pub/Sub message fields
+ Field Description
+ data The webhook topic payload structure.
+ attributes An object that contains key/value pairs of existing HTTP X-Shopify headers.
+ messageId The ID of the message, assigned by the Google Pub/Sub server when the message is published.
+ publishTime The time when the message was published, populated by the Google Pub/Sub server.
+ orderingKey
+ optional
+ The related messages for which publish order should be respected, populated by the Google Pub/Sub server.
+ Webhook topic payload structure
+ When you're using Google Cloud Pub/Sub to manage your webhooks, you receive a JSON payload for topics as described in the Webhook resource resource documentation. However, unlike with an HTTP webhook, you don't need to perform HMAC verification.
+ Refer to the Google Cloud Pub/Sub documentation for payload size limits.
+ Example webhook topic payload
+ 1 {
+ 2
+    "id": 6566731710550,
+ 3
+    "title": "Canadian Reclaimed wood framed burlap coffee bag",
+ 4
+    "body_html": "<meta charset=\"utf-8\">\n<p data-mce-fragment=\"1\">Burlap coffee bag Cafes do Brasil framed in a painted, reclaimed wood with a unique distressed style.</p>\n<p data-mce-fragment=\"1\"> Ready to hang with its sawtooth hanging hardware.</p>\n<p data-mce-fragment=\"1\">Dimensions: 36\" width x 24\" height</p>\n<p data-mce-fragment=\"1\">Made in Ontario, Canada</p>",
+ 5
+    "vendor": "Example shop",
+ 6
+    "product_type": "",
+ 7
+    "created_at": "2021-04-27T18:11:26-04:00",
+ 8
+    "handle": "reclaimed-wood-framed-burlap-coffee-bag",
+ 9
+    "updated_at": "2021-12-15T11:10:35-05:00",
+ 10
+    "published_at": null,
+ 11
+    "template_suffix": "",
+ 12
+    "status": "draft",
+ 13
+    "published_scope": "web",
+ 14
+    "tags": "",
+ 15
+    "admin_graphql_api_id": "gid://shopify/Product/6566731710550",
+ 16
+    "variants": [
+ 17
+      {
+ 18
+        "id": 39346305826902,
+ 19
+        "product_id": 6566731710550,
+ 20
+        "title": "Default Title",
+ 21
+        "price": "0.00",
+ 22
+        "sku": "",
+ 23
+        "position": 1,
+ 24
+        "inventory_policy": "deny",
+ 25
+        "compare_at_price": null,
+ 26
+        "fulfillment_service": "manual",
+ 27
+        "inventory_management": "shopify",
+ 28
+        "option1": "Default Title",
+ 29
+        "option2": null,
+ 30
+        "option3": null,
+ 31
+        "created_at": "2021-04-27T18:11:26-04:00",
+ 32
+        "updated_at": "2021-12-15T11:10:35-05:00",
+ 33
+        "taxable": true,
+ 34
+        "barcode": "",
+ 35
+        "grams": 0,
+ 36
+        "image_id": null,
+ 37
+        "weight": 0,
+ 38
+        "weight_unit": "kg",
+ 39
+        "inventory_item_id": 41446019530838,
+ 40
+        "inventory_quantity": 0,
+ 41
+        "old_inventory_quantity": 0,
+ 42
+        "requires_shipping": true,
+ 43
+        "admin_graphql_api_id": "gid://shopify/ProductVariant/39346305826902"
+ 44
+      }
+ 45
+    ],
+ 46
+    "options": [
+ 47
+      {
+ 48
+        "id": 8444211003478,
+ 49
+        "product_id": 6566731710550,
+ 50
+        "name": "Title",
+ 51
+        "position": 1,
+ 52
+        "values": [
+ 53
+          "Default Title"
+ 54
+        ]
+ 55
+      }
+ 56
+    ],
+ 57
+    "images": [
+ 58
+      {
+ 59
+        "id": 28261801033814,
+ 60
+        "product_id": 6566731710550,
+ 61
+        "position": 1,
+ 62
+        "created_at": "2021-04-27T18:11:28-04:00",
+ 63
+        "updated_at": "2021-04-27T18:11:28-04:00",
+ 64
+        "alt": null,
+ 65
+        "width": 1861,
+ 66
+        "height": 2590,
+ 67
+        "src": "https://cdn.shopify.com/s/files/1/0283/7286/1014/products/PXL_20201228_211944111.jpg?v=1619561488",
+ 68
+        "variant_ids": [],
+ 69
+        "admin_graphql_api_id": "gid://shopify/ProductImage/28261801033814"
+ 70
+      }
+ 71
+    ],
+ 72
+    "image": {
+ 73
+      "id": 28261801033814,
+ 74
+      "product_id": 6566731710550,
+ 75
+      "position": 1,
+ 76
+      "created_at": "2021-04-27T18:11:28-04:00",
+ 77
+      "updated_at": "2021-04-27T18:11:28-04:00",
+ 78
+      "alt": null,
+ 79
+      "width": 1861,
+ 80
+      "height": 2590,
+ 81
+      "src": "https://cdn.shopify.com/s/files/1/0283/7286/1014/products/PXL_20201228_211944111.jpg?v=1619561488",
+ 82
+      "variant_ids": [],
+ 83
+      "admin_graphql_api_id": "gid://shopify/ProductImage/28261801033814"
+ 84
+    }
+ 85 }
+ Next steps
+ Test your configuration by manually triggering a webhook delivery using the Shopify CLI webhook trigger command. Manually triggering webhooks doesn't test your webhook subscriptions.
+ Learn how to manage webhooks for different API versions.
+ Learn about the available topics for REST Admin API webhooks.
+ Learn about the available topics for GraphQL Admin API webhooks.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve your Shopify service account address
+ Step 2: Add the service account address to Google Cloud Pub/Sub
+ Step 3: Create and manage subscriptions
+ Google Cloud Pub/Sub message structure
+ Next steps
+ Updates & News

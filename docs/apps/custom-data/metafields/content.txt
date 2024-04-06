@@ -1,0 +1,100 @@
+Billing
+ App Store
+ Metafields
+ Metafields are a flexible way for your app to add and store additional information about a Shopify resource, such as a product, a collection, and many other owner types. The additional information stored in metafields can be almost anything related to a resource. Some examples are specifications, size charts, downloadable documents, release dates, images, or part numbers.
+ Merchants and other apps can retrieve and edit the data that's stored in metafields from the Shopify admin. You can also access metafields in themes using Liquid and through the Storefront API.
+ Tip
+ By default, values for metafields aren't accessible to custom storefronts. To enable custom storefronts to display your metafields, you can use the GraphQL Admin API to give the Storefront API access to metafield definitions.
+ How it works
+ A metafield includes the following parts:
+ Namespace: A container for a group of metafields. Grouping metafields within a namespace prevents your metafields from conflicting with other metafields with the same key name.
+ Key: The name for the metafield.
+ Type: The type of data that the metafield stores.
+ Value: The data to store in the metafield. The value is always stored as a string, regardless of the metafield's type.
+ Examples
+ In the following GraphQL examples, a merchant that sells clothing uses metafields to store the care instructions for each product. The online store has separate metafields for washing and drying instructions, which are grouped by the instructions namespace. Each product can have a different value for each metafield. A metafield set includes all the data for a particular metafield.
+ The following example shows the structure of the instructions.wash metafield:
+ Metafield structure: instructions.wash
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "metafield": {
+ 5
+          "namespace": "instructions",
+ 6
+          "key": "wash",
+ 7
+          "value": "Machine wash cold.",
+ 8
+          "type": "single_line_text_field"
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ The following example shows the structure of the instructions.dry metafield:
+ Metafield structure: instructions.dry
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "metafield": {
+ 5
+          "namespace": "instructions",
+ 6
+          "key": "dry",
+ 7
+          "value": "Tumble dry low.",
+ 8
+          "type": "single_line_text_field"
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ Kinds of metafields
+ You can create different kinds of metafields:
+ Regular metafields: Add and store additional information about a Shopify resource.
+ Private metafields: Create metafields that aren't accessible to merchants or other apps.
+ App-data metafields: Create metafields that belong to an app installation and are only accessible by that app.
+ Note
+ If you're helping a merchant to build their store, and you want to set up metafields through the Shopify admin, then refer to the merchant documentation about metafields.
+ Metafield definitions
+ Metafield definitions enable you to include data validation for metafields, and enable merchants to add metafield values for resources in the Shopify admin.
+ We also provide standard metafield definitions for common use cases. Using standard definitions means that your app can access information that merchants might have already stored in these metafields and provides interoperability across the Shopify platform. Learn about the standard metafield definitions we offer.
+ Metafield types
+ Each metafield and metafield definition has a type, which defines the type of information that it can store. The metafield types have built-in validation and Liquid support.
+ For more information about the supported types, refer to Metafield types.
+ Developer resources
+ GraphQL Admin API
+ Use the GraphQL Admin API to manage metafields, metafield definitions, app-data metafields, and private metafields.
+ GraphQL Storefront API
+ Use the GraphQL Storefront API to retrieve metafields.
+ REST Admin API
+ Use the REST Admin API to create, retrieve, update, and delete metafields.
+ Liquid
+ Use Liquid to access the metafield object and output metafield data in themes using metafield filters.
+ Metafields Workshop
+ Learn how to build and display metafields on your storefront.
+ Next steps
+ Learn about all of the different types supported by metafields.
+ Learn how to manage metafields using the GraphQL Admin API.
+ Learn how to manage metafield definitions using the GraphQL Admin API.
+ Use metafields to manage meta tags for SEO and change the way a store's pages appear in search engine results.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Kinds of metafields
+ Metafield definitions
+ Metafield types
+ Developer resources

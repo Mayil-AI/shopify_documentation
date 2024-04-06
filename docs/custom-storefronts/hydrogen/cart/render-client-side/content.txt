@@ -1,0 +1,200 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Render a cart from client side
+ Returning cart data, along with other data that builds a page, from a Remix loader server-renders the cart. However, if you want to turn on cache control for a page, then the cart shouldn't be server-rendered because carts are user-specific and should never be shared across different user sessions.
+ The cache control header structure is public, max-age=1, stale-while-revalidate=9. There are many other cache-control configurations available, but this guide focuses on the private and public modes:
+ private: Only the client browser is allowed to cache the request. No servers are allowed to cache the content. private mode is helpful for user account pages, which are relatively static in nature but shouldn't have public servers caching the request due to personalized or sensitive content.
+ public: Public servers like Oxygen, or any other CDNs, are allowed to cache the request. The same content can be reused with multiple users requesting the same page. The content shouldn't contain personalized or sensitive content.
+ To set public cache control on your loader data, you'll need to convert your cart to render from the client side.
+ Benefits of turning on cache control
+ Static pages like blogs or articles can be cached longer
+ You can expect cached pages to result in smaller response times compared to non-cached pages if they're served from Oxygen
+ Trade offs of turning on cache control
+ Expect delayed UI updates for personalized content. For example, if you have a cart icon that displays the number of items in cart, then expect updates to this value to be delayed during a full page load. The delay results from loading the required JavaScript bundles and making a request to get the cart data.
+ UI elements that rely on the client-side cart data fetch, such as the checkout button, aren't functional until the page finishes loading, JavaScript executes, a request to the server returns with cart data, and the client re-renders.
+ Performance metric time to interactive (TTI) will be longer due to the delayed cart's request.
+ Step 1: Add a loader on your cart route
+ Create a dedicated route to get a user's cart data. The route also serves as an API. You can get a user's cart by making a fetcher request to /cart.
+ File
+ JavaScript
+ TypeScript
+ /app/routes/cart.jsx
+ 1 import {json} from '@shopify/remix-oxygen';
+ 2 import {useLoaderData} from '@remix-run/react';
+ 3
+ 4 export async function loader({context}) {
+ 5
+    const {cart} = context;
+ 6
+    return json(await cart.get());
+ 7 }
+ 8
+ 9 export default function CartRoute() {
+ 10
+    const cart = useLoaderData();
+ 11
+ 12
+    return (
+ 13
+      <Cart layout="page" cart={cart} />
+ 14
+    );
+ 15 }
+ Step 2: Create a provider and a hook for getting the cart data
+ Create the <CartProvider> and useCart hook to enable read access to a user's cart across the app:
+ File
+ JavaScript
+ TypeScript
+ /app/components/CartProvider.jsx
+ 1 import {createContext, useContext, useEffect} from "react";
+ 2 import {Cart} from '@shopify/hydrogen-react/storefront-api-types';
+ 3 import {useFetcher} from "@remix-run/react";
+ 4
+ 5 const CartContext = createContext(undefined);
+ 6
+ 7 export function CartProvider({children}) {
+ 8
+    const fetcher = useFetcher();
+ 9
+ 10
+    useEffect(() => {
+ 11
+      if (fetcher.data || fetcher.state === 'loading') return;
+ 12
+ 13
+      fetcher.load('/api/cart');
+ 14
+    }, [fetcher]);
+ 15
+ 16
+    return <CartContext.Provider value={fetcher.data}>{children}</CartContext.Provider>;
+ 17 }
+ 18
+ 19 export function useCart() {
+ 20
+    return useContext(CartContext);
+ 21 }
+ Step 3: Include your CartProvider in your root
+ Include the CartProvider component in your root layout so that your useCart hook is available in the entire app.
+ File
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 import {CartProvider} from './components/CartProvider';
+ 2
+ 3 export default function App() {
+ 4
+    return (
+ 5
+      <html lang={locale.language}>
+ 6
+        <head>
+ 7
+          <meta charSet="utf-8" />
+ 8
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 9
+          <Seo />
+ 10
+          <Meta />
+ 11
+          <Links />
+ 12
+        </head>
+ 13
+        <body>
+ 14
+          <CartProvider>
+ 15
+            <Layout
+ 16
+              key={`${locale.language}-${locale.country}`}
+ 17
+              layout={data.layout}
+ 18
+            >
+ 19
+              <Outlet />
+ 20
+            </Layout>
+ 21
+            <ScrollRestoration />
+ 22
+            <Scripts />
+ 23
+          </CartProvider>
+ 24
+        </body>
+ 25
+      </html>
+ 26
+    );
+ 27 }
+ Step 4: Get cart content with your useCart hook
+ Access a user's cart data to do client-side UI rendering from anywhere in your app by using the useCart hook within the <CartProvider> component.
+ File
+ JavaScript
+ TypeScript
+ /app/components/Layout.jsx
+ 1 import {useCart} from './CartProvider';
+ 2
+ 3 function CartCount({
+ 4
+    isHome,
+ 5
+    openCart,
+ 6 }: {
+ 7
+    isHome: boolean;
+ 8
+    openCart: () => void;
+ 9 }) {
+ 10
+    const cart = useCart();
+ 11
+ 12
+    return (
+ 13
+      <Badge
+ 14
+        dark={isHome}
+ 15
+        openCart={openCart}
+ 16
+        count={cart?.totalQuantity || 0}
+ 17
+      />
+ 18
+    );
+ 19 }
+ If you provide cart data in any Remix loaders, then make sure to remove them.
+ File
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 export async function loader({context}) {
+ 2
+    const {storefront} = context;
+ 3
+ 4
+    return defer({
+ 5
+      selectedLocale: storefront.i18n,
+ 6
+      // cart: cart.get(),
+ 7
+    });
+ 8 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Add a loader on your cart route
+ Step 2: Create a provider and a hook for getting the cart data
+ Step 3: Include your `CartProvider` in your root
+ Step 4: Get cart content with your `useCart` hook
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

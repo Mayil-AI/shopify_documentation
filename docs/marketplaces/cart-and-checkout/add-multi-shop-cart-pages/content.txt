@@ -1,0 +1,435 @@
+Product description
+ Cart and checkout
+ Overview
+ Marketplace-level cart
+ Cart pages
+ Onboard merchants
+ Post checkout
+ Adding multi-shop cart pages
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You've created a marketplace-level cart icon that displays the total number of items in the cart. Now you want buyers to be able to see and edit what's in the cart, across all shops. The cart page should direct buyers towards a sale.
+ In this tutorial, you'll learn how to create an interactive cart page at the marketplace-level. A marketplace-level cart page is one that displays all products in the cart, across all shops. The page will include a GO TO CHECKOUT button for each product, which redirects buyers from the cart to the relevant online store for purchase.
+ What you'll learn
+ After you've finished this tutorial, you'll know how to do the following:
+ Filter shops by domain
+ Build a main cart page with a button redirecting users to an online store's checkout
+ Add the ability to edit and remove items from the cart
+ Requirements
+ You've completed the tutorial for adding a marketplace-level cart.
+ Step 1: Build the main cart page
+ Retrieve the carts that you stored in local storage, using the helper that you created.
+ Make a request to the channel app's GraphQL API for the Storefront API access tokens for all shops in the cart.
+ The following request passes a domains argument to the shops query to return only the shops that match a list of domains. You can use the domain and Storefront API access token to create an Apollo Client for each shop in the cart.
+ pages/cart/index.js
+ 1 import { getCarts } from "../helpers/cartHelpers";
+ 2
+ 3 const SHOPS_QUERY = gql`
+ 4
+    query Shops($domains: [String]) {
+ 5
+      shops(domains: $domains) {
+ 6
+        id
+ 7
+        domain
+ 8
+        storefrontAccessToken
+ 9
+      }
+ 10
+    }
+ 11 `;
+ 12 }
+ Query the Storefront API's Cart object for the cart details, and use this information to build out the cart page.
+ The following example uses the inContext directive, to ensure a consistent currency for all shop carts.
+ pages/cart/index.js
+ 1 const CART_DETAILS_QUERY = gql`
+ 2
+    query getCart($id: ID!) @inContext(country: CA) {
+ 3
+      shop {
+ 4
+        name
+ 5
+      }
+ 6
+      cart(id: $id) {
+ 7
+        id
+ 8
+        checkoutUrl
+ 9
+        estimatedCost {
+ 10
+          subtotalAmount {
+ 11
+            amount
+ 12
+            currencyCode
+ 13
+          }
+ 14
+        }
+ 15
+        lines(first: 20) {
+ 16
+          edges {
+ 17
+            node {
+ 18
+              merchandise {
+ 19
+                ... on ProductVariant {
+ 20
+                  id
+ 21
+                  image {
+ 22
+                    originalSrc
+ 23
+                    altText
+ 24
+                  }
+ 25
+                  priceV2 {
+ 26
+                    amount
+ 27
+                    currencyCode
+ 28
+                  }
+ 29
+                  product {
+ 30
+                    title
+ 31
+                  }
+ 32
+                  selectedOptions {
+ 33
+                    name
+ 34
+                    value
+ 35
+                  }
+ 36
+                }
+ 37
+              }
+ 38
+              quantity
+ 39
+            }
+ 40
+          }
+ 41
+        }
+ 42
+      }
+ 43
+    }
+ 44 `;
+ Build the Cart page, including a GO TO CHECKOUT button for each cart.
+ The button redirects buyers to the cart's checkout URL in a new tab.
+ Build a CART SUMMARY that returns a summary of all the carts.
+ The cart page might now look something like the following:
+ Step 2: Add edit and delete functionality
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ In this step, you'll add the ability for buyers to edit item quantities and remove items from the cart entirely.
+ In helpers/cartHelpers.js, create the following mutations using the Storefront API's Cart object.
+ cartLinesRemove enables buyers to delete line items from the cart.
+ cartLinesUpdate is what buyers use to edit the quantity of a line item in the cart.
+ Similar to the cart query that you created, you can use the inContext directive to ensure cart prices are returned in a consistent currency.
+ To ensure that the same cart fields are returned for these mutations and for queries, you'll use a GraphQL fragment. The fragment should contain the same fields that you used in the main cart page query.
+ helpers/cartHelpers.js
+ 1 export const CORE_CART_FIELDS = gql`
+ 2
+    fragment CoreCartFields on Cart {
+ 3
+      id
+ 4
+      checkoutUrl
+ 5
+      estimatedCost {
+ 6
+        subtotalAmount {
+ 7
+          amount
+ 8
+          currencyCode
+ 9
+        }
+ 10
+      }
+ 11
+      lines(first: 20) {
+ 12
+        edges {
+ 13
+          node {
+ 14
+            id
+ 15
+            merchandise {
+ 16
+              ... on ProductVariant {
+ 17
+                id
+ 18
+                image {
+ 19
+                  originalSrc
+ 20
+                  altText
+ 21
+                }
+ 22
+                priceV2 {
+ 23
+                  amount
+ 24
+                  currencyCode
+ 25
+                }
+ 26
+                product {
+ 27
+                  title
+ 28
+                }
+ 29
+                selectedOptions {
+ 30
+                  name
+ 31
+                  value
+ 32
+                }
+ 33
+              }
+ 34
+            }
+ 35
+            quantity
+ 36
+          }
+ 37
+        }
+ 38
+      }
+ 39
+    }
+ 40 `;
+ 41
+ 42 const CART_LINE_ITEMS_REMOVE_MUTATION = gql`
+ 43
+    ${CORE_CART_FIELDS}
+ 44
+    mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) @inContext(country: CA) {
+ 45
+      cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+ 46
+        cart {
+ 47
+          ...CoreCartFields
+ 48
+        }
+ 49
+        userErrors {
+ 50
+          code
+ 51
+          field
+ 52
+          message
+ 53
+        }
+ 54
+      }
+ 55
+    }
+ 56 `;
+ 57
+ 58 const CART_LINES_UPDATE_MUTATION = gql`
+ 59
+    ${CORE_CART_FIELDS}
+ 60
+    mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) @inContext(country: CA) {
+ 61
+      cartLinesUpdate(cartId: $cartId, lines: $lines) {
+ 62
+        cart {
+ 63
+          ...CoreCartFields
+ 64
+        }
+ 65
+        userErrors {
+ 66
+          code
+ 67
+          field
+ 68
+          message
+ 69
+        }
+ 70
+      }
+ 71
+    }
+ 72 `;
+ 73
+ 74 export const removeItemFromCart = async (cartId, lineItemId, shopClient) => {
+ 75
+    const mutationData = {
+ 76
+      cartId,
+ 77
+      lineIds: [lineItemId],
+ 78
+    };
+ 79
+ 80
+    const { data } = await shopClient.mutate({
+ 81
+      mutation: CART_LINE_ITEMS_REMOVE_MUTATION,
+ 82
+      variables: mutationData,
+ 83
+    });
+ 84
+ 85
+    return data;
+ 86 };
+ 87
+ 88 export const updateItemCountInCart = async (
+ 89
+    cartId,
+ 90
+    lineItemId,
+ 91
+    quantity,
+ 92
+    shopClient
+ 93 ) => {
+ 94
+    const mutationData = {
+ 95
+      cartId,
+ 96
+      lines: [
+ 97
+        {
+ 98
+          id: lineItemId,
+ 99
+          quantity,
+ 100
+        },
+ 101
+      ],
+ 102
+    };
+ 103
+ 104
+    const { data } = await shopClient.mutate({
+ 105
+      mutation: CART_LINES_UPDATE_MUTATION,
+ 106
+      variables: mutationData,
+ 107
+    });
+ 108
+ 109
+    return data;
+ 110 };
+ Update the CART_DETAILS_QUERY to use the CORE_CART_FIELDS fragment that you created.
+ Since the fields in the fragment are the same as in the query that you created, you don't need to make any changes to code that uses the query response data.
+ pages/cart/index.js
+ 1 import { CORE_CART_FIELDS } from "../helpers/cartHelpers";
+ 2
+ 3 const CART_DETAILS_QUERY = gql`
+ 4
+    ${CORE_CART_FIELDS}
+ 5
+    query getCart($id: ID!) @inContext(country: CA) {
+ 6
+      // ...
+ 7
+      cart(id: $id) {
+ 8
+        ...CoreCartFields
+ 9
+      }
+ 10
+    }
+ 11 `;
+ The cart page might now look something the following:
+ Step 3: Refresh the page after checkout
+ When a buyer completes the checkout for a specific shop, the marketplace's cart page should indicate this by removing the shop's items from the cart page and displaying a message.
+ In helpers/cartHelpers.js, in the addToExistingCart function, add code to create a new cart if the cartLinesAdd mutation returns null.
+ Receiving a null cart on the mutation indicates that the checkout is complete, and that a new cart will be created if the buyer goes back and adds another item from the same shop post-checkout.
+ You can also add a helper that will remove a shop's cart from local storage, so that you can remove the cart after checkout is complete.
+ helpers/cartHelpers.js
+ 1 const addToExistingCart = async(cartId, variantId, shopClient, shopDomain) => {
+ 2
+    // ...
+ 3
+ 4
+    const { data } = await shopClient.mutate({
+ 5
+      mutation: CART_LINES_ADD_MUTATION,
+ 6
+      variables: mutationData,
+ 7
+    });
+ 8
+ 9
+    if (!data.cartLinesAdd.cart) {
+ 10
+      createNewCart(variantId, shopDomain, shopClient);
+ 11
+    }
+ 12
+ 13
+    increaseCartCount();
+ 14 }
+ 15
+ 16 export const addToCart = async (variantId, shopDomain, shopClient) => {
+ 17
+    // ...
+ 18
+    addToExistingCart(carts[shopDomain], variantId, shopClient, shopDomain);
+ 19 }
+ 20
+ 21 export function removeCart(domain) {
+ 22
+    const currentCarts = getCarts();
+ 23
+    delete currentCarts[domain];
+ 24
+    window.localStorage.setItem(
+ 25
+      CARTS,
+ 26
+      JSON.stringify({
+ 27
+        ...currentCarts,
+ 28
+      })
+ 29
+    );
+ 30 }
+ When checkout is complete, the shop section on the cart page might look something like the following:
+ Next steps
+ Learn how to onboard merchants to your channel app.
+ Share feedback on Marketplace Kit.
+ Step 1: Build the main cart page
+ Step 2: Add edit and delete functionality
+ Step 3: Refresh the page after checkout
+ Next steps
+ Updates & News

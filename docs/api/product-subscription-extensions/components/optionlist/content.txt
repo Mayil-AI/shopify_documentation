@@ -1,0 +1,70 @@
+TextField
+ Thumbnail
+ OptionList
+ Note: This component is not available in Product Subscription extensions.
+ Option lists let you create grouped items. This can include single selection or multiple selection of options. Option lists are styled differently than choice lists and should not be used within a form, but as a standalone menu.
+ JavaScript
+ React
+ 1 import {extend, OptionList} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const options = [
+ 5
+      {label: 'Red', value: 'red', disabled: false},
+ 6
+      {label: 'Green', value: 'green', disabled: false},
+ 7
+      {label: 'Blue', value: 'blue', disabled: false},
+ 8
+    ];
+ 9
+    let selected = [];
+ 10
+ 11
+    const list = root.createComponent(OptionList, {
+ 12
+      title: 'OptionList title',
+ 13
+      options,
+ 14
+      allowMultiple: true,
+ 15
+      selected,
+ 16
+      onChange: (newSelected) => {
+ 17
+        console.log(`option selected: ${newSelected}`);
+ 18
+        selected = newSelected;
+ 19
+      },
+ 20
+    });
+ 21
+    root.appendChild(list);
+ 22
+ 23
+    root.mount();
+ 24 });
+ Props
+ optional = ?
+ Name Type Description
+ title? string Title to display above the list
+ options? OptionDescriptor[] Array of options to be listed
+ selected string[] Array of selected options
+ allowMultiple? boolean Allow more than one option to be selected
+ onChange (selected: string[]) => void Callback when selection changes
+ OptionDescriptor
+ Name Type Description
+ value string Value of the option
+ label string Display label for the option
+ disabled? boolean Whether the option is disabled or not
+ Guidelines
+ ✅ Do 🛑 Don't
+ Use OptionList to present either a single choice or multi choice list Have only a single item
+ For more guidelines, refer to Polaris' Option List best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props

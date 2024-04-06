@@ -1,0 +1,170 @@
+Customizing Shopify checkout
+ Merchants use Shopify checkout to accept orders and receive payments wherever they sell online. You can augment Shopify checkout with new functionality by building an app.
+ How it works
+ After a customer adds products to a cart, they use Shopify checkout to enter their customer, shipping, and payment information before placing the order.
+ Developers can create apps that extend Shopify checkout to include functionality that isn't provided natively. For example, you can create an app that offers a customer free shipping or other discounts depending on what's in their cart.
+ Merchants install these apps on their store in the Shopify admin. In the Shopify admin, merchants can use the checkout editor to place a checkout UI extension in the checkout experience.
+ Customization options
+ You can customize Shopify checkout using multiple technologies. All customization options are easy to install and upgrade-safe, which enables merchants to continue getting platform benefits when Shopify releases new products such as Shop Pay, or features such as One-page checkout.
+ For a detailed breakdown of the available technologies for customizing checkout, and ways that you can extend checkout, refer to the options for customizing Shopify checkout.
+ Getting started
+ Learn how to customize and extend checkout by following one of our use case tutorials:
+ Pre-purchase product offers
+ Build a pre-purchase upsell offer that prompts the customer to add a product to their order.
+ Post-purchase checkout extensions
+ Create a basic example of a post-purchase checkout extension.
+ Thank you and order status extensions
+ Build a survey that asks customers how they heard about the store after they made a purchase.
+ Custom banners
+ Learn how to add a custom banner to checkout.
+ Custom fields
+ Learn how to add custom fields to checkout that customers can use to add delivery instructions to their order.
+ Client-side validation
+ Use a checkout UI extension to validate fields at checkout and block customer progress.
+ Header
+ Use a checkout UI extension and the GraphQL Admin API's checkout branding types to customize the checkout header with custom images, including the back to cart link.
+ Footer
+ Use a checkout UI extension and the GraphQL Admin API's checkout branding types to customize the checkout footer with store policies.
+ Discounts
+ Use Shopify Functions to create a new discount type for users.
+ Payment customizations
+ Use Shopify Functions to hide a payment option offered to customers at checkout.
+ Delivery customizations
+ Use Shopify Functions to rename a delivery option offered to customers at checkout.
+ Cart and checkout validations
+ Use Shopify Functions to block progress on a checkout when the cart line quantities exceed a limit.
+ Order routing location rules
+ Use Shopify Functions to choose a different order location during checkout.
+ Customized bundles
+ Use Shopify Functions to group products together and sell them as a single unit.
+ Fulfillment constraints
+ Use Shopify Functions to customize fulfillment and delivery strategies.
+ Upgrade
+ Deprecated
+ checkout.liquid is deprecated. It will be sunset for the Information, Shipping, and Payment checkout steps on August 13, 2024, and for the Thank you and Order status pages on August 28, 2025. Additional scripts and script tags will also be sunset for the Order status page on August 28, 2025.
+ Stores that currently use checkout.liquid need to upgrade to Checkout Extensibility before these dates. Shopify Scripts will continue to work alongside Checkout Extensibility until August 28, 2025.
+ A report identifying your current checkout customizations is available in the Shopify admin. The report provides high-level guidance to map customizations to Checkout Extensibility. Use this report to simplify your review of your existing customizations and to help you upgrade to Checkout Extensibility faster. Learn more.
+ To upgrade a checkout.liquid customization to Checkout Extensibility, take one or more of the following actions:
+ Use a public app that's built using extensions.
+ We're adding new checkout apps to the Shopify App Store on a regular basis. If there currently isn't a suitable public app for your customization, then consider simplifying your checkout temporarily and adding new apps to your store as they become available.
+ Build a custom app using extensions, or hire a service partner to build one for you.
+ In some cases, after you've upgraded you can revert to checkout.liquid until its sunset dates.
+ If you're upgrading a store to Checkout Extensibility, we recommend planning your in-checkout, Thank you page, and Order status page upgrades together, when possible, for the following benefits:
+ Avoid maintaining multiple tech stacks, like UI extensions and checkout.liquid.
+ Apply styling once to the entire experience.
+ Manage one sunset date for checkout.liquid rather than one date for pre-purchase pages and another for Thank you and Order status pages.
+ If this isn't possible, then we recommend prioritizing the upgrade for in-checkout pages first and upgrading after-purchase pages after that.
+ Product roadmap
+ Some checkout customization features are in development and will be released later this year. The following are the features on our roadmap and our estimated launch dates:
+ Note
+ This roadmap is being shared for informational purposes and is subject to change. Bug fixes and improvements will be added as we hear from the community during the developer preview. Please share your feedback on what future features you'd like to see in our community discussion board.
+ Checkout UI extensions
+ Checkout UI extensions are available to all Shopify Plus merchants. Some individual stores might not yet have access if they rely on features that are incompatible with Checkout Extensibility.
+ Milestone Target
+ Checkout UI extensions available on all eligible Plus stores January 2023 (shipped)
+ General availability of extensions on the Thank you and Order status page (Plus plan only) November 2023 (shipped)
+ General availability of extensions on the Thank you and Order status page (all plans above Starter) April 2024
+ We'll continue adding API capabilities to help you access the right functionality in extensions. We'll also continue adding UI components that offer performant patterns on our design best practices. We release new components and APIs into the unstable API version first, and promote to the next stable release based on Shopify's API version release schedule.
+ Feature Target launch date
+ Support for reading and writing discount codes January 2023 (shipped)
+ New UI components: Tooltip, Pressable January 2023 (shipped)
+ Support for reading and writing gift cards February 2023 (shipped)
+ New UI components: Popover, Modal February 2023 (shipped)
+ Heading styles, button styles and corner radius controls through the Branding API February 2023 (shipped)
+ Session token API to enable authenticated network calls February 2023 (shipped)
+ New API that allows checkout UI extensions to directly query the Storefront API February 2023 (shipped)
+ New UI components: Disclosure, DatePicker April 2023 (shipped)
+ Merchant-uploaded custom fonts through the GraphQL Admin API April 2023 (shipped)
+ Support for adding checkout field validation errors from UI extensions April 2023 (shipped)
+ New API for SellingPlan on line items (read/write) May 2023 (shipped)
+ New API for reading presented and selected payment options May 2023 (shipped)
+ New API for reading presented and selected delivery options June 2023 (shipped)
+ New UI components: DateField June 2023 (shipped)
+ Developer preview of the Order status page in the checkout editor June 2023 (shipped)
+ New extension targets for enhancing delivery options June 2023 (shipped)
+ New API for cart metafields (read/write) July 2023 (shipped)
+ New API for writing updates to the shipping address July 2023 (shipped)
+ New API to read the customer billing address August 2023 (shipped)
+ New API for reading price breakdown on checkout total August 2023 (shipped)
+ New API to read a unique and stable session token for the current buyer checkout session September 2023 (shipped)
+ New API for customized SMS consent capture September 2023 (shipped)
+ New extension targets for extending payment options September 2023 (shipped)
+ New UI component: Map September 2023 (shipped)
+ Advanced color styling through the GraphQL Admin API September 2023 (shipped)
+ New extension targets for header and footer customization November 2023 (shipped)
+ New API to read and write cookie tracking consent January 2024 (shipped)
+ Advanced section styling, such as borders and spacing, through the Branding API January 2024 (shipped)
+ Customizations Report to identify existing checkout.liquid customizations with upgrade guidance January 2024 (shipped)
+ Header and footer customizations through the Branding API January 2024 (shipped)
+ New API to read checkout steps to enable buiding a custom breadcrumb March 2024 (shipped)
+ New UI components for customer privacy consent collection Sheet March 2024 (shipped)
+ Tailored upgrade guidance for existing checkout.liquid customizations March 2024
+ Pre-filling the checkout state from inputs provided through the Cart API March 2024
+ Support for custom address auto-completion April 2024
+ Support for adding and updating additional fees April 2024
+ New UI components for search and selection, including support for custom auto-completion May 2024
+ Support for hiding or locking address input fields Q2 2024
+ Support for styling order summary line items with the Branding API Q2 2024
+ Support for integrating 3rd-party chat applications into checkout Q2 2024
+ Input query API for customizing the data available to UI extensions Q2 2024
+ Support for conditional (responsive) component rendering on mobile checkouts Q2 2024
+ New UI components to support QR codes Q2 2024
+ Shopify Functions
+ We'll continue to add new Shopify Function APIs to further customize checkout business logic.
+ Milestone Target
+ General availability of Product Discount API and Order Discount API December 2022 (shipped)
+ General availability of Payment Customization API and Delivery Customization API February 2023 (shipped)
+ General availability of Cart Transform Function API July 2023 (shipped)
+ General availability of Order Routing Location Rule API July 2023 (shipped)
+ General availability of Fulfillment Constraints API July 2023 (shipped)
+ General availability of Cart and Checkout Validation API for custom apps July 2023 (shipped)
+ Developer preview of Function API to customize delivery options for local pickup September 2023 (shipped)
+ Developer preview of Cart Transform Function API: per component pricing and update operation October 2023 (shipped)
+ General availability of Cart and Checkout Validation API for public apps January 2024 (shipped)
+ General availability of Cart Transform Function API: per component pricing and update operation January 2024 (shipped)
+ General availability of Shipping Discount API January 2024 (shipped)
+ Addition to the Product Discount API to return all applicable discounts January 2024 (shipped)
+ Developer preview of Function API for integrating a 3rd-party pickup point network February 2024 (shipped)
+ General availability of Function API to customize delivery options for local pickup Q1 2024
+ General availability of Cart Transform Function API: per component pricing and update operation Q1 2024 (shipped)
+ Addition to the Product Discount API to return all applicable discounts Q1 2024 (shipped)
+ Developer Preview of Discounts Allocator Function API to customize discounts allocation logic Q1 2024 (shipped)
+ Addition to the Product Discount API to target product line items Q2 2024
+ Addition to the Product Discount API to stack multiple discounts on the same product line item Q2 2024
+ Web pixel app extensions
+ We'll continue to add new custom pixel and app pixel events and features.
+ Milestone Target
+ Add attributes to Checkout object March 2023 (shipped)
+ Add firstName and lastName to Customer object March 2023 (shipped)
+ Add productVariants to searchResult object March 2023 (shipped)
+ Add address1, address2 and zip to mailingAddress object April 2023 (shipped)
+ Add type to Product object April 2023 (shipped)
+ New standard event: checkout_shipping_info_submitted April 2023 (shipped)
+ New standard event: checkout_address_info_submitted April 2023 (shipped)
+ New standard event: checkout_contact_info_submitted April 2023 (shipped)
+ Add support for all collections in collection_viewed event May 2023 (shipped)
+ Add ordersCount to Customer object June 2023 (shipped)
+ Custom pixel saved versions July 2023 (shipped)
+ Add discountApplications to Checkout object July 2023 (shipped)
+ Add DiscountApplication.allocationMethod to Checkout object July 2023 (shipped)
+ New standard event: cart_viewed event July 2023 (shipped)
+ New standard event: product_removed_from_cart event August 2023 (shipped)
+ Add Product.url to ProductVariant September 2023 (shipped)
+ Add billingAddress to Checkout object September 2023 (shipped)
+ New Custom Pixel Autocomplete - helps to write custom pixels referencing the standard event schema September 2023 (shipped)
+ New visitor API September 2023 (shipped)
+ Add Transaction.gateway to Checkout object October 2023 (shipped)
+ New standard event: DOM events - clicked , input_blurred, input_focused, input_changed, form_submitted January 2024 (shipped)
+ New Pixel Granular Consent Purposes February 2024
+ Custom Pixel debugging tool for troubleshooting firing and event data Q2 2024
+ Customize standard event payloads with checkout data Q2 2024
+ Web pixels on Shop Pay Q3 2024
+ New standard event: JavaScript error events Q3 2024
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Customization options
+ Getting started
+ Upgrade
+ Product roadmap

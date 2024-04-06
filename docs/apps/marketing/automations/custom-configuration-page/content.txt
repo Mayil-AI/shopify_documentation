@@ -1,0 +1,170 @@
+Marketing automations
+ Overview
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Build a custom configuration page
+ To give users a more seamless action configuration experience, and to allow them to manage resources that are external to Shopify marketing automations, you can embed a page from your app in the Shopify marketing automations editor.
+ In your Shopify marketing automations action configuration, users see a preview with an image and text that's fetched from your custom configuration page preview URL. Users can click the button to access the custom configuration page.
+ Your custom configuration page is then displayed in a frame in the Shopify admin.
+ In this tutorial, you'll learn how to render a custom configuration page in Shopify marketing automations, customize the page frame, and access data relevant to your action in the custom configuration page context.
+ Requirements
+ You've created a Partner account.
+ You understand how apps fit into Shopify.
+ You've created an app.
+ Resources
+ To implement this feature, you'll use the following:
+ Shopify App Bridge
+ App Bridge components, including TitleBar and Button
+ App Bridge actions specific to the custom configuration page context, including APP::APP_FRAME::PROPERTIES_EVENT, APP::APP_FRAME::REQUEST_PROPERTIES, and APP::APP_FRAME::NAVIGATE_BACK
+ Implementing a custom configuration page
+ To build a custom configuration page, you'll use Shopify App Bridge to render a page from your app page in Shopify marketing automations.
+ From the context of the custom configuration page, you can then access step and property information that you can use to display the appropriate information.
+ You can also add additional buttons to the App Bridge title bar, or trigger a redirect to the previous page.
+ Use Shopify App Bridge to render your app page
+ To render your custom configuration page, you need to integrate Shopify App Bridge on the route that you want to render. To learn about setting up Shopify App Bridge, refer to one of the following pages:
+ Getting started with Shopify App Bridge
+ Getting started with App Bridge React
+ Access action information
+ In the context of the custom configuration page, Shopify marketing automations makes the following action information available:
+ A step_reference search parameter: step_reference is a unique ID for the step within a workflow, and can be used to identify the resource that the merchant is requesting.
+ Property data: Properties contains the extension fields data that make up your action payload schema. The properties are passed as an object containing the properties as key-value pairs:
+ 1 {
+ 2
+    <property-name>: <property-value>
+ 3 }
+ Request property data
+ To access property data, you need to subscribe to APP::APP_FRAME::PROPERTIES_EVENT, and then request the properties by triggering the APP::APP_FRAME::REQUEST_PROPERTIES event. The following example code subscribes to the properties event and requests the action properties in React:
+ Example
+ 1 import { useAppBridge } from '@shopify/app-bridge-react'
+ 2
+ 3 const Application = () => {
+ 4
+    const app = useAppBridge()
+ 5
+    const [propertiesData, setPropertiesData] = useState({})
+ 6
+ 7
+    useEffect(() => {
+ 8
+      const unsubscribeToPropertiesEvent = app.subscribe(
+ 9
+        'APP::APP_FRAME::PROPERTIES_EVENT',
+ 10
+        payload => {
+ 11
+          setPropertiesData(payload['properties'])
+ 12
+        },
+ 13
+      )
+ 14
+ 15
+      return unsubscribeToPropertiesEvent
+ 16
+    }, [app])
+ 17
+ 18
+    useEffect(() => {
+ 19
+      app.dispatch({
+ 20
+        type: 'APP::APP_FRAME::REQUEST_PROPERTIES',
+ 21
+        group: 'AppFrame',
+ 22
+      })
+ 23
+    }, [])
+ 24
+ 25
+    return (...)
+ 26 }
+ Add buttons to the App Bridge title bar
+ You can add more actions to the App Bridge title bar in one of two ways:
+ Using @shopify/app-bridge: Use the Button.create initializer to create the buttons, then pass them to the Titlebar.create initializer to set the buttons. You need to keep a reference to the Titlebar instance if you wish to do additional updates after the initialization.
+ Using @shopify/app-bridge-react: Pass the primary and secondary actions to the TitleBar React component.
+ Only primary and secondary actions on the TitleBar are supported. Other App Bridge actions are ignored.
+ Example
+ JavaScript
+ React
+ 1 import { TitleBar, Button } from '@shopify/app-bridge/actions'
+ 2
+ 3 // create the buttons
+ 4 const primaryBtn = Button.create(app, {
+ 5
+    label: 'Button 1',
+ 6 })
+ 7 const secondaryBtn = Button.create(app, {
+ 8
+    label: 'Button 2',
+ 9 })
+ 10
+ 11 // add click handlers
+ 12 primaryBtn.subscribe(Button.Action.CLICK, () => {
+ 13
+    console.log('button 1 clicked')
+ 14 })
+ 15 secondaryBtn.subscribe(Button.Action.CLICK, () => {
+ 16
+    console.log('button 2 clicked')
+ 17 })
+ 18
+ 19 const titleBar = TitleBar.create(app, {
+ 20
+    title: '',
+ 21
+    buttons: {
+ 22
+      primary: primaryBtn,
+ 23
+      secondary: [secondaryBtn],
+ 24
+    },
+ 25 })
+ 26
+ 27 // update buttons after initialization
+ 28 const newPrimary = Button.create(app, {
+ 29
+    label: 'New button',
+ 30 })
+ 31 newPrimary.subscribe(Button.Action.CLICK, () => {
+ 32
+    console.log('new primary button clicked')
+ 33 })
+ 34
+ 35 titleBar.set({
+ 36
+    buttons: {
+ 37
+      primary: newPrimary,
+ 38
+      secondary: [secondaryBtn],
+ 39
+    },
+ 40 })
+ Return to the previous page
+ By default, the title bar of the custom configuration page includes an Exit button that the user can use to return to the previous page. This might be the Shopify marketing automations editor. However, you can choose to trigger a redirect to the previous page using APP::APP_FRAME::NAVIGATE_BACK:
+ Example
+ 1 app.dispatch({
+ 2
+    type: 'APP::APP_FRAME::NAVIGATE_BACK',
+ 3
+    group: 'AppFrame',
+ 4 })
+ Next steps
+ Add custom configuration page preview URL and custom validation endpoints to your app.
+ Add your custom configuration page preview URL, custom configuration page URL, and custom validation URL to your Shopify marketing automations action configuration.
+ Note
+ To add a custom configuration page to your action, you also need to add a custom validation endpoint.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Resources
+ Implementing a custom configuration page
+ Use Shopify App Bridge to render your app page
+ Access action information
+ Add buttons to the App Bridge title bar
+ Return to the previous page
+ Next steps

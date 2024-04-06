@@ -1,0 +1,50 @@
+Delivery and shipping
+ Overview
+ Enhance delivery methods
+ Overview
+ Build a date picker
+ UX guidelines
+ Reorder delivery options
+ Pickup points
+ Create local pickup charges
+ Product offers
+ Distribution
+ Billing
+ App Store
+ UX guidelines for adding delivery methods
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ Use the following guidelines when you're designing checkout UI extensions for use in the delivery method extension points so that you can help merchants maintain customer trust and provide a fast and easy to use checkout experience.
+ How to best utilize the flow of information
+ Delivery method extension points introduce ways to change how customers interact with the flow of information regarding shipping, local pickup, and pickup points. It’s important to consider this flow when you're deciding the extension points to use and what content goes in them.
+ Checkout::ShippingMethods::RenderBefore: Best for general information that applies to the rest of the information on the page, to help customers make a decision regarding the delivery methods.
+ Checkout::ShippingMethodDetails::RenderAfter: Best for information regarding a specific delivery option that needs to be visible on load. Content should be short, direct pieces of information.
+ Checkout::ShippingMethodDetails::RenderExpanded: Use to display or request information that's specific to the delivery option selected. Best for small elements and short input.
+ Best to display or request information that is required for any of the options selected. Can also be used to display or request information that is specific to the option selected if it requires large size and input.
+ Use progressive disclosure to reduce friction
+ Show additional information only when the customer needs it and in the right flow of information. If information is necessary for one specific option, then only request it when that option is selected.
+ Be mindful when using presented and selected states
+ Your app can benefit from changing visual states depending on presented or selected options. This is useful when you have different information that should be displayed at different moments but would benefit from being in the same location. State-awareness is also useful to provide visual feedback to buyers upon a selection and to not overwhelm a page with unnecessary information.
+ When using state-awareness, be considerate of any transitions or loading that may happen.
+ Avoid large changes in the size and amount of content. If needed, provide the appropriate loading states and transitions to make the changes between states less extreme and distracting
+ Don’t hide important information behind an extra click
+ Only use the different states if it genuinely offers a better user experience. Checkout is not a place for flashy distractions, such as adding unnecessary images or colour changing
+ Keep changes minimal and cohesive
+ You should avoid any major disruptions in the decision making process and maintain the established hierarchy. Keep added information short and scannable.
+ Keep the amount of scrolling in the choice list minimal
+ Extensions in the choice list should follow the same alignment, text styles, and hierarchy as surrounding native content to provide a smooth user experience
+ Use and build upon the native delivery methods
+ Keeping checkout simple and straightforward gives customers a fast and uncomplicated checkout experience. Avoid adding any unnecessary diversions from the expected checkout flow. For example, don't use extensions such that a pickup point selection emulates choosing a shipping method. This can confuse customers and make it difficult for merchants to accurately fulfill orders.
+ Next steps
+ For general best practices for all checkout UI extensions, refer to the Checkout UX guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How to best utilize the flow of information
+ Use progressive disclosure to reduce friction
+ Be mindful when using presented and selected states
+ Keep changes minimal and cohesive
+ Use and build upon the native delivery methods
+ Next steps
+ Updates & News
+ Developer changelog

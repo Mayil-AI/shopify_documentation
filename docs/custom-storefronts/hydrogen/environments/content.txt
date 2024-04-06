@@ -1,0 +1,120 @@
+Additional SDKs
+ Environments
+ Hydrogen storefronts can contain multiple environments, to which you make deployments.
+ Each environment is linked to a branch in your Hydrogen app’s Git repository:
+ Environment Associated Git branch
+ Production Default branch. You can edit the production environment to select a different branch.
+ Custom environments Optional. Define multiple custom environments, with each one linked to its own branch.
+ Preview All other branches not linked to a production or custom environment.
+ Each environment can have its own set of environment variables, which allows you to use different values in your app depending on the environment. This can be useful for testing, feature development, and security.
+ Managing environments
+ The production and preview environments are required for all storefronts, and can't be deleted. In addition to these required environments, you can optionally create additional custom environments to develop new features, test out ideas, and more.
+ Create a new environment
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Click Add environment.
+ Select an existing repository branch to link to the environment, or create a new branch.
+ Type a name for the branch. The name determines the environment URL.
+ Select whether to make the environment public or private.
+ Optional: Under Copy environment variables, select an existing environment to copy variables from.
+ Click Save.
+ Update an environment
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Click the environment to edit.
+ Make your changes.
+ Click Save.
+ Delete a custom environment
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Click the environment to delete.
+ Click Delete environment.
+ Environment variables
+ Each environment can have its own set of environment variables, which are key-value pairs. Variable keys can be called in your app code, and return contexual values for the environment where the deployment is running.
+ Accessing environment variable values in your app
+ Hydrogen automatically adds your environment variables to a request's context object. You can access the values of environment variables from a loader or action:
+ JavaScript
+ TypeScript
+ 1 export const loader = async ({context}) => {
+ 2
+    const publicStoreDomain = context.env.PUBLIC_STORE_DOMAIN;
+ 3 };
+ Create a new environment variable
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Under Variables, click Add variable.
+ Under Key, type a key. It's a common convention for keys to use all-capital letters and underscores, such as EXAMPLE_API_TOKEN.
+ Under Value, add the value.
+ Optional: Check Make this value secret to hide the value after saving. This can be useful for sensitive information like API keys.
+ Under Environments, select the environments where the value should be returned.
+ Click Save.
+ Click Add another value to add additional values for other environments.
+ Edit an environment variable
+ You can edit keys and values, as well as which environments they apply to.
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Click the environment variable to update.
+ Make your changes.
+ Click Save.
+ Delete an environment variable
+ Deleting an environment variable deletes the key and all its associated values.
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Click the environment variable to delete.
+ Click Delete variable.
+ Click Delete variable to confirm.
+ Required environment variables
+ Oxygen requires the following variables to query your store's data. They're automatically added when you create a storefront. Some variables are read-only, meaning they can’t be edited directly.
+ Variable Description Read-only?
+ PRIVATE_STOREFRONT_API_TOKEN Your private Storefront API access token, used for server-side queries. This token is read-only, but can be rotated. Yes
+ PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID Your Customer Account API client ID. This token is read-only, but can be rotated. Yes
+ PUBLIC_CUSTOMER_ACCOUNT_API_URL The URL endpoint that accepts Customer Account API authentication requests. Yes
+ PUBLIC_STORE_DOMAIN Your store domain ID (such as example.myshopify.com). Yes
+ PUBLIC_STOREFRONT_API_TOKEN Your Storefront API access token, used for client-side queries. Yes
+ PUBLIC_STOREFRONT_ID Your Hydrogen storefront’s numeric ID. Yes
+ SESSION_SECRET The value that Remix uses to sign session cookies. No
+ Rotate your private Storefront API token
+ If your private Storefront API access token is exposed publicly, then you should rotate it to protect sensitive data and prevent abuse.
+ In your Hydrogen storefront, click Storefront settings.
+ Click Storefront API
+ Under Rotate private access token, click Generate new token
+ Click Generate new token to confirm.
+ Optional: If you have other client apps using your private API token, then update them with the new token value.
+ Under Past private access token, click Delete.
+ Push a commit to your GitHub repo to trigger a new deployment. At this time, Oxygen doesn't automatically re-deploy environments when rotating API tokens.
+ Immutability
+ Oxygen deployments are immutable, which includes their environment variable values. This means any changes to environment variables don’t affect deployments that were made in the past.
+ If you create or update environment variables, then you need to push a commit in order to trigger a new deployment before your changes will take effect.
+ Environment visibility
+ By default, environments are private, which means that you need to be logged into your store to view them. You can also make an environment public, meaning anyone with the URL can view it.
+ Toggle an environment to public or private
+ In your Hydrogen storefront, click Storefront settings.
+ Click Environments and variables.
+ Click the environment to edit.
+ Under URL privacy, select either Public or Private.
+ Click Save.
+ Note
+ Page load speed on private deployment URLs is slower because authentication must be verified on each route. Toggling the deployment to public improves load time but also means that anyone with access to the link can view the page.
+ Public environment limits
+ Stores have a limited number of public environments available, based on their plan.
+ Plan Public environment limit
+ Basic 1
+ Shopify 1
+ Advanced 1
+ Shopify Plus 25
+ Plus Partner Sandbox stores 1
+ Environment URLs
+ Each environment has an automatically generated URL. By default, this URL always points to the most recent deployment to that environment.
+ Next steps
+ Learn how to deploy your Hydrogen storefront to Oxygen and other runtimes.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Managing environments
+ Environment variables
+ Environment visibility
+ Environment URLs
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

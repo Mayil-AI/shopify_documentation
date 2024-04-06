@@ -1,0 +1,55 @@
+Building with the Customer Account API
+ Additional SDKs
+ Internationalization with Shopify Markets
+ Introduction
+ Shopify Markets helps merchants expand their business to a global audience by creating shopping experiences in local languages and currencies.
+ Hydrogen provides patterns on top of Remix to setup internationalization (i18n) that leverages a merchant’s market configuration. It also makes locales available throughout the app and in Storefront API queries.
+ Requirements
+ You've completed the Hydrogen Getting Started with a Hello World example project.
+ You've setup you store's regions and languages using Shopify Markets.
+ You're familiar with using the Storefront API with Shopify Markets.
+ Setup the default locale
+ Before setting up your Hydrogen Storefront, make sure to set a default language and country code. This ensures that the correct language and currency are used throughout the app.
+ This guide shows you how to add or update your custom storefront's default language.
+ Setup the default locale
+ Learn how to set the default locale for the language and country using Hydrogen.
+ Setup a multi-region and multilingual storefront
+ Shopify recommends that storefronts with multiple regions and languages have separate URLs for each locale. This improves accessibility for search engines and screen readers.
+ Use one of the following methods to create different URLs for each region and language.
+ Option URL examples
+ Localization scheme using URL paths hydrogen.shop/fr, hydrogen.shop/es
+ Localization scheme using domains and subdomains hydrogen.fr, hydrogen.es
+ The advantage of using the URL paths method is that you only need to set this up from the app and you don't need to setup any domain infrastructure.
+ Setup i18n with URL paths
+ Learn how to support multiple countries and languages by using URL paths
+ Setup i18n with domains and subdomains
+ Learn how to support multiple countries and languages by using domains and subdomains
+ Create a country selector
+ Users will want to switch your Storefront to their preferred country. It is good user experience to provide a way for them to achieve this within your store.
+ How to setup a country selector
+ Localization detection using headers, cookies, or URL search params
+ While it's possible to detect an approximation of the user's locale by reading the header, cookies or URL search params. Shopify only recommends this to improve the experience of the user.
+ A good example of detecting localization is to show a banner to asking the user if they want to switch country.
+ A bad example of localization detection is when the user gets automatically redirected.
+ Other drawbacks of this approach are that page caching ignores locale cookies, headers and URL search params. SEO bots tend to origin from the US, don't have cookies and will not change their accept-language headers.
+ Learn how to setup localization detection using headers, cookies or URL search params
+ Developer tools and resources
+ Shopify Markets
+ Learn about Shopify Markets for launching to multiple international markets
+ Next steps
+ Learn how to set up default locale for your storefront.
+ Learn how to set up multiregion and multilingual storefront with URL paths to get the right language and currency.
+ Learn how to set up multiregion and multilingual storefront with domains and subdomains to get the right language and currency.
+ Learn how to create a country selector to allow users to choose their own country.
+ Learn how to set up locale detection using response header, cookies, or URL search params.
+ Learn how to set up localization detection using headers, cookies or URL search params
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Introduction
+ Requirements
+ Setup the default locale
+ Setup a multi-region and multilingual storefront
+ Create a country selector
+ Localization detection using headers, cookies, or URL search params
+ Developer tools and resources

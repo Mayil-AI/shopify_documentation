@@ -1,0 +1,60 @@
+UX guidelines for theme app extensions
+ A great customer-facing and merchant user experience (UX) is important to the success of our merchants.
+ Key principles for app blocks
+ The following are key principles for designing your app blocks:
+ App blocks are responsive to the size of the section to which they're added.
+ App blocks inherit styling properties from the theme, such as typography and colors.
+ App blocks can use autofill resource settings to automatically point to dynamic sources and ensure that content remains in sync with its parent section.
+ Key principles for app blocks in the header section
+ To integrate app blocks in the header section on a variety of themes, we recommend that app blocks meet the following criteria:
+ When possible, prepare both an icon and text version of your app block so that the style can fit inline with other header elements.
+ Maintain a consistent user interface across desktop, tablet, and mobile devices.
+ The following examples show a successful app block design in the header section of Themes by Shopify. To integrate seamlessly with Dawn, the icon provided by the app block should meet the following criteria:
+ Be no larger than 24px by 24px to maintain size and whitespace proportions inline with other header elements:
+ Have a hit-box target size of 44px by 44px to ensure it's accessible, reachable, and not cut off:
+ Merchant customization
+ Merchants need to be able to easily customize your app blocks and app embed blocks using the theme editor.
+ Don't clutter the theme editor with configurable settings. Limit these to visual settings, where possible. This is especially important for your app embed blocks. All app embed blocks will live in the same panel, and many configurable settings for an individual app embed block can quickly clutter the panel.
+ Let merchants do the following from the theme editor's Apps section:
+ Add, remove, or reposition your app's individual app blocks
+ Edit the settings for your app's individual app blocks
+ Preview edits before saving and publishing changes
+ Let merchants do the following from the theme editor's App embeds section:
+ Activate and deactivate your app's individual app embed blocks
+ Edit the settings for your app's individual app embed blocks
+ Preview edits before saving and publishing changes
+ Descriptions for public apps
+ Descriptions for apps sold on the Shopify App Store should indicate whether the app requires an Online Store 2.0 theme. This will prevent merchants from installing an app and discovering that the app doesn't work in their online store.
+ Merchant onboarding
+ On the app onboarding page in Shopify admin, give merchants clear post-installation onboarding instructions. To learn more about writing effective help documentation, refer to Help documentation in Shopify Polaris.
+ The instructions that you provide to merchants will be different for app blocks and app embed blocks.
+ Onboarding for app blocks
+ App blocks are supported only in themes that contain JSON templates, also known as Online Store 2.0 themes, and only in sections that meet certain conditions. Because of this, you might need to provide multiple sets of instructions to merchants who are onboarding to your app. You should provide an onboarding flow similar to the following:
+ Prompt merchants to select the theme where they want to add the app block. You can use the selection to render the correct instructions, as these instructions will differ between Online Store 2.0 themes and vintage themes.
+ If a merchant selects a vintage theme and your app doesn't support vintage themes, then inform the merchant that the selected theme isn't supported.
+ Use a combination of screenshots, video tutorials, and written instructions to explain the following:
+ How to add, remove, and reorder the app block within the theme editor.
+ Which templates your app's app blocks can be added to.
+ How to configure the app block settings.
+ Onboarding for app embed blocks
+ Because app embed blocks are supported in all Shopify themes, you can provide a single set of instructions to merchants who are onboarding to your app.
+ App embed blocks also support deep linking, which allows merchants to easily preview and start using your blocks in their theme.
+ You should provide an onboarding flow similar to the following:
+ Prompt merchants to select the theme where they want to add the app embed block.
+ Use a combination of screenshots, video tutorials, and written instructions to explain the following:
+ How to activate and deactivate your app's app embed blocks.
+ Which templates the app embed blocks can be added to.
+ How to configure the app embed block settings.
+ Provide a deep link into the theme editor with an app embed block activated. Inform merchants of the supported templates, so that they know where the app embed block will appear when it is active.
+ Uninstalling apps
+ When merchants uninstall apps, blocks associated with the apps are automatically and entirely removed from online store themes.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Key principles for app blocks
+ Key principles for app blocks in the header section
+ Merchant customization
+ Descriptions for public apps
+ Merchant onboarding
+ Uninstalling apps
+ Updates & News

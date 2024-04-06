@@ -1,0 +1,80 @@
+TextField
+ Thumbnail
+ ResourceList
+ ResourceList displays a filterable collection of objects of the same type, like products or customers.
+ ResourceList should help merchants find an object and navigate to a full-page representation of it. A resource list should contain ResourceItem components.
+ JavaScript
+ React
+ 1 import {extend, ResourceList, ResourceItem} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const resourceitem1 = root.createComponent(ResourceItem, {
+ 5
+      id: '1234',
+ 6
+      onPress: () => console.log('Pressed 1'),
+ 7
+    });
+ 8
+    resourceitem1.appendChild('Cool item');
+ 9
+    const resourceitem2 = root.createComponent(ResourceItem, {
+ 10
+      id: '5678',
+ 11
+      onPress: () => console.log('Pressed 2'),
+ 12
+    });
+ 13
+    resourceitem2.appendChild('Cooler item');
+ 14
+ 15
+    const resourcelist = root.createComponent(ResourceList, {
+ 16
+      filterControl: {
+ 17
+        queryValue: '123',
+ 18
+        queryPlaceholder: 'Filter list',
+ 19
+        onQueryChange: (queryValue) => console.log('Filtering for', queryValue),
+ 20
+        onQueryClear: () => console.log('Clear value'),
+ 21
+      },
+ 22
+    });
+ 23
+ 24
+    resourcelist.appendChild(resourceitem1);
+ 25
+    resourcelist.appendChild(resourceitem2);
+ 26
+ 27
+    root.appendChild(resourcelist);
+ 28
+    root.mount();
+ 29 });
+ Props
+ optional = ?
+ Name Type Description
+ filterControl? FilterControl
+ FilterControl
+ Name Type Description
+ queryValue? string Search query value
+ queryPlaceholder? string Placeholder for search query field
+ onQueryChange (queryValue: string) => void Callback when search query changes
+ onQueryClear () => void Callback when the search field is cleared
+ Guidelines
+ A resource list should contain only ResourceItem components.
+ ✅ Do 🛑 Don't
+ Use ResourceList to show a summary of the resource ResourceLists should not contain elements other than ResourceItems
+ For more guidelines, refer to Polaris' Resource List best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Updates & News
+ Developer changelog

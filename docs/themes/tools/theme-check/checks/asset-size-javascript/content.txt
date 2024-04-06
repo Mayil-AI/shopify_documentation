@@ -1,0 +1,75 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ AssetSizeJavascript
+ Prevents using theme JavaScript files and external scripts with a compressed size greater than the configured threshold_in_bytes. Limiting the size of JavaScript files helps to improve the performance of your theme.
+ You occasionally might need to load large JavaScript bundles. In these cases, you can use an import on interaction pattern to avoid having users who don't interact with a component execute the bundle.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ In the following example, assets/chat-widget.js is greater than 10 KB gzipped:
+ 1 <script src="chat-widget.js" defer></script>
+ ✓ Pass
+ 1 <script>
+ 2
+    const chatWidgetButton = document.getElementById('#chat-widget')
+ 3
+ 4
+    chatWidgetButton.addEventListener('click', e => {
+ 5
+      e.preventDefault();
+ 6
+      import("chat-widget.js")
+ 7
+        .then(module => module.default)
+ 8
+        .then(ChatWidget => ChatWidget.init())
+ 9
+        .catch(err => {
+ 10
+          console.error(err);
+ 11
+        });
+ 12
+    });
+ 13 </script>
+ Options
+ The following example contains the default configuration for this check:
+ For themes:
+ 1 AssetSizeJavaScript:
+ 2
+    enabled: false
+ 3
+    threshold_in_bytes: 10000
+ For theme app extensions:
+ 1 AssetSizeJavaScript:
+ 2
+    enabled: false
+ 3
+    severity: suggestion
+ 4
+    threshold_in_bytes: 10000
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ threshold_in_bytes The maximum allowed compressed size, in bytes, for a single JavaScript file. This includes the theme and remote scripts.
+ Disabling this check
+ This check is enabled by default when you run the Shopify CLI 3.x build command on an app that contains a theme app extension. This limit is not yet enforced, but disabling this check isn't recommended for theme app extensions.
+ If you can't avoid violating the rule, then you should disable the check using the comment syntax. This ensures that you intentionally disable the check for each instance.
+ 1 {% # theme-check-disable AssetSizeJavaScript %}
+ 2 <script src="{{ 'chat-widget.js' | asset_url }}" defer></script>
+ 3 {% # theme-check-enable AssetSizeJavaScript %}
+ 4
+ 5
+ 6
+ 7
+ 8 This check is disabled by default when you run the Shopify CLI 2.x [`shopify theme check`](/docs/themes/tools/theme-check/commands) command.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog

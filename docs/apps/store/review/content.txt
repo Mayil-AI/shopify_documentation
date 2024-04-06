@@ -1,0 +1,25 @@
+App Store ads
+ Security
+ The app review process
+ When you submit an app, it goes through an app review process to make sure that it meets Shopify's requirements for safe, quality apps. Shopify's app requirements are the same for both fully visible and limited visibility public apps. If you’re planning to list your app on the Shopify App Store, then Shopify also reviews the content that you provided for your listing page.
+ To reduce the time it takes to review your app and help the process go smoothly, use tips outlined in the following sections as you build your app and draft your submission. To learn about the most common reasons why apps aren't accepted, refer to Common review problems.
+ Review process
+ Your app must meet all requirements on the App Store review page before your app is reviewed. During the review process your app changes status: Draft, Submitted, Reviewed, and Published. You can learn about the status of your app on your App Store review page.
+ Preliminary steps
+ When you create a public app, it starts with the Draft status. You must fix any issues that are identified on the App Store review page before you can submit your app for review. After you make the changes, you can click the Submit your app button to send your app for review.
+ App review
+ After you submit your public app for review, it moves to the Submitted status and you receive an email confirming that your submission was received. You can withdraw from the review process at any time by clicking Withdraw in the status banner.
+ If your app doesn't meet core requirements that prevent a reviewer from reviewing your app, then your app moves to the Paused status and then you’ll receive an email that outlines required changes. After you make the required changes to your app, you can resubmit by click Submit fixes in the status banner.
+ After your app meets the core requirements, Shopify assigns a reviewer to your submission, and they begin to review your app. If your app requires additional fixes that need to be discussed with your reviewer, then it moves to the Reviewed status. You'll receive an email that outlines the next steps and you need to reply to continue the process.
+ After your app has been approved by the app review team, you'll receive an email confirming that your app has moved to the Published status and now displays on the Shopify App Store.
+ Note
+ By default, all approved app listings are visible in the Shopify App Store. Learn more about listing visibility.
+ Next step
+ Prepare your app for review: Before you submit your app for review, you need to test it on a development store to check for any bugs or errors.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Review process
+ Next step
+ Updates & News
+ Developer changelog

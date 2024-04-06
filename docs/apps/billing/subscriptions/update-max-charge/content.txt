@@ -1,0 +1,175 @@
+Viewing charges and earnings
+ Best practices
+ App Store
+ Update the maximum charge for a subscription
+ Update the maximum amount that merchants can be charged for their subscription. You should do this if you change your pricing model.
+ Note
+ If you try to create a usage record for a usage pricing plan with an amount that's less than the new usage record, then the request fails. You need to increase the cappedAmount, and then obtain merchant approval before you can create more usage records.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Step 1: Retrieve charge data
+ Make a request to the AppSubscription object for the following data:
+ id
+ cappedAmount
+ The cappedAmount is the maximum that a merchant is billed for during the 30-day billing cycle. The currencyCode must be one of the supported currencies.
+ balanceUsed
+ The following query is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    node(id: "gid://shopify/AppSubscription/4019585080") {
+ 3
+      ...on AppSubscription {
+ 4
+        lineItems {
+ 5
+          plan {
+ 6
+            pricingDetails {
+ 7
+              ...on AppUsagePricing {
+ 8
+                terms
+ 9
+                cappedAmount {
+ 10
+                  amount
+ 11
+                  currencyCode
+ 12
+                }
+ 13
+                balanceUsed {
+ 14
+                  amount
+ 15
+                  currencyCode
+ 16
+                }
+ 17
+              }
+ 18
+            }
+ 19
+          }
+ 20
+        }
+ 21
+      }
+ 22
+    }
+ 23 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "node": {
+ 4
+        "lineItems": [
+ 5
+          {
+ 6
+            "plan": {
+ 7
+              "pricingDetails": {
+ 8
+                "terms": "$1 for 100 emails",
+ 9
+                "cappedAmount": {
+ 10
+                  "amount": "20.0",
+ 11
+                  "currencyCode": "USD"
+ 12
+                },
+ 13
+                "balanceUsed": {
+ 14
+                  "amount": "0.0",
+ 15
+                  "currencyCode": "USD"
+ 16
+                }
+ 17
+              }
+ 18
+            }
+ 19
+          }
+ 20
+        ]
+ 21
+      }
+ 22
+    },
+ 23
+    ...
+ 24 }
+ Step 2: Update the capped amount
+ Update the app subscription's capped amount by passing the AppSubscription ID to the appSubscriptionLineItemUpdate mutation as an argument.
+ The following mutation is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    appSubscriptionLineItemUpdate(
+ 3
+      id: "${AppSubscriptionLineItemUsagePricing_gid}"
+ 4
+      cappedAmount: { amount: 100.00, currencyCode: USD }
+ 5
+    ) {
+ 6
+      userErrors {
+ 7
+        field
+ 8
+        message
+ 9
+      }
+ 10
+      confirmationUrl
+ 11
+      appSubscription {
+ 12
+        id
+ 13
+      }
+ 14
+    }
+ 15 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "appSubscriptionLineItemUpdate": {
+ 4
+        "userErrors": [],
+ 5
+        "confirmationUrl": "https://domain.myshopify.com/admin/charges/4019585080/confirm_update_capped_amount?signature=BAh7BzoHaWRsKwc4AJbvOhJhdXRvX2FjdGl2YXRlRg%3D%3D--a93b35054feb213f04f1ee35ef5b569617ce6823",
+ 6
+        "appSubscription": {
+ 7
+          "id": "gid://shopify/AppSubscription/4019585080"
+ 8
+        }
+ 9
+      }
+ 10
+    },
+ 11
+    ...
+ 12 }
+ Next steps
+ Discounts
+ Learn about offering subscription discounts.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve charge data
+ Step 2: Update the capped amount
+ Next steps

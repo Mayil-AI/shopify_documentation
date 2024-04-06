@@ -1,0 +1,90 @@
+Customer engagement
+ Overview
+ Email consent
+ Additional customer information
+ Add a contact form
+ Troubleshooting
+ Theme Store
+ Collect additional customer information
+ You can collect additional information from customers when they create an account through the customer register form.
+ Note
+ You can't create new fields in the Shopify admin to host information, so any additional information is saved as a customer note. The customer note isn't accessible through Liquid, but can be accessed through the Customer object of the Admin API.
+ This information can be collected with any HTML input type, except for file. The input needs to have an attribute of name="customer[note][Information title]", where Information title is the title of the information you're collecting. You can have more than one input for collecting a note entry.
+ For example, the following would allow you to collect a customer's birthday and any allergies they might have:
+ 1 {% form 'create_customer' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="first-name">
+ 5
+      <label for="first-name">First name</label>
+ 6
+      <input id="first-name" type="text" name="customer[first_name]" />
+ 7
+    </div>
+ 8
+ 9
+    <div class="last-name">
+ 10
+      <label for="last-name">Last name</label>
+ 11
+      <input id="last-name" type="text" name="customer[last_name]" />
+ 12
+    </div>
+ 13
+ 14
+    <div class="email">
+ 15
+      <label for="email">Email</label>
+ 16
+      <input id="email" type="email" name="customer[email]" />
+ 17
+    </div>
+ 18
+ 19
+    <div class="password">
+ 20
+      <label for="password">Password</label>
+ 21
+      <input id="password" type="password" name="customer[password]" />
+ 22
+    </div>
+ 23
+ 24
+    <div class="password">
+ 25
+      <label for="password-confirmation">Password</label>
+ 26
+      <input id="password-confirmation" type="password" name="customer[password]" />
+ 27
+    </div>
+ 28
+ 29
+    <div class="birthday">
+ 30
+      <label for="birthday">Birthday</label>
+ 31
+      <input id="birthday" type="date" name="customer[note][Birthday]" />
+ 32
+    </div>
+ 33
+ 34
+    <div class="allergies">
+ 35
+      <label for="allergies">Allergies</label>
+ 36
+      <input id="allergies" type="text" name="customer[note][Allergies]" />
+ 37
+    </div>
+ 38
+ 39
+    <div class="submit">
+ 40
+      <input type="submit" value="Create" />
+ 41
+    </div>
+ 42 {% endform %}
+ Was this page helpful?
+ YesNo
+ Updates & News

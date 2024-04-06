@@ -1,0 +1,75 @@
+Shipping and delivery
+ Building your app
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Deferred purchase option apps
+ Deferred purchase option apps enable flexible payments and fulfillments on product variants. This guide describes how deferred purchase option apps work, the requirements for deferred options, and the limitations of deferred purchase option apps.
+ How do deferred purchase options work?
+ You can create purchase options using the sellingPlanGroupCreate mutation.
+ There's no single API to create a specific deferred purchase option. Instead, a deferred purchase option has configurations for pricing, delivery, inventory, and billing policies. This enables you to build more flexible and extensible apps that support various ways to sell and buy products.
+ Pricing policy
+ The pricingPolicies field defines pricing changes on a given product variant. Pricing policies enable merchants to adjust prices on deferred orders by setting adjustmentType and adjustmentValue. Pricing policies work in conjunction with price lists.
+ Note
+ Configuring pricing policies is optional.
+ Deferred purchase options can have only one fixed pricing policy. recurring pricing policies aren't available for deferred purchase options.
+ Delivery policy
+ The deliveryPolicy field defines when the order should be fulfilled, from the time that the order is created to the time that it leaves the merchant's possession. The order can be fulfilled as soon as possible (ASAP) or on a specific date (EXACT_TIME). If the fulfillment timeline depends on other conditions, then the fulfillment timeline can be set to unknown (UNKNOWN).
+ Inventory policy
+ The inventoryPolicy field defines whether the inventory is committed when the order is created (ON_SALE) or when the order is fulfilled (ON_FULFILLMENT). This helps merchants manage inventory when there are orders with delayed fulfillments.
+ Billing policy
+ The billingPolicy field defines the intervals of time between the placement of an order and payment collection.
+ When configuring the billing policy, you can set checkout charges for deferred purchase options to secure customers' commitments to orders before the orders are fulfilled. When you set a checkout charge, a partial amount is charged at checkout, and the remaining balance amount is charged on a specific date (EXACT_TIME) or X days after checkout (TIME_AFTER_CHECKOUT). You can set the checkout charge value to 0 to charge the full amount at checkout.
+ Note
+ Delivery and billing policies must be either all recurring or all fixed.
+ Use recurring policies for subscriptions.
+ Use fixed policies for deferred purchase options.
+ Shopify will store a customer's payment method so that merchants can collect the remaining balance amount without contacting the customer.
+ To learn more about policy configuration, refer to Create and manage deferred purchase options.
+ Purchase option category
+ The category field represents the purchase option category that's used to filter orders by purchase option on the order page. The category field supports the following approved categories:
+ SUBSCRIPTION
+ PRE_ORDER
+ TRY_BEFORE_YOU_BUY
+ If you want to offer a purchase option that isn't listed above, then set the category field to OTHER, and fill out our request form, where we'll review your request for a new purchase option.
+ Charging the remaining balance
+ A PaymentMandate is the payment method and permission that a customer gives to the merchant to debit money. You can use the orderCreateMandatePayment mutation to use a customer's payment mandate to trigger a payment for the remaining balance on an order or create a payment schedule. You can query vaultedPaymentMethods on the Order object to retrieve the list of available payment mandates.
+ Note
+ The orderCreateMandatePayment mutation is idempotent and requires a unique idempotencyKey. The payment attempts with the same idempotencyKey will return the same result of a previous payment rather than create a new payment. Learn more about idempotent requests.
+ Orders with a deferred payment will have an attached payment term that indicates when the payment should be made and how. You can query the PaymentTerms object to check the payment terms and when the remaining balance amount is due on a given order. To poll the payment status, you can use the orderPaymentStatus query.
+ It's your app's responsibility to schedule the charge at the right time and automate any process around payment failures. To learn more about your app's responsibilities, refer to the division of responsibilities between Shopify and apps.
+ Deferred purchase option use cases
+ Note
+ Shopify supports pre-orders and try before you buy as use cases for deferred purchase options. However, you can also create custom purchase options by configuring policies.
+ The following diagram illustrates how you can create deferred purchase options:
+ Pre-order
+ A 20% price reduction will be applied on the variant.
+ The product will be fulfilled on 2022-07-01.
+ The inventory will be updated when the order is created.
+ The 10% of the total amount will be charged as a deposit at checkout. The remaining amount will be charged on 2022-07-01, when the product is fulfilled.
+ Try before you buy
+ The product will be fulfilled as soon as possible.
+ The inventory will be updated when the order is created.
+ There's no deposit. The full amount will be charged 14 days after checkout.
+ Limitations
+ The following are known limitations for all purchase options:
+ Customers can't use local payment methods for purchase options.
+ Purchase options can't be used through Shopify POS.
+ Purchase options can't be used on draft orders.
+ Purchase options don't support "Buy X get Y" discounts.
+ The following are known limitations for deferred purchase options:
+ To use deferred purchase options, merchants need to use Shopify Payments or PayPal Express as a payment gateway.
+ Each order can only have one deferred payment due date. If an order has multiple products that have different deferred payment due dates, all of the order's deferred payments will be due on the soonest due date.
+ The Order Edits API only supports removing a product with a deferred purchase option.
+ Deferred purchase options aren't supported on stores with checkouts customized using checkout.liquid. Instead, you need to upgrade to Checkout Extensibility.
+ Deferred purchase options don't support cart permalinks.
+ Next steps
+ Learn about modeling deferred purchase option apps.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How do deferred purchase options work?
+ Charging the remaining balance
+ Deferred purchase option use cases
+ Limitations
+ Next steps

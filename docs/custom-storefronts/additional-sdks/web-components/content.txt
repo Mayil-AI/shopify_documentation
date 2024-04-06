@@ -1,0 +1,60 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Overview
+ Web SDKs
+ Storefront API Client
+ Buy Button JS
+ JS Buy SDK
+ Web Components
+ Backend SDKs
+ Web Components
+ Web Components are a collection of web standards that allow the creation of components that act as standard elements. Web Components encapsulate their style and HTML and are supported by all modern browsers. You can use components as you would use a <div> or <input>, and can also integrate them with any JavaScript library or framework that works with HTML.
+ You can use Web Components provided by Shopify to embed certain user interface (UI) components.
+ Note
+ Some of Shopify's Web Components haven't been tested on IE11.
+ Buy with Shop Pay component
+ The Buy with Shop Pay component allows you to integrate a Shop Pay button on any website for one or more preconfigured products. It directs the buyer to an accelerated buy-it-now checkout flow. Buyers who are already signed in with Shop Pay can review their order and confirm in a single tap. The component uses the Checkout Links functionality and adheres to the Shop Pay branding guidelines. View an implemented Shop Pay component:
+ Buy with Shop Pay
+ Attributes
+ Attribute Required? Description
+ store-url Yes The online store URL. For example, https://graphql.myshopify.com.
+ variants Yes The product variants, separated by commas (the format with quantities variant_id:quantity is also supported). You can obtain the product's variant ID either from the Shopify admin, or through the Admin or Storefront API.
+ Hosting
+ The Buy with Shop Pay component is hosted on the Shopify CDN:
+ https://cdn.shopify.com/shopifycloud/shop-js/client.js (latest)
+ https://cdn.shopify.com/shopifycloud/shop-js/v0.7/client.js (versioned)
+ Include and instantiate the component
+ The following code snippet shows how to include the required JavaScript bundle containing the Web Component, and add it to a web page:
+ 1 <script src="https://cdn.shopify.com/shopifycloud/shop-js/client.js"></script>
+ 2 ...
+ 3 <shop-pay-button
+ 4
+    store-url="https://graphql.myshopify.com"
+ 5
+    variants="36607875587"
+ 6 ></shop-pay-button>
+ 7
+ 8 <!-- This button includes two variants with different quantities. -->
+ 9 <shop-pay-button
+ 10
+    store-url="https://graphql.myshopify.com"
+ 11
+    variants="36607875587:2,36607875459:3"
+ 12 ></shop-pay-button>
+ Where to get help
+ Shopify's Web Components aren't supported by Shopify support, but there are other places where you can get help.
+ Shopify Community forums
+ Visit our forums to connect with the community and learn more about the Shopify API and App development.
+ Hire a Shopify Partner
+ Find a Shopify Partner for hire in our ecosystem of talented development agencies.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Buy with Shop Pay component
+ Where to get help
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

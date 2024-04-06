@@ -1,0 +1,80 @@
+Testing
+ Review process
+ Submitting a theme
+ Theme Store listings
+ Common theme rejections
+ Theme success
+ Theme revenue share
+ Submitting a theme to the Shopify Theme Store
+ When you submit a theme to the Shopify Theme Store, Shopify’s theme review team reviews your theme to make sure that it meets our Theme Store requirements. If your theme meets our requirements, then it's considered for approval.
+ If your theme is missing any of the requirements in the list or it requires major changes that prevent us from reviewing it, then your submission is rejected.
+ To reduce your chance of rejection, you should test your theme thoroughly. We've outlined some common reasons why themes are rejected during the review process. Review this list so that you can avoid these issues in your own submission.
+ Theme review process
+ The theme review process is broken down into 5 stages. Your theme must meet all of the following requirements in each stage to advance to the next stage of the review.
+ The following sections list the theme requirements that we check in each stage of the review process.
+ Stage 1: Theme features and Online Store 2.0 (OS 2.0) compatibility
+ Features
+ OS 2.0 compatibility in the theme’s templates, sections, and blocks
+ Stage 2: Lighthouse performance and accessibility
+ Lighthouse performance and accessibility requirements.
+ Stage 3: Technical requirements
+ Pages
+ Consistency and functionality
+ Browser compatibility
+ Assets
+ Search engine optimization (SEO)
+ Accessibility
+ Social media
+ During the first three stages, the theme review team might identify design and UX issues, or provide suggestions around design or UX. However, this feedback isn't a complete design and UX review. The team provides in-depth feedback in stage 4 of the review process.
+ Stage 4: Design and UX
+ Theme design and UX
+ Settings
+ Font picker
+ The color system
+ Responsive images
+ Stage 5: Pre-launch checks
+ Theme store exclusivity
+ Naming themes and theme styles
+ Demo stores
+ Documentation and contact forms
+ Supporting your theme
+ Submit your theme for review
+ Log in to your Partner Dashboard.
+ In the sidebar navigation, click Themes.
+ Click Submit a theme.
+ On the Theme file and compliance page, enter the name of your theme using the naming guidelines.
+ Add your theme ZIP file.
+ Select the check box to acknowledge that you have read and that you agree to the Shopify Partner Agreement.
+ Click Submit.
+ On the Theme listing details page, enter the listing information for your theme on the Shopify Theme Store. Learn more about the Theme Listing page.
+ Click Submit.
+ What to expect from Shopify when you submit your theme
+ After you submit your theme for review, Shopify’s theme review team tests your theme to ensure that it meets Shopify’s Theme Store requirements before your theme can be approved.
+ The Shopify theme review team might also access the Shopify admin of your demo store as a part of the theme review process.
+ If your theme submission doesn't meet our requirements, then your theme is rejected and you're notified by email. If your theme requires minor changes for approval, then you receive an email with a list of the required changes. The email outlines areas of the theme that require attention before continuing through the review process. You have the opportunity to discuss the feedback with the theme review team by replying to the email.
+ Caution
+ If you resubmit your theme without addressing the reasons why it was rejected, then you could be temporarily suspended from submitting themes to the Shopify Theme Store.
+ After the theme review team has fully reviewed your theme and ensured that it meets all of Shopify’s requirements, you can list your theme on the Shopify Theme Store.
+ Note
+ When a theme is submitted for review, we expect that the theme has been built following our requirements and has been fully tested for issues and bugs.
+ Contact throughout the review process
+ During the review process, we contact you at the email that you specified in the Theme submission contact email field when you completed your theme listing. To make sure that you receive emails from Shopify, add themes@shopify.com and noreply@shopify.com to your allowed senders list in your email service provider’s settings.
+ Changing your theme during review
+ After you submit your theme for review, you can still submit changes to your theme as long as the theme review team hasn't initiated the review. To submit changes to your theme, do the following:
+ Log in to your Partner Dashboard.
+ In the sidebar navigation, click Themes.
+ Click the theme that you want to update.
+ Click Upload new ZIP and upload the changed version of your theme.
+ Note
+ You'll receive an email notification immediately after your submission. However, it can take up to 24 hours for submission details to be reflected in your Partner Dashboard.
+ After the theme review team initiates a review, you won’t be able to make changes until the review has been completed and the assessment is sent to you.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Theme review process
+ Submit your theme for review
+ What to expect from Shopify when you submit your theme
+ Contact throughout the review process
+ Changing your theme during review
+ Updates & News
+ Developer changelog

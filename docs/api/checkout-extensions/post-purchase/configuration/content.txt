@@ -1,0 +1,40 @@
+Components
+ JWT specification
+ Customer account UI extensions
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Post-purchase extensions configuration
+ When you create a post-purchase extension, the shopify.extension.toml file is automatically generated in your extension directory. This guide describes the properties that you can configure in shopify.extension.toml.
+ How it works
+ You define properties for your extension in the extension configuration file. The shopify.extension.toml file contains the extension's settings, which include the extension name and metafields.
+ When an extension is published to Shopify, the contents of the configuration file are pushed alongside the extension.
+ Anatomy of a configuration file
+ The following example shows the properties in the shopify.extension.toml file:
+ shopify.extension.toml
+ 1 type = "post_purchase"
+ 2 name = "checkout_post_purchase"
+ 3
+ 4 # [[metafields]]
+ 5 # namespace: my-namespace
+ 6 # key: my-key
+ 7
+ 8 # [[metafields]]
+ 9 # namespace: my-namespace
+ 10 # key: my-key-2
+ Property Required? Description
+ type Yes The type of extension. For checkout post-purchase extensions, this value is always checkout_post_purchase.
+ name Yes The name of the checkout post-purchase extension.
+ metafields Yes The metafields that your extension needs to read.
+ 
+ You can specify up to five key and namespace pairs in the configuration file. When the extension is executed, Shopify looks for the metafields in each resource and returns their contents.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Anatomy of a configuration file
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

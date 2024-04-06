@@ -1,0 +1,320 @@
+Additional SDKs
+ Upgrade Hydrogen 1 to 2 with Remix
+ Note
+ The Hydrogen documentation is for version 2 of Hydrogen, which is built on Remix. If you're using Hydrogen 1, then you can reference the archived copy of the documentation.
+ Introduction
+ Hydrogen is a set of tools, utilities, and best-in-class examples for building a commerce application on top of Remix.
+ Because Hydrogen is inherently coupled to the Storefront API, we have also decided that Hydrogen will follow calendar versioning. This means that there is no Hydrogen 2.0. Instead the next version of Hydrogen will be 2023.1.0 and moving forward new versions of Hydrogen will be released at the same time as new versions of the Storefront API.
+ This guide teaches you how to migrate from an existing Hydrogen 1 project. Since each project is different, your migration experience might require additional steps, but you can use this guide as the basis for migrating your app. Before starting your migration, consider reviewing the Remix docs to understand the basics about how Remix apps work.
+ Step 1: Install Hydrogen 2 and Remix packages
+ Install the following Hydrogen 2 and Remix packages:
+ @remix-run/react: The primary package for Remix.
+ @shopify/hydrogen@latest: A package that includes tools and utilities built for Remix.
+ @shopify/remix-oxygen: A package for deploying to Oxygen. Alternatively use another adapter if deploying to another environment.
+ @shopify/cli@latest: The Shopify CLI package.
+ @shopify/cli-hydrogen@latest: A package for the Hydrogen extensions to the Shopify CLI.
+ Terminal
+ $ npm install @remix-run/react @shopify/remix-oxygen @shopify/hydrogen@latest @shopify/cli@latest @shopify/cli-hydrogen@latest
+ Step 2: Remove Vite
+ Remove vite.config.js and remove Vite as a dependency in package.json:
+ Terminal
+ $ npm uninstall vite
+ You should no longer see vite in the package.json dependencies.
+ Step 3: Set up local dev environment variables
+ Add a .env file with variables for the following:
+ .env
+ SESSION_SECRET="{hash}"
+ PUBLIC_STOREFRONT_API_TOKEN="{your_public_token}"
+ PUBLIC_STOREFRONT_API_VERSION="{api_version}"
+ PUBLIC_STORE_DOMAIN="{shop_id}.myshopify.com"
+ Then remove hydrogen.config.js.
+ Step 4: Create a Remix config
+ At the root of your project, add a new remix.config.js file with the following content:
+ remix.config.js
+ 1 /** @type {import('@remix-run/dev').AppConfig} */
+ 2 module.exports = {
+ 3
+    appDirectory: 'app',
+ 4
+    ignoredRouteFiles: ['**/.*'],
+ 5
+    watchPaths: ['./public'],
+ 6
+    server: './server.js',
+ 7
+    publicPath: (process.env.HYDROGEN_ASSET_BASE_URL ?? '/') + 'build/',
+ 8
+    assetsBuildDirectory: 'dist/client/build',
+ 9
+    serverBuildPath: 'dist/worker/index.js',
+ 10
+    serverMainFields: ['browser', 'module', 'main'],
+ 11
+    serverConditions: ['worker', process.env.NODE_ENV],
+ 12
+    serverDependenciesToBundle: 'all',
+ 13
+    serverModuleFormat: 'esm',
+ 14
+    serverPlatform: 'neutral',
+ 15
+    serverMinify: process.env.NODE_ENV === 'production',
+ 16 };
+ Step 5: Create a server file
+ In the root folder of your project, create a server.js file for Remix. This file is used to create a Storefront API client and Remix request handler. Refer to our server.js in the Hydrogen’s hello world template.
+ In the app directory, add entry.server.jsx and entry.client.jsx.
+ Unless you need to customize the streamed response from the server, or add customizations before the front-end hydrates, you shouldn’t need to modify these two files.
+ Step 6: Update package.json scripts
+ In your package.json, update the build, dev, and preview commands. The following is an example:
+ package.json
+ 1 {
+ 2
+    "build": "shopify hydrogen build",
+ 3
+    "dev": "shopify hydrogen dev",
+ 4
+    "preview": "npm run build && shopify hydrogen preview"
+ 5 }
+ Step 7: Move public assets
+ Rename and move src/assets to public.
+ Rename the src directory to app.
+ Add global CSS (common to the whole app) to app/styles/app.css.
+ For instructions on implementing different CSS solutions, refer to Remix's guide on CSS. For example, the documentation includes instructions specific to Tailwind.
+ Step 8: Set up a root route
+ Convert index.html into app/root.jsx. You can use our sample root.jsx as a starting point. You'll need to update the document with whatever custom root elements are in your index.html, such as custom <link>, <meta> or <script> tags. Ignore the Hydrogen v1 script, which points to /@shopify/hydrogen/entry-client. When you're finished, delete index.html.
+ Note
+ root.jsx references a <Layout /> component. This is the app layout that applies to the entire application. All base routes in the application are rendered within the <Outlet />. If you don’t want a common layout for every route, then instead just render <Outlet /> directly. An example <Layout /> component is available.
+ Step 9: Rename all routes
+ Rename all routes, removing the .server.jsx suffix. For example, rename routes/index.server.jsx to routes/index.jsx. Remix also follows different conventions for file routes. The following routes need special considerations:
+ Hydrogen 1 Hydrogen with Remix
+ robots.txt.server.js [robots.txt].jsx
+ sitemap.xml.server.ts [sitemap.xml].jsx
+ products/[handle].server.jsx products/$handle.jsx
+ policies/[handle].server.jsx policies/$handle.jsx
+ collections/[handle].server.jsx collections/$handle.jsx
+ pages/[handle].server.jsx pages/$handle.jsx
+ journal/[handle].server.jsx journal/$handle.jsx
+ Note
+ Though you can still use the .server.jsx suffix to make sure specific code is never bundled on the client, these are not server components and should not be used for routes.
+ Step 10: Remove useShopQuery and useQuery
+ Remix doesn't use React Server Components. This means that you can't fetch data directly within your route components. Instead, all data fetching should be moved into an exported loader function on each route, or within the root.jsx loader for any data that needs to be globally available.
+ Move every instance useShopQuery and useQuery in your code into an associated loader.
+ You can access the data queried within the loader with useLoaderData(). Shopify provides an API client in the loader context to make querying easier. The following is an example:
+ products/$handle.jsx
+ 1 export default function Product() {
+ 2
+    const {handle} = useRouteParams();
+ 3
+    const {
+ 4
+      language: {isoCode: languageCode},
+ 5
+      country: {isoCode: countryCode},
+ 6
+    } = useLocalization();
+ 7
+ 8
+    const {
+ 9
+      data: {product, shop},
+ 10
+    } = useShopQuery({
+ 11
+      query: PRODUCT_QUERY,
+ 12
+      variables: {
+ 13
+        country: countryCode,
+ 14
+        language: languageCode,
+ 15
+        handle,
+ 16
+      },
+ 17
+      preload: true,
+ 18
+    });
+ 19 }
+ Needs to change to:
+ products/$handle.jsx
+ 1 import {useLoaderData} from '@remix-run/react';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3 export async function loader({params, context}) {
+ 4
+    const {shop, product} = await context.storefront.query(PRODUCT_QUERY, {
+ 5
+      variables: {
+ 6
+        handle: params.handle,
+ 7
+        // Passing the country and language is unnecessary
+ 8
+        // They are automatically made available to the query
+ 9
+        country: context.storefront.i18n.country,
+ 10
+        language: context.storefront.i18n.language,
+ 11
+      },
+ 12
+    });
+ 13
+ 14
+    return json({shop, product});
+ 15 }
+ 16
+ 17 export default function Product() {
+ 18
+    const {product, shop} = useLoaderData();
+ 19 }
+ Read more about data fetching in Hydrogen.
+ Step 11: Convert API Routes
+ In Remix, instead of a separate pattern for API routes, loader and action functions serve as the same purpose — routes are their own API. Hydrogen 1 uses API routes primarily for use cases like creating a sitemap.xml route. The following is an example converted sitemap route:
+ routes/[sitemap.xml].jsx
+ 1 export async function api(request, {queryShop}) {
+ 2
+    const {data} = await queryShop({
+ 3
+      query: QUERY,
+ 4
+    });
+ 5
+ 6
+    return new Response(createSiteMapFromData(data), {
+ 7
+      headers: {
+ 8
+        'content-type': 'application/xml',
+ 9
+        'cache-control': `max-age=${60 * 60 * 24}`,
+ 10
+      },
+ 11
+    });
+ 12 }
+ 13
+ 14 // changes to
+ 15
+ 16 export async function loader({request, context: {storefront}}) {
+ 17
+    const {data} = await storefront.query(QUERY);
+ 18
+ 19
+    return new Response(createSiteMapFromData(data), {
+ 20
+      headers: {
+ 21
+        'content-type': 'application/xml',
+ 22
+        'cache-control': `max-age=${60 * 60 * 24}`,
+ 23
+      },
+ 24
+    });
+ 25 }
+ Note
+ The loader only handles GET requests. If your resource route accepts POST requests, then export an async action function instead (or in addition to, if both GET and POST are accepted).
+ Step 12: Add a 404 page
+ Hydrogen v1 handled 404 pages with a wildcard route defined in App.server.jsx. Remix also needs a wildcard route; in Remix, these are called "Splat Routes" (learn more).
+ Add a splat route file at app/routes/$.jsx. Replacing the route contents with the following code:
+ /app/routes/$.jsx
+ 1 export async function loader() {
+ 2
+    throw new Response('Not found', {status: 404});
+ 3 }
+ 4
+ 5 export default function Component() {
+ 6
+    return null;
+ 7 }
+ Because the route only throws a 404 response, make sure to add a CatchBoundary to root.tsx. This boundary renders whenever an error is thrown within the app.
+ root.jsx
+ 1 import {useCatch} from '@remix-run/react';
+ 2
+ 3 export function CatchBoundary() {
+ 4
+    const caught = useCatch();
+ 5
+ 6
+    if (caught.status === 404) return;
+ 7
+    // render a 404 page
+ 8
+    else return; // render a generic 500 error page
+ 9 }
+ Also make sure to update any route that takes a parameter, like the collection or product page, to throw a 404 Response if the resource does not exist:
+ products/$handle.jsx
+ 1 import {useLoaderData} from '@remix-run/react';
+ 2 import {json} from '@shopify/remix-oxygen';
+ 3
+ 4 export async function loader({params, context}) {
+ 5
+    const {shop, product} = await context.storefront.query(PRODUCT_QUERY, {
+ 6
+      variables: {handle: params.handle},
+ 7
+    });
+ 8
+ 9
+    if (!product?.id) {
+ 10
+      throw new Response(null, {status: 404});
+ 11
+    }
+ 12
+ 13
+    return json({shop, product});
+ 14 }
+ Learn more about 404 handling in Remix here.
+ Step 13: Convert session implementation
+ When previously creating the server.ts file, it included an example session implementation. Update the session according to your app needs. useSession is no longer available. Instead access the session from the request context:
+ root.jsx
+ 1 export async function loader({context}) {
+ 2
+    const token = await context.session.get('customerAccessToken');
+ 3 }
+ Whenever you make changes to the session, make sure to commit the changes while setting a new cookie header. The following is an example:
+ logout.jsx
+ 1 export async function action({context}) {
+ 2
+    await context.session.unset('customerAccessToken');
+ 3
+ 4
+    return new Response('Logout successful', {
+ 5
+      headers: {
+ 6
+        'Set-Cookie': await context.session.commit(),
+ 7
+      },
+ 8
+    });
+ 9 }
+ Troubleshooting Typescript
+ If you have TypeScript errors, then update the tsconfig.json and remix.env.d.ts in the root folder. Refer to the tsconfig.json and remix.env.d.ts in the Hydrogen’s hello-world template.
+ Next steps
+ See the Hydrogen guides for the following topics:
+ Cart
+ Internationalization with Shopify Markets
+ Analytics
+ SEO
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Introduction
+ Step 1: Install Hydrogen 2 and Remix packages
+ Step 2: Remove Vite
+ Step 3: Set up local dev environment variables
+ Step 4: Create a Remix config
+ Step 5: Create a server file
+ Step 6: Update package.json scripts
+ Step 7: Move public assets
+ Step 8: Set up a root route
+ Step 9: Rename all routes
+ Step 10: Remove `useShopQuery` and `useQuery`
+ Step 11: Convert API Routes
+ Step 12: Add a 404 page
+ Step 13: Convert session implementation
+ Troubleshooting Typescript
+ Next steps

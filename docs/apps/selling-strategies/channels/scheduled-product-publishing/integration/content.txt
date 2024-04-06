@@ -1,0 +1,285 @@
+B2B
+ Channels
+ Overview
+ Getting started
+ Scheduled publishing
+ Overview
+ Integrate with scheduled publishing
+ Combined listings
+ Blockchain
+ Online store
+ Integrating with scheduled publishing
+ This tutorial explains how to integrate your channel app with scheduled product publishing. The use case is simple, but you'll learn how to find resources to build more complex use cases on your own.
+ Outcomes
+ After you've finished this tutorial, you'll know how to do the following:
+ Request access to scheduled publishing
+ Retrieve products that are scheduled to be published to a sales channel
+ Poll the GraphQL Admin API to know what products are about to be made available to the channel
+ Requirements
+ You've completed the Getting started tutorials.
+ Access scopes
+ Your app requires the read_product_listings access scope.
+ Step 1: Request access to scheduled publishing
+ From the Partner Dashboard, go to Apps and then select your app from the list.
+ From your app's overview screen, click Configuration.
+ In the App settings section, on the Product Scheduled Publishing card, click Enable feature.
+ Note
+ If your channel doesn't include product validation, then you only need to complete this step.
+ Step 2 (optional): Identify products that are scheduled for publication
+ Request resourcePublicationOnCurrentPublication on the GraphQL Admin API's Product object. A publishDate in the future indicates that the product is scheduled to display on the channel at the specified datetime.
+ For example,
+ POST /api/{api_version}/graphql.json
+ GraphQL query
+ JSON response
+ 1 {
+ 2
+    products(first: 10) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          title
+ 6
+          resourcePublicationOnCurrentPublication {
+ 7
+            publication {
+ 8
+              name
+ 9
+              id
+ 10
+            }
+ 11
+            publishDate
+ 12
+            isPublished
+ 13
+          }
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17 }
+ Step 3: Subscribe to webhooks
+ Note
+ This step is only required if the channel validates products against requirements before displaying them.
+ Shopify's SCHEDULED_PRODUCT_LISTINGS webhooks notify channels when products are scheduled to be published.
+ The following is an example payload:
+ Example webhook payload
+ 1 {
+ 2
+    "product_listing": {
+ 3
+      "product_id": 788032119674292900,
+ 4
+      "created_at": null,
+ 5
+      "updated_at": "2021-10-01T17:12:26-04:00",
+ 6
+      "body_html": null,
+ 7
+      "handle": "example-t-shirt",
+ 8
+      "product_type": "Shirts",
+ 9
+      "title": "Example T-Shirt",
+ 10
+      "vendor": "Acme",
+ 11
+      "available": false,
+ 12
+      "tags": "example, mens, t-shirt",
+ 13
+      "publish_at": "2021-10-01T17:12:26-04:00",
+ 14
+      "variants": [
+ 15
+        {
+ 16
+          "id": 642667041472714000,
+ 17
+          "title": "",
+ 18
+          "option_values": [
+ 19
+            {
+ 20
+              "option_id": 527050010214937800,
+ 21
+              "name": "Title",
+ 22
+              "value": "Small"
+ 23
+            }
+ 24
+          ],
+ 25
+          "price": "19.99",
+ 26
+          "formatted_price": "$19.99",
+ 27
+          "compare_at_price": "24.99",
+ 28
+          "grams": 200,
+ 29
+          "requires_shipping": true,
+ 30
+          "sku": "example-shirt-s",
+ 31
+          "barcode": null,
+ 32
+          "taxable": true,
+ 33
+          "position": 0,
+ 34
+          "available": false,
+ 35
+          "inventory_policy": "deny",
+ 36
+          "inventory_quantity": 0,
+ 37
+          "inventory_management": "shopify",
+ 38
+          "fulfillment_service": "manual",
+ 39
+          "weight": 200,
+ 40
+          "weight_unit": "g",
+ 41
+          "image_id": null,
+ 42
+          "created_at": null,
+ 43
+          "updated_at": null
+ 44
+        },
+ 45
+        {
+ 46
+          "id": 757650484644203900,
+ 47
+          "title": "",
+ 48
+          "option_values": [
+ 49
+            {
+ 50
+              "option_id": 527050010214937800,
+ 51
+              "name": "Title",
+ 52
+              "value": "Medium"
+ 53
+            }
+ 54
+          ],
+ 55
+          "price": "19.99",
+ 56
+          "formatted_price": "$19.99",
+ 57
+          "compare_at_price": "24.99",
+ 58
+          "grams": 200,
+ 59
+          "requires_shipping": true,
+ 60
+          "sku": "example-shirt-m",
+ 61
+          "barcode": null,
+ 62
+          "taxable": true,
+ 63
+          "position": 0,
+ 64
+          "available": false,
+ 65
+          "inventory_policy": "deny",
+ 66
+          "inventory_quantity": 0,
+ 67
+          "inventory_management": "shopify",
+ 68
+          "fulfillment_service": "manual",
+ 69
+          "weight": 200,
+ 70
+          "weight_unit": "g",
+ 71
+          "image_id": null,
+ 72
+          "created_at": null,
+ 73
+          "updated_at": null
+ 74
+        }
+ 75
+      ],
+ 76
+      "images": [
+ 77
+        {
+ 78
+          "id": 539438707724640960,
+ 79
+          "created_at": null,
+ 80
+          "position": 0,
+ 81
+          "updated_at": null,
+ 82
+          "product_id": 788032119674292900,
+ 83
+          "src": "//cdn.shopify.com/shopifycloud/shopify/assets/shopify_shirt-39bb555874ecaeed0a1170417d58bbcf792f7ceb56acfe758384f788710ba635.png",
+ 84
+          "variant_ids": [],
+ 85
+          "width": 323,
+ 86
+          "height": 434
+ 87
+        }
+ 88
+      ],
+ 89
+      "options": [
+ 90
+        {
+ 91
+          "id": 527050010214937800,
+ 92
+          "name": "Title",
+ 93
+          "product_id": 788032119674292900,
+ 94
+          "position": 1,
+ 95
+          "values": [
+ 96
+            "Small",
+ 97
+            "Medium"
+ 98
+          ]
+ 99
+        }
+ 100
+      ]
+ 101
+    }
+ 102 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Outcomes
+ Requirements
+ Access scopes
+ Step 1: Request access to scheduled publishing
+ Step 2 (optional): Identify products that are scheduled for publication
+ Step 3: Subscribe to webhooks
+ Updates & News
+ Developer changelog
+ Partner blog

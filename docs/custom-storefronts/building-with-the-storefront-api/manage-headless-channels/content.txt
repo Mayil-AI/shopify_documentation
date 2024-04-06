@@ -1,0 +1,80 @@
+Additional SDKs
+ Manage the Headless channel
+ You can manage the Headless channel by creating new storefronts, rotating your private access tokens, editing store names, managing storefront permissions, order attribution, and more. The Headless channel gives you all of Shopify's channel features, such as product publishing, scheduled product publishing, analytics, and reporting sales by channel.
+ Note
+ The following instructions assume that you've pinned the Headless channel in your Shopify admin. If you haven't, then you can access the channel using the Search field.
+ What you'll learn
+ You'll learn how to do the following tasks:
+ Add a custom storefront using the Headless channel
+ View a list of your custom storefronts
+ Edit storefront names
+ Rotate private access tokens
+ Edit storefront permissions
+ Order attribution
+ Delete storefronts
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ Add storefronts
+ You can have a maximum of 100 active storefronts and access tokens per shop.
+ From your Shopify admin, under Sales channels, click Headless.
+ On the Storefronts page, click Add storefront.
+ View custom storefronts
+ From your Shopify admin, under Sales channels, click Headless.
+ On the Storefronts page, optionally select a storefront to view it.
+ Edit storefront names
+ From your Shopify admin, under Sales channels, click Headless.
+ On the Storefronts page, select the storefront to rename.
+ Beside Storefront name, click Edit.
+ Type the new name for the storefront.
+ Click Save.
+ Rotate private access tokens
+ Caution
+ After you delete your old private access token, you need to update any applications or scripts to use the new token, or else you won't be able to access the Storefront API. Deleting a private access token can't be undone.
+ From your Shopify admin, under Sales channels, click Headless.
+ On the Storefronts page, select the storefront to rotate the access tokens for.
+ In the Storefront API tokens card, under Rotate private access token, click Generate new token.
+ Update any applications or scripts to use the new token. The old token remains valid until you delete it.
+ Beside the old private access token, click Delete.
+ When prompted, click Delete token.
+ Request storefront permissions
+ Permissions control what Storefront API data custom storefronts can display in your Shopify store. When you install the channel, a default set of permissions is created for you. You can edit these.
+ Caution
+ Both Storefront and Admin API permissions are shared across all storefronts.
+ From your Shopify admin, under Sales channels, click Headless.
+ On the Storefronts page, select a storefront to edit permissions for.
+ In the Storefront API permissions card, click Edit.
+ Select or deselect permissions for the store.
+ Click Save.
+ Order attribution
+ Order attribution is at the channel level, not the storefront level.
+ From your Shopify admin, click Orders.
+ In the Channel column, sales attributed to the Headless channel display as Headless.
+ Learn how to create an order.
+ Delete storefronts
+ Caution
+ Deleting a storefront invalidates its Storefront API tokens. This action can't be undone.
+ From your Shopify admin, under Sales channels, click Headless.
+ On the Storefronts page, select a storefront to edit permissions for.
+ In the Delete storefront card, click Delete storefront.
+ Click Delete storefront
+ Next steps
+ Learn more about Storefront API authorization and rate limiting.
+ Learn more about Storefront API access tokens.
+ Learn how to publish products and schedule product publishing with the Headless channel.
+ Learn how to view analytics and reporting sales by channel with the Headless channel.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Add storefronts
+ View custom storefronts
+ Edit storefront names
+ Rotate private access tokens
+ Request storefront permissions
+ Order attribution
+ Delete storefronts
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,65 @@
+Get access tokens
+ Access token types
+ Installation
+ Overview
+ Uninstall an app
+ Client secret / API key
+ Webhooks
+ App extensions
+ Custom data
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Shopify managed installation
+ Shopify managed installation is an installation method where Shopify installs an app and updates its access scopes without making any calls to the app. This provides the following advantages for the developer and user:
+ Improved performance: No browser redirects during installation or updates.
+ Less complexity: Apps no longer need to implement authorization code grant for installation or access scope changes.
+ Improved user experience: Faster installations and updates, and no screen flickering.
+ To enable Shopify managed installation, you need to share the scopes that your app requires in a configuration file that you push to Shopify.
+ This guide describes how to enable Shopify managed installation for your app.
+ If you don't use this method, then your app will use authorization code grant, and call your app to determine the required access scopes before proceeding.
+ Step 1: Configure your app using Shopify CLI
+ You can configure your app locally using a TOML file with Shopify CLI. Learn how to manage your app's configuration using Shopify CLI.
+ Step 2: Deploy your configuration to Shopify
+ In your app's TOML file, the access scopes are defined in the scopes field as shown below:
+ shopify.app.config-name.toml
+ 1 name = "Example App"
+ 2 client_id = "a61950a2cbd5f32876b0b55587ec7a27"
+ 3 application_url = "https://www.app.example.com/"
+ 4 embedded = true
+ 5
+ 6 [access_scopes]
+ 7 scopes = "read_orders"
+ 8
+ 9 # other fields omitted for brevity
+ You can update the scopes field to include the access scopes that your app requires. For example, if your app requires access to the read_orders and write_customers access scope, you can update the scopes field as shown below:
+ shopify.app.config-name.toml
+ 1 name = "Example App"
+ 2 client_id = "a61950a2cbd5f32876b0b55587ec7a27"
+ 3 application_url = "https://www.app.example.com/"
+ 4 embedded = true
+ 5
+ 6 [access_scopes]
+ 7 scopes = "read_orders,write_customers"
+ 8
+ 9 # other fields omitted for brevity
+ Then you can deploy your app's access scopes to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Step 3: Shopify now manages installing your app and access scope changes
+ After you deploy your app configuration with your updated scopes, Shopify handles installation and scope updates whenever you deploy changes to your configuration.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Configure your app using Shopify CLI
+ Step 2: Deploy your configuration to Shopify
+ Step 3: Shopify now manages installing your app and access scope changes
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

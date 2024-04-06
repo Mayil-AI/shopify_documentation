@@ -1,0 +1,15 @@
+Best practices
+ App Store
+ Billing best practices
+ Consider the following best practices when developing your app's pricing model:
+ Billing best practices
+ Practice Benefit Example
+ Provide simple and intuitive pricing Makes it easier for merchants to understand the pricing model and encourages adoption If your app provides a single set of features for all merchants, then consider setting up time-based subscriptions at 30 or 365-day intervals.
+ Limit the number of plans Makes it easier for merchants to compare plans and identify which plan works best for them.
+ If your app provides tiered features, then consider setting up a basic plan and a pro plan
+ .
+ Set one plan that includes ads and a second plan that's add-free.
+ Offer free trials Encourages merchants and Partners that develop stores for merchants to try your app before they pay for it. This helps users learn your app's value and recommend the app to others. A 30-day period where the app is used free of charge, which transitions to an annual paid plan after that.
+ Create charges in the merchant's local billing currency Enables merchants to better budget their app spend, which prevents confusion and provides a better app experience.
+ If a merchant is in India, then bill them in Indian Rupees (INR). If they're in Canada, then bill them in Canadian Dollars (CAD).
+ Refer to supported currencies.

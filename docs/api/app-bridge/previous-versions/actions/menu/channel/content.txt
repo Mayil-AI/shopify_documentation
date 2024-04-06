@@ -1,0 +1,70 @@
+Features
+ Fullscreen
+ Loading
+ Menu
+ Overview
+ Channel Menu
+ Navigation Menu
+ Modal
+ Navigation
+ POS
+ Product subscription app extensions
+ Channel Menu
+ Note
+ ChannelMenu is only available to apps which are sales channels.
+ The ChannelMenu action allows you to create a navigation menu in the sidebar of Shopify admin on desktop. On Shopify mobile, the menu is rendered in a dropdown, like NavigationMenu.
+ Setup
+ Create an app and import the ChannelMenu module from @shopify/app-bridge/actions. The examples in this guide refer to the @shopify/app-bridge sample app:
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {ChannelMenu, AppLink} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create any number of AppLink instances and then pass them into ChannelMenu.
+ 1 const itemsLink = AppLink.create(app, {
+ 2
+    label: 'Items',
+ 3
+    destination: '/items',
+ 4 });
+ 5
+ 6 const settingsLink = AppLink.create(app, {
+ 7
+    label: 'Settings',
+ 8
+    destination: '/settings',
+ 9 });
+ 10
+ 11 // create ChannelMenu with no active links
+ 12
+ 13 const channelMenu = ChannelMenu.create(app, {
+ 14
+    items: [itemsLink, settingsLink],
+ 15 });
+ 16
+ 17 // or create a ChannelMenu with the settings link active
+ 18
+ 19 const channelMenu = ChannelMenu.create(app, {
+ 20
+    items: [itemsLink, settingsLink],
+ 21
+    active: settingsLink,
+ 22 });
+ Set an active nav item
+ To update the active state for the menu, pass a link to the active option using the set method.
+ Note
+ App Bridge does not automatically set the active state.
+ 1 channelMenu.set({active: settingsLink});
+ Reset active nav item
+ To clear the active link pass undefined as the active option using the set method:
+ 1 channelMenu.set({active: undefined});
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Setup
+ Set an active nav item
+ Reset active nav item
+ Updates & News
+ Developer changelog
+ Partner blog

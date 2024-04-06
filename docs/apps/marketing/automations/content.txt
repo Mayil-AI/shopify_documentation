@@ -1,0 +1,25 @@
+Marketing automations
+ Overview
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Marketing automations
+ Shopify marketing automations is a tool that lets merchants automate marketing activities. The Shopify marketing automations tool is built into the Shopify admin.
+ As a developer, you can integrate your app with Shopify marketing automations through custom triggers and actions that merchants can use in workflows. Triggers enable your app to start a Shopify marketing automations workflow. Actions allow Shopify marketing automations to call your app or service in a workflow to do work.
+ How it works
+ You create extensions for Shopify marketing automations in the Partner Dashboard. Your extension can be a trigger or action. Only Shopify can build conditions and other workflow elements.
+ Merchants build workflows by choosing from the triggers, conditions, and actions available to them and putting them into a workflow. To use the triggers and actions that you create, merchants must have your app installed.
+ Triggers
+ A trigger is an event that starts a workflow, and can be something that happens in a store or in an app. For example, a workflow might be triggered when a new order is created in a merchant's online store.
+ To build a trigger for Shopify marketing automations, you need to include the Customer Shopify property in your trigger. Any trigger that you build is also made available in Shopify Flow.
+ Learn how to create a trigger.
+ Actions
+ An action is a marketing activity that's executed in a store or in an app when certain conditions are met. For example, an action might send an SMS message to a customer.
+ To build an action for Shopify marketing automations, you need to include the Marketing activity ID Shopify property in your action. Actions that use this property aren't available in Shopify Flow.
+ Learn how to create an action.
+ Action endpoints
+ When a Shopify marketing automation action is triggered, the automation tool sends one or more POST requests to standardized endpoints that are hosted by your app. The POST requests contain the information that you need to execute the action in your app.
+ To learn about the endpoints that you need to create, how to verify requests, how to avoid processing duplicate requests, and more, refer to Action endpoints.
+ Was this page helpful?
+ YesNo
+ Updates & News

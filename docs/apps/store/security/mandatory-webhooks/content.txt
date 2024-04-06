@@ -1,0 +1,15 @@
+Secure tokens
+ Shortened URLs
+ Securing mandatory webhooks
+ Mandatory webhooks are callback methods that Shopify requires for apps listed on the Shopify App Store. Shopify requires privacy webhooks as a way to manage the personal data that an app collects.
+ Data privacy rules and regulations, such as the General Data Protection Regulation (GDPR) and California Privacy Rights Act (CPRA), set requirements for parties that collect, store, or process personal data of individuals. However, Shopify takes a standardized approach and requires public apps to provide the same privacy rights for all personal data, regardless of where an individual is located.
+ Any app that you distribute through the Shopify App Store must respond to data subject requests, regardless of whether the app collects personal data. Shopify provides mandatory webhooks to help.
+ Apps must meet the following webhook requirements:
+ The app must implement the mandatory webhooks.
+ The app must handle POST requests with a JSON body and Content-Type header set to application/json sent to mandatory webhooks.
+ If a mandatory webhook sends a request with an invalid Shopify HMAC header, then the app must return a 401 Unauthorized HTTP status.
+ Note
+ Follow this guide to learn how to verify webhooks.
+ Was this page helpful?
+ YesNo
+ Updates & News

@@ -1,0 +1,325 @@
+FunctionRunResult
+ Input
+ Scalars
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Discounts Allocator API reference
+ Developer preview
+ This Function API is available only in the Discounts Allocator developer preview.
+ Extension targets
+ The Discounts Allocator API exposes the following targets:
+ Target Output type Description
+ purchase.discounts-allocator.run FunctionRunResult Outputs a list of discounts allocations that should be applied to the cart
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Shipping Discount API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    discounts {
+ 3
+      id
+ 4
+      title
+ 5
+      code
+ 6
+      discountApplicationStrategy
+ 7
+      discountProposals
+ 8
+      {
+ 9
+        handle
+ 10
+        message
+ 11
+        valueType
+ 12
+        value
+ 13
+        targets {
+ 14
+          cartLineId
+ 15
+          quantity
+      metafield(namespace: "testing-app-allocator", key: "single-discount-cap") {
+ 19
+        value
+ 20
+      }
+ 21
+    }
+ 22
+    presentmentCurrencyRate
+ 23
+    cart {
+ 24
+      lines {
+ 25
+        id
+ 26
+        quantity
+ 27
+        cost {
+ 28
+          amountPerQuantity {
+ 29
+            amount
+ 30
+            currencyCode
+ 31
+          }
+ 32
+        }
+ 33
+        merchandise {
+ 34
+          __typename
+ 35
+          ... on ProductVariant {
+ 36
+            id
+ 37
+            title
+ 38
+            product {
+ 39
+              id
+ 40
+              title
+ 41
+            }
+ 42
+          }
+ 43
+        }
+ 44
+      }
+ 45
+    }
+ 46
+    shop {
+ 47
+      metafield(namespace: "testing-app-allocator", key: "per-cart-cap") {
+ 48
+        value
+ 49
+      }
+ 50
+    }
+ 51 }
+ The following example shows the resulting input to the query:
+ input.json
+ 1 {
+ 2
+    "discounts": [
+ 3
+      {
+ 4
+        "id": "gid://shopify/DiscountNode/13",
+ 5
+        "title": "CAPS",
+ 6
+        "code": "CAPS",
+ 7
+        "type": "CodePriceRule",
+ 8
+        "discountApplicationStrategy": "FIRST",
+ 9
+        "discountProposals": [
+ 10
+          {
+ 11
+            "handle": "8d783e44-14b9-4c2c-b431-2be340f1f4e1",
+ 12
+            "message": "CAPS",
+ 13
+            "valueType": "FIXED_AMOUNT",
+ 14
+            "value": "10.0",
+ 15
+            "targets": [
+ 16
+              {
+ 17
+                "cartLineId": "gid://shopify/CartLine/0",
+ 18
+                "quantity": 5
+ 19
+              }
+ 20
+            ]
+ 21
+          }
+ 22
+        ]
+ 23
+      }
+ 24
+    ],
+ 25
+    "presentmentCurrencyRate": "1.2706752",
+ 26
+    "cart": {
+ 27
+      "lines": [
+ 28
+        {
+ 29
+          "id": "gid://shopify/CartLine/0",
+ 30
+          "quantity": 5,
+ 31
+          "cost": {
+ 32
+            "amountPerQuantity": {
+ 33
+              "amount": "32.0",
+ 34
+              "currencyCode": "CAD"
+ 35
+            }
+ 36
+          },
+ 37
+          "merchandise": {
+ 38
+            "__typename": "ProductVariant",
+ 39
+            "id": "gid://shopify/ProductVariant/17",
+ 40
+            "title": "Shorts",
+ 41
+            "product": {
+ 42
+              "id": "gid://shopify/Product/9",
+ 43
+              "title": "Shorts"
+ 44
+            }
+ 45
+          }
+ 46
+        },
+ 47
+        {
+ 48
+          "id": "gid://shopify/CartLine/1",
+ 49
+          "quantity": 6,
+ 50
+          "cost": {
+ 51
+            "amountPerQuantity": {
+ 52
+              "amount": "20.0",
+ 53
+              "currencyCode": "CAD"
+ 54
+            }
+ 55
+          },
+ 56
+          "merchandise": {
+ 57
+            "__typename": "ProductVariant",
+ 58
+            "id": "gid://shopify/ProductVariant/17",
+ 59
+            "title": "Shorts",
+ 60
+            "product": {
+ 61
+              "id": "gid://shopify/Product/9",
+ 62
+              "title": "Shorts"
+ 63
+            }
+ 64
+          }
+ 65
+        }
+ 66
+      ]
+ 67
+    },
+ 68
+    "shop": {
+ 69
+      "metafield": null
+ 70
+    }
+ 71 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.discounts-allocator.run target.
+ Example
+ The following function result includes two line discounts:
+ output.json
+ 1 {
+ 2
+    "lineDiscounts": [
+ 3
+      {
+ 4
+        "cartLineId": "gid://shopify/CartLine/0",
+ 5
+        "quantity": 5,
+ 6
+        "allocations": [
+ 7
+          {
+ 8
+            "discountProposalId": "8d783e44-14b9-4c2c-b431-2be340f1f4e1",
+ 9
+            "amount": 10,
+ 10
+            "sequence": 0
+ 11
+          }
+ 12
+        ]
+ 13
+      },
+ 14
+      {
+ 15
+        "cartLineId": "gid://shopify/CartLine/1",
+ 16
+        "quantity": 6,
+ 17
+        "allocations": [
+ 18
+          {
+ 19
+            "discountProposalId": "a7194cec-d807-4c46-9284-4fec7a3f5fbe",
+ 20
+            "amount": 24,
+ 21
+            "sequence": 0
+ 22
+          }
+ 23
+        ]
+ 24
+      }
+ 25
+    ],
+ 26
+    "displayableErrors": []
+ 27 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

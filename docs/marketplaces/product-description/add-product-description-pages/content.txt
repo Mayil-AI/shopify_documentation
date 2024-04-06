@@ -1,0 +1,180 @@
+Product description
+ Overview
+ Description pages
+ Buy now buttons
+ Policies
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Adding product description pages
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ So far, your marketplace UI includes a homepage that displays shops and some of their products. Each shop in the marketplace has a dedicated page that shows the types of products they sell. However, to see product details, buyers need to select products and be redirected to the merchant's storefront. Instead, you want your marketplace to provide the information that buyers might need to make a purchase.
+ In this tutorial, you'll use dynamic routing that directs buyers to a unique URL for each product on the shop's page. You'll use the Storefront API to surface product details on product description pages. The pages will include product variant pickers, and page content will dynamically update to reflect a selected variant.
+ What you'll learn
+ After you finish this tutorial, you'll know how to do the following:
+ Link out from a product on a shop page to a product description page
+ Surface a shop's product descriptions on a marketplace
+ Dynamically update product details when selected variants change
+ Requirements
+ You've completed the Shops tutorials.
+ Step 1: Update products
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ You might have to update your GraphQL queries to Shopify to assist with building out your product pages.
+ Add handle to the product query. This is a unique string for the product, and is useful for URLs/routing.
+ pages/index.js
+ 1 const SHOP_PRODUCTS_QUERY = gql`
+ 2
+    query ShopProducts {
+ 3
+      // ...
+ 4
+      products(first: 4) {
+            // ...
+ 8
+            handle
+ 9
+          }
+    }
+ 13 `;
+ The marketplace homepage might now look something like the following:
+ The shop page might now look something like the following:
+ Step 2: Set up the product page
+ Make a call to Shopify to query for a product given the handle that you obtained.
+ pages/products/[shopid]/[producthandle].js
+ 1 const SHOP_PRODUCT_QUERY = gql`
+ 2
+   query getProduct($productHandle: String!) {
+ 3
+     product(handle: $productHandle) {
+ 4
+       title
+ 5
+       description
+ 6
+       images(first: 1) {
+ 7
+         edges {
+ 8
+           node {
+ 9
+             originalSrc
+ 10
+             altText
+ 11
+           }
+ 12
+         }
+ 13
+       }
+ 14
+     }
+ 15
+   }
+ 16 `;
+ Use the information retrieved to build a basic product page.
+ You should now have a basic product page that looks something like the following:
+ Step 3: Add variant selection
+ Products can have one or more variants, which might have their own image and price. Each variant is tied to merchant-configured product options. To enable buyers to explore all variants, they need to be able to select product options.
+ Update the product query to retrieve variant information and product options.
+ pages/products/[shopid]/[producthandle].js
+ 1 const SHOP_PRODUCT_QUERY = gql`
+ 2
+    query getProduct($productHandle: String!) {
+ 3
+      product(handle: $productHandle) {
+ 4
+        id
+ 5
+        title
+ 6
+        description
+ 7
+        options(first: 100) {
+ 8
+          id
+ 9
+          name
+ 10
+          values
+ 11
+        }
+ 12
+        variants(first: 100) {
+ 13
+          edges {
+ 14
+            node {
+ 15
+              id
+ 16
+              title
+ 17
+              priceV2 {
+ 18
+                amount
+ 19
+                currencyCode
+ 20
+              }
+ 21
+              image {
+ 22
+                originalSrc
+ 23
+                altText
+ 24
+              }
+ 25
+              selectedOptions {
+ 26
+                name
+ 27
+                value
+ 28
+              }
+ 29
+            }
+ 30
+          }
+ 31
+        }
+ 32
+        images(first: 1) {
+ 33
+          edges {
+ 34
+            node {
+ 35
+              originalSrc
+ 36
+              altText
+ 37
+            }
+ 38
+          }
+ 39
+        }
+ 40
+      }
+ 41
+    }
+ 42 `;
+ Use the information retrieved from the updated query to build a more detailed product description page.
+ The product description page can now have variant selectors and might look something like the following:
+ The product description page can also now have variant selectors, and dynamically update the price and image to the selected variant. It might look something like the following:
+ Next steps
+ Learn how to add a Buy Now button to shop pages, to take buyers directly from a product to checkout.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Update products
+ Step 2: Set up the product page
+ Step 3: Add variant selection
+ Next steps

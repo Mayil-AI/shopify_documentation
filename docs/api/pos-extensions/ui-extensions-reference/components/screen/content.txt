@@ -1,0 +1,155 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Screen
+ A component used in the root of a modal extension to define a screen.
+ Example
+ Here is a simple example of a modal that has two screens, and uses the navigate function to switch between them with parameters.
+ JavaScript
+ React
+ 1 import { extend, Button, ButtonProps, Navigator, Screen, ScrollView, Text, Tile } from "@shopify/retail-ui-extensions";
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'My app',
+ 6
+      enabled: true,
+ 7
+      onPress: () => {
+ 8
+        api.smartGrid.presentModal();
+ 9
+      },
+ 10
+    };
+ 11
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+ 14
+    root.appendChild(tile);
+ 15
+    root.mount();
+ 16 });
+ 17
+ 18 extend('pos.home.modal.render', (root, api) => {
+ 19
+    let navigator = root.createComponent(Navigator);
+ 20
+    root.appendChild(navigator);
+ 21
+ 22
+    let screenOne = root.createComponent(Screen, { name: 'ScreenOne', title: 'Screen One Title' });
+ 23
+    navigator.appendChild(screenOne);
+ 24
+ 25
+    const scrollView = root.createComponent(ScrollView);
+ 26
+    screenOne.appendChild(scrollView);
+ 27
+ 28
+    const buttonProps: ButtonProps = {
+ 29
+      title: 'Show ScreenTwo',
+ 30
+      onPress: () => {
+ 31
+        api.navigation.navigate('ScreenTwo', { param1: 'first param', somethingElse: 'second param' });
+ 32
+      },
+ 33
+      isDisabled: false,
+ 34
+    };
+ 35
+    const button = root.createComponent(Button, buttonProps);
+ 36
+    scrollView.appendChild(button);
+ 37
+ 38
+    let paramsText = root.createText();
+ 39
+    let paramsTextComponent = root.createComponent(Text);
+ 40
+ 41
+    let screenTwo = root.createComponent(
+ 42
+      Screen,
+ 43
+      {
+ 44
+        name: 'ScreenTwo',
+ 45
+        title: 'Screen Two Title',
+ 46
+        onReceiveParams: (params) => {
+ 47
+          paramsText.updateText(JSON.stringify(params))
+ 48
+        }
+ 49
+      });
+ 50
+ 51
+    paramsTextComponent.appendChild(paramsText);
+ 52
+    screenTwo.appendChild(paramsTextComponent);
+ 53
+    navigator.appendChild(screenTwo);
+ 54
+ 55
+    root.mount();
+ 56 });
+ Using the overrideNavigateBack callback
+ The overrideNavigateBack callback enables you to write custom functionality to overide the back button in the navigation bar. The callback forfeits the native back navigation functionality, meaning that you must dismiss or render a pop up screen with NavigationAPI to ensure a suitable navigation experience for merchants.
+ Example
+ React
+ 1 <Screen
+ 2
+      name='Screen'
+ 3
+       title='Screen'
+ 4
+       overrideNavigateBack={() => {
+ 5
+        /* Mandatory */
+ 6
+         api.navigation.pop();
+ 7
+       }}
+ 8 ></Screen>
+ Props
+ Name Type Description
+ name string Used to identify this screen as a destination in the navigation stack.
+ title string The title of the screen which will be displayed on the UI.
+ isLoading boolean? Displays a loading indicator when true. Set this to true when performing an asynchronous task, and then to false when the data becomes available to the UI.
+ presentation ScreenPresentationProps? Represents the presentation of a screen in the navigation stack.
+ onNavigate (() => void)? A callback triggered when the screen is navigated to.
+ onNavigateBack (() => void)? A callback that is triggered when the user navigates back from this screen. Runs after screen is unmounted.
+ overrideNavigateBack (() => void)? A callback that allows you to override the secondary navigation action. Runs when screen is still mounted.
+ onReceiveParams ((params: any) => void)? A callback that gets triggered when the navigation event completes and the screen receives the parameters.
+ ScreenPresentationProps
+ Name Type Description
+ sheet boolean? displays the screen from the bottom on navigate when true.
+ Guidelines
+ Usually, a Screen will have a ScrollView as its root component. This will allow the content to scroll if it doesn't fit on the screen.
+ The Screen component should be used in the root of a modal extension. It is not meant to be used in a tile extension. Refer to the extension points section.
+ Make sure to set the loading state to true if the children components of your screen are still waiting for data from the network. This will ensure a smooth rendering experience once your data is available.
+ Content Guidelines
+ The title of the screen should generally match the tile/context that was tapped to trigger the modality.
+ Exceptions can include viewing specific items where the title can simply reflect the title of item being viewed.
+ Titles should be as short as possible as longer titles will be truncated, causing a loss in context.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example
+ Using the overrideNavigateBack callback
+ Props
+ ScreenPresentationProps
+ Guidelines
+ Content Guidelines
+ Updates & News

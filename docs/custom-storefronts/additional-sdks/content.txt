@@ -1,0 +1,40 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Overview
+ Web SDKs
+ Backend SDKs
+ Additional SDKs
+ Shopify provides a range of additional SDKs and software tools to accelerate your storefront development process.
+ Web SDKs
+ Storefront API Client
+ Use the lightweight Storefront API Client to interact with the Storefront API in any JavaScript project.
+ Buy Button JS
+ Use the Buy Button library to quickly integrate customizable UI components into your website.
+ JavaScript Buy SDK
+ Use the JavaScript (JS) Buy SDK to add Shopify commerce features to any website.
+ Web Components
+ Use Web Components to include Shopify features on any website.
+ Backend SDKs
+ Use Shopify’s officially supported libraries to build fast, reliable apps with the programming languages and frameworks you already know.
+ Shopify/shopify-api-js
+ Use Shopify’s official client library for Node.js applications.
+ Shopify/shopify-api-php
+ Use Shopify’s official client library for PHP applications.
+ Shopify/shopify-api-ruby
+ Use Shopify’s official client library for Ruby applications.
+ Next steps
+ Learn more about the Buy Button JS
+ Learn more about the JS Buy SDK
+ Learn more about the Android Buy SDK
+ Learn more about the iOS Buy SDK
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Web SDKs
+ Backend SDKs
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

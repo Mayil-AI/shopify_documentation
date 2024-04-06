@@ -1,0 +1,105 @@
+Data fetching
+ Caching
+ Shopify API data
+ Third-party data
+ Full-page cache
+ Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Caching Shopify API data with Hydrogen and Oxygen
+ Hydrogen and Oxygen provide built-in caching to speed up Hydrogen storefronts. The caching API is based on the web-standard Cache-Control API.
+ By default, Hydrogen automatically caches Storefront API data when using Hydrogen’s built-in API client. You can customize or disable caching behavior for every request. You can optionally extend Hydrogen’s built-in utilities to cache data from third-party APIs.
+ Customer Account API data is never cached, because it’s personalized for each user.
+ Caching strategies
+ Hydrogen includes recommended caching strategies to help you determine which cache control header to set. The following table lists the available caching strategies and their associated cache control headers and cache durations:
+ Caching strategy Cache control header Cache duration
+ CacheShort() public, max-age=1, stale-while-revalidate=9 10 seconds
+ CacheLong() public, max-age=3600, stale-while-revalidate=82800 1 day
+ CacheNone() no-store No cache
+ CacheCustom() Define your own cache control header Custom
+ Default caching strategy
+ By default, each sub-request applies a strategy with the following cache options, which revalidates data after one second and caches it for up to one day:
+ 1 public, max-age=1, stale-while-revalidate=86399
+ Subrequest caching
+ You can configure the caching strategy for Storefront API data by passing a cache option with your query.
+ The following simplified example shows a component that displays product titles. Because titles don't change often, it caches the data using the CacheLong() strategy.
+ Caching product data with Hydrogen
+ JavaScript
+ TypeScript
+ /app/routes/products/$productHandle.jsx
+ 1 import {useLoaderData} from '@shopify/remix-oxygen';
+ 2
+ 3 export async function loader({params, context}) {
+ 4
+    const {handle} = params;
+ 5
+    const {storefront} = context;
+ 6
+ 7
+    const {product} = await storefront.query(PRODUCT_QUERY, {
+ 8
+      variables: {handle},
+ 9
+      // Product titles change less often, so they can be cached with CacheLong().
+ 10
+      cache: storefront.CacheLong()
+ 11
+    });
+ 12
+    return {product};
+ 13 }
+ 14
+ 15 export default function Product() {
+ 16
+    const {product} = useLoaderData();
+ 17
+    return (
+ 18
+      <h1>{product.title}</h1>
+ 19
+    )
+ 20 }
+ 21
+ 22 const PRODUCT_QUERY = `#graphql
+ 23
+    product(handle: $handle) {
+ 24
+      id
+ 25
+      title
+ 26
+    }`
+ Custom caching strategies
+ If you don't want to use the caching strategies built into Hydrogen, then you can create your own with the CacheCustom() function. This function accepts options compatible with the Cache-Control API.
+ The following strategy directs clients to revalidate the cached data when it’s no longer fresh, not to transform the data, and to consider it fresh for a maximum of 30 seconds:
+ Example custom caching strategy
+ JavaScript
+ TypeScript
+ 1 storefront.CacheCustom({
+ 2
+    mode: 'must-revalidate, no-transform',
+ 3
+    maxAge: 30,
+ 4 })
+ Cache-Control API
+ Hydrogen and Oxygen caching strategies are compatible with the HTTP Header Cache-Control API, with a small number of exceptions.
+ The following options are available when creating a custom caching strategy with CacheCustom():
+ Option Type Description
+ mode String One or more comma-separated directives for how caches should handle response data. Accepts public, private, no-store, must-revalidate, and no-transform.
+ maxAge Number The length of time, in seconds, to cache the response.
+ staleWhileRevalidate Number The length of time, in seconds, to serve a stale response while fetching a fresh one in the background.
+ sMaxAge Number The length of time, in seconds, that proxies or CDNs can store the response.
+ staleIfError Number The length of time, in seconds, for the browser to serve a cached response instead when it receives a 5xx error.
+ Cache-Control API exceptions
+ The no-cache directive isn't supported by Oxygen because it instructs the browser not to use the cached data until the server returns a 304 (Not Modified) status from server. However, Oxygen doesn't return the 304 response status code, so this directive has no effect.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Caching strategies
+ Subrequest caching
+ Custom caching strategies
+ Cache-Control API
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,295 @@
+Manage metafield definitions
+ Create an automated collection with metafields
+ Validation options
+ Overview
+ Manage validation options
+ App-data metafields
+ Private metafields
+ Migrate private metafields
+ Migrate metafields
+ Metaobjects
+ Validation options
+ Metafield definitions can have validation options. Validation options enable you to apply additional constraints to the data that a metafield can store, such as a minimum or maximum value, or a regular expression. The type of the metafield definition determines which validation options are available.
+ How it works
+ You can include a validation option for a metafield definition using the validation name and a corresponding value. The appropriate value depends on the metafield type that the validation applies to. For more information about the supported formats and units of measurement available for each type, refer to Metafield types.
+ Learn more about creating a metafield definition with validation options. Refer to the following table for more examples.
+ Supported validation options
+ The following table describes the validation options available for metafield definitions. Refer to the examples for validation option code snippets.
+ Validation option Description Supported types Use cases
+ Minimum length Sets the minimum length of a text value
+ single_line_text_field
+ multi_line_text_field
+ A blog summary needs to be at least 100 characters, so that it provides enough detail.
+ A value such as a zip code needs to have an exact character length, so set the minimum and maximum lengths to the same value.
+ Maximum length Sets the maximum length of a text value
+ single_line_text_field
+ multi_line_text_field
+ A blog summary or a product description needs to have a maximum length of 150 characters so that it fits in a designated area of your page.
+ A value such as a phone number needs to have an exact character length of ten, so set minimum length and maximum length to 10.
+ Regular expression Sets a regular expression. Shopify supports RE2.
+ single_line_text_field
+ multi_line_text_field
+ An email field requires an @ symbol followed by a . and some text.
+ A serial number needs to start with a specific set of characters.
+ Allowed domains A list of allowed domains. url
+ Allow links to specific social media sites at the bottom of an article.
+ Allow links to other pages within your site for a list of similar products.
+ Choices A list of up to 128 predefined options that limit the values allowed for the metafield. single_line_text_field
+ The flavor profile field for coffee products allows the following choices: Floral, Sweet, Nutty, and Other.
+ The field for sizing fits for a product allows the following choices: True to size, Runs large, Runs small.
+ File type options Sets a list of file type options. Leaving this empty allows all files, regardless of type.
+ 
+ Valid values: Image, Video. file_reference
+ A file reference from a blog to an author photo needs to be to an image file type.
+ A file reference to a demonstration video in MP4 format.
+ A file reference from an order to product instructions in PDF format.
+ Maximum precision Sets the maximum number of decimal places to store for a decimal number number_decimal
+ A version number field needs to accept a number with one decimal place.
+ A specification field for a product needs to have a maximum of three decimal places.
+ Minimum date Sets the minimum date in ISO 8601 format date The date field for an expiry date or a product release needs to be after a specific date.
+ Maximum date Sets the maximum date in ISO 8601 format date The date for future product availability can't be later than a specific date.
+ Minimum datetime Sets the minimum date and time in ISO 8601 format date_time A product release occurs on a specific date at midnight, and the product won't display before that date and time.
+ Maximum datetime Sets the maximum date and time in ISO 8601 format date_time A customer loyalty reward expires on a specific date and time. The reward can't be used after that date and time.
+ Minimum weight Sets the minimum weight weight A bundled product weight field needs to have a maximum allowed weight.
+ Maximum weight Sets the maximum weight weight An order requires a minimum weight for shipping.
+ Minimum volume Sets the minimum volume volume
+ A product volume field needs to have a specific minimum volume.
+ A product needs to have an exact volume, so you set minimum volume and maximum volume to the same value.
+ Maximum volume Sets the maximum volume volume
+ A product volume field needs to have certain maximum volume.
+ A product needs to have an exact volume, so you set minimum volume and maximum volume to the same value.
+ Minimum dimension Sets the minimum dimension dimension A product needs to have a minimum length, width, or height.
+ Maximum dimension Sets the maximum dimension dimension A product needs to have a maximum length, width, or height.
+ Minimum integer Sets the minimum integer number number_integer A product number needs to be within a specific range of numbers, so you set the minimum and maximum integer validations to create the range.
+ Maximum integer Sets the maximum integer number number_integer A product number needs to be within a specific range of numbers, so you set the minimum and maximum integer validations to create the range.
+ Minimum decimal Sets the minimum decimal number number_decimal A product version field needs to accept a version number that's greater than a specific decimal number, such as 0.5.
+ Maximum decimal Sets the maximum decimal number number_decimal A product version field needs to accept a version number that's less than a specific decimal number, such as 1.99.
+ Metaobject definition Sets the metaobject definition that a reference must point to
+ metaobject_reference
+ list.metaobject_reference
+ A product refers to a Designer metaobject.
+ Multiple metaobject definitions Sets the permitted metaobject definitions that can be referred to
+ mixed_reference
+ list.mixed_reference
+ A product that references a list of different Material metaobjects.
+ A dynamic placeholder reference that can support a union set of metaobject definitions.
+ JSON schema Sets the permitted JSON format. The JSON schema provides an example of a standard way to structure your JSON, and contains information about valid data types and the key descriptions. json Data from a 3rd-party app must match a specific JSON schema.
+ Examples
+ This section provides examples of each validation option.
+ Minimum length
+ The following example validates the minimum length of a text value to eight characters.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "8"
+ Maximum length
+ The following example validates the maximum length of a text value to 25 characters.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "25"
+ Regular expression
+ The following example validates a regular expression that matches the pattern (@)(.+)$.
+ 1 validations:
+ 2
+    name: regex,
+ 3
+    value: "(@)(.+)$"
+ Allowed domains
+ The following example validates shopify.com against a list of allowed domains.
+ 1 validations:
+ 2
+    name: allowed_domains,
+ 3
+    value: "[\"shopify.com\"]"
+ Choices
+ The following example validates the values allowed for the metafield: red, green, blue.
+ 1 validations:
+ 2
+    name: choices,
+ 3
+    value: "[\"red\", \"green\", \"blue\"]"
+ File type options
+ The following example validates the allowed file type options: Image, Video.
+ 1 validations:
+ 2
+    name: file_type_options,
+ 3
+    value:"[\"Image\",\"Video\"]"
+ Maximum precision
+ The following example validates that the maximum number of decimal places to store for a floating-point number is two.
+ 1 validations:
+ 2
+    name: max_precision,
+ 3
+    value: "2"
+ Minimum date
+ The following example validates the setting for the minimum date in ISO 8601 format.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "2022-01-01"
+ Maximum date
+ The following example validates the setting for the maximum date in ISO 8601 format.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "2022-03-03"
+ Minimum datetime
+ The following example validates the setting for the minimum date and time in ISO 8601 format.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "2022-03-03T16:30:00"
+ Maximum datetime
+ The following example validates the setting for the maximum date and time in ISO 8601 format.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "2022-03-03T16:30:00"
+ Minimum weight
+ The following example validates a setting for the minimum weight to be ten grams.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "{\"unit\":\"g\",\"value\":10}"
+ Maximum weight
+ The following example validates a setting for the maximum weight to be 50 grams.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "{\"unit\":\"g\",\"value\":50}"
+ Minimum volume
+ The following example validates a setting for the minimum volume to be five milliliters.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "{\"unit\":\"ml\",\"value\":5}"
+ Maximum volume
+ The following example validates a setting for the maximum volume to be 50 milliliters.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "{\"unit\":\"ml\",\"value\":50}"
+ Minimum dimension
+ The following example validates a setting for the minimum dimension to be five centimeters.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "{\"unit\":\"cm\",\"value\":5}"
+ Maximum dimension
+ The following example validates a setting for the maximum dimension to be 50 centimeters.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "{\"unit\":\"cm\",\"value\":50}"
+ Minimum integer
+ The following example validates a setting for the minimum integer number to be nine.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "9"
+ Maximum integer
+ The following example validates a setting for the maximum integer number to be 15.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "15"
+ Minimum decimal
+ The following example validates a setting for the minimum decimal number to be 0.5.
+ 1 validations:
+ 2
+    name: min,
+ 3
+    value: "0.5"
+ Maximum decimal
+ The following example validates a setting for the maximum decimal number to be 1.99.
+ 1 validations:
+ 2
+    name: max,
+ 3
+    value: "1.99"
+ Metaobject definition
+ The following example validates a setting for the metaobject definition that a reference must point to.
+ 1 validations:
+ 2
+    name: metaobject_definition_id,
+ 3
+    value: "gid://shopify/MetaobjectDefinition/123"
+ Multiple metaobject definitions
+ The following example validates a setting for the permitted metaobject definitions that can be referred to.
+ 1 validations:
+ 2
+    name: metaobject_definition_ids,
+ 3
+    value: "[\"gid://shopify/MetaobjectDefinition/123\",\"gid://shopify/MetaobjectDefinition/456\"]"
+ JSON schema
+ The following example validates a setting for the permitted JSON format.
+ 1 validations:
+ 2
+    name: schema,
+ 3
+    value: "{
+ 4
+      \"\$id\": \"https://example.com/person.schema.json\",
+ 5
+      \"\$schema\": \"https://json-schema.org/draft/2020-12/schema\",
+ 6
+      \"title\": \"Person\",
+ 7
+      \"type\": \"object\",
+ 8
+      \"properties\": {
+ 9
+          \"firstName\": {
+ 10
+              \"type\": \"string\",
+ 11
+              \"description\": \"The person's first name.\"
+ 12
+          },
+ 13
+          \"lastName\": {
+ 14
+              \"type\": \"string\",
+ 15
+              \"description\": \"The person's last name.\"
+ 16
+          },
+ 17
+          \"age\": {
+ 18
+              \"description\": \"Age in years >= 0.\",
+ 19
+              \"type\": \"integer\",
+ 20
+              \"minimum\": 0
+ 21
+          }
+ 22
+      }
+ 23 }"
+ Next steps
+ Learn how to manage metafield definitions using the GraphQL Admin API.
+ Learn how to manage validation options using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Supported validation options
+ Examples
+ Next steps

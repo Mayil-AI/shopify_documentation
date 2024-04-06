@@ -1,0 +1,145 @@
+Templates
+ Templates control what's rendered on each type of page in a theme.
+ Each page type in an online store has an associated template type. You can use the template to add functionality that makes sense for the page type. For example, to render a product page, the theme needs at least one template of type product. Similarly, to render a metaobject page, the theme needs at least one template of type metaobject/{metaobject-type}, for example: metaobject/book or metaobject/author, depending on the type of metaobject definition.
+ You can create multiple versions of the same template type to create custom templates for different use cases. For example, you can create a separate product template for outerwear products, or a separate page template for pages with video content.
+ Location
+ Template files are located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ├── 404.json
+ 5
+      |   ├── article.json
+ 6
+      |   ...
+ 7
+      ...
+ Subtypes
+ You can use two different template file types in your theme. These template file types can be used to build multiple template types, each of which represents a type of content in a merchant's online store.
+ File types
+ There are two different file types you can use for a theme template: JSON and Liquid.
+ Some template types support only the Liquid file type, while other template types support either template file type.
+ Type Description
+ JSON JSON templates are data files with the .json file extension. These templates let you easily populate your template with content from sections. Sections can be added, removed, or rearranged by merchants using the theme editor.
+ 
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ 
+ To learn more, refer to JSON templates.
+ Liquid Liquid templates are Liquid markup files, with the .liquid file extension. You can add Liquid and HTML directly to Liquid templates.
+ JSON vs. Liquid
+ If you want to use sections in a template, then you should use a JSON template.
+ JSON templates provide more flexibility for merchants to add, remove, and reorder sections, including app sections. Additionally, they minimize the amount of data in settings_data.json. Instead, data is stored directly in the template, which improves the performance of the theme editor.
+ Template types
+ Each available template type represents a type of content in a merchant's online store. No template types are required. However, you must have a matching template for any page type that you want to render. For example, to render a product page, you need at least one template of type product.
+ You can have a maximum of 1000 JSON templates in your theme, across all template types. For example, if you have 20 JSON product templates, 10 JSON page templates, and 5 JSON collection templates, then you can add up to 965 additional templates to the theme.
+ You can use the following template types in your theme. To learn more about each template type, click on the template name.
+ Note
+ The gift_card and robots.txt templates can't be JSON templates, so you must make them Liquid templates.
+ Type Description
+ 404 Renders page content that is shown to customers if they enter an invalid URL for the store.
+ article Renders the article page, which contains the full content of the article, as well as an optional comments section for customers. This template is used for items like individual posts in a blog.
+ blog Renders the blog page, which lists all articles within a blog.
+ cart Renders the /cart page, which provides an overview of the contents of a customer’s cart.
+ collection Renders the collection page, which lists all products within a collection.
+ customers/account Renders the customer account page, which provides an overview of the customer’s account.
+ customers/activate_account Renders the customer account activation page, which hosts the form for activating a customer account.
+ customers/addresses Renders the customer addresses page, which allows customers to view and manage their current addresses, as well as add new ones.
+ customers/login Renders the customer login page, which hosts the form for logging into a customer account.
+ customers/order Renders the customer order page, which displays the details of a customer’s past orders.
+ customers/register Renders the customer register page, which hosts the form for customer account creation.
+ customers/reset_password Renders the password reset page, which hosts the form to reset the password for a customer account.
+ gift_card.liquid Renders the gift card page, which displays the gift card issued to a customer upon purchase.
+ 
+ This must be a Liquid template.
+ index Renders the home page of the store, located at the root URL (/).
+ list-collections Renders the collection list page, which lists all the store's collections. This page is located at the /collections URL of the store.
+ page Renders the shop’s pages, such as About us and Contact us.
+ password Renders the /password page, which is a landing page shown when you add password protection to your online store. This page includes a message that is editable by merchants, and the password form for customers to gain access to the store.
+ product Renders the product page, which contains a product's media and content, as well as a form for customers to select a variant and add it to the cart.
+ robots.txt.liquid Renders the robots.txt file, which is hosted at the /robots.txt URL. This file tells search engines which pages can, or can't, be crawled on a site.
+ 
+ This must be a Liquid template.
+ search Renders the /search page, which displays the results of a storefront search.
+ metaobject Renders metaobject pages, such as “artists” or “authors”. To render each metaobject entry as an individual page, the metaobject definition must have the web page capability.
+ Schema
+ A Liquid template doesn't have a fixed schema. Refer to Content for information about what you can include in a Liquid template.
+ A JSON template accepts only a JSON file with a fixed schema and list of accepted attributes. For information about the schema of a JSON template, refer to JSON templates.
+ Content
+ The content that you can include in a template depends on whether it is a JSON template or a Liquid template.
+ You should always keep the goal of the template type in mind when deciding what content you want to include in a template. For example, a product template, or a section in the product template, should always include the product object, which renders product details, and the product form tag, which lets customers add a product variant to the cart. Depending on your template type and approach, you might want to include these items in a section that you reference in the template.
+ A Liquid template accepts standard HTML and Liquid. Liquid templates can access any global Liquid objects, as well as the object that's associated with the template. For more information, refer to the documentation for each template type.
+ A JSON template accepts only JSON with a fixed schema and list of accepted attributes. For more information, refer to JSON templates.
+ Usage
+ When working with template files, you should familiarize yourself with alternate templates and how to use them.
+ Alternate templates
+ In some cases, you might need to create different markup for the same template. For example, you might want to create an alternate template that includes different sections for specific products.
+ You can create an alternate template locally, through the theme code editor, or through the theme editor.
+ Note
+ You can't replace the default template with an alternate template. If the default template doesn't meet your needs, then you can edit the template code to customize it.
+ Contextual templates
+ When a merchant adapts a template for a specific buyer context, a new contextual template file is created. The file takes the name of the context in the following format: index.context.<context-string>.json
+ A contextual template file includes the overrides that you make to the template for a context. The context and parent template are defined at the top of the template. The context value can contain either "market": "market-handle" or "b2b": true. For example, the following code contextualizes the image-banner section for market handle ca:
+ index.context.ca
+ 1 {
+ 2
+    "context": {
+ 3
+      "market": "ca"
+ 4
+    },
+ 5
+    "parent": "index.json",
+ 6
+    "sections": {
+ 7
+      "image_banner": {
+ 8
+        "blocks": {
+ 9
+          "heading": {
+ 10
+            "disabled": true,
+ 11
+            "settings": {
+ 12
+              "heading_size": "h2"
+ 13
+            }
+ 14
+          }
+ 15
+        },
+ 16
+        "settings": {
+ 17
+          "show_text_box": true
+ 18
+        }
+ Name structure
+ Alternate template files use the following name structure, where template-name is the template name, template-suffix is the alternate name, and template-file-type is the file type, which is either json or liquid:
+ 1 template-name.template-suffix.template-file-type
+ For example, if you create an alternate JSON product template with the name of alternate, then the file name would be the following:
+ 1 product.alternate.json
+ Use an alternate template
+ After an alternate template has been created, it can be applied in the following ways:
+ It can be assigned to an associated resource in the Shopify admin.
+ It can be previewed in the theme editor.
+ It can be rendered on the storefront with the view URL parameter.
+ Tip
+ You can identify which template is currently being used with the template object.
+ Render an alternate template
+ Alternate templates can be rendered on the storefront with the view URL parameter. This parameter should be in the format of ?view=[template-suffix], where [template-suffix] is the template's alternate name.
+ For example, given the product.alternate.json template from the previous section, and a product called Example product, you can render that product with that template using the following:
+ 1 /products/example-product?view=alternate
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Subtypes
+ Schema
+ Content
+ Usage
+ Updates & News

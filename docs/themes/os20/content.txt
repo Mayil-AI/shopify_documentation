@@ -1,0 +1,40 @@
+Migrating to Online Store 2.0
+ Overview
+ Assessment
+ Migration guide
+ Troubleshooting
+ Theme Store
+ Online Store 2.0
+ Online Store 2.0 is a set of features and feature improvements that make themes and theme apps easier to build, more flexible, and easier to maintain.
+ Many Online Store 2.0 features rely on JSON templates. You can migrate a theme's templates to add support for these features by converting a Liquid template into a JSON template, and moving any required Liquid code or HTML into sections that you can include in the new JSON template.
+ Upgrading to Online Store 2.0 isn't mandatory. Merchants can continue using a vintage theme if it meets their needs.
+ Added functionality and support
+ After you migrate your theme to Online Store 2.0, the theme can use or support the following features.
+ Note
+ These features were announced at Shopify Unite 2021. Watch the full Shopify Unite 2021 stream.
+ Sections on every page
+ Online Store 2.0 introduces a new JSON template format that lets you add new and existing sections to most pages in your theme, and add and remove sections from any page directly in the Shopify theme editor.
+ This feature lets merchants personalize many more aspects of a store without relying on a developer. It also lets developers build maintainable themes with more modular components.
+ Dynamic sources
+ Merchants can connect dynamic sources to settings in their themes. A dynamic source is an attribute that updates to reflect its context. It can be an object attribute or custom metafield attribute.
+ You can also introduce standard metafields as default settings in your theme. Using standard metafields can help to make your components more flexible and reusable, or to provide standard templates for certain business segments.
+ App blocks
+ Themes that use this new architecture can add support for app blocks built with theme app extensions, an app development framework that lets you add an app to a theme, or update an app, without altering a merchant's theme code. Code is packaged in modular app blocks that merchants can control using the Shopify theme editor. When an app is uninstalled by a merchant, the app code is removed with it. This makes your theme easier to support and troubleshoot.
+ Migrating to Online Store 2.0
+ You can add Online Store 2.0 features to a store in several ways:
+ Download an Online Store 2.0 theme from the Shopify Theme Store: Update the look of a store and get access to new features by downloading a new theme from the Shopify Theme Store.
+ Download a new version of a theme: If a theme offers an updated version that uses Online Store 2.0, then you can add the latest theme version to a store manually.
+ Migrate a theme manually: Add Online Store 2.0 functionality to a theme by converting a Liquid template into a JSON template, and moving any required Liquid code or HTML into sections that you can include in the new JSON template.
+ You can migrate individual templates to take advantage of Online Store 2.0 features in specific parts of your theme, or you can migrate the entire theme by migrating all templates.
+ You don't need to be a developer or a Shopify Partner to migrate your own theme manually, but migrating a theme requires an understanding of Liquid, HTML, CSS, and JavaScript.
+ Before you migrate your own theme or a customer's theme, you can review the migration assessment to identify which path makes sense for your or your customer's business.
+ Migration assessment
+ Identify the best Online Store 2.0 migration path for a business.
+ Migration guide
+ Learn how to migrate a template to add support for Online Store 2.0 features.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Added functionality and support
+ Migrating to Online Store 2.0
+ Updates & News

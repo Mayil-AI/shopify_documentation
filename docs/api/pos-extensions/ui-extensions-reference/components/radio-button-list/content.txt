@@ -1,0 +1,20 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ RadioButtonList
+ A radio button list lets merchants select from a given set of options.
+ Props
+ Name Type Description
+ items string[] The radio button options.
+ onItemSelected (item: string) => void A callback to be performed when the radio list item is selected.
+ initialSelectedItem string? The name of the selected item when the radio button list is first rendered.
+ initialOffsetToShowSelectedItem boolean? Whether the initialSelectedItem renders at the top of the list.
+ Guidelines
+ Content guidelines
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Props
+ Guidelines
+ Content guidelines

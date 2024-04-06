@@ -1,0 +1,240 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Overview
+ Manage fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Manage fulfillments for prepaid subscriptions
+ After a prepaid subscription has been billed for, the merchant or customer might want to make changes to the subscription contract or order. For example, they might want to reschedule a shipment or refund one of the scheduled fulfillments.
+ This guide shows how to manage and make changes to scheduled fulfillments for prepaid subscriptions.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the merchant_managed_fulfillment_orders and third_party_fulfillment_orders access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You're familiar with how prepaid subscriptions work.
+ You have a prepaid subscription order that has scheduled fulfillment orders.
+ Manually open a fulfillment order
+ Merchants can opt to Fulfill early for scheduled fulfillments in the Shopify admin. For scheduled fulfillment orders, this changes the fulfillment order's status to OPEN ahead of the fulfillAt date.
+ You can also use the fulfillmentOrderOpen mutation to set a fulfillment order's status to OPEN, as demonstrated in the following example:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    fulfillmentOrderOpen(id: "gid://shopify/FulfillmentOrder/1899849515064") {
+ 3
+      fulfillmentOrder {
+ 4
+        id
+ 5
+        status
+ 6
+      }
+ 7
+      userErrors {
+ 8
+        field
+ 9
+        message
+ 10
+      }
+ 11
+    }
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "fulfillmentOrderOpen": {
+ 4
+        "fulfillmentOrder": {
+ 5
+          "id": "gid://shopify/FulfillmentOrder/1899849515064",
+ 6
+          "status": "OPEN"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    },
+ 11
+    ...
+ 12 }
+ Skip a fulfillment order
+ A customer might want to skip a scheduled fulfillment of a product. For example, in the case of a three-month prepaid coffee subscription, a customer might decide to skip fulfillment because they already have enough coffee that month.
+ To skip a fulfillment order, you need to reschedule the fulfillment order and change the subscription contract's renewal date if applicable.
+ Reschedule a fulfillment order
+ Pass a new fulfillAt date to the fulfillmentOrderReschedule mutation to reschedule a fulfillment order. In this example, the fulfillment order is rescheduled from Feb 15 to Apr 15.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    fulfillmentOrderReschedule(
+ 3
+      id: "gid://shopify/FulfillmentOrder/1899851251768"
+ 4
+      fulfillAt: "2022-04-15”
+ 5
+    ) {
+ 6
+      fulfillmentOrder {
+ 7
+        fulfillAt
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+      "FulfillmentOrderReschedule": {
+ 4
+        "fulfillmentOrder": {
+ 5
+          "fulfillAt": "2022-04-15T00:00:00Z"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    },
+ 10
+    ...
+ 11 }
+ Change the contract renewal date
+ To change the contract renewal date, you can use the subscriptionContractSetNextBillingDate mutation. Because the previous example rescheduled a fulfillment order from Feb 15 to Apr 15, the renewal date is changed to May 15 for the following example:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionContractSetNextBillingDate(
+ 3
+      contractId: "gid://shopify/SubscriptionContract/1671224"
+ 4
+      date: "2022-05-15"
+ 5
+    ) {
+ 6
+      contract {
+ 7
+        nextBillingDate
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionContractSetNextBillingDate": {
+ 4
+        "contract": {
+ 5
+          "nextBillingDate": "2022-05-15T00:00:00Z"
+ 6
+        },
+ 7
+        "userErrors": []
+ 8
+      }
+ 9
+    },
+ 10
+    ...
+ 11 }
+ Refund a scheduled fulfillment
+ Caution
+ When you refund fulfillment orders, it doesn't automatically cancel the renewal that's associated with the subscription contract. To cancel the renewal, you also need to update the subscription contract.
+ A customer might want to refund one or more of their scheduled fulfillments. Fulfillment order cancellations and refunds are processed in reverse chronological order. You can pass the quantity to the refundCreate mutation to determine how many subscription cycles should be cancelled.
+ The following example cancels the last four months of a six-month prepaid subscription:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    refundCreate(
+ 3
+      input: {
+ 4
+        orderId: "gid://shopify/Order/2067697074232"
+ 5
+        refundLineItems: {
+ 6
+          lineItemId: "gid://shopify/LineItem/4780880232504"
+ 7
+          quantity: 4
+ 8
+          restockType: CANCEL
+ 9
+          locationId: "gid://shopify/Location/9562054"
+ 10
+        }
+ 11
+      }
+ 12
+    ) {
+ 13
+      refund {
+ 14
+        id
+ 15
+      }
+ 16
+      userErrors {
+ 17
+        field
+ 18
+        message
+ 19
+      }
+ 20
+    }
+ 21 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "refundCreate": {
+ 4
+        "refund": {
+ 5
+          "id": "gid://shopify/Refund/659856"
+ 6
+ 9
+    },
+ 10
+    ...
+ 11 }
+ Next steps
+ Learn how to manage orders for prepaid subscriptions by keeping subscription contract and order information in sync.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Manually open a fulfillment order
+ Skip a fulfillment order
+ Refund a scheduled fulfillment
+ Next steps

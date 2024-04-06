@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Localization object
+ 2024-04 latest
+ Information about the localized experiences configured for the shop.
+ On this page
+ Fields
+ Types that return Localization
+ Fields
+ country (Country!)
+ The country of the active localized experience.
+ language (Language!)
+ The language of the active localized experience.
+ market (Market!)
+ The market of the active localized experience.
+ Types that return Localization
+ Input.localization
+ Was this page helpful?
+ YesNo

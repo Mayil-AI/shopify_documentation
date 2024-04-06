@@ -1,0 +1,75 @@
+Theme Store
+ Install Shopify CLI
+ This guide shows you how to install Shopify CLI on macOS, Windows, or Linux.
+ Requirements
+ The requirements to install and run Shopify CLI depend on your operating system:
+ Operating system Requirements
+ macOS
+ Homebrew
+ Node.js 18 or higher.
+ Ruby
+ Git
+ Note: When you install Shopify CLI using Homebrew, Homebrew installs Node.js, Ruby, and Git for you.
+ Windows
+ Node.js 18 or higher.
+ Ruby+Devkit 3.0, installed using RubyInstaller for Windows
+ (select the MSYS2 component and the MSYS2 base installation option)
+ Git
+ Bundler 2.3.8 or higher
+ Linux
+ Node.js 18 or higher.
+ Ruby 3.0
+ Ruby development environment (ruby-dev / ruby-devel)
+ Git
+ cURL
+ GCC
+ g++
+ Make
+ Installing requirements for Linux
+ Use the following commands to install all of the requirements to install and run Shopify CLI on Linux, other than Node.js:
+ Terminal
+ apt
+ Yum
+ $ sudo apt update && sudo apt upgrade
+ $
+ $ sudo apt install curl gcc g++ make
+ $
+ $ sudo apt install ruby-full
+ $
+ $ sudo apt install ruby-dev
+ # Ruby development environment
+ $
+ $ sudo apt install git
+ Install Shopify CLI
+ Shopify CLI is managed as a set of Node.js packages:
+ @shopify/cli
+ @shopify/theme
+ You can install these packages using Homebrew on macOS, or by installing the packages globally on Windows or Linux.
+ macOS
+ You can install Shopify CLI on macOS using Homebrew.
+ You need to add Shopify's third-party repositories to Homebrew using brew tap before you can install Shopify CLI.
+ Terminal
+ $ brew tap shopify/shopify
+ $ brew install shopify-cli
+ Note
+ Homebrew installs all of the requirements for running Shopify CLI, including Ruby, Node.js, and Git, for you.
+ Windows and Linux
+ To install Shopify CLI for themes, install the @shopify/cli and @shopify/theme Node.js packages globally using the command line.
+ Terminal
+ $ npm install -g @shopify/cli @shopify/theme
+ Verify the installation
+ To verify that Shopify CLI is installed properly, run the following command:
+ Terminal
+ $ shopify version
+ 
+ The command returns a version number.
+ Next steps
+ Review the available commands
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Install Shopify CLI
+ Verify the installation
+ Next steps
+ Updates & News

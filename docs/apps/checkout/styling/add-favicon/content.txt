@@ -1,0 +1,220 @@
+App Store
+ Add the favicon
+ You can use the GraphQL Admin API to add the favicon that displays at checkout, for a visual representation of your brand.
+ Tip
+ You can reset styles to their defaults by writing parent fields to null with the GraphQL Admin API. Refer to examples of resetting some and all values to the defaults.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Upload an image for the favicon that displays at checkout
+ Retrieve a list of your store's checkout profile IDs
+ Apply the favicon and view it in checkout
+ Requirements
+ The store that you're modifying must be on a Shopify Plus plan.
+ You've created a new development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ You've completed the GraphQL and REST Admin API getting started guide.
+ You've either installed the GraphiQL app on your store or created an app, with the read_checkout_branding_settings and write_checkout_branding_settings access scopes.
+ You're using API version 2023-10 or higher.
+ You're familiar with the GraphQL Admin API's branding types.
+ Step 1: Upload the icon
+ Customizing the checkout favicon requires you to first upload the icon to Shopify as a stagedUpload or your own hosting.
+ Step 2: Create the file asset
+ Make a request to the GraphQL Admin API's fileCreate mutation, passing an external URL or a staged upload URL as the originalSource. You'll use the id value when you add the image as the favicon.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation fileCreate($files: [FileCreateInput!]!) {
+ 2
+    fileCreate(files: $files) {
+ 3
+      files {
+ 4
+        id
+ 5
+        alt
+ 6
+        createdAt
+ 7
+      }
+ 8
+    }
+ 9 }
+ Query variables
+ 1 {
+ 2
+    "files": [
+ 3
+      {
+ 4
+        "alt": "Our logo, a leaf from the Monstera Deliciosa plant",
+ 5
+        "filename": "favicon-image",
+ 6
+        "originalSource": "https://{example}.com/custom-favicon-for-checkout"
+ 7
+      }
+ 8
+    ]
+ 3
+      "fileCreate": {
+ 4
+        "files": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/MediaImage/34829967327254",
+ 7
+            "alt": "Our logo, a leaf from the Monstera Deliciosa plant",
+ 8
+            "filename": "favicon-image",
+ 9
+            "createdAt": "2023-11-107T02:44:06Z"
+ 10
+ 13
+    },
+ 14 }
+ Step 3: Retrieve the store's checkout profile IDs
+ Checkout styling properties apply to a checkout profile ID. In this step, you'll retrieve the checkout profile to which you'll apply favicon changes.
+ Query checkoutProfiles to retrieve a list of checkout profile IDs.
+ The is_published parameter indicates which checkout profile is currently applied to your store's live checkout.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query checkoutProfiles {
+ 2
+    checkoutProfiles(first: 1, query: "is_published:true") {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+          name
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutProfiles": {
+ 4
+        "edges": [
+              "id": "gid://shopify/CheckoutProfile/1",
+ 8
+              "name": "Default checkout profile"
+ 9
+            }
+ 10
+          }
+ 11
+        ]
+ 12
+      }
+ 13
+    }
+ 14 }
+ Make note of your corresponding ID from the list. You'll supply the ID in subsequent mutations.
+ Step 4: Set the favicon image
+ Call the checkoutBrandingUpsert mutation, passing the mediaImageId. This is the id value that the fileCreate mutation returned.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation checkoutBrandingUpsert($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(
+ 3
+      checkoutBrandingInput: $checkoutBrandingInput
+ 4
+      checkoutProfileId: $checkoutProfileId
+ 5
+    ) {
+ 6
+      checkoutBranding {
+ 7
+        customizations {
+ 8
+          favicon {
+ 9
+            image {
+ 10
+              id
+ 11
+            }
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+      userErrors {
+ 16
+        field
+ 17
+        message
+ 18
+      }
+ 19
+    }
+ 20 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/{profile_ID}",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "favicon": {
+ 6
+          "mediaImageId": "gid://shopify/MediaImage/34829967327254"
+ 7
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "favicon": {
+ 7
+              "image": {
+ 8
+                "id": "gid://shopify/ImageSource/34839857299478"
+ 9
+              }
+ 10
+            }
+ 11
+          }
+ 12
+        },
+ 13
+        "userErrors": []
+ 14
+      }
+ 15
+    },
+ 16 }
+ Step 5: View the favicon in checkout
+ You can view the favicon in its draft and published state. You might need to refresh the page to see changes.
+ In the Shopify admin, click Settings.
+ Click Checkout.
+ In the Checkout page, click ....
+ Select one of the following:
+ If your checkout profile is live, select View.
+ If your checkout profile is in draft, select Preview.
+ Next steps
+ Explore the GraphQL Admin API to learn more about customizing checkout's favicon.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Upload the icon
+ Step 2: Create the file asset
+ Step 3: Retrieve the store's checkout profile IDs
+ Step 4: Set the favicon image
+ Step 5: View the favicon in checkout
+ Next steps
+ Updates & News
+ Developer changelog

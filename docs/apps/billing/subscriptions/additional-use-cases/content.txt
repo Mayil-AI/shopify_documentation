@@ -1,0 +1,25 @@
+Viewing charges and earnings
+ Best practices
+ App Store
+ Additional subscription use cases
+ Caution
+ Annual subscriptions don't support usage billing.
+ To tailor your app subscriptions to support more complex pricing models, use usage-based billing. For example, if your app has a default subscription and you want to enable merchants to purchase an optional, add-on subscription for a different product line, you can do the following:
+ Modify each subscription to reflect the additional modules that are available.
+ Track module billing in your application.
+ Use usage charges to bill the merchant for the desired amount at the desired time.
+ This guide shows how flexible usage-based billing is, and how app developers can leverage it to bill merchants for more complex pricing models. This is especially beneficial for larger app subscribers. The guide uses add-on modules as an example. You can also refer to an example mutation.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the applications_billing access scope.
+ Learn how to configure your access scopes using Shopify CLI.
+ Step 1: Account for additional spend in a subscription
+ Create a subscription for a usage-based pricing plan. You should set the capped amount to cover all the costs that you expect to charge merchants in the 30-day billing interval. For example, to charge the merchant $60 every 30 days for a base subscription, $0.10 per email as a usage-based charge, and an additional $30/day for an add-on module, your usage cap should be $30 and a reasonable average for email usage costs over a 30-day period.
+ Step 2: Keep track of billing intervals and usage
+ In your app, keep track of the billing cycles and/or usage that's associated with any additional charges. For example, if you want to bill biweekly, then you can create a recurring job that creates a usage charge for the desired amount every two weeks.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Account for additional spend in a subscription
+ Step 2: Keep track of billing intervals and usage

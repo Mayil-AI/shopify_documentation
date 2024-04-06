@@ -1,0 +1,85 @@
+Overview
+ Getting started
+ Create a subscription
+ UX guidelines
+ Payments
+ Billing
+ App Store
+ Post-purchase product offers
+ Beta
+ Post-purchase checkout extensions are in beta and can be used without restrictions in a development store. To use post-purchase extensions on a live store, you need to request access.
+ A post-purchase product offer is an additional sales opportunity that's displayed to customers immediately after they complete checkout. This guide introduces post-purchase checkout extensions, which allow merchants to add a post-purchase page directly into the Shopify checkout.
+ How it works
+ The post-purchase page appears after the order is confirmed, but before the Thank you page. You can use a post-purchase extension to add custom content such as the following:
+ Example Description
+ Upsell offers Prompt a customer to add more products to their initial order after they've completed payment.
+ Survey requests Ask a customer to complete a survey after they've completed checkout.
+ Feedback requests Ask a customer to complete a feedback form after they've completed checkout.
+ Donation requests Ask a customer to submit a donation after they've completed checkout.
+ Discount code offers Offer a customer additional discounts on products using a specific code.
+ Loyalty sign-ups Ask a customer to join a rewards or points program.
+ Important notifications Offer additional information that's valuable to customers.
+ Customer flow
+ The following diagram illustrates a high-level customer flow for an app that uses a post-purchase checkout extension:
+ The customer goes to the payment information page.
+ The page loads the Checkout::PostPurchase::ShouldRender extension point.
+ Optional: The extension makes a network call to your app server to obtain any data needed for the post-purchase page. The extension can store data in the browser's local storage, speeding up the time to the first render.
+ The extension returns the result of render to the payment information page. For render to be true, all the required conditions must be met. For example, the customer's credit card must be vaulted before the post-purchase offer is displayed.
+ The customer completes checkout.
+ If render returns true, then the post-purchase page loads the Checkout::PostPurchase::Render extension point. Any stored data is directly available to the render extension point. You app needs to call done to redirect the customer to the Order status page.
+ App Bridge Checkout
+ Post-purchase checkout extensions use App Bridge Checkout, a technology that hosts your extension on Shopify's CDN and integrates directly into the Shopify checkout. App Bridge Checkout includes a set of consistent UI components, targets, and development tools.
+ You create an extension by writing in Vanilla JS or React, and deciding whether to use TypeScript. Shopify securely hosts and renders your user interface in the client. When the extension appears to the customer in the checkout, it includes both app-provided and Shopify-provided interface elements, as shown in the following diagram:
+ Getting started
+ Follow this tutorial series to learn how to build post-purchase experiences.
+ Tutorial 1: Getting started with post-purchase checkout extensions
+ Create an upsell offer using a post-purchase checkout extension.
+ Tutorial 2: Create a post-purchase subscription
+ Add subscription products to your post-purchase checkout extension.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building post-purchase experiences.
+ Post-purchase extension points API
+ Consult the API reference for post-purchase extension points and their respective types.
+ Components for post-purchase extensions
+ Learn about the components that are available in post-purchase extensions.
+ Post-purchase extensions configuration
+ Learn about the properties that you can configure in your post-purchase checkout extension.
+ JWT specification
+ Learn how JWTs need to be structured in order to be used in post-purchase checkout extensions.
+ UX guidelines for post-purchase product offers
+ Explore UX guidelines that you can refer to when building post-purchase product offers.
+ Limitations and considerations
+ The following limitations and considerations for post-purchase checkout extensions apply:
+ Area Context
+ Payment provider Third-party payment providers that require the customer’s CVN/CVV to be retained aren't supported. This might include, but isn't limited to, payment providers such as Braintree, Payflow Pro, PayPal Payments Pro, and Eway.
+ Additional payment methods The post-purchase page won't be surfaced in the following scenarios:
+ The customer chooses to check out with an installment service or a wallet service (such as Klarna, Affirm, AfterPay, Apple Pay, Amazon Pay, or Google Pay).
+ The initial purchase was made with a gift card or any payment method other than a credit card.
+ Purchase events Third-party analytic services that use the Shopify Pixel API (such as Google Analytics, Facebook, Pinterest and Snap) report only the purchase event and value for the initial purchase.
+ Analytics Third-party analytics services that use the ScriptTag REST Admin API or GraphQL Admin API resource, or Additional Scripts have incomplete conversion data, because they're only triggered on the Order status page.
+ Duties and support for multiple currencies Post-purchase upsell offers won’t be surfaced on orders with duties and multiple currencies.
+ Order creation delays In scenarios such as flash sales where the Shopify Platform is under extreme load, our system might optimize to capture orders but briefly delay the order creation step for a fast and seamless buyer experience. In these scenarios, post-purchase pages won't be surfaced, even if the request for the post-purchase page was properly made.
+ Multiple apps Merchants with multiple apps that have the post-purchase checkout extension need to select which app appears on the post-purchase page. You can use a banner during app onboarding to let merchants know that they can select your app as the default post-purchase app in the Shopify admin checkout settings.
+ Fulfillment holds Shopify places a hold on fulfillment for all orders undergoing a post purchase cross-sell flow. Holds are released either when the customer visits the Order status page, or after a set amount of time, if the customer doesn't complete the post-purchase flow.
+ 
+ If the customer doesn't complete the flow (for example, the customer closes the browser before actioning the post-purchase upsell offer), then the fulfillment hold is lifted one hour after submission of the initial checkout. Fulfillment holds are only supported using the FulfillmentOrder resource.
+ Interaction with the Order status page The post-purchase page shouldn't be used as a replacement for the Order status page. For more information, refer to the customer flow.
+ API versioning The post-purchase checkout extension APIs aren't versioned and don't follow the Shopify API versioning quarterly release schedule.
+ Orders without a shipping address If the customer's checkout results in the creation of an order without a shipping address, then you can't add a subscription to the order using post-purchase. For example, a customer might have bought only digital products, which doesn't require a shipping address.
+ 
+ Similarly, a customer might choose local pickup as their delivery method, which also doesn't require a shipping address. You can determine in advance whether a shipping address exists by viewing the payment step within the ShouldRender extension point. If the destinationCountryCode input field is null, then no shipping address is set.
+ Orders for local delivery Post-purchase upsell offers won’t be surfaced on orders for local delivery.
+ Minimum order price Orders need to be $0.50 or more to qualify for post-purchase offers.
+ Accepted offers A customer can accept a maximum of two post-purchase offers for each checkout.
+ Number of post-purchase pages You can create only one post-purchase page. However, because a post-purchase extension is a single-page app, you can paginate the single page to create multiple pages.
+ Sales channel Orders need to be placed through the Online Store sales channel to qualify for post-purchase upsells. Other sales channels won't render post-purchase upsell pages.
+ Next steps
+ Get started building a post-purchase checkout extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Getting started
+ Developer tools and resources
+ Limitations and considerations
+ Next steps

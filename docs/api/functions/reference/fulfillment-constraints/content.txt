@@ -1,0 +1,35 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Fulfillment Constraints Function API overview
+ The Fulfillment Constraints API enables you to have a higher degree of customization when defining fulfillment and delivery strategies. With this API, checkout won't return any shipping rates if the configured constraints can't be met.
+ Example use cases
+ Ensure that n cart line items are fulfilled from the same location.
+ Ensure that n cart line items are fulfilled from any of the locations in a list.
+ Currently supported constraint types
+ MustFulfillFrom: Specifies a list of locations where cart items must be fulfilled from. If the cart items with constraints are not stocked at any of the locations in the list, then checkout won't return any shipping rates and completion of checkout will be blocked.
+ MustFulfillFromSameLocation: Specifies that cart items must be fulfilled from the same location. If the cart items with constraints aren't stocked at the same location, then checkout won't return any shipping rates and completion of checkout will be blocked.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Fulfillment Constraints API reference
+ Consult the GraphQL reference for the Fulfillment Constraints API.
+ Limitations and considerations
+ The Fulfillment Constraints functions currently support Checkout, Subscriptions and Draft Order invoice checkout.
+ The Fulfillment Constraints API doesn't currently support local pickup.
+ Customized constraint types aren't currently supported.
+ The Function's title and description are merchant-facing values, and are rendered as part of the user interface in the Shopify admin settings under Shipping and delivery > Order routing.
+ Next steps
+ Learn how to use Shopify Functions by building fulfillment constraints.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Currently supported constraint types
+ Developer tools and resources
+ Limitations and considerations
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

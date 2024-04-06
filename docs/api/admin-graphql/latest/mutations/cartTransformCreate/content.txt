@@ -1,0 +1,85 @@
+Billing
+ Bulk operations
+ Cart
+ Queries
+ Mutations
+ cartTransformCreate
+ cartTransformDelete
+ Objects
+ Checkout branding
+ Common objects
+ Customers
+ Discounts and marketing
+ Events
+ Inventory
+ Localizations
+ Marketplaces
+ Metafields
+ Metaobjects
+ Online store
+ Orders
+ Products and collections
+ Retail
+ Shipping and fulfillment
+ Shopify Markets
+ Shopify Payments
+ Store properties
+ GraphQL Types
+ cartTransformCreate
+ mutation
+ Requires write_cart_transforms access scope. Also: The shop must have upgraded to Checkout Extensibility and the user must have products and preferences permission to create a cart transform function.
+ Create a CartTransform function to the Shop.
+ Arguments
+ blockOnFailure
+ Boolean
+ default:
+ false
+ Whether a run failure should block cart and checkout operations.
+ functionId
+ String!
+ required
+ The identifier of the Function providing the cart transform.
+ Was this section helpful?
+ YesNo
+ CartTransformCreatePayload returns
+ cartTransform
+ CartTransform
+ The newly created cart transform function.
+ Show fields
+ userErrors
+ [CartTransformCreateUserError!]!
+ non-null
+ The list of errors that occurred from executing the mutation.
+ Show fields
+ Was this section helpful?
+ YesNo
+ Code
+ Map
+ Mutation
+ 1
+ 2
+ 8
+ 9
+ 10
+ 11
+ mutation cartTransformCreate($functionId: String!) {
+ cartTransformCreate(functionId: $functionId) {
+ cartTransform {
+ # CartTransform fields
+ }
+ userErrors {
+ field
+ message
+ }
+ }
+ }
+ Input
+ Variables
+ 1
+ 2
+ 3
+ 4
+ {
+ "blockOnFailure": true,
+ "functionId": "<your-functionId>"
+ }

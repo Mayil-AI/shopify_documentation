@@ -1,0 +1,270 @@
+API exploration
+ Products and collections
+ Search and discovery
+ Markets
+ Overview
+ International pricing
+ Multiple languages
+ Cart
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Support multiple languages on storefronts
+ You can use the Storefront API to support multiple languages on a storefront. This guide explains how to retrieve translated content and create a checkout in the customer's language with the Storefront API.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You're familiar with querying products and collections.
+ You've created resources that can be translated in your store.
+ You've created translated content using the GraphQL Admin API.
+ You're using API version 2022-04 or higher.
+ Step 1: Retrieve available languages
+ For each country context, the languages available are configured within the shop’s Markets settings. The following example shows how to access the list of available languages with the Localization object.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query Localization @inContext(country: US, language: ES) {
+ 2
+    localization {
+ 3
+      # for the current country
+ 4
+      availableLanguages {
+ 5
+        isoCode
+ 6
+        endonymName
+ 7
+      }
+ 8
+ 9
+      # and for non-current countries
+ 10
+      availableCountries {
+ 11
+        isoCode
+ 12
+        name
+ 13
+        availableLanguages {
+ 14
+          isoCode
+ 15
+          endonymName
+ 16
+ 19 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "localization": {
+ 4
+        "availableLanguages": [
+ 5
+          {
+ 6
+            "isoCode": "EN",
+ 7
+            "endonymName": "English"
+ 8
+          },
+ 9
+          {
+ 10
+            "isoCode": "ES",
+ 11
+            "endonymName": "Español"
+ 12
+          }
+ 13
+        ],
+ 14
+        "availableCountries": [
+ 15
+          {
+ 16
+            "isoCode": "CA",
+ 17
+            "name": "Canadá",
+ 18
+            "availableLanguages": [
+ 19
+              {
+ 20
+                "isoCode": "EN",
+ 21
+                "endonymName": "English"
+ 22
+              },
+ 23
+              {
+ 24
+                "isoCode": "FR",
+ 25
+                "endonymName": "français"
+ 26
+              }
+ 27
+            ]
+ 28
+          },
+ 29
+          {
+ 30
+            "isoCode": "US",
+ 31
+            "name": "Estados Unidos",
+ 32
+            "availableLanguages": [
+ 33
+              {
+ 34
+                "isoCode": "EN",
+ 35
+                "endonymName": "English"
+ 36
+              },
+ 37
+              {
+ 38
+                "isoCode": "ES",
+ 39
+                "endonymName": "Español"
+ 40
+              }
+ 41
+            ]
+ 42
+          }
+ 43
+        ]
+ 44
+      }
+ 45
+    },
+ 46
+    "extensions": {
+ 47
+      "context": {
+ 48
+        "country": "US",
+ 49
+        "language": "ES"
+ 50
+      }
+ 51
+    }
+ 52 }
+ Step 2: Retrieve translations
+ To query translatable resources and return translated content, use the @inContext directive to contextualize any query in one of the shop’s available languages.
+ The following example returns the Spanish translations for a product's title, description, and options.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query productDetails @inContext(language: ES) {
+ 2
+    product(handle: "white-t-shirt") {
+ 3
+      title
+ 4
+      description
+ 5
+      descriptionHtml
+ 6
+      options {
+ 7
+        name
+ 8
+        values
+ 9
+      }
+ 10
+    }
+ 11 }
+ JSON response
+ 4
+        "title": "Camiseta blanca",
+ 5
+        "description": "Hecho de algodón fino",
+ 6
+        "descriptionHtml": "<p>Hecho de algodón fino</p>",
+ 7
+        "options": [
+ 8
+          {
+ 9
+            "name": "Talla",
+ 10
+            "values": [
+ 11
+              "Pequeña",
+ 12
+              "Mediana",
+ 13
+              "Grande"
+ 14
+            ]
+ 15
+          }
+ 16
+        ]
+ 17
+      }
+ 18
+    },
+ 19
+    "extensions": {
+ 20
+      "context": {
+ 21
+        "country": "US",
+ 22
+        "language": "ES"
+ 23
+      }
+ 24
+    }
+ 25 }
+ Step 3: Create a checkout in the customer’s language
+ The @inContext directive can also be used with the checkoutCreate mutation to set the checkout locale.
+ The following example creates a checkout that will load in Spanish when you redirect the customer to its webUrl.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation createCheckout @inContext(language: ES) {
+ 2
+    checkoutCreate(
+ 3
+      input: {
+ 4
+        lineItems: [
+ 5
+          { quantity: 1, variantId: "gid://shopify/ProductVariant/38615086082" }
+ 6
+        ]
+ 7
+      }
+ 8
+    ) {
+ 9
+      checkout {
+ 10
+        webUrl  # loads in Spanish
+ 11
+      }
+ 12
+    }
+ 13 }
+ Next steps
+ Learn how to query international prices for products and orders, and explicitly set the context of a cart and checkout.
+ Learn how to create and update a cart in Shopify with the Storefront API.
+ Retrieve metafields with the Storefront API to access additional information from different types of resources.
+ Learn how to manage customer accounts with the Storefront API.
+ Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve available languages
+ Step 2: Retrieve translations
+ Step 3: Create a checkout in the customer’s language

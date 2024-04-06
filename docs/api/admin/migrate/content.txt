@@ -1,0 +1,40 @@
+Overview
+ Learn how to migrate
+ Update API calls in your app
+ New product model
+ App Bridge
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Migrate to GraphQL from REST
+ GraphQL is Shopify's technology of choice for building APIs. GraphQL addresses several problems that might sound familiar to anyone who’s worked with a REST API.
+ You can migrate your apps to use the GraphQL Admin API instead of the REST Admin API to take advantage of some of the benefits of GraphQL.
+ This section includes guides and resources to help you with the migration process.
+ Getting started
+ Refer to the following resources to start migrating from REST to GraphQL:
+ Migrate to GraphQL from REST
+ Learn about the things that you need to consider when migrating your app from REST to GraphQL.
+ Update API calls in your app
+ Learn how to update your REST API calls to GraphQL API calls using common API client libraries.
+ Explore GraphQL basics
+ Learn about the fundamentals of GraphQL.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about Shopify GraphQL APIs.
+ GraphQL Admin API reference
+ Consult the complete reference to Shopify’s GraphQL Admin API.
+ Shopify Admin API GraphiQL explorer
+ Browse Shopify’s GraphQL Admin API schema and documentation.
+ GraphQL Storefront API reference
+ Consult the complete reference to Shopify’s GraphQL Storefront API.
+ Shopify Storefront API GraphiQL explorer
+ Browse Shopify’s Storefront API schema and documentation.
+ Shopify GraphiQL app
+ Explore your store's data, and test queries and mutations, using the GraphQL Admin and Storefront APIs.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Getting started
+ Developer tools and resources
+ Updates & News
+ Developer changelog
+ Partner blog

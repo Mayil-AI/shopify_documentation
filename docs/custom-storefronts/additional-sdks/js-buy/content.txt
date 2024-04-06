@@ -1,0 +1,60 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Overview
+ Web SDKs
+ Storefront API Client
+ Buy Button JS
+ JS Buy SDK
+ Web Components
+ Backend SDKs
+ JS Buy SDK
+ The JavaScript (JS) Buy SDK is a lightweight library that lets you add commerce to any website. It's based on Shopify's Storefront API and provides the ability to retrieve products and collections from your store, add products to a cart, and check out.
+ Requirements
+ You've created a development store or have a production store.
+ You've created products or collections in your store.
+ You have experience writing JavaScript. The JS Buy SDK tool is intended for use by developers who are experienced with JavaScript.
+ You have a website and want to add commerce functionality to it.
+ Step 1: Generate an access token
+ To generate an access token, you can generate one in the Shopify admin. Alternatively, you can create a custom app and use authorization code grant.
+ Step 2: Make your products and collections available
+ After you've generated an access token, you need to make products and collections available to your custom app to access them from your app. After the products and collections are available, you can retrieve them using their respective IDs.
+ Tip
+ If you have many products or collections, then you can use bulk actions to make them available in one step.
+ Make a product available
+ From your Shopify admin, go to Products.
+ From the Products page, click the product you want to make available.
+ Next to SALES CHANNELS AND APPS click Manage.
+ In the Sales channels and apps dialog box, select the box next to the name of your custom app.
+ Make a collection available
+ From your Shopify admin, go to Products and click Collections.
+ From the Collections page, click the collection you want to make available.
+ Next to SALES CHANNELS AND APPS click Manage.
+ In the Sales channels and apps dialog box, select the box next to the name of your custom app.
+ Step 3: Access the JS Buy SDK
+ The JS Buy SDK can render data on the client side or server. Using the JS Buy SDK, you can do the following:
+ Fetch information about a single product or a collection of products
+ Create a shopping cart
+ Allow customers to select options and quantities
+ Generate a checkout URL for a single product or an entire cart
+ View the JS Buy SDK on GitHub
+ Where to get help
+ This SDK isn't supported by Shopify support, but there are other places where you can get help.
+ Open a GitHub issue
+ You can open an issue in the GitHub repository.
+ Shopify Community forums
+ Visit our forums to connect with the community and learn more about the Shopify API and app development.
+ Hire a Shopify Partner
+ Find a Shopify Partner for hire in our ecosystem of talented development agencies.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Generate an access token
+ Step 2: Make your products and collections available
+ Step 3: Access the JS Buy SDK
+ Where to get help
+ Updates & News
+ Developer changelog
+ Partner blog

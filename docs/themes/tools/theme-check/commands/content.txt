@@ -1,0 +1,35 @@
+Overview
+ Commands
+ Configuration
+ Checks reference
+ Migrate
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Theme Check commands
+ If you run Theme Check through the command line, then you can use the Shopify CLI commands and flags described in this guide to call and run Theme Check. Learn more about the checks that Theme Check runs.
+ Requirements
+ To run Theme Check commands, you need to install the @shopify/cli and @shopify/theme packages using Homebrew on macOS, or install the packages globally on Windows or Linux. For more information, refer to Install Shopify CLI.
+ Usage
+ Lints theme code.
+ Terminal
+ $ shopify theme check [flags]
+ Flags
+ Flag Alias Description Environment variable
+ --config <PATH> -C <PATH> The path to your custom Theme Check config. This config overrides .theme-check.yml, if it is present in the directory being analyzed. SHOPIFY_FLAG_CONFIG
+ --fail-level <LEVEL> The severity level that causes a run of theme check to fail (exit code 1). Options include error, suggestion, and style. SHOPIFY_FLAG_FAIL_LEVEL
+ --auto-correct -a Automatically fixes correctable offenses. SHOPIFY_FLAG_AUTO_CORRECT
+ --init Generates a new Theme Check config file. SHOPIFY_FLAG_INIT
+ --output -o Outputs the results of the check to a file. Options include json and text (default). SHOPIFY_FLAG_OUTPUT
+ --print Outputs the active config to STDOUT. SHOPIFY_FLAG_PRINT
+ --list -l Lists the active checks. SHOPIFY_FLAG_LIST
+ --environment <ENV_NAME> -e <ENV_NAME> The environment that you want to use. SHOPIFY_FLAG_ENVIRONMENT
+ --version -v Prints the version of Theme Check being used. SHOPIFY_FLAG_VERSION
+ --path <path> The path to your theme directory. SHOPIFY_FLAG_PATH
+ --verbose Provides more detailed output in the logs. SHOPIFY_FLAG_VERBOSE
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Usage
+ Updates & News

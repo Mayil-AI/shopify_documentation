@@ -1,0 +1,85 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Fonts
+ You can add fonts to your theme in the following ways:
+ Use fonts from Shopify’s font library
+ Use custom fonts
+ Tip
+ In general, fonts are a separate resource that need to be downloaded by the browser before any text is rendered, which impacts a store's overall performance. To make the theme more performant, system fonts that are already installed on the customers computer can be used by merchants that choose fonts from the System fonts category of the Shopify font library.
+ Shopify font library
+ Shopify's font library is a collection of fonts that includes system fonts, a selection of Google fonts, and licensed fonts from Monotype. These fonts are free to use on all Shopify online stores, and are provided in both WOFF and WOFF2 formats.
+ The files for each font include the following Unicode ranges, if the ranges are available for the font:
+ Basic Latin
+ Latin-1 Supplement
+ Latin Extended-A
+ Currency Symbols
+ A limited number number of fonts also include the CJK Unicode ranges used in Japanese writing (e.g. CJK Unified Ideographs).
+ This selection of fonts covers a broad range of use cases. However, due to licensing restrictions, there are some fonts that Shopify can't include. If you need to use a broader range of characters, then you can use system fonts, Typekit, and other solutions.
+ To learn more about using Shopify’s font library, refer to Add Shopify fonts to your theme.
+ Note
+ Personal access to the font files isn't currently available.
+ System fonts
+ System fonts are fonts that are already installed on a user’s computer. This removes the need for browsers to download the font before rendering text and makes the theme more performant. System fonts are listed with the available fonts, noted with a
+ system
+ badge, and will show under the System fonts category in the theme editor font picker.
+ If you choose to use system fonts, then the font that’s used to render text will depend on the user’s operating system. There are three generic system font types. The following are examples of fonts within those types:
+ mono - Menlo, Consolas, Monaco, Liberation Mono, and Lucida Console
+ sans-serif - BlinkMacSystemFont, Segoe UI, Roboto, Ubuntu, and Helvetica Neue
+ serif - Iowan Old Style, Apple Garamond, Baskerville, Times New Roman, Droid Serif, Times, and Source Serif Pro
+ Custom fonts
+ If you want to use a font that's not included in Shopify's font library, then you can use fonts from third party solutions like Typekit.
+ With most third party font solutions, you have the following options for including the font in your theme:
+ Reference the font through the third party's hosting
+ Upload the font files to your theme
+ If you include custom fonts in your theme and want to provide merchants with the ability to choose the font, then you need to create a setting for the selection, such as a select setting. You can then reference the setting value in your CSS when defining which font to use for the associated elements.
+ Third party hosted fonts
+ If a font is hosted with the third party, then they'll usually provide a <link> tag to include the font in your theme:
+ 1 <link rel="stylesheet" href="[font-url]">
+ Tip
+ The <link> tag is often included in theme.liquid, or your chosen layout file.
+ Host fonts in your theme
+ If you have your own font files, then follow these steps to include the font in your theme:
+ Non-admin
+ If you're planning on pushing your theme to a store using Shopify CLI, uploading a theme ZIP file, using the Shopify GitHub integration, or distributing the font with a theme through the Shopify Theme Store, then you should store the font in the assets folder of the theme. These steps should be performed in a local code editor, not the admin code editor.
+ Add the font files to the assets directory.
+ Create a @font-face CSS rule so that you can reference the font. Use the asset_url filter to output the URL for the font file:
+ 1 @font-face {
+ 2
+    font-family: "Font name";
+ 3
+    src: url("{{ '[font-file-name]' | asset_url }}") format("[font-format]");
+ 4 }
+ Shopify admin
+ If you want to add a font to an existing theme through the Shopify admin, then you should store your font in the Files section of the Shopify admin. This is because uploading some types of fonts to the assets directory through the admin code editor might lead to file corruption.
+ Upload the font files to the Content > Files section of the Shopify admin.
+ Create a @font-face CSS rule so that you can reference the font. Use the file_url filter to output the URL for the font file:
+ 1 @font-face {
+ 2
+    font-family: "Font name";
+ 3
+    src: url("{{ '[font-file-name]' | file_url }}") format("[font-format]");
+ 4 }
+ Add Shopify fonts to your theme
+ The following outlines how to use fonts from the Shopify font library in your theme:
+ Add a font_picker type setting to allow merchants to choose their font in the theme editor. The value of this setting is returned as a font object.
+ Use one of the following font filters to load the chosen font, or any of its variants:
+ Use the font_face filter to insert the default @font-face declaration.
+ Use the font_url filter to access a CDN URL, so that you can create a custom @font-face declaration.
+ Use the font_modify filter to access font variants of the same family. Examples are bold and italic stylings.
+ Reference the chosen font to set any specific CSS stylings, such as font-family, font-weight, and font-style.
+ Available fonts
+ The following fonts are free to use on all Shopify online stores:
+ Loading
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Shopify font library
+ System fonts
+ Custom fonts
+ Add Shopify fonts to your theme
+ Available fonts
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

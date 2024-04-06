@@ -1,0 +1,35 @@
+Subscription discounts
+ Refunds
+ Offering free trials
+ Viewing charges and earnings
+ Best practices
+ App Store
+ Subscription discounts
+ Creating an app subscription with a discount is a way to incentivize new merchants to try out the app at a lower cost. You can use the GraphQL Admin API to offer a percentage-value or fixed-price discount.
+ How it works
+ You can apply subscription discounts for a set number of billing cycles, such as 20% off for six billing cycles. You can discount subscriptions for new and existing subscribers.
+ Taxes, Shopify service fees, and revenue share are calculated based on the discounted price and not the base price.
+ When discounts begin
+ A discount can be applied to annual and 30-day subscriptions. Subscription discounts apply the next time that the subscription is charged. If you change the app subscription price, then the discount applies to the remaining portion of the current billing interval and the subscription's future billing intervals.
+ If you offer trial days with discounts, then the discount applies after the trial ends and when the app billing interval begins. If an app subscription is currently in a trial period and you add an app subscription discount, then the trial ends and the subscription with the discount applies immediately.
+ If you have specified a set number of billing intervals for your discount, then the time starts counting down from the moment that the discount is applied. Trial periods are ignored. If you don't specify a limit to the number of billing intervals for the discount, then the discount is considered limitless and applies indefinitely to the subscription.
+ When proration affects discounts
+ If your new subscription requires prorating, such as when the subscription's price or billing interval is changed, then the discounted price is used when Shopify calculates the prorated amount.
+ If the new subscription doesn't require proration, then the discounted price starts from the renewal date.
+ Learn more about prorated charges and credits.
+ When discounts end
+ You can remove a discount from a subscription at any time. Create a new subscription, without a discount, for the merchant to approve.
+ The merchant is charged the discounted price for the remainder of the billing interval unless a proration is required, such as for an increase or decrease in price. If a price change is created with a discount, then the discount is applied to the remaining value until the next subscription.
+ Next steps
+ Create a percentage-value discount
+ Use the GraphQL Admin API to discount a percentage of a subcsription.
+ Create a fixed-price discount
+ Use the GraphQL Admin API to discount a fixed amount of a subscription.
+ Best practices
+ Learn best practices for app billing.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Next steps
+ Updates & News

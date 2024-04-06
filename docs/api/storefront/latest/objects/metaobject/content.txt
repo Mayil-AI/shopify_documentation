@@ -1,0 +1,95 @@
+Common objects
+ Customers
+ Metaobjects
+ Queries
+ Objects
+ Metaobject
+ Fields
+ Queries
+ Implements
+ Search
+ GraphQL Types
+ Metaobject
+ object
+ Requires unauthenticated_read_metaobjects access scope.
+ An instance of a user-defined model based on a MetaobjectDefinition.
+ Fields
+ field
+ MetaobjectField
+ Accesses a field of the object by key.
+ Show arguments and fields
+ fields
+ [MetaobjectField!]!
+ non-null
+ All object fields with defined values. Omitted object keys can be assumed null, and no guarantees are made about field order.
+ Show fields
+ handle
+ String!
+ non-null
+ The unique handle of the metaobject. Useful as a custom ID.
+ id
+ ID!
+ non-null
+ A globally-unique ID.
+ onlineStoreUrl
+ URL
+ The URL used for viewing the metaobject on the shop's Online Store. Returns null if the metaobject definition doesn't have the online_store capability.
+ seo
+ MetaobjectSEO
+ The metaobject's SEO information. Returns null if the metaobject definition doesn't have the renderable capability.
+ Show fields
+ type
+ String!
+ non-null
+ The type of the metaobject. Defines the namespace of its associated metafields.
+ updatedAt
+ DateTime!
+ non-null
+ The date and time when the metaobject was last updated.
+ Was this section helpful?
+ YesNo
+ Map
+ Fields from
+ MetaobjectEdge
+ .
+ node
+ Connections from
+ MetaobjectConnection
+ .
+ nodes
+ Possible types in
+ MenuItemResource
+ MetafieldReference
+ Metaobject
+ Queries
+ metaobject
+ (arguments)
+ query
+ Fetch a specific Metaobject by one of its unique identifiers.
+ Show arguments
+ metaobjects
+ (arguments)
+ query
+ All active metaobjects for the shop.
+ Show arguments
+ Was this section helpful?
+ YesNo
+ <?>
+ Metaobject Queries
+ Metaobject
+ Queried by
+ metaobject
+ metaobjects
+ Implements
+ Node
+ interface
+ OnlineStorePublishable
+ interface
+ Was this section helpful?
+ YesNo
+ ||-
+ Metaobject Implements
+ Metaobject
+ Implements
+ Node
+ OnlineStorePublishable

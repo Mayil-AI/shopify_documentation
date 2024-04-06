@@ -1,0 +1,685 @@
+Subscriptions
+ Overview
+ Modeling apps
+ Selling plans
+ Overview
+ Manage selling plans
+ Contracts
+ Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Create and manage selling plans
+ Selling plans represent how products can be sold and purchased. When you create a selling plan, you can determine the policies under which a product can be sold. For example, you can create a selling plan where a customer can purchase a subscription on a monthly billing cycle, and where you offer a 15% discount for weekly deliveries of the product.
+ This guide shows you how to create a "Subscribe and save" and a "Prepaid" selling plan, and how to associate products with them.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_products, read_customer_payment_methods, read_own_subscription_contracts, and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ To be eligible to use Shopify subscriptions, users need to meet the qualifying criteria.
+ You've familiarized yourself with the concept of selling plans.
+ Step 1: Create a selling plan group
+ Caution
+ Purchase options and associated records, including SellingPlanGroup, SellingPlan, policies, and associations to products and variants, are deleted 48 hours after a user uninstalls a purchase option app. Products and product variants aren't deleted. We recommend backing up purchase options records in case you need to restore them later.
+ In the following example, a selling plan group is created using the sellingPlanGroupCreate mutation.
+ The input fields include name (the plan group name that customers see), merchantCode (the plan name that the merchant sees), sellingPlansToCreate (the individual selling plans to create), options (the selling plan options available in the drop-down list in the storefront), and position (how the options are sorted).
+ Learn more about GraphQL Admin API objects for purchase options. For more information on input fields and values, refer to the following resources:
+ SellingPlanGroupInput
+ SellingPlanInput
+ How subscriptions work
+ Note
+ SellingPlan objects are grouped together in Liquid when they are created by the same app, and when they have the same selling_plan_group.name and selling_plan_group.options values. For more information, refer to the selling_plan_group object.
+ Subscribe and save
+ Prepaid
+ Within each individual selling plan, the billing, delivery, and pricing policies are set:
+ billingPolicy: The schedule is based on a weekly, every two weeks, or monthly pay per delivery subscription.
+ deliveryPolicy: The schedule is based on the merchant offering delivery every week, two weeks, and one month.
+ pricingPolicies(fixed): The pricing is set at 15% off for deliveries every week, 10% off for deliveries every two weeks, and 5% off for deliveries every month. Selling plan pricing policies also work in conjunction with price lists. For more information, refer to the Catalogs overview.
+ The category field should be set to SUBSCRIPTION.
+ If you need to define more advanced delivery behaviors for subscriptions, such as specifying that fulfillment starts on a certain date each month, then you can include anchors in your API call. The following example sets billing and delivery anchor dates on Mondays or on the 15th of the month.
+ Note
+ The interval needs to be the same within a selling plan. For example, you can specify either WEEK or MONTH, but not both in the same plan. For information about other errors related to selling plans, refer to SellingPlanGroupUserErrorCode.
+ Selling plan API properties
+ The following selling plan API properties display merchant-facing strings on the Product page in Shopify admin and on the storefront product page and checkout. The app populates the strings. To provide the best user experience, you can follow the Subscription UX guidelines and the Pre-orders and try before you buy UX guidelines.
+ Field Content guideline Description
+ SellingPlan.name Subscription, delivery every week Display type and delivery frequency selected by the customer.
+ Pattern: [Subscription type], delivery every [frequency]
+ SellingPlanGroup.description (if field is set) SellingPlanGroup.summary Shopify will output the contents of SellingPlanGroup.summary directly. It will not add the Customer can choose string.
+ SellingPlanGroup.description (if field isn't set) Customer can choose
+ 
+ [SellingPlan.name]
+ [SellingPlan.name]
+ Shopify will output Customer can choose: and loop through the selling plan group's associated selling plans, outputting SellingPlan.name.
+ 
+ 
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ Subscribe and save
+ Prepaid
+ 1 mutation {
+ 2
+    sellingPlanGroupCreate(
+ 3
+      input: {
+ 4
+        name: "Subscribe and save"
+ 5
+        merchantCode: "subscribe-and-save"
+ 6
+        options: ["Delivery every"]
+ 7
+        position: 1
+ 8
+        sellingPlansToCreate: [
+ 9
+          {
+ 10
+            name: "Delivered every week"
+ 11
+            options: "1 Week(s)"
+ 12
+            position: 1
+ 13
+            category: SUBSCRIPTION
+ 14
+            billingPolicy: {
+ 15
+              recurring: {
+ 16
+                interval: WEEK,
+ 17
+                intervalCount: 1
+ 18
+                anchors: { type: WEEKDAY, day: 1 }
+ 19
+              }
+ 20
+            }
+ 21
+            deliveryPolicy: {
+ 22
+              recurring: {
+ 23
+                interval: WEEK,
+ 24
+                intervalCount: 1
+ 25
+                anchors: { type: WEEKDAY, day: 1 }
+ 26
+                preAnchorBehavior: ASAP
+ 27
+                cutoff: 0
+ 28
+                intent: FULFILLMENT_BEGIN
+ 29
+              }
+ 30
+            }
+ 31
+            pricingPolicies: [
+ 32
+              {
+ 33
+                fixed: {
+ 34
+                  adjustmentType: PERCENTAGE
+ 35
+                  adjustmentValue: { percentage: 15.0 }
+ 36
+                }
+ 37
+              }
+ 38
+            ]
+ 39
+          }
+ 40
+          {
+ 41
+            name: "Delivered every two weeks"
+ 42
+            options: "2 Week(s)"
+ 43
+            position: 2
+ 44
+            category: SUBSCRIPTION
+ 45
+            billingPolicy: {
+ 46
+              recurring: {
+ 47
+                interval: WEEK,
+ 48
+                intervalCount: 2
+ 49
+                anchors: { type: WEEKDAY, day: 1 }
+ 50
+              }
+ 51
+            }
+ 52
+            deliveryPolicy: {
+ 53
+              recurring: {
+ 54
+                interval: WEEK,
+ 55
+                intervalCount: 2
+ 56
+                anchors: { type: WEEKDAY, day: 1 }
+ 57
+                preAnchorBehavior: ASAP
+ 58
+                cutoff: 0
+ 59
+                intent: FULFILLMENT_BEGIN
+ 60
+              }
+ 61
+            }
+ 62
+            pricingPolicies: [
+ 63
+              {
+ 64
+                fixed: {
+ 65
+                  adjustmentType: PERCENTAGE
+ 66
+                  adjustmentValue: { percentage: 10.0 }
+ 67
+                }
+ 68
+              }
+ 69
+            ]
+ 70
+          }
+ 71
+          {
+ 72
+            name: "Delivered every month"
+ 73
+            options: "1 Month"
+ 74
+            position: 3
+ 75
+            category: SUBSCRIPTION
+ 76
+            billingPolicy: {
+ 77
+              recurring: {
+ 78
+                interval: MONTH,
+ 79
+                intervalCount: 1
+ 80
+                anchors: { type: MONTHDAY, day: 15 }
+ 81
+              }
+ 82
+            }
+ 83
+            deliveryPolicy: {
+ 84
+              recurring: {
+ 85
+                interval: MONTH,
+ 86
+                intervalCount: 1
+ 87
+                anchors: { type: MONTHDAY, day: 15 }
+ 88
+                preAnchorBehavior: ASAP
+ 89
+                cutoff: 0
+ 90
+                intent: FULFILLMENT_BEGIN
+ 91
+              }
+ 92
+            }
+ 93
+            pricingPolicies: [
+ 94
+              {
+ 95
+                fixed: {
+ 96
+                  adjustmentType: PERCENTAGE
+ 97
+                  adjustmentValue: { percentage: 5.0 }
+ 98
+                }
+ 99
+              }
+ 100
+            ]
+ 101
+          }
+ 102
+        ]
+ 103
+      }
+ 104
+      resources: { productIds: [], productVariantIds: [] }
+ 105
+    ) {
+ 106
+      sellingPlanGroup {
+ 107
+        id
+ 108
+      }
+ 109
+      userErrors {
+ 110
+        field
+ 111
+        message
+ 112
+      }
+ 113
+    }
+ 114 }
+ JSON response
+ Subscribe and save
+ Prepaid
+ 1 {
+ 2
+    "data": {
+ 3
+      "sellingPlanGroupCreate": {
+ 4
+        "sellingPlanGroup": {
+ 5
+          "id": "gid://shopify/SellingPlanGroup/294969"
+ 6
+ 9
+    },
+ 10
+    "extensions": {
+ 11
+      "cost": {
+ 12
+        "requestedQueryCost": 10,
+ 13
+        "actualQueryCost": 10,
+ 14
+        "throttleStatus": {
+ 15
+          "maximumAvailable": 1000,
+ 16
+          "currentlyAvailable": 990,
+ 17
+          "restoreRate": 50
+ 18
+        }
+ Note
+ Use a Product subscription app extension to make sure that the Create subscription plan function works as expected from the product or variant page in Shopify admin. If you're not familiar with extensions, then refer to Getting started building a product subscription app extension. If you're already familiar with extensions, then you can learn more about the Create mode.
+ Editing a selling plan group
+ You can call the sellingPlanGroupUpdate mutation to edit the attributes for a selling plan group that has already been created. In the following example, the “Subscribe and save” selling plan group is renamed to “Pay per delivery”:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    sellingPlanGroupUpdate(
+ 3
+      id: "gid://shopify/SellingPlanGroup/294969"
+ 4
+      input: { name: "Pay per delivery" }
+ 5
+    ) {
+ 6
+      sellingPlanGroup {
+ 7
+        id
+ 8
+        name
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "sellingPlanGroupUpdate": {
+ 4
+        "sellingPlanGroup": {
+ 5
+          "id": "gid://shopify/SellingPlanGroup/294969",
+ 6
+          "name": "Pay per delivery"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    },
+ 11
+    "extensions": {
+ 12
+      "cost": {
+ 13
+        "requestedQueryCost": 10,
+ 14
+        "actualQueryCost": 10,
+ 15
+        "throttleStatus": {
+ 16
+          "maximumAvailable": 1000,
+ 17
+          "currentlyAvailable": 990,
+ 18
+          "restoreRate": 50
+ 19
+        }
+ 20
+      }
+ 21
+    }
+ 22 }
+ Note
+ Use a Product subscription app extension to make sure that the Edit function works as expected from the product or variant page in Shopify admin. If you aren't familiar with extensions, then refer to Getting started building a product subscription app extension. If you're already familiar with extensions, then you can learn more about the Edit purchase option mode.
+ Step 2: Associate a selling plan group to a product
+ Selling plans can be created with products or product variants that are already associated in the sellingPlanGroupCreate call.
+ However, you can also use the sellingPlanGroupAddProducts or sellingPlanGroupAddProductVariants mutation to make a separate call to associate a selling plan group with a product or product variant, without having to delete and recreate the selling plan group.
+ If you have multiple selling plan groups to be associated with a product or product variant, then you can use the productJoinSellingPlanGroups or productVariantJoinSellingPlanGroups mutations.
+ In the following example, the selling plan group is associated with a product variant.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    sellingPlanGroupAddProductVariants(
+ 3
+      id: "gid://shopify/SellingPlanGroup/294969"
+ 4
+      productVariantIds: ["gid://shopify/ProductVariant/31374109802518"]
+ 5
+    ) {
+ 6
+      sellingPlanGroup {
+ 7
+        id
+ 8
+        productVariantCount
+ 9
+        productVariants(first: 10) {
+ 10
+          edges {
+ 11
+            node {
+ 12
+              id
+ 13
+              title
+ 14
+              inventoryQuantity
+ 15
+              product {
+ 16
+                id
+ 17
+                title
+ 18
+                totalInventory
+ 19
+              }
+ 20
+            }
+ 21
+          }
+ 22
+        }
+ 23
+      }
+ 24
+      userErrors {
+ 25
+        field
+ 26
+        message
+ 27
+      }
+ 28
+    }
+ 29 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "sellingPlanGroupAddProductVariants": {
+ 4
+        "sellingPlanGroup": {
+ 5
+          "id": "gid://shopify/SellingPlanGroup/294969",
+ 6
+          "productVariantCount": 1,
+ 7
+          "productVariants": {
+ 8
+            "edges": [
+ 9
+              {
+ 10
+                "node": {
+ 11
+                  "id": "gid://shopify/ProductVariant/31374109802518",
+ 12
+                  "title": "Type A",
+ 13
+                  "inventoryQuantity": 7,
+ 14
+                  "product": {
+ 15
+                    "id": "gid://shopify/Product/4352352387128",
+ 16
+                    "title": "The best coffee",
+ 17
+                    "totalInventory": 17
+ 18
+                  }
+ 19
+                }
+ 20
+              }
+ 21
+            ]
+ 22
+          }
+ 23
+        },
+ 24
+        "userErrors": []
+ 25
+      }
+ 26
+    },
+ 27
+    "extensions": {
+ 28
+      "cost": {
+ 29
+        "requestedQueryCost": 32,
+ 30
+        "actualQueryCost": 14,
+ 31
+        "throttleStatus": {
+ 32
+          "maximumAvailable": 1000,
+ 33
+          "currentlyAvailable": 986,
+ 34
+          "restoreRate": 50
+    }
+ 38 }
+ Note
+ Use a Product subscription app extension to make sure that the Add existing plan function works from the product or variant page in Shopify admin. If you aren't familiar with extensions, then refer to Getting started building a product subscription app extension. If you're already familiar with extensions, then you can learn more about the Add mode.
+ Removing a product or variant from a selling plan group
+ If you want to disassociate a product from a selling plan group, then you can use the sellingPlanGroupRemoveProducts mutation. To remove a product variant from a selling plan group, you can use the sellingPlanGroupRemoveProductVariants mutation. In the following example, a product is removed from a selling plan group:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    sellingPlanGroupRemoveProducts(
+ 3
+      id: "gid://shopify/SellingPlanGroup/294968"
+ 4
+      productIds: ["gid://shopify/Product/4353554710550"]
+ 5
+    ) {
+ 6
+      userErrors {
+ 7
+ 10
+      removedProductIds
+ 11
+    }
+ 12 }
+      "sellingPlanGroupRemoveProducts": {
+ 4
+        "userErrors": [],
+ 5
+        "removedProductIds": []
+ 6
+      }
+ 7
+    },
+ 8
+    "extensions": {
+ 9
+      "cost": {
+ 10
+        "requestedQueryCost": 10,
+ 11
+        "actualQueryCost": 10,
+ 12
+        "throttleStatus": {
+ 13
+          "maximumAvailable": 1000,
+ 14
+          "currentlyAvailable": 990,
+ 15
+          "restoreRate": 50
+    }
+ 19 }
+ Note
+ Use a Product subscription app extension to make sure the Remove function works as expected from the product or variant page in Shopify admin. If you aren't familiar with extensions, then refer to Getting started building a product subscription app extension. If you're already familiar with extensions, then you can learn more about the Remove mode.
+ The Remove function depends on whether the selling plan is associated with products or variants. If the selling plan is associated with products, then only the Product page shows the function. If the selling plan is associated with variants, then both the product and variant pages show the function.
+ Removing a product from a selling plan removes all variants associated with the product from the selling plan.
+ Step 3 (Optional): Configure a product to be sold only as a subscription
+ You can configure which products are sold on a subscription by specifying the requiresSellingPlan field as true in the productUpdate mutation. In the following example, the product is configured to be sold only on subscription.
+ Note
+ Selling plans are available only through the online store sales channel. Products that are marked as "subscription only" are unpublished from other sales channels.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(
+ 3
+      input: { id: "gid://shopify/Product/1", requiresSellingPlan: true }
+ 4
+    ) {
+ 5
+      product {
+ 6
+        id
+ 7
+        requiresSellingPlan
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/1",
+ 6
+          "requiresSellingPlan": true
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    },
+ 11
+    "extensions": {
+ 12
+      "cost": {
+ 13
+        "requestedQueryCost": 10,
+ 14
+        "actualQueryCost": 10,
+ 15
+        "throttleStatus": {
+ 16
+          "maximumAvailable": 1000,
+ 17
+          "currentlyAvailable": 990,
+ 18
+          "restoreRate": 50
+ 19
+        }
+ 20
+      }
+ 21
+    }
+ 22 }
+ Note
+ Merchants can manually set a product or product variant as “subscription only” on the Product page. Changing whether a product is sold as subscription only or not doesn't change the state of the plan. The Sell product as a subscription only setting is visible when a plan is applied to the product or product variant.
+ Collecting payment information
+ After you've created the selling plan group, customers can purchase a product on a subscription and add it to their cart. For more information on implementing storefront Liquid properties, refer to Showing selling plan groups and selling plans on a product page.
+ Customer payment methods allow merchants to initiate new charges, with or without the customer being present. After a checkout is complete, a customer payment method is associated with the customer.
+ When an order includes subscription products, the payment method is associated with the subscription contract. This allows subscription apps to know which payment method to use for recurring payments.
+ Next steps
+ Learn how to use subscription contracts to create agreements between a customer and a merchant, and bill customers on a recurring basis.
+ Learn how to manage orders and fulfillments for prepaid subscriptions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a selling plan group
+ Step 2: Associate a selling plan group to a product
+ Step 3 (Optional): Configure a product to be sold only as a subscription
+ Collecting payment information
+ Next steps
+ Updates & News

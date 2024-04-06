@@ -1,0 +1,75 @@
+Billing
+ App Store
+ Getting started with bundles
+ This guide describes how to get started with bundles, and describes the available implementation options.
+ How it works
+ To create a bundles app, you need to configure a bundle and create a bundle UI extension.
+ Bundles configuration
+ To configure a bundle, you can do one or both of the following tasks:
+ Implement the bundles product API to implement a fixed bundle.
+ Create a bundles Shopify Function to group lines together as they’re added to the cart, with configuration data in metafields. When you create a bundles Shopify Function, you need to build a theme app block. This block replaces the variant picker in Online store themes to add all of the required bundle components.
+ Bundle UI extension
+ Create a bundle UI extension to summarize bundle components for Shopify admin product and product variant pages.
+ Configure app extension for bundles app link to create and update bundle components, from the Partner Dashboard.
+ Create pages in your embedded app using Shopify App Bridge to allow users to perform the following tasks:
+ Configure bundle components for creating a new bundle product.
+ Update an existing bundle.
+ Implementation
+ Apps can configure and operate bundle products in the following ways:
+ Fixed bundles: Lets users configure product variants that are fulfilled with a bundle of products as a product grouping API.
+ Customized bundles: Uses the cartTransform object to convert a group of products added to the cart into a bundle and adjust the price automatically.
+ Note
+ In this documentation, we'll exclusively cover the customized bundles with functions implementation path.
+ The following table provides a comparison of the two implementation options:
+ Fixed bundles with the GraphQL Admin API Customized bundles with cartTransform object
+ Admin Configuration - -
+ Definition Using the GraphQL Admin API Through the cartTransform object, and the metafields and metabjects on that object.
+ Pricing The price is derived from the parent variant.
+ 
+ The bundle price is allocated across components in the checkout, cart, and orders using a weighted price algorithm. For expand, the price is derived from the parent. For merge, the price is derived from components, with a price adjustment applied in the function.
+ 
+ The bundle price is allocated across components in the checkout, cart, and orders using a weighted price algorithm.
+ Discounts Discount calculated on the parent then allocated on the components. Discount calculated on the parent then allocated on the components.
+ Taxes Taxes will be computed on the components. Taxes will be computed on the components.
+ Storefront - -
+ Product details page, buyer chooses Parent bundle variant
+ 
+ Works without Liquid change
+ 
+ Sellable quantity is available through Liquid Multiple component variants
+ 
+ App is responsible for its own variant picker on the product details page
+ 
+ Sellable quantity is only available through the Storefront API
+ Cart add Input:
+ Parent bundle variant
+ 
+ Displayed as grouped in cart and checkout
+ 
+ Output fields:
+ In cart, potential to query cart.line.components Input:
+ Multiple component variants
+ 
+ Displayed as grouped in cart and checkout
+ 
+ Output fields:
+ In cart, potential to query cart.line.components
+ Oversell protection Always: Shopify maintains sellable quantities on the parent bundle variant.
+ 
+ The parent inventory quantity is the minimum of the component's inventory quantities. Storefront: App maintains instock/out of stock for the parent.
+ 
+ Post-add-to-cart: Components are always checked in cart and checkout providing some built-in oversell protection.
+ Bundle grouping Grouped by bundle parent variant ID (item added to the cart) Grouped by bundle parent variant ID (assigned by function)
+ Admin Orders - -
+ Default fulfillment constraint No fulfillment constraint No fulfillment constraint
+ Store in order lines Components, with reference to parent through groupings Components, with reference to parent through groupings
+ Refund/Returns Operates at the component level Operates at the component level
+ Reports Sales reporting at the component level Sales reporting at the component level
+ Next steps
+ Add a customized bundle using Shopify Functions.
+ Add a fixed bundle using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Implementation

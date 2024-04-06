@@ -1,0 +1,115 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ ButtonGroup
+ Use the ButtonGroup action set to group together Button action set instances. You can pass this action set into your app’s TitleBar action set. The ButtonGroup action set does not provide functionality outside of the TitleBar action set. If you need a standard button group component in your app, use a Polaris button group.
+ Example code
+ Create an app and import the Button and ButtonGroup modules from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Button, ButtonGroup} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a button group
+ Generate a primary button with the label More actions and two buttons with the label Settings and Help:
+ 1 const button1 = Button.create(app, {label: 'Settings'});
+ 2 const button2 = Button.create(app, {label: 'Help'});
+ 3 const myGroupButton = ButtonGroup.create(app, {label: 'More actions', buttons: [button1, button2]});
+ Subscribe to updates
+ You can subscribe to the button group update action by calling subscribe. This returns a function that you can call to unsubscribe from the action:
+ 1 // Using the same button group as above
+ 2 const updateUnsubscribe = myGroupButton.subscribe(ButtonGroup.Action.UPDATE, data => {
+ 3
+    // Do something when the button group is updated
+ 4
+    // The data is in the following shape: {id: string, label: string, buttons: [{id: string, label: string, disabled: boolean,} ...]}
+ 5 });
+ 6
+ 7 // Unsubscribe
+ 8 updateUnsubscribe();
+ Unsubscribe
+ You call unsubscribe to remove all subscriptions on the button group and its children:
+ 1 const button1 = Button.create(app, {label: 'Settings'});
+ 2 const button2 = Button.create(app, {label: 'Help'});
+ 3 const myGroupButton = ButtonGroup.create(app, {label: 'More actions', buttons: [button1, button2]});
+ 4 // Using the same button group as above
+ 5 myGroupButton.subscribe(ButtonGroup.Action.UPDATE, data => {
+ 6
+    // Do something when the button group is updated
+ 7
+    // The data is in the following format: {id: string, label: string, buttons: [{id: string, label: string, disabled: boolean} ...]}
+ 8 });
+ 9
+ 10 button1.subscribe(Button.Action.CLICK, () => {
+ 11
+    //Do something with the click action
+ 12 });
+ 13
+ 14 button2.subscribe(Button.Action.CLICK, () => {
+ 15
+    //Do something with the click action
+ 16 });
+ 17
+ 18 // Unsubscribe from the button group update action
+ 19 // Unsubscribe from button1 and button2 click actions
+ 20 myGroupButton.unsubscribe();
+ Unsubscribe from button group actions only
+ You call unsubscribe with false to remove only button group subscriptions while leaving child subscriptions intact. For example, you might want to unsubscribe from the button group but keep button listeners so that the buttons can be reused in a different actions (such as a modal).
+ 1 const button1 = Button.create(app, {label: 'Settings'});
+ 2 const button2 = Button.create(app, {label: 'Help'});
+ 3 const myGroupButton = ButtonGroup.create(app, {label: 'More actions', buttons: [button1, button2]});
+ 4 // Using the same button group as above
+ 5 myGroupButton.subscribe(ButtonGroup.Action.UPDATE, data => {
+ 6
+    // Do something when the button group is updated
+ 7
+    // The data is in the following format: {id: string, label: string, buttons: [{id: string, label: string, disabled: boolean} ...]}
+ 8 });
+ 9
+ 10 button1.subscribe(Button.Action.CLICK, () => {
+ 11
+    //Do something with the click action
+ 12 });
+ 13
+ 14 button2.subscribe(Button.Action.CLICK, () => {
+ 15
+    //Do something with the click action
+ 16 });
+ 17
+ 18 // Unsubscribe from only the button group update action
+ 19 myGroupButton.unsubscribe(false);
+ 20
+ 21 // Reuse button1 and button2 in a modal
+ 22 const modalOptions = {
+ 23
+    title: 'My Modal',
+ 24
+    message: 'Hello world!',
+ 25
+    footer: {secondary: [button1, button2]},
+ 26 };
+ 27
+ 28 const myModal = Modal.create(app, modalOptions);
+ Update options
+ You can call the set method with partial button group options to update the options of an existing button group. This automatically triggers the update action on the button group and merges the new given options with existing options.
+ 1 const button1 = Button.create(app, {label: 'Settings'});
+ 2 const button2 = Button.create(app, {label: 'Help'});
+ 3 const myGroupButton = ButtonGroup.create(app, {label: 'More actions', buttons: [button1, button2]});
+ 4 myGroupButton.set({disabled: true});
+ Update buttons
+ You can update buttons attached to a button group. Any updates made to the button group's children automatically trigger an update action on the button group.
+ 1 const button1 = Button.create(app, {label: 'Settings'});
+ 2 const button2 = Button.create(app, {label: 'Help'});
+ 3 const myGroupButton = ButtonGroup.create(app, {label: 'More actions', buttons: [button1, button2]});
+ 4 button1.set({disabled: true});
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Create a button group
+ Subscribe to updates
+ Unsubscribe
+ Unsubscribe from button group actions only
+ Update options
+ Update buttons

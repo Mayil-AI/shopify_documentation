@@ -1,0 +1,120 @@
+Design guidelines
+ Overview
+ App structure
+ Overview
+ Anatomy
+ App body
+ Max modal
+ Admin UI extensions
+ Layout
+ Visual design
+ Content
+ Navigation
+ User experience
+ Checkout
+ Customer accounts
+ Billing
+ App Store
+ App structure
+ Apps are structured to work seamlessly with the Shopify admin and to provide an intuitive experience for merchants.
+ Switch to desktop view
+ Switch to mobile view
+ Anatomy
+ The Shopify admin
+ App nav
+ App header
+ Page header
+ Overflow menu
+ App body
+ Apps consist of a few navigation elements and the app body, which is the center of your app’s experience.
+ App navigation is strictly configured, and it’s an important part of providing a great merchant experience. For more details, refer to the navigation guidelines.
+ Switch to desktop view
+ Switch to mobile view
+ App body
+ The app body is where your app’s main experience lives.
+ Be sure to follow the layout guidelines when you choose a layout for the app body.
+ Max modal UPDATED
+ 
+ Formerly known as "Full-screen mode"
+ Max modal is a focused environment for specific immersive tasks. Refer to Polaris for guidance on overlays.
+ The modal utilizes the following areas of the app interface:
+ Modal header
+ The max modal can contain a top bar element to render a primary and a secondary action.
+ App body
+ The modal body is where you can add all the content for a full-screen experience.
+ Switch to desktop view
+ Switch to mobile view
+ When to use max modal
+ Use max modal when merchants need to complete a focused task, where leveraging the full viewport improves the user experience.
+ The following are some example use cases:
+ Complex editing experiences, such as an editor for creating newsletter content
+ Immersive experiences, such as an editor for cropping and modifying images
+ Previews, such as an app that adds elements to a product page and enables merchants to preview changes
+ Behavior
+ Max modal launches only after merchants interact with a button that indicates the entire canvas will be used.
+ Must Do NEW
+ Primary navigation for the app should be shown in the top bar of the modal and the primary actions must not be duplicated. This applies to developers using the latest version of App Bridge.
+ Must Do
+ If there are unsaved changes, prompt merchants to save before exiting full-screen mode.
+ Do Not
+ Don’t unnecessarily interrupt a merchant’s workflow when exiting modal.
+ Do Not APP STORE REQUIREMENT
+ Your app must not launch full-screen or the max modal from the app nav. Instead, they must launch from the app body. This is an app store requirement.
+ FullscreenBar
+ The Polaris FullscreenBar component enables merchants to exit a full-screen interface.
+ Return merchants to the same screen where they entered full-screen mode.
+ Info
+ Update to the latest version of App Bridge by adding the app-bridge.js script tag to the <head> of each document of your app.
+ After March 1, FullscreenBar will no longer be supported. Please update to the latest version of App Bridge.
+ Must Do
+ Return merchants to the screen that they were previously on when they exit full-screen mode.
+ Must Do
+ In full-screen mode, display the FullscreenBar component with a back button.
+ Admin UI extensions
+ Use admin UI extensions to integrate more deeply with the Shopify admin and create seamless merchant workflows.
+ Choose from the following extensions:
+ Admin block
+ Admin action
+ Admin link
+ Bulk action
+ Additional admin extensions are available for more specific use cases.
+ Do Not APP STORE REQUIREMENT
+ The extension can't be used to display promotions or advertisements. This includes promoting your app, related apps, or requesting app reviews. This is an app store requirement.
+ App attribution
+ Shopify will badge all admin UI extensions with the app icon, name, and a link to your app URL.
+ The app attribution component displays your app's logo and extension name as it displays in the Shopify App Store.
+ When to use admin blocks
+ Use admin block extensions to offer your app’s functionality or data in the context of a resource detail page. Merchants have the option to add your app block to a page, and arrange it in the page layout.
+ App blocks can be embedded into Product, Order, or Customer detail pages using these extension targets.
+ Learn more about admin blocks.
+ Must Do
+ Contents must be less than 600px in height, to avoid overly tall app blocks. If necessary, implement pagination to ensure that this requirement is met.
+ Must Do
+ Input fields must be visible at all times. If necessary, app blocks should trigger app actions to ensure that this requirement is met.
+ Must Do
+ Your block must have an empty state that informs merchants about what your app block does. For example, it should tell merchants what data will display in the block.
+ Tip
+ Inputs in your block can work with the contextual save bar by using the Form component, which provides merchants with a familiar save and validation experience.
+ When to use admin actions
+ Use admin action extensions to offer merchants quick access to common actions that they might do with your app. Because apps can add an unlimited number of admin actions, use discrete actions for discrete purposes.
+ App actions can be targeted to these extension targets.
+ Learn more about admin actions.
+ Apps can have multiple admin action extensions, which display in the More actions menus.
+ Must Do
+ Don't allow action content to exceed 1200px and don't use more than two steps of pagination. Otherwise, your app can be difficult to navigate.
+ When to use admin links and bulk actions
+ If your content doesn't fit well within the format of the block or action, then use an admin link or bulk action instead. If an interaction is complex, such as one that requires more screen space, then routing merchants into your app is a better experience.
+ Examples include a multi-step process, a very long form with multiple dynamic sections, or a complex editor with several columns.
+ Admin links show up in the More actions menus.
+ Bulk actions show up in the More actions menu of bulk actions controls.
+ Combining extensions
+ Use app actions and blocks together to provide a more focused merchant experience.
+ Tip
+ An admin block can trigger an admin action. For more information, refer to the extension custom protocol.
+ Do Not
+ Don't duplicate the content of your admin blocks and admin actions. Differentiating the functionality and value of your blocks and actions helps merchants understand which extensions to use and when.
+ Previous
+ App Design Guidelines
+ Next
+ Layout
+ Was this page helpful?

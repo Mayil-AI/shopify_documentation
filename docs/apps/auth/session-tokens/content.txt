@@ -1,0 +1,125 @@
+Overview
+ Getting started
+ Get access tokens
+ Access token types
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ Custom data
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Session tokens
+ A session token is a mechanism that lets your embedded app authenticate the requests that it makes between the client side and your app's backend.
+ Note
+ All embedded apps need to use session tokens because third-party cookies won't work with browsers that restrict cross-domain data access. If your embedded app still uses cookies and could pose a risk to users, then as part of our app audit process you might be contacted and requested to migrate your app to use session tokens. This request will require immediate action.
+ The following video provides a short introduction to session tokens:
+ How session tokens work
+ This section describes the authentication and request flows associated with session tokens, and the lifetime of a session token. It also provides information about implementing both OAuth and session token authentication for embedded apps.
+ Authentication flow using a session token
+ When your embedded app first loads, it's unauthenticated and serves up the frontend code for your app. Your app renders a user interface skeleton or loading screen to the user.
+ After the frontend code has loaded, your app calls a Shopify App Bridge action to get the session token. Your app includes the session token in an authorization header when it makes any HTTPS requests to its backend.
+ Request flow using a session token
+ The session token is signed using the shared secret between your app and Shopify so that your backend can verify if the request is valid.
+ Lifetime of a session token
+ The lifetime of a session token is one minute. Session tokens must be fetched using Shopify App Bridge on each request to make sure that stale tokens aren't used.
+ OAuth and session tokens
+ Tip
+ You can use Shopify CLI to generate a starter app with boilerplate code that handles authentication and authorization. The starter app includes code for an embedded app that uses session tokens and token exchange.
+ Session tokens are for authentication, and aren't a replacement for authorization. Learn more about the difference between authentication and authorization.
+ Unlike API access tokens, session tokens can't be used to make authenticated requests to Shopify APIs. An API access token is what you use to send requests from your app's backend to Shopify so that you can fetch specific data from the user's shop.
+ For example, to make authenticated requests to the Admin API, your app must store the access token it receives during the OAuth flow. To contrast, session tokens are used by your app's backend to verify the embedded request coming from your app's frontend.
+ The following diagram shows the authentication process using session tokens and API access tokens:
+ Anatomy of a session token
+ Session tokens use the JSON Web Token (JWT) format and contain information about the merchant that's currently using your embedded app.
+ A session token consists of a header, payload, and signature. For an interactive example, refer to JWT.io, where you can experiment with setting different values for each section. Shopify recommends that you use your test app's credentials when testing on JWT.io.
+ For the most part, you shouldn't have to manage the anatomical details of session tokens. In most scenarios, you'll use a library, such as authenticated_fetch from app-bridge, which generates and includes the session token in your requests. On the backend, you can use middleware similar to validateAuthenticatedSession in @shopify/shopify-app-express.
+ After a Shopify session token is decoded, it has the following fields:
+ Header
+ The values in the header are constant and never change.
+ 1 {
+ 2
+    "alg": "HS256",
+ 3
+    "typ": "JWT"
+ 4 }
+ alg: The algorithm used to encode the JWT.
+ typ: The (type) header parameter used by session token to declare the media type.
+ Payload
+ 1 {
+ 2
+    "iss": "<shop-name.myshopify.com/admin>",
+ 3
+    "dest": "<shop-name.myshopify.com>",
+ 4
+    "aud": "<client ID>",
+ 5
+    "sub": "<user ID>",
+ 6
+    "exp": "<time in seconds>",
+ 7
+    "nbf": "<time in seconds>",
+ 8
+    "iat": "<time in seconds>",
+ 9
+    "jti": "<random UUID>",
+ 10
+    "sid": "<session ID>"
+ 11
+    "sig": "<signature>"
+ 12 }
+ iss: The shop's admin domain.
+ dest: The shop's domain.
+ aud: The client ID of the receiving app.
+ sub: The User that the session token is intended for.
+ exp: When the session token expires.
+ nbf: When the session token activates.
+ iat: When the session token was issued.
+ jti: A secure random UUID.
+ sid: A unique session ID per user and app.
+ sig: Shopify signature.
+ Example payload
+ 1 {
+ 2
+   "iss"=>"https://exampleshop.myshopify.com/admin",
+ 3
+   "dest"=>"https://exampleshop.myshopify.com",
+ 4
+   "aud"=>"client-id-123",
+ 5
+   "sub"=>"42",
+ 6
+   "exp"=>1591765058,
+ 7
+   "nbf"=>1591764998,
+ 8
+   "iat"=>1591764998,
+ 9
+   "jti"=>"f8912129-1af6-4cad-9ca3-76b0f7621087",
+ 10
+   "sid"=>"aaea182f2732d44c23057c0fea584021a4485b2bd25d3eb7fd349313ad24c685",
+ 11
+   "sig"=>"f07cf3740270c17fb61c700b2f0f2e7f2f4fc8cc48426221738f7a39e4c475bf",
+ 12 }
+ Note
+ All times are in UNIX timestamp format.
+ Limitations and considerations
+ Session token authentication is fully supported for single-page apps. For more information, refer to Getting started with session token authentication.
+ If you have a multi-page app, then it might be possible to convert it to behave as if it were a single-page app using Turbolinks. You can only use session tokens for a multi-page app if you convert it to behave like a single-page app. For an example, refer to the Turbolinks and JWT sample app.
+ Sample apps
+ Sample single-page embedded app using Rails and React
+ Sample server-side rendered Rails app converted using Turbolinks
+ Next steps
+ Set up your embedded app to authenticate using session tokens.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How session tokens work
+ Anatomy of a session token
+ Limitations and considerations
+ Sample apps
+ Next steps
+ Updates & News

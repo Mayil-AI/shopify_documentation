@@ -1,0 +1,265 @@
+Product subscription app extensions
+ Metafield-linked product options
+ Learn about how to link metafields to product options in the new product model.
+ Beta
+ This API is currently in early access. This documentation will be updated as we introduce new features.
+ Why we've made these changes
+ The updated Shopify product taxonomy is an open-source comprehensive, global standard for product classification. It's a universal language that empowers merchants to categorize their products. Spanning 22 essential verticals, our taxonomy encompasses categories, attributes, and values, all thoughtfully integrated within Shopify and numerous marketplaces.
+ By using standard metaobjects to model each attribute's values (as metaobject entries), we ensure reusability and shop-specific customization. To connect metaobjects to any resource in Shopify, we use metafields (of type metaobject reference). Then, we introduced the ability to connect these metaobjects such that merchants can create variants for each attribute value.
+ Linking product options to metafields
+ In the new product model, variants are still a byproduct of the product’s options, representing the individual SKUs derived from the various attributes that define the product. With the new Shopify Product Taxonomy, a product's category now includes standard metafield references for each associated attribute. To use these metafield references to create variants, they must be connected to options.
+ For example, a shoe might be categorized as Apparel & Accessories > Shoes, which comes with the following pre-packaged attributes (metafields):
+ Age group
+ Closure type
+ Color
+ Footwear material
+ Occasion style
+ Pattern
+ Shoe fit
+ Shoe size
+ Target gender
+ Toe style
+ These metafields can be linked to options with the following mutations:
+ productOptionsCreate
+ productOptionUpdate
+ productCreate
+ For example, to use productCreate to create a new shoe with options for Color and Shoe size you could call the following mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateProductWithLinkedOptions($input: ProductInput!) {
+ 2
+    productCreate(input: $input) {
+ 3
+      userErrors {
+ 4
+        field
+ 5
+        message
+ 6
+          productCategory {
+ 7
+            productTaxonomyNode {
+ 8
+             id
+ 9
+            }
+ 10
+          }
+ 11
+          productTaxonomyNodeId
+ 12
+        }
+ 13
+        options {
+ 14
+          name
+ 15
+          linkedMetafield {
+ 16
+            namespace
+ 17
+            key
+ 18
+          }
+ 19
+          optionValues {
+ 20
+            name
+ 21
+            linkedMetafieldValue
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "title": "Fancy shoes",
+ 4
+      "productCategory": {
+ 5
+        "productTaxonomyNodeId": "gid://shopify/ProductTaxonomyNode/352"
+ 6
+      },
+ 7
+      "productOptions": [
+ 8
+        {
+ 9
+          "name": "Color",
+ 10
+          "linkedMetafield": {
+ 11
+            "namespace": "shopify",
+ 12
+            "key": "color-pattern",
+ 13
+            "values": [
+ 14
+              "gid://shopify/Metaobject/971662527",
+ 15
+              "gid://shopify/Metaobject/971662528",
+ 16
+              "gid://shopify/Metaobject/971662529"
+ 17
+            ]
+ 18
+          }
+ 19
+        },
+ 20
+        {
+ 21
+          "name": "Shoe size",
+ 22
+          "linkedMetafield": {
+ 23
+            "namespace": "shopify",
+ 24
+            "key": "shoe-size",
+ 25
+            "values": [
+ 26
+              "gid://shopify/Metaobject/971662530",
+ 27
+              "gid://shopify/Metaobject/971662531",
+ 28
+              "gid://shopify/Metaobject/971662532"
+ 29
+            ]
+ 30
+          }
+ 31
+        }
+ 32
+      ]
+ 33
+    }
+ 34 }
+ JSON response
+ 1 {
+ 2
+    "productCreate": {
+ 3
+      "productCategory": {
+ 4
+        "productTaxonomyNode": {
+ 5
+         "id": "gid://shopify/ProductTaxonomyNode/352"
+ 6
+         }
+ 7
+      }
+ 8
+          "productTaxonomyNodeId": "gid://shopify/ProductTaxonomyNode/352"
+ 9
+        },
+ 10
+        "options": [
+ 11
+          {
+ 12
+            "name": "Color",
+ 13
+            "linkedMetafield": {
+ 14
+              "namespace": "shopify",
+ 15
+              "key": "color-pattern"
+ 16
+            },
+ 17
+            "optionValues": [
+ 18
+              {
+ 19
+                "name": "Red",
+ 20
+                "linkedMetafieldValue": "gid://shopify/Metaobject/971662527"
+ 21
+              },
+ 22
+              {
+ 23
+                "name": "Blue",
+ 24
+                "linkedMetafieldValue": "gid://shopify/Metaobject/971662528"
+ 25
+              },
+ 26
+              {
+ 27
+                "name": "Yellow",
+ 28
+                "linkedMetafieldValue": "gid://shopify/Metaobject/971662529"
+ 29
+              }
+ 30
+            ]
+ 31
+          },
+ 32
+                  {
+ 33
+            "name": "Shoe size",
+ 34
+            "linkedMetafield": {
+ 35
+              "namespace": "shopify",
+ 36
+              "key": "shoe-size"
+ 37
+            },
+ 38
+            "optionValues": [
+ 39
+              {
+ 40
+                "name": "7",
+ 41
+                "linkedMetafieldValue": "gid://shopify/Metaobject/971662530"
+ 42
+              },
+ 43
+              {
+ 44
+                "name": "7.5",
+ 45
+                "linkedMetafieldValue": "gid://shopify/Metaobject/971662531"
+ 46
+              },
+ 47
+              {
+ 48
+                "name": "8",
+ 49
+                "linkedMetafieldValue": "gid://shopify/Metaobject/971662532"
+ 50
+              }
+ 51
+            ]
+ 52
+          }
+ 53
+        ]
+ 54
+      }
+ 55
+    }
+ 56 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Why we've made these changes
+ Linking product options to metafields
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,50 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Checks reference
+ You can run the following checks as part of Theme Check. Each check identifies a specific error or a place in your code where a best practice is not being followed.
+ To learn more about the check and its options, click on the name of the check.
+ Liquid file checks
+ These checks analyze the style and validity of Liquid code. Some of these checks support auto-correction using the --auto-correct flag.
+ Check Severity Purpose Auto-correction
+ AppBlockValidTags Error Identifies forbidden Liquid tags in theme app extension app block and app embed block code.
+ AssetPreload Warning Encourages preloading of assets using Liquid filters, rather than HTML attributes.
+ AssetSizeAppBlockCSS Error Prevents theme app extensions from using CSS files larger than the configured threshold.
+ AssetSizeAppBlockJavascript Error Prevents theme app extensions from using JavaScript files and external scripts with a compressed size larger than the configured threshold.
+ AssetSizeCSS Error Prevents themes from using CSS files larger than the configured threshold.
+ AssetSizeJavaScript Error Prevents using theme JavaScript files and external scripts with a compressed size greater than the configured threshold.
+ CdnPreconnect Warning This check is aimed at signaling the redundant preconnect to Shopify's CDN.
+ ContentForHeaderModification Error Identifies code that tries to parse content_for_header .
+ DeprecateBgsizes Warning Discourages use of the bgset extension instead of the image-set attribute for loading background images.
+ DeprecateLazysizes Warning Discourages use of the lazysizes library for lazy loading images, iframes, and scripts.
+ DeprecatedFilter Warning Discourages using deprecated filters in themes. Yes
+ DeprecatedTag Error Discourages using deprecated tags in themes.
+ ImgWidthAndHeight Error Enforces setting the width and height attributes on img tags.
+ LiquidHTMLSyntaxError Error Identifies Liquid and HTML syntax errors.
+ MissingAsset Error Makes sure that all asset files referenced by the asset_url filter exist.
+ MissingTemplate Warning Identifies when a resource is referenced using a render , section , or include tag, but doesn't exist. Yes
+ PaginationSize Warning Ensures that objects are paginated with performant sizes so too many objects are not loaded at once.
+ ParserBlockingJavaScript Error Identifies script tags that don't have defer or async attributes, avoiding parser-blocking JavaScript.
+ RemoteAsset Warning Discourages use of third party domains for hosting assets.
+ RequiredLayoutThemeObject Error Makes sure that the theme.liquid layout file contains the required {{ content_for_header }} and {{ content_for_layout }} objects. Yes
+ TranslationKeyExists Error Identifies references to translations that don't exist.
+ UnclosedHTMLElement Error Identifies instances of unclosed HTML elements in branching code.
+ UndefinedObject Error Identifies references to undefined Liquid objects.
+ UnknownFilter Error Identifies references to unknown Liquid filters.
+ UnusedAssign Warning Identifies variable definitions that aren't used.
+ ValidSchema Warning Identifies invalid JSON in {% schema %} tags.
+ JSON file checks
+ These checks analyze the syntax, content and structure of JSON files.
+ Check Severity Purpose Auto-correction
+ JSONSyntaxError Error Identifies invalid JSON files in themes.
+ MatchingTranslations Warning Identifies missing or additional translations in locale files. Yes
+ ValidHTMLTranslation Warning Identifies invalid HTML inside translations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Liquid file checks
+ JSON file checks
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,10 @@
+ToastApi
+ Components
+ Extension points APIs
+ Learn about the APIs provided to extension points:
+ LayoutApi: Adjust your content based on the user's screen size.
+ LocaleApi: Access a merchant’s current locale to internationalize your extension content.
+ SessionTokenApi: Get a fresh session token for communication with your app's backend service.
+ ToastApi: Provide quick, at-a-glance feedback on the outcome of an action.
+ Was this page helpful?
+ YesNo

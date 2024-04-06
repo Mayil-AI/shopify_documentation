@@ -1,0 +1,130 @@
+Troubleshooting
+ Theme Store
+ Discounts
+ Discounts can be applied at the line item level, or the cart, checkout, or order level. This means that they apply directly to specific line items, or apply to the cart or order as a whole. Discounts can be applied in the following ways:
+ As automatic discounts
+ Using manual discount codes
+ Using Shopify Scripts
+ In this tutorial, you'll learn how to display discounts in your theme.
+ Requirements
+ You've created a cart template or a customers/order template.
+ Resources
+ To display discounts in your theme, you'll use the following:
+ The discount_application object
+ The discount_allocation object
+ The line_item object
+ The discount_application object
+ The discount_application object registers discounts at the cart, checkout, or order level. Depending on where you're implementing your discount display, you'll access the relevant discount applications through the associated parent object:
+ For the cart template:
+ cart.discount_applications
+ cart.cart_level_discount_applications
+ For the customers/order template:
+ order.discount_applications
+ order.cart_level_discount_applications
+ Note
+ Manual discount codes can only be applied at the checkout, so they're not available through cart.discount_applications.
+ The discount_allocation object
+ The discount_allocation object associates a discount_application with a line item.
+ You can access an array of all of the discount allocations associated with a line item using line_item.line_level_discount_allocations.
+ The line_item object
+ To complete the price display, you need to use price and discount attributes of the line_item object, including:
+ original_price
+ original_line_price
+ final_price
+ final_line_price
+ line_level_total_discount
+ Implementing discount displays
+ Because discounts can apply to line items or to the cart or order as a whole, you should display discount information in two places:
+ With individual line items
+ With the total summary
+ The examples in this tutorial use the cart template. However, you can adapt these examples to add discounts to the customers/order template by using the order object where the cart object is used.
+ You can implement the components directly in a Liquid template, or in a section in a JSON template.
+ Line item discounts
+ If a discount applies to specific line items, then it should be displayed with those items. To display discounts with line items, you need to include the following in your display:
+ The line item price
+ The line item discount
+ Line item price
+ If a discount has been applied to a line item, then you should show the original price with a strikethrough, as well as the new discounted price. Each of these can be accessed with the following attributes of the Liquid line_item object:
+ original_price
+ original_line_price
+ final_price
+ final_line_price
+ Line item discounts
+ If a discount has been applied to a line item, then you should show each discount that's applied, with its associated discount amount, or a total discount amount. Line item-specific discounts can be accessed through the line_level_discount_allocations attribute of the Liquid line_item object, and the total line item discount can be accessed through the line_level_total_discount attribute.
+ Example
+ The following is an example that outputs the price and discounts display:
+ 1 {% for line_item in cart.items %}
+ 2
+    <!-- line item info -->
+ 3
+ 4
+    {% if line_item.original_price > line_item.final_price %}
+ 5
+      <s>{{ line_item.original_price | money }}</s>
+ 6
+    {% endif %}
+ 7
+ 8
+    {{ line_item.final_price | money }})
+ 9
+ 10
+    {% if line_item.line_level_discount_allocations.size > 0 %}
+ 11
+      Discounts:
+ 12
+      <ul>
+ 13
+        {% for discount_allocation in line_item.line_level_discount_allocations %}
+ 14
+          <li>
+ 15
+            {{ discount_allocation.discount_application.title }}-{{ discount_allocation.amount | money }}
+ 16
+          </li>
+ 17
+        {% endfor %}
+ 18
+      </ul>
+ 19
+    {% endif %}
+ 20 {% endfor %}
+ Tip
+ For another example of displaying line item discounts, you can refer to Dawn's implementation.
+ Cart discounts
+ The subtotal is the line item total after line item discounts have applied, and the total is the cart total after cart discounts have applied. If a discount applies to the cart as a whole, then it should display between the subtotal and total.
+ Cart-level discounts can be accessed through the cart_level_discount_applications attribute of the cart or order object.
+ Example
+ 1 Subtotal: {{ cart.items_subtotal_price | money }}
+ 2
+ 3 {% if cart.cart_level_discount_applications.size > 0 %}
+ 4
+    Discounts:
+ 5
+ 6
+    <ul>
+ 7
+      {% for discount_application in cart.cart_level_discount_applications %}
+ 8
+        <li>
+ 9
+          {{ discount_application.title }}-{{ discount_application.total_allocated_amount | money }}
+ 10
+        </li>
+ 11
+      {% endfor %}
+ 12
+    </ul>
+ 13 {% endif %}
+ 14
+ 15 Total: {{ cart.total_price | money }}
+ Tip
+ For another example of displaying cart discounts, you can refer to Dawn's implementation.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Resources
+ Implementing discount displays
+ Line item discounts
+ Cart discounts
+ Updates & News

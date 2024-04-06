@@ -1,0 +1,315 @@
+Additional SDKs
+ Add a content security policy
+ A content security policy (CSP) adds an important layer of security to your web app by helping to mitigate cross-site scripting and data injection attacks. It enforces what content is loaded in your app. This includes images, CSS, fonts, scripts, network requests, and more.
+ This guide describes how you can set up and customize a CSP for your site.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Setup a Content Security Policy on an existing Hydrogen app.
+ Define custom directives within your Content Security Policy.
+ Secure third party scripts with a Content Security Policy nonce.
+ Requirements
+ You've completed the Hydrogen Getting Started with a Hello World example project.
+ Step 1: Set up a content security policy
+ Hydrogen provides a default content security policy. Add the content security policy by using the createContentSecurityPolicy utility within your entry.server.jsx file which returns:
+ nonce: Pass this value to React's renderToReadableStream or any other custom component that renders a script under the hood.
+ NonceProvider: This makes the nonce available throughout the app, and renders it by wrapping RemixServer.
+ header: This is the actual content security policy header value. Add it to your app response headers.
+ Your updated entry.server.jsx should look something like the following:
+ File
+ JavaScript
+ TypeScript
+ /app/entry.server.jsx
+ 1 import {RemixServer} from '@remix-run/react';
+ 2 import isbot from 'isbot';
+ 3 import {renderToReadableStream} from 'react-dom/server';
+ 4 import {createContentSecurityPolicy} from '@shopify/hydrogen';
+ 5
+ 6 export default async function handleRequest(
+ 7
+    request,
+ 8
+    responseStatusCode,
+ 9
+    responseHeaders,
+ 10
+    remixContext,
+ 11 ) {
+ 12
+    // Create the Content Security Policy
+ 13
+    const {nonce, header, NonceProvider} = createContentSecurityPolicy();
+ 14
+ 15
+    const body = await renderToReadableStream(
+ 16
+      // Wrap the entire app in the nonce provider
+ 17
+      <NonceProvider>
+ 18
+        <RemixServer context={remixContext} url={request.url} />
+ 19
+      </NonceProvider>,
+ 20
+      {
+ 21
+        // Pass the nonce to react
+ 22
+        nonce,
+ 23
+        signal: request.signal,
+ 24
+        onError(error) {
+ 25
+          // eslint-disable-next-line no-console
+ 26
+          console.error(error);
+ 27
+          responseStatusCode = 500;
+ 28
+        },
+ 29
+      },
+ 30
+    );
+ 31
+ 32
+    if (isbot(request.headers.get('user-agent'))) {
+ 33
+      await body.allReady;
+ 34
+    }
+ 35
+ 36
+    responseHeaders.set('Content-Type', 'text/html');
+ 37
+    // Add the CSP header
+ 38
+    responseHeaders.set('Content-Security-Policy', header);
+ 39
+ 40
+    return new Response(body, {
+ 41
+      headers: responseHeaders,
+ 42
+      status: responseStatusCode,
+ 43
+    });
+ 44 }
+ Step 2: Add a nonce to your scripts
+ If you start your app's server, you'll notice a lot of errors in the console and scripts will fail to load. This is because the nonce value also needs to be passed to each script in the app.
+ Update root.jsx to use the useNonce() hook and pass the value to the ScrollRestoration, Scripts, and LiveRelod components. Make sure to also update the error boundary:
+ File
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 import {useNonce} from '@shopify/hydrogen';
+ 2
+ 3 export default function App() {
+ 4
+    const nonce = useNonce();
+ 5
+    const data = useLoaderData();
+ 6
+ 7
+    return (
+ 8
+      <html lang="en">
+ 9
+        <head>
+ 10
+          <meta charSet="utf-8" />
+ 11
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 12
+          <Meta />
+ 13
+          <Links />
+ 14
+        </head>
+ 15
+        <body>
+ 16
+          <Layout {...data}>
+ 17
+            <Outlet />
+ 18
+          </Layout>
+ 19
+          {/** Pass the nonce to all components that generate a script **/}
+ 20
+          <ScrollRestoration nonce={nonce} />
+ 21
+          <Scripts nonce={nonce} />
+ 22
+          <LiveReload nonce={nonce} />
+ 23
+        </body>
+ 24
+      </html>
+ 25
+    );
+ 26 }
+ 27
+ 28 export function ErrorBoundary() {
+ 29
+    const error = useRouteError();
+ 30
+    const [root] = useMatches();
+ 31
+    const nonce = useNonce();
+ 32
+    let errorMessage = "Unknown error";
+ 33
+    let errorStatus = 500;
+ 34
+ 35
+    if (isRouteErrorResponse(error)) {
+ 36
+      errorMessage = error?.data?.message ?? error.data;
+ 37
+      errorStatus = error.status;
+ 38
+    } else if (error instanceof Error) {
+ 39
+      errorMessage = error.message;
+ 40
+    }
+ 41
+ 42
+    return (
+ 43
+      <html lang="en">
+ 44
+        <head>
+ 45
+          <meta charSet="utf-8" />
+ 46
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 47
+          <Meta />
+ 48
+          <Links />
+ 49
+        </head>
+ 50
+        <body>
+ 51
+          <Layout {...root.data}>
+ 52
+            <div className="route-error">
+ 53
+              <h1>Oops</h1>
+ 54
+              <h2>{errorStatus}</h2>
+ 55
+              {errorMessage && (
+ 56
+                <fieldset>
+ 57
+                  <pre>{errorMessage}</pre>
+ 58
+                </fieldset>
+ 59
+              )}
+ 60
+            </div>
+ 61
+          </Layout>
+ 62
+          {/** Make sure to remember to pass the nonce to components within the ErrorBoundary **/}
+ 63
+          <ScrollRestoration nonce={nonce} />
+ 64
+          <Scripts nonce={nonce} />
+ 65
+          <LiveReload nonce={nonce} />
+ 66
+        </body>
+ 67
+      </html>
+ 68
+    );
+ 69 }
+ If you use any third-party scripts, then use the Script component which automatically attaches the nonce:
+ File
+ JavaScript
+ TypeScript
+ /app/entry.server.jsx
+ 1 import {useNonce, Script} from '@shopify/hydrogen';
+ 2
+ 3 export default function App() {
+ 4
+    const nonce = useNonce();
+ 5
+    const data = useLoaderData();
+ 6
+ 7
+    return (
+ 8
+      <html lang="en">
+ 9
+        <head>
+ 10
+          <meta charSet="utf-8" />
+ 11
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 12
+          <Meta />
+ 13
+          <Links />
+ 14
+        </head>
+ 15
+        <body>
+ 16
+          <Layout {...data}>
+ 17
+            <Outlet />
+ 18
+          </Layout>
+ 19
+          {/** The Script component automatically adds a nonce **/}
+ 20
+          <Script src="https://some-custom-script.js" />
+ 21
+          <ScrollRestoration nonce={nonce} />
+ 22
+          <Scripts nonce={nonce} />
+ 23
+          <LiveReload nonce={nonce} />
+ 24
+        </body>
+ 25
+      </html>
+ 26
+    );
+ 27 }
+ Step 3: Customize the content security policy
+ You can extend the default CSP generated by Hydrogen by passing custom directives into createContentSecurityPolicy. Refer to the content security policy reference for a description of available directives.
+ File
+ JavaScript
+ TypeScript
+ /app/entry.server.jsx
+ 1 const {nonce, header, NonceProvider} = createContentSecurityPolicy({
+ 2
+    styleSrc: [
+ 3
+      "'self'",
+ 4
+      'https://cdn.shopify.com',
+ 5
+      'https://some-custom-css.cdn',
+ 6
+    ],
+ 7 });
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Set up a content security policy
+ Step 2: Add a nonce to your scripts
+ Step 3: Customize the content security policy
+ Updates & News
+ Developer changelog
+ Partner blog

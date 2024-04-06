@@ -1,0 +1,90 @@
+gift_card.liquid
+ The gift_card.liquid template renders the gift card page, which displays the gift card issued to a customer upon purchase.
+ Tip
+ Refer to the gift_card.liquid template in Dawn for an example of this template.
+ Unlike other pages in your store, gift card pages are hosted on the checkout.shopify.com domain. Gift card URLs contain unique identifiers for your store and gift card:
+ 1 https://checkout.shopify.com/gift_cards/[store_id]/[gift_card_token]
+ The following image is an example of how Dawn's gift_card.liquid template renders the gift card page.
+ Location
+ The gift_card template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── gift_card.liquid
+ 6
+      |   ...
+ 7
+      ...
+ Content
+ This template can't be a JSON template.
+ You can include the following in your gift_card template or a section inside of the template:
+ The gift_card object
+ You can also include a QR code or Apple wallet passes.
+ The gift_card object
+ You can access the Liquid gift_card object to display the gift card details.
+ Usage
+ When working with the gift_card template, you should familiarize yourself with the following:
+ Adding a QR code link to the store
+ Including Apple Wallet passes to the template
+ Displaying only the gift card details
+ To learn how to personalize gift card templates with a custom image, refer to the Shopify Help Center.
+ QR code
+ You can include a QR code link to the store by adding JavaScript that generates a QR code. Add the following snippets in the <head> and <body> elements of the page, respectively:
+ Include in <head>
+ 1 {{ 'vendor/qrcode.js' | shopify_asset_url | script_tag }}
+ Include in <body>
+ 1 <div id="qr-code"></div>
+ 2
+ 3 <script>
+ 4
+    new QRCode(document.getElementById('qr-code'), {
+ 5
+      text: '{{ gift_card.qr_identifier }}',
+ 6
+      width: 120,
+ 7
+      height: 120
+ 8
+    });
+ 9 </script>
+ Apple Wallet passes
+ You can include Apple Wallet passes by adding the following snippet to the <body> element of the page:
+ 1 {% if gift_card.pass_url %}
+ 2
+    <a href="{{ gift_card.pass_url }}" >
+ 3
+      <img id="apple-wallet-badge"
+ 4
+        src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+ 5
+        width="120"
+ 6
+        height="40"
+ 7
+        alt="Add To Apple Wallet">
+ 8
+      </a>
+ 9 {% endif %}
+ Display only the gift card details
+ If you don’t want to include theme elements, like the header and footer, you can choose to render the gift_card.liquid template with no layout or with a custom layout, using the Liquid layout object.
+ For example:
+ gift_card.liquid
+ 1 {% layout none %}
+ 2
+ 3 <!-- template content -->
+ Preview the template
+ You can preview the gift card's appearance by navigating to the gift card template from the theme editor.
+ From the theme editor, open the drop-down menu at the top of the page.
+ Under Templates, click Others. Then click Gift card.
+ Note
+ If you can't find the gift card template in the theme editor's navigation menu, then you might need to insert the content_for_header Liquid object in the HTML <head> tag of your gift_card.liquid template.
+ Usage
+ Preview the template
+ Updates & News
+ Developer changelog
+ Partner blog

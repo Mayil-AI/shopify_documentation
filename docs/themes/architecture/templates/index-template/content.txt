@@ -1,0 +1,30 @@
+index
+ The index template renders the home page of the store, located at the root URL (/). The home page often serves as a customer's first impression of a merchant's store, so the index template should include versatile options for merchants to tell their story.
+ Tip
+ Refer to the index template in Dawn for an example of this template.
+ Location
+ The index template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── index.json
+ 6
+      |   ...
+ 7
+      ...
+ Usage
+ When working with the index template, you should familiarize yourself with the differences between JSON and Liquid index templates.
+ JSON vs. Liquid
+ Both JSON and Liquid index templates allow merchants to add and remove sections using the theme editor. Although the Liquid index template has this functionality, in most cases, you should use a JSON template (index.json) as your index template. JSON templates have the following advantages over Liquid templates:
+ JSON templates give more flexibility for merchants to add, remove, and reorder sections, including app sections.
+ JSON templates store their own data, which minimizes the amount of data in settings_data.json and improves the performance of the theme editor.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Usage

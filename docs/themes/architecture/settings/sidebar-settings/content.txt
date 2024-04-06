@@ -1,0 +1,65 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Sidebar settings
+ Sidebar settings can’t hold a value and aren’t configurable. They’re informational elements that can be used to provide detail around your input settings and organize them.
+ Sidebar settings are composed of standard attributes. The following are the types of sidebar settings:
+ header
+ paragraph
+ Tip
+ If you want to add input settings, like a checkbox, then refer to Input settings.
+ Standard attributes
+ The following are standard attributes across sidebar settings:
+ Attribute Description Required
+ type The input setting type, which can be either header or paragraph. Yes
+ content The setting content, which will show in the theme editor. Yes
+ header
+ A setting of type header outputs a header element to help you better organize your input settings. In addition to the standard attributes of a sidebar setting, header type settings have the following attribute:
+ Attribute Description Required
+ info An option for informational text about the setting. No
+ For example, the following setting generates the following output:
+ 1 {
+ 2
+    "type": "header",
+ 3
+    "content": "Email Signup",
+ 4
+    "info": "Subscribers added automatically to your “accepted marketing” customer list. [Learn more](https://help.shopify.com/manual/customers/manage-customers)"
+ 5 }
+ Output
+ paragraph
+ A setting of type paragraph outputs a text element to help you better describe your input settings. For example, the following setting generates the following output:
+ 1 {
+ 2
+    "type": "paragraph",
+ 3
+    "content": "All of your collections are listed by default. To customize your list, choose 'Selected' and add collections."
+ 4 }
+ Output
+ Create links
+ You can add links to the info settings attribute by enclosing the link text in brackets and then following it immediately with the URL in parentheses.
+ For example, the following setting generates the following output:
+ Settings
+ 1 {
+ 2
+    "type": "checkbox",
+ 3
+    "id": "enable_payment_button",
+ 4
+    "label": "Show dynamic checkout button",
+ 5
+    "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/online-store/dynamic-checkout)",
+ 6
+    "default": true
+ 7 },
+ Output
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Standard attributes
+ header
+ paragraph
+ Create links
+ Updates & News
+ Developer changelog
+ Partner blog

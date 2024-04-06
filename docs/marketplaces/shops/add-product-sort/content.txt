@@ -1,0 +1,55 @@
+Adding product sort
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ Your marketplace has shop pages with shop details and product categories. You want to give buyers a way of organizing the products, in dedicated pages.
+ In this tutorial, you'll add sort functionality to shops. You'll set up product sort by title, price, best-selling, and creation date, but you can follow a similar structure to provide sort options by other product attributes. Refer to the Storefront API to see all supported sorting options.
+ What you'll learn
+ After finishing this tutorial, you'll know how to add sort functionality to shop pages.
+ Requirements
+ You've finished the tutorial for adding product categories.
+ Sort products from the Storefront API
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ Update the products query to accept sortKey and reverse arguments.
+ pages/shops/[id].js
+ 1 const SHOP_PRODUCTS_QUERY = gql`
+ 2
+    query ShopProducts(
+ 3
+      // ...
+ 4
+      $sortKey: ProductSortKeys
+ 5
+      $reverse: Boolean
+ 6
+    ) {
+ 7
+      products(
+ 8
+        // ...
+ 9
+        sortKey: $sortKey
+ 10
+        reverse: $reverse
+ 11
+      ) {
+ 12
+        // ...
+ 13
+      }
+ 14
+    }
+ 15 `;
+ You can use this data in sort selectors for pages. The following is an example:
+ Next steps
+ Learn how to add product filters to the shop pages in a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Sort products from the Storefront API
+ Next steps

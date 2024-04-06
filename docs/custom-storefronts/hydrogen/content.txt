@@ -1,0 +1,95 @@
+Additional SDKs
+ Getting started with Hydrogen and Oxygen
+ Hydrogen is Shopify's set of opinionated components, utilities, and tools for building custom storefronts on top of Remix. Oxygen is the hosting layer for Hydrogen storefronts. Together, they make up Shopify’s recommended stack for building headless commerce.
+ What you’ll build
+ In this tutorial, you’ll learn how to complete the following tasks:
+ Creating a new Hydrogen app using example data
+ Running Hydrogen in your local development environment
+ Setting up continuous deployment with GitHub and Oxygen
+ Deploying your app to production with your own store inventory
+ Requirements
+ Node.js v16.13+
+ npm v8.1.2+ (Learn more about using alternate package managers)
+ You don't need a Shopify account to try Hydrogen. However, to connect to store inventory and deploy your app to Oxygen hosting, you'll need a Shopify account on a Basic, Shopify, Advanced, or Plus plan. Development stores aren’t supported at this time.
+ In addition to these requirements, we recommend understanding the basics of React and Remix to get the most out of Hydrogen.
+ Step 1: Create a new Hydrogen app
+ In your terminal, run the following command:
+ Terminal
+ $ npm create @shopify/hydrogen@latest
+ The Hydrogen CLI prompts you with several questions as part of your project setup. Some prompts are optional and can be skipped or set up later.
+ Note
+ The Recommended options in the following table are only for the purposes of this tutorial. You can re-run the command above to create new Hydrogen apps with different options that suit your needs.
+ Prompt Details Recommended
+ Data source Select Mock.shop to use example product data, with no API token required. Install the Hydrogen channel to connect your Shopify store inventory. Mock.shop
+ Project name The name of the directory that contains the project files. Your choice
+ Language Select whether to create a JavaScript or TypeScript project. Your choice
+ CSS library
+ (Optional) Select how to manage CSS. Select from Tailwind, Vanilla Extract, CSS modules, or ordinary CSS. You can skip this step and set up CSS support later. Tailwind
+ Dependencies Select Yes to install all dependencies with npm. Select No to install dependencies yourself. Yes
+ h2 alias Hydrogen CLI commands are run in the project folder with the command npx shopify hydrogen. To shorten this command to h2, select Yes. Yes
+ Scaffolding routes
+ (Optional) Hydrogen can automatically set up standard Shopify routes for you, such as the product detail page, collection indexes, and more. You can skip this step and scaffold routes later with h2 setup. Yes
+ Multiple markets
+ (Optional) In addition to creating standard routes, Hydrogen can create routes that support multiple languages and currencies with Shopify Markets. You can skip this step and scaffold routes later with h2 setup markets. Set up later
+ Hydrogen completes the setup process and displays a summary of the project details in your terminal, similar to the following example:
+ Step 2: Run your Hydrogen app
+ In your Hydrogen project directory, run the following terminal command:
+ Terminal
+ $ npm run dev
+ Hydrogen starts a local development server. Open http://localhost:3000 to view your app.
+ You can make edits to JSX or TSX files in the app/routes directory and see them reflected in the local app. Hydrogen watches your project files and reload the server every time you save your changes.
+ At this point, you have a working Hydrogen app that uses example data from Mock.shop:
+ Step 3: Install the Hydrogen channel
+ To start displaying real product data and making continuous deployments to Oxygen, you’ll need to install the necessary apps on Shopify and GitHub, push your codebase to GitHub, and connect the GitHub repository to Shopify.
+ Install the required apps
+ The following apps enable you to connect a Hydrogen repository on GitHub to Shopify’s Oxygen hosting platform:
+ Install the Shopify GitHub App from GitHub Marketplace.
+ Install the Hydrogen channel from the Shopify App Store.
+ Push your Hydrogen app repository to GitHub
+ New Hydrogen apps are created as Git repositories by default, so your app is ready to push to GitHub. Follow GitHub's instructions for pushing your local repository to GitHub.
+ Connect your GitHub repo to the Hydrogen channel
+ The Hydrogen channel manages the connection between GitHub and Shopify’s Oxygen hosting platform. The channel watches the repo for changes and automatically deploys your Hydrogen app with each update.
+ Follow these steps to make the first deployment of your Hydrogen app on Oxygen:
+ In the Shopify admin, under Sales channels, click Hydrogen.
+ Click Create storefront.
+ Enter your storefront name.
+ Select your GitHub account or organization from the dropdown.
+ Enter your repository name to filter down the options and select the repository.
+ Click Create.
+ Oxygen pulls a copy of your Hydrogen app codebase and automatically creates a preview deployment. The Shopify GitHub app also automatically opens a pull request in your repo to add a GitHub Actions workflow file to handle future deployments. Merge the PR to start continuous deployment.
+ At this point, your Hydrogen channel overview will look similar the following:
+ In this case, the warning label indicates that the Oxygen workflow file hasn't yet been merged.
+ Step 4: Merge your Oxygen workflow file
+ To start making production deployments, Oxygen requires a GitHub Actions workflow file in your repository. The Shopify GitHub app automatically opens a pull request to create this file when you connect a new repo.
+ Follow these steps to finish configuring your Hydrogen app for continuous deployment to Oxygen:
+ In the Hydrogen channel, click the name of the storefront that you just created.
+ Click Review and merge on GitHub to open the pull request in a new tab.
+ Follow GitHub’s prompts to merge the PR.
+ Close the tab to return to the Hydrogen storefront overview.
+ Oxygen will automatically create a new deployment in your production environment and continue watching your repo for updates. Each time you push one or more commits to your repo, Oxygen will create a new preview deployment with your changes.
+ Sync environment variables
+ After your Hydrogen app is deployed to Oxygen, it automatically displays any store inventory published to the Hydrogen sales channel. However, your local development environment will still show example data from Mock.shop.
+ This happens when your app is using different environment variables in Oxygen and in your local dev environment.
+ To synchronize these environment variables, use the Shopify CLI link command to link your local environment to Oxygen:
+ In your terminal, navigate to your Hydrogen app project directory.
+ Run the command npx shopify hydrogen link.
+ The CLI opens a browser window to authenticate. If prompted, log in to your Shopify store. Close the browser window.
+ If prompted, select the Shopify account to connect to.
+ Select the Hydrogen storefront to link.
+ To confirm that the connection succeeded, run npm run dev and open http://localhost:3000. Your local development app now displays production store data.
+ Next steps
+ At this point, you've created a Hydrogen app, connected the Hydrogen channel, and started making continuous deployments with Oxygen. There are several things you might want to do at this point.
+ Learn more about Hydrogen's project structure.
+ Learn more about deployments and environments.
+ Start fetching product data with the Storefront API.
+ Learn how to manage shopping carts in Hydrogen.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you’ll build
+ Requirements
+ Step 1: Create a new Hydrogen app
+ Step 2: Run your Hydrogen app
+ Step 3: Install the Hydrogen channel
+ Step 4: Merge your Oxygen workflow file
+ Next steps

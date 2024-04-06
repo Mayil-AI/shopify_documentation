@@ -1,0 +1,295 @@
+Navigation
+ Overview
+ History
+ Redirect / Navigate
+ POS
+ Product subscription app extensions
+ Redirect
+ The Redirect action set allows you to modify the top-level browser URL. Use the Redirect action set to navigate within your app, or to redirect users elsewhere in the Shopify admin or on the web.
+ You can use the redirect action set in the following ways:
+ Plain JavaScript
+ React hook
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the Redirect action from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Redirect} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ 5
+ 6 const redirect = Redirect.create(app);
+ Redirect to a relative path in the app
+ Redirect to a local app path. The path must be prefixed with a slash and is treated as relative to the app origin:
+ 1 // Go to {appOrigin}/settings
+ 2 redirect.dispatch(Redirect.Action.APP, '/settings');
+ Redirect to an absolute URL outside of the app and outside of Shopify admin.
+ 1 // Go to http://example.com
+ 2 redirect.dispatch(Redirect.Action.REMOTE, 'http://example.com');
+ Open in a new window
+ Add the newContext option (equivalent to <a target="_blank">):
+ 1 // Go to http://example.com in a new window
+ 2 redirect.dispatch(Redirect.Action.REMOTE, {
+ 3
+    url: 'http://example.com',
+ 4
+    newContext: true,
+ 5 });
+ Redirect to a relative path in Shopify admin
+ Redirect to the customers section in Shopify admin. The path must be prefixed with a slash.
+ 1 // Go to {shopUrl}/admin/customers
+ 2 redirect.dispatch(Redirect.Action.ADMIN_PATH, '/customers');
+ 3
+ 4 // Go to {shopUrl}/admin/customers in a new window
+ 5 redirect.dispatch(Redirect.Action.ADMIN_PATH, {
+ 6
+    path: '/customers',
+ 7
+    newContext: true,
+ 8 });
+ Redirect to a named section in Shopify admin
+ Redirect to the Products section in the Shopify admin:
+ 1 // Go to {shopUrl}/admin/products
+ 2 redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 3
+    name: Redirect.ResourceType.Product,
+ 4 });
+ 5
+ 6 // Go to {shopUrl}/admin/products in a new window
+ 7 redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 8
+    section: {
+ 9
+      name: Redirect.ResourceType.Product,
+ 10
+    },
+ 11
+    newContext: true,
+ 12 });
+ Redirect to a specific resource in Shopify admin.
+ Redirect to the collection with the ID 123 in the Shopify admin:
+ 1 // Go to {shopUrl}/admin/collections/123
+ 2 redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 3
+    name: Redirect.ResourceType.Collection,
+ 4
+    resource: {
+ 5
+      id: '123',
+ 6
+    },
+ 7 });
+ Redirect to create a product in Shopify admin.
+ Redirect to {shopUrl}/admin/products/new in the Shopify admin:
+ 1 // Go to {shopUrl}/admin/products/new
+ 2 redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 3
+    name: Redirect.ResourceType.Product,
+ 4
+    resource: {
+ 5
+      create: true,
+ 6
+    },
+ 7 });
+ Redirect to a product variant in Shopify admin.
+ Redirect to the collection with the id '123' in Shopify admin:
+ 1 // Go to {shopUrl}/admin/products/123/variant/456
+ 2 redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 3
+    name: Redirect.ResourceType.Product,
+ 4
+    resource: {
+ 5
+      id: '123',
+ 6
+      variant: {
+ 7
+        id: '456',
+ 8
+      },
+ 9
+    },
+ 10 });
+ Redirect to create a new product variant in Shopify admin.
+ Redirect to {shopUrl}/admin/products/123/variants/new in the Shopify admin:
+ 1 // Go to {shopUrl}/admin/products/123/variants/new
+ 2 redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 3
+    name: Redirect.ResourceType.Product,
+ 4
+    resource: {
+ 5
+      id: '123',
+ 6
+      variant: {
+ 7
+        create: true,
+ 8
+      },
+ 9
+    },
+ 10 });
+ Subscribe to actions
+ You can subscribe to actions dispatched through the redirect action set:
+ 1 redirect.subscribe(Redirect.Action.APP, (payload: Redirect.AppPayload) => {
+ 2
+    // Do something with the redirect
+ 3
+    console.log(`Navigated to ${payload.path}`);
+ 4 });
+ Subscribe to all redirect actions
+ You can subscribe to all redirect actions within your app, regardless of which action sets trigger the actions:
+ 1 app.subscribe(Redirect.Action.APP, (payload: Redirect.AppPayload) => {
+ 2
+    // Do something with the redirect
+ 3
+    console.log(`Navigated to ${payload.path}`);
+ 4 });
+ Current restrictions
+ Query Params
+ The use of query params is not supported. All query params are removed from the path during the redirect.
+ React
+ The useNavigate hook allows you to modify the top-level browser URL. You can use it to:
+ Navigate within your app
+ Redirect users elsewhere in the Shopify admin
+ Redirect elsewhere on the web
+ Example Code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ Navigate within your app using a relative or absolute path.
+ 1 import {useNavigate} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const navigate = useNavigate();
+ 5
+ 6
+    return (
+ 7
+      <>
+ 8
+        <Link onClick={() => {
+ 9
+          navigate('https://my-app.com/about');
+ 10
+        }}>About</Link>
+ 11
+ 12
+        <Link onClick={() => {
+ 13
+          navigate('/about');
+ 14
+        }}>About</Link>
+ 15
+      </>
+ 16
+    );
+ 17 }
+ Navigate to Shopify admin by using a section name and an optional resource ID.
+ 1 import {useNavigate} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const navigate = useNavigate();
+ 5
+ 6
+    return (
+ 7
+      <Link onClick={() => {
+ 8
+        navigate({
+ 9
+          name: 'Collection',
+ 10
+          resource: {
+ 11
+            id: '123',
+ 12
+          }
+ 13
+        });
+ 14
+      }}>Deluxe collection</Link>
+ 15
+    );
+ 16 }
+ You can create a new resource in Shopify admin by passing true to the create option.
+ 1 import {useNavigate} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const navigate = useNavigate();
+ 5
+ 6
+    return (
+ 7
+      <Link onClick={() => {
+ 8
+        navigate({
+ 9
+          name: 'Collection',
+ 10
+          resource: {
+ 11
+            create: true,
+ 12
+          }
+ 13
+        });
+ 14
+      }}>Create a new collection</Link>
+ 15
+    );
+ 16 }
+ Navigate elsewhere on the web by using a fully qualified URL.
+ 1 import {useNavigate} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const navigate = useNavigate();
+ 5
+ 6
+    return (
+ 7
+      <Link onClick={() => {
+ 8
+        navigate('https://shopify.com');
+ 9
+      }}>Shopify</Link>
+ 10 );
+ 11 }
+ Props
+ The useNavigate hook does not accept props. It returns a method with the following API.
+ Name Type Description Required
+ to string or AdminSectionOptions Where the app should redirect. If using a string, options must conform to AppOptions. For navigating in Shopify admin, use the AdminSectionOptions type and use the HostOptions type for passing options. Yes
+ options AppOptions or HostOptions Custom configuration for navigation behaviour No
+ AppOptions
+ The AppOptions type must be used when using a string type for to.
+ Name Type Description Required
+ replace boolean Replace the current location with the new location No
+ target "host", "new" The context where the new location should open No
+ AdminSectionOptions
+ You must use the AdminSectionOptions type with HostOptions.
+ Name Type Description Required
+ name "Product", "Collection", "Order", "Customer", "Discount" The name of a specific section in Shopify admin Yes
+ resource ResourceOptions Options for redirecting to a resource within Shopify admin No
+ ResourceOptions
+ Name Type Description Required
+ create boolean Whether the app should redirect to a page to create a new resource of the specified type No
+ id string The ID of the resource that the app should navigate to No
+ HostOptions
+ You must use the HostOptions type when using a AdminSectionOptions type for to.
+ Name Type Description Required
+ replace boolean Replace the current location with the new location No
+ target self The context where the new location should open No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ UndefinedObject
+ Identifies references to undefined Liquid objects.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 {% assign greetings = "Hello" %}
+ 2 {% if greeting == "Hello" %}
+ 3
+ 4 {{ articl }}
+ 5 {{ prodcut }}
+ ✓ Pass
+ 1 {% assign greetings = "Hello" %}
+ 2 {% if greetings == "Hello" %}
+ 3
+ 4 {{ article }}
+ 5 {{ product }}
+ Options
+ 1 UndefinedObject:
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Disabling this check isn't recommended.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check
+ Updates & News
+ Developer changelog
+ Partner blog

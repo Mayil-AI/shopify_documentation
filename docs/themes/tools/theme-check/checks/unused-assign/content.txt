@@ -1,0 +1,45 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ UnusedAssign
+ Identifies variable definitions that aren't used.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 {% assign this_variable_is_not_used = 1 %}
+ ✓ Pass
+ 1 {% assign this_variable_is_used = 1 %}
+ 2 {% if this_variable_is_used == 1 %}
+ 3
+    <span>Hello!</span>
+ 4 {% endif %}
+ 5 {% assign _prefixed_ok = 1}
+ Options
+ 1 UnusedAssign:
+ 2
+    enabled: true
+ 3
+    severity: warning
+ Parameter Description
+ enabled Whether this check is enabled.
+ severity The severity of the check.
+ Disabling this check
+ Variables that are known to be unused can be prefixed by a _ to disable the check. Example:
+ 1 {% capture _ %}
+ 2
+    {% form "cart", cart %}
+ 3
+      {% assign posted_successfully = cart.posted_successfully? %}
+ 4
+    {% endform %}
+ 5 {% endcapture %}
+ 6
+ 7 {% assign _unused = 'some value' %}
+ This check is safe to disable.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Options
+ Disabling this check

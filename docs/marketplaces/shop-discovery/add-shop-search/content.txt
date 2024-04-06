@@ -1,0 +1,55 @@
+Overview
+ Getting started
+ Developer tools
+ Shop discovery
+ Overview
+ Shop search
+ Shop sort
+ Shop filter
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Adding shop search
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ Now that you have a basic marketplace, you're ready to start building it up with more functionality. You want buyers to be able to search the marketplace to find specific shops.
+ In this tutorial, you'll add functionality for searching the shops where your channel app is installed, by name.
+ What you'll learn
+ After finishing this tutorial, you'll know how to add shop search to a marketplace homepage.
+ Requirements
+ You've completed the marketplaces Getting started tutorials.
+ You've learned more about the channel app code that enables you to add shop search.
+ Add search input to the marketplace homepage
+ To add shop search, your buyer-facing app needs to make a request to the Storefront API. The following requests the shop name using the nameIsLike argument, and requests the shop's ID, domain, and a Storefront API Access Token.
+ Note
+ File path references reflect the buyer-facing app's directory structure. If you're adding commerce to an existing platform, then the file paths will reflect its directory structure.
+ pages/index.js
+ 1 const SHOPS_QUERY = gql`
+ 2
+    query Shops($name: String) {
+ 3
+      shops(nameIsLike: $name) {
+ 4
+        id
+ 5
+        domain
+ 6
+        storefrontAccessToken
+ 7
+      }
+ 8
+    }
+ 9 `;
+ Your marketplace homepage might now look something like the following:
+ Next steps
+ Learn how to add options for sorting shops on a marketplace.
+ Share feedback on Marketplace Kit.
+ Add search input to the marketplace homepage
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

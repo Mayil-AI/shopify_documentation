@@ -1,0 +1,220 @@
+Scalars
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Configuration
+ Fulfillment Constraints API reference
+ The Fulfillment Constraints API enables you to have a higher degree of customization when defining fulfillment and delivery strategies.
+ Extension targets
+ The Fulfillment Constraints API exposes the following targets:
+ Target Output type Description
+ purchase.fulfillment-constraint-rule.run FunctionRunResult Outputs a list of fulfillment constraints
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Fulfillment Constraints API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    locations {
+ 3
+      id
+ 4
+      name
+ 5
+      address1
+ 6
+      someMetafield: metafield(namespace: "some-namespace", key: "some-key") {
+ 7
+        value
+ The following example shows the resulting input to the query:
+ input.json
+ 1 {
+ 2
+    "locations": [
+ 3
+      {
+ 4
+        "id": "gid://shopify/Location/1",
+ 5
+        "name": "Shopify Ottawa Office",
+ 6
+        "address1": "150 Elgin St",
+ 7
+        "someMetafield": {
+ 8
+          "value": "some-value"
+ 9
+        }
+ 10
+      }
+ 11
+    ]
+ 12 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.fulfillment-constraint-rule.run target.
+ Example
+ Output objects can return a value of 0 to n fulfillment constraints. The following function result specifies that DeliverableCartLine 1 and 2 must ship or fulfill from same location, and lines 3 and 4 must ship or fulfill from locations 1 or 2:
+ output.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "mustFulfillFromSameLocation": {
+ 5
+          "deliverableLineIds": ["gid://shopify/DeliverableCartLine/1", "gid://shopify/DeliverableCartLine/2"]
+ 6
+        }
+ 7
+      },
+ 8
+      {
+ 9
+        "mustFulfillFrom": {
+ 10
+          "deliverableLineIds": ["gid://shopify/DeliverableCartLine/3", "gid://shopify/DeliverableCartLine/4"],
+ 11
+          "locationIds": ["gid://shopify/Location/1", "gid://shopify/Location/2"],
+ 12
+        }
+ 13
+      }
+ 14
+    ]
+ 15 }
+ Optionally, the deliverableLineIds key can be omitted from the constraint operation to indicate that the fulfillment constraint should be applied to all deliverable lines within the cart.
+ output_2.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "mustFulfillFromSameLocation": {}
+ 5
+      },
+ 6
+      {
+ 7
+        "mustFulfillFrom": {
+ 8
+          "locationIds": ["gid://shopify/Location/1", "gid://shopify/Location/2"],
+ 9
+        }
+ 10
+      }
+ 11
+    ]
+ 12 }
+ Functions conflict
+ In scenarios where FunctionRunResult returns constraints that are mutually exclusive, checkout won't return any shipping rates.
+ Scenario 1
+ In the following example, an item cannot be fulfilled by two locations.
+ conflict_scenario_1.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "mustFulfillFrom": {
+ 5
+          "deliverableLineIds": [
+ 6
+            "gid://shopify/DeliverableCartLine/1",
+ 7
+          ],
+ 8
+          "locationIds": ["gid://shopify/Location/1"]
+ 9
+        }
+ 10
+      },
+ 11
+      {
+ 12
+        "mustFulfillFrom": {
+ 13
+          "deliverableLineIds": [
+ 14
+            "gid://shopify/DeliverableCartLine/1",
+ 15
+          ],
+ 16
+          "locationIds": ["gid://shopify/Location/2"]
+ 17
+        }
+ 18
+      }
+ 19
+    ]
+ 20 }
+ Scenario 2
+ In the following example, DeliverableCartLine 1 and DeliverableCartLine 2 can't be fulfilled together because they must fulfill from Location 1 and 2 respectively.
+ conflict_scenario_1.json
+ 1 {
+ 2
+    "operations": [
+ 3
+      {
+ 4
+        "mustFulfillFrom": {
+ 5
+          "deliverableLineIds": [
+ 6
+            "gid://shopify/DeliverableCartLine/1",
+ 7
+          ],
+ 8
+          "locationIds": ["gid://shopify/Location/1"]
+ 9
+        }
+ 10
+      },
+ 11
+      {
+ 12
+        "mustFulfillFrom": {
+ 13
+          "deliverableLineIds": [
+ 14
+            "gid://shopify/DeliverableCartLine/2",
+ 15
+          ],
+ 16
+          "locationIds": ["gid://shopify/Location/2"]
+ 17
+        }
+ 18
+      },
+ 19
+      {
+ 20
+        "mustFulfillFromSameLocation": {
+ 21
+          "deliverableLineIds": [
+ 22
+            "gid://shopify/DeliverableCartLine/1",
+ 23
+            "gid://shopify/DeliverableCartLine/2",
+ 24
+          ]
+ 25
+        }
+ 26
+      }
+ 27
+    ]
+ 28 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Functions conflict
+ Updates & News
+ Developer changelog

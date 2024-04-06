@@ -1,0 +1,40 @@
+Overview
+ Getting started
+ Overview
+ Build options
+ Hydrogen and Oxygen
+ Options for building headless
+ There are many options to build custom storefronts that integrate with Shopify using the Storefront API.
+ The Hydrogen stack is Shopify's opinionated fullstack approach. There are alternative tools and options for any stack that you might choose.
+ Custom storefront use cases and corresponding build options
+ Customization type Build with
+ Build a custom storefront with a Remix app and Shopify's frontend commerce tooling Hydrogen
+ Build a custom storefront using a third-party React framework and Shopify's library of components, reusable functions, and utilities Hydrogen React
+ Build headless using the framework of your choice and Shopify's backend using only the Storefront API Headless channel
+ Hydrogen and Oxygen
+ Built on Remix, Hydrogen is a Shopify storefront toolkit that provides a set of components, functions, and utilities used for building custom storefronts on Remix apps. Hydrogen is built and optimized to use data coming from the Storefront API.
+ Channels
+ You can use the Shopify admin to manage your commerce data across multiple channels to make sure that all customer touchpoints are in sync. You can also create a custom channel complementary to your online store channel, such as a mobile app, or create your own custom website to replace your online store.
+ The Hydrogen channel
+ The Hydrogen channel enables deployment of Hydrogen storefronts to Shopify's included edge hosting environment, Oxygen. It automatically creates and populates public and private environment variables necessary for integration with the Storefront API.
+ The Shopify GitHub integration for Oxygen enables you to connect a Git repository to the Hydrogen channel within the Shopify admin. You can use GitHub to host and collaborate on your Hydrogen storefront code. GitHub provides tools to track the history of changes, recover earlier versions of the storefront, and manage your code in a central repository.
+ The Hydrogen channel also provides order attribution, so that you can clearly see in your Shopify admin the GMV that's made through the channel.
+ You can install the Hydrogen channel through the Shopify App Store.
+ Learn how to get started using the Hydrogen channel in relation to Oxygen.
+ The Headless channel
+ Make headless and self-hosted Hydrogen experiences possible in the Headless channel without needing to create a custom app.
+ The Headless channel provides a single place to create and manage access tokens for the Storefront API. You can use the channel to create multiple custom storefronts. Storefronts that you create through the channel automatically include public and private access tokens with shop permission for the Storefront API. In the channel you can rotate your private access token and manage storefront permissions.
+ Additionally, the channel gives you all of Shopify's channel features, such as product publishing and order attribution, and analytics and reporting sales by channel. Order attribution is at the channel level, not the storefront level.
+ Additional SDKs
+ Shopify provides a range of SDKs and software tools to accelerate your development process. Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Next steps
+ Build a custom storefront with the following options:
+ Add the Headless channel and get started building with the Storefront API.
+ Get started with Hydrogen React.
+ Get started with Hydrogen and begin building a custom storefront.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Hydrogen and Oxygen
+ Channels
+ Additional SDKs

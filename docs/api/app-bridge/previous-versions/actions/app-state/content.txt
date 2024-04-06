@@ -1,0 +1,40 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ App state
+ You can access the app state using a React hook.
+ useAppBridgeState
+ The useAppBridgeState hook supports accessing all or parts of the application state, including keys like context, features, and staffMember. For more information about options, refer to Props.
+ Example code
+ Note
+ When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ Get the entire app state with no arguments.
+ 1 import {useAppBridgeState} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const appState = useAppBridgeState();
+ 5
+ 6
+    ...
+ 7 }
+ Get a specific piece of the app state with an argument.
+ 1 import {useAppBridgeState} from '@shopify/app-bridge-react';
+ 2
+ 3 function MyComponent {
+ 4
+    const staffMember = useAppBridgeState('staffMember');
+ 5
+ 6
+    ...
+ 7 }
+ Props
+ Name Type Description Required
+ state "cart", "client", "context", "contextualSaveBar", "features", "fullscreen", "isLegacy", "loading", "menu", "modal", "navigation", "pos", "print", "resourcePicker", "scanner", "sessionToken", "share", "staffMember", "titleBar", "toast" Key in app state to access No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ useAppBridgeState
+ Props
+ Updates & News
+ Developer changelog

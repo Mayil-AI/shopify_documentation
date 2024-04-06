@@ -1,0 +1,75 @@
+Test checkout UI extensions
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ Testing checkout UI extensions in different scenarios is a UX guideline. The purpose is to recreate merchant and customer experiences and ensure that extensions behave as desired.
+ Test locally
+ The custom field and product offer tutorials show you how to start generating and previewing extensions. Previewing UI extensions locally is different when using static and dynamic targets.
+ Static targets
+ When you're using a static target, the UI extension automatically renders in a chosen location.
+ Dynamic targets
+ When you're using a dynamic target, you can place the UI extension between core features on each checkout step.
+ Append ?placement-reference={name} to the checkout URL that's outputted by Shopify CLI. {name} represents an available placement for dynamic targets. For example, ?placement-reference=ORDER_SUMMARY4.
+ The following are supported locations dynamic targets:
+ WALLETS1
+ INFORMATION1, INFORMATION2 and INFORMATION3
+ DELIVERY1 and DELIVERY2
+ PAYMENT1, PAYMENT2, PAYMENT3 and PAYMENT4
+ ORDER_SUMMARY1, ORDER_SUMMARY2, ORDER_SUMMARY3, and ORDER_SUMMARY4
+ ORDER_STATUS1, ORDER_STATUS2 and ORDER_STATUS3
+ Test with Shop Pay
+ To use extensions in Shop Pay, you need to activate Shopify Payments on your development store and enable test mode. You can develop extensions locally in Shop Pay and preview published extensions.
+ Note
+ To test with Shop Pay Installments, you must complete the Shopify Payments setup. Stores with incomplete account information will show Shop Pay Installments as inactive.
+ Step 1: Enable Shopify Payments in test mode
+ For development stores, where you aren't accepting real payments, enable Shopify Payments.
+ From your Shopify admin, go to Settings > Payments.
+ Initiate the signup process by clicking Activate Shopify Payments.
+ Once on the signup page, click back to go to the payment settings page.
+ Follow the steps to enable test mode.
+ Note
+ To save changes, you require a valid Customer statement descriptor and Phone number.
+ Learn more about setting up Shopify payments.
+ Step 2: Complete test orders in Shop Pay
+ To complete test orders in Shop Pay, you'll need to create a Shop Pay account with a vaulted test card.
+ Create a guest checkout using a test card for the payment method. Use an email that doesn't have a Shop Pay Account attributed to it.
+ Click Save my information for a faster checkout and enter a valid phone number.
+ You should now have a new Shop Pay account with a vaulted test credit card that you can use to complete checkouts from Shop Pay.
+ Test the extension in the checkout editor
+ Note
+ To test the extension in the checkout editor, you need to install your app on a development store that has the Checkout and Customer Accounts Extensibility developer preview enabled.
+ After you've published your extension, you'll test the experience of Plus merchants who have installed your app.
+ In this step, you'll preview different placements for extensions using the checkout editor. Checkout UI extensions don't display in checkout until the merchant uses the checkout editor to add the app and place it in checkout.
+ From the Shopify admin click Settings > Checkout. Then click Customize checkout.
+ Use the dropdown list at the top of the page to navigate to the checkout step where you want to add your extension.
+ To activate your extension, click Add app block on the bottom left of the page, and select your extension from the list.
+ If your extension doesn't appear in the list, then you need to enable a preview of your extension:
+ In your Partner Dashboard, go to Apps.
+ Click the name of your app.
+ Click Extensions, and click the name of your extension.
+ Click Enable.
+ Preview different placements for the extension by dragging and dropping the extension between the different targets. Test extension experiences in other checkout contexts like One-page checkout, Three-page checkout, and Shop Pay.
+ When you've chosen a placement, click Save.
+ Three-page checkout
+ Three-page checkout is the default checkout context. To test your extension on three-page checkout, complete the following steps:
+ Open the Settings tab.
+ Under Checkout layout, click One-page checkout.
+ Click Three-page checkout.
+ One-page checkout
+ To test your extension on one-page checkout, complete the following steps:
+ Open the Settings tab.
+ Under Checkout layout, click Three-page checkout.
+ Click One-page checkout.
+ Shop Pay
+ To test your extension on Shop Pay, complete the following steps:
+ From checkout, click Add app block, and select your extension from the list.
+ Enable Include app in Shop Pay using the checkout behavior controls.
+ Click the cart icon in the editor header.
+ Click Preview Shop Pay from the list of options.
+ Next steps
+ Learn how to deploy extensions to release changes to users.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Test locally
+ Test with Shop Pay
+ Test the extension in the checkout editor

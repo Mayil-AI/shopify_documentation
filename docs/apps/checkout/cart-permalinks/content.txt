@@ -1,0 +1,30 @@
+Validation
+ Cart permalinks
+ Overview
+ Create cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Payments
+ Billing
+ App Store
+ Deep linking to a cart or checkout using permalinks
+ Cart permalinks take customers directly to a store cart or checkout with a pre-loaded cart. When you generate a cart permalink, you direct customers who want to buy a specific product from the sales channel directly to a merchant's store cart or checkout to complete the purchase. Cart permalinks work best for apps that enable customers to buy items from a single merchant.
+ Note
+ Selling plans don't work with cart permalinks.
+ You can use permalinks to do the following:
+ Apply one or more variant IDs to a cart or checkout
+ Append checkout parameters to include shipping information (address, rate) and customer information
+ Benefits of using cart permalinks
+ Building a sales channel with permalinks requires the lowest integration effort for the following reasons:
+ Your sales channel app doesn't need to request payment processing.
+ Your sales channel app doesn't need to sync orders, handle disputes, or manage refunds.
+ Next steps
+ Create cart permalinks
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Benefits of using cart permalinks
+ Next steps

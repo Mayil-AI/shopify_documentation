@@ -1,0 +1,60 @@
+Data fetching
+ Shopify API data
+ Third-party API data
+ Pagination
+ GraphiQL
+ Caching
+ Markets
+ SEO
+ Storefronts
+ Environments
+ Deployments
+ Build your storefront
+ Debugging and testing
+ Migrate and upgrade
+ Hydrogen API reference
+ GraphiQL explorer
+ For convenience, Hydrogen includes a local GraphiQL explorer to help you create queries and learn about Shopify's Storefront API.
+ Requirements
+ Make sure you have the following environment variables in place:
+ PUBLIC_STORE_DOMAIN
+ PUBLIC_STOREFRONT_API_VERSION
+ PUBLIC_STOREFRONT_API_TOKEN
+ GraphiQL
+ The GraphiQL interface is available by default when running the Hydrogen CLI in development mode.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npx shopify hydrogen dev
+ With the development server running, go to /graphiql in your browser.
+ If you're not using the Hydrogen CLI, or want to customize the GraphiQL interface, you can do so by creating a graphiql route in your project:
+ Optional route for GraphiQL
+ JavaScript
+ TypeScript
+ <root>/app/routes/graphiql.jsx
+ 1 import {graphiqlLoader} from '@shopify/hydrogen';
+ 2 import {redirect} from '@shopify/remix-oxygen';
+ 3
+ 4 export async function loader(args) {
+ 5
+    if (process.env.NODE_ENV === 'development') {
+ 6
+      // Default Hydrogen GraphiQL behavior
+ 7
+      return graphiqlLoader(args);
+ 8
+    }
+ 9
+ 10
+    return redirect('/');
+ 11 }
+ Note
+ If you’re creating your own graphiql route, then make sure it's not available in production. You can use process.env.NODE_ENV to enforce tree-shaking.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ GraphiQL
+ Updates & News
+ Developer changelog

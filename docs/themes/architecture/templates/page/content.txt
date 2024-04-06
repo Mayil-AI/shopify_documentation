@@ -1,0 +1,30 @@
+page
+ The page template renders the store's pages, like About us or Contact us.
+ Tip
+ Refer to the page template and its main section in Dawn for an example implementation.
+ Location
+ The page template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ...
+ 5
+      |   ├── page.json
+ You can include the following in your page template or a section inside of the template:
+ The page object
+ The page object
+ You can access the Liquid page object to display the page details.
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Content
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

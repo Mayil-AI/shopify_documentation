@@ -1,0 +1,25 @@
+Collaborator accounts
+ Theme Inspector
+ Overview
+ Optimizing themes using Theme Inspector
+ GitHub integration
+ Lighthouse CI
+ Dawn
+ Best practices
+ Integrating apps
+ Product merchandising
+ Shopify Theme Inspector for Chrome
+ The Shopify Theme Inspector for Chrome is a browser plugin that visualizes Liquid render profiling data in a flame graph. You can use this graph and the profiling data to identify the parts of your theme code that are slowing down an online store.
+ Even if a theme is designed with performance in mind, apps and customizations made to theme code can cause the online store to slow down. Liquid customizations often contribute to these slowdowns. Slow Liquid templates impact server response times, which increases the time it takes for a page to start rendering.
+ After you identify the code that's slowing down the store, you can optimize it to make the store faster and convert more visitors.
+ The Shopify Theme Inspector for Chrome can be used to analyze Liquid on your personal store, or stores that you have collaborator access to.
+ Optimizing your Liquid code can improve the experience, conversion rate, and discoverability of an online store. Learn more about online store and theme performance.
+ Install the Shopify Theme Inspector
+ The Shopify Theme Inspector for Chrome is available in the Chrome web store.
+ Run the Shopify Theme Inspector
+ To learn how to run the Shopify Theme Inspector and read the flame graph, refer to Identify Liquid render issues using Shopify Theme Inspector.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Install the Shopify Theme Inspector
+ Run the Shopify Theme Inspector

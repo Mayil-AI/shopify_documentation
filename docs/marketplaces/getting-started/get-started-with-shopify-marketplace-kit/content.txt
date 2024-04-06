@@ -1,0 +1,95 @@
+Overview
+ Getting started
+ Overview
+ Get started
+ Channel app
+ Marketplace homepage
+ Developer tools
+ Shop discovery
+ Shops
+ Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Getting started with Marketplace Kit
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ You're ready to create a marketplace. You want to showcase products from multiple merchants on your platform and direct buyers towards a sale. You'll get started with a basic framework that you can build on.
+ In this tutorial, you'll clone code for the channel app and set up the marketplace's routing, access, and data query framework.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Set up a merchant-facing channel app
+ Navigate the channel app code
+ Requirements
+ You've installed the latest versions of Node.js and npm.
+ You've installed Yarn.
+ You've installed Sequelize CLI. The channel app uses Sequelize as the ORM, so having the associated CLI is useful.
+ Terminal
+ # Add Sequelize as a dependency in your project
+ $ npm install sequelize sqlite3 # or
+ $ yarn add sequelize sqlite3
+ $
+ # Install Sequelize CLI
+ $ npm install --save-dev sequelize-cli
+ You've completed the GraphQL and REST Admin API getting started and you're authorized with the APIs using OAuth and an offline access token.
+ You've created a Partner account and a development store.
+ You understand how apps fit into Shopify and the different ways of distributing your app.
+ You're familiar with channels.
+ You've turned your app into a sales channel.
+ You're familiar with the Storefront API.
+ Step 1: Clone the app repository
+ In this step, you'll clone the repository that contains code for the merchant-facing sales channel app.
+ Terminal
+ $ git clone https://github.com/Shopify/shopify-marketplaces-admin-app.git
+ Step 2: Add the required scopes to a .env file
+ The app requires a set of access scopes to access shop data.
+ At the shopify-marketplaces-admin-app project root, create a .env file.
+ In the .env file, add the following access scopes:
+ shopify-marketplaces-admin-app/.env
+ 1 SCOPES=write_products,write_customers,write_draft_orders,unauthenticated_read_product_listings,read_product_listings
+ Step 3: Install packages
+ At the project root, run the following command:
+ Terminal
+ $ yarn install
+ The packages for the app are listed in the yarn.lock file.
+ Step 4: Connect and set up your database
+ The app connects to the database using Sequelize ORM, and uses a SQLite file as the database. You can edit this to connect to your own database. You can either use a new database or connect the app to an existing database. After your database is connected, you'll run the migrations to create the required data tables.
+ In config/config.json, edit the database values to connect to your database. For more information on how to connect the database, refer to the Sequelize documentation.
+ Run the migrations that create the data tables.
+ Migrations will be in the migrations folder. All associated models will be in the models folder.
+ Terminal
+ $ npx sequelize-cli db:migrate
+ You can optionally edit the migrations and set up models based on a table in an existing database.
+ Step 5: Review the Marketplace Kit code structure
+ Familiarize yourself with the code structure for the merchant-facing app, to help orient you to subsequent Marketplace Kit tutorials.
+ Code structure
+ Folder/file Contains
+ app/* React code for the frontend, which the merchant sees in the Shopify admin
+ server/index.js The setup for the app's Express server, the Shopify API library, and the Apollo GraphQL server
+ server/custom-session-storage.js
+ Custom session storage functions to store data in the database.
+ You might need to edit this for the database that you're using
+ server/handlers/*
+ Helper functions for making REST and GraphQL calls to Shopify, so that you can do things like create Storefront Access Tokens
+ Callback functions that are called when the app receives a webhook from Shopify
+ server/helpers.js Helper and wrapper functions that call functions in the handlers folder
+ webpack.config.js
+ The configuration for webpack, which is the app's module bundler
+ You might need to edit this file depending on your needs for development and production
+ Next steps
+ Learn how to build up the merchant-facing channel app page for the Shopify admin.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Clone the app repository
+ Step 2: Add the required scopes to a `.env` file
+ Step 3: Install packages
+ Step 4: Connect and set up your database
+ Step 5: Review the Marketplace Kit code structure
+ Next steps
+ Updates & News

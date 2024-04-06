@@ -1,0 +1,270 @@
+Billing
+ App Store
+ Add a fixed bundle
+ A fixed bundle is the default implementation to support basic bundle use cases across Shopify’s ecosystem. These include standard bundles and multipack bundles that fit within Shopify’s variant limits.
+ This guide shows you how to add a fixed bundle using the GraphQL Admin API.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Use the GraphQL Admin API to create a product with variants.
+ Associate components to variants.
+ Delete components in a bundle.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_products access scope. Learn how to configure your access scopes using Shopify CLI.
+ How it works
+ A bundle is modelled as a variant (the parent bundle) and is associated with other variants (bundle components) using the ProductVariantComponents relationship.
+ The bundle variant price determines the bundle price, while the component's variants inventory determines the bundle inventory.
+ A variant has a productVariantComponents field that determines the bundles' components. Two bundle variants can have the same components.
+ The following diagram shows an example of a product variant ("The Hair and Skin Bundle") that models a bundle and contains two components: "Natural Shampoo 50 ml" and "Coconut Conditioner". The bundle is modelled by creating a variant, associating the variant with components, and assigning a quantity of one to each component.
+ Limitations and considerations
+ A bundle can have up to 30 components.
+ After an app has assigned components to a bundle, only that app can manage the components of the bundle.
+ Nested bundles aren't supported. A bundle can't have components and be part of another bundle simultaneously.
+ Step 1: Create a product with variants
+ To create a product with variants, you can run the productCreate mutation.
+ The following example creates a product with a single variant modelling a bundle.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation CreateProductBundle($input: ProductInput!) {
+ 2
+    productCreate(input: $input) {
+ 3
+      product {
+ 4
+        title
+ 5
+        variants(first: 10) {
+ 6
+          edges{
+ 7
+            node{
+ 8
+              id
+ 9
+              price
+ 10
+            }
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+      userErrors{
+ 15
+        field
+ 16
+        message
+ 17
+      }
+ 18
+    }
+ 19 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "title": "The Hair And Skin Bundle",
+ 4
+      "variants": [
+ 5
+        {
+ 6
+          "price": 10
+ 7
+        }
+ 8
+      ]
+ 9
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productCreate": {
+ 4
+        "product": {
+ 5
+          "title": "The Hair And Skin Bundle",
+ 6
+          "variants": {
+ 7
+            "edges": [
+ 8
+              {
+ 9
+                "node": {
+ 10
+                  "id": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID",
+ 11
+                  "price": "10.00"
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+ 15
+          }
+ 16
+        },
+ 17
+        "userErrors": []
+ 18
+      }
+ 19
+    }
+ 20 }
+ Step 2: Associate components to variants
+ After creating the product variant, you need to associate the components of a bundle. To do that, you can run the productVariantRelationshipBulkUpdate mutation.
+ If the variant is associated with components, then the attribute productVariant.requiresComponents returns true.
+ The following example associates two components with a quantity of one to the product variant created in the previous step.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation CreateBundleComponents($input: [ProductVariantRelationshipUpdateInput!]!) {
+ 2
+    productVariantRelationshipBulkUpdate(input: $input) {
+ 3
+      parentProductVariants {
+ 4
+        id
+ 5
+        productVariantComponents(first: 10) {
+ 6
+          nodes{
+ 7
+            id
+ 8
+            quantity
+ 9
+            productVariant {
+ 10
+              id
+ 11
+            }
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+      userErrors {
+ 16
+        code
+ 17
+        field
+ 18
+        message
+ 19
+      }
+ 20
+    }
+ 21 }
+ Variables
+ 1 {
+ 2
+    "input": [
+ 3
+      {
+ 4
+        "parentProductVariantId": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID",
+ 5
+        "productVariantRelationshipsToCreate": [
+ 6
+          {
+ 7
+            "id": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID-COMPONENT-1",
+ 8
+            "quantity": 1
+ 9
+          },
+ 10
+          {
+ 11
+            "id": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID-COMPONENT-2",
+ 12
+            "quantity": 1
+ 13
+          }
+ 14
+        ]
+ 15
+      }
+ 16
+    ]
+ 17 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productVariantRelationshipBulkUpdate": {
+ 4
+        "parentProductVariants": [
+ 5
+          {
+ 6
+            "id": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID",
+ 7
+            "productVariantComponents": {
+ 8
+              "nodes": [
+ 9
+                {
+ 10
+                  "id": "gid://shopify/ProductVariantComponent/PRODUCT_VARIANT_COMPONENT_1",
+ 11
+                  "productVariant": {
+ 12
+                    "id": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID-COMPONENT-1"
+ 13
+                  }
+ 14
+                },
+ 15
+                {
+ 16
+                  "id": "gid://shopify/ProductVariantComponent/PRODUCT_VARIANT_COMPONENT_2",
+ 17
+                  "productVariant": {
+ 18
+                    "id": "gid://shopify/ProductVariant/PRODUCT-VARIANT-ID-COMPONENT-2"
+ 19
+                  }
+ 20
+                }
+ 21
+              ]
+ 22
+            }
+ 23
+          }
+ 24
+        ],
+ 25
+        "userErrors": []
+ 26
+      }
+ 27
+    }
+ 28 }
+ Tip
+ If you need to remove components from a bundle, you can run the productVariantRelationshipBulkUpdate mutation with productVariantRelationshipsToRemove input.
+ Next steps
+ Learn how to use the productVariantRelationshipBulkUpdate mutation.
+ How it works
+ Limitations and considerations
+ Step 1: Create a product with variants
+ Step 2: Associate components to variants
+ Next steps

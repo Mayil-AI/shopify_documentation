@@ -1,0 +1,135 @@
+Customer engagement
+ Overview
+ Email consent
+ Additional customer information
+ Add a contact form
+ Troubleshooting
+ Theme Store
+ Add a contact form to your theme
+ You can add a contact form to your theme to allow customers to get in touch with the merchant.
+ Tip
+ To learn more about the merchant experience of receiving submissions, refer to View contact form submissions.
+ You can add this form with the Liquid form tag and accompanying 'contact' parameter. Inside the form, you can include two different input types:
+ Required input
+ Optional inputs
+ The following is an example of the form with both of the above input types:
+ 1 {% form 'contact' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="first-name">
+ 5
+      <label for="first-name">First name</label>
+ 6
+      <input type="text" name="contact[first_name]" id="first-name" />
+ 7
+    </div>
+ 8
+ 9
+    <div class="last-name">
+ 10
+      <label for="last-name">Last name</label>
+ 11
+      <input type="text" name="contact[last_name]" id="last-name" />
+ 12
+    </div>
+ 13
+ 14
+    <div class="phone">
+ 15
+      <label for="phone">Phone</label>
+ 16
+      <input type="tel" name="contact[phone]" id="phone" />
+ 17
+    </div>
+ 18
+ 19
+    <div class="email">
+ 20
+      <label for="email">Email</label>
+ 21
+      <input type="email" name="contact[email]" id="email" />
+ 22
+    </div>
+ 23
+ 24
+    <div class="order-number">
+ 25
+      <label for="order-number">Order number</label>
+ 26
+      <input type="text" name="contact[order_number]" id="order-number" />
+ 27
+    </div>
+ 28
+ 29
+    <div class="message">
+ 30
+      <label for="message">Message</label>
+ 31
+      <textarea name="contact[body]" id="message"></textarea>
+ 32
+    </div>
+ 33
+ 34
+    <div class="submit">
+ 35
+      <input type="submit" value="Create" />
+ 36
+    </div>
+ 37 {% endform %}
+ Tip
+ For another example of a contact form, you can refer to Dawn's implementation.
+ Required input
+ The following input is required for the form to submit successfully:
+ Input type name
+ Email email contact[email]
+ Optional inputs
+ The optional inputs can be any HTML input type. They need to have an attribute of name="contact[information_id]", where information_id briefly identifies the information that you're collecting. These titles appear in contact notifications, and must be unique within the form.
+ To make a specific field required for a customer, you need to add a field attribute of required="required" within the field's input element.
+ Below are examples of input types that you might want to add to your form.
+ Dropdown type
+ 1 <div class="request-type">
+ 2
+    <label for="request-type">What is this regarding?</label>
+ 3
+    <select id="request-type" name="contact[request_type]">
+ 4
+      <option>Returns</option>
+ 5
+      <option>Shipping</option>
+ 6
+      <option>Custom order</option>
+ 7
+      <option>Other</option>
+ 8
+    </select>
+ 9 </div>
+ Radio type
+ 1 <div class="contact-method">
+ 2
+    <label for="contact-method">How do you want us to contact you?</label>
+ 3
+    <input type="radio" name="contact[contact_method]" value="email" id="email"><label for="email">Email</label><br>
+ 4
+    <input type="radio" name="contact[contact_method]" value="phone" id="phone"><label for="phone">Phone</label><br>
+ 5
+    <input type="radio" name="contact[contact_method]" value="text message" id="text"><label for="text">Text message</label>
+ 6 </div>
+ Checkbox type
+ To accept multiple selections, each input in a checkbox group needs to have a unique name value. If you don't use a unique name value for each input, then the form will only return the last value that was selected.
+ 1 <div class="contact-time">
+ 2
+    <label for="contact-time">When is the best time to reach you?</label>
+ 3
+    <input type="checkbox" name="contact[contact_time_1]" value="morning"><label for="morning">Morning</label><br>
+ 4
+    <input type="checkbox" name="contact[contact_time_2]" value="afternoon"><label for="afternoon">Afternoon</label><br>
+ 5
+    <input type="checkbox" name="contact[contact_time_3]" value="evening"><label for="evening">Evening</label>
+ 6 </div>
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Required input
+ Optional inputs

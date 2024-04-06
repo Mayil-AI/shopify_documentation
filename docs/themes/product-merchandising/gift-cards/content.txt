@@ -1,0 +1,70 @@
+Product recommendations
+ Media and images
+ Gift cards
+ Pricing and payments
+ Delivery and fulfillment
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Add a gift card recipient form
+ In this tutorial, you'll learn how to add a recipient form to your gift card product page.
+ Resources
+ To implement the recipient feature, you'll use the following objects:
+ The product object
+ The form object
+ The section object
+ Implementing the recipient form
+ To support the gift card recipient functionality, you need to complete the following tasks:
+ Add a form to collect recipient information
+ Add the recipient form to your product form
+ Display the recipient properties in the cart
+ The full implementation varies depending on your theme and what you want the display to look like. You can refer to the following files in Dawn for an example of a complete solution:
+ Gift card recipient form
+ Buy buttons, which is rendered in the product form
+ JS
+ CSS
+ Create a form to collect recipient information
+ The recipient information is added to your gift card using line item properties.
+ Inside your recipient form, you can use the following line item property names:
+ Recipient email: The email address that the gift card will be sent to.
+ Recipient name: Optional. The name that the gift card will be addressed to.
+ Message: Optional. A message that can be included in the gift card email.
+ Send on: Optional. The date that's used to schedule sending a gift card. The date uses ISO 8601 format, with an expected format of yyyy-mm-dd . If you don't specify a date, then the gift card is sent immediately.
+ __shopify_send_gift_card_to_recipient: A property that needs to be included with the value true to validate and process recipient information.
+ You can refer to the gift card recipient form in Dawn for a complete example of the properties in context.
+ Tip
+ Your form should surface errors returned by the form submission to allow the customer to fix any issues with their form input.
+ Add the recipient form to your product form
+ You need to include the recipient form that you created in your product form, so that it renders on the gift card product page. The example implementation in Dawn requires you to pass in a product object, form object, and section object.
+ 1 {% form 'product' %}
+ 2
+       <!-- form content -->
+ 3
+ 4
+       {%- if product.gift_card? -%}
+ 5
+            {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+ 6
+       {%- endif -%}
+ 7
+ 8
+       <!-- buy buttons -->
+ 9 {% endform %}
+ Note
+ The recipient form validation doesn't support dynamic checkout buttons. The form should be used only with the Add to Cart button.
+ Displaying the recipient properties in the cart
+ To learn about displaying any line item properties that are collected in the cart, refer to the cart template for line item properties.
+ Limitations
+ The gift card recipient name can't be longer than 255 characters.
+ The gift card message can't be longer than 200 characters.
+ You can only schedule a gift card to be sent up to 90 days in the future.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing the recipient form
+ Create a form to collect recipient information
+ Add the recipient form to your product form
+ Displaying the recipient properties in the cart
+ Limitations
+ Updates & News

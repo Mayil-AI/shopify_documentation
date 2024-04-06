@@ -1,0 +1,80 @@
+Delivery and shipping
+ Product offers
+ Overview
+ Pre-purchase
+ Overview
+ Build a pre-purchase offer
+ UX guidelines
+ Post-purchase
+ Payments
+ Thank you and Order status
+ App Store
+ UX guidelines for pre-purchase product offers
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ This guide introduces UX guidelines for adding pre-purchase product offers to checkout.
+ Placement
+ Choosing the right target is key to providing a good experience.
+ Before you start building, decide whether you want your product offer to render at a static target, a dynamic target, or whether you'll support both. To learn more about target types, refer to the target API reference.
+ This product offer example uses the Checkout::Dynamic::Render[OrderSummary4] target for the following reasons:
+ The target keeps the line items, discounts, and money lines together, which makes it easy for customers to scan their order summary.
+ A product offer is considered secondary content, and should therefore be placed outside of the order summary.
+ Note
+ On mobile, the order summary area is collapsed by default. The UI won't display the product offer until the customer expands the order summary.
+ Components
+ The components to create a product offer depends on the extension's possible states.
+ The product offer use case can have the following states:
+ Loading
+ Loaded (default)
+ Adding
+ Added
+ Note
+ Added doesn't need a success banner. The addition of the item to the order summary is confirmation that the item was successfully added to the order.
+ You can use the following components to create the states:
+ Components list for the product offer use case
+ Component Preview Tips
+ Divider Because the product offer will likely display in a core checkout feature such as contact information or order summary line items, include divider lines to help separate the product offer from the order summary.
+ SkeletonText To keep placement from shifting when the content loads, try to reflect the actual content’s dimensions.
+ SkeletonImage
+ Image Keep the thumbnail size the same as the thumbnail in the order summary to keep the layout consistent.
+ Heading If possible, allow merchants to customize the heading content.
+ Text
+ Text
+ Button Use secondary buttons here, reserving the primary button for the main call to actions like Pay now and Next step.
+ Banner Use banners to communicate error states.
+ Layout
+ When you use a nested layout, you'll need only the following structural components:
+ Components list for the product offer use case
+ Component Preview Tips
+ BlockStack You can nest BlockStack components either with themselves or with other components.
+ InlineLayout You can nest Inline components with themselves or with other components.
+ BlockStack
+ Use the BlockStack component to stack elements on top of each other vertically.
+ Nesting BlockStack
+ Note
+ BlockStack and BlockLayout components are similar to each other. BlockLayout enables you to specify different row sizes. With BlockStack, you don't need to do that.
+ Set spacing between the divider and the content to loose, for consistency with the rest of checkout’s spacing. Set the spacing between the heading and the line item content to base.
+ To address different spacing values, you can nest a BlockStack inside of another BlockStack component.
+ InlineLayout
+ To display products horizontally, use InlineLayout, and set the spacing between elements to base.
+ UX guidelines
+ Adhere to the following guidelines when you're designing a product offer checkout UI extension, so that you can help merchants gain customer trust and provide a great checkout experience:
+ Only show two product offers at a time
+ Adding more than two offers can overwhelm customers, making it difficult for them to choose a product.
+ Let merchants personalize product offers
+ Customers are more likely to respond positively to offers that relate to their shopping journey or to the items in their cart.
+ Only show necessary information
+ Make it easy for customers to process offer information by only showing what's most relevant. For example, if supporting information like a product description is required, then progressively reveal it to customers at strategic moments.
+ Next steps
+ Learn how to offer customers additional products at checkout that they can add to their order.
+ Explore UX guidelines for the entire checkout experience.
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Placement
+ Components
+ Layout
+ UX guidelines

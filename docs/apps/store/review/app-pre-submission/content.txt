@@ -1,0 +1,45 @@
+App Store ads
+ Security
+ Preparing your app for review
+ Before you submit your app to Shopify, you should do some final tests, validations, and administrative tasks to ensure that it's ready for review, and ready for merchants to use the app in production.
+ The app review team will only review production-ready apps. If you submit an app that is incomplete or has errors that prevent us from reviewing its features, then it won't be approved.
+ After you've tested your app and made sure that it meets all of our app requirements, you can submit your app for approval. These instructions apply to all apps.
+ Ensure you agree to follow the terms outlined in the Partner Program Agreement and the Shopify API License and Terms of Use. If at any point you don’t meet these terms, then Shopify restricts your access to Partner services.
+ Install your app on a development store
+ Development stores can be used to test apps to ensure they're free of bugs or otherwise incomplete. If you don’t have a development store, then you can create one.
+ Tip
+ You can also install your app on a development store using Shopify CLI.
+ Log in to your Partner Dashboard.
+ In your Partner Dashboard, click Apps.
+ Click the name of your app to navigate to the App overview page.
+ On the app page, in the Test your app section, click Select store.
+ Select the development store you want to use.
+ Click Install app.
+ You should now be directed to the OAuth grant screen to install your app. If you don't see the OAuth grant screen, then you might need to double check your app’s code, as well as the app URLs and redirects. You can avoid this by using Shopify managed installation.
+ Check your OAuth installs for errors
+ Tip
+ If you configure your app using Shopify CLI, then your app will automatically use Shopify managed installation. You can skip this step.
+ Before submitting your app, make sure to test your app’s URLs and redirects. Before submitting your app, make sure its App URL and allowed redirection URL redirect merchants to the OAuth screen as expected. If they don't redirect merchants to the OAuth grant screen, then your app won't be approved.
+ In your Partner Dashboard, click Apps.
+ Click the name of your app.
+ Click Configuration.
+ Find the URLs section.
+ Review and test the URLs that you provided.
+ For more information about using OAuth to communicate with Shopify, refer to Getting started with OAuth.
+ Test your app’s billing system
+ All charges associated with apps submitted to the Shopify App Store must use the Shopify Billing API.
+ You need to test your app's billing system before you submit your app to the Shopify App Store. To test your app without incurring a real charge, you can have your app create a test charge before you install it on your development store. To have your app create a test charge, you can change your app's charge requests to include "test": true. This will create a test charge when you install the app so that you don't incur a real charge on your account.
+ Your Billing API integration must meet the Shopify App Store billing requirements.
+ When you have finished testing, you must change all of your app's charge requests to include "test": false, or merchants who install your app won't be charged.
+ Request access to protected customer data
+ If your app uses customer data, then you need to meet the protected customer data requirements and then apply for access to this data in the API Access > Protected customer data access section of your Partner Dashboard.
+ Next step
+ Submit your app: If you've followed all of the requirements to create your app, then you're ready to submit your app for review by the Shopify app review team.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Install your app on a development store
+ Check your OAuth installs for errors
+ Test your app’s billing system
+ Request access to protected customer data
+ Next step

@@ -1,0 +1,70 @@
+Billing
+ App Store
+ Shopify Flow lifecycle events
+ You can receive webhooks from Shopify Flow about the stores that are using your triggers in enabled workflows. You can then use this data to make your app more efficient and reduce running the flowTriggerReceive mutation.
+ This guide shows you how to configure your app to receive trigger use webhooks from Shopify Flow.
+ How trigger usage webhooks work
+ Trigger usage webhooks contain identifying information about the trigger and the store that's using it, and indicate whether the trigger is being used. You can use this information to track the stores that are currently using your triggers, and then send trigger requests to only those stores.
+ Properties
+ The trigger usage webhook (HTTP POST request) is formatted in JSON and it contains the following properties:
+ Property Data type Description Example
+ flow_trigger_definition_id String The unique identifier for your Shopify Flow trigger. Add row to spreadsheet
+ has_enabled_flow Boolean Whether the store has an enabled workflow that uses your trigger. Valid values:
+ true: There is at least one workflow that is enabled and that uses your trigger.
+ false: There are no enabled workflows that use your trigger.
+ true
+ shop_id Number The unique identifier for the Shopify store. 690933842
+ shopify_domain String The myshopify domain of the Shopify store. johnsapparel.myshopify.com
+ timestamp ISO 8601 date and timestamp
+ The time when the notification was created. Notifications with newer timestamps should take precedence. If you already have a timestamp in your datastore and you receive a newer timestamp, then overwrite this payload's information in your datastore. Conversely, if you receive a timestamp that is older than the information in your datastore, then ignore this payload.
+ 2019-01-25T16:44:10.999Z
+ The following is an example body of a usage notification (HTTP POST) request:
+ 1 {
+ 2
+    "flow_trigger_definition_id": "Add row to spreadsheet",
+ 3
+    "has_enabled_flow": false,
+ 4
+    "shop_id": "690933842",
+ 5
+    "shopify_domain": "johnapparel.myshopify.com",
+ 6
+    "timestamp": "2019-01-25T16:44:10.999Z"
+ 7 }
+ Webhook events
+ Shopify Flow sends trigger usage webhooks when the following events occur:
+ A user enables a workflow that uses your trigger. In this case, the webhook contains "has_enabled_flow": true.
+ Your web server sends a trigger to a store and that store doesn't have a workflow that uses your trigger. In this case, the webhook contains"has_enabled_flow": false.
+ Web server response time and status codes
+ When a user tries to enable a workflow that uses your trigger, Shopify Flow sends a trigger usage webhook to your web server.
+ If your web server doesn't respond within 5 seconds, or if it responds with a different status code, then the user can't enable that workflow. The user receives a notification in the Shopify Flow app that tells them to try enabling the workflow at a later time.
+ 1. Configure your web server
+ To begin, configure your web server to listen for Shopify Flow webhooks.
+ Configure a URL in your web server to listen for the trigger usage webhooks from Shopify Flow.
+ Configure your web server to verify the HMAC header in the trigger usage webhook with your client secret.
+ The HMAC header is located in the following HTTP header: x-shopify-hmac-sha256. If you are using a Ruby-based web framework, then the header is http-x-shopify-hmac-sha256.
+ Configure your web server to respond within 5 seconds when it receives a trigger usage webhook.
+ 2. Process and store webhook data
+ After you've added support to listen for Shopify Flow webhooks, you can configure your web server to process and store the webhook data.
+ Save the list of stores that are using your triggers in a persistent datastore. Use the timestamp property to make sure that you don't overwrite an existing entry with older information.
+ Edit your application to send your triggers only to stores that are using your triggers.
+ 3. Configure the webhook
+ Finally, configure the webhook in your Partner Dashboard. When a user enables or disables a workflow that uses your trigger, a webhook is sent from Shopify Flow to your web server.
+ In your Partner Dashboard, open Apps and then click your app.
+ Click Extensions and then click Create.
+ Under Flow, click the Webhook configuration card.
+ Enter the URL that Shopify Flow will use to send you trigger usage webhooks. This URL can't contain localhost.
+ Click Save.
+ Next steps
+ Familiarize yourself with Shopify Flow and learn about building connectors.
+ Connect your app to Shopify Flow so that events that occur in your app can trigger workflows.
+ Connect your app to Shopify Flow so that your app receives data and information when a workflow action runs.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How trigger usage webhooks work
+ 1. Configure your web server
+ 2. Process and store webhook data
+ 3. Configure the webhook
+ Next steps
+ Updates & News

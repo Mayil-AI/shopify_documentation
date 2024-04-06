@@ -1,0 +1,20 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ AppBlockValidTags
+ Identifies forbidden Liquid tags in theme app extension app block and app embed block code.
+ Forbidden tags include:
+ {% javascript %}
+ {% stylesheet %}
+ {% include 'foo' %}
+ {% layout 'foo' %}
+ {% section 'foo' %}
+ {% sections 'foo' %}
+ Disabling this check
+ This check is enabled by default when you run the Shopify CLI 3.x build command on an app that contains a theme app extension. Disabling this check isn't recommended.
+ This check is disabled by default when you run the Shopify CLI 2.x shopify theme check command.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

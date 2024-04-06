@@ -1,0 +1,85 @@
+Product subscription app extensions
+ Product model and components
+ Learn about the new product model that we're introducing and the GraphQL Admin API components for working within it.
+ Modeling by product options
+ Merchants and Partners tend to model their products in terms of options rather than variants.
+ For example, a shoe might have the following data:
+ Blue and white colorways
+ Several sizes for each colorway
+ Different prices according to the size
+ Updated mutations to manage products
+ Manage products using the mutations that best align with your app's workflow. Learn more about workflow types.
+ Note
+ If your app or use case aligns with the database sync workflow, then use the productSet mutation. The mutation is available in both asynchronous and synchronous modes. You can create variants and options in one operation to align Shopify data with your external merchandising data. Otherwise, use the mutations described in this section.
+ In the new product model, variants are a byproduct of the product’s options, representing the individual SKUs derived from the mixable attributes that define the product. If your app or use case aligns with the interactive UI workflow, then you can use the following mutations to make targeted, incremental updates to products rather than having to pull all data, serialize it, and push it back to Shopify.
+ productCreate
+ productUpdate
+ productOptionsCreate
+ productOptionUpdate
+ productOptionsReorder
+ productOptionsDelete
+ productVariantsBulkCreate
+ productVariantsBulkUpdate
+ First-class options and option values
+ The new data model makes options and option values first-class entities.
+ For products, many actions that are typically performed at the variant level make more sense to perform and reason about at the option level. We’ve introduced a new set of options-focused operations and fields to support this. In most places, you can continue to reference your options and option values by name.
+ For use cases that align with the database sync workflow, the productSet mutation has productOption and optionValues for syncing product and variant data.
+ If your use case aligns with the interactive UI workflow, then you can now make changes across multiple variants without having to create and update each variant individually. You can also create standalone option values that exist and can be referenced independent of variants.
+ We've introduced the following OptionValue operations that enable you to reference options and values by GID. This helps to prevent inconsistencies in your variants and enables you to manage options directly:
+ productOptionsCreate
+ productOptionUpdate
+ productOptionsReorder
+ productOptionsDelete
+ We've added an optionValues field to the variants input on the following mutations in the GraphQL Admin API:e've added an optionValues field to the variants input on the following mutations in the GraphQL Admin API:
+ productVariantsBulkCreate
+ productVariantsBulkUpdate
+ We've also added a productOptions field to the input on the productCreate mutation.
+ productVariantsBulkCreate
+ productVariantsBulkUpdate
+ We've also added a productOptions field to the input on the productCreate mutation.
+ Why we've made these changes
+ The products and variants that a merchant can offer their customers is one of the biggest drivers for conversion. The 100 product variant limit has constrained our merchants’ ability to merchandise their entire product catalog.
+ While we've minimized changes to the product and variant endpoints in the REST Admin API, we need to make fundamental changes to the way merchants manage their products and variants to add scale and flexibility to the Shopify platform. Increasing the number of supported variants for each product is a key part of these improvements.
+ Focus on GraphQL
+ The changes add new functionality that introduces significant feature drift between how products are handled in the GraphQL Admin API and the REST Admin API. Increased limits and capabilities for product optionality, along with new data models to support, introduce the potential for larger and more complex responses to common queries. This is an area where GraphQL excels by default.
+ Shopify’s API platform is GraphQL-first. Going forward, our approach to managing products programmatically will reflect that. We’ll be fully deprecating our product REST Admin API endpoints and continuing to build on the changes to the product model in the GraphQL Admin API only.
+ Learn about some key differences between using REST and GraphQL to interact with products, variants, and related resources.
+ Learn about the key differences between Shopify's REST and GraphQL Admin APIs.
+ Improved performance and data integrity
+ Some of our existing workflows, particularly updating variants using ProductInput.variants, were prone to data clobbering.
+ For example, if Shopify is the source of truth for your data, if you had 1K variants and wanted to update the price of 50 of them, then you'd need to serialize 950 unchanged objects so that you could add them to the payload and push the data back to Shopify. This is inefficient, and accidentally omitting variants would result in variants being deleted. The intent of the API client was implicit, rather than explicit.
+ Future-proof APIs
+ Increased variants and standalone options are the first in a larger set of improvements that we’re making to options in our product model. For example, in a future release we’re planning to increase the number of options that are available on a product.
+ These changes require Shopify to redesign its approach to products in our APIs, so that they're compatible with expanded limits and capabilities option primitives, while enabling you to take advantage of future improvements without significant refactoring.
+ Key differences between product management in REST and GraphQL
+ The upcoming deprecation of the REST Admin API's /products and /variants endpoints means that you need to start calling the GraphQL Admin API instead when you're working with products.
+ Learn about the workflows that clients commonly use, to identify which set of product GraphQL mutations best fit your use case.
+ Learn about the key differences between Shopify's REST and GraphQL Admin APIs.
+ Asynchronous media management
+ In the GraphQL Admin API, media is managed asynchronously. This includes images that are associated with products and product variants.
+ Synchronous media upload is a significant bottleneck in the request-response loop when you work with products in the REST Admin API. This is because image processing typically exceeds the time to update any other given attribute on a product.
+ For frontend clients and applications, uploading media asynchronously enables optimistic updates for the slower part of updating a product, and enables other product updates to respond more quickly. The GraphQL Admin API media object is also more versatile than the REST Admin API image object, where the media object accommodates a wide range of media supported by Shopify now and in the future, including video and 3D models.
+ If you use the interactive UI workflow, then you can update the media that's associated with variants using the mediaId input object on the following mutations:
+ productCreate
+ productUpdate
+ productVariantsBulkCreate
+ productVariantsBulkUpdate
+ In this model, you pass mediaId the ID of a media file that's been created on a product, for example using the fileCreate mutation.
+ Learn more about managing media.
+ Next steps
+ Retrieve data
+ Learn how to retrieve product data, including for a large number of variants.
+ Add data
+ Learn how to add product data, including variants and options.
+ Edit data
+ Learn how to edit product data, including variants and options.
+ Sync data
+ Learn how you can sync product data from an external source into Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Modeling by product options
+ Updated mutations to manage products
+ First-class options and option values
+ Why we've made these changes
+ Key differences between product management in REST and GraphQL

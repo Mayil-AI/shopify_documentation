@@ -1,0 +1,225 @@
+Overview
+ Performance
+ Accessibility
+ Internationalization
+ Overview
+ Getting started
+ Embedding
+ Mobile
+ Deceptive code
+ Design guidelines
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Getting started with internationalizing your app
+ You're ready to start internationalizing your app. You want to begin the planning process and prepare strings for localization.
+ In this tutorial, you'll begin internationalizing your app by externalizing, formatting, and translating strings.
+ Tip
+ You can speed up internationalizing new and existing apps by using i18n-ally, an open source Visual Studio Code extension that makes it easier to externalize strings, view and navigate to translation strings from code, and perform machine translation.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Externalize strings so that they're available for localization
+ Format strings, including names and lists to support regional variation
+ Translate strings and test your user interface (UI)
+ Requirements
+ You've created a Partner account and a development store.
+ You understand how apps fit into Shopify and the different ways of distributing your app.
+ Step 1: Externalize strings
+ Translation is foundational to localization. The first step of translation involves externalizing any hard-coded strings from your app into translation files.
+ When your app renders its UI, it looks up the corresponding strings from the translation file that's associated with the requested locale.
+ Source files
+ The following example shows a hard-coded greeting string from an app:
+ Hard-coded string
+ 1 function greeting(casual_name) {
+ 2
+    return `Hello ${casual_name}`;
+ 3 }
+ The following example shows how to externalize the hard-coded greeting string in a translation file:
+ translations/en.json
+ 1 {
+ 2
+    "greeting": "Hello {casual_name}"
+ 3 }
+ Looking up externalized string
+ 1 function greeting(casual_name) {
+ 2
+    return i18n.translate("greeting", { casual_name: casual_name });
+ 3 }
+ Tip
+ Even if you don't intend to initially translate your app, you should still externalize strings in your app during initial development. It can be difficult to externalize strings in an existing app that wasn't originally structured with externalized strings.
+ Graphics
+ Text within graphics and images should also be externalized for translation.
+ Instead of having flat graphics that include text, externalize the text and overlay it on the graphic. Alternatively, you can generate flat graphics for each locale, and switch between them based on the requested locale.
+ Step 2: Get access to the user's locale
+ Depending on the audience, the lookup of a translation string uses the preferred locale of either an app user or a buyer.
+ The mechanism for receiving the locale depends on the type of app or app extension being developed.
+ For example, embedded apps receive the app user's chosen locale in the locale request parameter in Shopify's GET requests to the app.
+ Refer to the documentation for your type of app extension for more information.
+ Step 3: Format strings
+ Beyond language translation, parts of your app's strings should adapt dynamically to different locales.
+ For example, dates and times, names, numbers, prices, and lists are elements that should be formatted differently based not on language, but on the user's region or preferences.
+ Remove these elements from your app's strings, use a localization library to generate the formatted versions, and inject the formatted versions dynamically using string interpolation. The following sections describe how to format the following parts of strings:
+ Dates and times
+ Numbers
+ Prices
+ Lists
+ Names
+ Format dates and times
+ The format of dates and times varies by region, not by language. As a result, dates and times, such as the following examples, don't belong in translation strings:
+ Locale Formatted datetime
+ en-US 12/19/2020, 10:23 PM
+ en-GB 19/12/2020, 22:23
+ en-CA 2020-12-19, 10:23 p.m.
+ Use an API or library to format dates and times. For example, you can use Intl.DateTimeFormat and inject the formatted dates and times into your translations using string interpolation:
+ Non-localized en.json
+ 1 {
+ 2
+    "last_sale_day": "All orders must be placed by 2022-10-30"
+ 3 }
+ Localized en.json
+ 1 {
+ 2
+    "last_sale_day": "All orders must be placed by {date}" // 2022-10-30, 10/30/2022, 30/10/2022
+ 3 }
+ Format numbers
+ The format of numbers varies by region, not by language. As a result, numbers, such as the following examples, don't belong in translation strings:
+ Locale Formatted number
+ en-US 123,000
+ en-NL 123.000
+ en-IN 1,23,000
+ Use an API or library to format numbers. For example, you can use Intl.NumberFormat and inject the formatted numbers into your translations using string interpolation:
+ Non-localized en.json
+ 1 {
+ 2
+    "congrats": "Congratulations on 100,000 orders"
+ 3 }
+ Localized en.json
+ 1 {
+ 2
+    "congrats": "Congratulations on {formatted_number} orders" // 100,000, 100.000, 1,00,000
+ 3 }
+ Note
+ If the number is a variable, then you should also make use of pluralization features to make sure that the correct grammar can be used for each number.
+ Format prices
+ The format of prices varies by currency and region, not by language. As a result, prices, such as the following examples, don't belong in translation strings:
+ Locale Currency Formatted price
+ en-US USD $123,456.00
+ en-CH USD US$ 123’456.00
+ en-IN USD $1,23,456.00
+ Use an API or library to format prices. For example, you can use Intl.NumberFormat and inject the formatted prices into your translations using string interpolation:
+ Non-localized en.json
+ 1 {
+ 2
+    "order_total": "Your total order is ${price}"
+ 3 }
+ Localized en.json
+ 1 {
+ 2
+    "order_total": "Your total order is {formatted_price}", // $15.50, USD 15.5, 15,50 $US
+ 3 }
+ Format lists
+ The way that items are combined into lists varies by region, not by language. As a result, lists, such as the following examples, don't belong in translation strings:
+ Locale Formatted list
+ en-US User, Product, or Variant
+ en-GB User, Product or Variant
+ Use an API or library to format lists of items. For example, you can use Intl.ListFormat and inject the formatted lists into your translations using string interpolation:
+ en.json
+ 1 {
+ 2
+    "prompt": "Please select one of: {nouns}",
+ 3
+    "nouns": {
+ 4
+      "user": "User",
+ 5
+      "product": "Product",
+ 6
+      "variant": "Variant",
+ 7
+      ...
+ 8
+    }
+ 9 }
+ File
+ 1 function selection_prompt() {
+ 2
+    nouns = fetch_nouns().map(function (noun) {
+ 3
+      return i18n.translate(`nouns.${noun}`);
+ 4
+    });
+ 5
+    return i18n.translate("prompt", {
+ 6
+      nouns: new Intl.ListFormat(locale, {
+ 7
+        style: "long",
+ 8
+        type: "disjunction",
+ 9
+      }).format(nouns),
+ 10
+    });
+ 11 }
+ Format names
+ The way that you address a person varies by context and region.
+ For example, for a person with the given name "Quinn" and surname "Ishida" might be addressed in the following ways:
+ Locale Formatted full name Formatted casual name
+ en-US Quinn Ishida Quinn
+ en-JP IshidaQuinn-sama Ishida-sama
+ Don't encode the name formatting conventions of North American English. Instead, use an API or library to format a person's name based on the context, and inject the formatted name into your translations using string interpolation:
+ Non-localized en.json
+ 1 {
+ 2
+    "greeting": "Hello {first_name} {last_name}",
+ 3
+    "casual_greeting": "Hey {first_name}!"
+ 4 }
+ Localized en.json
+ 1 {
+ 2
+    "greeting": "Hello {full_name}", // Quinn Ishida, IshidaQuinn-sama
+ 3
+    "casual_greeting": "Hey {casual_name}!" // Quinn, Ishida-sama
+ 4 }
+ Step 4: Translate strings
+ Translating strings involves accounting for text expansion in different languages, and providing your source strings to someone that can translate the content.
+ Step 4A: Use pseudolocalization (Optional)
+ When interfaces are localized, the content often expands in length. In most languages, text is up to 50% longer on average than English. Some non-Latin languages, such as Japanese, take up more vertical space. For character-based languages, text wrapping and line breaking can’t always rely on spaces to separate words. Your interface needs to be flexible enough to accommodate language formatting and text expansion without changing its context of use.
+ The Polaris i18n documentation has more information about, and examples of, text expansion issues.
+ You can use pseudolocalization tools (example) to simulate text expansion before translation is completed. This enables you to test your app's UI for common text expansion issues. For example, you might want to test for overflowing strings or word wrapping.
+ Step 4B: Choose the languages to translate into
+ The Shopify admin can be used in any of the supported languages.
+ Shopify also translates some buyer-facing strings (first-party themes, checkout, and system messages) into additional languages (for example, refer to the language list in the Dawn theme).
+ When deciding on which languages to translate into, consider starting with those most common in the regions or markets that your app supports.
+ Step 4C: Translate content
+ Translating content involves providing your source strings to someone that can translate the content into each language.
+ Note
+ Because you'll need to make changes to translations as you develop new features, you should expect the relationship with the provider of your translations to be a continuous partnership.
+ There are several options for getting translations. The options vary on cost, turn-around time, and quality.
+ Third party translation service
+ The highest quality, but often most costly, option is to engage a third party translation service to manage the work of providing translations for your app.
+ Translation providers manage the relationships with the translators so that you can have confidence in the quality and turnaround time of the translations.
+ Shopify recommends using one of the following translation providers:
+ Blend
+ Crowdin
+ TranslateCI
+ Machine translation
+ Machine translation, such as Google Translate, is artificial intelligence software that can generate translations on-demand.
+ Machine translation can be quick and cost-effective, but the quality of the translations can vary because strings are often translated without context about your app or business.
+ Crowdsourced translation
+ If your app already has a large community, then sometimes community members are willing to contribute translations.
+ This method relies on managing and engaging your app's community in an ongoing manner, which can be time-consuming. Depending on the diversity of your community, it might be difficult to find enough people with fluency in the languages that you're translating your content into.
+ Do it yourself
+ If you or an acquaintance knows another language, then translations for that language can be manually provided.
+ Tips for high-quality translation
+ Provide your translators with all the context that they need.
+ Concatenate strings mindfully.
+ Next steps
+ Learn how to translate your app listing.
+ Step 1: Externalize strings
+ Step 2: Get access to the user's locale
+ Step 3: Format strings
+ Step 4: Translate strings
+ Next steps

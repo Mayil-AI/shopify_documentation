@@ -1,0 +1,1810 @@
+NFT distribution
+ Tokengating
+ Overview
+ Build a tokengating app
+ Overview
+ Create gates
+ Show gates
+ Apply discount
+ Build a tokengated storefront
+ UX guidelines
+ App Store
+ Create gates in admin using Gates API
+ This is the first part of a tutorial series to build a tokengating app. Read the overview section before starting this tutorial.
+ What you'll learn
+ In this tutorial, you'll use Node.js, React, Shopify App Bridge and Polaris components to create an admin app and use Gates API to create gates.
+ Frontend
+ The admin app has two pages:
+ Tokengates index: Uses the Polaris List component to display previously created tokengates.
+ Tokengate form: Enables merchants to create a new tokengate with a name, a discount, unlocking token addresses, and a list of products to be gated.
+ Backend
+ The backend consists of a Node.js Express app that leverages the Gates API to create, update, and delete gate configurations and gate subjects.
+ Requirements
+ You've created a Partner account.
+ You've created a development store that uses generated test data.
+ You've created an app that uses the Express.js app template and Shopify CLI.
+ You can create a new app using the Express.js app template by running one of the following commands:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest -- --template https://github.com/Shopify/shopify-app-template-node
+ Step 1: Start your development server
+ You can view and test your frontend components in the Shopify admin as you build them. After you've created an app, navigate to your app's directory and start your local server to build and preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Step 2: Create a form to configure a product gate
+ The form enables merchants to:
+ Define an exclusive discount
+ Define segments by adding token collections
+ Apply tokengates to products
+ Install required packages
+ You need to install @shopify/react-form to your required packages. We use this to manage React forms by providing custom hooks.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install --prefix web/frontend --save @shopify/react-form
+ Create the form component
+ The form submits the form data to the Gates API to create a new gate.
+ In the /web/frontend/pages directory, create a new file called CreateTokengate.jsx. The app boilerplate code comes with automatic routing, where a new route is created when a file is added to this directory.
+ Add the following code to the file:
+ /web/frontend/pages/CreateTokengate.jsx
+ 1 import { useCallback, useState } from "react";
+ 2 import { useNavigate } from "react-router-dom";
+ 3 import {
+ 4
+    Button,
+ 5
+    ButtonGroup,
+ 6
+    Card,
+ 7
+    Form,
+ 8
+    Heading,
+ 9
+    Layout,
+ 10
+    Page,
+ 11
+    PageActions,
+ 12
+    Stack,
+ 13
+    TextContainer,
+ 14
+    TextField,
+ 15 } from "@shopify/polaris";
+ 16 import { ContextualSaveBar, Toast } from "@shopify/app-bridge-react";
+ 17 import { useField, useForm } from "@shopify/react-form";
+ 18 import { useAuthenticatedFetch } from "../hooks";
+ 19 import { TokengatesResourcePicker } from "../components/TokengatesResourcePicker";
+ 20
+ 21 export default function CreateTokengate() {
+ 22
+    const fetch = useAuthenticatedFetch();
+ 23
+    const navigate = useNavigate();
+ 24
+    const [toastProps, setToastProps] = useState({ content: null });
+ 25
+ 26
+    const fieldsDefinition = {
+ 27
+      name: useField({
+ 28
+        value: undefined,
+ 29
+        validates: (name) => !name && "Name cannot be empty",
+ 30
+      }),
+ 31
+      discountType: useField("percentage"),
+ 32
+      discount: useField({
+ 33
+        value: undefined,
+ 34
+        validates: (discount) => !discount && "Discount cannot be empty",
+ 35
+      }),
+ 36
+      segment: useField({
+ 37
+        value: undefined,
+ 38
+        validates: (segment) => !segment && "Segment cannot be empty",
+ 39
+      }),
+ 40
+      products: useField([]),
+ 41
+    };
+ 42
+ 43
+    const { fields, submit, submitting, dirty, reset, makeClean } = useForm({
+ 44
+      fields: fieldsDefinition,
+ 45
+      onSubmit: async (formData) => {
+ 46
+        const { discountType, discount, name, products, segment } = formData;
+ 47
+ 48
+        const productGids = products.map((product) => product.id);
+ 49
+ 50
+        const response = await fetch("/api/gates", {
+ 51
+          method: "POST",
+ 52
+          headers: {
+ 53
+            "Content-Type": "application/json",
+ 54
+          },
+ 55
+          body: JSON.stringify({
+ 56
+            discountType,
+ 57
+            discount,
+ 58
+            name,
+ 59
+            productGids,
+ 60
+            segment: segment.split(","),
+ 61
+          }),
+ 62
+        });
+ 63
+ 64
+        if (response.ok) {
+ 65
+          setToastProps({ content: "Tokengate created" });
+ 66
+          makeClean();
+ 67
+          navigate("/");
+ 68
+        } else {
+ 69
+          setToastProps({
+ 70
+            content: "There was an error creating a tokengate",
+ 71
+            error: true,
+ 72
+          });
+ 73
+        }
+ 74
+      },
+ 75
+    });
+ 76
+ 77
+    const handleDiscountTypeButtonClick = useCallback(() => {
+ 78
+      if (fields.discountType.value === "percentage") {
+ 79
+        fields.discountType.onChange("amount");
+ 80
+      } else {
+ 81
+        fields.discountType.onChange("percentage");
+ 82
+      }
+ 83
+    }, [fields.discountType]);
+ 84
+ 85
+    const toastMarkup = toastProps.content && (
+ 86
+      <Toast {...toastProps} onDismiss={() => setToastProps({ content: null })} />
+ 87
+    );
+ 88
+ 89
+    return (
+ 90
+      <Page
+ 91
+        narrowWidth
+ 92
+        breadcrumbs={[
+ 93
+          {
+ 94
+            content: "Go back",
+ 95
+            onAction: () => {
+ 96
+              navigate("/");
+ 97
+            },
+ 98
+          },
+ 99
+        ]}
+ 100
+        title="Create a new Tokengate"
+ 101
+      >
+ 102
+        <Layout>
+ 103
+          <Layout.Section>
+ 104
+            <Form onSubmit={submit}>
+ 105
+              <ContextualSaveBar
+ 106
+                saveAction={{
+ 107
+                  onAction: submit,
+ 108
+                  disabled: submitting || !dirty,
+ 109
+                  loading: submitting,
+ 110
+                }}
+ 111
+                discardAction={{
+ 112
+                  onAction: reset,
+ 113
+                }}
+ 114
+                visible={dirty}
+ 115
+              />
+ 116
+              {toastMarkup}
+ 117
+              <Layout>
+ 118
+                <Layout.Section>
+ 119
+                  <Card>
+ 120
+                    <Card.Section>
+ 121
+                      <TextContainer>
+ 122
+                        <Heading>Configuration</Heading>
+ 123
+                        <TextField
+ 124
+                          name="name"
+ 125
+                          label="Name"
+ 126
+                          type="text"
+ 127
+                          {...fields.name}
+ 128
+                          autoComplete="off"
+ 129
+                        />
+ 130
+                      </TextContainer>
+ 131
+                    </Card.Section>
+ 132
+                    <Card.Section title="DISCOUNT PERK">
+ 133
+                      <Stack>
+ 134
+                        <Stack.Item>
+ 135
+                          <ButtonGroup segmented>
+ 136
+                            <Button
+ 137
+                              pressed={fields.discountType.value === "percentage"}
+ 138
+                              onClick={handleDiscountTypeButtonClick}
+ 139
+                            >
+ 140
+                              Percentage
+ 141
+                            </Button>
+ 142
+                            <Button
+ 143
+                              pressed={fields.discountType.value === "amount"}
+ 144
+                              onClick={handleDiscountTypeButtonClick}
+ 145
+                            >
+ 146
+                              Fixed Amount
+ 147
+                            </Button>
+ 148
+                          </ButtonGroup>
+ 149
+                        </Stack.Item>
+ 150
+                        <Stack.Item fill>
+ 151
+                          <TextField
+ 152
+                            name="discount"
+ 153
+                            type="number"
+ 154
+                            {...fields.discount}
+ 155
+                            autoComplete="off"
+ 156
+                            suffix={
+ 157
+                              fields.discountType.value === "percentage"
+ 158
+                                ? "%"
+ 159
+                                : ""
+ 160
+                            }
+ 161
+                            fullWidth
+ 162
+                          />
+ 163
+                        </Stack.Item>
+ 164
+                      </Stack>
+ 165
+                    </Card.Section>
+ 166
+                    <Card.Section title="SEGMENT">
+ 167
+                      <TextField
+ 168
+                        name="segment"
+ 169
+                        helpText="Comma separated list of contract addresses"
+ 170
+                        type="text"
+ 171
+                        placeholder="0x123, 0x456, 0x789"
+ 172
+                        {...fields.segment}
+ 173
+                        autoComplete="off"
+ 174
+                      />
+ 175
+                    </Card.Section>
+ 176
+                  </Card>
+ 177
+                </Layout.Section>
+ 178
+                <Layout.Section>
+ 179
+                  <TokengatesResourcePicker products={fields.products} />
+ 180
+                </Layout.Section>
+ 181
+                <Layout.Section>
+ 182
+                  <PageActions
+ 183
+                    primaryAction={{
+ 184
+                      content: "Save",
+ 185
+                      disabled: submitting || !dirty,
+ 186
+                      loading: submitting,
+ 187
+                      onAction: submit,
+ 188
+                    }}
+ 189
+                  />
+ 190
+                </Layout.Section>
+ 191
+              </Layout>
+ 192
+            </Form>
+ 193
+          </Layout.Section>
+ 194
+        </Layout>
+ 195
+      </Page>
+ 196
+    );
+ 197 }
+ Note
+ We've made reference to some backend APIs that don't exist. We'll create them later in the tutorial.
+ Create a resource picker component for the form
+ In the /web/frontend/components directory, create a new file called TokengatesResourcePicker.jsx.
+ Add the following code to the file:
+ /web/frontend/components/TokengatesResourcePicker.jsx
+ 1 import { useCallback, useState } from "react";
+ 2 import {
+ 3
+    Button,
+ 4
+    Card,
+ 5
+    Link,
+ 6
+    ResourceItem,
+ 7
+    ResourceList,
+ 8
+    Stack,
+ 9
+    Thumbnail,
+ 10 } from "@shopify/polaris";
+ 11 import { useNavigate } from "react-router-dom";
+ 12 import { ResourcePicker } from "@shopify/app-bridge-react";
+ 13 import { CancelSmallMinor, ImageMajor } from "@shopify/polaris-icons";
+ 14
+ 15 export const TokengatesResourcePicker = ({ products }) => {
+ 16
+    const [isResourcePickerOpen, setIsResourcePickerOpen] = useState(false);
+ 17
+    const navigate = useNavigate();
+ 18
+ 19
+    const handleTogglePicker = () => {
+ 20
+      setIsResourcePickerOpen(!isResourcePickerOpen);
+ 21
+    };
+ 22
+ 23
+    const handleProductSelection = ({ selection }) => {
+ 24
+      handleTogglePicker();
+ 25
+      products.onChange(selection);
+ 26
+    };
+ 27
+ 28
+    const handleNavigateToProduct = useCallback(
+ 29
+      (id) => {
+ 30
+        if (!id) return;
+ 31
+        navigate({
+ 32
+          name: "Product",
+ 33
+          resource: {
+ 34
+            id,
+ 35
+          },
+ 36
+        });
+ 37
+      },
+ 38
+      [navigate]
+ 39
+    );
+ 40
+ 41
+    const handleRemoveItem = useCallback(
+ 42
+      (id) => {
+ 43
+        const filteredResources = products.value.filter(
+ 44
+          (product) => product.id !== id
+ 45
+        );
+ 46
+        products.onChange(filteredResources);
+ 47
+      },
+ 48
+      [products.value]
+ 49
+    );
+ 50
+ 51
+    const listItemMarkup = (item) => {
+ 52
+      const { id, title, images } = item;
+ 53
+ 54
+      const thumbnail = (
+ 55
+        <Thumbnail
+ 56
+          source={images?.[0]?.src || ImageMajor}
+ 57
+          alt={images?.[0]?.alt || title}
+ 58
+          size="small"
+ 59
+        />
+ 60
+      );
+ 61
+ 62
+      return (
+ 63
+        <ResourceItem
+ 64
+          id={id}
+ 65
+          media={thumbnail}
+ 66
+          onClick={() => {}}
+ 67
+          verticalAlignment="center"
+ 68
+        >
+ 69
+          <Stack alignment="center">
+ 70
+            <Stack.Item fill>
+ 71
+              <p>
+ 72
+                <Link removeUnderline onClick={() => handleNavigateToProduct(id)}>
+ 73
+                  {title}
+ 74
+                </Link>
+ 75
+              </p>
+ 76
+            </Stack.Item>
+ 77
+            <Button
+ 78
+              icon={CancelSmallMinor}
+ 79
+              plain
+ 80
+              accessibilityLabel="cancel"
+ 81
+              onClick={() => handleRemoveItem(id)}
+ 82
+            />
+ 83
+          </Stack>
+ 84
+        </ResourceItem>
+ 85
+      );
+ 86
+    };
+ 87
+ 88
+    const selectedResourcesMarkup = () => {
+ 89
+      if (products.value.length > 0) {
+ 90
+        return (
+ 91
+          <ResourceList
+ 92
+            resourceName={{
+ 93
+              singular: "product",
+ 94
+              plural: "products",
+ 95
+            }}
+ 96
+            renderItem={listItemMarkup}
+ 97
+            items={products.value}
+ 98
+          />
+ 99
+        );
+ 100
+      }
+ 101
+ 102
+      return (
+ 103
+        <Card.Section>
+ 104
+          <Stack distribution="center">
+ 105
+            <Button onClick={handleTogglePicker}>Choose products</Button>
+ 106
+          </Stack>
+ 107
+        </Card.Section>
+ 108
+      );
+ 109
+    };
+ 110
+ 111
+    return (
+ 112
+      <Card
+ 113
+        title="Applies to"
+ 114
+        actions={
+ 115
+          products.value.length > 0
+ 116
+            ? [
+ 117
+                {
+ 118
+                  content: "Choose products",
+ 119
+                  onAction: () => setIsResourcePickerOpen(true),
+ 120
+                },
+ 121
+              ]
+ 122
+            : []
+ 123
+        }
+ 124
+      >
+ 125
+        <Card.Section>{selectedResourcesMarkup()}</Card.Section>
+ 126
+ 127
+        <ResourcePicker
+ 128
+          resourceType="Product"
+ 129
+          open={isResourcePickerOpen}
+ 130
+          onCancel={handleTogglePicker}
+ 131
+          onSelection={handleProductSelection}
+ 132
+        />
+ 133
+      </Card>
+ 134
+    );
+ 135 };
+ Step 3: Create the list component
+ The list component fetches the gates from the Gates API.
+ In the /web/frontend/components directory, create a new file called TokengatesList.jsx.
+ Add the following code to the file:
+ /web/frontend/components/TokengatesList.jsx
+ 1 import { useCallback } from "react";
+ 2 import { Button, Card, IndexTable, Stack } from "@shopify/polaris";
+ 3 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
+ 4
+ 5 export function TokengatesList() {
+ 6
+    const fetch = useAuthenticatedFetch();
+ 7
+ 8
+    const { data: gatesData, refetch: refetchGates } = useAppQuery({
+ 9
+      url: "/api/gates",
+ 10
+      reactQueryOptions: {
+ 11
+        onSuccess: () => {},
+ 12
+      },
+ 13
+    });
+ 14
+ 15
+    const deleteGate = useCallback(
+ 16
+      async (id) => {
+ 17
+        const response = await fetch(`/api/gates/${encodeURIComponent(id)}`, {
+ 18
+          method: "DELETE",
+ 19
+        });
+ 20
+ 21
+        if (!response.ok) {
+ 22
+          console.error("Error deleting gate");
+ 23
+          return;
+ 24
+        }
+ 25
+ 26
+        refetchGates();
+ 27
+      },
+ 28
+      [fetch, refetchGates]
+ 29
+    );
+ 30
+ 31
+    const perkTypeName = Object.freeze({
+ 32
+      discount: "Discount",
+ 33
+      exclusive: "Exclusive",
+ 34
+    });
+ 35
+ 36
+    const tableHeadings = [
+ 37
+      { title: "Gate" },
+ 38
+      { title: "Perk" },
+ 39
+      { title: "Segment" },
+ 40
+      { title: "Products" },
+ 41
+      { title: "" },
+ 42
+    ];
+ 43
+ 44
+    const indexTableRow = () => {
+ 45
+      if (!gatesData?.response) return;
+ 46
+ 47
+      return gatesData.response.map((gate, index) => {
+ 48
+        const { id, name, requirements, reaction, subjectBindings } = gate;
+ 49
+ 50
+        if (!requirements?.value || !reaction?.value) return;
+ 51
+ 52
+        const segment = (JSON.parse(requirements.value)?.conditions || [])
+ 53
+          .map((condition) => condition.contractAddress)
+ 54
+          .join(", ");
+ 55
+ 56
+        const perkType = JSON.parse(reaction.value)?.type ?? "—";
+ 57
+ 58
+        const numProducts = subjectBindings?.nodes?.length ?? "—";
+ 59
+ 60
+        return (
+ 61
+          <IndexTable.Row id={id} key={id} position={index}>
+ 62
+            <IndexTable.Cell>{name}</IndexTable.Cell>
+ 63
+            <IndexTable.Cell>{perkTypeName[`${perkType}`]}</IndexTable.Cell>
+ 64
+            <IndexTable.Cell>{segment}</IndexTable.Cell>
+ 65
+            <IndexTable.Cell>{numProducts}</IndexTable.Cell>
+ 66
+            <IndexTable.Cell>
+ 67
+              <Button onClick={() => deleteGate(id)}>Delete</Button>
+ 68
+            </IndexTable.Cell>
+ 69
+          </IndexTable.Row>
+ 70
+        );
+ 71
+      });
+ 72
+    };
+ 73
+ 74
+    const emptyState = (
+ 75
+      <Stack distribution="center">
+ 76
+        <p>No Tokengates found</p>
+ 77
+      </Stack>
+ 78
+    );
+ 79
+ 80
+    return (
+ 81
+      <Card>
+ 82
+        <IndexTable
+ 83
+          emptyState={emptyState}
+ 84
+          headings={tableHeadings}
+ 85
+          itemCount={gatesData?.response?.length ?? 0}
+ 86
+          resourceName={{
+ 87
+            singular: "Tokengate",
+ 88
+            plural: "Tokengates",
+ 89
+          }}
+ 90
+          selectable={false}
+ 91
+        >
+ 92
+          {indexTableRow()}
+ 93
+        </IndexTable>
+ 94
+      </Card>
+ 95
+    );
+ 96 }
+ Add the list component to the home page
+ Import the TokengatesList component and include the component markup in your index page.
+ Open /web/frontend/pages/index.jsx.
+ Replace your code with:
+ /web/frontend/pages/index.jsx
+ 1 import { useNavigate } from "react-router-dom";
+ 2 import { Page, Layout } from "@shopify/polaris";
+ 3
+ 4 import { TokengatesList } from "../components/TokengatesList";
+ 5
+ 6 export default function HomePage() {
+ 7
+    const navigate = useNavigate();
+ 8
+ 9
+    return (
+ 10
+      <Page
+ 11
+        title="Tokengates"
+ 12
+        primaryAction={{
+ 13
+          content: "Create tokengate",
+ 14
+          onAction: () => {
+ 15
+            navigate("/createtokengate");
+ 16
+          },
+ 17
+        }}
+ 18
+      >
+ 19
+        <Layout>
+ 20
+          <Layout.Section>
+ 21
+            <TokengatesList />
+ 22
+          </Layout.Section>
+ 23
+        </Layout>
+ 24
+      </Page>
+ 25
+    );
+ 26 }
+ In the browser, view your development store. After this step, your form should look like this:
+ Step 4: Create the backend for the admin app UI to interact with the Gates API
+ Now that you have created the frontend, you need to request additional scopes for your app to interact with gates. After, add the backend to create discounts, create, retrieve and delete gates.
+ Setup the gates scope
+ In /shopify.app.toml, update the existing scopes.
+ Modify the existing scopes declaration to add the read_gates, write_gates, read_discounts, and write_discounts scopes.
+ /shopify.app.toml
+ Code to remove
+ 1 scopes = "write_products"
+ Code to add
+ 1 scopes = "write_products,read_gates,write_gates,read_discounts,write_discounts"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Start your development server. If your server is already running, restart it.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ View your app again in your store admin. If prompted for an app update that applies the new scopes, then accept the update.
+ Enable the unstable API
+ The Gates API is available in the unstable API version. Configure the Shopify API client to use the unstable API version.
+ Open /web/shopify.js
+ Set the shopify configuration key apiVersion to unstable.
+ /web/shopify.js
+ 1 const shopify = shopifyApp({
+ 2
+    api: {
+ 3
+      apiVersion: LATEST_API_VERSION,
+ 4
+      // ...
+ 5
+    },
+ 6
+    // ...
+ 7 }
+ Code to remove
+ 1 apiVersion: LATEST_API_VERSION,
+ Code to add
+ 1 apiVersion: "unstable",
+ Create the backend to interact with the Gates API
+ Create a new directory /web/api/, and inside create a new file called constants.js.
+ Add the following code to the file:
+ /web/api/constants.js
+ 1 export const myHandle = "tokengating-example-app"
+ 2 export const myAppMetafieldNamespace = myHandle;
+ In the /web/api directory, create a new file called create-discount.js.
+ Add the following code to the file:
+ /web/api/create-discount.js
+ 1 import { myAppMetafieldNamespace } from "./constants.js";
+ 2
+ 3 const YOUR_FUNCTION_ID = "YOUR_FUNCTION_ID";
+ 4 console.log(`Loaded function id ${YOUR_FUNCTION_ID}`);
+ 5
+ 6 const CREATE_AUTOMATIC_DISCOUNT_MUTATION = `
+ 7
+    mutation CreateAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
+ 8
+      discountCreate: discountAutomaticAppCreate(
+ 9
+        automaticAppDiscount: $discount
+ 10
+      ) {
+ 11
+        userErrors {
+ 12
+          code
+ 13
+          message
+ 14
+          field
+ 15
+        }
+ 16
+      }
+ 17
+    }
+ 18 `;
+ 19
+ 20 export const createAutomaticDiscount = async (client, gateConfiguration) => {
+ 21
+    const response = await client.query({
+ 22
+      data: {
+ 23
+        query: CREATE_AUTOMATIC_DISCOUNT_MUTATION,
+ 24
+        variables: {
+ 25
+          discount: {
+ 26
+            title: gateConfiguration.name,
+ 27
+            functionId: YOUR_FUNCTION_ID,
+ 28
+            combinesWith: {
+ 29
+              productDiscounts: true,
+ 30
+              shippingDiscounts: true,
+ 31
+            },
+ 32
+            startsAt: new Date(),
+ 33
+            metafields: [
+ 34
+              {
+ 35
+                key: "gate_configuration_id",
+ 36
+                namespace: myAppMetafieldNamespace,
+ 37
+                type: "single_line_text_field",
+ 38
+                value: gateConfiguration.id
+ 39
+              }
+ 40
+            ]
+ 41
+          },
+ 42
+        },
+ 43
+      },
+ 44
+    });
+ 45 };
+ In the last part of this tutorial series, after deploying your function to apply the gate discount, you'll come back to fill in YOUR_FUNCTION_ID.
+ In the /web/api/ directory, create a new file called create-gate.js.
+ Add the following code to the file:
+ /web/api/create-gate.js
+ 1 import { GraphqlQueryError } from "@shopify/shopify-api";
+ 2 import shopify from "../shopify.js";
+ 3 import { myAppMetafieldNamespace, myHandle } from "./constants.js";
+ 4 import { createAutomaticDiscount } from "./create-discount.js";
+ 5
+ 6 const CREATE_GATE_CONFIGURATION_MUTATION = `
+ 7
+    mutation createGateConfiguration($name: String!, $requirements: String!, $reaction: String!) {
+ 8
+      gateConfigurationCreate(input: {
+ 9
+          name: $name,
+ 10
+          metafields: [{
+ 11
+            namespace: "${myAppMetafieldNamespace}",
+ 12
+            key: "requirements",
+ 13
+            type: "json",
+ 14
+            value: $requirements
+ 15
+          },
+ 16
+          {
+ 17
+            namespace: "${myAppMetafieldNamespace}",
+ 18
+            key: "reaction",
+ 19
+            type: "json",
+ 20
+            value: $reaction
+ 21
+          }],
+ 22
+          handle: "${myHandle}"
+ 23
+        }) {
+ 24
+        gateConfiguration {
+ 25
+          id
+ 26
+          name
+ 27
+          createdAt
+ 28
+          updatedAt
+ 29
+          metafields(namespace: "${myAppMetafieldNamespace}", first: 10) {
+ 30
+            nodes {
+ 31
+              key
+ 32
+              value
+ 33
+              namespace
+ 34
+              type
+ 35
+            }
+ 36
+          }
+ 37
+        }
+ 38
+        userErrors {
+ 39
+          field
+ 40
+          message
+ 41
+        }
+ 42
+      }
+ 43
+    }
+ 44 `;
+ 45
+ 46 const CREATE_GATE_SUBJECT_MUTATION = `
+ 47
+    mutation createGateSubject ($gateConfigurationId: ID!, $subject: ID!){
+ 48
+      gateSubjectCreate(input: {
+ 49
+        gateConfigurationId: $gateConfigurationId,
+ 50
+        active: true,
+ 51
+        subject: $subject
+ 52
+      }) {
+ 53
+        gateSubject {
+ 54
+          id
+ 55
+          configuration {
+ 56
+            id
+ 57
+            name
+ 58
+            requirements: metafield(namespace: "${myAppMetafieldNamespace}",
+ 59
+              key: "requirements") {
+ 60
+                value
+ 61
+            }
+ 62
+            reaction: metafield(namespace: "${myAppMetafieldNamespace}",
+ 63
+              key: "reaction") {
+ 64
+                value
+ 65
+            }
+ 66
+            createdAt
+ 67
+            updatedAt
+ 68
+          }
+ 69
+          createdAt
+ 70
+          updatedAt
+ 71
+        }
+ 72
+        userErrors {
+ 73
+          field
+ 74
+          message
+ 75
+        }
+ 76
+      }
+ 77
+    }
+ 78 `;
+ 79
+ 80 const UPDATE_GATE_SUBJECT_MUTATION = `
+ 81
+    mutation updateGateSubject ($gateConfigurationId: ID!, $id: ID!){
+ 82
+      gateSubjectUpdate(input: {
+ 83
+        gateConfigurationId: $gateConfigurationId,
+ 84
+        id: $id
+ 85
+      }) {
+ 86
+        gateSubject {
+ 87
+          id
+ 88
+          configuration {
+ 89
+            id
+ 90
+            name
+ 91
+            requirements: metafield(namespace: "${myAppMetafieldNamespace}",
+ 92
+              key: "requirements") {
+ 93
+                value
+ 94
+            }
+ 95
+            reaction: metafield(namespace: "${myAppMetafieldNamespace}",
+ 96
+              key: "reaction") {
+ 97
+                value
+ 98
+            }
+ 99
+            createdAt
+ 100
+            updatedAt
+ 101
+          }
+ 102
+          createdAt
+ 103
+          updatedAt
+ 104
+        }
+ 105
+        userErrors {
+ 106
+          field
+ 107
+          message
+ 108
+        }
+ 109
+      }
+ 110
+    }
+ 111 `;
+ 112
+ 113 const PRODUCTS_QUERY = `
+ 114 query retrieveProducts ($queryString: String!, $first: Int!){
+ 115
+    products(query: $queryString, first: $first) {
+ 116
+      nodes {
+ 117
+        id
+ 118
+        gates {
+ 119
+          id
+ 120
+          active
+ 121
+        }
+ 122
+      }
+ 123
+    }
+ 124 }
+ 125
+ 126 `;
+ 127
+ 128 export default async function createGate({
+ 129
+    session,
+ 130
+    name,
+ 131
+    discountType,
+ 132
+    discount,
+ 133
+    segment,
+ 134
+    productGids,
+ 135 }) {
+ 136
+    const client = new shopify.api.clients.Graphql({ session });
+ 137
+ 138
+    const segmentConditions = segment.map((address) => {
+ 139
+      return {
+ 140
+        name: `Gate for ${address.slice(0, 5)}`, // Replace with your gate name
+ 141
+        conditionsDescription: "Any token", // Replace with your condition description
+ 142
+        contractAddress: address,
+ 143
+        imageUrl: "https://placekitten.com/g/200/200", // Replace with NFT collection image URL
+ 144
+      };
+ 145
+    });
+ 146
+ 147
+    const gateConfigurationRequirements = {
+ 148
+      logic: "ANY",
+ 149
+      conditions: segmentConditions,
+ 150
+    };
+ 151
+ 152
+    const gateConfigurationReaction = {
+ 153
+      name: name,
+ 154
+      type: "discount",
+ 155
+      discount: {
+ 156
+        type: discountType,
+ 157
+        value: discount,
+ 158
+      },
+ 159
+    };
+ 160
+ 161
+    try {
+ 162
+      const createGateResponse = await client.query({
+ 163
+        data: {
+ 164
+          query: CREATE_GATE_CONFIGURATION_MUTATION,
+ 165
+          variables: {
+ 166
+            name,
+ 167
+            requirements: JSON.stringify(gateConfigurationRequirements),
+ 168
+            reaction: JSON.stringify(gateConfigurationReaction),
+ 169
+          },
+ 170
+        },
+ 171
+      });
+ 172
+      const gateConfiguration =
+ 173
+        createGateResponse.body.data.gateConfigurationCreate.gateConfiguration;
+ 174
+      const gateConfigurationId = gateConfiguration.id;
+ 175
+ 176
+      createAutomaticDiscount(client, gateConfiguration);
+ 177
+ 178
+      if (productGids.length === 0) {
+ 179
+        return;
+ 180
+      }
+ 181
+ 182
+      const retrieveProductsResponse = await client.query({
+ 183
+        data: {
+ 184
+          query: PRODUCTS_QUERY,
+ 185
+          variables: {
+ 186
+            queryString: generateProductsQueryString(productGids),
+ 187
+            first: 100,
+ 188
+          },
+ 189
+        },
+ 190
+      });
+ 191
+ 192
+      const products = retrieveProductsResponse.body.data.products.nodes;
+ 193
+ 194
+      for (const product of products) {
+ 195
+        if (product.gates.length > 0) {
+ 196
+          const activeGateSubjectId = product.gates[0].id;
+ 197
+          await client.query({
+ 198
+            data: {
+ 199
+              query: UPDATE_GATE_SUBJECT_MUTATION,
+ 200
+              variables: {
+ 201
+                gateConfigurationId,
+ 202
+                id: activeGateSubjectId,
+ 203
+              },
+ 204
+            },
+ 205
+          });
+ 206
+        } else {
+ 207
+          await client.query({
+ 208
+            data: {
+ 209
+              query: CREATE_GATE_SUBJECT_MUTATION,
+ 210
+              variables: {
+ 211
+                gateConfigurationId,
+ 212
+                subject: product.id,
+ 213
+              },
+ 214
+            },
+ 215
+          });
+ 216
+        }
+ 217
+      }
+ 218
+      return createGateResponse;
+ 219
+    } catch (error) {
+ 220
+      if (error instanceof GraphqlQueryError) {
+ 221
+        throw new Error(
+ 222
+          `${error.message}\n${JSON.stringify(error.response, null, 2)}`
+ 223
+        );
+ 224
+      } else {
+ 225
+        throw error;
+ 226
+      }
+ 227
+    }
+ 228 }
+ 229
+ 230 const generateProductsQueryString = (productGids) => {
+ 231
+    return productGids
+ 232
+      .map((productGid) => {
+ 233
+        const id = productGid.split("/").pop();
+ 234
+        return `(id:${id})`;
+ 235
+      })
+ 236
+      .join(" OR ");
+ 237 };
+ Note
+ The create-gate.js code supports the behavior that when a new gate is created with a product that belongs to an existing gate, the product will be removed from the existing gate and assigned to the newly created gate.
+ In the /web/api/ directory, create a new file called retrieve-gates.js.
+ Add the following code to the file:
+ /web/api/retrieve-gates.js
+ 1 import { GraphqlQueryError } from "@shopify/shopify-api";
+ 2 import shopify from "../shopify.js";
+ 3
+ 4 import { myAppMetafieldNamespace, myHandle } from "./constants.js";
+ 5
+ 6 const GATES_QUERY = `
+ 7
+    query getGateConfigurations($first: Int!) {
+ 8
+      gateConfigurations(query: "handle:${myHandle}", first: $first) {
+ 9
+        nodes {
+ 10
+          id
+ 11
+          name
+ 12
+          handle
+ 13
+          requirements: metafield(namespace: "${myAppMetafieldNamespace}",
+ 14
+            key: "requirements") {
+ 15
+              value
+ 16
+          }
+ 17
+          reaction: metafield(namespace: "${myAppMetafieldNamespace}",
+ 18
+            key: "reaction") {
+ 19
+              value
+ 20
+          }
+ 21
+          subjectBindings(first: $first) {
+ 22
+            nodes {
+ 23
+              id
+ 24
+            }
+ 25
+          }
+ 26
+          createdAt
+ 27
+          updatedAt
+ 28
+        }
+ 29
+      }
+ 30
+    }
+ 31 `;
+ 32
+ 33 export default async function retrieveGates(session) {
+ 34
+    const client = new shopify.api.clients.Graphql({ session });
+ 35
+ 36
+    try {
+ 37
+      const gates = await client.query({
+ 38
+        data: {
+ 39
+          query: GATES_QUERY,
+ 40
+          variables: {
+ 41
+            first: 20,
+ 42
+          },
+ 43
+        },
+ 44
+      });
+ 45
+      return gates.body.data.gateConfigurations.nodes;
+ 46
+    } catch (error) {
+ 47
+      if (error instanceof GraphqlQueryError) {
+ 48
+        throw new Error(
+ 49
+          `${error.message}\n${JSON.stringify(error.response, null, 2)}`
+ 50
+        );
+ 51
+      } else {
+ 52
+        throw error;
+ 53
+      }
+ 54
+    }
+ 55 }
+ In the /web/api/ directory, create a new file called delete-gate.js.
+ Add the following code to the file:
+ /web/api/delete-gate.js
+ 1 import { GraphqlQueryError } from "@shopify/shopify-api";
+ 2 import shopify from "../shopify.js";
+ 3
+ 4 const DELETE_GATE_CONFIGURATION_MUTATION = `
+ 5
+    mutation deleteGateConfiguration($id: ID!) {
+ 6
+      gateConfigurationDelete(input:{
+ 7
+        id: $id
+ 8
+      }) {
+ 9
+        deletedGateConfigurationId
+ 10
+      }
+ 11
+    }
+ 12 `;
+ 13
+ 14 export default async function deleteGate({ session, gateConfigurationGid }) {
+ 15
+    const client = new shopify.api.clients.Graphql({ session });
+ 16
+    try {
+ 17
+      const response = await client.query({
+ 18
+        data: {
+ 19
+          query: DELETE_GATE_CONFIGURATION_MUTATION,
+ 20
+          variables: {
+ 21
+            id: gateConfigurationGid,
+ 22
+          },
+ 23
+        },
+ 24
+      });
+ 25
+      return response.body.data.gateConfigurationDelete;
+ 26
+    } catch (error) {
+ 27
+      if (error instanceof GraphqlQueryError) {
+ 28
+        throw new Error(
+ 29
+          `${error.message}\n${JSON.stringify(error.response, null, 2)}`
+ 30
+        );
+ 31
+      } else {
+ 32
+        throw error;
+ 33
+      }
+ 34
+    }
+ 35 }
+ Step 5: Add the API endpoints to the server
+ The app uses authenticated endpoints to create, update, delete, and view the gates. You'll import the helpers createGate, retrieveGates, and deleteGate that you created in the previous steps, and call those endpoints with a GET and POST request.
+ Open /web/index.js.
+ Replace the code with:
+ /web/index.js
+ 1 // @ts-check
+ 2 import { join } from "path";
+ 3 import { readFileSync } from "fs";
+ 4 import express from "express";
+ 5 import serveStatic from "serve-static";
+ 6
+ 7 import shopify from "./shopify.js";
+ 8 import createGate from "./api/create-gate.js";
+ 9 import retrieveGates from "./api/retrieve-gates.js";
+ 10 import deleteGate from "./api/delete-gate.js";
+ 11 import PrivacyWebhookHandlers from "./privacy.js";
+ 12
+ 13 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+ 14
+ 15 const STATIC_PATH =
+ 16
+    process.env.NODE_ENV === "production"
+ 17
+      ? `${process.cwd()}/frontend/dist`
+ 18
+      : `${process.cwd()}/frontend/`;
+ 19
+ 20 const app = express();
+ 21
+ 22 // Set up Shopify authentication and webhook handling
+ 23 app.get(shopify.config.auth.path, shopify.auth.begin());
+ 24 app.get(
+ 25
+    shopify.config.auth.callbackPath,
+ 26
+    shopify.auth.callback(),
+ 27
+    shopify.redirectToShopifyOrAppRoot()
+ 28 );
+ 29 app.post(
+ 30
+    shopify.config.webhooks.path,
+ 31
+    shopify.processWebhooks({ webhookHandlers: PrivacyWebhookHandlers })
+ 32 );
+ 33
+ 34 app.use(express.json());
+ 35
+ 36 // All endpoints after this point will require an active session
+ 37 app.use("/api/*", shopify.validateAuthenticatedSession());
+ 38
+ 39 app.get("/api/gates", async (_req, res) => {
+ 40
+    try {
+ 41
+      const response = await retrieveGates(res.locals.shopify.session);
+ 42
+      res.status(200).send({ success: true, response });
+ 43
+    } catch (e) {
+ 44
+      console.error("Failed to process gates/get:", e.message);
+ 45
+      res.status(500).send({ success: false, error: e.message });
+ 46
+    }
+ 47 });
+ 48
+ 49 app.post("/api/gates", async (req, res) => {
+ 50
+    const { name, discountType, discount, segment, productGids } = req.body;
+ 51
+ 52
+    try {
+ 53
+      await createGate({
+ 54
+        session: res.locals.shopify.session,
+ 55
+        name,
+ 56
+        discountType,
+ 57
+        discount,
+ 58
+        segment,
+ 59
+        productGids,
+ 60
+      });
+ 61
+      res.status(200).send({ success: true });
+ 62
+    } catch (e) {
+ 63
+      console.error("Failed to process gates/create:", e.message);
+ 64
+      res.status(500).send({ success: false, error: e.message });
+ 65
+    }
+ 66 });
+ 67
+ 68 app.delete("/api/gates/:id", async (req, res) => {
+ 69
+    try {
+ 70
+      await deleteGate({
+ 71
+        session: res.locals.shopify.session,
+ 72
+        gateConfigurationGid: decodeURIComponent(req.params.id),
+ 73
+      });
+ 74
+      res.status(200).send({ success: true });
+ 75
+    } catch (e) {
+ 76
+      console.error("Failed to process gates/delete:", e.message);
+ 77
+      res.status(500).send({ success: false, error: e.message });
+ 78
+    }
+ 79 });
+ 80
+ 81 app.use(serveStatic(STATIC_PATH, { index: false }));
+ 82
+ 83 app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
+ 84
+    return res
+ 85
+      .status(200)
+ 86
+      .set("Content-Type", "text/html")
+ 87
+      .send(readFileSync(join(STATIC_PATH, "index.html")));
+ 88 });
+ 89
+ 90 app.listen(PORT);
+ Step 6: Create a gate
+ The admin UI to create tokengates is complete. Try it out by entering details in the form and pressing create. The gate should be created and included in the tokengate list.
+ To ensure later steps in this tutorial are successful, make sure to:
+ Input token addresses in the Segments field that you have access to
+ Select at least one product when creating a tokengate
+ Not leave the discount or name fields blank
+ Next steps
+ If you're using a custom storefront built using Hydrogen or the Headless channel, then follow the build a tokengated storefront tutorial series.
+ If you plan to integrate your app with a regular storefront, then show gates on the storefront using a theme app extension.
+ Step 1: Start your development server
+ Step 2: Create a form to configure a product gate
+ Step 3: Create the list component
+ Step 4: Create the backend for the admin app UI to interact with the Gates API
+ Step 5: Add the API endpoints to the server

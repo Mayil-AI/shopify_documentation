@@ -1,0 +1,335 @@
+Billing
+ App Store
+ Create custom B2B checkout experiences
+ Shopify Plus
+ Checkout UI extensions that render on the information and shipping and payment steps in checkout are available only to stores on a Shopify Plus plan.
+ In this tutorial, you'll use checkout UI extensions to create a custom B2B checkout experience that renders the content of a banner based on the customer type (B2B or D2C), company metafields, and whether completing the checkout results in submitting a draft order.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Use the usePurchasingCompany hook to identify business customers.
+ Use the useCheckoutSettings hook to identify draft order checkouts.
+ Get familiar with using Company and CompanyLocation metafields.
+ Deploy your extension code to Shopify.
+ Requirements
+ You've created a Partner account.
+ You've created a new development store with the following:
+ Generated test data
+ Checkout and Customer Accounts Extensibility developer preview enabled
+ You've created an app that uses Shopify CLI 3.0 or higher.
+ You've requested access to protected customer data.
+ Sample code
+ The sample code imports API hooks that provide b2b context to customize the checkout.
+ You can copy and paste the following code into your index file and add a few example values to get the extension to render in the browser. The rest of the tutorial walks through this sample code step-by-step.
+ src/index.jsx
+ 1 import React from "react";
+ 2 import {
+ 3
+    Banner,
+ 4
+    BlockStack,
+ 5
+    useCustomer,
+ 6
+    useAppMetafields,
+ 7
+    usePurchasingCompany,
+ 8
+    useCheckoutSettings,
+ 9 } from "@shopify/ui-extensions-react/checkout";
+ 10
+ 11 export function App() {
+ 12
+ 13
+    const metafields = useAppMetafields();
+ 14
+    const isHighValueClient = metafields.some(entry =>
+ 15
+      entry.target.type === 'company' &&
+ 16
+      entry.metafield.key === 'high_value' &&
+ 17
+      entry.metafield.value === 'true'
+ 18
+    );
+ 19
+ 20
+    const customer = useCustomer();
+ 21
+    const checkoutSettings = useCheckoutSettings();
+ 22
+    const purchasingCompany = usePurchasingCompany();
+ 23
+ 24
+    // If there isn't a purchasing company, then Shopify handles a D2C buyer checkout.
+ 25
+    // In this case, you don't want to render anything.
+ 26
+    if(!purchasingCompany) {
+ 27
+      return null;
+ 28
+    }
+ 29
+ 30
+    if(checkoutSettings.orderSubmission === 'ORDER') {
+ 31
+     return null;
+ 32
+    }
+ 33
+ 34
+    if(checkoutSettings.orderSubmission === 'DRAFT_ORDER') {
+ 35
+      const message = isHighValueClient ?
+ 36
+        `${customer.firstName}, even during the holidays we will serve ${purchasingCompany.company.name} promptly, expect the usual turnaround time of 2-3 business days.` :
+ 37
+        `Sorry ${customer.firstName}, there will be delays in draft order reviews during this holiday season. Expect a turnaround time of 5-10 business days.`
+ 38
+      const status = isHighValueClient ? 'info' : 'warning';
+ 39
+ 40
+      return (
+ 41
+        <Banner status={status} title="Holiday impacts on draft orders">{message}</Banner>
+ 42
+      );
+ 43
+    }
+ 44
+ 45
+    return null;
+ 46 }
+ Step 1: Create a Checkout UI extension
+ Note
+ If you already have a checkout UI extension that you want to add a custom banner to, then you can skip to step 2.
+ To create a checkout UI extension, you can use Shopify CLI, which generates starter code for building your extension and automates common development tasks.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new checkout UI extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template checkout_ui --name my-checkout-ui-extension
+ Select a language for your extension. You can choose from TypeScript, JavaScript, TypeScript React, or JavaScript React.
+ Tip
+ TypeScript or JavaScript is suitable for smaller projects that require a more straightforward API. TypeScript React or JavaScript React is suitable when you want an easy model for mapping state updates to UI updates. With JavaScript or TypeScript, you need to map state updates yourself. This process is similar to writing an application targeting the DOM, versus using react-dom.
+ You should now have a new extension directory in your app's directory. The extension directory includes the extension script at src/index.{file-extension}. The following is an example directory structure:
+ Checkout UI extension file structure
+ └── my-app
+   └── extensions
+     └── my-checkout-ui-extension
+         ├── src
+         │   └── Checkout.jsx OR Checkout.js // The index page of the checkout UI extension
+         ├── locales
+         │   ├── en.default.json // The default locale for the checkout UI extension
+         │   └── fr.json // The locale file for non-regional French translations
+         ├── shopify.extension.toml // The config file for the checkout UI extension
+         └── package.json
+ Start your development server to build and preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ To learn about the processes that are executed when you run dev, refer to the Shopify CLI command reference.
+ Press p to open the developer console. In the developer console page, click on the preview link for your extension.
+ Step 2: Import components
+ In the index file, import the components from the Checkout UI extensions API that you need to build the extension:
+ src/index.jsx
+ src/index.js
+ 1 import React from "react";
+ 2 import {
+ 3
+    Banner,
+ 4
+    BlockStack,
+ 5
+    useCustomer,
+ 6
+    useAppMetafields,
+ 7
+    usePurchasingCompany,
+ 8
+    useCheckoutSettings,
+ 9 } from "@shopify/ui-extensions-react/checkout";
+ Step 3: Set up the targets
+ The purchase.checkout.block.render target enables merchants to control where the extension is rendered in checkout. In the following example, the ORDER_SUMMARY4 placement is used so that the extension appears after the order summary:
+ src/Checkout.jsx
+ src/Checkout.js
+ 1 // Set up the entry point for the extension
+ 2 export default reactExtension("purchase.checkout.block.render", () => <App />);
+ Tip
+ You can adjust where dynamic targets display in checkout by appending ?placement-reference={name} to the checkout URL that's outputted by Shopify CLI. {name} represents a supported location for dynamic targets. For example, ?placement-reference=ORDER_SUMMARY4.
+ Step 4: Configure the metafields
+ Now that you've set up extension points, you can make metafields available by configuring shopify.extension.toml to access the customer, company, companyLocation metafields in the extension.
+ shopify.extension.toml
+ 1 ...
+ 2 # The metafields for the extension
+ 3 [[extensions.metafields]]
+ 4 namespace = "custom"
+ 5 key = "high_value"
+ 6
+ 7 ...
+ In the following example, the extension reads the merchant configured company metafield from appMetafields to determine whether the company has spent a certain amount of money (high_value).
+ src/index.jsx
+ src/index.js
+ 1 ...
+ 2
+ 3 export function App() {
+ 4
+ 5
+    // Use the merchant-defined metafields
+ 6
+    const metafields = useAppMetafields();
+ 7
+    const isHighValueClient = metafields.some(entry =>
+ 8
+      entry.target.type === 'company' &&
+ 9
+      entry.metafield.key === 'high_value' &&
+ 10
+      entry.metafield.value === 'true'
+ 11
+    );
+ 12
+    ...
+ 13 }
+ Step 5: Identify a business customer
+ You can use the usePurchasingCompany hook to identify whether a checkout is a B2B checkout. The usePurchasingCompany hook enables you to display tailored messages to B2B customers or hide information from D2C customers.
+ src/index.jsx
+ src/index.js
+ 1 ...
+ 2 function App() {
+ 3
+    ...
+ 4
+    const purchasingCompany = usePurchasingCompany();
+ 5
+ 6
+    if(!purchasingCompany) {
+ 7
+      return null;
+ 8
+    }
+ 9
+ 10
+    ...
+ 11
+ 12
+    // Render the banner
+ 13
+    return (
+ 14
+      <Banner status={status} title="Holiday impacts on draft orders">{message}</Banner>
+ 15
+    );
+ 16 }
+ Step 6: Identify a draft order checkout
+ You can use the useCheckoutSettings hook to identify whether a checkout is a draft order checkout. Draft orders require merchant review, so you can inform the B2B buyers with a customized message about the type of checkout they're on.
+ src/index.jsx
+ src/index.js
+ 1 ...
+ 2 function App() {
+ 3
+    ...
+ 4
+ 5
+    const checkoutSettings = useCheckoutSettings();
+ 6
+ 7
+    if(checkoutSettings.orderSubmission === 'ORDER') {
+ 8
+     return null;
+ 9
+    }
+ 10
+ 11
+    if(checkoutSettings.orderSubmission === 'DRAFT_ORDER') {
+ 12
+      const message = isHighValueClient ?
+ 13
+        `${customer.firstName}, even during the holidays we will serve ${purchasingCompany.company.name} promptly, expect the usual turnaround time of 2-3 business days.` :
+ 14
+        `Sorry ${customer.firstName}, there will be delays in draft order reviews during this holiday season. Expect a turnaround time of 5-10 business days.`
+ 15
+      const status = isHighValueClient ? 'info' : 'warning';
+ 16
+ 17
+    ...
+ 18
+ 19
+    // Render the banner
+ 20
+    return (
+ 21
+      <Banner status={status} title="Holiday impacts on draft orders">{message}</Banner>
+ 22
+    );
+ 23 }
+ Step 7: Deploy the UI extension
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ You can have up to 50 checkout UI extensions in an app version.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Troubleshooting
+ This section describes how to solve some potential errors when you run dev for an app that contains a checkout UI extension.
+ Property token error
+ If you receive the error ShopifyCLI:AdminAPI requires the property token to be set, then you'll need to use the --checkout-cart-url flag to direct the CLI to open a checkout session for you.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev -- --checkout-cart-url cart/{product_variant_id}:{quantity}
+ Missing checkout link
+ If you don't receive the test checkout URL when you run dev, then verify the following:
+ You have a development store populated with products.
+ You're logged in to the correct Partners organization and development store. To verify, check your app info using the following command:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run info
+ Otherwise, you can manually create a checkout with the following steps:
+ From your development store's storefront, add some products to your cart.
+ From the cart, click Checkout.
+ From directory of the app that contains your extension, run dev to preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ On the checkout page for your store, change the URL by appending the ?dev=https://{tunnel_url}/extensions query string and reload the page. The tunnel_url parameter allows your app to be accessed using a unique HTTPS URL.
+ You should now see a rendered order note that corresponds to the code in your project template.
+ Next steps
+ Learn about the components that are available in checkout UI extensions.
+ Consult the API reference for checkout UI targets and their respective types.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Sample code
+ Step 1: Create a Checkout UI extension
+ Step 2: Import components
+ Step 3: Set up the targets
+ Step 4: Configure the metafields
+ Step 5: Identify a business customer
+ Step 6: Identify a draft order checkout
+ Step 7: Deploy the UI extension
+ Troubleshooting
+ Next steps
+ Updates & News
+ Developer changelog

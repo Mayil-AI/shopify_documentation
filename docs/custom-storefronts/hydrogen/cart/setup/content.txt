@@ -1,0 +1,105 @@
+Skip to Content
+ Open Main Navigation
+ shopify.dev docs
+ On this page
+ Set up a cart handler
+ This guide shows you how to set up a cart handler inside your Hydrogen app. This makes a dynamic cart object available on all requests, so it can be read and updated by Remix actions and loaders.
+ Requirements
+ Anchor link to section titled "Requirements"
+ You've completed the quickstart guide.
+ Step 1: Create a cart instance with createCartHandler
+ Anchor link to section titled "Step 1: Create a cart instance with createCartHandler"
+ The createCartHandler function returns an object instance for you to interact with Storefront API cart queries. It allows you to easily interact with the cart.
+ In your server.(js|ts) file, create your cart handler inside the server fetch handler.
+ File
+ JavaScript
+ TypeScript
+ server.js
+ 1 const cart = createCartHandler({
+ 2
+    storefront, // storefront is created by the createStorefrontClient
+ 3
+    getCartId: cartGetIdDefault(request.headers),
+ 4
+    setCartId: cartSetIdDefault(),
+ 5 });
+ Next, pass your cart instance to the getLoadContext function.
+ File
+ JavaScript
+ TypeScript
+ server.jsx
+ 1 const handleRequest = createRequestHandler({
+ 2
+    build: remixBuild,
+ 3
+    mode: process.env.NODE_ENV,
+ 4
+    getLoadContext: () => ({
+ 5
+      session,
+ 6
+      waitUntil,
+ 7
+      storefront,
+ 8
+      env,
+ 9
+      cart, // Passed in cart instance
+ 10
+    }),
+ 11 });
+ If you're using Typescript, then add the HydrogenCart type to remix.env.d.ts to have a type association.
+ Note
+ If you've added custom methods to the createCartHandler, then use the HydrogenCartCustom type instead.
+ File
+ remix.env.d.ts
+ 1 import type {HydrogenCart} from '@shopify/hydrogen';
+ 2
+ 3 declare module '@shopify/remix-oxygen' {
+ 4
+    export interface AppLoadContext {
+ 5
+      waitUntil: ExecutionContext['waitUntil'];
+ 6
+      session: HydrogenSession;
+ 7
+      storefront: Storefront;
+ 8
+      cart: HydrogenCart;  // The type declaration for cart
+ 9
+      env: Env;
+ 10
+    }
+ 11 }
+ Step 2: Decide how you want to manage the cart ID
+ Anchor link to section titled "Step 2: Decide how you want to manage the cart ID"
+ Hydrogen provides the following default methods for getting and setting a cart ID:
+ cartGetIdDefault(requestHeaders: Headers): Retrieves the cart ID from the request header cookie. The cookie name must be cart.
+ cartSetIdDefault(): Returns a function that accepts a new cart ID and sets a cookie called cart=<new_cart_id> in the returned Headers object. By default, cartSetIdDefault() sets a session cookie. This means the cookie disappears when the user closes the browser.
+ Update cookie settings by passing an options object to the cartSetIdDefault function. This options object accepts the same attribute types provided by the cookie-parsing interface from the Worktop package dependency.
+ File
+ JavaScript
+ TypeScript
+ server.jsx
+ 1 const cart = createCartHandler({
+ 2
+    storefront,
+ 3
+    getCartId: cartGetIdDefault(request.headers),
+ 4
+    setCartId: cartSetIdDefault({
+ 5
+      maxage: 60 * 60 * 24 * 365, // One year expiry
+ 6
+    }),
+ 7 });
+ Note
+ The default methods for getting and saving a cart use the cookie name cart. This name allows a cart instance to be shared between Liquid and Hydrogen. If you provide custom cookie persistence methods and need to maintain compatibility with a Liquid-coded online store, then make sure to also use the cookie name cart.
+ Next steps
+ Anchor link to section titled "Next steps"
+ Learn how to read data from a cart
+ Learn how to customize your own cart handler.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

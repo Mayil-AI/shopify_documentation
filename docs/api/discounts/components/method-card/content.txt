@@ -1,0 +1,90 @@
+Product subscription app extensions
+ Method Card
+ The MethodCard enables users to toggle between discount methods to select code or automatic discount, and provides inputs to enter or generate a discountCode and discountTitle.
+ Example code
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    MethodCard,
+ 4
+    DiscountClass,
+ 5
+    DiscountMethod,
+ 6 } from "@shopify/discount-app-components";
+ 7
+ 8 function MyApp() {
+ 9
+    const [discountMethod, setDiscountMethod] = useState(
+ 10
+      DiscountMethod.Automatic
+ 11
+    );
+ 12
+    const [discountTitle, setDiscountTitle] = useState("");
+ 13
+    const [discountCode, setDiscountCode] = useState("");
+ 14
+ 15
+    return (
+ 16
+      <MethodCard
+ 17
+        title="Tiered discount"
+ 18
+        discountClass={DiscountClass.Product}
+ 19
+        discountMethod={{
+ 20
+          value: discountMethod,
+ 21
+          onChange: setDiscountMethod,
+ 22
+        }}
+ 23
+        discountTitle={{
+ 24
+          value: discountTitle,
+ 25
+          onChange: setDiscountTitle,
+ 26
+        }}
+ 27
+        discountCode={{
+ 28
+          value: discountCode,
+ 29
+          onChange: setDiscountCode,
+ 30
+        }}
+ 31
+      />
+ 32
+    );
+ 33 }
+ Properties
+ Name Type Description Required
+ title string Title of the discount type Yes
+ discountClass DiscountClass The class of the current discount (product, order or shipping). Yes
+ discountMethod Field<DiscountMethod> The discount method (either code or automatic). Used to control whether a text input or a code generator is shown. Yes
+ discountMethodHidden boolean Whether the discount method picker is hidden. No
+ discountTitle Field<string> The discount title. Yes
+ discountCode Field<string> The discount code generated. Yes
+ defaultDiscountCodeLength number The length of discount code to generate. Defaults to 12. No
+ DiscountClass
+ Name Value Description
+ Product PRODUCT The discount applies to specific products or product variants.
+ Order ORDER The discount applies to the entire order.
+ Shipping SHIPPING The discount applies to shipping rates.
+ DiscountMethod
+ Name Value Description
+ Code CODE Discount code
+ Automatic AUTOMATIC Automatic discount
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ DiscountClass
+ DiscountMethod
+ Updates & News
+ Developer changelog

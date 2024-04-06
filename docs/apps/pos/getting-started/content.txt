@@ -1,0 +1,30 @@
+App Store
+ Getting started with extending Shopify Point of Sale
+ This guide describes how to embed your app in Shopify Point of Sale (POS) so that you can begin extending Shopify POS using one of the supported technologies.
+ Requirements
+ You've created a development store.
+ You've created an app in the Partner Dashboard or using Shopify CLI.
+ Embed your in app in Shopify POS
+ To integrate with the different extension points, you need to embed your app in Shopify POS.
+ Go to your Partner Dashboard.
+ Click Apps in the sidebar.
+ Click the name of your app.
+ Click Configuration.
+ In the POS section, set the value for Embed app in Shopify POS to True.
+ Click Save and release.
+ Caution
+ To load your embedded app properly in Shopify POS as POS links, you must use Shopify App Bridge and enable the embedded app setting. After you've enabled the embedded app setting, Shopify loads your app in a webview. Your app must be responsive to a variety of mobile and tablet viewport widths.
+ Next steps
+ Learn how to extend POS app using
+ POS UI Extensions
+ POS links
+ Cart app extension
+ Product recommendations extension
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Embed your in app in Shopify POS
+ Next steps
+ Updates & News
+ Developer changelog

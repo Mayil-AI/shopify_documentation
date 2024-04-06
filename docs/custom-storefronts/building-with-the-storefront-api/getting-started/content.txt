@@ -1,0 +1,50 @@
+Additional SDKs
+ Getting started with the Storefront API
+ Note
+ If you're building with Hydrogen, then refer to the Hydrogen documentation for getting started.
+ The Storefront API is a GraphQL API that requires an access token associated with a specific Shopify store. You can call the API from any HTTP client. You can have a maximum of 100 active storefronts and access tokens per shop.
+ The Shopify API is framework agnostic. You can build using your framework of choice, such as Hydrogen, Next.js, Vue, and more. This guide teaches you how to get started building a storefront.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Install the Headless channel to your Shopify admin
+ Generate Storefront API access tokens
+ Manage storefront permissions
+ Requirements
+ You have the staff role on the Shopify store that you're working with.
+ You have Apps and channels permissions on the Shopify store that you're working with.
+ Step 1: Enable Storefront API access
+ Install the Headless channel from the Shopify App Store. On installation, click Create storefront to generate public and private access tokens that enable public and private, authenticated access to the Storefront API.
+ Make note of the private access token, as you'll use this token to authenticate requests to the Storefront API.
+ (Optional) Create another storefront
+ Note
+ The following instructions assume that you've pinned the Headless channel in your Shopify admin. If you haven't, then you can access the channel using the Search field.
+ From your Shopify admin, under Sales channels, click Headless.
+ Click Add storefront.
+ Step 2: Manage permissions
+ Managing permissions controls what your custom storefront can display from your Shopify store.
+ From your Shopify admin, select the Headless sales channel.
+ From the list, select the storefront.
+ Beside Storefront API permissions, click Edit.
+ Select the permissions for the storefront.
+ Click Save.
+ Step 3: Set up request headers
+ Before you make requests to the Storefront API, you need to set up your request headers with the private access token that you received when creating your storefront. To learn more about how to set up request headers for your development framework, refer to the Storefront API reference.
+ Step 4: Make queries
+ After you've selected the Storefront API permissions for your custom storefront and have Storefront API access tokens, you can make queries using the Storefront API.
+ Shopify provides the following resources for learning how to make GraphQL queries to Shopify's Storefront API:
+ GraphiQL explorer: Start exploring the Storefront API on a demo shop with the interactive GraphiQL explorer.
+ Storefront API Learning Kit: Download example queries from the Storefront API Learning Kit.
+ Next steps
+ Learn how to manage your Headless channel, including how to rotate private access tokens.
+ Learn how to query products and collections.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Enable Storefront API access
+ Step 2: Manage permissions
+ Step 3: Set up request headers
+ Step 4: Make queries
+ Next steps
+ Updates & News

@@ -1,0 +1,300 @@
+Overview
+ Catalogs
+ Translate content
+ Locally required order data
+ B2B
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Manage translations of merchant-provided content
+ You can create and retrieve translated content for Shopify resources, as well as metaobjects and metafields. For example, you might add translations of product information and email notification templates using the GraphQL Admin API so a merchant can send email notifications to their customers in multiple languages. Those translations can then be retrieved by either the GraphQL Admin API or the Storefront API.
+ This guide shows you how to use the GraphQL Admin API to enable the es (Spanish) locale on your store, retrieve a product, translate the product's title, publish the new locale, and view the translated content on your store.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_products, write_translations, and write_locales access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created at least one product in your Shopify store.
+ Limitations
+ If you need to change a store's primary locale, then you need to make the change in the Shopify admin. You can't change the primary locale using the GraphQL Admin API.
+ A resource's tags field can't be translated. For example, you can't translate a product's tags.
+ The translation response that's returned for menu links and email and SMS notification templates doesn't include the handle field.
+ If the merchant changes a product's handle, then URL redirects for that product won't be supported for language-specific URLs.
+ You can translate metafields only if they are publicly accessible.
+ App proxies don't support translations.
+ Step 1: Enable a locale
+ The ShopLocale object provides the list of primary and alternate locales that have been enabled on a Shopify store. Each locale has the following attributes:
+ Primary: Whether the locale is the default locale for the store. You can only have one primary locale.
+ Published: Whether the locale is visible to buyers. A store can have multiple locales in published or unpublished states.
+ You can use the shopLocaleEnable mutation to enable a locale on your store. Shopify accepts locales in the following formats:
+ Language subtag only: For example, en (English).
+ Language subtag + region subtag: For example, en-UK (English as spoken in the United Kingdom).
+ In the shopLocale response, include the locale, name, and published fields to verify that the locale has been successfully enabled.
+ Note
+ By default, newly enabled locales aren't published. Shops are limited to 20 enabled locales.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation enableLocale($locale: String!) {
+ 2
+    shopLocaleEnable(locale: $locale) {
+ 3
+      shopLocale {
+ 4
+        locale
+ 5
+        name
+ 6
+        published
+ 7
+      }
+ 8
+    }
+ 9 }
+ Variables
+ 1 {
+ 2
+    "locale": "es"
+ 3 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shopLocaleEnable": {
+ 4
+        "shopLocale": {
+ 5
+          "locale": "es",
+ 6
+          "name": "Spanish",
+ 7
+          "published": false
+    }
+ 11 }
+ Step 2: Retrieve a translatable product
+ To retrieve the first product eligible for translation, use the translatableResources query with the parameters first: 1 and resourceType: PRODUCT.
+ In the translatableContent response, include the key, value, digest, and locale fields. You need their response values to write the translation in the next step.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    translatableResources(first: 1, resourceType: PRODUCT) {
+          resourceId
+ 6
+          translatableContent {
+ 7
+            key
+ 8
+            value
+ 9
+            digest
+ 10
+            locale
+ 11
+          }
+ 12
+        }
+      "translatableResources": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "resourceId": "gid://shopify/Product/1973887860758",
+ 8
+              "translatableContent": [
+ 9
+                {
+ 10
+                  "key": "title",
+ 11
+                  "value": "Great shirt",
+ 12
+                  "digest": "dcf8d211f6633dac78dbd15c219a81b8931e4141204d18fba8c477afd19b75f9",
+ 13
+                  "locale": "en"
+ 14
+                },
+ 15
+                {
+ 16
+                  "key": "body_html",
+ 17
+                  "value": "This is one fine shirt.",
+ 18
+                  "digest": "8e48350042b4ca04a7a4568774af71f921e7c9b561d9fac7860041e566218d25",
+ 19
+                  "locale": "en"
+ 20
+                }
+ 21
+              ]
+ 22
+            }
+ 23
+          }
+ 24
+        ]
+ 25
+      }
+ 26
+    }
+ 27 }
+ Step 3: Write a translation
+ You can use the translationsRegister mutation to create a new translation for a translatable resource.
+ When you create a translation, you need to include the translatable content's digest value in the translatableContentDigest field. A unique digest is returned from the translatableResources query for each translatableContent entry.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateTranslation($id: ID!, $translations: [TranslationInput!]!) {
+ 2
+    translationsRegister(resourceId: $id, translations: $translations) {
+ 3
+      userErrors {
+ 4
+        message
+ 5
+        field
+ 6
+      }
+ 7
+      translations {
+ 8
+        locale
+ 9
+        key
+ 10
+        value
+ 11
+      }
+ 12
+    }
+ 13 }
+ Variables
+ 1 {
+ 2
+    // Replace the value of `id` with the value of `resourceId` from the product that you queried in step 2.
+ 3
+    "id": "gid://shopify/Product/GID",
+ 4
+    "translations": [
+ 5
+      {
+ 6
+        "key": "title",
+ 7
+        "value": "Camiseta buena",
+ 8
+        "locale": "es",
+ 9
+        "translatableContentDigest": "dcf8d211f6633dac78dbd15c219a81b8931e4141204d18fba8c477afd19b75f9"
+ 10
+      }
+ 11
+    ]
+ 12 }
+      "translationsRegister": {
+ 4
+        "userErrors": [],
+ 5
+        "translations": [
+ 6
+          {
+ 7
+            "locale": "es",
+ 8
+            "key": "title",
+ 9
+            "value": "Camiseta buena"
+ 10
+          }
+ 11
+        ]
+ 12
+      }
+ 13
+    }
+ 14 }
+ Step 4: Publish the locale
+ You can use the shopLocaleUpdate mutation to publish a locale to a Shopify store. Publishing a locale makes it available for translation. Shops are limited to 20 published locales.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation updateLocale {
+ 2
+    shopLocaleUpdate(locale: "es", shopLocale: {published: true}) {
+ 3
+      userErrors {
+ 4
+        message
+ 5
+        field
+ 6
+      }
+ 7
+      shopLocale {
+ 8
+        name
+ 9
+        locale
+ 10
+        primary
+ 11
+        published
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shopLocaleUpdate": {
+ 4
+        "userErrors": [],
+ 5
+        "shopLocale": {
+ 6
+          "name": "Spanish",
+ 7
+          "locale": "en",
+ 8
+          "primary": false,
+ 9
+          "published": true
+    }
+ 13 }
+ Step 5: Visit your online store
+ To view the translation on your online store, complete the following steps:
+ Navigate to the product's page on your online store.
+ Add an es to your URL. For example, myshopifystore.com/es/products/great-shirt.
+ Webhooks
+ Your app can subscribe to webhooks for event notifications related to locales. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration overview.
+ Example webhook responses
+ locales/create
+ locales/update
+ 1 // Occurs whenever a shop locale is enabled
+ 2 {
+ 3
+    "locale": "fr-CA",
+ 4
+    "published": true
+ 5 }
+ Next steps
+ Use the Storefront API to retrieve translated content.
+ Explore an example for retrieving a list of shop locales with the GraphQL Admin API.
+ Explore examples for retrieving translatable resources with the GraphQL Admin API.
+ Learn how to support multiple currencies and languages in your theme.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Limitations
+ Step 1: Enable a locale
+ Step 2: Retrieve a translatable product
+ Step 3: Write a translation
+ Step 4: Publish the locale
+ Step 5: Visit your online store
+ Webhooks

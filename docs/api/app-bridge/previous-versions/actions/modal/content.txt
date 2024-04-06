@@ -1,0 +1,420 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Modal
+ Note
+ This is a legacy API. Use the latest version of Modal instead.
+ Modals are overlays that prevent users from interacting with the rest of the app until they take an action that dismisses the modal.
+ Modals can be disruptive because they require users to take an action before they can continue interacting with the rest of Shopify. You should use modals sparingly.
+ The Modal action set allows you to open two types of modal: message and iframe. Message modals support only plain text content. Iframe modals allow you to fully customize the modal contents.
+ There are 2 ways to use the modal action:
+ Plain JavaScript
+ React component
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the Modal from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Modal} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a message modal
+ Create a message modal using the message option. Message modals support plain text content of any length.
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    message: 'Hello world!',
+ 4 };
+ 5
+ 6 const myModal = Modal.create(app, modalOptions);
+ Create an iframe modal
+ Create an iframe modal by passing the url option. If the url option is present, then the message option will be ignored.
+ Create an iframe modal with an absolute URL
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    url: 'http://example.com',
+ 4 };
+ 5
+ 6 const myModal = Modal.create(app, modalOptions);
+ Note
+ The absolute url option allows you to specify a sub domain, but not a different domain from the app url.
+ Create an iframe modal with a relative path
+ A relative path iframe sets the URL relative to your app root.
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    path: '/settings',
+ 4 };
+ 5
+ 6 const myModal = Modal.create(app, modalOptions);
+ If your app’s root URL was https://myapp.com, then the example above would open a modal at https://myapp.com/settings.
+ Open and close a modal
+ Open and close the modal by dispatching the OPEN and CLOSE actions.
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    url: 'http://example.com',
+ 4 };
+ 5
+ 6 const myModal = Modal.create(app, modalOptions);
+ 7
+ 8 myModal.dispatch(Modal.Action.OPEN);
+ 9
+ 10 // Close modal
+ 11 myModal.dispatch(Modal.Action.CLOSE);
+ Add footer buttons
+ Add buttons to the modal footer. All modals support one primary button and multiple secondary buttons. To learn more about buttons, refer to Button.
+ 1 const okButton = Button.create(app, {label: 'Ok'});
+ 2 okButton.subscribe(Button.Action.CLICK, () => {
+ 3
+    // Do something with the click action
+ 4 });
+ 5
+ 6 const cancelButton = Button.create(app, {label: 'Cancel'});
+ 7 cancelButton.subscribe(Button.Action.CLICK, () => {
+ 8
+    // Do something with the click action
+ 9 });
+ 10
+ 11 const modalOptions = {
+ 12
+    title: 'My Modal',
+ 13
+    message: 'Hello world!',
+ 14
+    footer: {
+ 15
+      buttons: {
+ 16
+        primary: okButton,
+ 17
+        secondary: [cancelButton],
+ 18
+      },
+ 19
+    },
+ 20 };
+ 21
+ 22 const myModal = Modal.create(app, modalOptions);
+ Subscriptions
+ Subscribe to modal actions by calling subscribe. This returns a function that you can call to unsubscribe from the action.
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    url: 'http://example.com',
+ 4 };
+ 5
+ 6 const myModal = Modal.create(app, modalOptions);
+ 7
+ 8 const openUnsubscribe = myModal.subscribe(Modal.Action.OPEN, () => {
+ 9
+    // Do something with the open event
+ 10 });
+ 11
+ 12 const closeUnsubscribe = myModal.subscribe(Modal.Action.CLOSE, () => {
+ 13
+    // Do something with the close event
+ 14 });
+ 15
+ 16 // Unsubscribe to actions
+ 17 openUnsubscribe();
+ 18 closeUnsubscribe();
+ All action sets in App Bridge support the same subscribe API. The modal footer buttons also return an unsubscribe function.
+ 1 const okButton = Button.create(app, {label: 'Ok'});
+ 2 const okButtonUnsubscribe = okButton.subscribe(Button.Action.CLICK, () => {
+ 3
+    // Do something with the click action
+ 4 });
+ 5
+ 6 okButtonUnsubscribe();
+ Unsubscribe from all
+ Call unsubscribe to remove all subscriptions on the modal and its children (including buttons).
+ 1 const okButton = Button.create(app, {label: 'Ok'});
+ 2 okButton.subscribe(Button.Action.CLICK, () => {
+ 3
+    // Do something with the click action
+ 4 });
+ 5 const cancelButton = Button.create(app, {label: 'Cancel'});
+ 6 cancelButton.subscribe(Button.Action.CLICK, () => {
+ 7
+    // Do something with the click action
+ 8 });
+ 9 const modalOptions = {
+ 10
+    title: 'My Modal',
+ 11
+    url: 'http://example.com',
+ 12
+    footer: {
+ 13
+      buttons: {
+ 14
+        primary: okButton,
+ 15
+        secondary: [cancelButton],
+ 16
+      },
+ 17
+    },
+ 18 };
+ 19
+ 20 const myModal = Modal.create(app, modalOptions);
+ 21
+ 22 myModal.subscribe(Modal.Action.OPEN, () => {
+ 23
+    // Do something with the open event
+ 24 });
+ 25
+ 26 myModal.subscribe(Modal.Action.CLOSE, () => {
+ 27
+    // Do something with the close event
+ 28 });
+ 29
+ 30 // Unsubscribe from modal open and close actions
+ 31 // Unsubscribe from okButton and cancelButton click actions
+ 32 myModal.unsubscribe();
+ Unsubscribe from only modal actions
+ Call unsubscribe with false to remove only modal subscriptions while leaving child subscriptions intact. For example, you might want to unsubscribe from the modal but keep button listeners so that you can reuse the buttons in a different modal.
+ 1 const okButton = Button.create(app, {label: 'Ok'});
+ 2 okButton.subscribe(Button.Action.CLICK, () => {
+ 3
+    // Do something with the click action
+ 4 });
+ 5 const cancelButton = Button.create(app, {label: 'Cancel'});
+ 6 cancelButton.subscribe(Button.Action.CLICK, () => {
+ 7
+    // Do something with the click action
+ 8 });
+ 9
+ 10 const modalOptions = {
+ 11
+    title: 'My Modal',
+ 12
+    message: 'Hello world!',
+ 13
+    footer: {
+ 14
+      buttons: {
+ 15
+        primary: okButton,
+ 16
+        secondary: [cancelButton],
+ 17
+      },
+ 18
+    },
+ 19 };
+ 20
+ 21 const myModal = Modal.create(app, modalOptions);
+ 22
+ 23 // Unsubscribe from only modal open and close actions
+ 24 myModal.unsubscribe(false);
+ 25
+ 26 // You can reuse the buttons above in a new modal
+ 27 // Their subscriptions will be left intact
+ 28
+ 29 const newModalOptions = {
+ 30
+    title: 'Confirm',
+ 31
+    message: 'Are you sure?',
+ 32
+    footer: {
+ 33
+      buttons: {
+ 34
+        primary: okButton,
+ 35
+        secondary: [cancelButton],
+ 36
+      },
+ 37
+    },
+ 38 };
+ 39
+ 40 const confirmModal = Modal.create(app, newModalOptions);
+ Update options
+ Call the set method with partial modal options to update the options of an existing modal. This automatically triggers the UPDATE action on the modal and merges the given options with the existing options.
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    url: 'http://example.com',
+ 4 };
+ 5
+ 6 const myModal = Modal.create(app, modalOptions);
+ 7
+ 8 myModal.set({title: 'My new title'});
+ Update footer buttons
+ Update buttons attached to a modal's footer. Any updates made to the modal's footer buttons automatically trigger an UPDATE action on the modal.
+ 1 const okButton = Button.create(app, {label: 'Ok'});
+ 2 const cancelButton = Button.create(app, {label: 'Cancel'});
+ 3 const modalOptions = {
+ 4
+    title: 'My Modal',
+ 5
+    message: 'Hello world!',
+ 6
+    footer: {
+ 7
+      buttons: {
+ 8
+        primary: okButton,
+ 9
+        secondary: [cancelButton],
+ 10
+      },
+ 11
+    },
+ 12 };
+ 13
+ 14 const myModal = Modal.create(app, modalOptions);
+ 15 myModal.dispatch(Modal.Action.OPEN);
+ 16
+ 17 okButton.set({label: 'Good to go!'});
+ Set modal size
+ By default, modals have a fixed size of Small. You can customize the size of a modal by passing in a different Modal.Size value.
+ 1 const modalOptions = {
+ 2
+    title: 'My Modal',
+ 3
+    message: 'Hello world!',
+ 4
+    size: Modal.Size.Large,
+ 5 };
+ 6
+ 7 const myModal = Modal.create(app, modalOptions);
+ 8 myModal.dispatch(Modal.Action.OPEN);
+ The 3 values for Modal.Size are Small, Medium and Large.
+ Note
+ The full screen modal size has been deprecated in version 1.6.5. If you open a modal with the size set to Full, then it will display in the default size of Medium.
+ Note The Auto modal size has been deprecated in version 1.12.x and moved into the setupModalAutoSizing utility. If you open a modal with the size set to Auto, then it will default to size Medium.
+ Set modal size automatically
+ The setupModalAutoSizing utility allows your iframe modal to update its height to fit the page content.
+ In your main app, open an iframe modal:
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Modal} from '@shopify/app-bridge/actions';
+ 3 import {setupModalAutoSizing} from '@shopify/app-bridge/utilities';
+ 4
+ 5 const app = createApp({
+ 6
+    apiKey: '12345',
+ 7 });
+ 8
+ 9 const modalOptions = {
+ 10
+    title: 'My Modal',
+ 11
+    path: '/modal',
+ 12 };
+ 13
+ 14 const myModal = Modal.create(app, modalOptions);
+ 15 myModal.dispatch(Modal.Action.OPEN);
+ Inside the modal page, import the setupModalAutoSizing utility to enable auto sizing:
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {setupModalAutoSizing} from '@shopify/app-bridge/utilities';
+ 3 const app = createApp({
+ 4
+    apiKey: '12345',
+ 5 });
+ 6 setupModalAutoSizing(app);
+ Avoid setting height, margin or padding styles on the <body> element of your modal page, as these will interfere with automatic modal sizing. As a workaround, set these styles on a wrapper element instead.
+ If you are using Shopify Polaris, be aware that it applies height: 100% to the <body> element by default. You will need to override this style on your modal page.
+ Note
+ The automatic modal sizing utility works with all size options.
+ Communicate with the parent page
+ Note
+ Available in App Bridge version 1.25.0 and above.
+ It’s often useful for a modal to be able to communicate with its parent page. You can use the DATA action to send messages between an iframe modal and its parent app.
+ Note
+ App Bridge serializes data using JSON.stringify. Objects and arrays can be serialized, but object references (for example, DOM elements) will be lost.
+ To send data from a modal, dispatch a Modal.Action.DATA action from your modal:
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Modal} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp({
+ 5
+    apiKey: '12345',
+ 6 });
+ 7
+ 8 const payload = {
+ 9
+    message: 'Hi this is modal!'
+ 10 };
+ 11 app.dispatch(Modal.data(payload));
+ In your app, subscribe to Modal.Action.DATA:
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Modal} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp({
+ 5
+    apiKey: '12345',
+ 6 });
+ 7
+ 8 app.subscribe(Modal.Action.DATA, (action) => {
+ 9
+    console.log('Received message from modal:', action);
+ 10 });
+ To send data from the app to the modal, complete the steps in reverse: subscribe to Modal.Action.DATA in the modal and dispatch a Modal.Action.DATA action from your app.
+ React
+ Example code
+ Import the Modal component from @shopify/app-bridge-react.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ Note When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import React from 'react';
+ 2 import ReactDOM from 'react-dom';
+ 3 import {Provider, Modal} from '@shopify/app-bridge-react';
+ 4
+ 5 function MyApp() {
+ 6
+    return (
+ 7
+      <Provider config={config}>
+ 8
+        <Modal title="My modal" message="Hello world!" open />
+ 9
+      </Provider>
+ 10
+    );
+ 11 }
+ 12
+ 13 const root = document.createElement('div');
+ 14 document.body.appendChild(root);
+ 15 ReactDOM.createRoot(root).render(<MyApp />);
+ Props
+ Name Type Description Required
+ open boolean Whether the modal is open or not Yes
+ src string The url that will be loaded as the content of the modal
+ title string The content for the title of the modal
+ size "Small", "Medium", "Large" Controls the size of the modal
+ message string The message to display inside the modal. If a src prop is specified, this prop will be ignored. Yes
+ primaryAction ActionProps Primary action
+ secondaryActions ActionProps[] Collection of secondary actions
+ onClose () => void Callback when the modal is closed
+ Note
+ The Auto modal size has been deprecated in version 1.12.x. If you open a modal with the size set to Auto it will default to size Medium.
+ ActionProps
+ Name Type Description Required
+ content string Content the action displays
+ destructive boolean Should the action be styled as destructive
+ disabled boolean Should the action be disabled
+ external boolean Forces url to open in a new tab
+ target "ADMIN_PATH", "REMOTE", "APP" Where to display the target link
+ url string A destination to link to
+ onAction () => void Callback when an action takes place
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog

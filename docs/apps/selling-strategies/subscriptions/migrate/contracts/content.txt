@@ -1,0 +1,320 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Migrate to the Subscriptions API
+ Overview
+ Migrate customer information
+ Migrate existing subscription
+ UX guidelines
+ Deferred purchase options
+ Build a user interface
+ Billing
+ App Store
+ Migrating existing subscription contracts to Shopify
+ Migrating your existing subscriptions to Shopify will allow you to continue charging your existing subscribers without experiencing any disruption in service.
+ In this tutorial, you’ll learn how to migrate existing subscription contracts to Shopify.
+ Requirements
+ This tutorial assumes that you've already completed the preceding tutorial to migrate customer information.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Import subscription contracts
+ Create billing attempts
+ Step 1: Import subscription contracts
+ After you've created or updated Shopify's customer record, you can import the subscription contracts. Subscription contracts include information about the variant, the plan, the payment method, and the billing and shipping addresses.
+ To import subscription contracts you can use the subscriptionContractAtomicCreate mutation.
+ The following example creates a subscription contract including the customer that was previously imported, the payment method from the preceding step, and lines:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 mutation subscriptionContractAtomicCreate {
+ 2
+    subscriptionContractAtomicCreate(input: {
+ 3
+      customerId: "gid://shopify/Customer/1",
+ 4
+      nextBillingDate: "2024-06-01",
+ 5
+      currencyCode: USD,
+ 6
+      contract: {
+ 7
+        status: ACTIVE,
+ 8
+        paymentMethodId: "gid://shopify/CustomerPaymentMethod/869e7a39",
+ 9
+        billingPolicy: {
+ 10
+          interval: MONTH,
+ 11
+          intervalCount: 1,
+ 12
+          minCycles: 3
+ 13
+        },
+ 14
+        deliveryPolicy: {
+ 15
+          interval: MONTH,
+ 16
+          intervalCount: 1
+ 17
+        },
+ 18
+        deliveryMethod: {
+ 19
+          shipping: {
+ 20
+            address: {
+ 21
+              firstName: "John",
+ 22
+              lastName: "McDonald",
+ 23
+              address1: "33 New Montgomery St",
+ 24
+              address2: "#750",
+ 25
+              city: "San Francisco",
+ 26
+              provinceCode: "CA",
+ 27
+              countryCode: US,
+ 28
+              zip: "94105"
+ 29
+            }
+ 30
+          }
+ 31
+        },
+ 32
+        deliveryPrice: 14.99,
+ 33
+        lines: [
+ 34
+        {
+ 35
+          discounts: [
+ 36
+            {
+ 37
+              recurringCycleLimit: 1,
+ 38
+              title: "Amazing discount",
+ 39
+              value: {
+ 40
+                fixedAmount: {
+ 41
+                  amount: 1.1,
+ 42
+                  appliesOnEachItem: true
+ 43
+                },
+ 44
+                percentage: 1
+ 45
+              }
+ 46
+            }
+ 47
+          ],
+ 48
+          line: {
+ 49
+            currentPrice: 29.99,
+ 50
+            customAttributes: [
+ 51
+              {
+ 52
+                key: "Type",
+ 53
+                value: "Subscription"
+ 54
+              }
+ 55
+            ],
+ 56
+            pricingPolicy: {
+ 57
+              basePrice: 29.99,
+ 58
+              cycleDiscounts: [
+ 59
+                {
+ 60
+                  adjustmentType: FIXED_AMOUNT,
+ 61
+                  adjustmentValue: {
+ 62
+                    fixedValue: 29.99,
+ 63
+                    percentage: 1.1
+ 64
+                  },
+ 65
+                  afterCycle: 1,
+ 66
+                  computedPrice: 29.99
+ 67
+                }
+ 68
+              ]
+ 69
+            },
+ 70
+            productVariantId: "gid://shopify/Product/10079785100",
+ 71
+            quantity: 1,
+ 72
+            sellingPlanId: "gid://shopify/SellingPlan/11988072400",
+ 73
+            sellingPlanName: "Subscribe and save"
+ 74
+          }
+ 75
+        }
+ 76
+      ]}
+ 77
+    }) {
+ 78
+      contract {
+ 79
+        id
+ 80
+        lines(first: 10) {
+ 81
+          nodes {
+ 82
+            id
+ 83
+            quantity
+ 84
+          }
+ 85
+        }
+ 86
+      }
+ 87
+      userErrors {
+ 88
+        field
+ 89
+        message
+ 90
+      }
+ 91
+    }
+ 92 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionContractAtomicCreate": {
+ 4
+        "contract": {
+ 5
+          "id": "gid://shopify/SubscriptionContract/1",
+ 6
+          "lines": {
+ 7
+            "nodes": [
+ 8
+              {
+ 9
+                "id": "gid://shopify/SubscriptionLine/bc43bd4d-59ea-45fa-b276-4bac64ae3c96",
+ 10
+                "quantity": 1
+ 11
+              }
+ 12
+            ]
+ 13
+          }
+ 14
+        },
+ 15
+        "userErrors": []
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 2: Create billing attempts
+ You need to create billing attempts to trigger the billing schedule of a contract. When billing attempts are successful, Shopify creates an order.
+ The following mutation makes a billing attempt by specifying the required fields subscriptionContractId and idempotencyKey (a unique key generated by the client to avoid duplicate payments). In response to a successful mutation, the subscription contract is billed against its current status:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    subscriptionBillingAttemptCreate(
+ 3
+      subscriptionContractId: "gid://shopify/SubscriptionContract/1",
+ 4
+      subscriptionBillingAttemptInput: {
+ 5
+        idempotencyKey: "abc123"
+ 6
+      }
+ 7
+    ) {
+ 8
+      subscriptionBillingAttempt {
+ 9
+        id
+ 10
+        errorMessage
+ 11
+        nextActionUrl
+ 12
+        order {
+ 13
+          id
+ 14
+        }
+ 15
+        ready
+ 16
+      }
+ 2
+    "data": {
+ 3
+      "subscriptionBillingAttemptCreate": {
+ 4
+        "subscriptionBillingAttempt": {
+ 5
+          "id": "gid://shopify/SubscriptionBillingAttempt/593791910",
+ 6
+          "errorMessage": null,
+ 7
+          "nextActionUrl": null,
+ 8
+          "order": {
+ 9
+            "id": "gid://shopify/Order/148977776"
+ 10
+          },
+ 11
+          "ready": true
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ For more information on creating billing attempts, refer to Create a billing attempt.
+ Import and bill contracts in bulk
+ You can also leverage the Bulk Operations API to perform these operations on large numbers of contracts without incurring any API limit costs.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ What you'll learn
+ Step 1: Import subscription contracts
+ Step 2: Create billing attempts
+ Import and bill contracts in bulk
+ Updates & News
+ Developer changelog

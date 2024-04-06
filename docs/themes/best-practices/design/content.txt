@@ -1,0 +1,90 @@
+Theme editor preview inspector
+ Design
+ Overview
+ Color system
+ Merchant stores
+ Version control
+ File transformation
+ Deceptive code
+ Integrating apps
+ Product merchandising
+ Designing Shopify themes
+ A well-designed theme lets both merchants and customers know that you have their needs in mind. To help you to tackle the requirements of these two audiences, the design principles in this topic are split between the merchant and customer experiences.
+ Before you start designing your theme, make sure that you have a feedback loop between the theme designer and theme developer. Although there are several factors to consider, your theme shouldn't sacrifice performance at the expense of design. For more information about theme performance, refer to the theme performance best practices.
+ For detailed considerations around making your theme modular and customizable using sections and blocks, refer to our best practices for using sections and blocks.
+ Design principles for the merchant experience
+ When you're creating your theme, there are design considerations that are specific to the merchant experience. For example, you might want to design a scalable theme that takes into account how your merchant's inventory will grow.
+ Purposeful
+ A purposefully-designed theme considers and balances the following key factors:
+ Conversion
+ Purchasing decisions
+ Brand expression
+ To create a purposeful theme, do the following:
+ Design sections and blocks that are tailored to your target audience. For example a theme optimized for merchants selling apparel can offer a size chart block in the main section of their product page template.
+ Create different sections for each template to showcase different customer experiences. For example, a theme might include an upsell section designed specifically for the cart template.
+ Define your segment based on the target audience, inventory size, and customer experience. Build your theme-specific principles accordingly.
+ Build a strong, opinionated theme art direction and make sure you balance those design decisions with ecommerce best practices.
+ Build variations of the same component, rather than providing two components that achieve the same purpose.
+ Easy to set up
+ A theme that's easy to set up is configured to avoid merchant confusion during the customization process and reduces overhead before launching.
+ To create a theme that's easy to set up, do the following:
+ Keep theme settings to the minimum that's required to empower the majority of merchants. Avoid niche settings and settings for edge cases.
+ Consider blocks to improve a section’s usability. For example, you can group settings by component to facilitate content reordering and content input.
+ Create theme empty states and placeholders that leverage existing store data to provide a ready-to-launch look and feel wherever possible.
+ Antifragile
+ An antifragile theme has components that are designed to be robust and to scale with any type of content.
+ To create an antifragile theme, do the following:
+ Make sure your components don't require perfect assets and image ratios to look professional. For example, product cards should look clean and cohesive, even with inconsistent product images.
+ Use an atomic design approach to theme components. Atomic design systems deliberately set order and hierarchy. When creating your theme, make sure to pay attention to the semantic order of elements.
+ Provide a robust layout no matter how much content is added, even if content is missing.
+ Include a robust font system where the hierarchy scales for different scenarios. For example, consider using a shorter text for labels on product cards and a longer text for promotions.
+ Make sure font styles are associated with the right elements, such as associating all headings with the same font setting, for consistency.
+ Apply your color scheme consistently across the theme to always provide an optimal contrast for legibility and accessibility.
+ Make sure that no critical action can be obscured by apps that add a floating component to the page, such as chat apps and cookie banners.
+ Flexible
+ A flexible theme offers flexibility only where it matters most for merchants to express their brand and tell their story beautifully.
+ To create a flexible theme, do the following:
+ Make sure that all the flexibility provided in the theme is predictable. A merchant's actions should lead to expected results. Avoid any magic settings that remove control from merchants.
+ Provide flexibility in your theme settings that aligns with best practices for SEO, accessibility, layout responsiveness, content management, and translation and localization. For example, provide a text field along with an image setting to allow merchants to add an image with text.
+ Avoid replacing platform functionality with theme settings.
+ Avoid providing workarounds that go beyond displaying and organizing content.
+ Extensible
+ An extensible theme helps merchants extend the functionality of their stores without sacrificing the look and feel of their stores.
+ You can extend a merchant's theme by using metafields, theme blocks, and app blocks. For example, you can add support for app blocks in sections that have clear use cases for layering additional conversion tools or purchase decision factors.
+ Design principles for the customer experience
+ When you're creating your theme, there are design considerations specific to the customer experience. For example, you might want to design an expressive theme that helps merchants share their story with customers.
+ Accessible
+ In order to submit your theme to the Shopify theme store, you're required to meet accessibility standards. For more information about theme accessibility, refer to the theme accessibility best practices.
+ To create an accessible theme, do the following:
+ Use the color system best practices to build a robust color palette for your theme.
+ Make sure you design components respect the DOM order and the elements tab order.
+ The Polaris accessibility considerations can be used to design your theme.
+ Expressive
+ An expressive theme includes sections that let merchants tell their stories: who they are, what value they bring, and how they differ from other merchants. For example, you might include a section to display lifestyle imagery or video, or a section that displays either short or long text in an appealing layout.
+ Intuitive
+ An intuitive theme facilitates the flow of product discovery and leads customers to conversion.
+ To create an intuitive theme, do the following:
+ Tailor the product discovery experience to your target segment. For example, consider inspirational flows for the fashion industry, where these flows account for a large proportion of conversion (cross-selling patterns).
+ Design a prominent and discoverable navigation and intuitive menu interactions
+ Include entry points, such as a featured collection or a highlighted products section, that lead further down the purchase consideration funnel.
+ Design each product page with a prominent title, price, and buy button. Make sure the description and secondary information are easily discoverable.
+ Select design patterns that build trust with customers. Prioritize customers' interests first, to create long term customer relationships, and avoid dark patterns.
+ Test your theme with real users. When testing, include a decision-making and purchase scenario for users to complete.
+ Cohesive
+ A cohesive theme articulates the merchants brand in a unified voice as customers navigate the store. The scale, spacing, weight of components, layouts, and pages in your theme should be consistent.
+ Efficient
+ An efficient theme provides a fast and clear path to checkout.
+ To create an efficient theme, do the following:
+ Limit the number of steps required to make a purchase. For example, reduce steps by enabling dynamic checkout by default.
+ Design navigation and interaction patterns with immediate feedback that feels performant.
+ Optimize layouts for a powerful mobile-first experience.
+ Avoid elements that require additional cognitive load to understand. For example, use standard, well-established iconography for the menu and user accounts.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Design principles for the merchant experience
+ Design principles for the customer experience
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

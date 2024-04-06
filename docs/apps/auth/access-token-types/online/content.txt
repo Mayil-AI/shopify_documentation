@@ -1,0 +1,30 @@
+Get access tokens
+ Access token types
+ Online tokens
+ Offline tokens
+ Generate access tokens for admin custom apps
+ Delegate tokens
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Online access tokens
+ When you create an API access token for the Shopify Admin API, you can choose between two access modes: offline and online. Online access must be explicitly requested. Tokens with online access mode are linked to an individual user on a store, where the access token's lifespan matches the lifespan of the user's web session.
+ Online access is meant to be used when a user is interacting with your app through the web, or when an app must respect an individual user's permission level.
+ Example use cases
+ Your app's security requirements specify short-lived access to a store. Tokens with online access mode expire either when the user logs out or after 24 hours.
+ Your app differentiates between users that are logged in and those using the app. Tokens with online access mode have the same permissions as the user that's logged in.
+ Installation
+ After your app is installed, requesting this access mode always returns an access token restricted to the scopes available to the user. The app can inspect scope and associated_user_scope to determine if a user is lacking certain permissions.
+ When online access mode is requested and the app is not already installed on a store, the user installing the app must have access to all required scopes, or the installation fails.
+ Authorization
+ An API request made using an online mode access token is guaranteed to respect the user's individual permissions. Shopify returns a 403 Forbidden status code when the access token is valid but the user does not have access.
+ App developers should make sure to handle such a response gracefully. After an access token has expired, Shopify returns a 401 Unauthorized response code.
+ Best practices
+ If your app implements caching to avoid fetching data from Shopify too often, then make sure to scope the cache to each individual user. Because online access mode is guaranteed to respect each user's permission level, not caching on a per-user basis could result in an inconsistent cache.
+ Revoking access
+ The access tokens created with the online access mode are temporary, and are guaranteed to expire after some time. After an access token has expired, Shopify returns a 401 Unauthorized response code.
+ Users can revoke their own access to your app at any time, without affecting the validity of other users' access tokens. When a user logs out of Shopify admin, all online mode access tokens created during the same web session are revoked.
+ Was this page helpful?
+ YesNo

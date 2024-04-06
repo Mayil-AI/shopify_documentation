@@ -1,0 +1,375 @@
+Shipping and fulfillment
+ AssignedFulfillmentOrder
+ CancellationRequest
+ CarrierService
+ Fulfillment
+ FulfillmentEvent
+ FulfillmentOrder
+ FulfillmentRequest
+ JSON
+ The FulfillmentRequest resource
+ POST
+ Sends a fulfillment request
+ POST
+ Accepts a fulfillment request
+ POST
+ Rejects a fulfillment request
+ FulfillmentService
+ LocationsForMove
+ Shopify Payments
+ Store properties
+ TenderTransaction
+ Webhooks
+ Deprecated API calls
+ FulfillmentRequest
+ Multiple access scopes needed — refer to each endpoint for access scope requirements.
+ The FulfillmentRequest resource represents a fulfillment request made by the merchant or an order management app to a fulfillment service for a fulfillment order. A fulfillment service can accept or reject the fulfillment request.
+ Terminating a fulfillment request
+ A fulfillment service can stop fulfilling an accepted fulfillment request if they choose closing the fulfillment order as incomplete. The fulfillment order can be partially fulfilled when a fulfillment service chooses to stop the fulfillment.
+ The merchant or an order management app can notify the fulfillment service to cancel an accepted fulfillment request by sending a cancellation request. The fulfillment service can accept or reject the cancellation request. The fulfillment order can be partially fulfilled at this time.
+ The merchant or an order management app can also cancel a fulfillment order. Calling the cancel endpoint results in the fulfilment order being cancelled within Shopify. This change will not be communicated to the fulfilment service. If the intention is for a fulfilment service to halt fulfilment activity, a cancellation request should be sent to the fulfilment service instead, as described above.
+ Retrieving fulfillment request details
+ The FulfillmentOrder resource and the merchant_requests field can be used to retrieve the merchant requests which have been made. The overall status of these requests is also available using the request_status field of the fulfillment order.
+ To learn more about the fulfillment request process in the fulfillment workflow, refer to Manage fulfillments as a fulfillment service app guide.
+ Was this section helpful?
+ YesNo
+ #
+ Endpoints
+ POST
+ /admin/api/2024-04/fulfillment_orders/{fulfillment_order_id}/fulfillment_request.json
+ Sends a fulfillment request
+ POST
+ /admin/api/2024-04/fulfillment_orders/{fulfillment_order_id}/fulfillment_request/accept.json
+ Accepts a fulfillment request
+ POST
+ /admin/api/2024-04/fulfillment_orders/{fulfillment_order_id}/fulfillment_request/reject.json
+ Rejects a fulfillment request
+ The FulfillmentRequest resource
+ Properties
+ Was this section helpful?
+ YesNo
+ {}
+ The FulfillmentRequest resource
+ 1
+ {}
+ POST
+ Sends a fulfillment request
+ Requires third_party_fulfillment_orders access scope.
+ Sends a fulfillment request to the fulfillment service of a fulfillment order.
+ Parameters
+ api_version
+ string
+ required
+ fulfillment_order_id
+ string
+ required
+ fulfillment_order_line_items
+ The fulfillment order line items to be requested for fulfillment. If left blank, all line items of the fulfillment order are requested for fulfillment.
+ message
+ An optional message for the fulfillment request.
+ Was this section helpful?
+ YesNo
+ Examples
+ Sends a fulfillment request to the fulfillment service for all line items on the fulfillment order if fulfillment_order_line_items is left blank
+ Path parameters
+ fulfillment_order_id=1046000934
+ string
+ required
+ Sends a fulfillment request to the fulfillment service of a fulfillment order for the specified line items
+ Was this section helpful?
+ YesNo
+ POST
+ /admin/api/2024-04/fulfillment_orders/1046000934/fulfillment_request.json
+ cURL
+ Remix
+ Ruby
+ 4
+ 5
+ curl -d '{"fulfillment_request":{"message":"Fulfill this ASAP please."}}' \
+ -X POST "https://your-development-store.myshopify.com/admin/api/2024-04/fulfillment_orders/1046000934/fulfillment_request.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 
+ {}
+ Response
+ JSON
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ HTTP/1.1 200 OK
+ {
+ "original_fulfillment_order": {
+ "id": 1046000934,
+ "shop_id": 548380009,
+ "order_id": 450789469,
+ "assigned_location_id": 24826418,
+ "request_status": "submitted",
+ "status": "open",
+ "supported_actions": [
+ "cancel_fulfillment_order"
+ ],
+ "destination": {
+ "id": 1046000849,
+ "address1": "Chestnut Street 92",
+ "address2": "",
+ "city": "Louisville",
+ "company": null,
+ "country": "United States",
+ "email": "bob.norman@mail.example.com",
+ "first_name": "Bob",
+ "last_name": "Norman",
+ "phone": "+1(502)-459-2181",
+ "province": "Kentucky",
+ "zip": "40202"
+ },
+ "origin": {
+ "address1": null,
+ "address2": null,
+ "city": null,
+ "country_code": "DE",
+ "location_id": 24826418,
+ "name": "Apple Api Shipwire",
+ "phone": null,
+ "province": null,
+ "zip": null
+ },
+ "line_items": [
+ {
+ "id": 1058737693,
+ "shop_id": 548380009,
+ "fulfillment_order_id": 1046000934,
+ "quantity": 1,
+ "line_item_id": 466157049,
+ "inventory_item_id": 39072856,
+ "fulfillable_quantity": 1,
+ "variant_id": 39072856
+ },
+ {
+ "id": 1058737694,
+ "shop_id": 548380009,
+ "fulfillment_order_id": 1046000934,
+ "quantity": 1,
+ "line_item_id": 518995019,
+ "inventory_item_id": 49148385,
+ POST
+ Accepts a fulfillment request
+ Requires assigned_fulfillment_orders access scope.
+ Accepts a fulfillment request sent to a fulfillment service for a fulfillment order.
+ Parameters
+ api_version
+ string
+ required
+ fulfillment_order_id
+ string
+ required
+ message
+ An optional reason for accepting the fulfillment request.
+ Was this section helpful?
+ YesNo
+ Examples
+ Accepts a fulfillment request sent to a fulfillment service and updates the fulfillment order
+ Path parameters
+ fulfillment_order_id=1046000932
+ string
+ required
+ Was this section helpful?
+ YesNo
+ POST
+ /admin/api/2024-04/fulfillment_orders/1046000932/fulfillment_request/accept.json
+ curl -d '{"fulfillment_request":{"message":"We will start processing your fulfillment on the next business day."}}' \
+ -X POST "https://your-development-store.myshopify.com/admin/api/2024-04/fulfillment_orders/1046000932/fulfillment_request/accept.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 
+ 53
+ 54
+ 55
+ HTTP/1.1 200 OK
+ {
+ "fulfillment_order": {
+ "id": 1046000932,
+ "shop_id": 548380009,
+ "order_id": 450789469,
+ "assigned_location_id": 24826418,
+ "request_status": "accepted",
+ "status": "in_progress",
+ "supported_actions": [
+ "request_cancellation"
+ ],
+ "destination": {
+ "id": 1046000847,
+ "address1": "Chestnut Street 92",
+ "address2": "",
+ "city": "Louisville",
+ "company": null,
+ "country": "United States",
+ "email": "bob.norman@mail.example.com",
+ "first_name": "Bob",
+ "last_name": "Norman",
+ "phone": "+1(502)-459-2181",
+ "province": "Kentucky",
+ "zip": "40202"
+ },
+ "origin": {
+ "address1": null,
+ "address2": null,
+ "city": null,
+ "country_code": "DE",
+ "location_id": 24826418,
+ "name": "Apple Api Shipwire",
+ "phone": null,
+ "province": null,
+ "zip": null
+ },
+ "line_items": [
+ {
+ "id": 1058737687,
+ "shop_id": 548380009,
+ "fulfillment_order_id": 1046000932,
+ "quantity": 1,
+ "line_item_id": 466157049,
+ "inventory_item_id": 39072856,
+ "fulfillable_quantity": 1,
+ "variant_id": 39072856
+ },
+ {
+ "id": 1058737688,
+ "shop_id": 548380009,
+ "fulfillment_order_id": 1046000932,
+ "quantity": 1,
+ "line_item_id": 518995019,
+ "inventory_item_id": 49148385,
+ POST
+ Rejects a fulfillment request
+ Requires assigned_fulfillment_orders access scope.
+ Rejects a fulfillment request sent to a fulfillment service for a fulfillment order.
+ Parameters
+ api_version
+ string
+ required
+ fulfillment_order_id
+ string
+ required
+ line_items
+ array
+ An optional array of line item rejection details. If none are provided, all line items will be assumed to be unfulfillable.
+ 
+ Note: After the fulfillment request has been rejected, none of the line items will be able to be fulfilled. This field documents which line items specifically were unable to be fulfilled and why.
+ 
+ Each line item has the following properties:
+ Show line_items properties
+ message
+ An optional message for rejecting the fulfillment request.
+ reason
+ enum
+ An optional reason for the fulfillment request rejection.
+ Show reason properties
+ Was this section helpful?
+ YesNo
+ Examples
+ Rejects a fulfillment request sent to a fulfillment service and updates the fulfillment order
+ Path parameters
+ fulfillment_order_id=1046000933
+ string
+ required
+ Was this section helpful?
+ YesNo
+ POST
+ /admin/api/2024-04/fulfillment_orders/1046000933/fulfillment_request/reject.json
+ curl -d '{"fulfillment_request":{"message":"Not enough inventory on hand to complete the work.","reason":"inventory_out_of_stock","line_items":[{"fulfillment_order_line_item_id":1058737690,"message":"Not enough inventory."}]}}' \
+ -X POST "https://your-development-store.myshopify.com/admin/api/2024-04/fulfillment_orders/1046000933/fulfillment_request/reject.json" \
+ -H "X-Shopify-Access-Token: {access_token}" \
+ -H "Content-Type: application/json"
+ 
+ 53
+ 54
+ 55
+ HTTP/1.1 200 OK
+ {
+ "fulfillment_order": {
+ "id": 1046000933,
+ "shop_id": 548380009,
+ "order_id": 450789469,
+ "assigned_location_id": 24826418,
+ "request_status": "rejected",
+ "status": "open",
+ "supported_actions": [
+ "request_fulfillment"
+ ],
+ "destination": {
+ "id": 1046000848,
+ "address1": "Chestnut Street 92",
+ "address2": "",
+ "city": "Louisville",
+ "company": null,
+ "country": "United States",
+ "email": "bob.norman@mail.example.com",
+ "first_name": "Bob",
+ "last_name": "Norman",
+ "phone": "+1(502)-459-2181",
+ "province": "Kentucky",
+ "zip": "40202"
+ },
+ "origin": {
+ "address1": null,
+ "address2": null,
+ "city": null,
+ "country_code": "DE",
+ "location_id": 24826418,
+ "name": "Apple Api Shipwire",
+ "phone": null,
+ "province": null,
+ "zip": null
+ },
+ "line_items": [
+ {
+ "id": 1058737690,
+ "shop_id": 548380009,
+ "fulfillment_order_id": 1046000933,
+ "quantity": 1,
+ "line_item_id": 466157049,
+ "inventory_item_id": 39072856,
+ "fulfillable_quantity": 1,
+ "variant_id": 39072856
+ },
+ {
+ "id": 1058737691,
+ "shop_id": 548380009,
+ "fulfillment_order_id": 1046000933,
+ "quantity": 1,
+ "line_item_id": 518995019,
+ "inventory_item_id": 49148385,
+ Updates & News
+ Developer changelog

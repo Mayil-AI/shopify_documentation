@@ -1,0 +1,170 @@
+Product subscription app extensions
+ API updates
+ Learn about the changes to the product-related elements in version 2024-04 of the GraphQL and REST Admin APIs.
+ New queries for variant and option resource limits
+ To determine the total number of variants and options that can be added to each product in a shop, you can now query a shop’s product variants and options resource limits using ShopResourceLimits:
+ POST https://{shop}.myshopify.com/admin/api/unstable/graphql.json
+ 1 query ShopResourceLimits {
+ 2
+    shop {
+ 3
+      resourceLimits {
+ 4
+        maxProductVariants
+ 5
+        maxProductOptions
+ 6
+      }
+ 7
+    }
+ 8 }
+ Mutations for managing product options and variants
+ Tip
+ For apps with an interactive UI workflow.
+ New mutations to manage product options
+ We’ve added the following mutations to the GraphQL Admin API that enable you to manage product options directly:
+ productOptionsCreate
+ productOptionUpdate
+ productOptionsReorder
+ productOptionsDelete
+ Updated inputs to manage option values
+ To manage option values with the new product model, we've added an optionValues field to the variants input on the following mutations in the GraphQL Admin API:
+ productVariantsBulkCreate
+ productVariantsBulkUpdate
+ We've also added a productOptions field to the input on the productCreate mutation.
+ New mutation for syncing product data
+ Tip
+ For apps with a database sync workflow.
+ We've added the productSet mutation to the GraphQL Admin API, to create and update the state of a product per an external database. The mutation is available to sync in both asynchronous and synchronous modes. It has a productOption and a variants input. The variants input has an optionValues input for pulling product and variant data from the external database.
+ Use this mutation when you're managing the state of the product model outside of Shopify, and want to update Shopify's product model state to reflect your external state. Examples are Enterprise Resource Planning (ERP) systems and Worksheets.
+ Note
+ The productSet mutation has an input limit of 2K variants when run asynchronously and only 100 variants when run synchronously.
+ Deprecated GraphQL component fields
+ The following table lists deprecated fields and what you should use instead.
+ Component Deprecated Use instead
+ productCreate ProductInput.options field ProductInput.productOptions field
+ productCreate ProductInput.variants field productVariantsBulkCreate
+ productUpdate ProductInput.options field
+ productOptionsCreate
+ productOptionUpdate
+ productOptionsReorder
+ productOptionsDelete
+ productUpdate ProductInput.variants field
+ productVariantsBulkCreate
+ productVariantsBulkUpdate
+ productVariantsBulkDelete
+ productVariantsBulkReorder
+ productVariantsBulkCreate variants.options field variants.optionValues field
+ productVariantsBulkUpdate variants.options field variants.optionValues field
+ ProductInput images field
+ Learn more about managing media.
+ Deprecated REST endpoints
+ The following REST endpoints and their operations are being deprecated:
+ products
+ products/{product-id}/variants
+ Learn more about addressing your use cases with the GraphQL Admin API's queries for retrieving data and mutations for adding and editing data.
+ Webhook updates
+ A variant_gids field will be retroactively added to all webhook versions. The field will list all variant GIDs in the format variant_gids: [{admin_graphql_api_id: ID!}].
+ Product webhooks will return a full variants payload for the first 100 records. For variants 101+, the payload won't include the full variant details, but the variant_gids field will still be included for these variants.
+ The following is an example payload:
+ Example webhook payload for product variant data
+ 1 {
+ 2
+    "variants": [
+ 3
+      {
+ 4
+        "admin_graphql_api_id": "gid://shopify/ProductVariant/46610383339576",
+ 5
+        "barcode": null,
+ 6
+        "compare_at_price": "12.00",
+ 7
+        "created_at": "2024-01-18T18:16:09+01:00",
+ 8
+        "fulfillment_service": "manual",
+ 9
+        "id": 46610383339576,
+ 10
+        "inventory_management": null,
+ 11
+        "inventory_policy": "deny",
+ 12
+        "position": 1,
+ 13
+        "price": "0.00",
+ 14
+        "product_id": 8685870907448,
+ 15
+        "sku": "",
+ 16
+        "taxable": true,
+ 17
+        "title": "Red / Testing1 / Size-test-1",
+ 18
+        "updated_at": "2024-01-31T10:56:05+01:00",
+ 19
+        "option1": "Red",
+ 20
+        "option2": "Testing1",
+ 21
+        "option3": "Size-test-1",
+ 22
+        "grams": 0,
+ 23
+        "image_id": null,
+ 24
+        "weight": 0,
+ 25
+        "weight_unit": "g",
+ 26
+        "inventory_item_id": 48657068654648,
+ 27
+        "inventory_quantity": 0,
+ 28
+        "old_inventory_quantity": 0,
+ 29
+        "requires_shipping": true
+ 30
+      }
+ 31
+      // ... up to 99 more variants
+ 32
+    ],
+ 33
+    "variant_gids": [
+ 34
+      {
+ 35
+        "admin_graphql_api_id": "gid://shopify/ProductVariant/46610383339576"
+ 36
+      }
+ 37
+      // ... the remaining variant gids
+ 38
+    ]
+ 39 }
+ Next steps
+ New product model
+ Learn the relationships between products, variants, and options in the new product model and how we're making products easier to work with.
+ Retrieve data
+ Learn how to retrieve product data, including for a large number of variants.
+ Add data
+ Learn how to add product data, including variants and options.
+ Edit data
+ Learn how to edit product data, including variants and options.
+ Sync data
+ Learn how you can sync product data from an external source into Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ New queries for variant and option resource limits
+ Mutations for managing product options and variants
+ New mutation for syncing product data
+ Deprecated GraphQL component fields
+ Deprecated REST endpoints
+ Webhook updates
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

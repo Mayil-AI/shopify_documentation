@@ -1,0 +1,160 @@
+APIs
+ Collapse sidebar
+ Checkout UI extensions
+ Unstable
+ 2024-04
+ 2024-01
+ 2023-10
+ 2023-07
+ 2023-04
+ 2024-04
+ Overview
+ Scaffolding an extension
+ Extension Targets
+ Configuration file
+ Extension APIs
+ UI components
+ Security
+ Troubleshooting
+ Resources
+ Targets Overview
+ Targets
+ APIs
+ Components
+ Actions
+ Feedback
+ Forms
+ Interactive
+ Media
+ Other
+ Overlays
+ Structure
+ Titles and text
+ Utilities
+ Configuration
+ Error handling
+ API versioning and unified UI extensions
+ All Checkout UI extensions components
+ Actions
+ Button
+ Buttons are used for actions, such as “Add”, “Continue”, “Pay now”, or “Save”.
+ Link
+ Link makes text interactive so customers can perform an action, such as navigating to another location.
+ Pressable
+ Pressable is a generic interactive component. It shares the same styling properties as View but also adds pressable behavior, meaning that you can execute some logic in response to user interaction. Use this component for creating interactive elements without the default styling that comes with and .
+ Feedback
+ Badge
+ Use badges to highlight contextual information, like a label or a status, about an object. An object can be anything that has a status or label attributed to it, like an order or subscription.
+ Banner
+ Use banners to communicate important messages to customers in a prominent way.
+ SkeletonImage
+ SkeletonImage is used to provide a low fidelity representation of an image before it appears on the page.
+ SkeletonText
+ SkeletonText is used to provide a low fidelity representation of text content before it appears on the page.
+ SkeletonTextBlock
+ SkeletonTextBlock is used to provide a low fidelity representation of a block of text before it appears on the page.
+ Spinner
+ Spinner is used to notify buyers that their action is being processed. The Spinner is usually used when sending or receiving data from a server.
+ Forms
+ Checkbox
+ Use checkboxes to give customers a single binary option, such as signing up for marketing, or agreeing to terms and conditions.
+ Choice
+ Options inside a ChoiceList.
+ The wrapping ChoiceList component will dictate if the choice renders as radio buttons or checkboxes.
+ ChoiceList
+ Use choice lists to present a list of choices where buyers can make a single selection or multiple selections.
+ ConsentCheckbox
+ Use buyer consent checkboxes for collecting the buyer's approval for a given policy.
+ ConsentPhoneField
+ Display a phone field for customers to sign up for text message marketing, noting that the phone field value will be automatically saved during checkout.
+ DateField
+ Use a date field to get a date input from a customer.
+ DatePicker
+ The DatePicker component is a calendar picker UI that allows users to select a single date or a date range
+ Form
+ The form component should be used to wrap one or more form controls. This component provides an "implicit submit" behavior, where customers can submit the form from any input by pressing "Enter" on their keyboards. This behavior is widely expected, and should be respected as often as possible.
+ PhoneField
+ A PhoneField is an input field that merchants can type into optimized for phone numbers with a country code base auto-formatting. The country code is required for the initial render of the field but it can be overriden later by the user either by selecting a country in the country selection dropdown or by manually editing the country phone code directly in the text field.
+ Select
+ Selects let buyers choose one option from an options menu. Consider select when you have 4 or more options, to avoid cluttering the interface.
+ Stepper
+ Use a stepper to increase or decrease a value, like changing the quantity from 1 to 2.
+ TextField
+ Use a text field to get text input from a customer.
+ ToggleButton
+ Options inside a ToggleButtonGroup.
+ ToggleButtonGroup
+ ToggleButtonGroup allows you to make a single choice out of the number of options provided. This is similar to the ChoiceList component, but without controls such as checkbox or radio button.
+ Interactive
+ Disclosure
+ Disclosure is an optionally controlled component used to put long sections of information under content blocks that users can expand or collapse by pressing an activator. The activator can be specified as children using an action component (, or ) or component. The content blocks can be specified as children inside a structure component (, , , , etc.).
+ Map
+ Use the Map component to provide visual representation of geographic data such as verifying address, package or pickup locations.
+ MapMarker
+ MapMarker represents a specific location or point of interest on a map.
+ MapPopover
+ MapPopover provides additional information or context about a specific location or point of interest on a map.
+ Media
+ Icon
+ Icons are pictograms or graphic symbols. They can act as wayfinding tools or as a means of communicating functionality.
+ Image
+ Image is used for large format, responsive images.
+ PaymentIcon
+ Payment icons can be used for displaying payment-related information or features such as a user’s saved or available payment methods.
+ ProductThumbnail
+ Product thumbnail is a representation of a product image. It provides a visual preview of the item, so buyers can quickly identify products.
+ Other
+ List
+ Lists display a set of related content. Each list item usually begins with a bullet or a number.
+ ListItem
+ List items are used as children of the List component.
+ They usually begins with a bullet or a number.
+ Tag
+ A Tag is used to help label, organize or categorize objects. It is commonly used in Checkout to display the discounts applied to a cart.
+ Overlays
+ Modal
+ Modals are a special type of overlay that shift focus towards a specific action/set of information before the main flow can proceed. They must be specified inside the overlay prop of an activator component (, or ).
+ Popover
+ Popovers are similar to tooltips. They are small overlays that open on demand after a user interaction. The difference is that the popover can contain more content, without cluttering the page. They must be specified inside the prop of an activator component (, or ).
+ Tooltip
+ Tooltips are floating labels that briefly explain the function of a user interface element. They must be specified inside the overlay prop of an activator component. Currently, activator components are , , and .
+ Structure
+ BlockLayout
+ BlockLayout is used to lay out content over multiple rows.
+ By default, all rows fill the available block space, sharing it equally.
+ BlockSpacer
+ BlockSpacer is used to create empty block space, typically when variable spacing is needed between multiple elements.
+ BlockStack
+ BlockStack is used to vertically stack elements.
+ Divider
+ A divider separates content and represents a thematic break between elements.
+ Grid
+ Grid is used to lay out content in a matrix of rows and columns.
+ GridItem
+ GridItem can be used as children of Grid.
+ It offers a way to span the element across a number of columns and rows.
+ InlineLayout
+ InlineLayout is used to lay out content over multiple columns.
+ By default, all columns are of equal size and fill the available inline space. Content does not wrap on new rows when not enough columns have been explicitly set, instead they are added as new column and fill the remaining inline space.
+ InlineSpacer
+ InlineSpacer is used to create empty inline space, typically when variable spacing is needed between multiple elements.
+ InlineStack
+ InlineStack is used to lay out a horizontal row of elements. Elements always wrap.
+ ScrollView
+ ScrollView is a container for long form content, such as order summary line items, that allows for scrolling so customers can expose more content as they view.
+ View
+ View is a generic container component. Its contents will always be their “natural” size, so this component can be useful in layout components (like Grid, , ) that would otherwise stretch their children to fit.
+ Titles and text
+ Heading
+ Headings control the visual style of headings. Use headings to introduce major sections, like Contact information, Shipping address, or Shipping method.
+ HeadingGroup
+ Heading group controls the heading level of headings nested within it, like H1, H2, H3.
+ Use a heading group whenever you use a heading to ensure the experience is the same for screen reader users. When using a heading, any children related to that heading should be nested within the same heading group.
+ Text
+ Text is used to visually style and provide semantic value for a small piece of text content.
+ TextBlock
+ Text block is used to render a block of text that occupies the full width available, like a paragraph.
+ Utilities
+ StyleHelper
+ This is a helper for authoring conditional values for property styles.
+ Write complex conditional styles based on one or more conditions, such as viewport sizes and interactive states, in a concise and expressive way.

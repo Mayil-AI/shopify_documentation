@@ -1,0 +1,480 @@
+Billing
+ App Store
+ Get started
+ This is the first part of a tutorial series for building a tokengated storefront. Read the overview section before starting this tutorial.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following:
+ Create gates using GraphQL Storefront API. These gates define which segments of customers receive exclusive discounts.
+ Enable wallet connection on your custom storefront using connect wallet components.
+ Requirements
+ You've completed the Hydrogen getting started tutorial with a Demo Store example project.
+ You've enabled the unauthenticated_read_gates access scope for your storefront. Learn how to manage permission scopes for Hydrogen.
+ You've completed the Create gates and Apply discount tutorials from the Build a tokengating app tutorial series.
+ Step 1: Install blockchain packages
+ Note
+ To install the wagmi package, you might need to bump your version of TypeScript.
+ In a terminal, run the following command to install additional packages. These packages help to create a uniform experience between Shopify, your custom storefront, and the blockchain.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm i @shopify/connect-wallet @shopify/tokengate viem wagmi
+ Step 2: Configuration
+ Additional configuration is required to begin using the @shopify/connect-wallet functionality. To learn more about @shopify/connect-wallet, refer to the Blockchain component reference.
+ Configure the connect-wallet package
+ In this step, you'll create a config file that defines which Remote Procedure Call (RPC) providers you want to use to query against the blockchain, as well as the chains that you want to use.
+ Retrieve the projectId for your WalletConnect app by opening the WalletConnect dashboard and navigating to your project.
+ In your project's root folder, create a new file called connect-wallet-config.js.
+ Add the following code:
+ 1 import {buildConnectors} from '@shopify/connect-wallet';
+ 2 import {configureChains, createConfig, mainnet} from 'wagmi';
+ 3 // import {alchemyProvider} from 'wagmi/providers/alchemy';
+ 4 import {publicProvider} from 'wagmi/providers/public';
+ 5
+ 6 const {chains, publicClient, webSocketPublicClient} = configureChains(
+ 7
+    [mainnet],
+ 8
+    [
+ 9
+      /**
+ 10
+       * We recommend using `alchemyProvider or `infuraProvider`
+ 11
+      * to reduce the risk of your application being rate limited.
+ 12
+      */
+ 13
+      // alchemyProvider({apiKey: 'INSERT API KEY HERE'}),
+ 14
+      publicProvider(),
+ 15
+    ],
+ 16 );
+ 17
+ 18 const {connectors, wagmiConnectors} = buildConnectors({
+ 19
+    chains,
+ 20
+    projectId: 'YOUR_WALLET_CONNECT_PROJECT_ID',
+ 21 });
+ 22
+ 23 const config = createConfig({
+ 24
+    autoConnect: true,
+ 25
+    connectors: wagmiConnectors,
+ 26
+    publicClient,
+ 27
+    webSocketPublicClient,
+ 28 });
+ 29
+ 30 export {chains, config, connectors};
+ Root route updates
+ Open your /app/root JSX or TSX file.
+ Add the following import statements:
+ 1 import {ConnectWalletProvider} from '@shopify/connect-wallet';
+ 2 import connectWalletStylesheet from '@shopify/connect-wallet/styles.css';
+ 3 import tokengateStylesheet from '@shopify/tokengate/styles.css';
+ 4 import {WagmiConfig} from 'wagmi';
+ 5
+ 6 import {chains, config, connectors} from './connect-wallet-config';
+ Add the connectWalletStylesheet and tokengateStylesheet stylesheets to your links function.
+ /app/root.jsx
+ Before
+ 1 export const links = () => {
+ 2
+    return [
+ 3
+      {rel: 'stylesheet', href: styles},
+ 4
+      {
+ 5
+        rel: 'preconnect',
+ 6
+        href: 'https://cdn.shopify.com',
+ 7
+      },
+ 8
+      {
+ 9
+        rel: 'preconnect',
+ 10
+        href: 'https://shop.app',
+ 11
+      },
+ 12
+      {rel: 'icon', type: 'image/svg+xml', href: favicon},
+ 13
+    ];
+ 14 };
+ After
+ 1 export const links = () => {
+ 2
+    return [
+ 3
+      {rel: 'stylesheet', href: styles},
+ 4
+      {rel: 'stylesheet', href: connectWalletStylesheet},
+ 5
+      {rel: 'stylesheet', href: tokengateStylesheet},
+ 6
+      {
+ 7
+        rel: 'preconnect',
+ 8
+        href: 'https://cdn.shopify.com',
+ 9
+      },
+ 10
+      {
+ 11
+        rel: 'preconnect',
+ 12
+        href: 'https://shop.app',
+ 13
+      },
+ 14
+      {rel: 'icon', type: 'image/svg+xml', href: favicon},
+ 15
+    ];
+ 16 };
+ Wrap the Layout component with WagmiConfig and ConnectWalletProvider components.
+ The WagmiConfig component manages configuration for all hooks used by the @shopify/connect-wallet package. Read more about WagmiConfig.
+ The ConnectWalletProvider component is a React Context provider for managing your configured wagmi connectors, connected wallet state, Ethereum Name Service (ENS), and wallet connection interactions.
+ /app/root.jsx
+ Before
+ 1 export default function App() {
+ 2
+    const data = useLoaderData();
+ 3
+    const locale = data.selectedLocale ?? DEFAULT_LOCALE;
+ 4
+    const hasUserConsent = true;
+ 5
+ 6
+    useAnalytics(hasUserConsent, locale);
+ 7
+ 8
+    return (
+ 9
+      <html lang={locale.language}>
+ 10
+        <head>
+ 11
+          <meta charSet="utf-8" />
+ 12
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 13
+          <Seo />
+ 14
+          <Meta />
+ 15
+          <Links />
+ 16
+        </head>
+ 17
+        <body>
+ 18
+          <Layout
+ 19
+            key={`${locale.language}-${locale.country}`}
+ 20
+            layout={data.layout}
+ 21
+          >
+ 22
+            <Outlet />
+ 23
+          </Layout>
+ 24
+          <ScrollRestoration />
+ 25
+          <Scripts />
+ 26
+        </body>
+ 27
+      </html>
+ 28
+    );
+ 29 }
+ After
+ 1 export default function App() {
+ 2
+    const data = useLoaderData();
+ 3
+    const locale = data.selectedLocale ?? DEFAULT_LOCALE;
+ 4
+    const hasUserConsent = true;
+ 5
+ 6
+    useAnalytics(hasUserConsent, locale);
+ 7
+ 8
+    return (
+ 9
+      <html lang={locale.language}>
+ 10
+        <head>
+ 11
+          <meta charSet="utf-8" />
+ 12
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+ 13
+          <Seo />
+ 14
+          <Meta />
+ 15
+          <Links />
+ 16
+        </head>
+ 17
+        <body>
+ 18
+          <WagmiConfig client={client}>
+ 19
+            <ConnectWalletProvider chains={chains} connectors={connectors}>
+ 20
+              <Layout
+ 21
+                key={`${locale.language}-${locale.country}`}
+ 22
+                layout={data.layout}
+ 23
+              >
+ 24
+                <Outlet />
+ 25
+              </Layout>
+ 26
+            </ConnectWalletProvider>
+ 27
+          </WagmiConfig>
+ 28
+          <ScrollRestoration />
+ 29
+          <Scripts />
+ 30
+        </body>
+ 31
+      </html>
+ 32
+    );
+ 33 }
+ Step 3: Create a gate and attach it to a product
+ Create a gate and attach it to a product by using the tokengating app you built by following the Build a tokengating app tutorial series.
+ Note
+ If you are using the app you built in the Build a tokengating app tutorial series, you will still need to complete Step 3.3 to allow the Storefront API to read gate metafields.
+ Optionally, you can use the Shopify GraphiQL app to create a gate and attach it to a product using the Admin API gateConfigurationCreate mutation. The following steps detail the mutations needed to create a gate and attach it to a product.
+ Create the gate configuration
+ For this tutorial, create a gate with two different metafields: reaction and requirements.
+ reaction: Determines the effect unlocking the gate has on the customer's shopping experience. Valid values are discount or exclusive_access. These values are defined in the @shopify/tokengate package.
+ requirements: Defines what the customer needs to have to unlock the gate. The syntax for requirements is defined in the @shopify/tokengate package. Reference the following example for a valid configuration:
+ Example requirements
+ 1 {
+ 2
+    "conditions": [
+ 3
+      {
+ 4
+        "name": "CryptoPunks",
+ 5
+        "imageUrl": "https://i.seadn.io/gae/BdxvLseXcfl57BiuQcQYdJ64v-aI8din7WPk0Pgo3qQFhAUH-B6i-dCqqc_mCkRIzULmwzwecnohLhrcH8A9mpWIZqA7ygc52Sr81hE?auto=format&w=384",
+ 6
+        "contractAddress": "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB"
+ 7
+      }
+ 8
+    ],
+ 9
+    "logic": "ALL"
+ 10 }
+ The value in the createGateConfiguration metafields is a stringified JSON value. You can use an online tool to stringify your JSON input before running your mutation.
+ Mutation
+ Mutation
+ 1 mutation createGateConfiguration($input: GateConfigurationCreateInput!) {
+ 2
+    gateConfigurationCreate(input: $input) {
+ 3
+      gateConfiguration {
+        createdAt
+ 7
+        updatedAt
+ 8
+        metafields(namespace: "headless_gating_example", first: 10) {
+ 9
+          nodes {
+ 10
+            key
+ 11
+            value
+ 12
+            namespace
+ 13
+            type
+      }
+ 17
+      userErrors {
+ 18
+        field
+ 19
+        message
+ 20
+      }
+ 21
+    }
+ 22 }
+ Input variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "name": "My headless gate",
+ 4
+      "metafields": [
+ 5
+        {
+ 6
+          "namespace": "headless_gating_example",
+ 7
+          "key": "requirements",
+ 8
+          "type": "json",
+ 9
+          "value": "{\n  \"conditions\": [\n    {\n      \"name\": \"CryptoPunks\",\n      \"imageUrl\": \"https://i.seadn.io/gae/BdxvLseXcfl57BiuQcQYdJ64v-aI8din7WPk0Pgo3qQFhAUH-B6i-dCqqc_mCkRIzULmwzwecnohLhrcH8A9mpWIZqA7ygc52Sr81hE?auto=format&w=384\",\n      \"contractAddress\": \"0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB\"\n    }\n  ],\n  \"logic\": \"ALL\"\n}"
+ 10
+        },
+ 11
+        {
+ 12
+          "namespace": "headless_gating_example",
+ 13
+          "key": "reaction",
+ 14
+          "type": "json",
+ 15
+          "value": "{\n  \"type\": \"discount\",\n  \"discount\": {\n    \"type\": \"percentage\",\n    \"value\": 20\n  }\n}"
+ 16
+        }
+ 17
+      ],
+ 18
+      "handle": "your-handle"
+ 19
+    }
+ 20 }
+ Attach the gate to a product
+ After you've created the gate, you can attach it to your product using the product's GID.
+ Mutation
+ Mutation
+ 1 mutation CreateGateSubject ($gateConfigurationId: ID!, $subject: ID!){
+ 2
+    gateSubjectCreate(input: {
+ 3
+      gateConfigurationId: $gateConfigurationId,
+ 4
+      active: true,
+ 5
+      subject: $subject
+ 6
+    }) {
+ 7
+      gateSubject {
+ 8
+        id
+ 9
+        configuration {
+ 10
+          id
+ 11
+          name
+ 12
+          requirements: metafield(namespace: "headless_gating_example",
+ 13
+            key: "requirements") {
+ 14
+              value
+ 15
+          }
+ 16
+          reaction: metafield(namespace: "headless_gating_example",
+ 17
+            key: "reaction") {
+ 18
+              value
+ 19
+          }
+ 20
+          createdAt
+ 21
+          updatedAt
+ 22
+        }
+ 23
+        createdAt
+ 24
+        updatedAt
+ 25
+      }
+ 26
+      userErrors {
+ 27
+        field
+ 28
+        message
+ 29
+      }
+ 30
+    }
+ 31 }
+ Input variables
+ 1 {
+ 2
+    "gateConfigurationId": "gid://shopify/GateConfiguration/YOUR_GATE_CONFIGURATION_ID",
+ 3
+    "subject": "gid://shopify/Product/ID_HERE"
+ 4 }
+ Expose metafields in the Storefront API
+ Run the Admin API metafieldStorefrontVisibilityCreate mutation to expose your new metafields to the Storefront API. Until you run the mutation, the values defined in your metafields can't be read.
+ Ensure that you use the unstable version of the Admin API as GATE_CONFIGURATION isn't a valid MetafieldOwnerType as of 2023-07.
+ You'll need to run the mutation twice, once for reaction, and once for requirements.
+ Make sure to replace the namespace value with your own namespace.
+ GraphQL mutation
+ 1 mutation metafieldStorefrontVisibilityCreate {
+ 2
+    metafieldStorefrontVisibilityCreate(input: {
+ 3
+      namespace: "headless_gating_example",
+ 4
+      # Replace the key below with "requirements" after you have run this mutation once
+ 5
+      key: "reaction",
+ 6
+      ownerType: GATE_CONFIGURATION,
+ 7
+    }) {
+ 8
+      metafieldStorefrontVisibility {
+ 9
+        id
+ 10
+      }
+ 11
+      userErrors {
+ 12
+        field
+ 13
+        message
+ 14
+      }
+ 15
+    }
+ 16 }
+ Next steps
+ Save a connected wallet to session storage
+ Step 1: Install blockchain packages
+ Step 2: Configuration
+ Step 3: Create a gate and attach it to a product
+ Next steps
+ Updates & News

@@ -1,0 +1,40 @@
+Deciding extension placement
+ Localizing UI extensions
+ Testing UI extensions
+ UX guidelines
+ Selling strategies
+ App Store
+ Testing customer account UI extensions
+ Follow these guidelines to test your customer account UI extensions in different user scenarios. Recreating merchant and customer experiences helps ensure that extensions behave as desired in different locations.
+ Test locally
+ The inline and order action menu extensions tutorials show you how to start generating and previewing extensions. Previewing UI extensions locally is different when you use static versus block targets.
+ Static targets
+ When you're using a static target, the UI extension automatically renders in a chosen location.
+ Shopify Plus
+ Some static extensions on the Profile page only render for B2B customers. B2B on Shopify is only available on the Shopify Plus plan. Explore B2B Profile targets
+ Block targets
+ When you're using a block target, merchants can choose where to place the UI extension. To preview a block extension in each supported location, append ?placement-reference={name} to the customer URL that's outputted by Shopify CLI. For example, ?placement-reference=ORDER_SUMMARY3.
+ The following are the placement reference names for each page:
+ Placement references
+ Order index
+ PAGE_TITLE
+ ORDER_INDEX
+ Order status
+ PAGE_TITLE
+ ORDER_STATUS1, ORDER_STATUS2, and ORDER_STATUS3
+ ORDER_SUMMARY1, ORDER_SUMMARY2, and ORDER_SUMMARY3
+ Profile
+ PAGE_TITLE
+ PROFILE1, and PROFILE2
+ Next steps
+ Deployment
+ Learn how to deploy app versions to release changes to users.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Test locally
+ Static targets
+ Block targets
+ Next steps
+ Updates & News
+ Developer changelog

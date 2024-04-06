@@ -1,0 +1,55 @@
+Product subscription app extensions
+ Active Dates Card
+ The ActiveDatesCard component provides functionality to select a start and end date and time.
+ Example code
+ 1 import React, { useState } from "react";
+ 2 import { ActiveDatesCard } from "@shopify/discount-app-components";
+ 3
+ 4 function MyApp() {
+ 5
+    const [startTime, setStartTime] = useState("2022-06-13T04:30:00.000Z");
+ 6
+    const [endTime, setEndTime] = useState("2022-06-14T03:30:00.000Z");
+ 7
+ 8
+    return (
+ 9
+      <ActiveDatesCard
+ 10
+        startDate={{
+ 11
+          value: startTime,
+ 12
+          onChange: setStartTime,
+ 13
+        }}
+ 14
+        endDate={{
+ 15
+          value: endTime,
+ 16
+          onChange: setEndTime,
+ 17
+        }}
+ 18
+        timezoneAbbreviation="EST"
+ 19
+      />
+ 20
+    );
+ 21 }
+ Properties
+ Name Type Description Required
+ startDate Field<DateTime> The field to use for the start date picker, formatted as an ISO 8601 timestamp in UTC Yes
+ endDate Field<DateTime|null> The field to use for the end date picker, formatted as an ISO 8601 timestamp in UTC Yes
+ timezoneAbbreviation string The timezone abbreviation for display. Yes
+ weekStartsOn Weekday The day of the week to show as the first day in the date picker. No
+ disabled boolean Disables all inputs. No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ Updates & News
+ Developer changelog
+ Partner blog

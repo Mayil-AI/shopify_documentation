@@ -1,0 +1,55 @@
+B2B
+ Channels
+ Combined listings
+ Overview
+ Create a combined listing
+ Billing
+ App Store
+ Combined listings
+ Shopify Plus
+ Combined listings are available only to stores on a Shopify Plus plan.
+ Combined listings bring together products that are merchandised by an option, such as color, model, or dimension, for enhanced display in the product details page.
+ Early Access
+ The GraphQL Admin API has been updated to support the creation of combined listings. To be considered for early access to these API updates, please reach out to Partner support.
+ How it works
+ Combined listings use Shopify's existing product model to create combinations of multiple child products under a single parent product. When a customer views the parent or child products in your online store, they will see a single product with all of the options available to them across all of the child products.
+ For example, if you have a shoe that comes in three colors and ten sizes, and you have each of the colors as a separate product, then you can create a combined listing that displays all three products on the same product page along with the ten sizes for each.
+ Child products
+ Child products represent each of the option values that you want to merchandise. They each have their own images and URL handles and can be merchandised separately. The child products that you want to display together should already be created in your store before you create the combined listing through the app. You can create and add more child products to the combined listing later as well.
+ Parent products
+ Parent products are created when you create a combined listing. They too are just products, but when the combined listing is created, they're associated with the child products.
+ By using a parent product, you gain the additional options provided by the parent, resulting in a total of six options.
+ Note
+ Unlike child products, parent products can't be purchased, don't have their own inventory, and don't have any sales data associated with them.
+ Lifecycle of a combined listing
+ From creation to purchase, combined listings have a modified lifecycle that involves the Shopify admin, the Combined Listings app, and your Online Store theme.
+ Lifecycle of a combined listing
+ Area App responsibilities Shopify responsibilities
+ Admin - Configuration
+ In the Shopify admin, merchants create multiple products divided by option.
+ In the app, merchants create a combined listing with options and option values that represent how the products are divided.
+ After creating a combined listing, merchants are directed to publish the parent product.
+ Not applicable
+ Storefront Storefronts that use the online store channel:
+ Merchants must update their theme to work with combined listings.
+ Combined listings will show as a single product with the options provided by the parent product.
+ Not applicable
+ Checkout Not applicable Checkout lines present child products, but not parent products.
+ Orders Not applicable Order lines present child products, but not parent products.
+ Limitations
+ The following limitations apply to combined listings apps.
+ Shopify Plus: Only stores on a Shopify Plus plan can use combined listings.
+ Currently combined listings can only be sold through the Online Store sales channel. Combined listings can’t be sold through Shopify Point of Sale (POS) or with subscriptions.
+ Sales on combined listings are only tracked through child products, not parent products.
+ A combined listing product can't be a bundle.
+ A combined listing can't be included in another combined listing
+ A combined listing can have up to 2000 variants across its child products
+ A parent product can have three options
+ A parent product can have as many children as the number of variants your Shopify plan allows
+ Next steps
+ Learn how to create a combined listing
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Lifecycle of a combined listing

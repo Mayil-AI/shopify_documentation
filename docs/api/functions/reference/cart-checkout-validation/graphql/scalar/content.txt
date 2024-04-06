@@ -1,0 +1,50 @@
+Overview
+ Common objects
+ FunctionFetchResult
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Cart Transform API
+ Pickup Point Delivery Option Generator API
+ Delivery Customization API
+ Discounts APIs
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ Scalars
+ 2024-04 latest
+ Scalars are primitive values such as Int or String. For more information, see the GraphQL spec.
+ Scalar Definition
+ Boolean
+ Represents true or false values.
+ Date
+ Represents an ISO 8601-encoded date string. For example, September 7, 2019 is represented as "2019-07-16".
+ DateTime
+ Represents an ISO 8601-encoded date and time string. For example, 3:50 pm on September 7, 2019 in the time zone of UTC (Coordinated Universal Time) is represented as "2019-09-07T15:50:00Z".
+ DateTimeWithoutTimezone
+ A subset of the ISO 8601 format that includes the date and time but not the timezone which is determined from context.
+ For example, "2018-01-01T00:00:00".
+ Decimal
+ A signed decimal number, which supports arbitrary precision and is serialized as a string.
+ Example values: "29.99", "29.999".
+ Float
+ Represents signed double-precision fractional values as specified by IEEE 754.
+ Handle
+ A function-scoped handle to a refer a resource. The Handle type appears in a JSON response as a String, but it is not intended to be human-readable. Example value: "10079785100"
+ ID
+ Represents a unique identifier, often used to refetch an object. The ID type appears in a JSON response as a String, but it is not intended to be human-readable.
+ Example value: "gid://shopify/Product/10079785100"
+ Int
+ Represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+ String
+ Represents textual data as UTF-8 character sequences. This type is most often used by GraphQL to represent free-form human-readable text.
+ TimeWithoutTimezone
+ A subset of the ISO 8601 format that includes the time but not the date or timezone which is determined from context. For example, "05:43:21".
+ URL
+ Represents an RFC 3986 and RFC 3987-compliant URI string.
+ For example, "https://johns-apparel.myshopify.com" is a valid URL. It includes a scheme (https) and a host (johns-apparel.myshopify.com).
+ Void
+ A void type that can be used to return a null value from a mutation.

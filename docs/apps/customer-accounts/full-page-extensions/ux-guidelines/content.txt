@@ -1,0 +1,25 @@
+Inline extensions
+ Order action menu extensions
+ Full-page extensions
+ Overview
+ Build full-page extensions
+ UX guidelines
+ Order status page
+ Best practices
+ Selling strategies
+ Online store
+ UX guidelines for full-page extensions
+ When you’re designing a full-page extension, follow these best practices to ensure flexibility for merchants.
+ Keep each page focused on one topic
+ Avoid cramming too many topics or jobs to be done into a single full-page extension. When a page is focused on one topic, the page title can set better expectations about the contents of the page. When the page title is clear, it also gives merchants more flexibility to link to the page from navigation or page content, and provide clear labels for those links, resulting in a more intuitive navigation experience.
+ Use a consistent page structure
+ Use the Page component to achieve a page structure that’s consistent with the other pages in customer accounts. For example, the component supports page title, subtitle, and page-level actions grouped in the upper-right.
+ If you’re building an index page that contains a list of resources, use the ResourceItem component to be consistent with the Order index page. For example, the component supports an image, description, price, and an actionable button.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Keep each page focused on one topic
+ Use a consistent page structure
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,330 @@
+Product subscription app extensions
+ Countries and Rates Card
+ The CountriesAndRatesCard component enables users to select whether a discount will apply to all countries or to specific countries. The user can also provide an upper bound for shipping rates so that a discount can be limited only to shipping situations that are financially viable for the user.
+ Properties
+ Name Type Description Required
+ countrySelectionType Field<CountrySelectionType> Whether a discount applies to all countries or to specific countries. Yes
+ selectedCountries Field<CountryCode[]> The specific country codes that a discount applies to. Yes
+ excludeShippingRates Field<boolean> Whether the discount only applies when shipping rates are under a certain amount. Yes
+ maximumShippingPrice Field<PositiveNumericString> The maximum shipping rate where the discount applies. Yes
+ countrySelector React.ReactNode The widget the enables users to select countries. Yes
+ currencyCode CurrencyCode The currency code used for the maxiumum shipping price input. Yes
+ Example code
+ 1 import React, { useState } from "react";
+ 2 import {
+ 3
+    CountriesAndRatesCard,
+ 4
+    CountrySelectionType,
+ 5 } from "@shopify/discount-app-components";
+ 6
+ 7 export default function MyApp() {
+ 8
+    const [countrySelectionType, setCountrySelectionType] = useState(
+ 9
+      CountrySelectionType.AllCountries
+ 10
+    );
+ 11
+    const [excludeShippingRates, setExcludeShippingRates] = useState(false);
+ 12
+    const [maximumShippingPrice, setMaximumShippingPrice] = useState(0);
+ 13
+    const [countries, setCountries] = useState([]);
+ 14
+ 15
+    return (
+ 16
+      <CountriesAndRatesCard
+ 17
+        selectedCountries={{
+ 18
+          value: countries,
+ 19
+          onChange: setCountries,
+ 20
+        }}
+ 21
+        countrySelectionType={{
+ 22
+          value: countrySelectionType,
+ 23
+          onChange: setCountrySelectionType,
+ 24
+        }}
+ 25
+        maximumShippingPrice={{
+ 26
+          value: maximumShippingPrice,
+ 27
+          onChange: setMaximumShippingPrice,
+ 28
+          onBlur: setMaximumShippingPrice,
+ 29
+        }}
+ 30
+        excludeShippingRates={{
+ 31
+          value: excludeShippingRates,
+ 32
+          onChange: setExcludeShippingRates,
+ 33
+        }}
+ 34
+        countrySelector={
+ 35
+          <CountrySelector
+ 36
+            selectedCountries={countries}
+ 37
+            setSelectedCountries={setCountries}
+ 38
+          />
+ 39
+        }
+ 40
+        currencyCode={CurrencyCode.Cad}
+ 41
+      />
+ 42
+    );
+ 43 }
+ CountrySelector
+ The following code is an example of the CountrySelector component:
+ 1 import React, {useState} from 'react';
+ 2 import {TextField, Icon, Button} from '@shopify/polaris';
+ 3 import {SearchMinor} from '@shopify/polaris-icons';
+ 4
+ 5 import CountryPicker from './CountryPicker';
+ 6
+ 7 export default function CountrySelector({ selectedCountries, setSelectedCountries }) {
+ 8
+    const [isOpen, setIsOpen] = useState(false);
+ 9
+    const [searchQuery, setSearchQuery] = useState('');
+ 10
+    return (
+ 11
+      <div>
+ 12
+        <TextField
+ 13
+          placeholder="Search country"
+ 14
+          labelHidden
+ 15
+          onChange={(nextSearchQuery) => {
+ 16
+            setSearchQuery(nextSearchQuery);
+ 17
+            setIsOpen(true);
+ 18
+          }}
+ 19
+          value={searchQuery}
+ 20
+          autoComplete="off"
+ 21
+          prefix={<Icon source={SearchMinor} color="subdued" />}
+ 22
+          connectedRight={
+ 23
+            <Button
+ 24
+              onClick={() => {
+ 25
+                setIsOpen(true);
+ 26
+              }}
+ 27
+            >
+ 28
+              Browse
+ 29
+            </Button>
+ 30
+          }
+ 31
+        />
+ 32
+        <CountryPicker
+ 33
+          isOpen={isOpen}
+ 34
+          searchQuery={searchQuery}
+ 35
+          setSearchQuery={setSearchQuery}
+ 36
+          initialSelectedItems={selectedCustomers}
+ 37
+          onCancel={() => setIsOpen(false)}
+ 38
+          onSelect={(customers) => {
+ 39
+            setIsOpen(false);
+ 40
+            setSelectedCustomers(customers);
+ 41
+          }}
+ 42
+        />
+ 43
+      </div>
+ 44
+    );
+ 45 }
+ CountryPicker
+ To load the list of countries where the app user can ship, we need to query the GraphQL API. In the following CountryPicker component, ./authenticatedGraphQL is used to proxy the GraphQL request:
+ 1 import React, {useState} from 'React';
+ 2 import { gql } from 'graphql-request';
+ 3 import { useQuery } from 'react-query';
+ 4 import { unstable_Picker as Picker } from '@shopify/app-bridge-react';
+ 5
+ 6 import { fetchGraphQL } from './authenticatedGraphQL'; // A request to proxy the GraphQL request
+ 7 import { useLocalizeCountry } from '@shopify/discount-app-components';
+ 8
+ 9
+ 10 const SHOP_COUNTRIES_QUERY = gql`
+ 11
+    query GetShopCountries {
+ 12
+      shop {
+ 13
+        id
+ 14
+        countriesInShippingZones {
+ 15
+          countryCodes
+ 16
+          includeRestOfWorld
+ 17
+ 20 `;
+ 21
+ 22 function CountryPicker({
+ 23
+    isOpen,
+ 24
+    onCancel,
+ 25
+    onSelect,
+ 26
+    searchQuery,
+ 27
+    setSearchQuery,
+ 28
+    initialSelectedItems,
+ 29 }) {
+ 30
+    const [selectedItems, setSelectedItems] = useState();
+ 31
+    const graphQLClient = useGraphQLClient();
+ 32
+    const localizeCountry = useLocalizeCountry();
+ 33
+    let countries = [];
+ 34
+    let countryCodes = [];
+ 35
+ 36
+    useEffect(() => {
+ 37
+      setSelectedItems(initialSelectedItems);
+ 38
+    }, [initialSelectedItems]);
+ 39
+ 40
+    // The request to fetch countries
+ 41
+    const {
+ 42
+      data,
+ 43
+      error,
+ 44
+      isLoading: dataIsLoading,
+ 45
+    } = useQuery(['GetCountries'], async () => fetchGraphQL(SHOP_COUNTRIES_QUERY));
+ 46
+ 47
+    // Map the API response to a list of countries
+ 48
+    if (!dataIsLoading && !error) {
+ 49
+      countryCodes = data.data.shop.countriesInShippingZones.countryCodes
+ 50
+      const includesRestOfWorld = data.data.shop.countriesInShippingZones.includesRestOfWorld;
+ 51
+      countries = countryCodes.map((node) => localizeCountry(countryCode));
+ 52
+    }
+ 53
+ 54
+    return (
+ 55
+      <Picker
+ 56
+        open={isOpen}
+ 57
+        items={countries}
+ 58
+        selectedItems={selectedItems.map(item=>({id:item}))}
+ 59
+        maxSelectable={0}
+ 60
+        searchQuery={searchQuery}
+ 61
+        onCancel={onCancel}
+ 62
+        onSelect={({ selectedItems }) => {
+ 63
+          onSelect(
+ 64
+            selectedItems.map((item) =>
+ 65
+              countryCodes.find((node) => node === item.id),
+ 66
+            ),
+ 67
+          );
+ 68
+        }}
+ 69
+        onSearch={(options) => {
+ 70
+          setSearchQuery(options.searchQuery);
+ 71
+        }}
+ 72
+        emptySearchLabel={ {
+ 73
+          title: 'No Countries',
+ 74
+          description: 'There is no country for this search',
+ 75
+          withIllustration: true,
+ 76
+        } }
+ 77
+        loading={dataIsLoading}
+ 78
+        searchQueryPlaceholder="Search country"
+ 79
+        primaryActionLabel="Select"
+ 80
+        secondaryActionLabel="Cancel"
+ 81
+        title="Country Picker"
+ 82
+      />
+ 83
+    );
+ 84 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Properties
+ Example code
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

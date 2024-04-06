@@ -1,0 +1,60 @@
+Billing
+ App Store
+ Admin, installation, and OAuth performance
+ These guidelines apply to apps in the Shopify admin only.
+ Tip
+ Apps that meet all the mandatory criteria on this page, and meet other applicable criteria, are eligible for Built for Shopify status in the Shopify App Store.
+ Improve your app's loading performance
+ Loading performance is an important part of the user experience when using apps in the Shopify admin. When your app is slow to load, it dissuades users from adopting it, increases bounce rates, and decreases overall usage.
+ You can also improve your app's loading experience by minimizing visual noise, such as layout shifts, and clearly indicating loading progress. As a result, users will perceive your app as faster and more responsive, even if the loading time doesn't change. Refer to the Polaris best practices for loading for a complete guide on designing a high-quality experience.
+ Measure your app's loading performance
+ Shopify uses Web Vitals to measure your app's performance in the Shopify admin. Each time a user loads your app, we gather and save the Web Vitals metrics in order to better understand the user experience. To learn more about Web Vitals, you can refer to the introduction on web.dev
+ Note
+ To enable Shopify to gather Web Vitals metrics, you might need to update your version of App Bridge.
+ For apps that use App Bridge 2.x, you need to use version 2.2.0 or higher.
+ For apps that use App Bridge 3.x, you need to use version 3.2.0 or higher.
+ Where possible, you should use version 3.2.0 or higher.
+ Updating your app to a version that supports admin performance tracking is a prerequisite to reaching Built for Shopify status.
+ To measure your app's performance, we recommend adding Web Vitals to your app, capturing the performance with an analytics tool, and analyzing the aggregated data from user visits to your app. Though measuring Web Vitals on your device can be a useful tool for debugging issues, the data can differ significantly from what users experience when they use your app. To ensure that you provide users with an outstanding app experience, you should measure and monitor user loading experiences with your app as well.
+ Tip
+ The Shopify admin uses an iFrame to display your app. Most local tools that measure Web Vitals metrics, such as Lighthouse, don't accurately measure pages inside of iFrames. To use these tools to debug your app, run the app outside of the Shopify admin.
+ The web-vitals package used by Shopify measures your app's performance each time a merchant launches your app through any route. If you use another tool to measure your page's performance, then it might take measurements more frequently. For example, some tools might measure the performance of each navigation between pages of your app. This can cause discrepancies between the values displayed in the Partner Dashboard and the metrics gathered by these tools.
+ To add Web Vitals to your app, install it from npm or load the package from a CDN.
+ 1 npm install web-vitals
+ Then, you can import the core Web Vitals metrics and call each function to log the resulting metrics to your own analytics service. Detailed usage information and additional diagnostic tools can be found on the web-vitals GitHub page.
+ 1 import {onCLS, onFID, onLCP} from 'web-vitals';
+ 2
+ 3 function sendToAnalytics(metric) {
+ 4
+     //add code to send the metric to your analytics service
+ 5 }
+ 6
+ 7 onCLS(sendToAnalytics);
+ 8 onFID(sendToAnalytics);
+ 9 onLCP(sendToAnalytics);
+ Largest Contentful Paint
+ Largest Contentful Paint (LCP) measures the time from when a user begins loading your page to when the largest image or block of text is displayed. It tracks how quickly your app can display its main content to users.
+ Mandatory
+ 75% of the time, your app should have a Largest Contentful Paint of 2.5 seconds or less, measured over a 30 day period.
+ First Input Delay
+ First Input Delay (FID) measures your app responsiveness to users' input. It measures the time from when a user interacts with your page to when your app begins processing the response to that interaction.
+ Mandatory
+ 75% of the time, your app should have a First Input Delay of 100 milliseconds or less, measured over a 30 day period.
+ Cumulative Layout Shift
+ Cumulative Layout Shift (CLS) measures your app's visual stability. Unstable user interfaces can be frustrating for users, especially when an element, such as a button, that they're trying to interact with moves suddenly. Cumulative Layout Shift quantifies these kinds of disruptive experiences so you can identify and remove them.
+ Enable optimized loading on mobile devices
+ By default, the Shopify Mobile app opens apps in an iFrame that's hosted from the Shopify admin. Each time an app is launched, the Shopify admin site must be re-loaded, which adds a significant amount of time to the app's load. With optimized loading enabled, the Shopify Mobile app loads the app directly inside of a native WebView, which significantly reduces the load time.
+ Mandatory
+ Your app must have optimized loading on mobile devices enabled.
+ Load Shopify App Bridge from your app bundle for redirects
+ Shopify offers an option to load Shopify App Bridge from Shopify CDN. However, for optimal performance, you should load App Bridge from your app bundle instead. Loading Shopify App Bridge from your app bundle increases the chance that the user's browser can access this code from the cache rather than downloading it. This can make your app more performant.
+ For an example of loading Shopify App Bridge from the app bundle, refer to this page in the Node app template.
+ Optimize your OAuth flow
+ Because authorization is the first interaction that users have with your app UI, you should make sure that it's a positive experience. Follow these best practices for optimizing your OAuth performance to make your app authorization process smoother, faster, and more polished.
+ Shopify strongly recommends you use the Remix app template, which already has OAuth implemented, and API libraries that include methods that simplify the implementation process. Using the Remix app template helps to ensure that your implementation is complete, and that your app follows our OAuth best practices that are outlined here. You can build an app using the Remix app template by initializing an app using Shopify CLI. For more information, refer to Create an app.
+ If you don't want to use an app template, then you can use the same API libraries that the templates use to implement OAuth in your own app, or you can implement OAuth yourself. To follow Shopify best practices, all embedded apps should use the grant type called token exchange. Token exchange is a more efficient way to authorize embedded apps, and requires only a session token to be exchanged for an access token. This eliminates the need for multiple redirects, and improves performance. To use token exchange, you need to update your app to use Shopify CLI to manage your app's configuration. Doing so will automatically enable Shopify managed installation for your app, dramatically improving the user experience for installation and scope updates and eliminating the need for your app to handle these flows.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Improve your app's loading performance
+ Optimize your OAuth flow

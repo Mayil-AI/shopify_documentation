@@ -1,0 +1,15 @@
+Storefront search
+ Filtering
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Store navigation and search
+ Customers should be able to easily discover store content. To help with this, you can implement the following methods in your theme:
+ Store navigation: Merchants can create menus that highlight store content, which can be featured in places like the header and footer to allow customers to easily browse content.
+ Search functionality: Customers are often looking for something specific, so you should provide the option to search the store directly, rather than make customers manually navigate to find what they're looking for.
+ Filtering: Merchants can add filtering to collection and search pages to allow customers to further specify the content they want to browse.
+ Was this page helpful?
+ YesNo
+ Updates & News

@@ -1,0 +1,160 @@
+Additional SDKs
+ Migrate from the online store to Hydrogen
+ This guide outlines considerations when migrating from the online store to Hydrogen.
+ Incremental adoption / proxy routes
+ Some merchants might want to adopt a Hydrogen storefront incrementally. For example, by first launching a Hydrogen storefront with just a product page and temporarily using the online store for everything else. You can do this by proxying specific routes. Learn more.
+ Shared carts
+ To share a cart between a Hydrogen storefront and the online store, such as when you're incrementally adopting Hydrogen, you’ll need to update your online store to use the Storefront API for carts instead of using Liquid carts. Learn more.
+ Subdomain for checkout
+ Regardless of whether you're using the online store or Hydrogen, customers are always directed back to a Shopify-hosted checkout. Traditionally, a checkout URL might look something like {shop}.myshopify.com/123456/checkouts….
+ It’s common to set up a subdomain for the purpose of checkout, for example checkout.example.com. To do this:
+ Connect the subdomain
+ Set the Target to Online Store.
+ Set the Domain type to Primary.
+ Configure routing
+ When you're migrating from an online store to a custom storefront, you can define your own routes. For example, product routes don't need to conform to a /products/[handle] URL path.
+ If you change routes, for example to /p/[handle], then set up redirects to help customers and search engines find your resources. This is especially important if you change the /cart route, which is linked to from the breadcrumbs at checkout.
+ The following is an example of setting up a redirect from /cart:
+ /app/routes/cart.jsx
+ 1 // Catch `/cart` and redirect to `/bag`
+ 2 import {redirect} from '@shopify/remix-oxygen';
+ 3
+ 4 export function loader() {
+ 5
+    return redirect('/bag');
+ 6 }
+ Shareable discount code links
+ The online store has built-in support for shareable discount code links, with the URL structure /discount/[discount_code]. These links attach the discount code in the URL to a customer's cart, which is then applied automatically at checkout.
+ If you use these shareable discount code links with your customers in the online store channel, then you might want to have the same functionality in your custom storefront channel, on a /discount route.
+ We recommend that the logic you set in this route does the following:
+ Check if a cart exists
+ If a cart exists, then update the cart with the discount code
+ If a cart doesn't exist, then create a cart and include the discount code
+ Redirect to another page. For example, the home page
+ Tip
+ For a complete example, refer to the Hydrogen demo store.
+ Cart Permalinks
+ The online store has built-in support for cart permalinks, which link customers to Shopify checkouts or the online store cart, with pre-loaded items to complete a purchase.
+ Cart permalinks have the following URL structure:
+ /cart/[variant_id]:[quantity],[variant_id]:[quantity]
+ You can also append query parameters to a cart permalink URL to include additional information. Learn more.
+ If you use cart permalinks with your customers in the online store channel, including the reordering feature available to new customer accounts, then you will want to include the same or similar functionality on the /cart route of your custom storefront channel.
+ Tip
+ For a complete example, refer to the Hydrogen demo store.
+ Online store redirects
+ If you decide to keep the online store channel accessible, be sure to set up redirects to take customers to your Hydrogen storefront. Assuming your Hydrogen storefront maintains the online store URL structure, you could do something like the following example:
+ theme.liquid
+ 1 {% assign new_website = 'https://headless-website.com' %}
+ 2 <!doctype html>
+ 3 <html>
+ 4
+    <head>
+ 5
+      <meta charset="utf-8">
+ 6
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ 7
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+ 8
+      <meta name="robots" content="noindex">
+ 9
+      <link rel="preconnect" href="{{new_website}}" crossorigin>
+ 10
+      <script>
+ 11
+        function getCookie(name) {
+ 12
+          name = name + '=';
+ 13
+          var cookies = document.cookie.split(';');
+ 14
+          for (var i = 0; i < cookies.length; i++) {
+ 15
+            var cookie = cookies[i].trim();
+ 16
+            if (cookie.indexOf(name) == 0) {
+ 17
+              return cookie.substring(name.length, cookie.length);
+ 18
+            }
+ 19
+          }
+ 20
+        }
+ 21
+ 22
+        // Redirect + handle discount codes
+ 23
+        var discountCode = getCookie('discount_code');
+ 24
+        if (discountCode) {
+ 25
+          window.location.replace(`{{new_website}}/discount/${discountCode}?redirect=${window.location.pathname}`);
+ 26
+        } else {
+ 27
+          window.location.replace(`{{new_website}}${window.location.pathname}`);
+ 28
+        }
+ 29
+      </script>
+ 30
+      {{content_for_header}}
+ 31
+    </head>
+ 32
+ 33
+    <body>
+ 34
+      {{content_for_layout}}
+ 35
+    </body>
+ 36 </html>
+ Product feeds
+ If you use Shopify's out-of-the-box product feeds, then you'll need to set up feed rules (Facebook, Google) to use your Hydrogen storefront's domain.
+ Canonical links to legacy domains
+ When migrating to a custom storefront, if you decide to keep the online store channel accessible, add canonical links to all of the online store's page templates. The following is an example:
+ theme.liquid
+ 1 <head>
+ 2
+    <link rel="canonical" href="https://example.com/" />
+ Make sure that the canonical URL reflects any structural changes that you've made to the URL. The following is an example:
+ theme.liquid
+ 1 <head>
+ 2
+    {% if request.page_type = 'product' %}
+ 3
+      <link rel="canonical" href="https://example.com/p/{{ product.handle }}" />
+ 4
+    {{ elsif }}
+ 5
+      <link rel="canonical" href="https://example.com/{{ request.path }}" />
+ 6
+    {{ endif }}
+ Password protection
+ Online store password protection also affects Hydrogen checkouts. To remove password protection:
+ From the Shopify admin, under Sales channels, click Online Store > Preferences.
+ In the Restrict store access section, deselect Restrict access to visitors with the password.
+ Click Save.
+ Notifications
+ You can update notifications to use the same domain as your Hydrogen storefront.
+ From the Shopify admin, click Settings > Notifications.
+ Update the Notification URLs setting.
+ Next Steps
+ Go live with Hydrogen go live on Hydrogen for merchants ready to publish their new Hydrogen storefront.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Incremental adoption / proxy routes
+ Shared carts
+ Subdomain for checkout
+ Configure routing
+ Shareable discount code links
+ Cart Permalinks
+ Online store redirects
+ Product feeds
+ Canonical links to legacy domains
+ Password protection
+ Notifications
+ Next Steps
+ Updates & News

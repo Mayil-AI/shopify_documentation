@@ -1,0 +1,115 @@
+Content
+ Navigation
+ Overview
+ Information architecture
+ App nav
+ App header
+ Page header
+ User experience
+ Checkout
+ Customer accounts
+ Billing
+ App Store
+ Navigation
+ Navigation enables merchants to move between sections of your app.
+ Why is navigation important?
+ Navigation is how merchants move from task to task. A good navigation structure enables merchants to complete tasks easily and without friction. Build your app’s navigation around what merchants need to do.
+ Navigation elements display in the following areas:
+ App nav
+ App header
+ Page header
+ Switch to desktop view
+ Switch to mobile view
+ Information architecture
+ Information architecture (IA) is the practice of organizing sections so that they make sense as a whole.
+ Why is IA important?
+ IA shows merchants where they currently are, and how to navigate the rest of the app. It should be obvious what previously happened and what will happen next.
+ Rely on the relationship between the app nav and app body components to guide merchants where they need to go.
+ Use the fewest possible categories to define what your app does.
+ Must Do
+ Merchants must be able to return to the previous page without using the browser button. To achieve this, your app can provide breadcrumbs or a Back button on the page.
+ Do Not
+ Don’t send merchants outside of the Shopify admin for key actions or during primary workflows. This can be a frustrating experience.
+ App home
+ The app URL specified in the Partner Dashboard should point to your app homepage. This page is the default view when your app’s name is selected in the Shopify admin.
+ If you're building an app that's made entirely of extensions, then a default app home URL and homepage is provided.
+ Must Do
+ Use the app name to point at your app’s homepage. This is controlled in the Partner Dashboard, under App Setup > App URL.
+ Do Not
+ Don't duplicate the app homepage's URL in your navigation.
+ App nav
+ The app nav gives merchants a way to move between pages of your app.
+ The app nav is located in the sidebar in the Shopify admin and in the header in Shopify mobile.
+ Must Do
+ If your app has different sections, then use the App Bridge ui-nav-menu web component or NavMenu React component to integrate the sections into the Shopify admin and Shopify mobile navigation.
+ Must Do
+ Make navigation items short and scannable. Use nouns instead of verbs to keep the navigation menu concise.
+ Tip
+ When you use more than seven items in the ui-nav-menu web component or NavMenu React component, item seven and above are truncated into a View more button.
+ Do Not
+ Don’t replicate the app nav content in the app body. It creates unnecessary repetition and makes navigation confusing.
+ Do Not
+ Don’t place the main navigation in the page header. This can mislead merchants. The page header is reserved for in-page actions.
+ Do Not
+ Don’t use tabs as primary navigation for your app, since Tabs are used in the Shopify admin as filters on index tables. Use the App Bridge ui-nav-menu web component or NavMenu React component instead.
+ App name
+ The app name represents a way for merchants to identify your app across multiple touchpoints in the Shopify admin.
+ The app name can be shorter than the Shopify App Store listing, so that it fits into the app nav.
+ Info
+ To change your app name, in the Partner Dashboard navigate to App setup.
+ Must Do
+ Keep app names short, with no more than 20 characters. Anything beyond 20 characters is truncated and might be confusing for merchants.
+ Do Not
+ Don’t put a description in the app name. Put the description in the Shopify App Store listing instead.
+ Navigation icon
+ Submit a navigation icon that displays in the app nav. The navigation icon is gray when it’s inactive and green when it’s active.
+ To learn more about designing your navigation icon, refer to the visual design guidelines.
+ Info
+ To change your navigation icon, navigate to App setup > Embedded app in the Partner Dashboard.
+ Must Do
+ If you're using an SVG icon in the Shopify admin navigation, then it must look similar to your app’s App Store icon. It's not mandatory to have an SVG icon.
+ Tip
+ Navigation app icons are cropped with a 4px border radius. You don't need to submit your icon with rounded corners.
+ App header
+ The app header contains main structural pieces for your app. It’s the header that merchants will interact with throughout the entire app experience.
+ The app header contains the following elements:
+ App icon and name
+ Pinning icon
+ Overflow menu
+ Switch to desktop view
+ Switch to mobile view
+ Overflow menu
+ The overflow menu is reserved for additional support information about your app.
+ The overflow menu includes the following content:
+ About this app
+ Support
+ At this time, the overflow menu isn’t customizable.
+ Info
+ On mobile, the option to pin the app is collapsed into the overflow menu.
+ Switch to desktop view
+ Switch to mobile view
+ Page header
+ The page header contains titles and actions for a specific page.
+ The page header should, at the very least, contain the page’s title. You can optionally add more elements, such as buttons. For examples, refer to the ui-title-bar web component or TitleBar React component documentation.
+ Tip
+ Use App Bridge’s ui-title-bar web component or TitleBar React component to integrate with the Shopify admin’s navigation. This helps your app stay within recommended guidelines.
+ Page title
+ The page title should be short and describe the general purpose of the page.
+ Try to limit each page to a single purpose. Merchants prefer focusing their attention on specific tasks, and splitting their attention might damage the user experience.
+ Switch to desktop view
+ Switch to mobile view
+ Primary and secondary actions
+ The primary and secondary buttons in the ui-title-bar web component or TitleBar React component initiate a page-specific action.
+ Primary and secondary button labels should have the following attributes:
+ Clarity and predictability: Merchants should be able to anticipate what will happen when they click a page action.
+ Action led: Button labels should always lead with a strong verb that encourages action. To provide enough context for merchants, use a {verb}+{noun} format.
+ Switch to desktop view
+ Switch to mobile view
+ Must Do
+ Offer merchants clear and predictable action labels.
+ Tip
+ The ui-title-bar web component or TitleBar React component accepts one primary action and multiple secondary actions. When more than one secondary action is present, they're truncated into a More actions dropdown.
+ Previous
+ Content
+ Next
+ Alerts

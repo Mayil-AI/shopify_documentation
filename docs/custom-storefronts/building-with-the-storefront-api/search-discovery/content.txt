@@ -1,0 +1,75 @@
+API exploration
+ Products and collections
+ Search and discovery
+ Overview
+ Set up search tracking
+ Markets
+ Cart
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ Search and discovery
+ Search and discovery are essential components of any successful online store. They help customers find the products they’re looking for. Using the Storefront API, you can build a storefront search and product recommendations, and create a tailored shopping experience for customers.
+ This guide introduces you to creating your own storefront search experience with the Storefront API.
+ How it works
+ You can use the Storefront API to complete the following tasks related to search and discovery:
+ Storefront search: Surface the most relevant results in your store with Shopify’s AI-powered search.
+ Predictive search: Provide customers with a typeahead search and suggestions feature in your custom storefront.
+ Filters and facets: Use faceted filtering to filter products that interest customers the most.
+ Track search analytics: Access valuable analytics data related to search. You can track metrics such as search terms, click-through rates, and conversion rates to gain insights into customer behavior and optimize your store’s performance.
+ Storefront search
+ The search query returns the most relevant search results for customers using machine learning and natural language processing techniques. Storefront search supports the following features:
+ Typo tolerance: Search results for misspelled terms.
+ Partial match: Yield relevant results for general search queries.
+ Tolerance for no results: Display relevant products to avoid no search results.
+ Buyability prediction: Search results based on clicks and likelihood to convert.
+ Advanced customizations: With the Shopify Search & Discovery app, you can add synonym terms and boost products in the search results.
+ Tip
+ Learn more about the behaviors applied to search terms which increase the number of relevant results.
+ Predictive search
+ The predictiveSearch query lets customers refine their search to find what they’re looking for. Predictive search includes the following features:
+ Typeahead search: Dynamic list of suggested search queries.
+ Resource suggestions: Suggested collections, products, pages, and blog articles.
+ Typo tolerance: Search results for misspelled terms.
+ Partial match: Yield relevant results for general search queries.
+ Tip
+ Learn more about predictive search patterns and behavior in the Predictive search UX guidelines.
+ Filters and facets
+ The search query suppports filtering on attributes such as availability, product type, color, or other options to find the products that interest customers the most. You can query the available filters for products in a search result to build faceted filtering.
+ Note
+ You can create and customize filters using the Shopify Search & Discovery app.
+ Track search analytics
+ Tracking search analytics is an essential part of optimizing your store’s performance and increasing conversions. By tracking and analyzing search data, you can do the following:
+ Measure storefront performance: Analyze top-performing search terms and how customers are navigating your store so that you can improve your store’s performance. You can access a set of reports in the Shopify Search & Discovery app.
+ Improve search relevance: Shopify’s storefront search infrastructure uses product and customer interaction data to optimize your store’s performance. By tracking search analytics, Shopify’s search engine can identify search terms that are not returning relevant results and adjust search algorithms accordingly. This can help improve the relevance of search results and ensure that customers are finding the products they’re looking for.
+ Developer resources
+ Get familiar with the Storefront API by exploring guides that cover common use cases, and the complete reference for the GraphQL Storefront API.
+ search query
+ Consult the GraphQL Storefront API reference to learn more about the search query.
+ predictiveSearch query
+ Consult the GraphQL Storefront API reference to learn more about the predictiveSearch query.
+ Optimize your store’s performance with search tracking
+ Learn how to set up search tracking with the Storefront API and Hydrogen.
+ Limitations and considerations
+ The search and predictiveSearch queries are supported in the Storefront API version 2023-07 or higher.
+ To take advantage of AI-powered search, you need to set up search tracking on your custom storefront to ensure that Shopify’s storefront search infrastructure can optimize your store’s performance based on product and buyer interaction data.
+ Next steps
+ Learn how to optimize your store’s performance with search tracking.
+ Customize search, filters, and product recommendations using the Shopify Search & Discovery app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Storefront search
+ Predictive search
+ Filters and facets
+ Track search analytics
+ Developer resources
+ Limitations and considerations
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

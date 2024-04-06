@@ -1,0 +1,40 @@
+App developer tools
+ Shopify provides a range of software tools, app templates, example apps, and libraries to accelerate your development process.
+ Developer tools
+ Shopify CLI
+ A command-line tool to scaffold and manage Shopify apps.
+ Polaris design system
+ Design patterns and guidance, including a library of UI components, tokens, and icons to build apps in the admin.
+ Polaris for VSCode extension
+ Automatic autocompletion for Polaris tokens, right inside your favorite code editor.
+ Shopify App Generator for Rails
+ A Rails engine for building Shopify apps.
+ API libraries
+ For a complete list of official and third-party open source API libraries, refer to API libraries.
+ App templates
+ The following templates can help you start your Shopify app development.
+ When you create an app using Shopify CLI, you can specify the template that you want to use with the --flavor flag. Enter remix, node, ruby, or php to use one of our app templates, or use a third-party template by providing a path to a GitHub repository for the template.
+ Shopify recommends using the Remix template for most apps.
+ You can also build an extension-only app, which is an app that contains no app home, and uses the extension-only template. To create an extension-only app, select Start by adding your first extension when you create your app. Learn more about extension-only apps.
+ To learn more about building using the template, and deploying apps built using the template, review the readme in the template repository.
+ Remix app template
+ An app template that uses Remix.
+ Extension-only app template
+ An app template for building extension-only apps.
+ Express app template
+ An app template that uses Express, Node.js, and React.
+ Ruby app template
+ An app template in Ruby and React.
+ PHP app template
+ An app template in PHP.
+ Example apps
+ The following examples can help you with your app.
+ Shopify QR Code app: An example app based on the Node app template. The app, inspired by Shopcodes, implements basic QR code generation for products and discounts.
+ Storefront API apps: A series of example apps that demonstrate how to use the Storefront API. The examples are built and maintained by community members.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Developer tools
+ API libraries
+ App templates
+ Example apps

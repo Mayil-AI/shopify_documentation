@@ -1,0 +1,20 @@
+Product subscription app extensions
+ View
+ A View is a generic container component. Its contents will always be their “natural” size, so this component can be useful in layout components (like Layout, Tiles, BlockStack, InlineStack) that would otherwise stretch their children to fit.
+ Example
+ JS
+ React
+ 1 import {extend, View} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const view = root.createComponent(View, undefined, 'View');
+ 5
+ 6
+    root.appendChild(view);
+ 7 });
+ Props
+ optional = ?
+ Name Type Description
+ inlinePadding? "xtight" | "tight" | "loose" | "xloose" Adjust the inline padding
+ blockPadding? "xtight" | "tight" | "loose" | "xloose" Adjust the block padding

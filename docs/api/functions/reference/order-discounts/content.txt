@@ -1,0 +1,40 @@
+Product Discount API
+ Shipping Discount API
+ Discounts Allocator API
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Order Discount Function API overview
+ The Order Discount API enables you to create a new type of discount that is applied to all merchandise in the cart.
+ Example use cases
+ Money off the order subtotal. For example, $5 off the order subtotal.
+ Money off products on an order. For example, 20% off all products on the order.
+ Tiered discount by spend. For example, spend $100 get 10% off all products.
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Order Discount API reference
+ Consult the GraphQL reference for the Order Discount API.
+ Migrating from scripts to functions
+ If you want to migrate an existing line item script to Shopify Functions, then you can use the following mappings:
+ Shopify Scripts method Description Shopify Functions object Additional context
+ change_line_price Applies a discount to a product Product discount or Order discount
+ split Splits a product into multiple lines so that you can discount partial numbers Product discount Use a product variant to limit the number of times that you want to apply the discount.
+ change_properties Adds or changes a line item property Not available Refer to applyAttributeChange in the checkout targets API.
+ reject Disallows a discounts code from being applied at checkout Not available Use a Product discount or Order discount function that contains the necessary logic. For example, you can use conditions to exclude a discount from applying.
+ Limitations and considerations
+ Input cart.deliveryGroups is always an empty array for this function.
+ Next steps
+ Learn how to use Shopify Functions by building a discounts experience.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Migrating from scripts to functions
+ Limitations and considerations
+ Next steps
+ Updates & News
+ Developer changelog

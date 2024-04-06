@@ -1,0 +1,150 @@
+Get access tokens
+ Token exchange
+ Overview
+ Getting started
+ Authorization code grant
+ Access token types
+ Installation
+ Client secret / API key
+ Webhooks
+ App extensions
+ App Store
+ Implement token exchange manually
+ If you're building an embedded app, and you aren't able to use the Remix starter app, then you can implement token exchange manually.
+ Requirements
+ You've created a Partner account.
+ You've created an embedded app that doesn't use a Shopify app template.
+ You have your app's client credentials.
+ You're familiar with session tokens in Shopify.
+ Tip
+ You can use Shopify CLI to generate a starter app with boilerplate code that handles authentication and authorization. The starter app includes code for an embedded app that uses session tokens and token exchange.
+ Step 1: Ensure you have a valid session token
+ Your app's frontend must acquire a session token from App Bridge. The app then includes it in the AUTHORIZATION header for all requests to the app's backend.
+ Your app's backend is responsible for authenticating all incoming requests using the session token.
+ Step 2: Get an access token
+ If your app does not have a valid access token, it can exchange its session token for one using token exchange.
+ The following shows an example of a token exchange request and response for both an online and an offline access token.
+ Request
+ Online access token
+ Offline access token
+ 1 curl -X POST \
+ 2
+    https://{shop}.myshopify.com/admin/oauth/access_token \
+ 3
+    -H 'Content-Type: application/json' \
+ 4
+    -H 'Accept: application/json' \
+ 5
+    -d '{
+ 6
+        "client_id": "{client_id}",
+ 7
+        "client_secret": "{client_secret}",
+ 8
+        "grant_type": "urn:ietf:params:oauth:grant-type:token-exchange",
+ 9
+        "subject_token": "{session_token}",
+ 10
+        "subject_token_type": "urn:ietf:params:oauth:token-type:id_token",
+ 11
+        "requested_token_type": "urn:shopify:params:oauth:token-type:online-access-token"
+ 12
+    }'
+ Response
+ Online access token
+ Offline access token
+ 1 {
+ 2
+    "access_token": "f85632530bf277ec9ac6f649fc327f17",
+ 3
+    "scope": "write_orders,read_customers",
+ 4
+    "expires_in": 86399,
+ 5
+    "associated_user_scope": "write_orders",
+ 6
+    "associated_user": {
+ 7
+      "id": 902541635,
+ 8
+      "first_name": "John",
+ 9
+      "last_name": "Smith",
+ 10
+      "email": "john@example.com",
+ 11
+      "email_verified": true,
+ 12
+      "account_owner": true,
+ 13
+      "locale": "en",
+ 14
+      "collaborator": false
+ 15
+    }
+ 16 }
+ If your session token is expired or otherwise invalid, then the token exchange request fails with an HTTP status code of 400 Bad Request.
+ Online access token response values
+ Value Description
+ access_token An API access token that can be used to access the shop’s data. Your app should store the token somewhere to make authenticated requests for a shop’s data. An online access token can be used for as long as the app is installed or for the next 24 hours, whichever comes first. After 24 hours, you need to refresh the access token.
+ scope The list of access scopes that were granted to your app and are associated with the access token.
+ expires_in The number of seconds until the access token expires.
+ associated_user_scope The list of access scopes that were granted to the app and are available for this access token, given the user’s permissions.
+ associated_user Information about the user who completed the authorization. The email field in this response appears regardless of the email verification status. If you’re using emails as an identification source, then make sure that the email_verified field is also true. You can use the id field to uniquely identify a single user.
+ Offline access token response values
+ Value Description
+ access_token An API access token that can be used to access the shop’s data as long as your app is installed. Your app should store the token somewhere to make authenticated requests for a shop’s data. An offline access token can be used for as long as the app is installed.
+ scope The list of access scopes that were granted to your app and are associated with the access token.
+ Step 3: Make authenticated requests
+ After your app has obtained an API access token, it can make authenticated requests to the Admin API and fulfill incoming requests from the app frontend.
+ The following examples show how to retrieve a list of products using the GraphQL Admin API and the REST Admin API.
+ Terminal
+ GraphQL
+ REST
+ 1 curl -X POST \
+ 2
+    https://{shop}.myshopify.com/admin/api/2024-04/graphql.json \
+ 3
+    -H 'Content-Type: application/json' \
+ 4
+    -H 'X-Shopify-Access-Token: {access_token}' \
+ 5
+    -d '{
+ 6
+      "query": "{
+ 7
+        products(first: 5) {
+ 8
+          edges {
+ 9
+            node {
+ 10
+              id
+ 11
+              handle
+ 12
+            }
+ 13
+          }
+ 14
+          pageInfo {
+ 15
+            hasNextPage
+ 16
+          }
+ 17
+        }
+ 18
+      }"
+ 19
+    }'
+ Next steps
+ Install your app and manage scopes
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Ensure you have a valid session token
+ Step 2: Get an access token
+ Step 3: Make authenticated requests
+ Next steps

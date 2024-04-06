@@ -1,0 +1,85 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Button
+ Use the Button action set to create buttons for other action sets, such as TitleBar and Modal. The Button action set does not provide functionality outside of other App Bridge actions. If you need a standard button component in your app, use a Polaris button.
+ Example code
+ Create an app and import the Button action from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {Button} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a button
+ Create a primary button with the label Save:
+ 1 const myButton = Button.create(app, {label: 'Save'});
+ Subscribe to click action
+ You can subscribe to button actions by calling subscribe. This returns a function that you can call to unsubscribe from the action:
+ 1 const myButton = Button.create(app, {label: 'Save'});
+ 2 const clickUnsubscribe = myButton.subscribe(Button.Action.CLICK, data => {
+ 3
+    // Do something with the click event
+ 4 });
+ 5
+ 6 // Unsubscribe to click actions
+ 7 clickUnsubscribe();
+ Dispatch click action
+ 1 const myButton = Button.create(app, {label: 'Save'});
+ 2 myButton.dispatch(Button.Action.CLICK);
+ Dispatch click action with a payload
+ 1 const myButton = Button.create(app, {label: 'Save'});
+ 2 // Trigger the action with a payload
+ 3 myButton.dispatch(Button.Action.CLICK, {message: 'Saved'});
+ 4
+ 5 // Subscribe to the action and read the payload
+ 6 myButton.subscribe(Button.Action.CLICK, data => {
+ 7
+    // data = { payload: { message: 'Saved'} }
+ 8
+    console.log(`Received ${data.payload.message} message`);
+ 9 });
+ Attach buttons to a modal
+ You can attach buttons to other actions such as modals. To learn more about modals, see Modal.
+ 1 const okButton = Button.create(app, {label: 'Ok'});
+ 2 const cancelButton = Button.create(app, {label: 'Cancel'});
+ 3 const modalOptions = {
+ 4
+    title: 'My Modal',
+ 5
+    message: 'Hello world!',
+ 6
+    footer: {primary: okButton, secondary: [cancelButton]},
+ 7 };
+ 8
+ 9 const myModal = Modal.create(app, modalOptions);
+ Button style
+ You can change the style of the button by passing the style property. Buttons support a single alternate style, the Danger style:
+ 1 const myButton = Button.create(app, {label: 'Delete', style: Button.Style.Danger});
+ Update options
+ You can call the set method with partial button options to update the options of an existing button. This automatically triggers the update action on the button and merges the new given options with existing options:
+ 1 const myButton = Button.create(app, {label: 'Save'});
+ 2 myButton.set({disabled: true});
+ Unsubscribe
+ You call unsubscribe to remove all current subscriptions on the button:
+ 1 const myButton = Button.create(app, {label: 'Save'});
+ 2 myButton.subscribe(Button.Action.CLICK, data => {
+ 3
+    // Do something with the click event
+ 4 });
+ 5
+ 6 myButton.unsubscribe();
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Create a button
+ Subscribe to click action
+ Dispatch click action
+ Dispatch click action with a payload
+ Attach buttons to a modal
+ Button style
+ Update options
+ Unsubscribe
+ Updates & News
+ Developer changelog

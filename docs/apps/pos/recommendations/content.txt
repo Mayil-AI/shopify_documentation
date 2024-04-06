@@ -1,0 +1,200 @@
+App Store
+ Product recommendations extension
+ You can add the Shopify Point of Sale (POS) product recommendations extension to your app so that users can quickly and easily access product recommendations from within Shopify POS.
+ Product recommendations are displayed in the smart grid after a product or customer is added to a cart. Recommendations can also be accessed when viewing a customer profile or product details.
+ Requirements
+ You've created a development store.
+ You've created an app in the Partner Dashboard or using Shopify CLI.
+ You've embedded your app in Shopify POS.
+ Configure the app extension
+ You can configure the POS product recommendations extension from your Partner Dashboard.
+ Go to your Partner Dashboard.
+ In the sidebar, click Apps.
+ Click the app name.
+ Click Extensions.
+ Under Point of Sale, click the Product recommendations card.
+ Enter the URL path that will be used to build your POS product recommendations extension endpoints.
+ Click Save.
+ Create and release a new app version to make this extension available to users. You need to release a new app version whenever you update the extension configuration in the Partner Dashboard.
+ For example, if your app's base URL is https://myapp.com and your URL path is pos-extension-api, then the extension uses the following endpoints:
+ https://myapp.com/pos-extension-api/recommendations
+ https://myapp.com/pos-extension-api/recommendations_shown
+ https://myapp.com/pos-extension-api/action_taken
+ Note
+ After you enable this extension for your production app, all of the Shopify POS users who have your app installed see the new UI card in the customer profile and product details screen. They can also add it to their POS smart grid. If your app isn't returning any recommendations, then the user will see the message No recommendations available in the card. There's no way to hide the card if the app extension is enabled.
+ Create the endpoints
+ Before your app can communicate with Shopify through the app extension, you need to host standardized API endpoints on your app's primary domain. These endpoints are called when Shopify POS performs a related action.
+ Endpoint requirements
+ The following table shows the requirements for the POS product recommendations app extension:
+ rule/concern type/requirement
+ API format REST
+ Request Method POST
+ Content type JSON
+ Security mechanism Session token. The session token is provided in an AUTHORIZATION header on every request. The token allows you to verify that the request came from Shopify and provides you with the domain of the shop that's making the request.
+ Protocol HTTPS (app domain requires valid SSL certificate)
+ Responding to requests
+ All requests to the recommendations endpoint must respond within three seconds, otherwise Shopify will timeout the call and return an error to the user. This is to stop the Shopify POS experience from being slow.
+ Base endpoint
+ Your app needs to support three API endpoint calls for the POS cart app extension. To do this, you need to provide a path segment that is appended to the app's base URL to form the complete URL called by Shopify. You can add the path segment by configuring the app extension from your Partner Dashboard.
+ App extension architecture
+ The POS product recommendations extension is based on the following three endpoints:
+ recommendations
+ recommendations_shown
+ action_taken
+ See the POS product recommendation extension endpoints for more information about all of the following endpoints.
+ The recommendations endpoint
+ Shopify POS sends a request to your app's recommendations endpoint in response to the following actions:
+ The POS user adds a product to the cart.
+ The customer on the cart changes.
+ The POS user views the details of a product.
+ The POS user views a customer profile.
+ The request contains the supported templates that your app can use when returning data to Shopify. Your app's response includes the template you choose and the required data to populate that template in Shopify POS. A request to the recommendation endpoint doesn't mean that the recommendations are displayed to the user. The recommendations_shown request is sent to notify you of that event.
+ The following is an example request to the recommendations endpoint:
+ 1 {
+ 2
+    "request_uuid": "b6fb9cf1-92fd-4ef5-888e-cfe5fb795d75",
+ 3
+    "surface": "cart",
+ 4
+    "customer_id": 1234,
+ 5
+    "elements": [
+ 6
+      {
+ 7
+        "product_id": 456,
+ 8
+        "variant_id": null
+ 9
+      },
+ 10
+      {
+ 11
+        "product_id": 789,
+ 12
+        "variant_id": 333
+ 13
+      },
+ 14
+    ],
+ 15
+    "supported_templates": ["grouped_product_variant_list"],
+ 16
+    "locale": "en-us"
+ 17 }
+ The following is an example response, which includes the chosen template type and a list of products or variants grouped with custom titles. The response provides recommendations under a "Frequently bought together" group and a "Related products" group. The titles of these groups can be set to whatever you choose.
+ 1 {
+ 2
+    "template": "grouped_product_variant_list",
+ 3
+    "title": "3 recommended products",
+ 4
+    "groups": [
+ 5
+      {
+ 6
+        "title": "Frequently bought together",
+ 7
+        "elements": [
+ 8
+          {
+ 9
+            "product_id": 999,
+ 10
+            "variant_id": null
+ 11
+          },
+ 12
+          {
+ 13
+            "product_id": 987,
+ 14
+            "variant_id": 444
+ 15
+          }
+ 16
+        ]
+ 17
+      },
+ 18
+      {
+ 19
+        "title": "Related products",
+ 20
+        "elements": [
+ 21
+          {
+ 22
+            "product_id": 654,
+ 23
+            "variant_id": null
+ 24
+          }
+ 25
+        ]
+ 26
+      }
+ 27
+    ]
+ 28 }
+ The following example shows how the returned response renders:
+ Caution
+ It's important that your app returns status code 200 from the recommendations request so that an error doesn't appear in the POS UI. If your app doesn't recognize the customer_id, product_id or variant_id, or if there are no recommendations available for any other reason, then return status code 200 with an empty array for groups.
+ The recommendations_shown endpoint
+ Shopify POS sends a request to your app's recommendations_shown endpoint when the POS user taps on the recommendations tile on the smart grid, customer profile, or product details.
+ This request corresponds to the full list of recommendations being shown to the POS user:
+ Note
+ Shopify POS will make a best effort to notify your app of these actions. However, because there's no guarantee that a user performs these actions in a reasonable timeframe, it's possible that you won't be notified of these actions even if they occur.
+ The request contains the same request_uuid value that was sent with the original request to your recommendations endpoint.
+ The following is an example request to the recommendations_shown endpoint:
+ 1 {
+ 2
+    "request_uuid": "b6fb9cf1-92fd-4ef5-888e-cfe5fb795d75",
+ 3 }
+ There's no need for you to provide a response to this request. Its purpose is to let you know if and when your recommendations are shown to the POS user.
+ The action_taken endpoint
+ Shopify POS sends a request to your app's action_taken endpoint if a POS user adds one of your recommended products to a cart, and also if that cart results in a completed sale.
+ Note
+ Shopify POS will make a best effort to notify your app of these actions. However, because there's no guarantee that a user performs these actions in a reasonable timeframe, it's possible that you won't be notified of these actions even if they occur.
+ The request contains the same request_uuid value that was sent to your recommendations endpoint with the original request. It also contains an action field to indicate that Shopify POS is notifying you of a product being added to cart or that a recommended product was sold.
+ The following is an example request to the action_taken endpoint:
+ 1 {
+ 2
+    "request_uuid": "b6fb9cf1-92fd-4ef5-888e-cfe5fb795d75",
+ 3
+    "action": "added_to_cart",
+ 4
+    "elements": [
+ 5
+      {
+ 6
+        "product_id": 987,
+ 7
+        "variant_id": 444,
+ 8
+      }
+ 9
+    ]
+ 10 }
+ The following is another example of this request indicating a recommended product being sold:
+ 1 {
+ 2
+    "request_uuid": "b6fb9cf1-92fd-4ef5-888e-cfe5fb795d75",
+ 3
+    "action": "order_created",
+ 4
+    "order_id": 654
+ 5 }
+ There's no need for you to provide a response to this request. Its purpose is to let you know if and when your recommended products are added to a cart and sold.
+ Implement verification
+ To verify that app extension requests have come from Shopify, validate the session token that's provided in the AUTHORIZATION header on every request. To learn more, refer to Getting started with session token authentication.
+ Next steps
+ Learn about the fields that Shopify sends to your app for each of the POS product recommendations app extension endpoint calls, including the response fields and possible values for the templates and actions that your app sends to Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Configure the app extension
+ Create the endpoints
+ App extension architecture
+ Implement verification

@@ -1,0 +1,130 @@
+Display custom data at checkout
+ Checkout UI extensions can read and display custom data that's stored in metafields. For example, in this guide you'll learn how to read watering instructions for plants and display that data next to the plant in the order summary at checkout. Learn from an end-to-end example here, and you can use what you've learned to display other types of metafield data at other checkout UI extension targets.
+ Follow along with this tutorial to build a sample app, or clone the completed sample app.
+ Shopify Plus
+ Checkout UI extensions are available only to Shopify Plus merchants.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following:
+ Add custom data to products using a metafield
+ Generate a checkout UI extension that appears in the checkout flow using Shopify CLI
+ Set up configurations for your checkout UI extension in the extension TOML file
+ Render metadata next to products at checkout
+ Deploy your extension code to Shopify
+ Requirements
+ Create a Partner account
+ Create a development store
+ The development store must use the Checkout and Customer Accounts Extensibility developer preview, and should be pre-populated with test data.
+ Create an app
+ Create an app that uses Shopify CLI. This tutorial is compatible with the extension-only template.
+ Project
+ Extension:
+ React
+ React
+ View on GitHub
+ Create a metafield for a product
+ In the Shopify admin, define a metafield and add data to it.
+ Add a metafield definition
+ Add a metafield for the product. For this tutorial, set the Name and the Namespace and key with the following values:
+ Name: Watering instructions
+ Namespace and key: The namespace is instructions and the key is watering, entered as instructions.watering.
+ Set the Type as Single line text.
+ Add metafield data
+ Select a product.
+ Under Product metafields, in the text field for the metafield definition that you added, enter the data that you want to display in the checkout UI extension. For example, "Average water needed".
+ Click Save.
+ Repeat these steps for another product, and add different data. For example, "Very little water needed".
+ Create a checkout UI extension
+ To create a checkout UI extension, you'll use Shopify CLI, which generates starter code for building your extension.
+ Create the extension
+ Navigate to your app directory.
+ Run one of the following commands to create a new extension:
+ npm
+ Yarn
+ pnpm
+ >
+ npm run shopify app generate extension
+ Select Checkout UI as the extension type, and then provide a name for your extension.
+ Select a language for your extension. The example code in this tutorial uses JavaScript React.
+ You now have a new directory for your app under <app-name> > extensions. The extension directory includes the extension script at src > Checkout.jsx.
+ Set up an extension target
+ Set up a target for your checkout UI extension. Targets control where your extension renders in the checkout flow.
+ Export the target from your script file
+ In your Checkout.jsx file, set the entrypoint for the checkout extension, and then export it so that it can be referenced in your configuration.
+ Create a reactExtension function that references your target, and export it using the default export.
+ This extension uses the purchase.checkout.cart-line-item.render-after target, to display the custom data after the product.
+ reactExtension
+ purchase.checkout.cart-line-item.render-after
+ Reference the target in your configuration file
+ In your checkout UI extension's configuration file, create an [[extensions.targeting]] section with the following information:
+ target - An identifier that specifies where you're injecting code into Shopify. This needs to match the target that you exported from your Checkout.jsx file.
+ module - The path to the file that contains the extension code.
+ shopify.extension.toml is the configuration file for your extension. It contains basic information and settings.
+ Info
+ Whenever you edit your extension configuration file, you need to restart your server for the changes to take effect.
+ Reference the metafield in the configuration file
+ In your checkout UI extension's configuration file, reference the metafield definition so that the extension code in your Checkout.jsx file can read it.
+ Add the metafield definition to the extension TOML
+ Create an [[extensions.metafields]] section with the metafield namespace and key. This needs to match the metafield definition that you created in the Shopify admin.
+ Render the extension
+ Import checkout UI extension resources to render the extension and the metadata in the checkout UI.
+ Import the following checkout UI extension resources to render the extension:
+ useCartLines: Return the current line item for the checkout.
+ Text: Provide semantic value to the text that you're rendering.
+ useAppMetafields: Return the metafield data for the product.
+ useCartLines
+ Text
+ useAppMetafields
+ Preview the extension
+ Preview your extension to make sure that it works as expected.
+ Start your server
+ Run the Shopify CLI dev command to build your app and preview it on your development store.
+ In a terminal, navigate to your app directory.
+ Either start or restart your server to build and preview your app:
+ npm
+ Yarn
+ pnpm
+ >
+ npm run dev
+ Make sure that you select a development store that has the Checkout and Customer Accounts Extensibility developer preview enabled.
+ Press p to open the developer console.
+ In the developer console page, click on the preview link for the custom field extension.
+ Troubleshooting
+ Deploy the extension
+ When you're ready, you can deploy your extension to Shopify.
+ Deploy and release your extension
+ To release your changes to users, create and release an app version. You can have up to 50 checkout UI extensions in an app version.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ npm
+ Yarn
+ pnpm
+ >
+ npm run deploy
+ An app version created using Shopify CLI contains the following:
+ The app configuration from the local configuration file. If the include_config_on_deploy flag is omittted or false, the configuration from the active app version is used instead.
+ The local version of the app's CLI-managed extensions. If you have an extension in your deployed app, but the extension code doesn't exist locally, then the extension isn't included in your app version.
+ The latest drafts of dashboard-managed extensions.
+ Releasing an app version replaces the current active version that's served to stores with your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but want to avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Was this page helpful?
+ YesNo
+ 1
+ 
+ Tutorial complete!
+ Nice work - what you just built could be used by Shopify merchants around the world! Keep the momentum going with these related tutorials and resources.
+ Next steps
+ Learn more about metafields
+ Learn more about adding and storing additional information about Shopify resources.
+ Localize your extension
+ Learn how to localize text and number formats in your extension.
+ Explore the checkout UI extension component reference
+ Learn about the components that you can use in your checkout UI extension.
+ Explore the checkout UI extension targets API reference
+ Learn about the extension targets that are offered in the checkout.
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

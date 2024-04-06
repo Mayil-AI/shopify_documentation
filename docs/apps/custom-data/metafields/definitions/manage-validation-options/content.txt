@@ -1,0 +1,235 @@
+Manage metafield definitions
+ Create an automated collection with metafields
+ Validation options
+ Overview
+ Manage validation options
+ App-data metafields
+ Private metafields
+ Migrate private metafields
+ Migrate metafields
+ Metaobjects
+ Manage validation options
+ Validation options enable you to apply additional constraints to the data that a metafield can store, such as a minimum or maximum value, or a regular expression. This guide shows you how to manage validation options using the GraphQL Admin API.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ You're using the GraphQL Admin API version 2021-10 or higher.
+ Your app has access to the namespace and the owner type associated with the metafield definition.
+ Step 1: Retrieve a list of supported validation options
+ The following example query returns the full list of supported validations for each type from the GraphQL Admin API:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 query MetafieldDefinitionTypes {
+ 2
+    metafieldDefinitionTypes {
+ 3
+      name
+ 4
+      supportedValidations {
+ 5
+        name
+ 6
+        type
+ Note
+ For an example query response that shows the complete list of types and supported validations, refer to the GraphQL reference documentation.
+ Step 2: Create a metafield definition with validation options
+ The following example creates a metafield definition called Pizza size with validation for the metafield to have a minimum size of 9 inches and a maximum size of 15 inches:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+        namespace
+ 7
+        key
+ 8
+        # add other return fields
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+        code
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Pizza size",
+ 4
+      "namespace": "bakery",
+ 5
+      "key": "pizza_size",
+ 6
+      "type": "dimension",
+ 7
+      "description": "The size (diameter) of the pizza in inches.",
+ 8
+      "validations": [
+ 9
+        {
+ 10
+          "name": "min",
+ 11
+          "value": "{\"unit\": \"INCHES\", \"value\": \"9\"}"
+ 12
+        },
+ 13
+        {
+ 14
+          "name": "max",
+ 15
+          "value": "{\"unit\": \"INCHES\", \"value\": \"15\"}"
+ 16
+        }
+ 17
+      ],
+ 18
+      "ownerType": "PRODUCT"
+ 19
+    }
+ 20 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456109",
+ 5
+        "name": "Pizza size",
+ 6
+        "namespace": "bakery",
+ 7
+        "key": "pizza_size"
+ 8
+      },
+ 9
+      "userErrors": []
+ 10
+    }
+ 11 }
+ Step 3 (Optional): Use regular expressions for validation options
+ For certain definition types, you can add a regular expression as a validation option. Shopify supports RE2 syntax for regular expressions.
+ The following example creates a metafield definition called Email with the type single_line_text_field and adds a validation option to confirm that the value of the metafield contains the @ symbol with at least one character after it:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        validations {
+ 6
+          name
+ 7
+          type
+ 8
+          value
+ 9
+        }
+ 10
+        # add other return fields
+ 11
+      }
+ 12
+      userErrors {
+ 13
+        field
+ 14
+        message
+ 15
+        code
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Email",
+ 4
+      "key": "email",
+ 5
+      "type": "single_line_text_field",
+ 6
+      "namespace": "newsletter",
+ 7
+      "ownerType": "CUSTOMER",
+ 8
+      "validations": [
+ 9
+        {
+ 10
+          "name": "regex",
+ 11
+          "value": "(@)(.+)$"
+ 12
+        }
+ 13
+      ]
+ 14
+    }
+ 15 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "metafieldDefinitionCreate": {
+ 4
+        "createdDefinition": {
+ 5
+          "id": "gid://shopify/MetafieldDefinition/115736632",
+ 6
+          "validations": [
+ 7
+            {
+ 8
+              "name": "regex",
+ 9
+              "type": "single_line_text_field",
+ 10
+              "value": "(@)(.+)$"
+ 11
+            }
+ 12
+          ]
+ 13
+        },
+ 14
+        "userErrors": []
+ 15
+      }
+ 16
+    }
+ 17 }
+ Next steps
+ Learn about the supported validation options for metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve a list of supported validation options
+ Step 2: Create a metafield definition with validation options
+ Step 3 (Optional): Use regular expressions for validation options
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

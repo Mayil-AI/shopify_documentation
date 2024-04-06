@@ -1,0 +1,40 @@
+Billing
+ App Store
+ Order status page
+ Note
+ Order action menu extensions are shared between the Order index and Order status pages, which enables customers to manage their order from either page.
+ The Order status page serves as a centralized hub where customers can access all the details related to their order and stay updated on its progress. Customers can reach this page by clicking on a specific order in the Order index page or through the link provided in default order notifications.
+ Customers frequently monitor their order statuses, so the page is an important surface that provides many opportunities for developers to build new functionality to support customer needs.
+ Shared extensions
+ The following targets on the Order status page can be deployed to live merchant shops, while the rest of the targets on the Order status page will remain in developer preview:
+ customer-account.order-status.block.render
+ customer-account.order-status.customer-information.render-after
+ customer-account.order-status.cart-line-item.render-after
+ customer-account.order-status.cart-line-list.render-after
+ Authentication states
+ The Order status page supports the following authentication states:
+ Unauthenticated Order status page
+ Unlike the other pages in customer accounts, the Order status page doesn’t require authentication. It can be accessed by anyone who has a direct link.
+ When customers directly access the page, only public order data like items in the cart, order status, and order total displays. Sensitive and personally identifiable information doesn't display. Because the Order status page is fully public, it doesn't support extensions. This measure helps avoid exposing sensitive information or actions.
+ The Order status page supports customer account extensions without full customer authentication. However, extensions can only perform actions that relate to a specific order.
+ Pre-authenticated Order status page
+ If you're building an app that directs customer to the pre-authenticated Order status page, then you need to obtain level 2 permission for protected customer data.
+ To protect customer data, the Order status page also supports authentication.
+ Most customers use the pre-authenticated Order status page after checkout to monitor their order and access post-purchase actions. Customers can access their order status page from their order confirmation email for 3 weeks without logging in, when using the same browser session. When using different browser sessions, customers can access their order status page for 2 weeks without logging in, across a maximum of 5 different browser sessions. If the limit is exceeded, then the customer needs to log in.
+ When customers access the Order status page from an order confirmation email, the URL includes a token. This token provides partial authentication, which allows customers to view all data related to that order. Customers can't access data from other orders, including the customer information that's associated with the order. Extensions shouldn't expose any data or actions outside the scope of the order that the customer is viewing.
+ Caution
+ If you are building an app that directs customer to the pre-authenticated Order status page, then you need to obtain level 2 permission for protected customer data.
+ If the customer tries to navigate to another page in their account, or tries to take an action, then they're prompted to log in. After they've logged in, the fully authenticated Order status page displays.
+ API access
+ buyerIdentity.customer.id is only exposed to extensions when the customer is logged in. This means that in the pre-authenticated state, you can't retrieve the customer's ID. This ensures that the data that extensions provide on this page is relevant only to the specific order being viewed.
+ Fully authenticated Order status page
+ Customers are considered fully authenticated when they have a valid authentication session. This authentication state has no restrictions or limitations for UI extensions.
+ Limitations
+ Extensions on the pre-authenticated Order status page can't currently query the Customer Account API using fetch. In the future, extensions will be able to query the current order using the API.
+ Extensions can't determine the authentication state of the Order status page, which prevents you from adjusting API queries and mutations based on whether the customer is fully logged in. We'll add support for this in the future.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Shared extensions
+ Authentication states
+ Limitations

@@ -1,0 +1,145 @@
+Billing cycles
+ Orders
+ Fulfillments
+ Overview
+ Manage fulfillments
+ Migrate to the Subscriptions API
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Fulfillment for prepaid subscriptions
+ A prepaid subscription is a subscription type through which customers can pay up front for a product that's delivered on regular intervals. For example, a customer might purchase a three-month prepaid subscription for coffee bags in which they pay immediately but receive three separate shipments of coffee bags over the duration of the subscription.
+ This guide describes how prepaid subscriptions work and some considerations for managing fulfillments for prepaid subscriptions.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the merchant_managed_fulfillment_orders and third_party_fulfillment_orders access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You're familiar with selling plans, subscription contracts, and the use and setup of delivery anchors.
+ You're familiar with managing fulfillments as an order management app.
+ Prepaid subscription components
+ When a customer purchases a prepaid subscription from a merchant, a subscription contract and an order are created. The order contains multiple fulfillment orders which are scheduled to be fulfilled at a later time. This enables support for prepaid subscription scenarios, where a customer wants to pay up front for a product that's delivered using billing and delivery intervals.
+ The scheduled fulfillment dates on the fulfillment orders are determined based on the delivery anchors that are set up on the selling plan's sellingPlanRecurringDeliveryPolicy, as well as the originTime that's provided during subsequent billing attempts.
+ API object Description
+ SubscriptionContract A subscription contract is the agreement between a customer and a merchant for recurring purchases over a set or undefined period of time. When a buyer purchases a prepaid subscription from a merchant, a subscription contract and an order are created.
+ Order The order contains all the items that will be sent out for the duration of the prepaid subscription. The order has multiple associated fulfillment orders that are scheduled to be fulfilled at a later time, based on the delivery anchor, interval, and interval count set on the sellingPlanRecurringDeliveryPolicy. This enables payment and sold goods to be kept in the same order, supporting accurate reporting in Shopify.
+ LineItem A single line in a shopping cart. After a customer completes checkout for a prepaid subscription, the order contains the line items to be sent for the duration of the prepaid subscription.
+ FulfillmentOrder A unit of work (for example, line items) that is grouped together for fulfillment based on location, fulfillment service, delivery method, and delivery profile.
+ Example lifecycle
+ The follow image describes an example lifecycle for a prepaid subscription:
+ The customer begins checkout. The checkout line item is a three-month prepaid subscription of coffee bags and the quantity is one.
+ The customer completes the checkout. Both a subscription contract and an order are created. The order line item is coffee bags and the quantity is three.
+ Three fulfillment orders in a SCHEDULED state are created and associated with the order. The fulfillment orders have the following fulfillAt dates:
+ Fulfillment order 1: Jan 15
+ Fulfillment order 2: Feb 15
+ Fulfillment order 3: Mar 15
+ When the fulfillAt date for each fulfillment order is reached, inventory is committed and the fulfillment order is transitioned to the OPEN state, marking the items in that fulfillment order as fulfillable.
+ On Jan 15, the first fulfillment order transitions to an OPEN state, indicating that fulfillment should begin for the item. Only the items that are meant to be fulfilled on January 15 are ready for fulfillment, whereas the remaining items are shown as scheduled:
+ Caution
+ Apps should be aware that SCHEDULED fulfillment orders aren't included in the calculation of the order lineItem.fulfillableQuantity. In this example lifecycle, before January 15 lineItem.fulfillableQuantity is 0, and after January 15 it changes to 1. After the item is fulfilled the value returns to 0. Shopify recommends using fulfillmentOrderLineItem.remainingQuantity to determine remaining quantities to fulfill.
+ Line item quantities for checkouts and orders
+ A subscription appears as one line item on the checkout. However, the line item quantity on the corresponding order represents the interval count of the subscription billing policy. For example, if a customer buys a three-month subscription of coffee beans, then the checkout line item quantity is 1 and order line item quantity is 3.
+ Fulfillment scheduling and statuses
+ The fulfillAt attribute of a fulfillment order represents when the merchant should start fulfilling the items in the fulfillment order. The attribute also contributes to the grouping of line items for fulfillment orders with the SCHEDULED status, along with location, fulfillment service, delivery method, and delivery profile.
+ For fulfillment orders that are assigned to a third-party fulfillment service, the fulfillAt attribute represents when the merchant should request fulfillment from the fulfillment service.
+ The SCHEDULED status of fulfillmentOrderStatus represents the state of fulfillment orders that are created with a future fulfillAt date. The order's displayFulfillmentStatus is SCHEDULED only when all associated fulfillment orders are in a SCHEDULED state.
+ Caution
+ All cycles for a pre-paid subscription contract which has been billed apply to a single order. To make edits to these cycles, you need to use the Order and FulfillmentOrder resources. Changes to fulfillment orders aren't automatically reflected on subscription contracts, and changes to subscription contracts don't automatically update existing fulfillment orders. Changes to the subscription contract are reflected only on new orders that are generated from the changed subscription contract.
+ Learn more about keeping orders and subscription contracts in sync for prepaid subscriptions.
+ Contract renewals
+ When a pre-paid subscription contract is up for renewal, apps need to trigger a billing attempt using the subscriptionBillingAttemptCreate mutation. The customer is then billed and a new order is generated for the new billing cycles.
+ Refunds
+ A customer might request a refund for one or more scheduled fulfillments. Refunds are supported in the Shopify admin, but you can also support a variety of refund scenarios using the refundCreate mutation.
+ Note
+ You should refund specific line items and quantities rather than refunding custom dollar amounts. Refunding custom amounts negatively impacts merchant sales reporting.
+ How refunds work
+ Caution
+ When you refund fulfillment orders, it doesn't automatically cancel the renewal that's associated with the subscription contract. To cancel the renewal, you also need to update the subscription contract.
+ Refunds are made starting on the last scheduled fulfillment and then working backwards in reverse chronological order.
+ Fulfillment orders with SCHEDULED status are prioritized over those with OPEN status. The fulfillment orders are selected for refund using the value of fulfillAt in descending order.
+ Refer to the Manage fulfillments for prepaid subscriptions tutorial for an example of how refunds apply to scheduled fulfillments.
+ Webhooks
+ You can subscribe to the refunds/create webhook in case the merchant does a refund on a prepaid subscription order through the Shopify admin or another app. In these scenarios, you can use the webhook as a trigger to communicate with the merchant that they might want to also cancel the associated subscription contract.
+ Advanced fulfillment scenarios
+ Customers might add a combination of prepaid subscriptions, subscribe-and-save subscriptions, and non-subscription (one-time purchase) items to their cart. This section describes how fulfillment orders are created for some example scenarios.
+ For these example scenarios, the test shop has only one location, one manual fulfillment service, one delivery profile, and one delivery method.
+ Multiple prepaid subscriptions
+ A customer might add multiple prepaid subscription items to their order.
+ In this example, a customer orders the following items on Jan 10:
+ A three-month prepaid subscription for coffee filters
+ A three-month prepaid subscription for coffee bags
+ If the subscriptions have different anchor dates, then the order is created with separate fulfillment orders for each line item. The following image shows the fulfillment orders for subscriptions with different anchor dates on the 15th and 17th of each month:
+ If the subscriptions share the same anchor date, then the fulfillment orders are combined for each billing cycle. The following image shows the fulfillment orders for each subscription with shared anchor dates on the 15th of each month:
+ Prepaid subscription with non-subscription items
+ A customer might purchase a prepaid subscription item with a non-subscription (one-time purchase) item at the same time. The resulting order contains both of the purchased items.
+ In this example, the customer orders the following items on Jan 10:
+ A three-month prepaid subscription for coffee bags
+ A one-time purchase for a Seiko Coffee Machine
+ Because the Seiko Coffee Machine can be fulfilled immediately, four fulfillment orders are generated:
+ However, if the customer orders these items on the anchor date, then the one-time purchase is added to the same fulfillment order as the first cycle for the prepaid subscription. The following image shows that only three fulfillment orders are generated for this scenario:
+ Prepaid subscription with pay-per-delivery subscription items
+ A customer might purchase a prepaid subscription item with a subscribe-and-save subscription item at the same time. This creates two subscription contracts: one for the prepaid subscription and one for the subscribe-and-save subscription.
+ The first generated order includes all cycles of the prepaid item and only the first cycle of the subscribe-and-save item.
+ In this example, the customer orders the following items on Jan 10:
+ A three-month prepaid subscription for coffee bags with an anchor date on the 15th of each month
+ A subscribe-and-save subscription for coffee filters with billing and fulfillment anchor dates on the 12th of each month
+ The first order with ID 444 is generated on Jan 10 and has the following fulfillment orders:
+ The statuses on these fulfillment orders change on the anchor dates. The following diagram shows when the fulfillment status changes and inventory is committed for this first order:
+ On Feb 15, the fulfillment order for coffee bags on the prepaid subscription for the first order transitions to an OPEN status.
+ On Feb 12, a new order with ID 555 is generated for the subscribe-and-save subscription after a successful billing attempt. The inventory is committed upon order creation and the fulfillment order is created with an OPEN status.
+ Webhooks
+ In API version 2023-01 and higher, your app can subscribe to webhooks for event notifications related to fulfillment orders. The following examples show the JSON responses from each of the available webhooks.
+ To learn how to set up and consume webhooks, refer to Webhooks configuration overview.
+ Example webhook responses
+ fulfillment_orders/order_routing_complete
+ fulfillment_orders/fulfillment_request_submitted
+ fulfillment_orders/fulfillment_request_accepted
+ fulfillment_orders/fulfillment_request_rejected
+ fulfillment_orders/placed_on_hold
+ fulfillment_orders/hold_released
+ fulfillment_orders/scheduled_fulfillment_order_ready
+ fulfilment_orders/rescheduled
+ fulfillment_orders/cancellation_request_submitted
+ fulfillment_orders/cancellation_request_accepted
+ fulfillment_orders/cancellation_request_rejected
+ fulfillment_orders/cancelled
+ fulfillment_orders/fulfillment_service_failed_to_complete
+ 1 // Occurs when a fulfillment order is created and the order routing has been completed for the order
+ 2 {
+ 3
+   "fulfillment_order": {
+ 4
+     "id": "gid://shopify/FulfillmentOrder/1",
+ 5
+     "status": "open",
+ 6
+   }
+ 7 }
+ Fulfillment order display on legacy clients
+ Legacy mobile clients
+ For mobile clients (version 8.75.0 or older), scheduled fulfillment orders are hidden from the mobile UI. After a scheduled fulfillment order’s fulfillAt date expires and it transitions to an OPEN state, it becomes visible in the UI.
+ This means that scheduled fulfillment orders can't be manually marked as OPEN in advance of their fulfillAt date on legacy mobile clients.
+ Legacy POS clients
+ POS Classic (Android & iOS) doesn't show the fulfillment statuses of scheduled orders.
+ For the all-new POS (iOS version 6.19 and older), fulfillment status isn't exposed for scheduled orders. Products that are sold as subscription-only aren't displayed in the product catalogue on POS. If an app adds a subscription-only product to the cart, then an error is raised.
+ Next steps
+ Learn how to manage fulfillments for prepaid subscriptions, including how to manually open fulfillment orders, skip and reschedule fulfillment orders, and refund scheduled fulfillments.
+ Learn how to manage orders for prepaid subscriptions by keeping subscription contract and order information in sync.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Prepaid subscription components
+ Example lifecycle
+ Line item quantities for checkouts and orders
+ Fulfillment scheduling and statuses
+ Contract renewals
+ Refunds
+ Advanced fulfillment scenarios
+ Webhooks
+ Fulfillment order display on legacy clients
+ Next steps
+ Updates & News

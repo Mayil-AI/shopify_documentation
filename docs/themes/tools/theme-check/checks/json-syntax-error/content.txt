@@ -1,0 +1,40 @@
+Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ JSONSyntaxError
+ Identifies invalid JSON files in themes.
+ Examples
+ The following examples contain code snippets that either fail or pass this check.
+ ✗ Fail
+ 1 {
+ 2
+    "comma": "trailing",
+ 3 }
+ 1 {
+ 2
+    "quotes": 'These are single quotes'
+ 3 }
+ ✓ Pass
+ 1 {
+ 2
+    "comma": "not trailing"
+ 3 }
+ 1 {
+ 2
+    "quotes": "This value uses double quotes"
+ 3 }
+ Disabling this check
+ Disabling this check isn't recommended.
+ Aliases
+ For backward compatibility with configuration files made for Theme Check v1.X.X, this check is also recognized in configuration files with the following names:
+ ValidJson
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Examples
+ Disabling this check
+ Aliases
+ Updates & News
+ Developer changelog
+ Partner blog

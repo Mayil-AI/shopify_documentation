@@ -1,0 +1,90 @@
+Hydrogen CLI
+ Analytics
+ Overview
+ Track page views
+ Track cart events
+ Cart
+ Content security policy
+ Data fetching
+ Caching
+ Markets
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Analytics with Hydrogen and Oxygen
+ Hydrogen provides recommended patterns for collecting and transmitting website metrics to Shopify analytics, which enables you to view metrics in real time, directly in the Shopify admin.
+ Requirements
+ You've completed the Hydrogen Getting Started guide and have a working storefront.
+ Set up Shopify analytics
+ The two most common metrics for tracking online commerce performance are page views and cart events.
+ Track page views with Hydrogen
+ Set up your Hydrogen app to collect page view analytics and send the data to Shopify.
+ Track cart events with Hydrogen
+ Set up your Hydrogen app to collect events like add-to-cart actions and send the data to Shopify.
+ Validate that analytics are working
+ To check that analytics data is being sent to Shopify analytics as expected, inspect your Hydrogen app's requests in your browser's developer tools network tab, and filter for the monorail-edge.shopifysvc.com endpoint.
+ Requests to this endpoint return an HTTP response status code of 200 OK or 207 Multi-Status.
+ A 200 status code means the data upload succeeded as expected.
+ A 207 status code means there are errors in the request payload. Any related error messages are returned as part of the response. When running your app in development mode, error messages output to the browser console.
+ Shopify Live View
+ To ensure your Hydrogen storefront analytics are compatible with Shopify Live View, make your app meets the following requirements:
+ Shopify cookies need be set up properly, using Hydrogen’s useShopifyCookies hook.
+ Your app's Storefront API token must be created and managed through the Hydrogen sales channel. Tokens created with other channels won't work.
+ For add-to-cart analytics events, the referring URL can't be localhost or an Oxygen preview environment URL ending in myshopify.dev.
+ The storefrontHeaders prop for createStorefrontClient must be defined:
+ File
+ JavaScript
+ TypeScript
+ /server.jsx
+ 1 import {getStorefrontHeaders} from '@shopify/remix-oxygen';
+ 2
+    //...
+ 3
+    const {storefront} = createStorefrontClient({
+ 4
+      cache,
+ 5
+      waitUntil,
+ 6
+      i18n: getLocaleFromRequest(request),
+ 7
+      publicStorefrontToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+ 8
+      privateStorefrontToken: env.PRIVATE_STOREFRONT_API_TOKEN,
+ 9
+      storeDomain: env.PUBLIC_STORE_DOMAIN,
+ 10
+      storefrontId: env.PUBLIC_STOREFRONT_ID,
+ 11
+      // Use the header utility built into Hydrogen's Remix adapter:
+ 12
+      storefrontHeaders: getStorefrontHeaders(request),
+ 13
+    });
+ Analytics across subdomains
+ Depending how you've set up your Hydrogen app, it's possible that the Hydrogen app is hosted on a different subdomain than the checkout. For example:
+ Hydrogen app: my-shop.com
+ Online Store checkout: checkout.my-shop.com
+ To ensure that Shopify analytics are working properly across subdomains, do the following:
+ Clear the cookies for the page.
+ Navigate to a page on Hydrogen app and note the cookie values and cookie domain for the _shopify_y and _shopify_s cookies.
+ Navigate to the checkout and make sure the cookie values for _shopify_y and _shopify_s are exactly the same. You might see multiple cookies with the same name. This isn't a problem as long as the cookies contain the same value.
+ If the cookie value changes when crossing subdomains, then try setting the domain value on useShopifyCookies to your Hydrogen app domain:
+ File
+ JavaScript
+ TypeScript
+ /app/root.jsx
+ 1 import {useShopifyCookies} from '@shopify/hydrogen';
+ 2
+ 3 export default function App() {
+ 4
+    useShopifyCookies({hasUserConsent: true, domain: 'my-shop.com'});
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Set up Shopify analytics
+ Validate that analytics are working
+ Shopify Live View
+ Analytics across subdomains
+ Updates & News

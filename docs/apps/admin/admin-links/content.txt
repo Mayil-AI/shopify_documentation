@@ -1,0 +1,25 @@
+Admin
+ Overview
+ Embedded app home
+ Admin action and block extensions
+ Admin links
+ Overview
+ Getting started
+ Flow
+ Payments
+ Fulfillment
+ App Store
+ Admin links
+ Admin link extensions enable you to insert links into the Shopify admin that take users to the relevant pages of your app. These links display in one of the following locations, depending on their type:
+ Admin links: Display in the More actions drop-down lists at the top of pages.
+ Bulk action links: Display as actions on index tables when a user has selected one or more resources from the table.
+ Navigation links: Display your app's navigation items consistently across devices.
+ These links are useful for directing users to associated, complex workflows in your app. For example, the Shopify Flow app has a link lets you run an automation on any order:
+ When clicked, admin links and bulk action links contain dynamically generated URL parameters that identify the store that launched the action and the resource IDs of the currently selected or displayed resource.
+ Next steps
+ Learn how to configure admin and bulk action links.
+ Learn about admin action and block extensions, which enable your app to create workflows and UX that users can access directly on the page.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

@@ -1,0 +1,75 @@
+Overview
+ GraphQL reference
+ Overview
+ Common objects
+ Overview
+ UNIONS
+ Merchandise
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CollectionMembership
+ Company
+ CompanyContact
+ CompanyLocation
+ Country
+ Customer
+ CustomProduct
+ DeliverableCartLine
+ FulfillmentGroup
+ FulfillmentGroupRankedLocations
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ Localization
+ LocalTime
+ Location
+ LocationAddress
+ MailingAddress
+ Market
+ MarketRegionCountry
+ Metafield
+ MoneyV2
+ Operation
+ OrderRoutingLocationRule
+ Product
+ ProductVariant
+ PurchasingCompany
+ RankedLocation
+ CurrencyCode
+ DeliveryMethod
+ LanguageCode
+ WeightUnit
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Payment Customization API
+ Configuration
+ FulfillmentGroup object
+ 2024-04 latest
+ A group of one or more items to be fulfilled together.
+ On this page
+ Fields
+ Types that return FulfillmentGroup
+ Deprecated fields
+ Fields
+ deliveryAddress (MailingAddress)
+ The delivery address for the fulfillment group.
+ handle (Handle!)
+ The fulfillment group handle.
+ inventoryLocationHandles ([Handle!]!)
+ A list of inventory location handles for the fulfillment group.
+ Types that return FulfillmentGroup
+ Input.fulfillmentGroups
+ Deprecated fields
+ Show/Hide
+ Was this page helpful?
+ YesNo

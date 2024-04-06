@@ -1,0 +1,55 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ End-to-end testing
+ Learn how to run end-to-end tests against your deployment in your CI/CD workflow by creating an authentication bypass token.
+ Step 1: Generate the authentication bypass token
+ Note
+ This guide uses the Hydrogen CLI to deploy code to the Oxygen Platform. This supersedes the previously used shopify/oxygenctl-action command.
+ Generate a Hydrogen deployment token in the Shopify admin.
+ Modify your CI/CD file to include the deploy command.
+ 1 npx shopify hydrogen deploy --auth-bypass-token --token $SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN
+ The command outputs a file named h2_deploy_log.json, which contains the deployment URL and the authentication bypass token that you can feed into your end-to-end testing system. Each token remains valid for two hours.
+ Example GitHub workflow
+ If you're using GitHub workflow files, then edit the deploy step per the following example. If you're using another CI/CD system, then refer to these example workflows.
+ .github/workflows/oxygen-deployment.yml
+ 1 ...
+ 2
+ 3 jobs:
+ 4
+    deploy:
+ 5
+      ...
+ 6
+      steps:
+ 7
+        - name: Build and Publish to Oxygen
+ 8
+          id: deploy
+ 9
+          run:
+ 10
+            - npx shopify hydrogen deploy --auth-bypass-token --token $SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN
+ 11
+ 12
+        - name: Run End-to-end Tests
+ 13
+          run: |
+ 14
+            export AUTH_BYPASS_TOKEN=$(jq -r '.authBypassToken' h2_deploy_log.json)
+ 15
+            export DEPLOYMENT_URL=$(jq -r '.url' h2_deploy_log.json)
+ 16
+            npm run e2e-test
+ Refer to a live example on our Hydrogen demo store.
+ Step 2: Embed the authentication bypass token in the request header
+ Your end-to-end testing system must embed the token within the header before navigating to the deployment URL.
+ 1 oxygen-auth-bypass-token: <auth-bypass-token>
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Generate the authentication bypass token
+ Step 2: Embed the authentication bypass token in the request header
+ Updates & News
+ Developer changelog
+ Partner blog

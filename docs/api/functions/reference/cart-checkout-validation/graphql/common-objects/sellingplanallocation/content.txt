@@ -1,0 +1,20 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ SellingPlanAllocation object
+ 2024-04 latest
+ Represents an association between a variant and a selling plan. Selling plan allocations describe the options offered for each variant, and the price of the variant when purchased with a selling plan.
+ On this page
+ Fields
+ Types that return SellingPlanAllocation
+ Fields
+ priceAdjustments ([SellingPlanAllocationPriceAdjustment!]!)
+ A list of price adjustments, with a maximum of two. When there are two, the first price adjustment goes into effect at the time of purchase, while the second one starts after a certain number of orders. A price adjustment represents how a selling plan affects pricing when a variant is purchased with a selling plan. Prices display in the customer's currency if the shop is configured for it.
+ sellingPlan (SellingPlan!)
+ A representation of how products and variants can be sold and purchased. For example, an individual selling plan could be '6 weeks of prepaid granola, delivered weekly'.
+ Types that return SellingPlanAllocation
+ CartLine.sellingPlanAllocation
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

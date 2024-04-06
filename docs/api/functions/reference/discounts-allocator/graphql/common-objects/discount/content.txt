@@ -1,0 +1,80 @@
+Overview
+ UNIONS
+ Merchandise
+ Value
+ OBJECTS
+ Attribute
+ BuyerIdentity
+ Cart
+ CartCost
+ CartDeliveryGroup
+ CartDeliveryOption
+ CartLine
+ CartLineCost
+ CartLineTarget
+ CollectionMembership
+ CustomProduct
+ DeliverableCartLine
+ Discount
+ DiscountProposal
+ FixedAmount
+ GateConfiguration
+ GateSubject
+ HasTagResponse
+ Language
+ LineDiscount
+ Metafield
+ MoneyV2
+ OutputAllocations
+ Percentage
+ Product
+ ENUMS
+ CountryCode
+ CurrencyCode
+ DeliveryMethod
+ DiscountApplicationStrategy
+ DiscountClass
+ LanguageCode
+ WeightUnit
+ FunctionRunResult
+ Input
+ Scalars
+ Fulfillment Constraints API
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Product subscription app extensions
+ Discount object
+ unstable
+ On this page
+ Fields
+ Types that return Discount
+ Implements
+ Fields
+ code (String)
+ The discount code, for code-based discounts.
+ discountApplicationStrategy (DiscountApplicationStrategy!)
+ The strategy to use when considering discounts proposals.
+ discountClass (DiscountClass!)
+ The class of the discount.
+ discountProposals ([DiscountProposal!]!)
+ Proposals to evaluate as part of this discount.
+ id (ID!)
+ The ID of the discount.
+ metafield (Metafield)
+ Returns a metafield by namespace and key that belongs to the resource.
+ Argument Description
+ key ( String! ) required
+ The key for the metafield.
+ namespace ( String )
+ The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+ title (String!)
+ The discount title.
+ Types that return Discount
+ Input.discounts
+ Implements
+ HasMetafields
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

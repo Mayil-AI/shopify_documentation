@@ -1,0 +1,290 @@
+Distribution
+ Billing
+ App Store
+ Access controls for metafields
+ You can control who has access to the metafields that you own.
+ How it works
+ If you create a metafield definition under a namespace that you own, and you don't specify an access setting for it, then the definition will be private to your app. This means that no other apps can read or write the metafield values under that definition, including the admin UI on behalf of the merchant.
+ If you want merchants to be able to read or edit these values, then you can set admin access to MERCHANT_READ or MERCHANT_READ_WRITE.
+ If you want to allow merchants and other apps to read these values, then you can set admin access to PUBLIC_READ.
+ If you want to allow access to the storefront surface area (Liquid templates and the Storefront API), then you can set storefront access to PUBLIC_READ.
+ Explicit access grants
+ If you want to specify individual apps that can read or write these values, then you can use explicit access grants. This is shown in the third example below. Explicit access grants apply to the Admin API only.
+ Examples
+ The first example shows how to create a definition under a namespace that you own. The merchant will have read-only access using the admin UI, but no other API clients will have access.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        namespace
+ 6
+        key
+ 7
+        access
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ 12
+        code
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "My read-only metafield definition",
+ 4
+      "namespace": "$app:some-namespace",
+ 5
+      "key": "some-key",
+ 6
+      "type": "single_line_text_field",
+ 7
+      "ownerType": "PRODUCT",
+ 8
+      "access": {
+ 9
+        "admin": "MERCHANT_READ"
+ 10
+      }
+ 11
+    }
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456109",
+ 5
+        "namespace": "app--123456--some-namespace",
+ 6
+        "key": "some-key",
+ 7
+        "access": {
+ 8
+          "admin": "MERCHANT_READ"
+ 9
+        },
+ 10
+      },
+ 11
+      "userErrors": []
+ 12
+    }
+ 13 }
+ The following example shows how to create a definition under a namespace that you own. The merchant will have read-only access in the Shopify admin, and the metafields will be publicly readable in the storefront surface area (Liquid templates and Storefront API).
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        namespace
+ 6
+        key
+ 7
+        access
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        message
+ 12
+        code
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "My read-only metafield definition",
+ 4
+      "namespace": "$app:some-namespace",
+ 5
+      "key": "some-key",
+ 6
+      "type": "single_line_text_field",
+ 7
+      "ownerType": "PRODUCT",
+ 8
+      "access": {
+ 9
+        "admin": "MERCHANT_READ",
+ 10
+        "storefront": "PUBLIC_READ"
+ 11
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456109",
+ 5
+        "namespace": "app--123456--some-namespace",
+ 6
+        "key": "some-key",
+ 7
+        "access": {
+ 8
+          "admin": "MERCHANT_READ",
+ 9
+          "storefront": "PUBLIC_READ"
+ 10
+        },
+ 11
+      },
+ 12
+      "userErrors": []
+ 13
+    }
+ 14 }
+ The following example shows how to create a definition that is private to your app, but you are allowing another app to read the metafields by specifying an explicit access grant.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        namespace
+ 6
+        key
+ 7
+        access {
+ 8
+          admin
+ 9
+          grants {
+ 10
+            grantee
+ 11
+            access
+ 12
+          }
+ 13
+        }
+ 14
+      }
+ 15
+      userErrors {
+ 16
+        field
+ 17
+        message
+ 18
+        code
+ 19
+      }
+ 20
+    }
+ 21 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "My read-only metafield definition",
+ 4
+      "namespace": "$app:some-namespace",
+ 5
+      "key": "some-key",
+ 6
+      "type": "single_line_text_field",
+ 7
+      "ownerType": "PRODUCT",
+ 8
+      "access": {
+ 9
+        "admin": "PRIVATE",
+ 10
+        "grants": [
+ 11
+          {
+ 12
+            "grantee": "gid://shopify/App/123",
+ 13
+            "access": "READ"
+ 14
+          }
+ 15
+        ]
+ 16
+      }
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456110",
+ 5
+        "namespace": "app--123456--some-namespace",
+ 6
+        "key": "some-key",
+ 7
+        "access": {
+ 8
+          "admin": "PRIVATE",
+ 9
+          "grants": [
+ 10
+            {
+ 11
+              "grantee": "gid://shopify/App/123",
+ 12
+              "access": "READ"
+ 13
+            }
+ 14
+          ]
+ 15
+        }
+ 16
+      },
+ 17
+      "userErrors": []
+ 18
+    }
+ 19 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Examples

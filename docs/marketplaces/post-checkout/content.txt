@@ -1,0 +1,35 @@
+Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Overview
+ Order data
+ Billing
+ Post checkout
+ Post-checkout includes storing order data and billing merchants. To create post-checkout functionality, you can use webhooks. A webhook is a subscription to a specific action on the Shopify platform. Shopify provides a series of webhooks that you can subscribe to, from products to orders to app uninstalls.
+ This guide introduces you to the tutorials for building post-checkout experiences on a marketplace.
+ Order data
+ Channel apps only have access to data for the orders that they create.
+ Fulfillment holds
+ Developer preview
+ Fulfillment holds are available only to select partners.
+ You can automatically apply a fulfillment hold on an order for additional processing. Merchants can't fulfill the order until the marketplace releases the hold.
+ When an order is created and the payment is authorized, the order is placed on hold. After the additional processing is complete, the hold is released, and the order is sent for fulfillment to the merchant.
+ Billing
+ Shopify provides several ways to start billing merchants for your app. As a marketplace, you might choose to implement an existing pricing model or using the API billing resources in a way that suits your needs.
+ A common marketplace billing model is a commission-based model. This is when you take a percentage of each order that's attributed to your marketplace. To implement a commission-based model, you'll need to use the REST Admin API's UsageCharge resource for each order that is created through your channel app.
+ Advanced billing
+ Depending on the billing agreement that you want to offer, you might want to refund the usage charge if an order is cancelled, refunded, or returned. You can use the orders/cancelled and orders/updated webhook events to respond to changes in the orders and issue an ApplicationCredit to return the order's usage charge to the merchant.
+ Limitations
+ Webhooks might be delayed when orders are created or updated, so this solution might not be optimal for any real-time operations.
+ Next steps
+ Learn how to store order data in your database for orders made through your channel app.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Order data
+ Fulfillment holds
+ Billing
+ Advanced billing
+ Limitations

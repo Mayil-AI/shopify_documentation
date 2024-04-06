@@ -1,0 +1,150 @@
+Layouts
+ Overview
+ checkout.liquid
+ Overview
+ Customize checkout.liquid
+ Checkout CSS
+ Templates
+ Sections
+ Blocks
+ Section groups
+ Config
+ Locales
+ Settings
+ Developer tools
+ Best practices
+ Integrating apps
+ Product merchandising
+ Pricing and payments
+ Delivery and fulfillment
+ Customer engagement
+ Troubleshooting
+ Theme Store
+ Best practices for editing checkout.liquid
+ Deprecated
+ checkout.liquid is deprecated. It will be sunset for the Information, Shipping, and Payment checkout steps on August 13, 2024, and for the Thank you and Order status pages on August 28, 2025. Additional scripts and script tags will also be sunset for the Order status page on August 28, 2025.
+ Stores that currently use checkout.liquid need to upgrade to Checkout Extensibility before these dates. Access to checkout.liquid won't be provided to new stores, with the exception of expansion stores. Shopify Scripts will continue to work alongside Checkout Extensibility until August 28, 2025.
+ Learn how to build checkout extensions that extend the functionality of Shopify checkout.
+ Caution
+ Before you make changes to your checkout, it's recommended that you back up the current version of the code in your checkout.liquid file. To learn more about backing up your theme, refer to Downloading themes or Duplicating themes.
+ If you're on Shopify Plus, then you can get access to the checkout.liquid layout. However, if you make changes to this layout, then you'll need to manually upgrade it whenever Shopify releases an upgrade.
+ Document Object Model (DOM) dependency
+ One of the biggest considerations to make when implementing checkout modifications is how DOM-dependent your code is. As Shopify releases checkout upgrades, the content output by the Liquid drops in checkout.liquid, and in some cases by the checkout.liquid content itself, is updated. This means that if your customizations depend on that content, then they could break with new upgrades. It’s always best to minimize DOM dependency to reduce future support debt for your team.
+ Tip
+ Other than adding content only outside of the Liquid drops, the most DOM-independent method for accessing elements is to reference data and name attributes, as these are less likely to be changed across upgrades.
+ Add custom code
+ When making changes, you should keep all of the relevant code for a specific customization in a single snippet. This reduces the risk of conflict with other code, and generally makes the code easier to read.
+ Also, any time that a change is made, it's recommended that you place a comment at the beginning of the change noting who made it, and when.
+ Example
+ 1 {% comment %} Added by Name from Company on September 21 2018 {% endcomment %}
+ Add killswitches
+ When customizing checkout.liquid, you're more likely to run into issues or conflicts in the checkout, possibly preventing sales, so it's a good idea to wrap your customizations in a killswitch (a theme setting). This allows you to temporarily disable the customization to get the checkout functioning quickly, which gives you time to troubleshoot issues.
+ General customization approach
+ In general, the approach for making customizations is the following:
+ Create a killswitch theme setting
+ Create a snippet to host your customization
+ Include your snippet, wrapped in your killswitch, in checkout.liquid
+ The following examples show a killswitch theme setting and a snippet inclusion wrapped in a conditional based on the killswitch:
+ config/settings_schema.json
+ 1 {
+ 2
+    "type": "checkbox",
+ 3
+    "id": "checkout_customization",
+ 4
+    "label": "Enables a checkout customization"
+ 5 },
+ layout/checkout.liquid
+ 1 {% comment %}Added by Name at Company on September 21, 2018{% endcomment %}
+ 2 {% if settings.checkout_customization %}
+ 3
+    {% render 'checkout-customization' %}
+ 4 {% endif %}
+ In your snippet, you can do the following:
+ Use the checkout's version of jQuery
+ Watch for the page:load and page:change events to set up your customization
+ Scope your customization to the appropriate step or page by referencing the following objects:
+ Shopify.Checkout.step
+ Shopify.Checkout.page
+ Shopify.Checkout.OrderStatus
+ 1 (function($) {
+ 2
+    $(document).on("page:load page:change", function() {
+ 3
+      if (Shopify.Checkout.step === "contact_information") {
+ 4
+        // Add content
+ 5
+      }
+ 6
+    });
+ 7 })(Checkout.$);
+ Form submit
+ Many checkout customizations require validating data before allowing the customer to move to the next step. Due to the functionality around the main form submit button, the easiest approach is watch for the click event on this button, rather than the submit field on the form. You should also watch for the use of the enter key and re-route that functionality into a click event on the submit button.
+ Caution
+ All selectors used in the snippet below are placeholders. You'll need to decide on the selector you want to use. Try to avoid DOM dependency.
+ 1 (function($) {
+ 2
+    $(document).on("page:load page:change", function() {
+ 3
+      if (Shopify.Checkout.step === "contact_information") {
+ 4
+        $("DEFINE_YOUR_SUBMIT_BUTTON_SELECTOR").on("click", function(e) {
+ 5
+          e.preventDefault();
+ 6
+ 7
+          if (data is valid) {
+ 8
+            $("DEFINE_YOUR_MAIN_FORM_SELECTOR").submit();
+ 9
+          } else {
+ 10
+            // Show an error
+ 11
+          }
+ 12
+        });
+ 13
+ 14
+        $("DEFINE_YOUR_MAIN_FORM_SELECTOR").on("keyup", function(e) {
+ 15
+          if (e.keycode === 13) {
+ 16
+            e.preventDefault();
+ 17
+            $("DEFINE_YOUR_SUBMIT_BUTTON_SELECTOR").trigger("click");
+ 18
+          }
+ 19
+        });
+ 20
+      }
+ 21
+    });
+ 22 })(Checkout.$);
+ Common customizations
+ The following examples are commonly requested customizations. They all use the general customization approach as a starting point.
+ Block the use of specific characters in address fields
+ To block the use of specific characters in address fields, you need to consider the following cases:
+ Updates to the associated address fields, such as the blur event.
+ The form submit event.
+ For each of these cases, execute your validation. For example, you could compare any field values with a Regular Expression (Regex). If the data isn't valid, you can show an error and prevent the default functionality.
+ Limit the number of characters in address fields
+ To limit the number of characters in address fields, add a maxlength attribute to any associated fields, as shown in the following example.
+ Note
+ The selector used below is a placeholder. You'll need to decide on the selector you want to use. Try to avoid DOM dependency.
+ 1 $("DEFINE_YOUR_FIELD_SELECTOR").attr("maxlength", your_value);
+ The maxlength attribute only prevents additional characters from being entered. To ensure a good user experience, you should add a message that appears when a customer hits the character limit.
+ Add a required Terms of Service checkbox
+ To add a required checkbox for agreeing to Terms of Service, create a checkbox on the page, then follow the form submit event to check whether the checkbox has been checked before allowing the customer to proceed. It's also a good idea to use a checkout attribute to save the value of the checkbox.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Document Object Model (DOM) dependency
+ Add custom code
+ Add killswitches
+ General customization approach
+ Form submit
+ Common customizations
+ Updates & News

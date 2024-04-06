@@ -1,0 +1,70 @@
+Product subscription app extensions
+ Learn about the new product model and components
+ Note
+ The new GraphQL product APIs that support 2000 variants per product are now available in 2024-04. Post your questions and comments on the APIs on the New Products API community board
+ In API release 2024-04, Shopify did the following:
+ Introduced a new product model
+ Enhanced product-related components in the GraphQL Admin API
+ Deprecating specific product-related components in the GraphQL and REST Admin APIs, which includes some key REST endpoints
+ In version 2024-04, all additions and deprecations are stable. Select merchants who work with custom apps, and don't have dependencies on third-party apps, can have products on their stores with increased variants.
+ Learn about these API changes, the reasons behind them, and how to update your apps to use the new product model and components.
+ Who needs to migrate
+ All public apps that are built on existing GraphQL product APIs or REST product APIs must migrate to the new GraphQL product APIs by February 1, 2025.
+ Custom apps that are built using the existing GraphQL product APIs must migrate to the new GraphQL product APIs by April 1, 2025.
+ Custom apps that are built on REST will also need to migrate if they need to support more than 100 variants.
+ Custom apps that don't need to support more than 100 variants can continue to use the deprecated REST product APIs. However, please note the following:
+ Developers should expect that the GraphQL API will be the only supported API over the long term and will be made aware of these timelines as they become available.
+ The deprecated REST product APIs are in maintenance mode. All new features and support will be built only for the new GraphQL product APIs.
+ Any merchant using custom apps that are built with these deprecated APIs will not be able to increase their variant limit past 100.
+ What's changing
+ The following are the changes to our product model and product-related Admin APIs in version 2024-04:
+ REST Admin API:
+ The /products and /variants endpoints are deprecated.
+ GraphQL Admin API:
+ The number of variants and options are no longer fixed at 100 and 3, respectively. Instead, the limits can vary by shop. We expect to have most shops support an initial rollout of 2K variants and 3+ options.
+ Introducing new mutations and fields for managing product options
+ Elevating options and option values as first class entities within the data model
+ Separating variant and option operations from product operations. Depending on your workflow, we recommend that you start managing your product variants using bulk product variant mutations.
+ A variant_ids field will be retroactively added to all webhook versions. Product webhooks will return a full variants payload for the first 100 records, and only the variant_ids for variants 101+.
+ Different mutations for different workflows
+ We've developed different sets of mutations that are catered to different workflows common to Shopify apps and use cases. Because there are multiple ways to work with the new product model, identify the workflow that best matches your app or use case and use the corresponding types in the GraphQL Admin API.
+ Database sync workflow
+ When your app's source of truth for merchandising data is something other than Shopify.
+ This workflow is assisted by a productSet mutation that pushes information about a product from an external source into Shopify. Examples of apps and use cases for this workflow are those that import product information from an external source into Shopify, such as Enterprise Resource Planning (ERP) systems and Worksheets.
+ Interactive UI workflow
+ When your app's source of truth for merchandising data is Shopify, and when you want to edit specific product data.
+ This workflow is assisted by sets of new and updated mutations that enable specific and incremental changes to products, variants, and options. Examples of apps and uses cases for this workflow are those that update product model information.
+ Get started
+ Review the following resources to start using the new product model:
+ API updates
+ Learn what's being added, removed, and updated for products in the 2024-04 version of the Admin APIs, and why.
+ New product model
+ Learn the relationships between products, variants, and options in the new product model and how we're making products easier to work with.
+ Retrieve product data
+ Learn how to perform queries to retrieve product data.
+ Add product data
+ Learn how add product data, including variants and options, with the GraphQL Admin API.
+ Edit product data
+ Learn how to edit product data, including variants and options, with the GraphQL Admin API.
+ Sync data
+ Learn how you can sync product data from an external source into Shopify.
+ Migrate from REST to GraphQL
+ The REST Admin API /products and /variants endpoints are being deprecated. To keep working with products, you need to migrate to the GraphQL Admin API. The following resources will help:
+ git
+ Product management in GraphQL versus REST
+ Learn about the differences between using GraphQL and REST to interact with products, variants, and related API components.
+ Migrate to GraphQL
+ If you're new to using GraphQL at Shopify, then review guides and resources for migrating your app to the GraphQL Admin API from the REST Admin API.
+ GraphQL basics
+ Learn about the basics of GraphQL, including its benefits over REST.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Who needs to migrate
+ What's changing
+ Different mutations for different workflows
+ Get started
+ Migrate from REST to GraphQL
+ Updates & News
+ Developer changelog
+ Partner blog

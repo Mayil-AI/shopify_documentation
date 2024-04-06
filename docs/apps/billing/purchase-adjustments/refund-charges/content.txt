@@ -1,0 +1,35 @@
+Subscription discounts
+ Refunds
+ Overview
+ Refunding app charges
+ Offering free trials
+ Viewing charges and earnings
+ Best practices
+ App Store
+ Refunds overview
+ From the app charge overview page for a particular app charge, you can issue a full or partial refund to the merchant.
+ How it works
+ When you issue a refund to a merchant for an app or theme, Shopify refunds you only for any commission collected. The processing fee charged on the app or theme sale is not refunded. Learn how to view your Shopify fee invoices.
+ You can issue multiple refunds for the same charge when a partial refund is completed, as long as there's a remaining balance on the charge. When there's no remaining balance, the button to issue the refund isn't available.
+ Required permissions
+ Store owners can issue refunds by default. Staff members require the Manage refunds and Manage app permissions. Learn more about managing staff member permissions.
+ Limitations
+ The following are limitations associated with issuing refunds:
+ You can only refund charges that the merchant has paid for. If an app charge hasn't been paid, then you can credit the charge to remove it from the merchant's bill.
+ Apps can't issue refunds for charges that are higher than $1000.00 USD. To process a refund that meets this criterion, contact Shopify Support.
+ Apps can't issue refunds for invoices that are older than 12 months. To process a refund that meets this criterion, contact Shopify Support.
+ If a merchant paid for their invoice with an Automated Clearing House (ACH) bank transfer, then apps can only refund charges on invoices that are less than 90 days old.
+ Get started
+ Refund an app charge
+ Issue a full or partial app refund from the Partner Dashboard.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Required permissions
+ Limitations
+ Get started
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

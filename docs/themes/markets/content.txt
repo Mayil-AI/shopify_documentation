@@ -1,0 +1,20 @@
+Customer engagement
+ Markets
+ Overview
+ Support multiple currencies and languages
+ Detect and set a visitor’s optimal localization
+ Country and language selector UX guidelines
+ Site navigation and search
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Shopify Markets
+ Shopify helps merchants expand their business to a global audience, sell to multiple countries, and scale internationally. This means that many merchants need to sell in multiple languages and currencies.
+ To support this, Shopify has the Geolocation app, which detects a customer's location and enables them to choose a currency, a language, or both. Alternatively, you can create country and language selectors to enable customers to choose their preferred options.
+ Additionally, you can adapt your theme content for different markets.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

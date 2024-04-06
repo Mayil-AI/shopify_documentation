@@ -1,0 +1,65 @@
+Overview
+ Android Buy SDK
+ iOS Buy SDK
+ Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Building a mobile app for your Shopify store
+ How it works
+ Shopify provides a suite of libraries that enable developers to deliver best-in-class, mobile app commerce experiences for buyers: build custom storefront and product discovery flows, integrate identity with sign-in and account management, and accelerate buyers through a contextual and personalized checkout process.
+ Storefront
+ Shopify’s Mobile Buy SDK’s enable you to create and embed custom storefront and product discovery experiences within your mobile app. The SDK’s interface with the GraphQL Storefront API to fetch information about products and collections, and to assemble a personalized buyer cart with contextual buyer information.
+ iOS Buy SDK
+ Create custom storefronts and assemble carts within an iOS app.
+ Android Buy SDK
+ Create custom storefronts and assemble carts within an Android app.
+ Buyer identity
+ The best shopping experiences are buyer and context aware, enabling relevant personalization of product, payment, and other preferences in product discovery, checkout, and post-purchase workflows. Shopify provides support for built-in identity solutions, integrations with third-party identity providers, and cart-driven workflows for optimizing guest and new buyer checkout journeys.
+ New Customer Accounts
+ Authenticate buyers with a secure one-time code sent to an email address, with built-in support for Shop sign-in. Integrate via Customer API, SDK support coming in 2024.
+ Classic Customer Accounts
+ Authenticate buyers with classic customer account via username and password. Integrate via Storefront API or Buy SDK.
+ Multipass
+ Authenticate buyers with third-party identity and authentication system via Multipass protocol.
+ Cart Buyer Identity
+ Associate known identity and buyer preferences via cart to prefill and accelerate checkout.
+ Checkout Sheet Kit
+ Shopify’s Checkout Sheet Kit enables you to provide the world’s highest converting, customizable, one-page checkout directly within the native app. The experience is a fully-featured checkout that preserves all of the store customizations—e.g. branding settings, UI extensions, Functions, and more. It also provides platform idiomatic defaults such as support for light and dark mode, and developer APIs to embed, customize, and follow the lifecycle of the checkout experience.
+ Checkout Sheet Kit for Swift
+ A Swift library for presenting the Shopify checkout experience.
+ Checkout Sheet Kit for Android
+ An Android library for presenting the Shopify checkout experience.
+ Checkout Sheet Kit for React Native
+ A React Native module for presenting the Shopify checkout experience.
+ Note
+ The checkout experience is powered using embedded Shopify web checkout. The library implements a native bridge and protocol that abstracts all of the embedding logic behind simple-to-use native APIs with additional capabilities to pre-fill buyer identity, optimize how the checkout is loaded, how it is presented, and more. Check out our blog to learn how Checkout Sheet Kit is built.
+ Product Roadmap
+ Note
+ This roadmap is being shared for informational purposes and is subject to change. Please share your feedback with us on what future features you’d like to see.
+ Some library features are in development. Here is the roadmap with estimated launch dates:
+ Storefront
+ Feature Release target
+ Storefront Kit (Swift, Android) 2024
+ Identity
+ Feature Release target
+ Identity Kit (Swift, Android) for Customer Accounts and Customer API 2024
+ Identity Kit support for Login with Shop 2024
+ Checkout
+ Feature Release target
+ General availability of Swift, Android, and React Native libraries Shipped
+ Web Pixel and analytics integration Shipped
+ Branding overrides for light/dark mode Q3 2024
+ Apple Pay and Google Pay support pre-checkout (buy now) Q1 2024
+ Design language improvements for Swift and Android 2024
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Storefront
+ Buyer identity
+ Checkout Sheet Kit
+ Product Roadmap
+ Updates & News
+ Developer changelog
+ Partner blog

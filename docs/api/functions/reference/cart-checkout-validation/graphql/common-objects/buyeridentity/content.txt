@@ -1,0 +1,25 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ BuyerIdentity object
+ 2024-04 latest
+ Represents information about the buyer that is interacting with the cart.
+ On this page
+ Fields
+ Types that return BuyerIdentity
+ Fields
+ customer (Customer)
+ The customer associated with the cart.
+ email (String)
+ The email address of the buyer that's interacting with the cart.
+ isAuthenticated (Boolean!)
+ Whether the buyer authenticated with a customer account.
+ phone (String)
+ The phone number of the buyer that's interacting with the cart.
+ purchasingCompany (PurchasingCompany)
+ The purchasing company associated with the cart.
+ Types that return BuyerIdentity
+ Cart.buyerIdentity
+ Was this page helpful?
+ YesNo
+ Updates & News

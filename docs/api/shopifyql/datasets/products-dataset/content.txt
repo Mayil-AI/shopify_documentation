@@ -1,0 +1,95 @@
+Segment query language reference
+ Datasets
+ Orders dataset
+ Products dataset
+ Payment attempts dataset
+ Product subscription app extensions
+ Products dataset
+ Use ShopifyQL to access the dataset to analyze data about product performance. This dataset combines sales and sessions data at a product_id grain to provide a holistic view of product performance.
+ This page outlines the definition, type, and utility of each ShopifyQL column including numeric values, aggregates, and dimensional attributes.
+ Notes about this dataset
+ Each row of this dataset represents either a sale or a session associated with a product in a 15 minute span, per currency. Sales events will have the currency code populated, but session events will have NULL currency, so sales data and sessions data are aggregated to distinct rows. As such, each row represents a 15 minute rollup of either sessions data or sales data. Further, sales data is also aggregated at the currency grain, so there might be multiple sales rows per 15 minute span if there are sales in multiple currencies during that span.
+ Unintuitive row filtering
+ Since sales and sessions exist on different rows in the underlying dataset, filtering on one will remove all rows belonging to the other. For example, the following query will result in sum(gross_sales) = 0 because all sale lines will be removed by the WHERE view_sessions > 0 filter.
+ 1 FROM products
+ 2 SHOW
+ 3 sum(gross_sales),
+ 4 sum(view_sessions)
+ 5 WHERE view_sessions > 0
+ 6 SINCE -7d
+ Important difference between the following fields:
+ view_purchase_sessions: The count of sessions with a product page view and purchase
+ view_cart_checkout_purchase_sessions: The count of sessions with a product page view, cart addition, checkout started and purchase
+ view_cart_checkout_purchase_sessions can be zero when view_purchase_sessions isn't zero, if the cart addition or the checkout being started wasn't captured by the session. This can happen because some stores don’t have carts. Similarly, some stores don’t have product pages, so the first step in their conversion funnels is always zero.
+ Numeric values
+ Numeric values are the base numbers in the dataset. They’re typically aggregated using ShopifyQL functions like sum.
+ Name Type Definition
+ view_sessions number The sessions where the product was viewed
+ cart_sessions number The sessions where the product was added to cart
+ checkout_sessions number The sessions where the product reached checkout
+ purchase_sessions number The sessions where the product was purchased
+ view_cart_sessions number The sessions where the product was viewed and added to cart
+ view_cart_checkout_sessions number The sessions where the product was viewed, added to cart, and reached checkout
+ view_cart_checkout_purchase_sessions number The sessions where the product was viewed, added to cart, reached checkout, and purchased
+ checkout_purchase_sessions number The sessions where the product reached checkout and was purchased
+ view_purchase_sessions number The sessions where the product was viewed and purchased
+ quantity_added_to_cart number The number of items added to the cart from online store sessions
+ quantity_purchased number The number of items purchased from online store sessions
+ gross_sales price The value of sales before factoring in discounts, returns, shipping, or taxes
+ ordered_product_quantity number The number of items ordered
+ returned_product_quantity number The number of items returned
+ net_product_quantity number The items ordered, less the number of items returned
+ discounts price The amount taken off a product's regular price
+ returns price The value of returned products
+ net_sales price The value of sales after factoring in discounts and returns, but before taxes
+ taxes price The total amount of taxes charged
+ product_price price The price the product sold for before discounts
+ product_price_after_discounts price The price the product sold for after discounts
+ Aggregates
+ Aggregates are predefined calculations of numeric values, to replicate metrics that are available throughout Shopify. Aggregates can be grouped or filtered by any of the dimensional attributes.
+ Name Type Definition
+ view_to_cart_rate rate The ratio of sessions added to cart after viewing
+ Formula: SUM(view_and_cart_sessions)/SUM(view_sessions)
+ view_cart_to_checkout_rate rate The ratio of sessions which reached checkout after viewing and adding to cart
+ Formula: SUM(view_cart_checkout_sessions)/SUM(view_cart_sessions))
+ view_cart_checkout_to_purchase_rate rate The ratio of sessions purchased after viewing, adding to cart and reaching checkout
+ Formula: SUM(view_cart_checkout_purchase_sessions)/SUM(view_cart_checkout_sessions)
+ checkout_to_purchase_rate rate The ratio of sessions purchased after reaching checkout
+ Formula: SUM(checkout_purchase_sessions)/SUM(checkout_sessions)
+ view_to_purchase_rate rate The ratio of sessions purchased after viewing
+ Formula: SUM(view_purchase_sessions)/SUM(view_sessions)
+ Dimensional attributes
+ Name Type Definition
+ product_title string The name of a product
+ product_type string The label describing the nature of the product
+ product_id number The product identifier used in Shopify
+ Sample Queries
+ 1. Show top selling products
+ 1 FROM products
+ 2 VISUALIZE sum(net_sales) AS product_sales
+ 3 TYPE BAR
+ 4 GROUP BY product_title
+ 5 SINCE last_month UNTIL yesterday
+ 6 ORDER BY product_sales DESC
+ 7 LIMIT 5
+ 2. Return rate of top selling products
+ 1 FROM products
+ 2 SHOW
+ 3 sum(returned_product_quantity) AS total_returns,
+ 4 sum(ordered_product_quantity) AS total_orders,
+ 5 sum(returned_product_quantity) / sum(ordered_product_quantity) AS rate_of_return
+ 6 GROUP BY product_title
+ 7 SINCE last_month UNTIL yesterday
+ 8 ORDER BY total_orders DESC
+ 9 LIMIT 5
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Notes about this dataset
+ Numeric values
+ Aggregates
+ Dimensional attributes
+ Sample Queries
+ Updates & News
+ Developer changelog
+ Partner blog

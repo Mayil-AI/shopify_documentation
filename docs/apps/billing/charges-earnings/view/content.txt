@@ -1,0 +1,910 @@
+Overview
+ Viewing charges
+ Best practices
+ App Store
+ View charges and earnings
+ You can view your app's revenue and retrieve data on transactions using the following mechanisms:
+ Partner Dashboard
+ GraphQL Admin API
+ Requirements
+ To use the Partner Dashboard, you require a Partner account.
+ To view the Partner Dashboard's app charge overview and Payouts pages, store owners and staff require the View financials permission.
+ To use the GraphQL Admin API, your app must be able to make authenticated requests to the API.
+ Viewing app charges in the Partner Dashboard
+ The following procedures explain how to view app charges and data from the Partner Dashboard:
+ App charge overview page
+ From the Partner Dashboard, click Apps .
+ Select the app that you want to view charges for.
+ On the Overview page, scroll to Latest app history.
+ Optional: Select View all app history and navigate through the pages.
+ In the Event Details column, click Open payments.
+ To view transaction details, next to a transaction click the inverted caret (▼).
+ Store page
+ From the Partner Dashboard, click Apps .
+ In the search bar, enter the name of the store with the app charges that you want to check.
+ In the search results, select the store.
+ Next to the app charge that you want to check, click the link in the Details column.
+ Payouts page
+ From the Partner Dashboard, click Apps .
+ In the sidebar, click Payouts.
+ On the Payouts page, click the payout with the app charges that you want to check.
+ Next to the app charge that you want to check, click the link in the Type column.
+ For details, next to a transaction click the inverted caret.
+ App history page
+ From the Partner Dashboard, click Apps .
+ Click the name of the app with the charges that you want to check.
+ In the sidebar, click Insights > App history.
+ In the table next to the app charge that you want to check, in the Event Details column, click Open payments.
+ For details, next to a transaction click the inverted caret.
+ Querying billing data with the GraphQL Admin API
+ Use the following examples to familiarize yourself with billing data in the GraphQL Admin API. The currency code must be one of the supported currencies.
+ App purchases
+ You can query a single purchase or multiple purchases.
+ Single app purchase
+ Query a single purchase with the AppPurchaseOneTime object. Pass the app purchase ID as an argument. You can retrieve this ID from the Payouts page.
+ The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    node(id: "gid://shopify/AppPurchaseOneTime/5308422") {
+ 3
+      ... on AppPurchaseOneTime {
+ 4
+        price {
+ 5
+          amount
+ 6
+          currencyCode
+ 7
+        }
+ 8
+        createdAt
+ 9
+        id
+ 10
+        name
+ 11
+        status
+ 12
+        test
+      "node": {
+ 4
+        "price": {
+ 5
+          "amount": "100.0",
+ 6
+          "currencyCode": "USD"
+ 7
+        },
+ 8
+        "createdAt": "2023-09-01T19:17:09Z",
+ 9
+        "id": "gid://shopify/AppPurchaseOneTime/5308422",
+ 10
+        "name": "Super Duper Expensive action",
+ 11
+        "status": "ACTIVE",
+ 12
+        "test": true
+ 13
+      }
+ 14
+    },
+ 15
+    ...
+ 16 }
+ Multiple app purchases
+ Query multiple purchases using currentAppInstallation. Specify the number of purchases to return by passing first or last as an argument.
+ The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    currentAppInstallation {
+ 3
+      oneTimePurchases(first: 2) {
+ 4
+        edges {
+ 5
+          node {
+ 6
+            ...on AppPurchaseOneTime {
+ 7
+              price {
+ 8
+                amount
+ 9
+                currencyCode
+ 10
+              }
+ 11
+              createdAt
+ 12
+              id
+ 13
+              name
+ 14
+              status
+ 15
+              test
+ 16
+            }
+ 17
+          }
+ 18
+ 21 }
+ JSON response
+ 1 {
+ 2
+     "data": {
+ 3
+       "currentAppInstallation": {
+ 4
+         "oneTimePurchases": {
+ 5
+           "edges": [
+ 6
+             {
+ 7
+               "node": {
+ 8
+                 "price": {
+ 9
+                   "amount": "100.0",
+ 10
+                   "currencyCode": "USD"
+ 11
+                 },
+ 12
+                 "createdAt": "2023-08-30T19:17:09Z",
+ 13
+                 "id": "gid://shopify/AppPurchaseOneTime/5308422",
+ 14
+                 "name": "Super Duper Expensive action",
+ 15
+                 "status": "ACTIVE",
+ 16
+                 "test": true
+ 17
+               }
+ 18
+             },
+ 19
+             {
+ 20
+               "node": {
+ 21
+                 "price": {
+ 22
+                   "amount": "100.0",
+ 23
+                   "currencyCode": "USD"
+ 24
+                 },
+ 25
+                 "createdAt": "2023-09-01T18:22:00Z",
+ 26
+                 "id": "gid://shopify/AppPurchaseOneTime/5701638",
+ 27
+                 "name": "Another Super Duper Expensive action",
+ 28
+                 "status": "EXPIRED",
+ 29
+                 "test": true
+ 30
+               }
+ 31
+             }
+ 32
+           ]
+ 33
+         }
+ 34
+       }
+ 35
+     },
+ 36
+     ...
+ 37 }
+ App subscriptions
+ You can query a single subscription or multiple subscriptions.
+ Single app subscription
+ Query a single subscription using the AppSubscription object. Pass the subscription ID as an argument.
+ The subscription ID is returned when you create a subscription. The AppSubscription object can also return the app subscriptions that are associated with the installation.
+ The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    node(id: "gid://shopify/AppSubscription/4019585080") {
+ 3
+      ...on AppSubscription {
+ 4
+        billingInterval
+ 5
+        createdAt
+ 6
+        currentPeriodEnd
+ 7
+        id
+ 8
+        name
+ 9
+        status
+ 10
+        test
+ 11
+        lineItems {
+ 12
+          plan {
+ 13
+            pricingDetails {
+ 14
+              ...on AppRecurringPricing {
+ 15
+                interval
+ 16
+                price {
+ 17
+                  amount
+ 18
+                  currencyCode
+ 19
+                }
+ 20
+              }
+ 21
+              ...on AppUsagePricing {
+ 22
+                terms
+ 23
+                cappedAmount {
+ 24
+                  amount
+ 25
+                  currencyCode
+ 26
+                }
+ 27
+                balanceUsed {
+ 28
+                  amount
+ 29
+                  currencyCode
+ 30
+                }
+ 31
+              }
+ 32
+            }
+ 33
+          }
+ 34
+        }
+ 35
+      }
+ 36
+    }
+ 37 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "node": {
+ 4
+        "billingInterval": "EVERY_30_DAYS",
+ 5
+        "createdAt": "2023-09-01T15:50:50Z",
+ 6
+        "currentPeriodEnd": null,
+ 7
+        "id": "gid://shopify/AppSubscription/4019585080",
+ 8
+        "name": "Super Duper Capped Pricing Plan",
+ 9
+        "status": "CANCELLED",
+ 10
+        "test": true,
+ 11
+        "lineItems": [
+ 12
+          {
+ 13
+            "plan": {
+ 14
+              "pricingDetails": {
+ 15
+                "terms": "$1 for 100 emails",
+ 16
+                "cappedAmount": {
+ 17
+                  "amount": "20.0",
+ 18
+                  "currencyCode": "USD"
+ 19
+                },
+ 20
+                "balanceUsed": {
+ 21
+                  "amount": "0.0",
+ 22
+                  "currencyCode": "USD"
+ 23
+                }
+ 24
+              }
+ 25
+            }
+ 26
+          }
+ 27
+        ]
+ 28
+      }
+ 29
+    },
+ 30
+    ...
+ 31 }
+ Multiple app subscriptions
+ Query multiple subscriptions using currentAppInstallation. Specify the number of subscriptions to return by passing first or last as an argument.
+ The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    currentAppInstallation {
+ 3
+      allSubscriptions(first: 2) {
+ 4
+        edges {
+ 5
+          node {
+ 6
+            lineItems {
+ 7
+              plan {
+ 8
+                pricingDetails {
+ 9
+                  __typename
+ 10
+                  ... on AppRecurringPricing {
+ 11
+                    price {
+ 12
+                      amount
+ 13
+                      currencyCode
+ 14
+                    }
+ 15
+                  }
+ 16
+                  ... on AppUsagePricing {
+ 17
+                    balanceUsed {
+ 18
+                      amount
+ 19
+                      currencyCode
+ 20
+                    }
+ 21
+                    cappedAmount {
+ 22
+                      amount
+ 23
+                      currencyCode
+ 24
+                    }
+ 25
+                  }
+ 26
+                }
+ 27
+              }
+ 28
+            }
+ 29
+            createdAt
+ 30
+            id
+ 31
+            name
+ 32
+            status
+ 33
+            test
+ 34
+          }
+ 35
+        }
+ 36
+      }
+ 37
+    }
+ 38 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "currentAppInstallation": {
+ 4
+        "allSubscriptions": {
+ 5
+          "edges": [
+ 6
+            {
+ 7
+              "node": {
+ 8
+                "lineItems": [
+ 9
+                  {
+ 10
+                    "plan": {
+ 11
+                      "pricingDetails": {
+ 12
+                        "__typename": "AppRecurringPricing",
+ 13
+                        "price": {
+ 14
+                          "amount": "4.99",
+ 15
+                          "currencyCode": "USD"
+ 16
+                        }
+ 17
+                      }
+ 18
+                    }
+ 19
+                  },
+ 20
+                  {
+ 21
+                    "plan": {
+ 22
+                      "pricingDetails": {
+ 23
+                        "__typename": "AppUsagePricing",
+ 24
+                        "balanceUsed": {
+ 25
+                          "amount": "0.0",
+ 26
+                          "currencyCode": "USD"
+ 27
+                        },
+ 28
+                        "cappedAmount": {
+ 29
+                          "amount": "100.0",
+ 30
+                          "currencyCode": "USD"
+ 31
+                        }
+ 32
+                      }
+ 33
+                    }
+ 34
+                  }
+ 35
+                ],
+ 36
+                "createdAt": "2023-08-30T17:00:16Z",
+ 37
+                "id": "gid://shopify/AppSubscription/2816132",
+ 38
+                "name": "Gift Basket Plan",
+ 39
+                "status": "EXPIRED",
+ 40
+                "test": true
+ 41
+              }
+ 42
+            },
+ 43
+            {
+ 44
+              "node": {
+ 45
+                "lineItems": [
+ 46
+                  {
+ 47
+                    "plan": {
+ 48
+                      "pricingDetails": {
+ 49
+                        "__typename": "AppRecurringPricing",
+ 50
+                        "price": {
+ 51
+                          "amount": "4.99",
+ 52
+                          "currencyCode": "USD"
+ 53
+                        }
+ 54
+                      }
+ 55
+                    }
+ 56
+                  },
+ 57
+                  {
+ 58
+                    "plan": {
+ 59
+                      "pricingDetails": {
+ 60
+                        "__typename": "AppUsagePricing",
+ 61
+                        "balanceUsed": {
+ 62
+                          "amount": "0.0",
+ 63
+                          "currencyCode": "USD"
+ 64
+                        },
+ 65
+                        "cappedAmount": {
+ 66
+                          "amount": "100.0",
+ 67
+                          "currencyCode": "USD"
+ 68
+                        }
+ 69
+                      }
+ 70
+                    }
+ 71
+                  }
+ 72
+                ],
+ 73
+                "createdAt": "2023-09-01T19:42:43Z",
+ 74
+                "id": "gid://shopify/AppSubscription/2962896",
+ 75
+                "name": "Gift Basket Plan",
+ 76
+                "status": "EXPIRED",
+ 77
+                "test": true
+ 78
+              }
+ 79
+            }
+ 80
+          ]
+ 81
+        }
+ 82
+      }
+ 83
+    },
+ 84
+    ...
+ 85 }
+ App usage records
+ Query an app usage record for a single subscription or records for multiple subscriptions. You can also query a specific app usage record by its ID.
+ App usage records for a single subscription
+ Query the app usage record for a single subscription using the AppSubscription object. Pass the subscription ID as an argument. You can specify the number of records to return by passing first or last as an argument.
+ The subscription ID is returned when you create a subscription. The AppSubscription object can also return the app subscriptions that are associated with the installation.
+ The following is an example:
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    node(id: "gid://shopify/AppSubscription/4019585080") {
+ 3
+      ...on AppSubscription {
+ 4
+        lineItems {
+ 5
+          usageRecords(first: 5) {
+ 6
+            edges {
+ 7
+              node {
+ 8
+                id
+ 9
+                description
+ 10
+                createdAt
+ 11
+                price {
+ 12
+                  amount
+ 13
+                  currencyCode
+ 14
+                }
+ 15
+              }
+ 16
+            }
+ 17
+          }
+ 18
+ 21 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "node": {
+ 4
+        "lineItems": [
+ 5
+          {
+ 6
+            "usageRecords": {
+ 7
+              "edges": [
+ 8
+                {
+ 9
+                  "node": {
+ 10
+                    "id": "gid://shopify/AppUsageRecord/14518231",
+ 11
+                    "description": "Super Mega Plan 1000 emails",
+ 12
+                    "createdAt": "2019-05-30T16:03:31Z",
+ 13
+                    "price": {
+ 14
+                      "amount": "1.0",
+ 15
+                      "currencyCode": "USD"
+ 16
+                    }
+ 17
+                  }
+ 18
+                }
+ 19
+              ]
+ 20
+            }
+ 21
+          }
+ 22
+        ]
+ 23
+      }
+ 24
+    },
+ 25
+    ...
+ 26 }
+ App usage records for multiple subscriptions
+ Query the app usage record for a single subscription using currentAppInstallation. You can get the usageRecords from the lineItems field of allSubscriptions. Specify the number of records to return by passing first or last as an argument.
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    currentAppInstallation {
+ 3
+      allSubscriptions(first: 2) {
+ 4
+        edges {
+ 5
+          node {
+ 6
+            id
+ 7
+            status
+ 8
+            lineItems {
+ 9
+              id
+ 10
+              usageRecords(first: 5) {
+ 11
+                edges {
+ 12
+                  node {
+ 13
+                    id
+ 14
+                    description
+ 15
+                    createdAt
+ 16
+                    price {
+ 17
+                      amount
+ 18
+                      currencyCode
+ 19
+                    }
+ 20
+                  }
+ 21
+                }
+ 22
+              }
+ 23
+            }
+ 24
+          }
+ 25
+        }
+ 26
+      }
+ 27
+    }
+ 28 }
+      "currentAppInstallation": {
+ 4
+        "allSubscriptions": {
+ 5
+          "edges": [
+ 6
+            {
+ 7
+              "node": {
+ 8
+                "id": "gid://shopify/AppSubscription/2816132",
+ 9
+                "status": "EXPIRED",
+ 10
+                "lineItems": [
+ 11
+                  {
+ 12
+                    "id": "gid://shopify/AppSubscriptionLineItem/2816132?v=1&index=0",
+ 13
+                    "usageRecords": {
+ 14
+                      "edges": []
+ 15
+                    }
+ 16
+                  },
+ 17
+                  {
+ 18
+                    "id": "gid://shopify/AppSubscriptionLineItem/2816132?v=1&index=1",
+ 19
+                    "usageRecords": {
+ 20
+                      "edges": []
+ 21
+                    }
+ 22
+                  }
+ 23
+                ]
+ 24
+              }
+ 25
+            },
+ 26
+            {
+ 27
+              "node": {
+ 28
+                "id": "gid://shopify/AppSubscription/2962896",
+ 29
+                "status": "EXPIRED",
+ 30
+                "lineItems": [
+ 31
+                  {
+ 32
+                    "id": "gid://shopify/AppSubscriptionLineItem/2962896?v=1&index=0",
+ 33
+                    "usageRecords": {
+ 34
+                      "edges": []
+ 35
+                    }
+ 36
+                  },
+ 37
+                  {
+ 38
+                    "id": "gid://shopify/AppSubscriptionLineItem/2962896?v=1&index=1",
+ 39
+                    "usageRecords": {
+ 40
+                      "edges": []
+ 41
+                    }
+ 42
+                  }
+ 43
+                ]
+ 44
+              }
+ 45
+            }
+ 46
+          ]
+ 47
+        }
+ 48
+      }
+ 49
+    },
+ 50
+    ...
+ 51 }
+ App usage record by ID
+ Query a specific app usage record using the AppUsageRecord object. Pass the app usage record ID as an argument.
+ POST https://{shop}.myshopify.com/admin/api/latest/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    node(id: "gid://shopify/AppUsageRecord/14518231") {
+ 3
+      ...on AppUsageRecord {
+ 4
+        createdAt
+ 5
+        description
+ 6
+        id
+ 7
+        price {
+ 8
+          amount
+ 9
+          currencyCode
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "node": {
+ 4
+        "createdAt": "2023-09-01T16:03:31Z",
+ 5
+        "description": "Super Mega Plan 1000 emails",
+ 6
+        "id": "gid://shopify/AppUsageRecord/14518231",
+ 7
+        "price": {
+ 8
+          "amount": "1.0",
+ 9
+          "currencyCode": "USD"
+ 10
+        }
+ 11
+      }
+ 12
+    },
+ 13
+    ...
+ 14 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Viewing app charges in the Partner Dashboard
+ Querying billing data with the GraphQL Admin API
+ Updates & News
+ Developer changelog
+ Partner blog

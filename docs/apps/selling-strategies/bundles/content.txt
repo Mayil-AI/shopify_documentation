@@ -1,0 +1,50 @@
+Billing
+ App Store
+ Bundles
+ Product bundles are used by merchants to group products together and sell them as a single unit. This critical merchandising strategy helps merchants to increase average order value, decrease marketing and distribution costs, and reduce inventory waste.
+ How it works
+ Shopify offers different methods to merchandise bundles of products and includes product and cart APIs to support a wide range of bundle use cases. The product bundles methods extend the existing product and variant model.
+ Bundle options
+ The following bundle options are available:
+ Fixed bundles: Shopify’s default implementation to support basic bundle use cases across Shopify’s ecosystem. These include Standard bundles and Multipack bundles that fit within Shopify’s variant limits.
+ Customized bundles: Used for more complex use cases, particularly when offering more choices to customers, or modelling a more complex composition of products, such as Mix-and-match bundles.
+ Using these options, merchants can create and manage bundles from their product page without leaving their Shopify admin.
+ Lifecycle of a bundle
+ The following table describes the journey and responsibilities of a bundle app:
+ Area App responsibilities Shopify responsibilities
+ Admin - Configuration
+ In the Shopify admin, merchant creates a product.
+ In the app, merchant configures bundles for each variant and option.
+ On save, merchant returns to the admin product page to continue product setup.
+ On the product details and product variant details pages in the Shopify admin, an app-powered UI extension summarizes bundle information and links to the related bundle management page within the app.
+ For variant updates, merchant returns to the app to configure bundles.
+ Not applicable.
+ Storefront
+ Storefronts that use the online store channel:
+ Customized bundle paired with theme app block to select bundle components on product details page.
+ Apps have flexibility to build product selection.
+ Fixed bundles work on existing product pages, without theme changes.
+ Cart page shows bundle parent, with the option to return bundle components using item_components.
+ Custom storefronts:
+ Storefront API supports fixed and customized bundles across the APIs.
+ Not applicable.
+ Checkout Not applicable. Checkout lines present bundle products as a group of lines.
+ Orders Partner fulfillment apps have access to bundle information. Order lines return bundle components, with a reference to the bundle parent.
+ Limitations
+ The following limitations apply to bundle apps.
+ Store configurations
+ Some store configurations and customizations, such as with specific apps, make the store incompatible with bundles:
+ checkout.liquid customizations aren't compatible with bundles. Instead, you need to upgrade to Checkout Extensibility.
+ Line item Shopify Scripts don't apply on bundle line items. The script input is the same as Liquid, where bundle lines are part of the cart lines set, and Shopify discards script operations if they're applied to bundle line items. For more information on bundles and Shopify Scripts, visit the Shopify Help Center.
+ Bundles can be sold through only the Online Store sales channel. Bundles can’t be sold through Shopify Point of Sale or with selling plans.
+ Some apps and payment gateways aren't compatible with bundles.
+ Store eligibility
+ You can use the BundlesFeature GraphQL object to determine whether a store is eligible for bundles. If the store isn't eligible for bundles, then Shopify prevents you from publishing bundled products to sales channels.
+ If you implement customized bundles using the Cart Transform Function API, and the parent variant can't be purchased without components, then you must mark the parent bundles with the requiresComponents attribute to true.
+ Next steps
+ Learn how to get started with bundles.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Lifecycle of a bundle

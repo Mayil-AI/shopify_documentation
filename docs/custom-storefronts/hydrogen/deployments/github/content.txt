@@ -1,0 +1,150 @@
+Additional SDKs
+ Hydrogen CI/CD with GitHub
+ Hydrogen supports CI/CD with GitHub out of the box. If you connect the Hydrogen channel to GitHub, then Oxygen will automatically deploy every time you push or merge changes in your Hydrogen repository.
+ When using Hydrogen with GitHub, you have two options:
+ Connect an existing Hydrogen app repository
+ Scaffold a new repository from the Shopify admin
+ Requirements
+ A Shopify account on a supported plan.
+ A GitHub account.
+ The Hydrogen app installed on your store.
+ The Shopify GitHub App installed on your GitHub account.
+ Connect an existing repo
+ If you created a Hydrogen app with the CLI, then you can upload your repository to GitHub and then connect it to Shopify.
+ Step 1: Connect your GitHub repo to the Hydrogen channel
+ In the Shopify admin, under Sales channels, click Hydrogen.
+ Click Create storefront.
+ Type a name for your new storefront. The name can be edited later.
+ Make sure Set up GitHub continuous deployment now is selected.
+ Select your GitHub account or organization from the dropdown.
+ Select the repository for your Hydrogen app.
+ Click Connect.
+ Oxygen pulls a copy of your Hydrogen app code base and automatically creates a preview deployment. The Shopify GitHub app also opens a pull request in your repo to add a GitHub Actions workflow file to handle future deployments.
+ Step 2: Merge your Oxygen workflow file
+ To create deployments, Oxygen requires a GitHub workflow file in your repository. The Shopify GitHub app automatically opens a pull request to create this file when you connect a repo:
+ Follow these steps to finish configuring your Hydrogen app for continuous deployment to Oxygen:
+ In the Hydrogen channel, click the name of the storefront that you just created.
+ Click Review and merge on GitHub to open the pull request in a new tab.
+ Follow GitHub’s prompts to merge the PR.
+ Close the tab to return to the Hydrogen storefront overview.
+ Oxygen will automatically create a new deployment in your production environment and continue watching your repo for updates. Each time you push one or more commits to your repo, Oxygen will create a new preview deployment with your changes.
+ Create a new repo
+ You can create a new Hydrogen storefront and scaffold a new GitHub repository directly from the Shopify admin:
+ In the Shopify admin, under Sales channels, click Hydrogen.
+ Click Create storefront.
+ Type a name for your new storefront. The name can be edited later.
+ Make sure Set up GitHub continuous deployment now is selected.
+ Select your GitHub account or organization from the dropdown.
+ Type a name for the new repository.
+ Click Create <repository name>.
+ (Optional) If you want the repository to be public, then click Create <repository name> as a public repository.
+ Select JavaScript or TypeScript for your project language.
+ Click Create.
+ Shopify scaffolds a new Hydrogen app in your GitHub account, displays the storefront overview page, and automatically creates the first deployment of your storefront. Clone the new repo to start working on your Hydrogen app.
+ Enable deployment PR comments
+ You can configure Shopify to comment on your pull requests with deployment preview links. This allows you to quickly access deployments in context, without needing to open the Shopify admin.
+ To enable deployment PR comments on GitHub:
+ In your Hydrogen storefront, click Storefront settings.
+ Click Oxygen deployments.
+ Under Git repository, check Comment on pull requests with deployment preview links.
+ (Optional) If you want preview links to be visible without needing to be logged into your store, select Anyone with the link. This option uses shareable links.
+ To test that comments are working, create a pull request for your Hydrogen app. The Shopify GitHub bot adds a comment, then updates it with more details as the deployment proceeds.
+ Oxygen GitHub Action
+ Deployments to Oxygen from GitHub are controlled by an Oxygen workflow file in your Hydrogen app. If you connected an existing repo, then Shopify will automatically open a PR to add this file when you connect a repository. If you created a new repo from the Shopify admin, then this file was automatically added.
+ This is an example of what an Oxygen workflow file looks like:
+ /.github/workflows/oxygen-deployment-0000000000.yml
+ 1 # Don't change the line below!
+ 2 #! oxygen_storefront_id: 0000000000
+ 3
+ 4 name: Storefront 0000000000
+ 5 on: [push]
+ 6
+ 7 permissions:
+ 8
+    contents: read
+ 9
+    deployments: write
+ 10
+ 11 jobs:
+ 12
+    deploy:
+ 13
+      name: Deploy to Oxygen
+ 14
+      timeout-minutes: 30
+ 15
+      runs-on: ubuntu-latest
+ 16
+      steps:
+ 17
+        - uses: actions/checkout@v3
+ 18
+ 19
+        - name: Setup node.js
+ 20
+          uses: actions/setup-node@v4
+ 21
+          with:
+ 22
+            node-version: 'lts/*'
+ 23
+            check-latest: true
+ 24
+ 25
+        - name: Cache node modules
+ 26
+          id: cache-npm
+ 27
+          uses: actions/cache@v4
+ 28
+          env:
+ 29
+            cache-name: cache-node-modules
+ 30
+          with:
+ 31
+            path: ~/.npm
+ 32
+            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+ 33
+            restore-keys: |
+ 34
+              ${{ runner.os }}-build-${{ env.cache-name }}-
+ 35
+              ${{ runner.os }}-build-
+ 36
+              ${{ runner.os }}-
+ 37
+ 38
+        - name: Install dependencies
+ 39
+          run: npm ci
+ 40
+ 41
+        - name: Build and Publish to Oxygen
+ 42
+          run: npx shopify hydrogen deploy
+ 43
+          env:
+ 44
+            SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_0000000000 }}
+ This is a standard GitHub Actions workflow file and you can edit it to customize your CI/CD workflows in GitHub. However, there are few key points to be aware of:
+ Don't change the line below! refers to the immediate line following, which contains the app's associated storefront ID.
+ By default, the workflow installs app dependencies with npm. If you use a different package manager, then you’ll need to edit this file to prevent errors caused by multiple lockfiles, as well as to manage module caching.
+ Refer to a live example on our Hydrogen demo store.
+ Alternate package managers
+ If you're using a package manager other than npm, such as Yarn or pnpm, note the following:
+ Hydrogen and Oxygen use npm by default. Shopify can’t guarantee compatibility with other package managers.
+ The Oxygen deployment workflow file uses npm by default, and assumes the presence of a package-lock.json file. You can edit the workflow file to use your preferred package manager. In particular, check that the steps to install dependencies, cache modules, and build your app are updated to use the correct commands.
+ Next steps
+ Support other version control platforms or more complex deployment systems with custom CI/CD workflows.
+ Learn more about creating and managing Hydrogen environments
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Connect an existing repo
+ Create a new repo
+ Enable deployment PR comments
+ Oxygen GitHub Action
+ Next steps

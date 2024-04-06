@@ -1,0 +1,215 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Build fulfillment constraints
+ Build local pickup delivery option generators
+ Fulfillment service apps
+ Returns apps
+ Migrate to fulfillment orders
+ Point of Sale
+ Getting started with building location rules
+ You can use location rules to rank the possible locations for a line item during checkout. In this tutorial, you'll use Shopify Functions to create a function that prioritizes locations in a particular country.
+ Beta
+ Location rules is a new feature that's only available by request. To develop location rules, you need to contact order-routing-early-access@shopify.com.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Generate starter code for Shopify Functions.
+ Use GraphQL to define the input of your function.
+ Deploy functions to the Shopify platform.
+ Use the order routing settings to create a location rule in a Shopify store.
+ Review logs for your function.
+ Requirements
+ Refer to Build location rules.
+ Step 1: Create the location rule function
+ To create your location rule function, you can use Shopify CLI to generate a starter function, specify the inputs for your function using an input query, and implement your function logic using Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new location rule extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template order_routing_location_rule --name location-rule
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ $
+    (3) Rust
+ $
+    (4) Wasm
+ Tip
+ Shopify Functions support any language that compiles to WebAssembly (Wasm), such as Rust, AssemblyScript, or TinyGo. You specify the Wasm template option when you're using a language other than Rust and can conform to the Wasm API. Learn more about the Wasm API.
+ Navigate to extensions/location-rule:
+ Terminal
+ $ cd extensions/location-rule
+ Replace the contents of src/run.graphql file with the following code:
+ run.graphql defines the input for the function. You need the fulfillment groups, with the available locations for the items in the group.
+ The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    fulfillmentGroups {
+ 3
+      handle
+ 4
+      inventoryLocationHandles
+ 5
+    }
+ 6
+    locations {
+ 7
+      handle
+ 8
+      address {
+ 9
+        countryCode
+ 10
+      }
+ 11
+    }
+ 12 }
+ Tip
+ If a store has many locations, then running this query can result in a big input to parse. To optimize performance, consider loading the location in the input and querying the inventory locations by ID.
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ The function logic sorts the locations in your store, putting locations in Canada first.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2
+ 3 /**
+ 4 * @typedef {import("../generated/api").RunInput} RunInput
+ 5 * @typedef {import("../generated/api").RunInput["fulfillmentGroups"][0]} FulfillmentGroup
+ 6 * @typedef {import("../generated/api").RunInput["locations"][0]} Location
+ 7 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 8 * @typedef {import("../generated/api").Operation} Operation
+ 9 * @typedef {import("../generated/api").FulfillmentGroupRankedLocations} FulfillmentGroupRankedLocations
+ 10 * @typedef {import("../generated/api").RankedLocation} RankedLocation
+ 11 */
+ 12
+ 13 /**
+ 14 * @param {RunInput} input
+ 15 * @returns {FunctionRunResult}
+ 16 */
+ 17 export function run(input) {
+ 18
+      // Load the fulfillment groups and generate the rank operations for each one
+ 19
+      let operations = input.fulfillmentGroups
+ 20
+        .map(fulfillmentGroup => /** @type {Operation} */(
+ 21
+          {
+ 22
+            rank: buildRankOperation(fulfillmentGroup, input.locations)
+ 23
+          }
+ 24
+        ));
+ 25
+ 26
+      // Return the operations
+ 27
+      return { operations: operations };
+ 28 };
+ 29
+ 30 /**
+ 31 * @param {FulfillmentGroup} fulfillmentGroup
+ 32 * @param {Location[]} locations
+ 33 * @returns {FulfillmentGroupRankedLocations}
+ 34 */
+ 35 function buildRankOperation(fulfillmentGroup, locations) {
+ 36
+    return {
+ 37
+      fulfillmentGroupHandle: fulfillmentGroup.handle,
+ 38
+      rankings: prioritizeCanadianLocations(fulfillmentGroup.inventoryLocationHandles, locations),
+ 39
+    };
+ 40 };
+ 41
+ 42 /**
+ 43 * @param {string[]} locationHandles
+ 44 * @param {Location[]} locations
+ 45 * @returns {RankedLocation[]}
+ 46 */
+ 47 function prioritizeCanadianLocations(locationHandles, locations) {
+ 48
+    // Load the inventory locations for the fulfillment group
+ 49
+    return locationHandles.map(locationHandle => {
+ 50
+      const location = locations.find((loc) => loc.handle == locationHandle);
+ 51
+      return {
+ 52
+        locationHandle,
+ 53
+        // Rank the location as 0 if the country code is CA, otherwise rank it as 1
+ 54
+        rank: location?.address.countryCode === "CA" ? 0 : 1,
+ 55
+      }
+ 56
+    });
+ 57 };
+ If you're using Rust, then build the function's Wasm module:
+ Terminal
+ $ cargo wasi build --release
+ If you encounter any errors, then ensure that you've installed Rust and cargo-wasi.
+ Step 2: Preview the function on a development store
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 3: Test the location rule
+ You can test your location rule to ensure it's working as expected, and review logs for your function.
+ Before you test the location rule, make sure that you have the following:
+ Two locations in your store in different countries, one of them in Canada.
+ One product that is stocked on multiple locations.
+ From the Shopify admin, go to Settings > Shipping and delivery.
+ In the Order routing section, click Manage.
+ Click Add rule.
+ Your new rule should be an available option.
+ Add your new rule and drag it to the top to make it your highest priority location rule.
+ Open your development store.
+ Add products to your cart. At least one product should be stocked at multiple locations, including your Canadian location.
+ Proceed through checkout.
+ Open your development store's admin, and find your new order. This should be assigned to your Canadian location.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > order-routing-location-rule.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Add configuration to your location rules using metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the location rule function
+ Step 2: Preview the function on a development store
+ Step 3: Test the location rule
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,40 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Button
+ Buttons enable the merchant to initiate actions, like "add", "save", or "next".
+ Props
+ Name Type Description Options
+ title string The text displayed inside the button.
+ type ButtonType? Determines the button’s appearance. primary: Use to indicate the most important action in any given view. There can only be one primary button per view.
+ 
+ basic: Use this to indicate the second-most important action in any given view.
+ 
+ plain: Use this for unpronounced or common actions, like navigating.
+ 
+ destructive: Use this to indicate potentially irreversible actions, or actions that delete data. Only use one destructive action per view.
+ onPress (() => void)? Callback when the button is pressed.
+ isDisabled boolean? Whether the button should be disabled.
+ isLoading boolean? Replaces button text with an activity indicator while a background action is being performed.
+ Guidelines
+ Stack buttons vertically.
+ Use only one primary button and one destructive button in a single view.
+ Primary buttons should stick to the bottom of a view and always be visible. When scrolling, content scrolls behind the button.
+ Only use multiple buttons in any given view when presenting "either/or" options.
+ Content guidelines
+ Button content must be as concise as possible to fit inside the component, especially considering that content might be longer when translated. In general, use the [verb] + [item] formula:
+ ✅ Add new customer
+ ❌ Customer
+ You can use just [verb], if it’s obvious from the surrounding context what the [item] is:
+ ✅ Filter
+ ❌ Filter staff
+ Certain actions, like "next", don’t need a verb.
+ ✅ Next
+ ❌ Go to next page
+ Use "add" + [destination] when moving an item that already exists from one place to another (such as adding a product to the cart). The item you’re moving (such as "product") should be clear from the surrounding context, so doesn’t need to be included:
+ ✅ Add to cart
+ ❌ Add product to cart
+ Use "add new" + [item] when creating a new item within the system:
+ ✅ Add new customer
+ ❌ Create customer

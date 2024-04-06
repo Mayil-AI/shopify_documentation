@@ -1,0 +1,540 @@
+Distribution
+ Billing
+ App Store
+ Create an automated collection with metafields
+ An automated collection, also known as a smart collection, is a grouping of products that's defined by a set of rules. Shopify automatically changes the contents of an automated collection based on the configured rules. You can create rules with metafield definitions to automatically update the contents of an automated collection based on product metafields and variant metafields.
+ In this guide, you'll learn how to configure an automated collection with metafield definition rules by creating an automated collection that contains all products that are made out of silk and on sale.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app is using API version 2023-01 or higher.
+ You've created products in your store.
+ Step 1: Create the metafield definitions with the automated collection setting enabled
+ For this example, you'll need to create two metafield definitions for the product materials and sale status. You can specify that the metafield definitions can be used for automated collection conditions by setting the useAsCollectionCondition setting to true.
+ The following code uses the metafieldDefinitionCreate mutation to create a materials metafield definition of type list.single_line_text_field. This metafield will contain the list of materials used to make the product.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateMaterialsMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+        namespace
+ 7
+        key
+ 8
+        useAsCollectionCondition
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+        code
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "Materials",
+ 4
+      "namespace": "custom",
+ 5
+      "key": "materials",
+ 6
+      "description": "A list of materials used to make the product.",
+ 7
+      "type": "list.single_line_text_field",
+ 8
+      "ownerType": "PRODUCT",
+ 9
+      "useAsCollectionCondition": true # This setting must be true to use the metafield definition as a collection condition.
+ 10
+    }
+ 11 }
+ JSON response
+ 1 {
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456110",
+ 5
+        "name": "Materials",
+ 6
+        "namespace": "custom",
+ 7
+        "key": "materials",
+ 8
+        "useAsCollectionCondition": true
+ 9
+      },
+ 10
+      "userErrors": []
+ 11
+    }
+ 12 }
+ The following code uses the metafieldDefinitionCreate mutation to create an On sale metafield definition of type boolean. This metafield will indicate whether the product is on sale.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateOnSaleMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+ 2
+    metafieldDefinitionCreate(definition: $definition) {
+ 3
+      createdDefinition {
+ 4
+        id
+ 5
+        name
+ 6
+        namespace
+ 7
+        key
+ 8
+        useAsCollectionCondition
+ 9
+      }
+ 10
+ 13
+        code
+ 14
+      }
+ 15
+    }
+ 16 }
+ Variables
+ 1 {
+ 2
+    "definition": {
+ 3
+      "name": "On sale",
+ 4
+      "namespace": "custom",
+ 5
+      "key": "on_sale",
+ 6
+      "description": "Whether the product is on sale or not.",
+ 7
+      "type": "boolean",
+ 8
+      "ownerType": "PRODUCT",
+ 9
+      "useAsCollectionCondition": true # This setting must be true to use the metafield definition as a collection condition.
+ 2
+    "metafieldDefinitionCreate": {
+ 3
+      "createdDefinition": {
+ 4
+        "id": "gid://shopify/MetafieldDefinition/1071456111",
+ 5
+        "name": "On sale",
+ 6
+        "namespace": "custom",
+ 7
+        "key": "on_sale",
+ 8
+        "useAsCollectionCondition": true
+ 9
+      },
+ 10
+      "userErrors": []
+ 11
+    }
+ 12 }
+ Step 2: Populate the metafields on your products
+ To populate the metafields, use the productUpdate mutation and include the metafields that you created in the previous step in the mutation input.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation($input: ProductInput!) {
+ 2
+    productUpdate(input: $input) {
+ 3
+      product {
+ 4
+        metafields(first: 100) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              namespace
+ 8
+              key
+ 9
+              value
+ 10
+            }
+ 11
+          }
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "input" : {
+ 3
+      "id": "gid://shopify/Product/1",
+ 4
+      "metafields": [
+ 5
+        {
+ 6
+          "namespace": "custom",
+ 7
+          "key": "materials",
+ 8
+          "value": "[ \"Silk\", \"Cotton\"]",
+ 9
+          "type": "list.single_line_text_field",
+ 10
+        },
+ 11
+        {
+ 12
+          "namespace": "custom",
+ 13
+          "key": "on_sale",
+ 14
+          "value": "true",
+ 15
+          "type": "boolean",
+ 16
+        }
+ 17
+      ]
+ 18
+    }
+ 19 }
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "metafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "namespace": "custom",
+ 10
+                  "key": "materials",
+ 11
+                  "value": "[ \"Silk\", \"Cotton\"]"
+ 12
+                }
+ 13
+              },
+ 14
+              {
+ 15
+                "node": {
+ 16
+                  "namespace": "custom",
+ 17
+                  "key": "on_sale",
+ 18
+                  "value": "true"
+ 19
+                }
+ 20
+              }
+ 21
+            ]
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ Learn more about how to populate metafields.
+ Step 3: Verify the metafield definitions are available as collection conditions
+ You can use the collectionRulesConditions query to verify the metafield definitions are set up as collection conditions.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query collectionRulesConditions {
+ 2
+    ruleType
+ 3
+    allowedRelations
+ 4
+    defaultRelation
+ 5
+    ruleObject {
+ 6
+      ... on CollectionRuleMetafieldCondition {
+ 7
+        metafieldDefinition {
+ 8
+          id
+ 9
+          name
+ 10
+          ownerType
+ 11
+          # add other return fields
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ JSON response
+ 1 {
+ 2
+    "collectionRulesConditions": [
+ 3
+      {
+ 4
+        "ruleType": "PRODUCT_METAFIELD_DEFINITION",
+ 5
+        "allowedRelations": [
+ 6
+          "EQUALS"
+ 7
+        ],
+ 8
+        "defaultRelation": "EQUALS",
+ 9
+        "ruleObject": {
+ 10
+          "metafieldDefinition": {
+ 11
+            "id": "gid://shopify/MetafieldDefinition/1071456110",
+ 12
+            "name": "Materials",
+ 13
+            "ownerType": "PRODUCT"
+      },
+ 17
+      {
+ 18
+        "ruleType": "PRODUCT_METAFIELD_DEFINITION",
+ 19
+        "allowedRelations": [
+ 20
+          "EQUALS"
+ 21
+        ],
+ 22
+        "defaultRelation": "EQUALS",
+ 23
+        "ruleObject": {
+ 24
+          "metafieldDefinition": {
+ 25
+            "id": "gid://shopify/MetafieldDefinition/1071456111",
+ 26
+            "name": "On sale",
+ 27
+            "ownerType": "PRODUCT"
+ 28
+          }
+ 29
+        }
+ 30
+      }
+ 31
+    ]
+ 32 }
+ Step 4: Create an automated collection with the metafield definition conditions
+ After confirming that the metafield definitions are configured as collection conditions, you can create an automated collection that uses these metafield definitions as conditions.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CreateAutomatedCollection($input: CollectionInput!) {
+ 2
+    collectionCreate(input: $input) {
+ 3
+      collection {
+ 4
+        id
+ 5
+        title
+ 6
+        ruleSet {
+ 7
+          appliedDisjunctively
+ 8
+          rules {
+ 9
+            column
+ 10
+            relation
+ 11
+            condition
+ 12
+            conditionObject {
+ 13
+              ... on CollectionRuleMetafieldCondition {
+ 14
+                metafieldDefinition {
+ 15
+                  id
+ 16
+                  name
+ 17
+                  ownerType
+ 18
+                }
+ 19
+              }
+ 20
+            }
+ 21
+          }
+ 22
+        }
+ 23
+      }
+ 24
+      userErrors {
+ 25
+        field
+ 26
+        message
+ 27
+      }
+ 28
+    }
+ 29 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "title": "Silk products on sale",
+ 4
+      "descriptionHtml": "Check out our silk sale.",
+ 5
+      "ruleSet": {
+ 6
+        "appliedDisjunctively": false,
+ 7
+        "rules": [
+ 8
+          {
+ 9
+            "column": "PRODUCT_METAFIELD_DEFINITION",
+ 10
+            "relation": "EQUALS",
+ 11
+            "condition": "silk",
+ 12
+            "conditionObjectId": "gid://shopify/MetafieldDefinition/1071456110"
+ 13
+          },
+ 14
+          {
+ 15
+            "column": "PRODUCT_METAFIELD_DEFINITION",
+ 16
+            "relation": "EQUALS",
+ 17
+            "condition": "true",
+ 18
+            "conditionObjectId": "gid://shopify/MetafieldDefinition/1071456111"
+ 19
+          }
+ 20
+        ]
+ 21
+      }
+ 22
+    }
+ 23 }
+ JSON response
+ 1 {
+ 2
+    "collectionCreate": {
+ 3
+      "userErrors": [],
+ 4
+      "collection": {
+ 5
+        "id": "gid://shopify/Collection/1063001327",
+ 6
+        "title": "Silk products on sale",
+ 7
+        "ruleSet": {
+ 8
+          "appliedDisjunctively": false,
+ 9
+          "rules": [
+ 10
+            {
+ 11
+              "column": "PRODUCT_METAFIELD_DEFINITION",
+ 12
+              "relation": "EQUALS",
+ 13
+              "condition": "silk",
+ 14
+              "conditionObject": {
+ 15
+                "metafieldDefinition": {
+ 16
+                  "id": "gid://shopify/MetafieldDefinition/1071456110",
+ 17
+                  "name": "Materials",
+ 18
+                  "ownerType": "PRODUCT"
+ 19
+                }
+ 20
+              }
+ 21
+            },
+ 22
+            {
+ 23
+              "column": "PRODUCT_METAFIELD_DEFINITION",
+ 24
+              "relation": "EQUALS",
+ 25
+              "condition": "true",
+ 26
+              "conditionObject": {
+ 27
+                "metafieldDefinition": {
+ 28
+                  "id": "gid://shopify/MetafieldDefinition/1071456111",
+ 29
+                  "name": "On sale",
+ 30
+                  "ownerType": "PRODUCT"
+ 31
+                }
+ 32
+              }
+ 33
+            }
+ 34
+          ]
+    }
+ 38 }
+ Next steps
+ Learn about standard metafield definitions that store common product data and can also be used to configure automated collections.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create the metafield definitions with the automated collection setting enabled
+ Step 2: Populate the metafields on your products
+ Step 3: Verify the metafield definitions are available as collection conditions
+ Step 4: Create an automated collection with the metafield definition conditions
+ Next steps
+ Updates & News
+ Developer changelog

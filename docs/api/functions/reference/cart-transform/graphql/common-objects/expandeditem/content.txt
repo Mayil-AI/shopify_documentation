@@ -1,0 +1,15 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ ExpandedItem object
+ 2024-04 latest
+ Fields
+ attributes ([AttributeOutput!])
+ The CartLine attributes to be added to component line.
+ merchandiseId (ID!) required
+ The merchandise id of the expanded item.
+ price (ExpandedItemPriceAdjustment)
+ The price adjustment for the expanded item.
+ quantity (Int!) required
+ The quantity of the expanded item.The max quantity is 2000.

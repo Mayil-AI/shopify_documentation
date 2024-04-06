@@ -1,0 +1,825 @@
+Product description
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Overview
+ Order data
+ Billing
+ Billing merchants
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Merchants can sell their products on your marketplace. Now you want to set up a billing model so that you can charge merchants a sales fee.
+ In this tutorial, you'll take a fixed fee for each order made in the marketplace. You'll use a capped amount of $20 and charge a $0.5 fee for each order. This provides an approachable billing structure for merchants. It's similar to a monthly subscription of $20, but the merchant doesn’t pay unless your marketplace has provided them with orders.
+ What you'll learn
+ After finishing this tutorial, you'll know how to do the following:
+ Create a usage plan for billing merchants who make sales on your marketplace
+ Add a monthly subscription plan for the marketplace
+ Bill merchants a usage fee
+ Requirements
+ You've completed the tutorial for storing order data.
+ Step 1: Set up subscription handlers
+ To bill merchants for selling on your marketplace, you need to create the mutation that creates subscriptions and usage charges using the Admin API.
+ In server/handlers/mutations create a file called create-app-subscription.js.
+ In server/handlers/mutations/create-app-subscription.js, add a method that calls the appSubscriptionCreate mutation and creates a subscription with a usage pricing plan.
+ The plan requires terms that tell merchants how you will be billing them, as well as a capped amount which is the maximum amount that you can charge the merchant per month. It also requires a return URL, which redirects the merchant back to your app after accepting the subscription in the Shopify admin. The method should return the subscription ID, confirmation URL, and line item ID.
+ server/handlers/mutations/create-app-subscription.js
+ 1 import {callShopifyGraphqlAPI} from '../client';
+ 2 import dotenv from 'dotenv';
+ 3 dotenv.config();
+ 4
+ 5 const APP_SUBSCRIPTION_CREATE = `
+ 6
+    mutation AppSubscriptionCreate(
+ 7
+      $name: String!
+ 8
+      $returnUrl: URL!
+ 9
+      $lineItems: [AppSubscriptionLineItemInput!]!
+ 10
+    ) {
+ 11
+      appSubscriptionCreate(
+ 12
+        name: $name
+ 13
+        test: true
+ 14
+        returnUrl: $returnUrl
+ 15
+        lineItems: $lineItems
+ 16
+      ) {
+ 17
+        userErrors {
+ 18
+          message
+ 19
+        }
+ 20
+        confirmationUrl
+ 21
+        appSubscription {
+ 22
+          id
+ 23
+          lineItems {
+ 24
+            id
+ 25
+          }
+ 26
+        }
+ 27
+      }
+ 28
+    }
+ 29 `;
+ 30
+ 31 export const createAppSubscription = async (shop, token, appHandle) => {
+ 32
+    const variables = {
+ 33
+      name: 'Mockingbird Marketplace Fee',
+ 34
+      returnUrl: `https://${shop}/admin/apps/${appHandle}`,
+ 35
+      lineItems: [
+ 36
+        {
+ 37
+          plan: {
+ 38
+            appUsagePricingDetails: {
+ 39
+              cappedAmount: {
+ 40
+                amount: 20,
+ 41
+                currencyCode: 'USD',
+ 42
+              },
+ 43
+              terms: '$0.5 per order',
+ 44
+            },
+ 45
+          },
+ 46
+        },
+ 47
+      ],
+ 48
+    };
+ 49
+ 50
+    const resp = await callShopifyGraphqlAPI(shop, token, {
+ 51
+      query: APP_SUBSCRIPTION_CREATE,
+ 52
+      variables,
+ 53
+    });
+ 54
+    return {
+ 55
+      subscriptionId: resp.body.data.appSubscriptionCreate.appSubscription.id,
+ 56
+      subscriptionConfirmationUrl:
+ 57
+        resp.body.data.appSubscriptionCreate.confirmationUrl,
+ 58
+      subscriptionLineItemId:
+ 59
+        resp.body.data.appSubscriptionCreate.appSubscription.lineItems[0].id,
+ 60
+    };
+ 61 };
+ In server/handlers/rest create a file called get-app-subscription.js.
+ In server/handlers/rest/get-app-subscription.js, export a method that gets the recurring application charge information given a subscription ID.
+ You can use this to get the app subscription details after the subscription's created using the GraphQL Admin API mutation.
+ server/handlers/rest/get-app-subscription.js
+ 1 import {callShopifyRestAPI, HTTP_GET_METHOD} from '../client';
+ 2
+ 3 export const getAppSubscription = async (shop, token, id) => {
+ 4
+    const resp = await callShopifyRestAPI(
+ 5
+      shop,
+ 6
+      token,
+ 7
+      HTTP_GET_METHOD,
+ 8
+      `recurring_application_charges/${id}`,
+ 9
+    );
+ 10
+ 11
+    return resp.body.recurring_application_charge;
+ 12 };
+ In server/handlers/index.js, export the newly-created method from the handler module.
+ server/handlers/index.js
+ 1 // ...
+ 2 import {createAppSubscription} from './mutations/create-app-subscription';
+ 3 import {getAppSubscription} from './rest/get-app-subscription';
+ 4
+ 5 export {
+ 6
+   // ...
+ 7
+   createAppSubscription,
+ 8
+   getAppSubscription,
+ 9 };
+ Step 2: Add a subscription confirmation URL to the internal API
+ In the channel app, you need to redirect merchants to the subscription confirmation page so that they can accept the subscription.
+ The confirmation URL is returned when you create the subscription, and expires after two days if the merchant has not approved the subscription. You can check the status of the confirmation URL by fetching the app subscription status. If it's stale, then you can create a new subscription.
+ You'll need to update the Shop data model to store the subscription ID and line item ID, which you can subsequently use to bill merchants usage charges.
+ Create a new sequelize migration that you'll use to add subscriptionId and subscriptionLineItemId columns to your Shop data model.
+ Terminal
+ $ npx sequelize migration:create --name add-shop-subscription-info
+ The command creates a new file in your app's /migrations folder with following name: {TIMESTAMP}-add-shop-subscription-info.js
+ Update the migration file to add the columns to your Shops data table.
+ migrations/{TIMESTAMP}-add-shop-subscription-info.js
+ 1 'use strict';
+ 2 module.exports = {
+ 3
+    up: async (queryInterface, Sequelize) => {
+ 4
+      await queryInterface.addColumn('Shops', 'subscriptionId', {
+ 5
+        type: Sequelize.STRING,
+ 6
+      });
+ 7
+      await queryInterface.addColumn('Shops', 'subscriptionLineItemId', {
+ 8
+        type: Sequelize.STRING,
+ 9
+      });
+ 10
+    },
+ 11
+ 12
+    down: async (queryInterface) => {
+ 13
+      await queryInterface.removeColumn('Shops', 'subscriptionId');
+ 14
+      await queryInterface.removeColumn('Shops', 'subscriptionLineItemId');
+ 15
+    },
+ 16 };
+ Add the new attributes to your Shop data model.
+ models/shop.js
+ 1 // ...
+ 2 module.exports = (sequelize, DataTypes) => {
+ 3
+    // ...
+ 4
+    Shop.init(
+ 5
+      {
+ 6
+        // ...
+ 7
+        subscriptionId: DataTypes.STRING,
+ 8
+        subscriptionLineItemId: DataTypes.STRING,
+ 9
+      },
+ 10
+      // ...
+ 11
+    );
+ 12
+    return Shop;
+ 13 };
+ Run the migration to write the changes to your database.
+ Terminal
+ $ npx sequelize db:migrate
+ In server/helpers.js, create a new method called getNewSubscriptionConfirmationUrl that creates a new app subscription, saves the details to the database, and returns a confirmation URL.
+ server/helpers.js
+ 1 // ...
+ 2 import {createAppSubscription, getAppHandle} from './handlers';
+ 3 import db from '../models';
+ 4
+ 5 // ...
+ 6 export async function getNewSubscriptionConfirmationUrl(shop, accessToken) {
+ 7
+    const appHandle = await getAppHandle(shop, accessToken);
+ 8
+    const {subscriptionId, subscriptionConfirmationUrl, subscriptionLineItemId} =
+ 9
+      await createAppSubscription(shop, accessToken, appHandle);
+ 10
+ 11
+    await db.Shop.update(
+ 12
+      {subscriptionId, subscriptionLineItemId},
+ 13
+      {where: {domain: shop}},
+ 14
+    );
+ 15
+ 16
+    return subscriptionConfirmationUrl;
+ 17 }
+ In server/graphql/schema.js, create a new AdminShopSubscription type that contains fields for the confirmation URL and a Boolean to indicate whether the subscription is accepted.
+ server/graphql/schema.js
+ 1 export const schemaString = `
+ 2 type AdminShopSubscription {
+ 3
+   confirmationUrl: String
+ 4
+   accepted: Boolean!
+ 5 }
+ 6 // ...
+ 7 type AdminShop {
+ 8
+   // ...
+ 9
+   subscription: AdminShopSubscription!
+ 10 }
+ 11 // ...
+ 12 `;
+ In server/graphql/resolvers.js, add a subscription resolver to the AdminShop type.
+ The resolver returns a confirmation URL for an app subscription, and whether the app subscription is accepted. Since the adminShop resolver on the Query type returns the shop details from the database, you can get the subscriptionId from the first parameter.
+ server/graphql/resolvers.js
+ 1 import {parseGid} from '@shopify/admin-graphql-api-utilities';
+ 2 import {getAppSubscription} from '../handlers';
+ 3 import {getNewSubscriptionConfirmationUrl} from '../helpers';
+ 4
+ 5 export const resolvers = {
+ 6
+    // ...
+ 7
+    AdminShop: {
+ 8
+      // ...
+ 9
+      subscription: async ({domain, accessToken, subscriptionId}) => {
+ 10
+        if (!subscriptionId) {
+ 11
+          const confirmationUrl = await getNewSubscriptionConfirmationUrl(
+ 12
+            domain,
+ 13
+            accessToken,
+ 14
+          );
+ 15
+          return {
+ 16
+            confirmationUrl,
+ 17
+            accepted: false,
+ 18
+          };
+ 19
+        }
+ 20
+        const {status, confirmation_url} = await getAppSubscription(
+ 21
+          domain,
+ 22
+          accessToken,
+ 23
+          parseGid(subscriptionId),
+ 24
+        );
+ 25
+        if (status === 'pending') {
+ 26
+          return {
+ 27
+            confirmationUrl: confirmation_url,
+ 28
+            accepted: false,
+ 29
+          };
+ 30
+        }
+ 31
+        if (status === 'active' || status === 'accepted') {
+ 32
+          return {
+ 33
+            accepted: true,
+ 34
+          };
+ 35
+        }
+ 36
+ 37
+        const confirmationUrl = await getNewSubscriptionConfirmationUrl(
+ 38
+          domain,
+ 39
+          accessToken,
+ 40
+        );
+ 41
+        return {
+ 42
+          confirmationUrl,
+ 43
+          accepted: false,
+ 44
+        };
+ 45
+      },
+ 46
+    },
+ 47
+    // ...
+ 48 };
+ Step 3: Add the subscription to the channel app
+ You can update the merchant onboarding page to surface information about the billing agreement that you added to the internal GraphQL API.
+ If the subscription is accepted, then mark the item in the onboarding checklist as completed. Otherwise, you'll redirect the merchant to the subscriptionConfirmationUrl so that they can accept the subscription.
+ In app/src/sections/Onboarding/components/OnboardingInfoCard.jsx update the OnboardingInfoCard component to include information about the billing agreement.
+ app/src/sections/Onboarding/components/OnboardingInfoCard.jsx
+ 1 import {BillingStatementDollarMajor} from '@shopify/polaris-icons';
+ 2
+ 3 const OnboardingInfoCard = ({ onboardingInfoCompleted, state }) => {
+ 4
+    // ...
+ 5
+    return (
+ 6
+      <OnboardingCard
+ 7
+        title="What you need to know before you start"
+ 8
+        state={state}
+ 9
+      >
+ 10
+        <OnboardingInfo
+ 11
+          completed={onboardingInfoCompleted}
+ 12
+          items={[
+ 13
+            // ...
+ 14
+            {
+ 15
+              icon: {
+ 16
+                color: 'subdued',
+ 17
+                source: BillingStatementDollarMajor,
+ 18
+              },
+ 19
+              title: 'Every order made through Mockingbird will have a $0.50 fee',
+ 20
+              content: (
+ 21
+                <p>
+ 22
+                  The fee will be charged each time a buyer completes a checkout
+ 23
+                  initiated in the marketplace, and will not be credited for
+ 24
+                  refunded orders. You will be charged every month, up to a
+ 25
+                  maximum of $20.00.
+ 26
+                </p>
+ 27
+              ),
+ 28
+            },
+ 29
+          ]}
+ 30
+          // ...
+ 31
+        />
+ 32
+     </OnboardingCard>
+ 33
+    );
+ 34 };
+ The onboarding information card should display information about the billing agreement. The following is an example:
+ In app/src/sections/Onboarding/components/OnboardingChecklistCard.jsx, update the OnboardingChecklistCard component to accept props for the subscription confirmation URL and whether the subscription is accepted.
+ The component should render an item for the subscription agreement, which redirects to the confirmation URL on action.
+ app/src/sections/Onboarding/components/OnboardingChecklistCard.jsx
+ 1 const OnboardingChecklistCard = ({
+ 2
+   // ...
+ 3
+   subscriptionConfirmationUrl,
+ 4
+   subscriptionAccepted,
+ 5 }) => {
+ 6
+   // ...
+ 7
+   const handleSubscriptionAction = () => {
+ 8
+     redirect.dispatch(Redirect.Action.REMOTE, {
+ 9
+       url: subscriptionConfirmationUrl,
+ 10
+     });
+ 11
+   };
+ 12
+ 13
+   const items = [
+ 14
+     // ...
+ 15
+     {
+ 16
+       label: 'Accept the app subscription agreement',
+ 17
+       completed: subscriptionAccepted,
+ 18
+       action: {
+ 19
+         onAction: handleSubscriptionAction,
+ 20
+       },
+ 21
+     },
+ 22
+   ];
+ 23
+ 24
+   // ...
+ 25 }
+ In app/src/sections/Onboarding/Onboarding.jsx update the admin shop query to fetch the subscription details.
+ Update the Onboarding component to pass the subscription details from the query to the OnboardingChecklistCard component. The component should also use the subscriptionAccepted Boolean to determine whether the shop meets marketplace requirements.
+ app/src/sections/Onboarding/Onboarding.jsx
+ 1 // ...
+ 2
+ 3 const ONBOARDING_PAGE_QUERY = gql`
+ 4
+    query OnboardingPageQuery {
+ 5
+      adminShop {
+ 6
+        // ...
+ 7
+        subscription {
+ 8
+          confirmationUrl
+ 9
+          accepted
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 `;
+ 14
+ 15 const Onboarding = () => {
+ 16
+    // ...
+ 17
+    const {
+ 18
+      onboardingInfoCompleted,
+ 19
+      termsAccepted,
+ 20
+      config: {hasStorefront, shipsToCanada, cadEnabled, hasPolicies},
+ 21
+      subscription: {
+ 22
+        accepted: subscriptionAccepted,
+ 23
+        confirmationUrl: subscriptionConfirmationUrl,
+ 24
+      },
+ 25
+    } = data.adminShop;
+ 26
+    const requirementsMet =
+ 27
+      hasStorefront &&
+ 28
+      shipsToCanada &&
+ 29
+      cadEnabled &&
+ 30
+      hasPolicies &&
+ 31
+      subscriptionAccepted;
+ 32
+ 33
+    return (
+ 34
+      <OnboardingPage
+ 35
+        // ...
+ 36
+      >
+ 37
+        // ...
+ 38
+        <OnboardingChecklistCard
+ 39
+          // ...
+ 40
+          subscriptionConfirmationUrl={subscriptionConfirmationUrl}
+ 41
+          subscriptionAccepted={subscriptionAccepted}
+ 42
+        />
+ 43
+        // ...
+ 44
+      </OnboardingPage>
+ 45
+    );
+ 46 };
+ The onboarding page checklist should now include an item for the subscription billing agreement:
+ Clicking on the billing agreement requirement link should redirect to a subscription approval page:
+ In app/src/sections/Settings.jsx, update the query to fetch the subscription details.
+ The Settings component should pass the subscription details from the query into the SettingsChecklist component. The SettingsChecklist component should render an item for the billing requirement.
+ app/src/sections/Settings.jsx
+ 1 const SETTINGS_PAGE_QUERY = gql`
+ 2
+   query SettingsPageQuery {
+ 3
+     adminShop {
+ 4
+       // ...
+ 5
+       subscription {
+ 6
+         confirmationUrl
+ 7
+         accepted
+ 8
+       }
+ 9
+     }
+ 10
+   }
+ 11 `;
+ 12
+ 13 const SettingsChecklist = ({
+ 14
+    // ...
+ 15
+    subscriptionAccepted,
+ 16
+    subscriptionConfirmationUrl,
+ 17 }) => {
+ 18
+    // ...
+ 19
+ 20
+    const handleSubscriptionAction = () => {
+ 21
+      redirect.dispatch(Redirect.Action.REMOTE, {
+ 22
+        url: subscriptionConfirmationUrl,
+ 23
+      });
+ 24
+    };
+ 25
+ 26
+    const items = [
+ 27
+      // ...
+ 28
+      {
+ 29
+        label: 'Accept the app subscription agreement',
+ 30
+        completed: subscriptionAccepted,
+ 31
+        action: {
+ 32
+          onAction: handleSubscriptionAction,
+ 33
+        },
+ 34
+      },
+ 35
+    ];
+ 36
+ 37
+    // ...
+ 38 };
+ 39
+ 40 const Settings = () => {
+ 41
+    // ...
+ 42
+    const checklistCardProps = data
+ 43
+      ? {
+ 44
+          children: (
+ 45
+            <SettingsChecklist
+ 46
+              {...data.adminShop.config}
+ 47
+              subscriptionAccepted={data.adminShop.subscription.accepted}
+ 48
+              subscriptionConfirmationUrl={
+ 49
+                data.adminShop.subscription.confirmationUrl
+ 50
+              }
+ 51
+            />
+ 52
+          ),
+ 53
+        }
+ 54
+      : {
+ 55
+          sectioned: true,
+ 56
+          children: <SkeletonBodyText lines={4} />,
+ 57
+        };
+ 58
+    // ...
+ 59 };
+ Step 4: Bill a usage fee
+ After merchants have approved the subscription, you can start billing usage fees for orders placed on your marketplace.
+ In server/handlers/mutations add a file called create-usage-record.js.
+ In server/handlers/mutations/create-usage-record.js, add a method that creates a usage charge using the appUsageRecordCreate mutation.
+ It should accept the subscriptionLineItemId, which is stored in your database, and bill a $0.5 usage fee.
+ server/handlers/mutation/create-usage-record.js
+ 1 import {callShopifyGraphqlAPI} from '../client';
+ 2
+ 3 const USAGE_RECORD_CREATE = `
+ 4
+    mutation appUsageRecordCreate(
+ 5
+      $subscriptionLineItemId: ID!
+ 6
+      $price: MoneyInput!
+ 7
+      $description: String!
+ 8
+    ) {
+ 9
+      appUsageRecordCreate(
+ 10
+        subscriptionLineItemId: $subscriptionLineItemId
+ 11
+        price: $price
+ 12
+        description: $description
+ 13
+      ) {
+ 14
+        appUsageRecord {
+ 15
+          id
+ 16
+        }
+ 17
+        userErrors {
+ 18
+          field
+ 19
+          message
+ 20
+        }
+ 21
+      }
+ 22
+    }
+ 23 `;
+ 24
+ 25 export const createUsageRecord = async (
+ 26
+    shop,
+ 27
+    token,
+ 28
+    subscriptionLineItemId,
+ 29 ) => {
+ 30
+    const variables = {
+ 31
+      subscriptionLineItemId,
+ 32
+      price: {
+ 33
+        amount: 0.5,
+ 34
+        currencyCode: 'USD',
+ 35
+      },
+ 36
+      description: 'Marketplace order fee',
+ 37
+    };
+ 38
+ 39
+    const resp = await callShopifyGraphqlAPI(shop, token, {
+ 40
+      query: USAGE_RECORD_CREATE,
+ 41
+      variables,
+ 42
+    });
+ 43
+ 44
+    return resp.body.data.appUsageRecordCreate;
+ 45 };
+ In server/handlers/index.js export createUsageRecord from the handlers module.
+ server/handlers/index.js
+ 1 // ...
+ 2 import {createUsageRecord} from './mutations/create-usage-record';
+ 3
+ 4 export {
+ 5
+   // ...
+ 6
+   createUsageRecord,
+ 7 };
+ In server/handlers/webhooks/orders.js update the handleOrderCreate function to get the shop’s subscriptionLineItemId from the database, and call the handler that you created.
+ server/handlers/webhooks/orders.js
+ 1 import Shopify from '@shopify/shopify-api';
+ 2 import {createUsageRecord} from '..';
+ 3 import db from '../../../models';
+ 4
+ 5 export const handleOrderCreate = async (shop, body) => {
+ 6
+    // ...
+ 7
+    const {accessToken} = await Shopify.Utils.loadOfflineSession(shop);
+ 8
+ 9
+    const {subscriptionLineItemId} = await db.Shop.findOne({
+ 10
+      where: {domain: shop},
+ 11
+    });
+ 12
+ 13
+    await createUsageRecord(shop, accessToken, subscriptionLineItemId);
+ 14 };
+ Next steps
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Set up subscription handlers
+ Step 2: Add a subscription confirmation URL to the internal API
+ Step 3: Add the subscription to the channel app
+ Step 4: Bill a usage fee
+ Next steps
+ Updates & News

@@ -1,0 +1,55 @@
+Get access tokens
+ Access token types
+ Online tokens
+ Offline tokens
+ Generate access tokens for admin custom apps
+ Delegate tokens
+ Overview
+ Create a token
+ Installation
+ Client secret / API key
+ Distribution
+ Billing
+ App Store
+ Delegate access tokens
+ Delegate access tokens are the recommended way for custom apps to make requests from private or authenticated contexts, like a server.
+ If you create a custom storefront with the Headless channel, Shopify creates public and private access tokens for you.
+ This guide familiarizes you with delegate access tokens.
+ Caution
+ Unlike public access tokens, private access tokens should be treated as secret and not used on the client-side. We recommend only requesting the scopes that your app needs, to reduce the security risk if the token leaks.
+ What's a delegate access token?
+ A delegate access token is an OAuth access token with a subset of the total permissions of an app.
+ Delegate access tokens are based on a parent API access token. The parent access token is used to authenticate your request for a delegate access token.
+ The following diagram illustrates the delegate access token flow based on the actions of you, your app, and Shopify:
+ The developer creates an app and authenticates it to the GraphQL Admin or REST Admin API.
+ The app requests an access token for the shop from the Admin API. This is the parent token.
+ Shopify authenticates the app and issues the access token.
+ The app uses the access token to request a delegate access token.
+ Shopify validates the request and returns a delegate access token.
+ The delegate access token is used to make requests to the Admin or Storefront API.
+ You need only one delegate access token for a shop, unless you need to rotate the tokens or change the access scopes that are available to the token.
+ When should I create a delegate access token?
+ The following are some example scenarios for when you would create a delegate access token:
+ Admin API requests when app architectures are split across multiple subsystems, with each one running on its own server. Delegate access tokens avoid sharing a single access token between all subsystems, and ensure that each subsystem has access to only the minimal scopes that it needs to function properly.
+ When do delegate access tokens expire?
+ You can explicitly declare an expires_in value for the delegate access token.
+ If you don't specify an expiry, then the token expires at the same time as its parent. If the parent token is an offline access token, then it won't expire and neither will the delegate access token. Otherwise, you'll need to rotate the parent and delegate tokens.
+ Limitations and considerations
+ The following limitations and considerations apply to delegate access tokens:
+ An app can delegate only the same or fewer scopes than were granted to it when asking for permission. You can't request extra scopes using the REST or GraphQL Admin APIs. If a new scope is required, then the app must first be re-authorized with the new access scope by a user of the store.
+ When an app is re-authorized with fewer access scopes, all delegate access tokens lose the access scopes that are no longer authorized.
+ A delegate access token can't be used to create new delegate access tokens.
+ A delegate access token can be used to make requests to any API objects or resources that don't require access scopes. This includes, for example, uninstalling the app from a store. Make sure that only trusted parties have access to a delegated access token.
+ Next steps
+ Create a delegate access token using the GraphQL or REST Admin APIs.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What's a delegate access token?
+ When should I create a delegate access token?
+ When do delegate access tokens expire?
+ Limitations and considerations
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

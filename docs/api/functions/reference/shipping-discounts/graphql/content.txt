@@ -1,0 +1,135 @@
+Overview
+ GraphQL reference
+ Overview
+ Common objects
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Discounts Allocator API
+ Fulfillment Constraints API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Shipping Discount API reference
+ The Shipping Discount API enables you to create a new type of discount that is applied to one or more shipping rates at checkout.
+ Extension targets
+ The Shipping Discount API exposes the following targets:
+ Target Output type Description
+ purchase.shipping-discount.run FunctionRunResult Outputs the shipping rate discounts
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Shipping Discount API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      deliveryGroups {
+ 4
+        id
+ 5
+        deliveryOptions {
+ 6
+          handle
+ 7
+          title
+ 8
+        }
+ 9
+        selectedDeliveryOption {
+ 10
+          handle
+ 11
+          title
+ 12
+        }
+ 13
+      }
+ 14
+    }
+ 15 }
+ The following example shows the resulting input to the query:
+      "deliveryGroups": [
+ 4
+        {
+ 5
+          "id": "gid://shopify/CartDeliveryGroup/0",
+ 6
+          "deliveryOptions": [
+ 7
+            {
+ 8
+              "handle": "handle0-standard",
+ 9
+              "title": "Standard"
+ 10
+            },
+ 11
+            {
+ 12
+              "handle": "handle1-express",
+ 13
+              "title": "Express"
+ 14
+            }
+ 15
+          ]
+ 16
+        }
+ 17
+      ]
+ 18
+    }
+ 19 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.shipping-discount.run target.
+ Unlike other discount Function APIs, the Shipping Discount Functions API FunctionRunResult object doesn't have a DiscountApplicationStrategy field. Instead, all discounts included in the FunctionRunResult are applied, as long as each of these discounts target the same shipping rate no more than once, whether by targeting it specifically using DeliveryOptionTarget or generally using DeliveryGroupTarget. The FunctionRunResult is ignored if individual shipping rates are targeted more than once.
+ Example
+ The following function result includes one free shipping discount for the Standard shipping rate:
+ output.json
+ 1 {
+ 2
+    "discounts": [
+ 3
+      {
+ 4
+        "value": {
+ 5
+          "percentage": {
+ 6
+            "value": "100"
+ 7
+          }
+ 8
+        },
+ 9
+        "targets": [
+ 10
+          {
+ 11
+            "deliveryOption": {
+ 12
+              "handle": "handle0-standard"
+ 13
+            }
+ 14
+          }
+ 15
+        ],
+ 16
+        "message": "100% off Standard shipping"
+ 17
+      }
+ 18
+    ]
+ 19 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult

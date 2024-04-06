@@ -1,0 +1,125 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Overview
+ Components
+ Endpoints
+ Statuses
+ Product subscription app extensions
+ Marketing activities statuses reference
+ Each marketing activity is marked with a status. Users can view the status of their marketing activities in the Marketing section of the Shopify admin.
+ Note
+ For a complete list of possible statuses, refer to the MarketingActivityStatus enum.
+ Pending status
+ The PENDING status is set when the user clicks the Publish activity button in Shopify. When the marketing activity is successfully created, the app needs to set the status as ACTIVE. If publishing fails, then the marketing activity should be set as FAILED.
+ Failed status
+ The FAILED status is set when the marketing activity has failed to be published. If the marketing activity creation fails, then the app needs to set the marketing activity status as FAILED and provide the correct error messages when calling MarketingActivityUpdate. Example error message format -
+ 1 {
+ 2
+    "errors": {
+ 3
+      "base_error_severity": "warning",
+ 4
+      "base": [
+ 5
+        "Your account does not have any payment method set."
+ 6
+      ],
+ 7
+      "quantity": [
+ 8
+        "is required"
+ 9
+      ],
+ 10
+      "start_at": {
+ 11
+        "start_time": [
+ 12
+          "is required",
+ 13
+          "must be after January 1st, 2019"
+ 14
+        ],
+ 15
+        "end_time": [
+ 16
+          "is required"
+ 17
+        ]
+ 18
+      }
+ 19
+    }
+ 20 }
+ The keys represent the input name of the form field.
+ The array of strings contains the error messages associated with that field.
+ Error messages can contain Markdown links that use root-relative or HTTPS URLs. For example:
+ Click [here](https://example.com) to set up your account
+ or Read more about [account setup](https://example.com).
+ base is a generic error that's not associated with any specific field.
+ base_error_severity can be used to indicate the severity level of the base error to the user. The available levels are critical, warning, and info. The default severity level is warning.
+ Nested components (like the budget_settings example) nest their inner fields so it's easier to read and locate the specific error for each field.
+ Active status
+ The ACTIVE status is set when the marketing activity has started and is currently actively running. It's expected that the app sets the status as INACTIVE when the activity has finished.
+ Note
+ For one-time marketing activities such as email and social media posts, it's recommended that you set the marketing activity as INACTIVE directly after the action has been completed to indicate that the activity is done (for example, after the email has been sent, or the social media post has been posted).
+ Inactive status
+ The INACTIVE status is set when the marketing activity has finished. These marketing activities are still displayed to the user, but they are no longer editable.
+ Scheduled status
+ The SCHEDULED status is set when the app has successfully acknowledged the creation of a marketing activity sometime in the future. For example, if an email marketing activity is set to be sent in the future, then the app should set the status of that activity as SCHEDULED.
+ Paused status
+ The PAUSED status means that the marketing activity is currently in a paused state and not running. If the marketing activity needs to be paused by the app (instead of being paused by the app user through a pause call), then when the app calls MarketingActivityUpdate it should provide an error message to state why it's paused the activity.
+ Disconnected status
+ The DISCONNECTED status applies to a marketing activity when its state in Shopify no longer accurately reflects its state outside of Shopify. There are a few different reasons why an activity can have this status:
+ A user uninstalls the app that created a marketing activity
+ A user's account on the marketing platform is no longer in sync with the app
+ A user uninstalls the app that created a marketing activity
+ If a user uninstalls an app that they've used to create marketing activities, then Shopify revokes access to those marketing activities. Those activities are marked as DISCONNECTED (unless the app's already marked them as INACTIVE, DELETED, or DELETED_EXTERNALLY), labeled as Disconnected in the Shopify admin, and updated with an error message. When activities are labeled as Disconnected, the user can no longer make changes to them directly in their Shopify admin.
+ Action required by the app
+ In this case, the app doesn't need to mark the activity as DISCONNECTED since that's done automatically when the user deletes the app in their Shopify admin.
+ If the user reinstalls the app, then the app needs to update the status of each marketing activity so that it matches its current status outside of Shopify, and then clear the related error messages. This can be done by subscribing to the app install webhook, and then calling MarketingActivityUpdate to set the status and mark the error message as empty.
+ A user's account on the marketing platform is no longer in sync with the app
+ If the app detects that a user's account on the marketing platform is no longer in sync with the app, then the status of their marketing activities in Shopify might not reflect their current status on that platform. For example, if a user deactivates their account on the marketing platform after they create marketing activities, then that account becomes out of sync with the app in Shopify.
+ Action required by the app
+ In this case, the app needs to do the following:
+ When the app detects that it's no longer in sync with the user's account on the marketing platform, it should call MarketingActivityUpdate to set the status of the marketing activities as DISCONNECTED, and then set the error message to instruct the user to reconnect the account that's associated with their marketing activities.
+ When the app detects that it's in sync with the user's account again, it needs to update the status of the marketing activities to their current status on the marketing platform, and then clear the related error messages.
+ Deleted status
+ The DELETED status is set by the app to acknowledge that the user's request to delete the marketing activity is successful. The activity that was marked as deleted will no longer be visible to the user in the Marketing section of their Shopify admin. It's also expected that the app removes the activity from all of the associated platforms.
+ Action required by the app
+ When the Delete call is received by the app, it needs to ensure that all activity has been paused or stopped before the MarketingActivityUpdate is called to mark the activity as DELETED.
+ Deleted externally status
+ The DELETED_EXTERNALLY status applies to a marketing activity that was deleted from outside of Shopify.
+ After an activity is marked as DELETED_EXTERNALLY, it still appears on the Marketing page in the Shopify admin. This lets the user know that the activity was deleted from outside of Shopify. If the user deletes the activity from its details page in their Shopify admin, then it's removed from the Marketing page as well.
+ Required activity endpoints per status
+ This table identifies endpoints that must be implemented for each status.
+ Note
+ An activity with DELETED, UNDEFINED, or DISCONNECTED status cannot call the following endpoints.
+ PENDING FAILED SCHEDULED ACTIVE PAUSED INACTIVE DELETED_EXTERNALLY
+ Publish
+ Republish x
+ Pause x x x
+ Resume x
+ Update x x x
+ Delete x x x x x x
+ Preview x x x x x x
+ Preload x x x x x x x
+ Activity status and form
+ Activities can be edited when their status is ACTIVE, FAILED, or SCHEDULED.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Pending status
+ Failed status
+ Active status
+ Inactive status
+ Scheduled status
+ Paused status
+ Disconnected status
+ Deleted status
+ Deleted externally status
+ Required activity endpoints per status
+ Activity status and form
+ Updates & News
+ Developer changelog

@@ -1,0 +1,120 @@
+Overview
+ Requirements
+ App review process
+ Built for Shopify
+ Overview
+ Achievement criteria
+ Losing your status
+ App success
+ App listing visibility
+ App revenue share
+ Data protection
+ App Store ads
+ Security
+ Achievement criteria
+ To qualify for Built for Shopify status, your app must meet the following criteria. Each of the criteria in this list helps your app to meet our app quality standards.
+ Along the way, you'll qualify for smaller achievements that grant you unique benefits. For details about the benefits of each achievement, refer to the Built for Shopify overview.
+ Some criteria are automatically evaluated on a regular basis. You can check whether your app meets these criteria on the Distribution page of your Partner Dashboard.
+ Criteria are subject to change. If your app has qualified for this achievement, then we'll notify you when new criteria are added and tell you how to maintain your status.
+ Note
+ You can apply for Built for Shopify status anytime. Benefits take effect and become visible to merchants in the first half of 2023. There's no deadline to apply.
+ What happens when I qualify?
+ When your app meets the automatically evaluated criteria for an achievement, you might need to take additional steps.
+ Achievement Action Notes
+ Built for Shopify When your app meets the automatically evaluated criteria, you can apply for Built for Shopify status. After you apply for Built for Shopify status, Shopify manually evaluates the remaining criteria, and audits certain manually evaluated criteria.
+ App highlights None When your app meets the criteria for a highlight, it's automatically added to your app listing. It might take a few days for the highlight to appear after the criteria are met.
+ In the spotlight None When your app meets the criteria for this achievement, it automatically becomes eligible to be promoted in the In the spotlight section.
+ 
+ Our app review team selects eligible apps to be featured every week. Your app isn’t guaranteed to be selected.
+ Story pages When your app meets all of the criteria for this achievement, then you can submit your app for consideration to be featured in editorial content. Your app isn’t guaranteed to be selected after it’s submitted.
+ Criteria
+ The following table outlines the criteria for each achievement. Each of the criteria in this list helps your app to meet our app quality standards.
+ Some criteria are only applicable to specific types of apps.
+ Caution
+ You can lose Built for Shopify status after it's granted if you fail to meet certain criteria on an ongoing basis. Learn more about why you might lose Built for Shopify status.
+ Criterion Description Achievement
+ Built for Shopify App highlight:
+ Works with the latest themes App highlight:
+ Use directly in Shopify admin In the spotlight Story pages Increased visibility
+ Good Partner standing
+ The app needs to uphold the Shopify API License and Terms of Use. Your Partner account needs to have no outstanding infractions against the Partner Program Agreement.
+ ✔ ✔ ✔
+ Meets App Store requirements
+ The app needs to continue to meet the requirements for distributing apps on the Shopify App Store.
+ Your app will be audited for these requirements when you apply for Built for Shopify status.
+ ✔
+ 
+ Verified after application ✔ ✔
+ Uninstalls cleanly: uses theme app extensions
+ If your app is meant to be used in a merchant's online store, then you need to use theme app extensions to build the elements to be included in the theme.
+ Theme app extensions allow apps to integrate with themes seamlessly, without injecting code into the theme. When merchants uninstall apps, blocks that are associated with the apps are automatically and entirely removed from online store themes.
+ Storefront apps only ✔
+ 
+ Only storefront apps are eligible for this highlight Storefront apps only Storefront apps only Storefront apps only
+ Doesn't use the Asset API to create, modify, or delete files
+ Your app shouldn't add, remove, or edit a merchant's theme files using the Asset API. There are three exceptions to this rule:
+ Your app is a page builder app that adds or replaces all layouts or templates files with the purpose of providing an alternative theme customization experience.
+ Your app backs up all theme files, and restores files from a backup.
+ Your app primarily provides search engine optimization, content locking, or developer tooling functionality.
+ You can still use the Asset API to read theme files.
+ Your app will be audited for Asset API usage when you apply for Built for Shopify status.
+ Storefront apps only
+ 
+ Assessed after application
+ Minimizes impact on store speed
+ Your app must not significantly reduce the Lighthouse performance score of a store.
+ To achieve Built for Shopify status, your app must not reduce the storefront Lighthouse performance score by more than ten points.
+ Storefront apps only
+ 
+ Assessed after application
+ Minimizes impact on checkout speed
+ You need to optimize how your app fetches and stores carrier rates to minimize impact on checkout speed.
+ For Shopify to assess your impact on checkout speed, your app must make a minimum of 1000 requests over the course of three weeks. Your requests must have a p99 value of 1000ms or less, with 0% failure rate.
+ Apps that provide live shipping rates at checkout only Apps that provide live shipping rates at checkout only
+ Mobile performance:
+ uses App Bridge optimized loading on mobile devices
+ Enable App Bridge optimized loading to allow your app to load in a WebView on mobile devices.
+ App Bridge optimized loading improves app load times and displays some app elements using native mobile UI elements, improving the mobile user experience.
+ ✔
+ Admin performance:
+ meets 75th percentile Web Vitals targets
+ Shopify uses Web Vitals to determine the performance of your app in the Shopify admin. To enable Shopify to gather Web Vitals metrics, your app needs to use App Bridge version 2.2.x, or 3.2.x or higher.
+ When your app loads in the Shopify admin, it needs to meet Web Vitals targets for the following metrics, at the 75th percentile of page loads:
+ Largest Contentful Paint (LCP): 2.5 seconds or less
+ First Input Delay (FID): 100 milliseconds or less
+ Your app needs to have a minimum of 100 calls for each of LCP and FID over the last 28 days to be assessed.
+ Learn how to measure your app's performance in the Shopify admin using Web Vitals.
+ ✔
+ App is embedded in the Shopify admin
+ You should embed your app in the Shopify admin using Shopify App Bridge and session token authentication to further optimize the merchant's experience.
+ Embedding your app in the Shopify admin makes your app feel familiar, gives you access to Shopify UI elements, and lets merchants use your app easily on mobile devices.
+ ✔ ✔
+ 
+ Only embedded apps are eligible for this highlight
+ Follows embedded app best practices
+ Your embedded app should follow our embedded app best practices. These best practices minimize the need for the merchant to move between Shopify and external app surfaces to use your app’s most important functionality.
+ Your app will be assessed when you apply for Built for Shopify status.
+ ✔
+ 
+ Assessed after application
+ Meets all App Design Guidelines
+ An intuitive design removes complexity and saves merchants time and effort.
+ Shopify’s App Design Guidelines show you what great Shopify apps look like and how they’re crafted. These guidelines remove the guesswork, so you can build apps that are predictable and easy to use.
+ Your app must meet all applicable App Design Guidelines.
+ Adherence to these guidelines is assessed when you apply for Built for Shopify status.
+ ✔
+ 
+ Verified after application
+ Minimum number of installs
+ Your app must have a minimum of 50 net installs.
+ ✔ ✔ ✔
+ Minimum number of reviews
+ Your app must have a minimum of 5 reviews.
+ ✔ ✔ ✔
+ Minimum app rating
+ Your app must meet a minimum recent app rating threshold in the Shopify App Store.
+ ✔ ✔ ✔
+ Complete, updated app listing form
+ The app listing is your first point of contact with a merchant, and it's where they'll go to determine whether your app is right for them. Your app listing should be as complete as possible, and reflect your app's current functionality.
+ On September 15, 2022, the app listing form was updated with new fields that help you to better communicate information about your app to merchants. To meet this criterion, your app listing needs to have been updated after September 15, 2022.
+ ✔ ✔ ✔ ✔

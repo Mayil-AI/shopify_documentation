@@ -1,0 +1,70 @@
+Segment query language reference
+ Datasets
+ Orders dataset
+ Products dataset
+ Payment attempts dataset
+ Product subscription app extensions
+ Payment Attempts dataset
+ This page outlines the definition, type, and utility of each ShopifyQL column including numeric values, aggregates, and dimensional attributes.
+ Notes about this dataset
+ This dataset is available for Plus merchants only.
+ The grain of this dataset is one row for each payment_attempt_group.
+ A payment attempt group is defined as a sequence of payment attempts that meet all of the following criteria:
+ Attempts were part of the same checkout
+ Attempts used the same card, if card data is available
+ Attempts were for the same amount of money, in the same currency
+ Attempts used the same payment method
+ Each attempt in the group was made no more than 30 minutes after the previous attempt
+ The attempts were all failures, or ended in a success. If two sequential successes occur with all the same attributes, then they're treated as separate groups.
+ Attempts are grouped to account for retried payments, allowing users to determine whether a customer eventually succeeded in making the purchase that they intended to make. This approach is based on the assumption that if a payment attempt group ends in a success, then the preceding failed attempts didn't result in a loss of revenue.
+ Numeric values
+ Numeric values are the base numbers in the dataset. They’re typically aggregated using ShopifyQL functions like sum.
+ Name Type Definition
+ successful_attempts number The number of payment attempts in this group that were successful
+ failed_attempts number The number of payment attempts in this group that were not successful
+ customer_currency_amount price The amount of the attempted payment, in the currency used by the customer
+ shop_currency_amount price The amount of the attempted payment, in the store's default currency
+ Dimensional attributes
+ Name Type Definition
+ payment_attempt_group string A unique identifier for the group of payment attempts described by each row
+ order_id number A unique idenfitier for the related order, if one exists
+ card_bin_country string The country associated with the card bin
+ card_bin string The first several digits of the card number used
+ card_brand string The brand of the card that was used
+ card_wallet string The card wallet that was used, if any
+ payment_method string The payment method that was used
+ funding_source string The source of funding behind the card used, such as debit or credit
+ customer_currency string The currency used by the customer
+ shop_currency string The default store currency
+ first_attempted timestamp The time at which the earliest payment attempt in the group occurred
+ last_attempted timestamp The time at which the latest payment attempt in the group occurred
+ in_person_payment Boolean Whether the payment was made in person, for example, using a point of sale terminal
+ Aggregates
+ Aggregates are predefined calculations of numeric values, to replicate metrics that are available throughout Shopify. Aggregates can be grouped or filtered by any of the dimensional attributes.
+ Name Type Definition
+ authorization_rate percent The rate of successful payment authorization, adjusted for retries. Defined as sum(successful_attempts) / count(). To learn more about how retries are accounted for, refer to the dataset notes.
+ raw_authorization_rate percent The rate of successful payment authorization, not adjusted for retries. Defined as sum(successful_attempts) / sum(successful_attempts + failed_attempts).
+ Sample queries
+ Show payment authorization rate by month
+ 1 FROM payment_attempts
+ 2 SHOW auth_rate, raw_auth_rate
+ 3 GROUP BY month
+ 4 SINCE -3m
+ 5 ORDER BY month
+ Show payment authorization rate by payment_method
+ 1 FROM payment_attempts
+ 2 SHOW auth_rate, sum(successful_attempts + failed_attempts) AS total_attempts
+ 3 GROUP BY payment_method
+ 4 SINCE -3m
+ 5 ORDER BY total_attempts DESC
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Notes about this dataset
+ Numeric values
+ Dimensional attributes
+ Aggregates
+ Sample queries
+ Updates & News
+ Developer changelog
+ Partner blog

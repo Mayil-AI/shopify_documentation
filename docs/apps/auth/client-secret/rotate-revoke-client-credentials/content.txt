@@ -1,0 +1,100 @@
+Get access tokens
+ Access token types
+ Installation
+ Client secret / API key
+ Overview
+ Rotate or revoke client credentials
+ Webhooks
+ App extensions
+ Custom data
+ Functions
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Rotate or revoke client credentials
+ Client credentials should be changed regularly. Employees leave, client credentials can be accidentally committed to version control, and wide-reaching security flaws can be discovered. While these situations pose security risks, in most cases you can address them without causing any downtime for your app by rotating your client credentials.
+ Client credentials are also known as app credentials or API keys.
+ Caution
+ In the case of a serious security breach, you should immediately revoke your compromised client credentials before you generate new ones. This prevents a malicious attacker from accessing or modifying your users' data while you transition to new credentials. In some high-risk situations, application downtime can't be avoided while you address a security breach.
+ Step 1: Create a new client secret
+ To communicate securely with Shopify’s API, you need to generate a new client secret. You can do this from your app's page in the Partner Dashboard.
+ Log in to your Partner Dashboard.
+ Click Apps.
+ Click the name of the app that you want to rotate client credentials for.
+ Click API Access.
+ In the Client secret section, click Rotate.
+ On the Generate new client secret? screen, click Generate.
+ The new client secret displays with a New label.
+ Step 2: Configure webhooks
+ Webhooks are signed with your app's client secret to prevent forgeries. If your app uses webhooks, then configure it to accept both webhooks signed with the new client secret and webhooks signed with the old client secret until after you revoke the old secret.
+ Caution
+ Shopify will sign webhooks with your app's oldest unrevoked client secret. We know it can be convenient to use the same client secret configuration for both OAuth and webhook validation, but this makes it easy to incorrectly validate webhooks using only the new client secret after following the configure OAuth step.
+ Step 3: Configure OAuth
+ Access tokens requested from Shopify’s API using the new client secret will be secure. Configure your app to use only the new client secret when acquiring an access token.
+ Step 4: Generate a new refresh token
+ Many of the access tokens that your app stores will be associated with the old client secret. New access tokens must be requested from the Shopify API to work with the new client secret. You'll need a refresh token to generate these new access tokens.
+ You can generate a refresh token from your app’s page in the Partner Dashboard. Refresh tokens automatically expire after one hour.
+ Caution
+ Don't delete your old client secret until you've requested new access tokens for every token stored by your app. Users might not be able to open your app if you delete a client secret that still has tokens associated with it.
+ Step 5: Request new access tokens
+ Refresh each access token stored by your application by requesting new tokens that use your new client secret and the refresh token:
+ POST https://{store_name}.myshopify.com/admin/oauth/access_token
+ Include the following required parameters in your requests:
+ client_id: The client ID for your app.
+ client_secret: The new client secret for your app.
+ refresh_token: The refresh token you created from your app's page in the Partner Dashboard.
+ access_token: The access token you would like to refresh.
+ Note
+ The refresh token is temporary and can be used for only one hour after it has been generated.
+ Step 6: Revoke the old client secret
+ Now your app is using the new client secret to communicate with the Shopify API. The old client secret can now be revoked.
+ You can revoke the old client secret from your app's page in the Partner Dashboard. Remember that revoking any secret will also remove the access tokens associated with it.
+ If your app uses webhooks, then configure it to accept webhooks that are signed with the new client secret only.
+ Examples
+ The following examples show a basic implementation of access token rotation in different programming languages.
+ Ruby
+ Node
+ PHP
+ 1 require "rest_client"
+ 2 require "json"
+ 3
+ 4 api_key = "public-api-key"
+ 5 shared_secret = "newly-generated-shared-secret"
+ 6 refresh_token = "token-generated-from-partners-dashboard"
+ 7 access_token = "access-token-to-refresh"
+ 8
+ 9 post_data = {
+ 10
+    client_id: api_key,
+ 11
+    client_secret: shared_secret,
+ 12
+    refresh_token: refresh_token,
+ 13
+    access_token: access_token,
+ 14 }
+ 15
+ 16 response = RestClient.post(
+ 17
+    'https://{shop}.myshopify.com/admin/oauth/access_token.json',
+ 18
+    post_data
+ 19 )
+ 20
+ 21 # The response includes the updated access token for future requests.
+ 22 access_token = JSON.parse(response.body)['access_token']
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Create a new client secret
+ Step 2: Configure webhooks
+ Step 3: Configure OAuth
+ Step 4: Generate a new refresh token
+ Step 5: Request new access tokens
+ Step 6: Revoke the old client secret
+ Examples
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

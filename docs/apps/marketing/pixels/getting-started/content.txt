@@ -1,0 +1,335 @@
+Marketing
+ Overview
+ Web pixels
+ Overview
+ Getting started
+ Customer segments
+ Marketing activities
+ Marketing automations
+ SEO
+ Authentication
+ Distribution
+ Billing
+ App Store
+ Getting started with web pixel extensions
+ Pixels are JavaScript code snippets that run on the online store and collect behavioral data for marketing campaign optimization and analytics. You can create a web pixel extension to subscribe your app to events that are emitted by Shopify.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Create a web pixel extension.
+ Configure your web pixel extension to subscribe to all events emitted by Shopify.
+ Activate and test your web pixel extension.
+ Deploy your web pixel extension to Shopify.
+ Requirements
+ You've created a Partner account and a development store.
+ You've created an app that uses Shopify CLI 3.50 or higher. If you previously installed Shopify CLI, then make sure you're using the latest version.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the write_pixels and read_customer_events access scopes. Learn how to configure your access scopes using Shopify CLI.
+ Step 1: Create a web pixel extension
+ To create a web pixel extension, you can use Shopify CLI to generate a starter extension.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new web pixel extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template web_pixel --name my-web-pixel
+ Choose the language that you want to use:
+ Terminal
+ $ ?  What would you like to work in?
+ $
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ After the generation process has completed, a new folder is created in your app directory named extensions. This folder contains all of the code for your web pixel extension.
+ Step 2: Define your web pixel settings
+ Your web pixel needs to be configured for each store so it can properly track and associate data. The settings for your web pixel can be found at extensions/<your_extension_name>/shopify.extension.toml.
+ Inside of shopify.extension.toml, you can define fields that can be used by your web pixel. The following example shows the shopify.extension.toml file with a description of each property:
+ shopify.extension.toml
+ 1 type = "web_pixel_extension"
+ 2 name = "my-web-pixel"
+ 3 runtime_context = "strict"
+ 4
+ 5 [settings]
+ 6 type = "object"
+ 7
+ 8 # [settings.fields.name]
+ 9 # name = "name"
+ 10 # description = "description"
+ 11 # type = "single_line_text_field"
+ 12 # validations = [{...}]
+ 13
+ 14 # [settings.fields.name]
+ 15 # name = "name"
+ 16 # description = "description"
+ 17 # type = "single_line_text_field"
+ 18 # validations = [{...}]
+ Property Description
+ type
+ required The type of extension. For web pixel extensions, this value is always web_pixel_extension.
+ name
+ required The name of the web pixel app extension.
+ runtime_context
+ required The context that the web pixel extension is running in. This value must be set to strict.
+ settings
+ required Denotes the data type of the settings definition. A type property with the value object must be provided for this section.
+ settings.fields
+ required Denotes the acceptable metafields for your settings definition. Requires a name and type field. An optional description and validations field can also be provided.
+ By default, your shopify.extension.toml file is generated with a field named accountID, as shown in the following example:
+ shopify.extension.toml
+ 1 type = "web_pixel_extension"
+ 2 name = "pixel"
+ 3 runtime_context = "strict"
+ 4
+ 5 [settings]
+ 6 type = "object"
+ 7
+ 8 [settings.fields.accountID]
+ 9 name = "Account ID"
+ 10 description = "Account ID"
+ 11 type = "single_line_text_field"
+ 12 validations =  [
+ 13
+    { name = "min", value = "1" }
+ 14 ]
+ Each of the fields that you define has a name, description, and type. The only type that is supported for web pixel is single_line_text_field. Validations can be provided as an optional parameter and can be used to define any constraints on a field's value. In the above example, there is a single validation to ensure that the value provided is at minimum length of 1. Further information on validation options can be found on the metafields validation page.
+ With the settings defined, you can now set up subscriptions to events that are emitted.
+ Step 3: Subscribe to events
+ Event subscription allows your app to listen for events that are emitted by Shopify and other developers. You can define a specific event to subscribe to or you can subscribe to all events using analytics.subscribe.
+ You can add an event subscription to your app using the extensions/<your_extension_name>/src/index.js file. When you run the generate extension command to create the extension, a set of basic sample code is created in this file.
+ You can add code to enable subscription to any target events. For example, you can add the following code that subscribes to all events:
+ extensions/<your_extension_name>/src/index.js
+ 1 import {register} from '@shopify/web-pixels-extension';
+ 2
+ 3 register(async ({analytics, browser, settings}) => {
+ 4
+    // Retrieve or set your tracking cookies
+ 5
+    const uid = await browser.cookie.get('your_visitor_cookie');
+ 6
+    const pixelEndpoint = `https://example.com/pixel?id=${settings.accountID}&uid=${uid}`;
+ 7
+ 8
+    // Subscribe to events
+ 9
+    analytics.subscribe('all_events', (event) => {
+ 10
+      // Transform the event payload to fit your schema (optional)
+ 11
+ 12
+    // Send events to third-party servers
+ 13
+    fetch('https://example.com/pixel', {
+ 14
+      method: 'POST',
+ 15
+      body: JSON.stringify(payload),
+ 16
+      keepalive: true,
+ 17
+    });
+ 18 });
+ With this code added, the web pixel is now set to listen to all events that are emitted. Refer to the Web pixel extension API for additional APIs to support other functions or to subscribe to individual events.
+ Step 4: Update your app access scopes
+ Before you can activate a web pixel extension, you must request the following access scopes to invoke web pixel mutations in the GraphQL Admin API:
+ write_pixels: Used to write the web pixel merchant settings
+ read_customer_events: Used to gain access to customer events
+ In shopify.app.toml in the root of your app, add the write_pixels and read_customer_events access scopes:
+ shopify.app.toml
+ 1 [access_scopes]
+ 2 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+ 3 scopes = "write_pixels,read_customer_events"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Start your app by running the dev command to connect the extension to a development store:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Note
+ Connecting the extension to the store is the first step in testing your web pixel extension. However, the web pixel isn't created and configured in the development store, and isn't subscribed to customer events, until you run a mutation to create the web pixel.
+ With the server running, press p to open your app's preview URL in a browser.
+ Click Update app to accept the new access scope permissions in your store.
+ In your development store, go to Settings > Customer events.
+ The name of your app appears in the App pixels list with the Disconnected status. You'll connect your app and activate the web pixel extension in the next step.
+ Step 5: Activate a web pixel extension
+ To activate a web pixel extension, you must create a web pixel record on the store where you installed your app. You can do this using the webPixelCreate mutation. When this mutation is called, Shopify validates against the settings definition that you defined in shopify.extension.toml. If the settings input field doesn't match the schema that you defined, then the mutation will fail.
+ Note
+ The simplest way to execute GraphQL queries if you're developing an app is to use the local GraphiQL instance that the CLI provides.
+ Execute the following mutation from within your app:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    # This mutation creates a web pixel, and sets the `accountID` declared in `shopify.extension.toml` to the value `123`.
+ 3
+    webPixelCreate(webPixel: { settings: "{\"accountID\":\"123\"}" }) {
+ 4
+      userErrors {
+ 5
+        code
+ 6
+        field
+ 7
+        message
+ 8
+      }
+ 9
+      webPixel {
+ 10
+        settings
+ 11
+        id
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "webPixelCreate": {
+ 4
+        "userErrors": [],
+ 5
+        "webPixel": {
+ 6
+          "settings": "{\"accountID\":\"123\"}",
+ 7
+          "id": "gid://shopify/WebPixel/1"
+ 8
+        }
+ 9
+      }
+ 10
+    },
+ 11
+    "extensions": {
+ 12
+      "cost": {
+ 13
+        "requestedQueryCost": 10,
+ 14
+        "actualQueryCost": 10,
+ 15
+        "throttleStatus": {
+ 16
+          "maximumAvailable": 1000,
+ 17
+          "currentlyAvailable": 990,
+ 18
+          "restoreRate": 50
+ 19
+        }
+ 20
+      }
+ 21
+    }
+ 22 }
+ In your development store, go to Settings > Customer events.
+ The name of your app should appear in the App pixels list with the Connected status.
+ Optional. If you need to update your extension code, such as change the settings of settings.fields.[name] in shopify.extension.toml, and want to see your changes reflected in development, then you need to run the webPixelUpdate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    webPixelUpdate(id: "gid://shopify/WebPixel/1", webPixel: { settings: "{\"accountID\":\"234\"}" }) {
+ 3
+      userErrors {
+ 4
+        code
+ 5
+        field
+ 6
+        message
+ 7
+      }
+ 8
+      webPixel {
+ 9
+        settings
+ 10
+        id
+      "webPixelUpdate": {
+ 4
+        "userErrors": [],
+ 5
+        "webPixel": {
+ 6
+          "settings": "{\"accountID\":\"234\"}",
+ 7
+          "id": "gid://shopify/WebPixel/1"
+ 8
+        }
+ 9
+      }
+ 10
+    },
+ 11
+    "extensions": {
+ 12
+      "cost": {
+ 13
+        "requestedQueryCost": 10,
+ 14
+        "actualQueryCost": 10,
+ 15
+        "throttleStatus": {
+ 16
+          "maximumAvailable": 1000,
+ 17
+          "currentlyAvailable": 990,
+ 18
+          "restoreRate": 50
+ 19
+        }
+ 20
+      }
+ 21
+    }
+ 22 }
+ Step 6: Test the web pixel settings
+ You can test that the web pixel is configured and subscribed to all events emitted on the development store by completing the following steps:
+ With the server running, open your development store.
+ Right-click anywhere on the page and select Inspect.
+ Click Console.
+ The accountID is logged in the console:
+ Step 7: Deploy your extension
+ When you're ready to release your changes to users, you can create and release an app version. An app version is a snapshot of your app configuration and all extensions.
+ Navigate to your app directory.
+ Run one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ Tip
+ If you want to create a version, but avoid releasing it to users, then run the deploy command with a --no-release flag.
+ You can release the unreleased app version using the CLI release command, or through the Partner Dashboard.
+ Next steps
+ Consult the customer events reference to learn about the ways of tracking and sending events with web pixels.
+ Explore the web pixel extension API to learn about the sandboxing modes for web pixels, and the API references that are available for the sandbox.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create a web pixel extension
+ Step 2: Define your web pixel settings
+ Step 3: Subscribe to events
+ Step 4: Update your app access scopes
+ Step 5: Activate a web pixel extension
+ Step 6: Test the web pixel settings
+ Step 7: Deploy your extension
+ Next steps
+ Updates & News

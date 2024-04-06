@@ -1,0 +1,25 @@
+Billing
+ App Store
+ Enable publishing bundles
+ Publishing bundles on a custom storefront is currently disabled by default. This guide explains how to enable the feature.
+ Step 1: Enable publishing bundles on the storefront from the Partner Dashboad
+ From your app's overview screen, click App setup.
+ In the Sell Bundles section, click Enable Feature.
+ After the feature is enabled, a message indicating that the channel supports selling bundles displays.
+ Step 2: Publish bundles on the storefront channel
+ Bundle products are published in the same way as any other product. After you enable the feature, merchants that use your app can publish bundles products with the following steps:
+ From your Shopify admin, go to Products.
+ Click the product's name to open its details. The product is included in the sales channels listed in the Publishing section.
+ Click ⋮ > Manage sales channels.
+ Select the sales channels and apps that you want to include the product in.
+ Click Done.
+ Click Save.
+ After publishing bundles on the custom storefront, they will be available for buyers to purchase.
+ Note
+ On admin-created custom apps, publishing bundles is enabled by default
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Enable publishing bundles on the storefront from the Partner Dashboad
+ Step 2: Publish bundles on the storefront channel
+ Updates & News

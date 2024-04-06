@@ -1,0 +1,60 @@
+Overview
+ Getting started
+ Manage marketing activities
+ Connect a marketing app
+ Marketing automations
+ Marketing activities
+ You can use a marketing activities app extension to enable merchants to manage promotional campaigns and marketing automations from the Marketing page in the Shopify admin using your app.
+ This guide describes how your app works with the marketing activities app extension and Shopify to support marketing activities. It also describes how you can connect a marketing app to the Shopify platform.
+ Note
+ If you're building a marketing automation, then you shouldn't integrate your app as a marketing activity app extension. Instead, you should use a marketing automation Flow action extension, which can be used in Shopify marketing automations.
+ How it works
+ Marketing on Shopify helps merchants find and sell to customers using a variety of means, including content marketing, SEO, and social media. You can add a marketing activities app extension to your app to surface your app directly in the Marketing page in the Shopify admin.
+ Using a marketing activities app extension, you can complete the following tasks:
+ Configure the marketing activity form that's rendered in Shopify admin.
+ Enable app users to preview marketing activities on your platform.
+ Manage a user's marketing onboarding state.
+ Manage the lifecycle of a user's marketing activities.
+ Track a user's marketing activity engagements.
+ Defining a marketing activity form
+ Using Shopify’s form builder inside the Partner Dashboard, you can define the fields necessary for your activity to participate in a marketing campaign. There are many components to choose from. Some of the components are generic, like text and numbers, while others allow you to access Shopify data, like products and discounts.
+ Rendering a marketing activity form
+ Each marketing activity extension is uniquely identified by its UUID, which is used to open the marketing activity form.
+ Shopify calls your app's preload endpoint to render the marketing activity form. Your app is responsible for responding with form data based on the merchant’s marketing activity and the state of a merchant's shop data. Shopify also calls your app's error feedback endpoint to report whether there were problems with your marketing activity extension.
+ The merchant uses the app extension form to create a marketing activity.
+ Shopify calls your app's preload endpoint.
+ The app responds with form data.
+ The creation form is rendered with the preview.
+ If there is an error rendering the form, then Shopify reports this to the app's error feedback endpoint.
+ Publishing a marketing activity
+ After a merchant publishes a marketing activity, Shopify calls your app's create endpoint to create the marketing activity. Your app is responsible for validating the form data. After the marketing activity is created, your app calls Shopify to update the status of the marketing activity using the MarketingActivityUpdate mutation.
+ The merchant clicks to publish the marketing activity.
+ Shopify creates the marketing activity and sends a request to the app's create endpoint
+ The app validates the form data, publishes the marketing activity asynchronously, and updates status information using the MarketingActivityUpdate mutation.
+ Shopify updates the marketing activity status.
+ Shopify renders the marketing activity.
+ Connecting a marketing app to Shopify
+ You can use the GraphQL Admin API to create and manage marketing efforts in your app or on a platform outside of Shopify. By integrating with Shopify, apps can connect their data, and app users can access a complete picture of how their marketing efforts are performing.
+ For more information, refer to Connect a marketing app to Shopify.
+ Note
+ You don't need to use a marketing activities app extension to connect a marketing app to Shopify.
+ Developer resources
+ Marketing activities components reference
+ Learn about the different components that you can use to build a marketing activity form.
+ Marketing activities endpoints reference
+ Learn about the endpoints that you need to add to your app to support marketing activities.
+ Marketing activities statuses reference
+ Learn about the different statuses for marketing activities and how to handle them.
+ Next steps
+ Get started with marketing activities to enable merchants to create marketing campaigns from their Shopify admin using your app.
+ Consult the reference documentation for marketing activities app extensions.
+ Learn how to connect a marketing app to the Shopify platform using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Defining a marketing activity form
+ Publishing a marketing activity
+ Connecting a marketing app to Shopify
+ Developer resources
+ Next steps

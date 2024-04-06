@@ -1,0 +1,205 @@
+Components
+ Theming
+ Analytics
+ Liquid
+ Ajax API
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Analytics
+ Blockchain Components include support for analytics that give you insight into how customers interact with the components. The components publish events whenever a user action happens (ex: tokengate unlocked), and your app can subscribe to those events and publish them to any external endpoint (ex: Google Analytics, Facebook).
+ This guide lists all the default events and describes how to subscribe to the events, configure custom events, and unsubscribe from events.
+ Default events
+ By default, the Blockchain Components publishes the following events to subscribers:
+ connect-wallet events
+ Event name Action that publishes the event
+ CONNECT_WALLET_PROVIDER_RENDERED The ConnectWalletProvider has rendered on the client.
+ CONNECT_WALLET_CONNECT_BUTTON_CLICKED A customer has clicked the ConnectButton.
+ CONNECT_WALLET_CONNECTED_BUTTON_CLICKED A customer has clicked the connected button.
+ CONNECT_WALLET_DISCONNECT_BUTTON_CLICKED A customer has clicked the disconnect button.
+ CONNECT_WALLET_CONNECTOR_BUTTON_CLICKED A customer has clicked a connector button, such as MetaMask or Ledger.
+ CONNECT_WALLET_MODAL_BACK_BUTTON_CLICKED A customer has clicked the modal back button.
+ CONNECT_WALLET_MODAL_CLOSE_BUTTON_CLICKED A customer closes the connect wallet modal using the close button
+ CONNECT_WALLET_WHAT_IS_A_WALLET_BUTTON_CLICKED A customer has clicked the "What is a wallet" button.
+ CONNECT_WALLET_RETRY_SIGNATURE_BUTTON_CLICKED A customer has clicked the retry signature button during the signature stage.
+ CONNECT_WALLET_GET_WALLET_BUTTON_CLICKED A customer has clicked the "Get Wallet" button. The connector name is included in the payload when the customer clicks a specific connector in the "Get a Wallet" screen.
+ CONNECT_WALLET_USE_WALLET_BUTTON_CLICKED A customer has clicked the "Use WalletConnect Modal" wallet button.
+ CONNECT_WALLET_RETRY_CONNECTING_BUTTON_CLICKED A customer has clicked the retry connecting button during the connection stage.
+ CONNECT_WALLET_USE_QR_CODE_BUTTON_CLICKED A customer has clicked the "Use QR code" button.
+ CONNECT_WALLET_HELP_BUTTON_CLICKED A customer has clicked the help button.
+ CONNECT_WALLET_ON_CONNECT_EVENT A customer has connected their wallet.
+ CONNECT_WALLET_ON_SIGN_MESSAGE_EVENT A customer has signed a message with their wallet.
+ CONNECT_WALLET_ON_DISCONNECT_EVENT A customer has disconnected their wallet.
+ tokengate events
+ Event name When the event is published
+ TOKENGATE_COMPONENT_RENDERED The Tokengate component has rendered on the client.
+ TOKENGATE_ON_UNLOCK_EVENT A customer has unlocked the Tokengate by meeting the requirements.
+ TOKENGATE_ON_REQUIREMENTS_NOT_MET_EVENT A customer did not meet the requirements to unlock the Tokengate.
+ gate-context-client events
+ Event name When the event is published
+ GATE_CONTEXT_CLIENT_ON_CONTEXT_SUBMITTED_TO_CART_ATTRIBUTES A customer's address along with the gate context are written to the cart attributes after their wallet was connected
+ Subscribe to events
+ Subscribe to an event to enable your app to listen to the event. The following steps describe how to subscribe to the TOKENGATE_COMPONENT_RENDERED event.
+ Create a new component in your app. For example, components/AnalyticsListener.jsx.
+ In your component, add the following code to subscribe to the TOKENGATE_COMPONENT_RENDERED event:
+ File
+ components/AnalyticsListener.jsx
+ 1 import {subscribe, eventNames} from '@shopify/blockchain-components';
+ 2
+ 3 let init = false;
+ 4 export default function AnalyticsListener() {
+ 5
+    useEffect(() => {
+ 6
+      subscribe(
+ 7
+        eventNames.TOKENGATE_COMPONENT_RENDERED,
+ 8
+        (payload) => {
+ 9
+          console.log(payload);
+ 10
+        }
+ 11
+      );
+ 12
+    });
+ 13
+ 14
+   return null;
+ 15 }
+ Add your component to your app's entrypoint, either index.tsx, _app.tsx, or your framework's entrypoint, before any of the other elements:
+ File
+ index.jsx
+ 1 import {Tokengate} from '@shopify/tokengate';
+ 2
+ 3 import {AnalyticsListener} from './components/AnalyticsListener';
+ 4
+ 5 export function Index() {
+ 6
+    return (
+ 7
+      <>
+ 8
+        <AnalyticsListener />
+ 9
+        <Tokengate />
+ 10
+        /* {...your app content here} */
+ 11
+      </>
+ 12
+    );
+ 13 }
+ Test the event by refreshing the root page of your app. The TOKENGATE_COMPONENT_RENDERED payload object details display in the browser’s console.
+ Subscribe to all events
+ You can subscribe to all the events to enable your app to listen to all events.
+ Create a new component in your app. For example, components/AnalyticsListener.jsx.
+ In your component, add the following code to subscribe to all events:
+ File
+ components/AnalyticsListener.jsx
+ 1 import {subscribeToAll, eventNames} from '@shopify/blockchain-components';
+ 2
+ 3 let init = false;
+ 4 export default function AnalyticsListener() {
+ 5
+    useEffect(() => {
+ 6
+      subscribeToAll(
+ 7
+        (payload) => {
+ 8
+          console.log(payload);
+ 9
+        }
+ 10
+      );
+ 11
+    });
+ 12
+ 13
+   return null;
+ 14 }
+ Add your component to your app's entrypoint, either index.tsx, _app.tsx, or your framework's entrypoint, before any of the other elements:
+ File
+ index.jsx
+ 1 import {Tokengate} from '@shopify/tokengate';
+ 2
+ 3 import {AnalyticsListener} from './components/AnalyticsListener';
+ 4
+ 5 export function Index() {
+ 6
+    return (
+ 7
+      <>
+ 8
+        <AnalyticsListener />
+ 9
+        <Tokengate />
+ 10
+        /* {...your app content here} */
+ 11
+      </>
+ 12
+    );
+ 13 }
+ Test the event by refreshing the root page of your app. All the events with their payload object details display in the browser’s console.
+ Unsubscribe from events
+ You can unsubscribe from events that you no longer want your app to track. The following example shows how to unsubscribe from a specific event, the TOKENGATE_COMPONENT_RENDERED event:
+ File
+ components/SomeComponent.jsx
+ 1 import {subscribe, eventNames} from '@shopify/blockchain-components';
+ 2
+ 3 useEffect(() => {
+ 4
+    const tokengateComponentRenderedSubscriber = subscribe(
+ 5
+      eventNames.TOKENGATE_COMPONENT_RENDERED,
+ 6
+      (payload) => {
+ 7
+        console.log(payload);
+ 8
+      }
+ 9
+    );
+ 10
+ 11
+    return function cleanup() {
+ 12
+      tokengateComponentRenderedSubscriber.unsubscribe();
+ 13
+    };
+ 14 });
+ The following example shows how to unsubscribe from all events:
+ File
+ components/SomeComponent.jsx
+ 1 import {subscribe, eventNames} from '@shopify/blockchain-components';
+ 2
+ 3 useEffect(() => {
+ 4
+    const allEventsSubscriber = subscribeToAll(
+ 5
+      (payload) => {
+ 6
+        console.log(payload);
+ 7
+      }
+ 8
+    );
+ 9
+ 10
+    return function cleanup() {
+ 11
+      allEventsSubscriber.unsubscribe();
+ 12
+    };
+ 13 });
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Default events
+ Subscribe to events
+ Subscribe to all events
+ Unsubscribe from events
+ Updates & News

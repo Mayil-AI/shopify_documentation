@@ -1,0 +1,10 @@
+Overview
+ Security badges
+ Captcha
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Trust and security
+ Trust and security are important aspects of a theme for both merchants, and customers.
+ To help protect merchants from spam, Shopify uses captcha on customer, contact, and blog comment forms.
+ To help assure customers that a merchant's shop is secure, Shopify offers security badges that can be linked to Shopify documentation on Payment Card Industry (PCI) standard compliance.

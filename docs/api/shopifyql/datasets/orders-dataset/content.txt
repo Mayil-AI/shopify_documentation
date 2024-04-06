@@ -1,0 +1,80 @@
+Segment query language reference
+ Datasets
+ Orders dataset
+ Products dataset
+ Payment attempts dataset
+ Product subscription app extensions
+ Orders dataset
+ Use ShopifyQL to access the dataset to explore data about order value and volume.
+ This page outlines the definition, type, and utility of each ShopifyQL column including numeric values, aggregates, and dimensional attributes.
+ Notes about this dataset
+ This dataset contains one order per row, and has data available starting August 1, 2018. Refunds, returns, and exchanges are captured, deleted orders are removed entirely. All gift card sale items are excluded from this dataset as well. This is because gift cards are considered a liability/payment method rather than actual goods/services sold. The date assigned to each order is the date of the first sales event within that order.
+ All money values are shown in the registered currency of the shop. All metrics are fully additive, which means they are summable with any dimension in the dataset and are always the same.
+ Numeric values
+ Numeric values are the base numbers in the dataset. They’re typically aggregated using ShopifyQL functions like sum.
+ Notes about this dataset
+ This dataset is available for Plus merchants.
+ Name Type Definition
+ additional_fees price The additional fees applied to the order in the shop's currency
+ discounts price The value of discounts applied to the order
+ duties price The duties applied when shipping internationally
+ gross_sales price The total value of items sold in the order
+ net_sales price The total value of items sold, subtracting any discounts applied and items returned
+ ordered_product_quantity number The number of products ordered
+ returned_product_quantity number The number of products returned
+ net_product_quantity number The quantity of products ordered, subtracts returns
+ orders number The count of orders, used to aggregate over time periods
+ shipping price The amount charged for shipping, subtracts any shipping discounts or refunds
+ taxes price The total amount of taxes charged based on the orders
+ tips price The value of tips
+ returns price The value of returned items
+ gross_sales_adjustments price The adjustments to gross sales after the initial order, includes order edits and exchanges
+ discounts_adjustments price The adjustments to discounts after the initial order, includes order edits and exchanges
+ Aggregates
+ Aggregates are predefined calculations of numeric values, to replicate metrics that are available throughout Shopify. Aggregates can be grouped or filtered by any of the dimensional attributes.
+ Name Type Definition
+ average_order_value price The average order value, which equates to gross sales (excluding adjustments) minus discounts (excluding adjustments), divided by the number of orders
+ Formula: SUM((gross_sales - gross_sales_adjustments) + (discounts - discounts_adjustments))/SUM(orders)
+ Dimensional attributes
+ Name Type Definition
+ billing_city string The city from the customer's billing address
+ billing_country string The country from the customer's billing address
+ billing_region string The region, state or province, from the customer's billing address
+ order_id number The order identifier used in Shopify
+ sales_channel string The channel where the sale came from, like online store
+ shipping_city string The city where the order shipped
+ shipping_country string The country where the order shipped
+ shipping_region string The state or province where the order shipped
+ Sample Queries
+ 1. Show net sales by month
+ Note
+ The query will need to SUM() the net_sales metric. This is because the dataset contains net sales per order, and has to be aggregated.
+ 1 FROM orders SHOW sum(net_sales) AS monthly_net_sales
+ 2 GROUP BY month
+ 3 SINCE -3m
+ 4 ORDER BY month
+ 2. Show the number of orders per day over a time period
+ 1 FROM orders
+ 2 VISUALIZE sum(orders) AS orders
+ 3 TYPE line
+ 4 GROUP BY day
+ 5 SINCE last_month UNTIL yesterday LIMIT 100
+ 3. Show average order value per day over a time period
+ 1 FROM orders
+ 2 VISUALIZE average_order_value
+ 3 TYPE line
+ 4 GROUP BY day ALL
+ 5 SINCE last_month UNTIL yesterday LIMIT 100
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Notes about this dataset
+ Numeric values
+ Notes about this dataset
+ Aggregates
+ Dimensional attributes
+ Sample Queries
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

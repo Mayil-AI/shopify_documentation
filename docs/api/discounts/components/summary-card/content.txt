@@ -1,0 +1,220 @@
+Product subscription app extensions
+ Summary Card
+ The SummaryCard component displays basic information about the state of a discount and can display more advanced configuration options if any OptionalSectionsProps are passed. None, any, or all optional sections can be displayed. We recommend displaying as many sections as you have data for, in order to give as much information to the user about their discount as possible.
+ Example code
+ 1 import React from "react";
+ 2 import {
+ 3
+    CountrySelectionType,
+ 4
+    DiscountMethod,
+ 5
+    DiscountStatus,
+ 6
+    Eligibility,
+ 7
+    RequirementType,
+ 8
+    SupportedCountryCode,
+ 9
+    SummaryCard,
+ 10 } from "@shopify/discount-app-components";
+ 11 import { CurrencyCode } from "@shopify/react-i18n";
+ 12
+ 13 function MyApp() {
+ 14
+    // ...
+ 15
+ 16
+    return (
+ 17
+      <SummaryCard
+ 18
+        header={{
+ 19
+          discountMethod: DiscountMethod.Automatic,
+ 20
+          appDiscountType: "Tiered discounts",
+ 21
+          discountDescriptor: DiscountMethod.Automatic
+ 22
+            ? discountTitle
+ 23
+            : discountCode,
+ 24
+          isEditing: true,
+ 25
+          discountStatus: DiscountStatus.Active,
+ 26
+        }}
+ 27
+        performance={{
+ 28
+          isEditing: true,
+ 29
+          discountStatus: DiscountStatus.Active,
+ 30
+          usageCount: 0,
+ 31
+        }}
+ 32
+        activeDates={{
+ 33
+          startDate: "2022-05-24T03:30:00.000Z",
+ 34
+          endDate: "2022-06-13T04:30:00.000Z",
+ 35
+        }}
+ 36
+        additionalDetails={["additional detail 1", "additional detail 2"]}
+ 37
+        minimumRequirements={{
+ 38
+          requirementType: RequirementType.Subtotal,
+ 39
+          subtotal: "100",
+ 40
+          quantity: "",
+ 41
+          currencyCode: CurrencyCode.Usd,
+ 42
+        }}
+ 43
+        combinations={{
+ 44
+          combinesWith: {
+ 45
+            orderDiscounts: true,
+ 46
+            productDiscounts: false,
+ 47
+            shippingDiscounts: false,
+ 48
+          },
+ 49
+        }}
+ 50
+        customerEligibility={{
+ 51
+          eligibility: Eligibility.CustomerSegments,
+ 52
+          selectedCustomerSegments: [
+ 53
+            {
+ 54
+              id: "2",
+ 55
+              name: "Abandoned checkouts in the last 30 days",
+ 56
+            },
+ 57
+          ],
+ 58
+        }}
+ 59
+        maximumShippingPrice={{
+ 60
+          currencyCode: CurrencyCode.Usd,
+ 61
+          maximumShippingPrice: "1123",
+ 62
+        }}
+ 63
+        selectedCountries={{
+ 64
+          countrySelectionType: CountrySelectionType.SelectedCountries,
+ 65
+          selectedCountries: [SupportedCountryCode.Ca],
+ 66
+        }}
+ 67
+      />
+ 68
+    );
+ 69 }
+ Properties
+ Name Type Description Required
+ header HeaderProps The header properties. Yes
+ performance PerformanceProps The performance sections properties. Yes
+ activeDates ActiveDatesProps Displays the start and end dates of the discount. No
+ additionalDetails string[] Additional text that you want to display. No
+ appliesToPurchaseType AppliesToPurchaseTypeProps The purchase type that the discount applies to (one time, subscription, or both). No
+ combinations CombinationsProps How the discount combines with other discounts. No
+ customerEligibility CustomerEligibilityProps Which customers the discount applies to. No
+ maximumShippingPrice MaximumShippingPriceProps The maximum allowable shipping price that the discount can apply to. No
+ minimumRequirements MinimumRequirementsProps The minimum purchase requirements for the discount to apply. No
+ recurringPayment RecurringPaymentProps How the discount applies to orders with recurring payments. No
+ selectedCountries SelectedCountriesProps The countries that the discount applies to. No
+ usageLimits UsageLimitsProps The number of times that the discount can be used. No
+ HeaderProps
+ Name Type Description Required
+ discountMethod DiscountMethod The method of the current discount (either code or discount). Yes
+ appDiscountType string The discount type of the current discount. This value should be the appDiscountType.title returned from the API. Yes
+ discountDescriptor string The discount title for automatic discounts, or the discount code for code discounts. Yes
+ isEditing boolean Whether the discount is currently being edited. No
+ discountStatus DiscountStatus The status of the discount. No
+ PerformanceProps
+ Name Type Description Required
+ isEditing boolean Whether the discount is currently being edited. Yes
+ status DiscountStatus The status of the discount (active, expired, or scheduled). No
+ usageCount number The number of times that the discount has been used. No
+ hasReports boolean Whether the shop has enabled the reports feature. No
+ discountMethod DiscountMethod The discount method (either code or automatic). Used to control whether a text input or a code generator is shown. No
+ totalSales MoneyInput The total number of sales that have been made with the discount. No
+ ActiveDatesProps
+ Name Type Description Required
+ startDate DateTime The start date of the discount, formatted as an ISO 8601 timestamp in UTC. Yes
+ endDate DateTime | null The end date of the discount, formatted as an ISO 8601 timestamp in UTC. Yes
+ AppliesToPurchaseTypeProps
+ Name Type Description Required
+ purchaseType PurchaseType The purchase type that the discount applies to (one time, subscription, or both). Yes
+ CombinationsProps
+ Name Type Description Required
+ combinesWith CombinableDiscountTypes The discount classes that can be combined with this discount. Yes
+ CustomerEligibilityProps
+ Name Type Description Required
+ eligibility Eligibility Who the discount applies to (all customers, specific customers, specific customer groups). Yes
+ selectedCustomerSegments CustomerSegment[] The specific customer segments that the discount applies to. No
+ selectedCustomers Customer[] The specific customers that the discount applies to. No
+ MaximumShippingPriceProps
+ Name Type Description Required
+ maximumShippingPrice PositiveNumericString The maximum shipping price, displayed when the user selects to exclude shipping rates. Yes
+ currencyCode CurrencyCode The currency code that should be used to format the input value. Yes
+ MinimumRequirementsProps
+ Name Type Description Required
+ requirementType RequirementType The type of minimum requirement (none, subtotal, or quantity). Yes
+ quantity PositiveNumericString The minimum quantity requirement for the discount. No
+ subtotal PositiveNumericString The minimum subtotal requirement for the discount. No
+ currencyCode CurrencyCode The currencyCode that should be used to format the subtotal amount. No
+ RecurringPaymentProps
+ Name Type Description Required
+ isRecurring boolean Whether a discount is applicable for recurring payments. Yes
+ recurringPaymentType RecurringPaymentType The type of recurring payments (first payment, multiple payments, or all payments). Yes
+ recurringPaymentLimit PositiveNumericString If the discount is available for RecurringPaymentType.MultiplePayments, then this value displays how many payments the discount is available for. No
+ SelectedCountriesProps
+ Name Type Description Required
+ countrySelectionType CountrySelectionType The country selection type that the discount applies to (either all countries or selected countries). Yes
+ selectedCountries CountryCode[] The list of country codes where the discount applies. Yes
+ UsageLimitsProps
+ Name Type Description Required
+ totalUsageLimit PositiveNumericString | null The total number of times that a discount can be used. Yes
+ oncePerCustomer boolean Whether a discount can only be used once per customer. Yes
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example code
+ Properties
+ HeaderProps
+ PerformanceProps
+ ActiveDatesProps
+ AppliesToPurchaseTypeProps
+ CombinationsProps
+ CustomerEligibilityProps
+ MaximumShippingPriceProps
+ MinimumRequirementsProps
+ RecurringPaymentProps
+ SelectedCountriesProps
+ UsageLimitsProps
+ Updates & News
+ Developer changelog
+ Partner blog

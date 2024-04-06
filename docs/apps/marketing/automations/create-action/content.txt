@@ -1,0 +1,250 @@
+Marketing automations
+ Overview
+ Create an action
+ Action endpoints
+ Custom configuration page
+ Create a marketing automation action
+ An action is a marketing activity that's executed in a store or in an app when certain conditions are met. You can connect your app to Shopify marketing automations so that your app receives data when a workflow action runs.
+ When your marketing automation action is triggered, you need to send information about the marketing activity, as well as engagement data, back to Shopify. This data is displayed to users in the Marketing area of the Shopify admin so users can understand the impact of their marketing automations.
+ This tutorial shows you how to add an action to your app so that users can use it in their marketing automations, and set up your app to send engagement data back to Shopify. For example, you might create an action that sends an SMS message to a customer.
+ Note
+ This tutorial describes how to create actions in a development environment and then add support for them in your test app. Before you deploy to production, you need to submit the action for review by Shopify.
+ Requirements
+ You've created a Partner account
+ You've created a development store.
+ You've set up a test web server that you can use to send requests to and receive requests from Shopify marketing automations.
+ You've created an app and installed it on your development store. The test app needs to work with the test web server.
+ Step 1: Configure your web server
+ To use marketing automation actions, you need a web server that can listen for requests that are sent when an action is run, created, or deleted.
+ Optionally, you can also add the following:
+ an endpoint to validate actions
+ a custom configuration page, and an endpoint that lets users preview your custom configuration page
+ Add the following endpoints to your server:
+ Endpoint Purpose
+ Flow action execution The endpoint where the automation tool sends your action's payload. The payload contains data that you can use to execute the action in your app.
+ Custom configuration page preview An endpoint that provides data about your custom configuration page to display in the automation tool. This endpoint is required if you want to use a custom configuration page.
+ Custom validation An endpoint that validates the contents of merchant-configurable properties in an action payload when an action is saved. This endpoint is required if you want to use a custom configuration page.
+ Marketing activity create This endpoint is called when a step in a workflow is created using the action. Shopify creates a marketing activity and sends the marketing_activity_id to you.
+ 
+ In response, your app needs to send details about the marketing activity back to Shopify, including UTM parameters. These UTM parameters are required so that sessions and sales can be attributed to the marketing activity.
+ Marketing activity delete This endpoint is called when a workflow associated with the marketing activity is deleted.
+ 
+ When you receive a request at this endpoint, you can stop sending marketing engagement data, and clean up any data related to the marketing activity. All workflow runs associated with this marketing activity will be canceled, and the marketing activity will be hidden from merchants.
+ To learn more about the endpoint requirements for your server, refer to Action endpoints.
+ To learn how to create a custom configuration page, refer to Build a custom configuration page.
+ Verifying requests
+ For security reasons, make sure that you verify the following elements in each request:
+ The POST request's HMAC header (Either x-shopify-hmac-sha256 or http-x-shopify-hmac-sha256). The HMAC header should be verified before you process the payload. For more information, refer to Verifying requests.
+ The payload action_definition_id. This ID should match the ID of the action that you created, and can be retrieved from the payload preview.
+ Step 2: Create a Flow action extension
+ To create an action that users can use in their Shopify marketing automation workflows, you need to add a Flow/Actions extension to your app. Optionally, you can add a custom configuration page to display in the Shopify Flow editor, and add an endpoint to perform custom validation.
+ Create the action extension and a draft version
+ For the action creation please refer to the Flow documentation.
+ Configure the payload schema
+ Under Payload schema, select and configure the data that will be sent to your app when the action is triggered.
+ You can include two types of properties in your payload schema: Shopify properties and merchant-configurable properties.
+ Your payload schema must contain the Marketing activity ID Shopify property. If you don't include this property, then the action won't be available to Shopify marketing automations.
+ In the Payload preview area, you can preview the data model that Shopify marketing automations will use as the JSON payload that it sends to your web server.
+ Shopify properties
+ Properties are Shopify resources that can be used by your action. The ID for the resource is usually populated by a workflow trigger. For example, if a workflow is triggered by a customer abandoning their cart, then that customer's ID is populated in the workflow execution environment.
+ Select This property is required if the property must be present in the environment to use the action.
+ For example, if you're creating a Send marketing SMS action, then you can specify that the action needs the Customer property. When the action is executed, Shopify passes the customer_id in the payload. You can then use the ID to query for the customer phone number and SMS marketing consent before sending the SMS.
+ Reference type (TOML) Payload key Description
+ customer_reference customer_id The id of the customer. Your app must have the read_customers scope.
+ order_reference order_id The id of the order. Your app must have the read_orders scope.
+ product_reference product_id The id of the product. Your app must have the read_products scope.
+ marketing_activity_reference marketing_activity_id Endpoints for Shopify to call when a workflow using the action is created.
+ abandonment_reference abandonment_id The id of the abandonment.
+ Marketing activity ID
+ To allow your Flow action to be used in Shopify marketing automations, you need to configure the Marketing activity ID Shopify property.
+ Under Payload schema, click Add property, and then select Marketing activity ID.
+ The marketing activity ID property requires two URLs. Each represents a marketing activity endpoint that you created on your server.
+ URL Description Endpoint
+ Marketing activity creation URL This endpoint is called when a step in a workflow is created using the action. Shopify creates a marketing activity and sends the marketing_activity_id to you.
+ 
+ In response, your app needs to send details about the marketing activity back to Shopify, including UTM parameters. These UTM parameters are required so that sessions and sales can be attributed to the marketing activity. Marketing activity create
+ Marketing activity deletion URL This endpoint is called when a workflow associated with the marketing activity is deleted.
+ 
+ When you receive a request at this endpoint, you can stop sending marketing engagement data, and clean up any data related to the marketing activity. All workflow runs associated with this marketing activity will be canceled, and the marketing activity will be hidden from merchants. Marketing activity delete
+ Abandonment ID
+ An abandonment object represents a customer's online store session that ends after browsing products, after adding a product to the cart, or during checkout, without completing a purchase. Depending on how far the customer made it in their journey, the object might contain metadata on the products that were viewed, the products that were added to cart, and the details of the checkout.
+ An abandonment object is present in workflows using the Customer left online store without making a purchase and Customer abandons checkout triggers. If there is no abandonment in the workflow, then Shopify Flow passes a NULL value for this field. If your action isn't intended to be used only in abandonment workflows, then you don't need to select This property is required.
+ Merchant-configurable properties
+ Merchant-configurable properties are fields for users to populate as a part of the action configuration. For example, if you're creating an action called Send marketing SMS, then you might want to let the user provide the body text of the SMS message.
+ When the action is executed, the user-configured values are passed as a part of the action payload.
+ Tip
+ If you let users enter links to their online store in any of the properties you define, then your app needs to append UTM parameters for the marketing activity to the URL.
+ For example, if the user includes the URL https://{shop}.myshopify.com, then you'll append URL parameters to make the URL https://{shop}.myshopify.com?utm_campaign=welcome_sms_subscriber_123&utm_medium=sms&utm_source=sms_provider.
+ You might need to shorten the URL using a URL shortener.
+ Optional: Add a custom configuration page
+ To give merchants a more seamless action configuration experience, and to allow them to manage resources that are external to Shopify marketing automations, you can embed a page from your app in the Shopify marketing automations editor. Building a custom configuration page requires creating and hosting an App Bridge-enabled page as a part of your app, which can then be surfaced in to users Shopify marketing automations. Learn how to build a custom configuration page.
+ A custom configuration page also requires a custom configuration page preview endpoint that provides text and images that describe the custom configuration page to users.
+ If you built a custom configuration page that you want to display to users in the Shopify Flow editor, then you need to provide details about where to access the page and preview data for the page.
+ Under Custom configuration page, select Enable a custom configuration page for this action.
+ In the Destination URL field, enter the URL for the custom configuration page that you created.
+ In the Preview URL field, enter the URL for your custom configuration page preview endpoint.
+ Optional: Configure custom validation
+ If you want to perform custom validation on the contents of the properties that you define as a part of your payload schema, then you can expose an endpoint where Shopify marketing automations will send the properties and the values that the user sets on save.
+ If you configured a custom configuration page for your action, then this endpoint is required.
+ Under Custom validation, select Enable custom validation for this action. If you enabled a custom configuration page, then this option is automatically selected.
+ In the Validation endpoint field, enter the URL for the custom validation endpoint that you created.
+ Step 3: Send marketing data and insights back to Shopify
+ When a user uses your action in a workflow, you need to send information back to Shopify using the GraphQL Admin API. You need to send information to Shopify at the following stages:
+ Stage Action
+ After the marketing activity is created Update marketing activity metadata, including the marketing activity title and status.
+ When an action run is completed Send engagement metrics. This data appears on the following marketing automation reports:
+ The summary page for the marketing automation
+ The marketing activity report
+ If the workflow returns an abandonment object, then send a marketing activity delivery status for the abandonment object. This data is used by workflow conditions and appears on any abandoned checkout details page under Orders > Abandoned checkouts.
+ Update marketing activity metadata
+ When a user creates a step in a workflow that uses your action, Shopify creates a marketing activity and notifies your app by sending a request to your app's marketing activity create endpoint. After you send a response acknowledging the request, you need to send an asynchronous marketingActivityUpdate request. The request must include the following:
+ Attribute Description
+ id The ID of the marketing activity that you received in the marketing activity create request payload.
+ title The title of the marketing activity. This title is displayed in the Marketing section of the Shopify admin.
+ 
+ You should set this title to something related to the action configuration, so the user can identify the marketing activity in relation to the marketing automation. For example, if the action sends an email, then you might set the title of the marketing activity to the email subject line.
+ status The status of the marketing activity.
+ 
+ Status values have additional meanings in the context of marketing automations:
+ 
+ ACTIVE: The marketing activity is initialized and able to attribute online store traffic to the marketing activity.
+ FAILED: There's something wrong with the configuration of the marketing activity. The user might need to address the error. You can communicate further details about the error using MarketingActivityUpdateInput.errors.
+ PAUSED: The marketing activity for the step in the workflow is paused, due to an error or something known to the user. This is different from an entire automation being paused.
+ DISCONNECTED: The user uninstalled the app, or disconnected the account associated with the marketing activity.
+ DELETED: The marketing automation is deleted. This status is usually set by Shopify.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 mutation UpdateMarketingActivity($id: ID!, $title: String!, $status: MarketingActivityStatus) {
+ 2
+    marketingActivityUpdate(input: {
+ 3
+      id: $id
+ 4
+      title: $title
+ 5
+      status: $status
+ 6
+    })  {
+ 7
+      marketingActivity {
+ 8
+        id
+ 9
+        status
+ 10
+        title
+ 11
+ 14
+        message
+ 15
+      }
+ 16
+    }
+ 17 }
+ Send engagement metrics
+ After each workflow run is executed, your app needs to send engagement metrics back to Shopify using the marketingEngagementCreate mutation. Engagement metrics include impressions, likes, shares, and clicks.
+ This data appears on the following marketing automation reports:
+ The summary page for the marketing automation
+ The marketing activity report
+ You can send metrics as a daily aggregate, or as an all-time aggregate using the isCumulative flag.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 mutation marketingEngagementCreate(marketingActivityId:"gid://shopify/MarketingActivity/134942490646", marketingEngagement:{
+ 2
+      clicksCount:300,
+ 3
+      commentsCount:0,
+ 4
+      complaintsCount:0,
+ 5
+      failsCount:2,
+ 6
+      favoritesCount:0,
+ 7
+      fetchedAt:"2022-08-16T12:50:00Z",
+ 8
+      impressionsCount:1600,
+ 9
+      isCumulative: true,
+ 10
+      occurredOn:"2022-08-16T12:50:00Z",
+ 11
+      sendsCount:60,
+ 12
+      uniqueClicksCount: 0,
+ 13
+      uniqueViewsCount:0,
+ 14
+      unsubscribesCount:0,
+ 15
+      utcOffset: "-07:00",
+ 16
+      viewsCount:1600
+ 17
+    }
+ 18 )
+ Send a marketing activity delivery status for an abandonment object
+ After each workflow run is executed, your app needs to check if the workflow contains an abandonment ID. If it does, you need to send the marketing activity delivery status for the abandonment object to Shopify using the abandonmentUpdateActivitiesDeliveryStatuses mutation. This data will be used by workflow conditions. If the abandonment is of type CHECKOUT, it also appears on the abandoned checkout details page, in the Recovery automation results section. You need to provide the following information:
+ The abandonment ID
+ The marketing activity ID
+ The delivery status
+ If the delivery status is SENT, then you should also provide the time at which the delivery was executed. If the delivery status is NOT_SENT, then you have the option to provide a reason why it wasn't sent. If you don't call this mutation to provide Shopify with the delivery status, then the status will always display as Not sent in the Recovery automation results section.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ 1 mutation UpdateAbandonmentDeliveryStatus(
+ 2
+    $abandonmentId: ID!
+ 3
+    $marketingActivityId: ID!
+ 4
+    $deliveryStatus: AbandonmentDeliveryState!
+ 5
+    $deliveredAt: DateTime
+ 6
+    $deliveryStatusChangeReason: String
+ 7 ) {
+ 8
+    abandonmentUpdateActivitiesDeliveryStatuses(
+ 9
+      abandonmentId: $abandonmentId
+ 10
+      marketingActivityId: $marketingActivityId
+ 11
+      deliveryStatus: $deliveryStatus
+ 12
+      deliveredAt: $deliveredAt
+ 13
+      deliveryStatusChangeReason: $deliveryStatusChangeReason
+ 14
+    ) {
+ 15
+      abandonment {
+ 16
+        id
+ 17
+      }
+ 18
+      userErrors {
+ 19
+        code
+ 20
+        field
+ 21
+        message
+ Step 4: Test the action and data updates
+ After you've created an action in the Partner Dashboard and added support for it in your web server, you can test the action in Shopify marketing automations on your development store.
+ In your development store, create a Shopify marketing automations workflow that uses the action. For example, create a custom automation workflow that starts with a Shopify trigger such as Customer abandons checkout, and then add this action to the workflow.
+ Trigger the workflow using the trigger you selected. For example, if you selected the Customer abandons checkout trigger, create a checkout in the development store and leave without completing it.
+ When the workflow completes, the action payload is sent to your web server, and a request to create a marketing activity is sent to the marketing activity create endpoint.
+ In the Marketing page, in the Recent marketing activities section, make sure that your marketing activity appears in the list with a unique name.
+ In the Recent marketing activities section, beside your marketing activity, click the menu button ⋯ and then click View report. Ensure that any engagement metrics that should be updated by the action run are reflected in the report. It might take up to 30 minutes for updates to be reflected in the report.
+ If the workflow uses the Customer abandons checkout trigger, then in the Abandoned checkout details page, in the Recovery automation results section, make sure that your marketing activity has the correct delivery status upon workflow run completion.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Configure your web server
+ Step 2: Create a Flow action extension
+ Step 3: Send marketing data and insights back to Shopify
+ Step 4: Test the action and data updates
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

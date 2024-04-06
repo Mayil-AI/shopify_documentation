@@ -1,0 +1,25 @@
+Storefront search
+ Filtering
+ Overview
+ Storefront filtering
+ Tag filtering
+ Filtering
+ A helpful feature for an online store is the ability to filter a list of products by various criteria to help customers more easily find what they're looking for.
+ There are two methods for filtering products in Shopify themes:
+ Storefront filtering
+ Tag filtering
+ Storefront filtering
+ Storefront filtering is the recommended method for filtering products. It allows merchants to easily create filter groups based on existing product data, like availability, price, variant options, and more. These filters can be applied to both collections and search results.
+ To learn more about how to support storefront filtering in your theme, refer to Support storefront filtering.
+ You should also familiarize yourself with the UX considerations for storefront filtering.
+ Tag filtering
+ You can use product tags to filter a collection into smaller subsets of products.
+ To learn more about how to use tag filtering, refer to Filter collections by tag.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Storefront filtering
+ Tag filtering
+ Updates & News
+ Developer changelog
+ Partner blog

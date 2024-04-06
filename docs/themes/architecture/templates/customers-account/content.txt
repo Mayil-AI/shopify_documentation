@@ -1,0 +1,60 @@
+customers/account
+ The customers/account template renders the customer account page, which provides an overview of the customer’s account.
+ Tip
+ Refer to the customers/account template and its main section in Dawn for an example implementation.
+ Location
+ The customers/account template is located in the templates > customers directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   └── customers
+ 5
+      |     ├── account.json
+ You should include the customer object in your customers/account template or a section inside of the template.
+ The customer object
+ You can access the Liquid customer object to display the customer account details.
+ Usage
+ When working with the customers/account template, you should familiarize yourself with the following:
+ Showing the customer's orders
+ Showing the customer's default address
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Show the customer’s orders
+ You should show customers a list of their orders. These can be accessed through the order attribute of the customer object, and have a limit of 20 per page. For this reason, you should paginate orders to ensure that they’re all accessible:
+ Example
+ 1 {% paginate customer.orders by 10 %}
+ 2
+    {% for order in customer.orders %}
+ 3
+      <!-- order info -->
+ 4
+    {% endfor %}
+ 5
+ 6
+    {{ paginate | default_pagination }}
+ 7 {% endpaginate %}
+ Show the customer’s default address
+ You should show customers their default address. This can be accessed through the default_address attribute of the customer object:
+ Example
+ 1 {% if customer.default_address %}
+ 2
+    <p>{{ customer.default_address.address1 }}</p>
+ 3
+ 4
+    {% if customer.default_address.address2 != blank %}
+ 5
+      <p>{{ customer.default_address.address2 }}</p>
+ 6
+    {% endif %}
+ 7
+ 8
+    <p>{{ customer.default_address.city }}, {% if customer.default_address.province_code %}{{ customer.default_address.province_code }}{% endif %}, {{ customer.default_address.country_code }}
+ 9
+    <p>{{ customer.default_address.zip_code }}</p>
+ 10
+    <p>{{ customer.default_address.phone }}</p>
+ 11 {% endif %}
+ Was this section helpful?

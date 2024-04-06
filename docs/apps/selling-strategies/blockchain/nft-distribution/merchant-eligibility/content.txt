@@ -1,0 +1,25 @@
+NFT distribution
+ Overview
+ Check NFT sales eligibility
+ Merchant eligibility
+ UX guidelines
+ Tokengating
+ Online store
+ Admin
+ Flow
+ Payments
+ Billing
+ App Store
+ Merchant eligibility
+ Merchants who would like to sell NFTs through Shopify Payments are required to get approval from Shopify before selling. This process is facilitated through an automated application and responses are shared with app developers through an API. You need to check the eligibility of a merchant if their NFT will be offered to a customer for sale or for free (as a gift) and the merchant has Shopify Payments enabled.
+ You can check a merchant's eligibility to sell NFTs by using the GraphQL Admin API.
+ Currently, merchants who are using Shopify Payments based in Austria, Belgium, Canada, Denmark, Germany, Ireland, Italy, Japan, Netherlands, Spain, Sweden, United Kingdom, and the United States are eligible to apply for approval.
+ Merchant eligibility without Shopify Payments
+ At this time, our eligibility process is for those with Shopify Payments enabled. If merchants aren't on Shopify Payments or the merchant is on Shopify Payments but not in an eligible region, then they won't be able to access the application form. All merchants are required to adhere to our Acceptable Use Policy when selling anything on Shopify.
+ Merchant eligibility changes
+ Upon notification that a merchant is no longer approved (for example, a change in status), the merchant must immediately suspend all further sales of NFTs and the NFT products with non-zero prices must be deleted from the shop, within 5 days of notification. Otherwise, the shop will be rejected from Shopify Payments. We recommend that app developers automatically notify merchants and delete these products, however, manual notification and deletion is also acceptable.
+ Your app must poll the NFT Sales Eligibility API hourly to check the shop’s eligibility. If a merchant isn't using Shopify Payments, then the result from our NFT Sales Eligibility API would indicate that reapplyDate is nil and giftingApproved/sellApproved is false. When a merchant enables Shopify Payments, the next time you query the NFT Sales Eligibility API, you would then see the current date for reapplyDate, which indicates that the user needs to fill out the form. You can direct the merchant to the application form: https://{shop}.myshopify.com/admin/nft-application.
+ NFT gifting
+ You need to check the eligibility of a merchant if their NFT will be offered to a customer for sale or for free. If there's a price increase due to the “free NFT” being gifted, whether gifted at the time of t-shirt purchase or at a later time, then this is still considered a sale of an NFT, and therefore, the merchant needs to be approved to sell NFTs.
+ Was this page helpful?
+ YesNo

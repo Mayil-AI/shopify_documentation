@@ -1,0 +1,55 @@
+Marketing
+ Overview
+ Web pixels
+ Overview
+ Getting started
+ Customer segments
+ Marketing activities
+ Marketing automations
+ SEO
+ Authentication
+ Distribution
+ Billing
+ App Store
+ Web pixels
+ This guide describes how web pixels work, introduces the sandbox environments that are available, and provides some considerations before you get started.
+ How web pixels work
+ Pixels are JavaScript code snippets that run on the online store and collect behavioral data, referred to as customer events, for marketing campaign optimization and analytics.
+ After you’ve created your web pixel and configured it to a merchant’s shop, your pixel is able to load in the shop’s online store. As a customer browses the online store, they’ll trigger customer events that are published to a Shopify data layer or event bus. Your pixel can subscribe to the events on this data layer and then transform the event payloads into a format that conforms to the requirements of your pixel’s data collection endpoint.
+ Benefits
+ Web pixel app extensions provide developers with a simplified process for managing and processing behavioral data, by loading pixels in a secure sandbox environment with APIs for subscribing to customer events. Web pixel app extensions provide the following benefits to app users and developers:
+ Eliminate or minimize the need for users to add tracking code
+ Securely access all surfaces, like storefront, checkout and post-purchase pages
+ Control what data the developers have access to
+ Avoid performance and privacy alerts
+ Provide a smaller pixel code libraries with the removal of excess DOM manipulation code
+ Requesting consent
+ Web pixel app extensions are compatible with the Customer Privacy API in that they honor the consent signals chosen by the customer. You can't call the Customer Privacy API from a web pixel app extension.
+ In regions where customers must consent to tracking, app extension callbacks are executed only after consent is given. All previously-registered events are then replayed, to capture any events that already occurred on the page.
+ In regions where tracking is enabled by default and customers can opt out, the callbacks are executed as events are registered until the user opts out.
+ Sandbox environments
+ Web pixels are loaded in a sandbox on a visitor's browser, and are designed to give merchants and customers complete control over what data is accessible to app developers. These controls mean some common features of pixels won’t work the same or won’t work at all. Specifically, these include any features that rely on scraping the DOM for information or attempting to write to the DOM. Although these limitations may seem constraining, most can be overcome by leveraging the data passed into the sandbox using the web pixel extension API.
+ While this documentation is focused on web pixel app extensions, it's important to note that there are two types of sandbox environments: strict and lax.
+ Strict sandbox (Web pixel app extension)
+ App developers create web pixel app extensions which are loaded in a strict sandbox environment using web workers. This environment has access to many of the same globals as you’d get with JavaScript running in a browser. However, we only guarantee the presence of the following globals:
+ self, a reference back to the global object.
+ console, which is the same console available in the browser and can be used for printing to the browser’s console. Note: Your app should not log any content when running in production.
+ setTimeout, clearTimeout, setInterval, and clearInterval, which behave the same as they do outside a web worker
+ fetch and related globals (Headers, Request, and Response), which can be used to make HTTP requests to arbitrary endpoints. Note: Any requests you make must explicitly support cross-origin resource sharing (CORS), just as they would if the request were coming from fetch() outside of a web worker.
+ Caution
+ You must not rely on any other globals being available. Many globals will be explicitly overwritten to be undefined in the sandbox, and non-language globals that aren’t hidden and aren’t in the list above might also be overwritten at any time.
+ Traditional JavaScript pixels that use browser APIs such as window.document won't work in this environment. You can use contextual APIs available to web pixel app extensions to replicate specific browser API functionality.
+ Lax sandbox (Custom web pixel)
+ Custom pixels are loaded in a lax sandbox environment. The lax sandbox is an iframe element that has the sandbox attribute defined with the allow-scripts and allow-forms values. This setup allows legacy Javascript pixels to be inserted onto the page using an iframe.
+ Traditional Javascript pixels that are placed in the lax sandbox cannot access the top frame. There are certain properties that return different values because you cannot access the top frame. For example, window.href returns the sandbox URL instead of the top frame URL.
+ This feature is intended for merchants to use and more information can be found in the help docs. We strongly recommend that developers create apps and encourage users to install their apps instead of creating Custom Pixels, for greater integration.
+ Next steps
+ Create a web pixel app extension to subscribe to all events emitted by Shopify.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How web pixels work
+ Sandbox environments
+ Next steps
+ Updates & News
+ Developer changelog

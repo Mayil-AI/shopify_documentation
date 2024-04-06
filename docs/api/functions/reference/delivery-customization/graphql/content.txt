@@ -1,0 +1,125 @@
+Delivery Customization API
+ Overview
+ GraphQL reference
+ Overview
+ Common objects
+ FunctionResult
+ FunctionRunResult
+ Input
+ Scalars
+ Discounts APIs
+ Delivery Customization API reference
+ The Delivery Customization API enables you to rename, reorder, and sort the delivery options available to buyers during checkout.
+ Extension targets
+ The Delivery Customization API exposes the following targets:
+ Target Output type Description
+ purchase.delivery-customization.run FunctionRunResult Outputs the list of operations to apply to delivery options
+ Input
+ The RunInput object is the complete schema that your function can receive as input.
+ For a list of fields that the Delivery Customization API's Input object accepts, refer to Input.
+ Example
+ The following example shows an input query:
+ input.graphql
+ 1 query Input {
+ 2
+    cart {
+ 3
+      cost {
+ 4
+        subtotalAmount {
+ 5
+          amount
+ 6
+          currencyCode
+ 7
+        }
+ 8
+      }
+ 9
+      deliveryGroups {
+ 10
+        id
+ 11
+        deliveryOptions {
+ 12
+          handle
+ 13
+          title
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17 }
+ The following example shows the resulting input to the query:
+      "cost": {
+ 4
+        "subtotalAmount": {
+ 5
+          "amount": 200.0,
+ 6
+          "currencyCode": "CAD"
+ 7
+        }
+ 8
+      },
+ 9
+      "deliveryGroups": [
+ 10
+        {
+ 11
+          "id": "gid://shopify/CartDeliveryGroup/0",
+ 12
+          "deliveryOptions": [
+ 13
+              {
+ 14
+                "handle": "shopify-Standard-21.90",
+ 15
+                "title": "Standard"
+ 16
+              },
+ 17
+              {
+ 18
+                "handle": "shopify-Express-31.90",
+ 19
+                "title": "Express"
+ 20
+              },
+ 21
+          ]
+ 22
+        }
+ 23
+      ]
+ 24
+    }
+ 25 }
+ FunctionRunResult
+ The FunctionRunResult object is the expected output for the purchase.delivery-customization.run target.
+ Example
+ The following function result hides a delivery option:
+ output.json
+ 1 {
+ 2
+    "operations": {
+ 3
+      "hide": {
+ 4
+        "deliveryOptionHandle": "shopify-Express-31.90"
+ 5
+      }
+ 6
+    }
+ 7 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Extension targets
+ Input
+ FunctionRunResult
+ Updates & News
+ Developer changelog
+ Partner blog

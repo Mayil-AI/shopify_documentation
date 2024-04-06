@@ -1,0 +1,550 @@
+Delivery and shipping
+ Product offers
+ Payments
+ Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ UX guidelines
+ Thank you and Order status
+ Localized UI extensions
+ Build a payment customization user interface
+ Merchants create and manage payment customizations in the Shopify admin. Shopify uses the URLs that you configure to render the payment customization creation and editing experience for the merchant. You can customize this UI for your function's configuration needs, or to meet other requirements of your app.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create an App Bridge UI that enables users to create a function owner.
+ Configure the UI paths for your function.
+ Requirements
+ You've completed the Add configuration to your payment customization tutorial.
+ You created your app with the Remix app template.
+ Step 1: Create the frontend UI for your function
+ The following example builds a React-based page that enables merchants to create and configure a new payment customization. The code renders a frontend page in your app and uses the GraphQL Admin API to create a payment customization.
+ In app/routes, create a new file named app.payment-customization.$functionId.$id.jsx.
+ The Shopify Remix app template uses file-based routing, so the file name determines the page's URL. The $ prefix indicates functionId and id are dynamic segments. The path for this page is /app/payment-customization/{functionId}/{id} .
+ Add the following code in app.payment-customization.$functionId.$id.jsx:
+ The loader function handles fetching the data to populate the form and is used when this page has an id value that is not new.
+ The action function handles submitting the form data to Shopify to create the payment customization.
+ The PaymentCustomization function renders the page and form components using Polaris components and Remix hooks.
+ app/routes/app.payment-customization.$functionId.$id.jsx
+ 1 import { useState, useEffect } from "react";
+ 2 import {
+ 3
+    Banner,
+ 4
+    Button,
+ 5
+    Card,
+ 6
+    FormLayout,
+ 7
+    Layout,
+ 8
+    Page,
+ 9
+    TextField,
+ 10 } from "@shopify/polaris";
+ 11 import {
+ 12
+    Form,
+ 13
+    useActionData,
+ 14
+    useNavigation,
+ 15
+    useSubmit,
+ 16
+    useLoaderData,
+ 17 } from "@remix-run/react";
+ 18 import { json, redirect } from "@remix-run/node";
+ 19
+ 20 import { authenticate } from "../shopify.server";
+ 21
+ 22 // This is a server-side function that provides data to the component when rendering.
+ 23 export const loader = async ({ params, request }) => {
+ 24
+    const { id } = params;
+ 25
+ 26
+    // If the ID is `new`, then we are creating a new customization and there's no data to load.
+ 27
+    if (id === "new") {
+ 28
+      return {
+ 29
+        paymentMethodName: "",
+ 30
+        cartTotal: "0",
+ 31
+      };
+ 32
+    }
+ 33
+ 34
+    const { admin } = await authenticate.admin(request);
+ 35
+    const response = await admin.graphql(
+ 36
+      `#graphql
+ 37
+        query getPaymentCustomization($id: ID!) {
+ 38
+          paymentCustomization(id: $id) {
+ 39
+            id
+ 40
+            metafield(namespace: "$app:payment-customization", key: "function-configuration") {
+ 41
+              value
+ 42
+            }
+ 43
+          }
+ 44
+        }`,
+ 45
+      {
+ 46
+        variables: {
+ 47
+          id: `gid://shopify/PaymentCustomization/${id}`,
+ 48
+        },
+ 49
+      }
+ 50
+    );
+ 51
+ 52
+    const responseJson = await response.json();
+ 53
+    const metafield =
+ 54
+      responseJson.data.paymentCustomization?.metafield?.value &&
+ 55
+      JSON.parse(responseJson.data.paymentCustomization.metafield.value);
+ 56
+ 57
+    return json({
+ 58
+      paymentMethodName: metafield?.paymentMethodName ?? "",
+ 59
+      cartTotal: metafield?.cartTotal ?? "0",
+ 60
+    });
+ 61 };
+ 62
+ 63 // This is a server-side action that is invoked when the form is submitted.
+ 64 // It makes an admin GraphQL request to create a payment customization.
+ 65 export const action = async ({ params, request }) => {
+ 66
+    const { functionId, id } = params;
+ 67
+    const { admin } = await authenticate.admin(request);
+ 68
+    const formData = await request.formData();
+ 69
+ 70
+    const paymentMethodName = formData.get("paymentMethodName");
+ 71
+    const cartTotal = parseFloat(formData.get("cartTotal"));
+ 72
+ 73
+    const paymentCustomizationInput = {
+ 74
+      functionId,
+ 75
+      title: `Hide ${paymentMethodName} if cart total is larger than ${cartTotal}`,
+ 76
+      enabled: true,
+ 77
+      metafields: [
+ 78
+        {
+ 79
+          namespace: "$app:payment-customization",
+ 80
+          key: "function-configuration",
+ 81
+          type: "json",
+ 82
+          value: JSON.stringify({
+ 83
+            paymentMethodName,
+ 84
+            cartTotal,
+ 85
+          }),
+ 86
+        },
+ 87
+      ],
+ 88
+    };
+ 89
+ 90
+    // If the ID is `new`, then we're creating a new customization. Otherwise, we will use the update mutation.
+ 91
+    if (id === "new") {
+ 92
+      const response = await admin.graphql(
+ 93
+        `#graphql
+ 94
+          mutation createPaymentCustomization($input: PaymentCustomizationInput!) {
+ 95
+            paymentCustomizationCreate(paymentCustomization: $input) {
+ 96
+              paymentCustomization {
+ 97
+                id
+ 98
+              }
+ 99
+              userErrors {
+ 100
+                message
+ 101
+              }
+ 102
+            }
+ 103
+          }`,
+ 104
+        {
+ 105
+          variables: {
+ 106
+            input: paymentCustomizationInput,
+ 107
+          },
+ 108
+        }
+ 109
+      );
+ 110
+ 111
+      const responseJson = await response.json();
+ 112
+      const errors = responseJson.data.paymentCustomizationCreate?.userErrors;
+ 113
+ 114
+      return json({ errors });
+ 115
+    } else {
+ 116
+      const response = await admin.graphql(
+ 117
+        `#graphql
+ 118
+          mutation updatePaymentCustomization($id: ID!, $input: PaymentCustomizationInput!) {
+ 119
+            paymentCustomizationUpdate(id: $id, paymentCustomization: $input) {
+ 120
+              paymentCustomization {
+ 121
+                id
+ 122
+              }
+ 123
+              userErrors {
+ 124
+                message
+ 125
+              }
+ 126
+            }
+ 127
+          }`,
+ 128
+        {
+ 129
+          variables: {
+ 130
+            id: `gid://shopify/PaymentCustomization/${id}`,
+ 131
+            input: paymentCustomizationInput,
+ 132
+          },
+ 133
+        }
+ 134
+      );
+ 135
+ 136
+      const responseJson = await response.json();
+ 137
+      const errors = responseJson.data.paymentCustomizationUpdate?.userErrors;
+ 138
+ 139
+      return json({ errors });
+ 140
+    }
+ 141 };
+ 142
+ 143 // This is the client-side component that renders the form.
+ 144 export default function PaymentCustomization() {
+ 145
+    const submit = useSubmit();
+ 146
+    const actionData = useActionData();
+ 147
+    const navigation = useNavigation();
+ 148
+    const loaderData = useLoaderData();
+ 149
+    const [paymentMethodName, setPaymentMethodName] = useState(
+ 150
+      loaderData.paymentMethodName
+ 151
+    );
+ 152
+    const [cartTotal, setCartTotal] = useState(loaderData.cartTotal);
+ 153
+ 154
+    const isLoading = navigation.state === "submitting";
+ 155
+ 156
+    const errorBanner = actionData?.errors.length ? (
+ 157
+      <Layout.Section>
+ 158
+        <Banner
+ 159
+          title="There was an error creating the customization."
+ 160
+          status="critical"
+ 161
+        >
+ 162
+          <ul>
+ 163
+            {actionData?.errors.map((error, index) => {
+ 164
+              return <li key={`${index}`}>{error.message}</li>;
+ 165
+            })}
+ 166
+          </ul>
+ 167
+        </Banner>
+ 168
+      </Layout.Section>
+ 169
+    ) : null;
+ 170
+ 171
+    const handleSubmit = () => {
+ 172
+      submit({ paymentMethodName, cartTotal }, { method: "post" });
+ 173
+    };
+ 174
+ 175
+    useEffect(() => {
+ 176
+      if (actionData?.errors.length === 0) {
+ 177
+        open("shopify:admin/settings/payments/customizations", "_top");
+ 178
+      }
+ 179
+    }, [actionData?.errors]);
+ 180
+ 181
+    return (
+ 182
+      <Page
+ 183
+        title="Hide payment method"
+ 184
+        backAction={{
+ 185
+          content: "Payment customizations",
+ 186
+          onAction: () =>
+ 187
+            open("shopify:admin/settings/payments/customizations", "_top"),
+ 188
+        }}
+ 189
+        primaryAction={{
+ 190
+          content: "Save",
+ 191
+          loading: isLoading,
+ 192
+          onAction: handleSubmit,
+ 193
+        }}
+ 194
+      >
+ 195
+        <Layout>
+ 196
+          {errorBanner}
+ 197
+          <Layout.Section>
+ 198
+            <Card>
+ 199
+              <Form method="post">
+ 200
+                <FormLayout>
+ 201
+                  <FormLayout.Group>
+ 202
+                    <TextField
+ 203
+                      name="paymentMethodName"
+ 204
+                      type="text"
+ 205
+                      label="Payment method"
+ 206
+                      value={paymentMethodName}
+ 207
+                      onChange={setPaymentMethodName}
+ 208
+                      disabled={isLoading}
+ 209
+                      autoComplete="on"
+ 210
+                      requiredIndicator
+ 211
+                    />
+ 212
+                    <TextField
+ 213
+                      name="cartTotal"
+ 214
+                      type="number"
+ 215
+                      label="Cart total"
+ 216
+                      value={cartTotal}
+ 217
+                      onChange={setCartTotal}
+ 218
+                      disabled={isLoading}
+ 219
+                      autoComplete="on"
+ 220
+                      requiredIndicator
+ 221
+                    />
+ 222
+                  </FormLayout.Group>
+ 223
+                </FormLayout>
+ 224
+              </Form>
+ 225
+            </Card>
+ 226
+          </Layout.Section>
+ 227
+        </Layout>
+ 228
+      </Page>
+ 229
+    );
+ 230 }
+ Step 2: Update your input query to use an app-owned namespace
+ In the previous tutorial, you used a metafield namespace that was accessible to any app, so that the metafield namespace could be populated using GraphiQL. To make your function ready for production, you should update the metafield namespace to use a reserved prefix so that other apps can't use your metafield.
+ Replace the code in the extensions/payment-customization/input.graphql file with the following code. The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ src/run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      cost {
+ 4
+        totalAmount {
+ 5
+          amount
+ 6
+        }
+ 7
+      }
+ 8
+    }
+ 9
+    paymentMethods {
+ 10
+      id
+ 11
+      name
+ 12
+    }
+ 13
+    paymentCustomization {
+ 14
+      metafield(namespace: "$app:payment-customization", key: "function-configuration") {
+ 15
+        value
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 3: Configure the create UI path for your function
+ Settings in the shopify.extension.toml file define the URLs that Shopify uses for merchants to create and edit payment customizations using your function. Shopify automatically fills in any dynamic tokens in these URLs.
+ In extensions/payment-customization/shopify.extension.toml, populate the two settings directly under [ui.paths]. This change is automatically reflected.
+ extensions/payment-customization/shopify.extension.toml
+ 1 create = "/app/payment-customization/:functionId/new"
+ 2 details = "/app/payment-customization/:functionId/:id"
+ Step 4: Update your app access scopes
+ You must request the write_payment_customizations access scope to invoke payment customization mutations in the Admin API.
+ In shopify.app.toml in the root of your app, add the write_payment_customizations scope.
+ shopify.app.toml
+ 1 # This file stores configurations for your Shopify app.
+ 2
+ 3 scopes = "write_products, write_payment_customizations"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Restart your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Use the URL provided by the CLI to open and re-install your app. You should be prompted to accept the new access scope permissions in your store.
+ Step 5: Create and test your payment customization
+ From the Shopify admin, go to Settings > Payments.
+ Under the Payment customizations section, click Manage.
+ If you have existing customizations from previous tutorials, then click the checkbox next to each of them, and then click Deactivate.
+ Click Add a customization and then click payment-customization by {your app}.
+ Fill in the payment customization form, then click Save.
+ For Payment method, use Cash on Delivery.
+ For Cart total, use 200.
+ Open your development store and build a cart with a total (including shipping and tax) under 200. The Cash on Delivery payment method should display in checkout.
+ Add additional items to your cart to raise the total over 200. Your payment function should now hide the Cash on Delivery payment option.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard.
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > payment-customization.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Learn more about how Shopify Functions work and the benefits of using Shopify Functions.
+ Consult the API references for Shopify Functions.
+ Learn how to use variables in your input query.
+ Review the UX guidelines to learn how to implement payment customizations in user interfaces.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create the frontend UI for your function
+ Step 2: Update your input query to use an app-owned namespace
+ Step 3: Configure the create UI path for your function
+ Step 4: Update your app access scopes
+ Step 5: Create and test your payment customization
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

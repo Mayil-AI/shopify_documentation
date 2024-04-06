@@ -1,0 +1,110 @@
+Subscriptions
+ Deferred purchase options
+ Build a user interface
+ Build a customer-facing portal
+ Markets
+ Purchase options
+ Purchase option apps provide merchants and customers with various ways to sell and buy products, beyond the "buy now, pay now, and ship now" experience. For example, customers can place an order for an album before it's released or place a subscription order to receive a bag of coffee beans every month.
+ This guide describes what purchase options are, how they work, and some tools and resources to consider before you get started.
+ What's a purchase option?
+ A purchase option determines how customers can buy products from a store. Purchase options can help merchants manage cash flow and inventory, have flexibility on product launches, and diversify marketing strategies.
+ Purchase option types
+ Purchase options include subscriptions and deferred purchase options.
+ Subscriptions
+ Subscriptions enable customers to purchase products on a recurring basis. For example, customers can do the following:
+ Pay-per-delivery subscription: Pay for products for each delivery. New orders are created at regular intervals. This option is also known as "Subscribe and save".
+ Pre-paid subscription: Make a single payment upfront and receive products on a regular cadence until the order is fulfilled.
+ For more information, refer to Subscriptions.
+ Deferred purchase options
+ Deferred purchase options enable customers to purchase products with deferred payments or deliveries. For example, customers can do the following:
+ Pre-order: Place an order for products or variants that haven't been released yet.
+ Try before you buy: Try products before completing payment, and send back the products that aren't wanted.
+ You can enable deposits for deferred purchase options. Shopify will store a customer's payment method so that merchants can collect the remaining balance amount without contacting the customer.
+ For more information, refer to Deferred purchase options.
+ How do purchase options work?
+ Purchase options and selling plans
+ A purchase option defines how a product can be sold and specifies selling plan policies around pricing, delivery, and more.
+ For example, a subscription can include "Delivery every week, 15% off" and "Delivered every two weeks, 10% off" selling plans.
+ Selling plans and policies
+ Selling plans include configurations of the following policies:
+ Pricing: Defines pricing changes on a given product variant.
+ Billing: Defines the intervals of time between the placement of an order and payment collection.
+ Delivery: Defines when the order should be fulfilled, from the time that the order is created to the time that it leaves the merchant's possession.
+ Inventory: Defines whether the inventory is committed when the order is created or when the order is fulfilled.
+ You can create subscriptions by configuring pricing, delivery, and billing policies.
+ You can create deferred purchase options by configuring pricing, inventory, delivery, and billing policies.
+ For more information, refer to Subscriptions and Deferred purchase options.
+ GraphQL Admin API objects for purchase options
+ The following diagram illustrates the GraphQL Admin API objects for purchase options:
+ The SellingPlanGroup object includes one or more SellingPlan objects.
+ The SellingPlan object specifies how a product can be sold, such as "Weekly delivery" or "Monthly delivery". Policies are organized into SellingPlan.
+ Each SellingPlanGroup includes products (Product), product variants (ProductVariant), and policy configurations (SellingPlan).
+ Purchase option category
+ The category field represents the purchase option category that's used to filter orders by purchase option on the order page. The category field supports the following approved categories:
+ SUBSCRIPTION
+ PRE_ORDER
+ TRY_BEFORE_YOU_BUY
+ If you want to offer a purchase option that isn't listed above, then set the category field to OTHER, and fill out our request form, where we'll review your request for a new purchase option.
+ Shopify's principles
+ The following are our principles for extending the Shopify platform to support purchase options.
+ Selling and buying products in various ways
+ Purchase option apps provide merchants and customers with various ways to sell and buy products, beyond the "buy now, pay now, and ship now" experience.
+ Using checkout to ensure performance, integration, and sustainability
+ Checkout determines charge amounts, payment terms, and payment and shipping methods. Checkout needs to be accurate and have the highest standards of performance and reliability at global scale.
+ Ensuring that merchants are using Shopify’s checkout guarantees performance and integration with Shopify’s core feature set and ecosystem of apps. As Shopify and its ecosystem evolve, checkout is crucial to ensure a sustainable long-term journey for merchants.
+ Modeling and storing purchase option business data in Shopify
+ To maximize merchant success, Shopify models and stores business operational data related to purchase options. A centralized location for key purchase option business data can help merchants mitigate integrity risks and reduce synchronization costs.
+ Both Shopify and apps should be able to access the purchase option business data to help merchants understand and grow their business. The following are examples of purchase option business data:
+ What purchase options are offered
+ Who the purchase options customers are
+ What products customers buy using purchase options
+ How customers are paying for their purchase option orders
+ How purchase option data changes over time
+ Providing creative solutions for merchants
+ Merchants can use purchase options in various ways depending on the industry, product type (physical or digital), and business size. Shopify’s role is to create a platform where developers can provide creative solutions for merchants to effectively manage their purchase options.
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Access scopes
+ To use the GraphQL Admin API for purchase options, your app needs to request the following access scopes:
+ Note
+ You must request permission for the access scopes that are marked with permissions required. To learn how to request permission, refer to orders permissions and subscriptions permissions.
+ Access scopes
+ Access scope Description Subscriptions Deferred purchase options
+ write_products Allows your app to write products ✔ ✔
+ read_all_orders
+ permissions required
+ Allows your app to read all orders rather than the default window of 60 days worth of orders ✔ ✔
+ read_customer_payment_methodspermissions required Allows your app to read customer payment methods ✔ ✔
+ read_own_subscription_contractspermissions required Allows your app to read subscription contract mutations for contracts they own ✔
+ write_own_subscription_contractspermissions required Allows your app to write subscription contract mutations for contracts they own ✔
+ read_purchase_options Allows your app to read purchase options ✔
+ write_purchase_options Allows your app to write purchase options ✔
+ read_payment_mandatepermissions required Allows your app to read payment mandates ✔
+ write_payment_mandatepermissions required Allows your app to write payment mandates ✔
+ Developer tools and resources
+ To help you build and manage purchase options, Shopify offers the following developer tools and resources.
+ Developer tools and resources
+ Tools/Resources Description
+ App extensions Surfaces your app’s purchase options in the Shopify admin
+ App proxy Fetches data from an app proxy server to display on a page of the online store. By using an app proxy, customers can have a seamless experience managing their existing agreements under the shop’s domain.
+ Storefront Liquid drops and properties Allows you to integrate purchase options into a store's theme
+ UX guidelines
+ For information on UX guidelines, refer to the following resources:
+ Subscription UX guidelines
+ Pre-orders and try before you buy UX guidelines
+ Next steps
+ Learn about subscriptions
+ Learn about deferred purchase options
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What's a purchase option?
+ Purchase option types
+ How do purchase options work?
+ Shopify's principles
+ Requirements
+ Developer tools and resources
+ UX guidelines

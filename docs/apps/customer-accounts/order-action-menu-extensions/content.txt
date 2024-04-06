@@ -1,0 +1,35 @@
+Inline extensions
+ Order action menu extensions
+ Overview
+ Build order action menu extensions
+ UX guidelines
+ Full-page extensions
+ Order status page
+ Best practices
+ Selling strategies
+ Online store
+ Order action menu extensions
+ Order action menu extensions render buttons on the Order index and Order status pages that allow customers to take actions on their order.
+ How it works
+ The order action menu offers a static customer-account.order.action.menu-item.render extension target that renders on both the Order index and Order status pages in customer accounts.
+ To complete the order action flow, you can link the button to a modal. For example, to prompt the customer to confirm the action, or surface additional UI needed to complete the order action. The CustomerAccountAction component is a modal that renders the customer-account.order.action.render static extension target.
+ If the order action experience you’re building requires complex forms or large amounts of information, you can alternatively also link a button to a full-page extension, or any other function or action.
+ Limitations
+ The customer-account-order-action-menu-item-render target only supports the Button component, which is available in the checkout UI extension component library.
+ Developer tools and resources
+ Target overview
+ Explore all extension targets available for customer account UI extensions.
+ Checkout UI extension components
+ The component library that contains the Button component.
+ Customer account UI extension components
+ The component library that contains the CustomerAccountAction component.
+ Next steps
+ Build an order action menu extension
+ Build extensions on the order action menu that enable customers to report a problem with their orders.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Limitations
+ Developer tools and resources
+ Next steps

@@ -1,0 +1,100 @@
+Additional SDKs
+ Self-hosting Hydrogen
+ If you don’t want to deploy to Oxygen, then you can host Hydrogen on other JavaScript runtimes, such as Vercel, Netlify, Fly.io, and Cloudflare Workers.
+ Requirements
+ Install the Headless channel. This enables access to the Storefront API and Customer Account API, and lets you manage API tokens.
+ Steps to update your Hydrogen app
+ Note
+ Your hosting platform might have other requirements or implementation details not covered here.
+ Step 1: Update your Remix adapter
+ Remix, Hydrogen’s underlying framework, provides a range of adapters that allow you to adjust your app configuration and build step to target different deployment runtimes.
+ In your Hydrogen app, uninstall the Remix adapter for Oxygen:
+ Terminal
+ $ npm uninstall @shopify/remix-oxygen
+ Install the Remix adapter for your selected hosting platform. For example:
+ Terminal
+ $ npm install @remix-run/cloudflare
+ Step 2: Edit app files for your adapter
+ Typically, when changing Remix adapters, you’ll need to make updates to the following files:
+ server.js
+ remix.config.js
+ app/entry.server.jsx
+ Remix provides templated examples for a range of adapters. Consult your chosen adapter's template files for specific configurations or required edits.
+ When making changes, make sure that you continue to pass Hydrogen’s Storefront API client to the Remix loader context. Typically, this involves editing the updated server.js file using the createRequestHandler function provided by your chosen adapter.
+ The following example shows some changes that your app might require:
+ File
+ JavaScript
+ TypeScript
+ /server.js
+ 1 import {createStorefrontClient} from '@shopify/hydrogen';
+ 2 import {createRequestHandler} from '@remix/ADAPTER_NAME';
+ 3
+ 4 export default {
+ 5
+    async fetch(request, env, executionContext) {
+ 6
+      const {storefront} = createStorefrontClient({
+ 7
+        // Required: Storefront API credentials
+ 8
+        privateStorefrontToken: env.PRIVATE_STOREFRONT_API_TOKEN,
+ 9
+        publicStorefrontToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+ 10
+        storefrontApiVersion: env.PUBLIC_STOREFRONT_API_VERSION,
+ 11
+        storeDomain: `https://${env.PUBLIC_STORE_DOMAIN}`,
+ 12
+        storefrontHeaders: {
+ 13
+          // Pass a buyerIp to prevent being flagged as a bot
+ 14
+          buyerIp: 'customer_IP_address', // Platform-specific method to get request IP
+ 15
+          cookie: request.headers.get('cookie'),  // Required for Shopify Analytics
+ 16
+          purpose: request.headers.get('purpose'), // Used for debugging purposes
+ 17
+        },
+ 18
+        i18n: {
+ 19
+          country: 'country_code',
+ 20
+          language: 'language_code',
+ 21
+        },
+ 22
+        cache: () => {},
+ 23
+        waitUntil: () => {},
+ 24
+        // Additional platform-specific configuration...
+ 25
+      });
+ 26
+      const handleRequest = createRequestHandler({
+ 27
+        // Inject the Storefront API client into the Remix context
+ 28
+        getLoadContext: () => ({storefront}),
+ 29
+        // Additional platform-specific configuration...
+ 30
+      });
+ 31
+      return handleRequest(request);
+ 32
+    },
+ 33 };
+ The cache object should implement the standard Web Cache API. Check with your chosen hosting platform for more details about its caching implementation.
+ The waitUntil method is used in serverless contexts to keep the request function alive after a response has been sent. Check whether your hosting platform supports this pattern, or one like it. For example, Vercel Edge Functions provide a compatible waitUntil method. This method isn't required when deployed to a stateful Node.js server, because the server keeps running after the response has been returned.
+ Consult the createStorefrontClient API reference for the complete list of required and optional parameters.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Steps to update your Hydrogen app
+ Updates & News
+ Developer changelog
+ Partner blog

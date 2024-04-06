@@ -1,0 +1,515 @@
+Billing
+ App Store
+ Manage private metafields
+ You can create private metafields when you don't want the metafield data to be accessible by merchants or other apps. This guide shows you how to manage private metafields using the GraphQL Admin API.
+ Caution
+ The use of private metafields is now deprecated. See our migration guide for using reserved prefixes to have your metafields only accessible to your app.
+ Requirements
+ Your app can make authenticated requests to the GraphQL Admin API.
+ You have access to the type of resource that you want to add the metafield on. For example, setting a metafield on a PRODUCT requires the same access as mutating a product.
+ Limitations
+ Private metafields are similar to other metafields, but they have the following limitations:
+ Private metafields are accessible only by the app that created them.
+ Private metafields are accessible only from the GraphQL Admin API. They're not accessible through Liquid or the Storefront API.
+ An app can create a maximum of 10 private metafields per resource.
+ Private metafields don't support metafield definitions.
+ Note: Private metafields are deleted when the app that created them is uninstalled.
+ Step 1: Create a private metafield
+ You can create private metafields using the GraphQL Admin API mutations:
+ Use the privateMetafieldUpsert mutation
+ Use a GraphQL mutation to create or update the owning resource
+ Create a private metafield using privateMetafieldUpsert
+ Use the privateMetafieldUpsert mutation to create a private metafield for an existing resource. Specify the owning resource by providing its ID as part of the input.
+ Tip
+ You can create private metafields for the Shop resource by omitting the owner field from the mutation input.
+ The following example creates a private metafield for an existing product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    privateMetafieldUpsert(input: {
+ 3
+      owner: "gid://shopify/Product/1",
+ 4
+      namespace: "wholesale",
+ 5
+      key: "wholesale_price",
+ 6
+      valueInput: {
+ 7
+        value: "5.00",
+ 8
+        valueType: STRING
+ 9
+      }
+ 10
+    }) {
+ 11
+      privateMetafield {
+ 12
+        namespace
+ 13
+        key
+ 14
+        value
+ 15
+        valueType
+ 16
+      }
+ 17
+      userErrors {
+ 18
+        field
+ 19
+        message
+ 20
+      }
+ 21
+    }
+ 22 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "privateMetafieldUpsert": {
+ 4
+        "privateMetafield": {
+ 5
+          "namespace": "wholesale",
+ 6
+          "key": "wholesale_price",
+ 7
+          "value": "5.00",
+ 8
+          "valueType": "STRING"
+ 9
+        },
+ 10
+        "userErrors": []
+ 11
+      }
+ 12
+    }
+ 13 }
+ Create private metafields through the owning resource
+ You can include private metafields as part of the input when you create or update the owning resource.
+ The following mutations accept an array of private metafields as part of their input object:
+ collectionCreate
+ collectionUpdate
+ customerCreate
+ customerUpdate
+ draftOrderCreate
+ draftOrderUpdate
+ orderCreate
+ orderUpdate
+ productCreate
+ productUpdate
+ productVariantCreate
+ productVariantUpdate
+ The following example uses the productUpdate mutation to create a private metafield for an existing product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(input: {
+ 3
+      id: "gid://shopify/Product/1",
+ 4
+      privateMetafields: {
+ 5
+        owner: "gid://shopify/Product/1",
+ 6
+        namespace: "wholesale",
+ 7
+        key: "wholesale_price",
+ 8
+        valueInput: {
+ 9
+          value: "25",
+ 10
+          valueType: INTEGER,
+ 11
+        }
+ 12
+      }
+ 13
+    }) {
+ 14
+      product {
+ 15
+        privateMetafields(first:10) {
+ 16
+          edges {
+ 17
+            node {
+ 18
+              namespace
+ 19
+              key
+ 20
+              value
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "privateMetafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "namespace": "wholesale",
+ 10
+                  "key": "wholesale_price",
+ 11
+                  "value": "25"
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+      }
+ 18
+    }
+ 19 }
+ Step 2: Retrieve a private metafield
+ When you query a resource, you can retrieve its private metafields individually or in a list.
+ Retrieve a single private metafield
+ Use the privateMetafield field to return a single private metafield. Specify the private metafield that you want to retrieve by using the namespace and key arguments.
+ The following example retrieves a private metafield that belongs to a product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    product(id: "gid://shopify/Product/1") {
+ 3
+      privateMetafield(namespace: "wholesale", key: "price") {
+ 4
+        value
+ 5
+      }
+ 6
+    }
+ 7 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "privateMetafield": {
+ 5
+          "value": "15.00"
+ 6
+        }
+ Retrieve a list of private metafields
+ Use the privateMetafields connection to retrieve a list of metafields. You can query this connection in a resource or in the query root. You can include the namespace argument to filter the returned results.
+ The following example retrieves all the private metafields that belong to a product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+    product(id: "gid://shopify/Product/1") {
+ 3
+      privateMetafields(namespace: "wholesale", first: 10) {
+ 4
+        edges {
+ 5
+          node {
+ 6
+            id
+ 7
+            namespace
+ 8
+            key
+ 9
+            value
+ 10
+          }
+ 11
+        }
+ 12
+      }
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "privateMetafields": {
+ 5
+          "edges": [
+ 6
+            {
+ 7
+              "node": {
+ 8
+                "id": "gid://shopify/PrivateMetafield/1",
+ 9
+                "namespace": "wholesale",
+ 10
+                "key": "price",
+ 11
+                "value": "15.00"
+ 12
+              }
+ 13
+            }
+ 14
+          ]
+ 15
+        }
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 3: Update a private metafield
+ There are two ways to update a private metafield:
+ Use the privateMetafieldUpsert mutation
+ Update the owning resource
+ Update a private metafield using privateMetafieldUpsert
+ You can update a private metafield by using the privateMetafieldUpsert mutation. As part of the input, specify the owning resource by its ID, and specify the private metafield by its namespace and key.
+ The following example updates the value of a private metafield that belongs to a product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    privateMetafieldUpsert(input: {
+ 3
+      owner: "gid://shopify/Product/1",
+ 4
+      namespace: "wholesale",
+ 5
+      key: "price",
+ 6
+      valueInput: {
+ 7
+        value: "25",
+ 8
+        valueType: INTEGER
+ 9
+      }
+ 10
+    }) {
+ 11
+      privateMetafield {
+ 12
+        namespace
+ 13
+        key
+ 14
+        value
+ 15
+        valueType
+ 16
+      }
+ 17
+      userErrors {
+ 18
+        field
+ 19
+        message
+ 20
+      }
+ 21
+    }
+ 22 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "privateMetafieldUpsert": {
+ 4
+        "privateMetafield": {
+ 5
+          "namespace": "wholesale",
+ 6
+          "key": "price",
+ 7
+          "value": "25",
+ 8
+          "valueType": "INTEGER"
+ 9
+        },
+ 10
+        "userErrors": []
+ 11
+      }
+ 12
+    }
+ 13 }
+ Update the owning resource
+ You can update a private metafield by updating the owning resource and including the private metafield as part of the mutation input. Specify the owning resource by its ID, and specify the private metafield by its namespace and key. The following GraphQL mutations accept private metafields as part of their input:
+ collectionUpdate
+ customerUpdate
+ draftOrderUpdate
+ productUpdate
+ productVariantUpdate
+ The following example uses the productUpdate mutation to update the value of a private metafield that belongs to a product:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    productUpdate(input: {
+ 3
+      id: "gid://shopify/Product/1",
+ 4
+      privateMetafields: {
+ 5
+        owner: "gid://shopify/Product/1",
+ 6
+        namespace: "wholesale",
+ 7
+        key: "wholesale_price",
+ 8
+        valueInput: {
+ 9
+          value: "50",
+ 10
+          valueType: INTEGER,
+ 11
+        }
+ 12
+      }
+ 13
+    }) {
+ 14
+      product {
+ 15
+        privateMetafields(first:10) {
+ 16
+          edges {
+ 17
+            node {
+ 18
+              namespace
+ 19
+              key
+ 20
+              value
+ 21
+            }
+ 22
+          }
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "privateMetafields": {
+ 6
+            "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "namespace": "wholesale",
+ 10
+                  "key": "price",
+ 11
+                  "value": "50"
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+      }
+ 18
+    }
+ 19 }
+ Step 4 (Optional): Delete a private metafield
+ Use the privateMetafieldDelete mutation to delete a private metafield. Specify the private metafield you want to delete by its namespace and key, and specify the owning resource by ID.
+ The following example deletes the wholesale.price metafield from a product resource:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    privateMetafieldDelete(input: {
+ 3
+      owner: "gid://shopify/Product/1",
+ 4
+      namespace: "wholesale",
+ 5
+      key: "price",
+ 6
+    }) {
+ 7
+      deletedPrivateMetafieldId
+ 8
+      userErrors {
+ 9
+        field
+ 10
+        message
+ 11
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "privateMetafieldDelete": {
+ 4
+        "deletedPrivateMetafieldId": "gid://shopify/PrivateMetafield/1",
+ 5
+        "userErrors": []
+ 6
+      }
+ 7
+    }
+ 8 }
+ Next steps
+ Learn about access controls for metafields.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Limitations
+ Step 1: Create a private metafield
+ Step 2: Retrieve a private metafield
+ Step 3: Update a private metafield
+ Step 4 (Optional): Delete a private metafield
+ Next steps

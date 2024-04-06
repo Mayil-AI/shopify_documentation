@@ -1,0 +1,90 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Navigator
+ A component used to navigate between different screens.
+ Example
+ Here is a simple example of a modal that has two screens, and uses the navigate function to switch between them.
+ JavaScript
+ React
+ 1 import { extend, Button, ButtonProps, Navigator, Screen, ScrollView, Tile } from "@shopify/retail-ui-extensions";
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'My app',
+ 6
+      enabled: true,
+ 7
+      onPress: () => {
+ 8
+        api.smartGrid.presentModal();
+ 9
+      },
+ 10
+    };
+ 11
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+ 14
+    root.appendChild(tile);
+ 15
+    root.mount();
+ 16 });
+ 17
+ 18 extend('pos.home.modal.render', (root, api) => {
+ 19
+    let navigator = root.createComponent(Navigator);
+ 20
+    root.appendChild(navigator);
+ 21
+ 22
+    let screenOne = root.createComponent(Screen, { name: 'ScreenOne', title: 'Screen One Title' });
+ 23
+    navigator.appendChild(screenOne);
+ 24
+ 25
+    const scrollView = root.createComponent(ScrollView, {});
+ 26
+    screenOne.appendChild(scrollView);
+ 27
+ 28
+    const buttonProps: ButtonProps = {
+ 29
+      title: 'Show ScreenTwo',
+ 30
+      onPress: () => {
+ 31
+        api.navigation.navigate('ScreenTwo');
+ 32
+      },
+ 33
+      isDisabled: false,
+ 34
+    };
+ 35
+    const button = root.createComponent(Button, buttonProps);
+ 36
+    scrollView.appendChild(button);
+ 37
+ 38
+    let screenTwo = root.createComponent(Screen, { name: 'ScreenTwo', title: 'Screen Two Title' });
+ 39
+    navigator.appendChild(screenTwo);
+ 40
+ 41
+    root.mount();
+ 42 });
+ Props
+ Name Type Description
+ initialScreenName string? The name of the Screen to initialize to. Defaults to the first Screen.
+ Guidelines
+ Wrap the Screens you want to navigate between in a Navigator component, and then use the navigate function to switch between them.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example
+ Props

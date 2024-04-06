@@ -1,0 +1,30 @@
+Bring your own stack
+ Building with the Storefront API
+ Building with the Customer Account API
+ Overview
+ Getting started
+ Using Customer Account API with Hydrogen
+ Customers
+ Customer Account API reference
+ Additional SDKs
+ Building with the Customer Account API
+ The Customer Account API offers a secure and private way of accessing private customer-scoped data, such as customer, orders, payments, fulfillment, discounts, refunds, and metafields. The Customer Account API allows you to build personalized customer experiences that you can use in your Headless or Hydrogen custom storefronts.
+ Benefits
+ The Customer Account API provides the following benefits:
+ Seamless authentication: The hosted customer authentication system enables passwordless login for customers, allowing them to have a single sign-on experience across custom storefronts, online store, accounts, and checkout.
+ Data scoping: The Customer Account API scopes data to each store and customer. This granular approach allows developers to build applications that cater to specific customer needs, offering personalized experiences and targeted marketing.
+ Enhanced security: The Customer Account API requires authentication for each request and ensures that authorized applications can access sensitive customer information. This added layer of security protects both merchants and customers from unauthorized access and potential data breaches that could expose sensitive customer information.
+ API versioning
+ The Customer Account API is versioned, with new releases four times a year. We strongly recommend updating your apps to make requests to the latest API version.
+ Reference
+ Customer Account API reference
+ Consult the Customer Account API reference for available objects, queries, and mutations.
+ Next steps
+ Get started with the Customer Account API and learn how to query data.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Benefits
+ API versioning
+ Reference
+ Next steps

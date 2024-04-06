@@ -1,0 +1,320 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Getting started with building a discounts experience
+ Functions availability
+ Some Function APIs are available only in developer preview.
+ Users that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Public apps that are distributed through the Shopify App Store and contain functions can be used by stores on any plan. Only stores on a Shopify Plus plan can use custom apps that contain Shopify Function APIs.
+ You can create a new type of discount that's applied to a particular product or product variant in the cart. In this tutorial, you'll use Shopify Functions to create a new discount type called "Volume discount" that offers a percentage off when customers purchase more than the minimum quantity of a product.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Generate starter code for Shopify Functions.
+ Use GraphQL to define the input of your function.
+ Deploy functions to the Shopify platform.
+ Review logs for your function.
+ Requirements
+ You've created a Partner account.
+ You've created a development store.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Step 1: Create the product discount function
+ To create your product discount function, you can use Shopify CLI to generate a starter function, specify the inputs for your function using an input query, and implement your function logic using JavaScript or Rust.
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new product discount extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --template product_discounts --name product-discount
+ Choose the language that you want to use. For this tutorial, you should select either JavaScript or Rust.
+ Terminal
+ $ ?  What would you like to work in?
+ $ > (1) JavaScript
+ $
+    (2) TypeScript
+ $
+    (3) Rust
+ $
+    (4) Wasm
+ Navigate to extensions/product-discount:
+ Terminal
+ $ cd extensions/product-discount
+ Replace the contents of src/run.graphql file with the following code.
+ run.graphql defines the input for the function target. The query differs slightly in JavaScript and Rust due to code generation requirements.
+ run.graphql
+ JavaScript input query
+ 3
+      lines {
+ 4
+        quantity
+ 5
+        merchandise {
+ 6
+          __typename
+ 7
+          ...on ProductVariant {
+ 8
+              id
+ 9
+          }
+ 10
+ 13 }
+ If you're using JavaScript, then run the following command to regenerate types based on your input query:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app function typegen
+ Replace the src/run.js or src/run.rs file with the following code.
+ This function logic applies a 10% discount to any product variant cart lines with a quantity of two or more.
+ File
+ JavaScript
+ Rust
+ src/run.js
+ 1 // @ts-check
+ 2 import { DiscountApplicationStrategy } from "../generated/api";
+ 3
+ 4 // Use JSDoc annotations for type safety
+ 5 /**
+ 6 * @typedef {import("../generated/api").RunInput} RunInput
+ 7 * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
+ 8 * @typedef {import("../generated/api").Target} Target
+ 9 * @typedef {import("../generated/api").ProductVariant} ProductVariant
+ 10 */
+ 11
+ 12 /**
+ 13 * @type {FunctionRunResult}
+ 14 */
+ 15 const EMPTY_DISCOUNT = {
+ 16
+    discountApplicationStrategy: DiscountApplicationStrategy.First,
+ 17
+    discounts: [],
+ 18 };
+ 19
+ 20 // The configured entrypoint for the 'purchase.product-discount.run' extension target
+ 21 /**
+ 22 * @param {RunInput} input
+ 23 * @returns {FunctionRunResult}
+ 24 */
+ 25 export function run(input) {
+ 26
+    const targets = input.cart.lines
+ 27
+    // Only include cart lines with a quantity of two or more
+ 28
+    // and a targetable product variant
+ 29
+    .filter(line => line.quantity >= 2 &&
+ 30
+      line.merchandise.__typename == "ProductVariant")
+ 31
+    .map(line => {
+ 32
+      const variant = /** @type {ProductVariant} */ (line.merchandise);
+ 33
+      return /** @type {Target} */ ({
+ 34
+        // Use the variant ID to create a discount target
+ 35
+        productVariant: {
+ 36
+          id: variant.id
+ 37
+        }
+ 38
+      });
+ 39
+    });
+ 40
+ 41
+    if (!targets.length) {
+ 42
+      // You can use STDERR for debug logs in your function
+ 43
+      console.error("No cart lines qualify for volume discount.");
+ 44
+      return EMPTY_DISCOUNT;
+ 45
+    }
+ 46
+ 47
+    // The @shopify/shopify_function package applies JSON.stringify() to your function result
+ 48
+    // and writes it to STDOUT
+ 49
+    return {
+ 50
+      discounts: [
+ 51
+        {
+ 52
+          // Apply the discount to the collected targets
+ 53
+          targets,
+ 54
+          // Define a percentage-based discount
+ 55
+          value: {
+ 56
+            percentage: {
+ 57
+              value: "10.0"
+ 58
+            }
+ 59
+          }
+ 60
+        }
+ 61
+      ],
+ 62
+      discountApplicationStrategy: DiscountApplicationStrategy.First
+ 63
+    };
+ 64 };
+ Step 2: Preview the function on a development store
+ To test your function, you need to make it available to your development store.
+ If you're developing a function in a language other than JavaScript or TypeScript, ensure you have configured build.watch in your function extension configuration.
+ Navigate back to your app root:
+ Terminal
+ $ cd ../..
+ Use the Shopify CLI dev command to start app preview:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ You can keep the preview running as you work on your function. When you make changes to a watched file, Shopify CLI rebuilds your function and updates the function extension's drafts, so you can immediately test your changes.
+ Follow the CLI prompts to preview your app, and install it on your development store.
+ Step 3: Update your app access scopes
+ You must request the write_discounts access scope to give your app the permissions it needs to create and update discounts.
+ In shopify.app.toml, located in the root of your app, add the write_discounts scope:
+ shopify.app.toml
+ 1 # This file stores configurations for your Shopify app.
+ 2
+ 3 scopes = "write_products, write_discounts"
+ Deploy your updated configuration to Shopify:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ Restart your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Use the URL provided by the CLI to open or re-install your app. You should be prompted to accept the new access scope permissions in your store.
+ Step 4: Create the product discount with GraphiQL
+ To activate your function, you must create a product discount on the store where you installed your app. You can do this using the discountAutomaticAppCreate or discountCodeAppCreate GraphQL mutations.
+ In subsequent tutorials, you'll use metafields on this product discount to configure your function, and create an interface so that users can configure the function themselves.
+ Install the Shopify GraphiQL app on your store. If you've already installed GraphiQL, then you should do so again to select the necessary access scopes for discounts.
+ Note
+ Make sure to select the write_discounts access scopes for the Admin API.
+ In the GraphiQL app, in the API Version field, select the 2023-07 version.
+ Find the ID of your function by executing the following query:
+ find-function-query.graphql
+ 1 query {
+ 2
+    shopifyFunctions(first: 25) {
+ 3
+      nodes {
+ 4
+        app {
+ 5
+          title
+ 6
+        }
+ 7
+        apiType
+ 8
+        title
+ 9
+        id
+ The result contains a node with your function's ID:
+ find-function-result.json
+ 1 {
+ 2
+    "app": {
+ 3
+      "title": "your-app-name-here"
+ 4
+    },
+ 5
+    "apiType": "product_discounts",
+ 6
+    "title": "product-discount",
+ 7
+    "id": "YOUR_FUNCTION_ID_HERE"
+ 8 }
+ Execute the following mutation and replace YOUR_FUNCTION_ID_HERE with the ID of your function:
+ mutation.graphql
+ 1 mutation {
+ 2
+    discountAutomaticAppCreate(automaticAppDiscount: {
+ 3
+      title: "Volume discount",
+ 4
+      functionId: "YOUR_FUNCTION_ID_HERE",
+ 5
+      startsAt: "2022-06-22T00:00:00"
+ 6
+    }) {
+ 7
+       automaticAppDiscount {
+ 8
+        discountId
+ 9
+       }
+ 10
+       userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+       }
+ 14
+    }
+ 15 }
+ You should receive a GraphQL response that includes the ID of the created product discount. If the response includes any messages under userErrors, then review the errors, check that your mutation and functionId are correct, and try the request again.
+ Tip
+ If you receive a Could not find Function error, then confirm the following:
+ The function ID is correct.
+ You've installed the app on your development store.
+ Development store preview is enabled in the Partner Dashboard.
+ Your app has the write_discounts access scope.
+ Step 5: Test the product discount
+ From your Shopify admin, go to Discounts.
+ You should now see the Volume discount that you created. Deactivate or delete all other discounts to ensure that the Volume discount is the only active discount.
+ Open your development store and build a cart with a single item in it.
+ No discounts should be applied to the cart.
+ Increase the item quantity to two.
+ The 10% Volume discount should now be applied to the cart.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard:
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > product-discount.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Add configuration to your discounts experience using metafields.
+ Step 1: Create the product discount function
+ Step 2: Preview the function on a development store
+ Step 3: Update your app access scopes
+ Step 4: Create the product discount with GraphiQL
+ Step 5: Test the product discount

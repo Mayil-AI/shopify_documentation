@@ -1,0 +1,170 @@
+Overview
+ Migrate
+ Config
+ Locales
+ Settings
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Migrate static sections to section groups
+ Section groups give merchants the flexibility to add, remove, and reorder sections in their theme's layout without making changes to the theme code.
+ If you created your theme before section groups became available, then you might render one or more sections statically in your layout file. Because section groups are more flexible and reduce the need for code changes, you should replace the statically rendered sections in your layout files with section groups that contain the sections by default.
+ When you migrate static sections to section groups, Shopify attempts to migrate any applicable settings for the merchant during the theme update process.
+ Step 1: Create new section groups
+ Create a section group for each of the areas of your layout where you include static sections. In most cases, you need to create a header section group and a footer section group.
+ In the sections directory, create a new JSON file for the section group.
+ The file name should identify the area of the layout that the section group represents. For example, you might create a file called header-group.json for your header section group.
+ In the file, add data for the basic section group schema, including the section group type and name.
+ sections/header-group.json
+ 1 {
+ 2
+    "type": "header",
+ 3
+    "name": "Header group",
+ 4
+    "sections": {},
+ 5
+    "order": []
+ 6 }
+ Add references to the sections that you want to include in the section group. You should include all of the static sections that the section group is replacing, so Shopify can copy a merchant's static section settings to the section group.
+ For example, the header area of your layout file might contain the following sections:
+ layout/theme.liquid
+ 1 {% section 'announcement-bar' %}
+ 2 {% section 'header' %}
+ You can add references to those sections in your new section group:
+ sections/header-group.json
+ 1 {
+ 2
+    "type": "header",
+ 3
+    "name": "Header Group",
+ 4
+    "sections": {
+ 5
+      "header": {
+ 6
+        "type": "header",
+ 7
+        "settings": {}
+ 8
+      },
+ 9
+      "announcement-bar": {
+ 10
+        "type": "announcement-bar",
+ 11
+        "settings": {}
+ 12
+      }
+ 13
+    },
+ 14
+    "order": [
+ 15
+      "announcement-bar",
+ 16
+      "header"
+ 17
+    ]
+ 18 }
+ Step 2: Replace static section tags with section group tags
+ After you create your section group JSON file, replace the static sections in your layout file with your new section group:
+ layout/theme.liquid
+ Code to remove
+ 1 {% section 'announcement-bar' %}
+ 2 {% section 'header' %}
+ Code to add
+ 1 {% sections 'header-group' %}
+ Settings migration for theme updates
+ When a merchant updates their theme from a version that uses a static section to a version that includes that section in a section group, Shopify attempts to copy the static section's settings to the settings for the equivalent section in the section group. Shopify maps these settings based on the section's type.
+ For example, if a theme uses a section group that has a section of type header, Shopify copies any settings for a section of type header from the old version’s /config/settings_data.json file.
+ Old version: config/settings_data.json
+ 1 {
+ 2
+    "current": {
+ 3
+      "colors_solid_button_labels": "#ffffff",
+ 4
+      "colors_accent_1": "#121212",
+ 5
+      "sections": {
+ 6
+        "header": {
+ 7
+          "type": "header",
+ 8
+          "settings": {
+ 9
+            "color_scheme": "background-1",
+ 10
+            "logo_width": 90,
+ 11
+            "logo_position": "middle-left",
+ 12
+            "menu": "main-menu",
+ 13
+            "show_line_separator": true,
+ 14
+            "enable_sticky_header": true,
+ 15
+            "margin_bottom": 0
+ 16
+          }
+ 17
+        }
+ 18
+      }
+ 19
+    },
+ 20
+    "presets": {}
+ 21 }
+ New version: sections/header-group.json
+ 1 {
+ 2
+    "type": "header",
+ 3
+    "name": "Header Group",
+ 4
+    "sections": {
+ 5
+      "header": {
+ 6
+        "type": "header",
+ 7
+        "settings": {
+ 8
+          "color_scheme": "background-1",
+ 9
+          "logo_width": 90,
+ 10
+          "logo_position": "middle-left",
+ 11
+          "menu": "main-menu",
+ 12
+          "show_line_separator": true,
+ 13
+          "enable_sticky_header": true,
+ 14
+          "margin_bottom": 0
+ 15
+        }
+ 16
+      }
+ 17
+    },
+ 18
+    "order": [
+ 19
+      "header"
+ 20
+    ]
+ 21 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Create new section groups
+ Step 2: Replace static section tags with section group tags
+ Settings migration for theme updates
+ Updates & News

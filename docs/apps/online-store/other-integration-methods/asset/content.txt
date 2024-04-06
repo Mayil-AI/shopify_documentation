@@ -1,0 +1,80 @@
+Overview
+ Theme app extensions
+ Other integration methods
+ ScriptTag resource
+ App proxies
+ Asset resource
+ Verify theme support
+ Manage media
+ Admin
+ Flow
+ Distribution
+ Billing
+ App Store
+ The Asset API resource
+ The Asset REST Admin API resource reads, adds, changes, or removes theme files.
+ Starting with Admin API 2023-04, Asset resource PUT or DEL requests are restricted using the write_themes access scope. If an app that's distributed in the Shopify App Store needs to use Asset resource PUT or DEL requests, then it needs to be granted an exemption by Shopify to use the write_themes access scope.
+ As an alternative, you can use theme app extensions, or instruct merchants how to add code to their theme using the following tools:
+ A custom Liquid section or block
+ The custom CSS setting
+ Deep-linking to a specific file and location in the code editor
+ Apps must obtain an exemption or migrate before March 31, 2024.
+ Review the sections below to learn whether your app is eligible for an exemption, and how to apply for an exemption, and some alternatives to the Asset resource that you might consider for your app.
+ You can still use the Asset resource to read theme files without an exemption.
+ Uses cases eligible for exemption
+ If your app falls into one of the following categories, you might be eligible for an exemption.
+ Page builders: Your app adds or replaces all layouts or templates files with the purpose of providing an alternative theme customization experience. This exemption won’t be granted to apps that modify only a few pages, for example, by adding forms, wishlist pages, or pre-order pages to a theme. This functionality can be achieved using theme app embeds or app blocks for themes.
+ Backups: Your app backs up all theme files and restores files from a backup as the primary app functionality.
+ Adding Liquid to repeating blocks: Your app adds elements such as ratings, buttons, or badges to recurring resource lists like products.
+ Other platform functionality: Your app primarily provides search engine optimization, content locking, or developer tooling and testing functionality.
+ Note
+ As alternative APIs and resources that address these use cases become available, app developers will be required to transition to suggested alternatives.
+ If you think that your app is eligible for an exemption, then you can submit an exception request. Exemptions are valid for both accessing the protected scope and qualifying for Built for Shopify status.
+ After you submit your request, the Shopify app review team will review your submission and be in touch with you within two weeks.
+ If your app’s use case doesn’t fall within the exemption categories, then you need to use the recommended integration method, Theme App Extensions or use the ScriptTag resource.
+ Alternatives for common Asset resource use cases
+ The following table suggests alternatives to explore for common Asset resource use cases.
+ Recommended alternatives for use cases that are not eligible for exemption
+ Use case Recommended alternative
+ Loading custom JavaScript that provides additional functionality for your app
+ Online store 2.0 themes: User theme app embeds or blocks
+ Vintage themes: Use theme app embeds
+ Loading custom CSS that provides styling for your app functionality, such as custom colors or fonts
+ Loading custom images that provide additional visual elements for a store or your app functionality, such as custom logos or product images
+ Adding custom metadata to a store, such as meta descriptions, keywords, or social media tags Theme app embeds
+ Loading custom font files that provide additional typography options for a store
+ Loading custom tracking scripts, such as Google Analytics, to track store performance and customer behavior
+ Implementing custom pop-ups, such as sign-up forms or promotional offers
+ Loading a custom favicon for a store
+ Implementing custom live chat
+ Adding custom zoom functionality, such as the ability to zoom in on product images
+ Customizing the search results page, such as adding custom search results
+ Online store 2.0 themes: Use theme app blocks
+ Vintage themes:
+ Use theme app embeds, or provide instructions to add code snippets for vintage themes or non-sectioned pages.
+ Recommend that merchants with custom themes migrate relevant templates to Online Store 2.0
+ Adding custom product reviews, such as customer ratings or customer feedback
+ Customizing product details pages by adding additional product information
+ Customizing the cart page by adding custom cart information
+ Customizing the order confirmation page by adding custom order information or custom order tracking
+ Customizing the login page by adding custom login forms or custom login options
+ Adding custom store policies, such as return policy or privacy policy
+ Customizing the contact page, such as adding custom contact forms or custom contact information
+ Customizing repeating resources, such as product cards or blog posts
+ Use standard metafield definitions for product ratings and product rating counts on product cards.
+ Use theme app embeds or provide instructions to add code snippets for vintage themes or non-sectioned pages.
+ Creating custom pages, such as a custom collection, about us page or contact page Provide instructions to create the alternate template using the theme editor
+ Auto installing an app block or app embed on behalf of the merchant
+ Provide a deep link for merchants to preview the app embed in the theme editor. Merchants can adjust and save.
+ Provide instructions to add theme app blocks using the theme editor
+ Commenting out page details, such as the title of a block, to hide elements or inject other values Theme app embeds to add content or load scripts to achieve similar functionality
+ Editing a CSS class or adding attributes to an existing theme element
+ Use theme app embeds and load scripts to target specific elements of the page
+ Use theme app embeds and leverage the Custom CSS setting of existing sections
+ Use theme app embeds or theme app blocks to offer an alternative element instead of modifying the theme’s block
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Uses cases eligible for exemption
+ Alternatives for common Asset resource use cases
+ Updates & News

@@ -1,0 +1,40 @@
+Delivery Customization API
+ Overview
+ GraphQL reference
+ Discounts APIs
+ Fulfillment Constraints API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Delivery Customization Function API overview
+ The Delivery Customization API enables you to rename, reorder, and sort the delivery options available to buyers during checkout.
+ Example use cases
+ Hide delivery options for certain products or customers
+ Reorder delivery options according to user preference
+ Hide delivery options for PO Box addresses
+ Add messaging to delivery option titles
+ Developer tools and resources
+ Shopify CLI
+ A command-line tool for building Shopify apps.
+ Delivery Customization API reference
+ Consult the GraphQL reference for the Delivery Customization API.
+ Migrating from scripts to functions
+ If you want to migrate an existing shipping script to Shopify Functions, then you can use the following mappings:
+ Shopify Scripts method Description Shopify Functions object Additional context
+ change_name Changes the name of a delivery option RenameOperation
+ sort Sorts the delivery options based on some criteria, typically to place one delivery option at the top or bottom of a list MoveOperation Instead of sorting, you can move individual delivery methods.
+ delete_if Removes a delivery option from checkout HideOperation
+ Limitations and considerations
+ The Delivery Customization API doesn't currently support draft orders.
+ You can't modify local delivery and local pickup options with delivery customizations.
+ Next steps
+ Learn how to use Shopify Functions by building a delivery customization.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example use cases
+ Developer tools and resources
+ Migrating from scripts to functions
+ Limitations and considerations
+ Next steps

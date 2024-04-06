@@ -1,0 +1,45 @@
+Delivery and shipping
+ Overview
+ Enhance delivery methods
+ Reorder delivery options
+ Pickup points
+ Overview
+ Generate options
+ App requirements and UX guidelines
+ Create local pickup charges
+ Product offers
+ Distribution
+ Billing
+ App Store
+ Pickup points
+ Early access:
+ Pickup points are currently only available for specific stores that have eligible fulfillment locations and use eligible Shopify Shipping carriers.
+ A pickup point is a third-party location where customers can have their orders shipped, instead of to their address. Common locations are post offices, relay points, or pickup lockers. Pickup points are often a more secure, flexible, and cheaper delivery option for many customers around the world.
+ How it works
+ Pickup point options display to merchants in the Shopify admin and to customers at checkout. Merchants must activate pickup points in the Shopify admin.
+ During checkout, customers can choose the delivery method to ship to a pickup point, search for available locations, and then select a location where they want their order delivered. The locations work in partnership with different shipping providers.
+ Selected pickup points are automatically linked to orders, which can be viewed on the order in the Shopify admin and accessed through the GraphQL Admin API.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building for pickup points:
+ Example pickup point delivery option generator
+ Review the example function that Shopify CLI generates and learn how it works.
+ Pickup Point Delivery Option Generator reference
+ Review the reference for the Pickup Point Delivery Option Generator API.
+ Extension targets
+ Review the extension targets that are available to pickup points.
+ Limitations
+ Pickup points are only available to custom apps that are built for stores on the Shopify Plus plan. Public apps in the Shopify App Store and custom apps built for stores on non-Plus plans aren't eligible to build for pickup points.
+ Get started
+ Generate options
+ Use Shopify Functions to generate pickup point options for customers.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Developer tools and resources
+ Limitations
+ Get started
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

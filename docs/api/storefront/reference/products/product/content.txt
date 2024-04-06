@@ -1,0 +1,320 @@
+Common objects
+ Queries
+ Mutations
+ Objects
+ ApiVersion
+ AppliedGiftCard
+ Article
+ ArticleAuthor
+ Attribute
+ AvailableShippingRates
+ Blog
+ Brand
+ BrandColorGroup
+ BrandColors
+ CartCost
+ CartCustomDiscountAllocation
+ CartLineCost
+ Checkout
+ CheckoutBuyerIdentity
+ Collection
+ Comment
+ CommentAuthor
+ Company
+ CompanyContact
+ CompanyLocation
+ ComponentizableCartLine
+ Country
+ CreditCard
+ Currency
+ Domain
+ ExternalVideo
+ Filter
+ FilterValue
+ Fulfillment
+ FulfillmentLineItem
+ FulfillmentTrackingInfo
+ GenericFile
+ Image
+ InContextAnnotation
+ InContextAnnotationType
+ Language
+ Localization
+ Location
+ LocationAddress
+ MailingAddress
+ Market
+ MediaImage
+ MediaPresentation
+ Menu
+ MenuItem
+ Metafield
+ MetaobjectField
+ MetaobjectSEO
+ Model3d
+ Model3dSource
+ MoneyV2
+ Order
+ OrderLineItem
+ Page
+ PageInfo
+ PaymentSettings
+ Product
+ Fields
+ Connections
+ Queries
+ Implements
+ ProductOption
+ ProductPriceRange
+ ProductVariant
+ PurchasingCompany
+ QuantityPriceBreak
+ QuantityRule
+ QueryRoot
+ SelectedOption
+ SellingPlan
+ SellingPlanAllocation
+ SellingPlanAllocationPriceAdjustment
+ SellingPlanCheckoutCharge
+ SellingPlanCheckoutChargePercentageValue
+ SellingPlanFixedAmountPriceAdjustment
+ SellingPlanFixedPriceAdjustment
+ SellingPlanGroup
+ SellingPlanGroupOption
+ SellingPlanOption
+ SellingPlanPercentagePriceAdjustment
+ SellingPlanPriceAdjustment
+ SEO
+ ShippingRate
+ Shop
+ ShopPolicy
+ ShopPolicyWithDefault
+ StoreAvailability
+ Swatch
+ Transaction
+ UnitPriceMeasurement
+ UrlRedirect
+ Video
+ VideoSource
+ Customers
+ Metaobjects
+ Search
+ GraphQL Types
+ Product
+ object
+ Requires unauthenticated_read_product_listings access scope.
+ A product represents an individual item for sale in a Shopify store. Products are often physical, but they don't have to be. For example, a digital download (such as a movie, music or ebook file) also qualifies as a product, as do services (such as equipment rental, work for hire, customization of another product or an extended warranty).
+ Fields
+ availableForSale
+ Boolean!
+ non-null
+ Indicates if at least one product variant is available for sale.
+ compareAtPriceRange
+ ProductPriceRange!
+ non-null
+ The compare at price of the product across all variants.
+ Show fields
+ createdAt
+ DateTime!
+ non-null
+ The date and time when the product was created.
+ description
+ String!
+ non-null
+ Stripped description of the product, single line with HTML tags removed.
+ Show arguments
+ descriptionHtml
+ HTML!
+ non-null
+ The description of the product, complete with HTML formatting.
+ featuredImage
+ Image
+ The featured image for the product.
+ This field is functionally equivalent to images(first: 1).
+ Show fields
+ handle
+ String!
+ non-null
+ A human-friendly unique string for the Product automatically generated from its title. They are used by the Liquid templating language to refer to objects.
+ id
+ ID!
+ non-null
+ A globally-unique ID.
+ isGiftCard
+ Boolean!
+ non-null
+ Whether the product is a gift card.
+ metafield
+ Metafield
+ Returns a metafield found by namespace and key.
+ Show arguments and fields
+ metafields
+ [Metafield]!
+ non-null
+ The metafields associated with the resource matching the supplied list of namespaces and keys.
+ Show arguments and fields
+ onlineStoreUrl
+ URL
+ The URL used for viewing the resource on the shop's Online Store. Returns null if the resource is currently not published to the Online Store sales channel.
+ options
+ [ProductOption!]!
+ non-null
+ List of product options.
+ Show arguments and fields
+ priceRange
+ ProductPriceRange!
+ non-null
+ The price range.
+ Show fields
+ productType
+ String!
+ non-null
+ A categorization that a product can be tagged with, commonly used for filtering and searching.
+ publishedAt
+ DateTime!
+ non-null
+ The date and time when the product was published to the channel.
+ requiresSellingPlan
+ Boolean!
+ non-null
+ Whether the product can only be purchased with a selling plan.
+ seo
+ SEO!
+ non-null
+ The product's SEO information.
+ Show fields
+ tags
+ [String!]!
+ non-null
+ A comma separated list of tags that have been added to the product. Additional access scope required for private apps: unauthenticated_read_product_tags.
+ title
+ String!
+ non-null
+ The product’s title.
+ totalInventory
+ Int
+ The total quantity of inventory in stock for this Product.
+ trackingParameters
+ String
+ A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+ updatedAt
+ DateTime!
+ non-null
+ The date and time when the product was last modified. A product's updatedAt value can change for different reasons. For example, if an order is placed for a product that has inventory tracking set up, then the inventory adjustment is counted as an update.
+ variantBySelectedOptions
+ ProductVariant
+ Find a product’s variant based on its selected options. This is useful for converting a user’s selection of product options into a single matching variant. If there is not a variant for the selected options, null will be returned.
+ Show arguments and fields
+ vendor
+ String!
+ non-null
+ The product’s vendor name.
+ Was this section helpful?
+ YesNo
+ Connections
+ collections
+ [Collection!]!
+ non-null
+ List of collections a product belongs to.
+ Show arguments and fields
+ images
+ [Image!]!
+ non-null
+ List of images associated with the product.
+ Show arguments and fields
+ media
+ [Media!]!
+ non-null
+ The media associated with the product.
+ Show arguments
+ sellingPlanGroups
+ [SellingPlanGroup!]!
+ non-null
+ A list of a product's available selling plan groups. A selling plan group represents a selling method. For example, 'Subscribe and save' is a selling method where customers pay for goods or services per delivery. A selling plan group contains individual selling plans.
+ Show arguments
+ variants
+ [ProductVariant!]!
+ non-null
+ List of the product’s variants.
+ Show arguments and fields
+ Was this section helpful?
+ YesNo
+ Map
+ Fields from
+ PredictiveSearchResult
+ .
+ products
+ ProductEdge
+ .
+ node
+ ProductVariant
+ .
+ product
+ Connections from
+ Collection
+ .
+ products
+ ProductConnection
+ .
+ nodes
+ Possible types in
+ MenuItemResource
+ MetafieldParentResource
+ MetafieldReference
+ SearchResultItem
+ Product
+ Queries
+ product
+ (arguments)
+ query
+ Fetch a specific Product by one of its unique attributes.
+ Show arguments
+ product
+ ByHandle
+ (arguments)
+ query
+ Find a product by its handle. Use product instead.
+ Show arguments
+ product
+ Recommendations
+ (arguments)
+ query
+ Find recommended products related to a given product_id. To learn more about how recommendations are generated, see Showing product recommendations on product pages.
+ Show arguments
+ products
+ (arguments)
+ query
+ List of the shop’s products. For storefront search, use search query.
+ Show arguments
+ Was this section helpful?
+ YesNo
+ <?>
+ Product Queries
+ Product
+ Queried by
+ product
+ productRecommendations
+ products
+ Implements
+ HasMetafields
+ interface
+ Node
+ interface
+ OnlineStorePublishable
+ interface
+ Trackable
+ interface
+ Was this section helpful?
+ YesNo
+ ||-
+ Product Implements
+ Product
+ Implements
+ HasMetafields
+ Node
+ OnlineStorePublishable
+ Trackable
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

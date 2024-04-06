@@ -1,0 +1,275 @@
+Product subscription app extensions
+ Shopify API access scopes
+ All apps need to request access to specific store data during the app authorization process. This guide provides a complete list of available access scopes for the Admin, Storefront, and Payment Apps APIs.
+ How it works
+ Tip
+ For more information on how to configure your access scopes, refer to app configuration.
+ After you've generated API credentials, your app needs to be authorized to access store data.
+ Authorization is the process of giving permissions to apps. Users can authorize Shopify apps to access data in a store. For example, an app might be authorized to access orders and product data in a store.
+ An app can request authenticated or unauthenticated access scopes.
+ Type of access scopes Description Example use cases
+ Authenticated Controls access to resources in the REST Admin API, GraphQL Admin API, and Payments Apps API.
+ 
+ Authenticated access is intended for interacting with a store on behalf of a user.
+ Creating products
+ Managing discount codes
+ Unauthenticated Controls an app's access to Storefront API objects.
+ 
+ Unauthenticated access is intended for interacting with a store on behalf of a customer.
+ Viewing products
+ Initiating a checkout
+ Customer Controls an app's access to Customer Account API objects.
+ 
+ Customer access is intended for interacting with data that belongs to a customer.
+ Viewing orders
+ Updating customer details
+ Authenticated access scopes
+ Note
+ In the following table, access to some resources are marked with permissions required. In these cases, you must request specific permission to access data from the user in your Partner Dashboard.
+ Your app can request the following authenticated access scopes:
+ Authenticated access scopes
+ Scope Access
+ read_all_orders
+ All relevant orders rather than the default window of orders created within the last 60 dayspermissions required
+ This access scope is used in conjunction with existing order scopes, for example read_orders or write_orders.
+ You need to request permission for this access scope from your Partner Dashboard before adding it to your app.
+ read_assigned_fulfillment_orders,
+ write_assigned_fulfillment_orders
+ FulfillmentOrder resources assigned to a location managed by your fulfillment service
+ read_cart_transforms,
+ write_cart_transforms
+ Manage Cart Transform objects to sell bundles.
+ read_checkouts,
+ write_checkouts
+ Checkouts
+ read_checkout_branding_settings,
+ write_checkout_branding_settings
+ Checkout branding
+ read_content,
+ write_content
+ Article, Blog, Comment, Page, Redirects, and Metafield Definitions
+ read_customer_merge,
+ write_customer_merge
+ CustomerMergePreview and CustomerMergeRequest
+ read_customers,
+ write_customers
+ Customer and Saved Search
+ read_customer_payment_methods
+ CustomerPaymentMethodpermissions required
+ You need to request permission for this access scope from your Partner Dashboard before adding it to your app.
+ read_discounts,
+ write_discounts
+ GraphQL Admin API Discounts features
+ read_draft_orders,
+ write_draft_orders
+ Draft Order
+ read_files,
+ write_files
+ GraphQL Admin API GenericFile object and fileCreate, fileUpdate, and fileDelete mutations
+ read_fulfillments,
+ write_fulfillments
+ Fulfillment Service
+ read_gift_cards,
+ write_gift_cards
+ Gift Card
+ read_inventory,
+ write_inventory
+ Inventory Level and Inventory Item
+ read_legal_policies GraphQL Admin API Shop Policy
+ read_locales,
+ write_locales
+ GraphQL Admin API Shop Locale
+ read_locations Location
+ read_markets,
+ write_markets
+ Market
+ read_metaobject_definitions,
+ write_metaobject_definitions
+ MetaobjectDefinition
+ read_metaobjects,
+ write_metaobjects
+ Metaobject
+ read_marketing_events,
+ write_marketing_events
+ Marketing Event
+ read_merchant_approval_signals MerchantApprovalSignals
+ read_merchant_managed_fulfillment_orders,
+ write_merchant_managed_fulfillment_orders
+ FulfillmentOrder resources assigned to merchant-managed locations
+ read_orders,
+ write_orders
+ Abandoned checkouts, Customer, Fulfillment, Order, and Transaction resources
+ read_payment_mandate,
+ write_payment_mandate
+ PaymentMandate
+ read_payment_terms,
+ write_payment_terms
+ GraphQL Admin API PaymentSchedule and PaymentTerms objects
+ read_price_rules,
+ write_price_rules
+ Price Rules
+ read_products,
+ write_products
+ Product, Product Variant, Product Image, Collect, Custom Collection, and Smart Collection
+ read_product_listings Product Listing and Collection Listing
+ read_publications,
+ write_publications
+ Product publishing and Collection publishing
+ read_purchase_options,
+ write_purchase_options
+ SellingPlan
+ read_reports,
+ write_reports
+ Reports
+ read_resource_feedbacks,
+ write_resource_feedbacks
+ ResourceFeedback
+ read_script_tags,
+ write_script_tags
+ Script Tag
+ read_shipping,
+ write_shipping
+ Carrier Service, Country, and Province
+ read_shopify_payments_disputes Shopify Payments Dispute resource
+ read_shopify_payments_payouts Shopify Payments Payout, Balance, and Transaction resources
+ read_store_credit_accounts StoreCreditAccount
+ read_store_credit_account_transactions,
+ write_store_credit_account_transactions
+ StoreCreditAccountDebitTransaction and StoreCreditAccountCreditTransaction
+ read_own_subscription_contracts,
+ write_own_subscription_contracts
+ SubscriptionContractpermissions required
+ You need to request permission for these access scopes from your Partner Dashboard before adding them to your app.
+ read_returns,
+ write_returns
+ Return object
+ read_themes,
+ write_themes
+ Asset and Theme
+ read_translations,
+ write_translations
+ GraphQL Admin API Translatable object
+ read_third_party_fulfillment_orders,
+ write_third_party_fulfillment_orders
+ FulfillmentOrder resources assigned to a location managed by any fulfillment service
+ read_users User and StaffMembershopify plus
+ read_order_edits,
+ write_order_edits
+ GraphQL Admin API OrderStagedChange types and order editing features
+ write_payment_gateways Payments Apps API paymentsAppConfigure
+ write_payment_sessions Payments Apps API Payment, Capture, Refund and Void
+ write_pixels,
+ read_customer_events
+ Web Pixels API
+ write_privacy_settings,
+ read_privacy_settings
+ Privacy API
+ read_validations,
+ write_validations
+ GraphQL Admin API Validation object
+ Requesting specific permissions
+ Follow the procedures below to request specific permissions to request access scopes in the Partner Dashboard.
+ Orders permissions
+ By default, you have access to the last 60 days' worth of orders for a store. To access all the orders, you need to request access to the read_all_orders scope from the user:
+ From the Partner Dashboard, go to Apps.
+ Click the name of your app.
+ Click API access.
+ In the Access requests section, on the Read all orders scope card, click Request access.
+ On the Orders page that opens, describe your app and why you’re applying for access.
+ Click Request access.
+ If Shopify approves your request, then you can add the read_all_orders scope to your app along with read_orders or write_orders.
+ Subscription APIs permissions
+ Subscription apps let users sell subscription products that generate multiple orders on a specific billing frequency.
+ With subscription products, the app user isn't required to get customer approval for each subsequent order after the initial subscription purchase. As a result, your app needs to request the required protected access scopes to use Subscription APIs from the app user:
+ From the Partner Dashboard, go to Apps.
+ Click the name of your app.
+ Click API access.
+ In the Access requests section, on the Access Subscriptions APIs card, click Request access.
+ On the Subscriptions page that opens, describe why you’re applying for access.
+ Click Request access.
+ If Shopify approves your request, then you can add the read_customer_payment_methods and write_own_subscription_contracts scopes to your app.
+ Protected customer data permissions
+ By default, apps don't have access to any protected customer data. To access protected customer data, you must meet our protected customer data requirements. You can add the relevant scopes to your app, but the API won't return data from non-development stores until your app is configured and approved for protected customer data use.
+ Unauthenticated access scopes
+ Unauthenticated access scopes provide apps with read-only access to the Storefront API. Unauthenticated access is intended for interacting with a store on behalf of a customer. For example, an app might need to do one or more of following tasks:
+ Read products and collections
+ Create customers and update customer accounts
+ Query international prices for products and orders
+ Interact with a cart during a customer's session
+ Initiate a checkout
+ Request scopes
+ To request unauthenticated access scopes for an app, select them when you generate API credentials or change granted access scopes.
+ To request access scopes or permissions for the Headless channel, refer to managing the Headless channel.
+ You can request the following unauthenticated access scopes:
+ Unauthenticated access scopes
+ Scope Access
+ unauthenticated_read_checkouts,
+ unauthenticated_write_checkouts
+ Checkout object
+ unauthenticated_read_customers,
+ unauthenticated_write_customers
+ Customer object
+ unauthenticated_read_customer_tags tags field on the Customer object
+ unauthenticated_read_content Storefront content, such as Article, Blog, and Comment objects
+ unauthenticated_read_metaobjects View metaobjects, such as Metaobject
+ unauthenticated_read_product_inventory quantityAvailable field on the ProductVariant object and totalAvailable field on the Product object
+ unauthenticated_read_product_listings Product and Collection objects
+ unauthenticated_read_product_pickup_locations Location and StoreAvailability objects
+ unauthenticated_read_product_tags tags field on the Product object
+ unauthenticated_read_selling_plans Selling plan content on the Product object
+ Customer access scopes
+ Customer access scopes provide apps with read and write access to the Customer Account API. Customer access is intended for interacting with data that belongs to a customer. For example, an app might need to do one or more of following tasks:
+ Read customers orders
+ Update customer accounts
+ Create and update customer addresses
+ Read shop, customer or order metafields
+ Request scopes
+ To request access scopes or permissions for the Headless or Hydrogen channel, refer to managing permissions.
+ You can request the following customer access scopes:
+ Customer access scopes
+ Scope Access
+ customer_read_customers,
+ customer_write_customers
+ Customer object
+ customer_read_orders Order object
+ customer_read_draft_orders Draft Order object
+ customer_read_markets Market object
+ Checking granted access scopes
+ You can check your app’s granted access scopes using the GraphQL Admin API or REST Admin API.
+ GraphQL
+ POST https://{store_name}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ JSON response
+ 1 query {
+ 2
+    appInstallation {
+ 3
+      accessScopes {
+ 4
+        handle
+ 5
+        description
+ 6
+      }
+ 7
+    }
+ 8 }
+ REST
+ REST request
+ JSON response
+ 1 GET https://{store_name}.myshopify.com/admin/oauth/access_scopes.json
+ Limitations and considerations
+ Apps should request only the minimum amount of data that's necessary for an app to function when using a Shopify API. Shopify restricts access to scopes for apps that don't require legitimate use of the associated data.
+ Only public or custom apps are granted access scopes. Legacy app types, such as private or unpublished, won't be granted new access scopes.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Authenticated access scopes
+ Unauthenticated access scopes
+ Customer access scopes
+ Checking granted access scopes
+ Limitations and considerations
+ Updates & News
+ Developer changelog
+ Partner blog

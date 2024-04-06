@@ -1,0 +1,430 @@
+Billing
+ App Store
+ Getting started building for B2B on Shopify
+ Shopify Plus
+ Only stores on the Shopify Plus plan can use apps with B2B features.
+ When a merchant engages in business-to-business (B2B) transactions, they sell their goods and services directly to other companies. You can use the GraphQL Admin API to build apps that solve the challenges that come with B2B commerce.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create a company
+ Create a B2B catalog
+ Create a draft order for a company
+ Requirements
+ You've created a Partner account and a development store.
+ You've added products to your development store.
+ Your app has the unauthenticated_read_customers, unauthenticated_write_customers, read_products, write_products, read_draft_orders, and write_draft_orders access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You're familiar with the concept of selling B2B.
+ Step 1: Create a company
+ When a merchant sells with B2B, a company represents information about who makes a B2B purchase. The following example creates a company by calling the companyCreate mutation with the following inputs:
+ name: The name of the company.
+ companyLocation: The location of the company. A companyLocation must be added to attach important information, like tax exemptions, to the company.
+ companyContact: A contact at the company who can make purchases. A companyContact must be added to create orders and draft orders.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    companyCreate(input: {
+ 3
+      company: {
+ 4
+        name: "Example Company"
+ 5
+      },
+ 6
+      companyLocation: {
+ 7
+        name: "Example Company Location"
+ 8
+      },
+ 9
+      companyContact: {
+ 10
+        firstName: "Bo",
+ 11
+        lastName: "Wang",
+ 12
+        email: "bo.wang@example.com"
+ 13
+      }
+ 14
+    }) {
+ 15
+      company {
+ 16
+        id
+ 17
+        name
+ 18
+        locations(first:10) {
+ 19
+          edges {
+ 20
+            node {
+ 21
+              id
+ 22
+              name
+ 23
+            }
+ 24
+          }
+ 25
+        }
+ 26
+        contacts(first:10) {
+ 27
+          edges {
+ 28
+            node {
+ 29
+              id
+ 30
+              customer {
+ 31
+                firstName
+ 32
+                lastName
+ 33
+                email
+ 34
+              }
+ 35
+            }
+ 36
+          }
+ 37
+        }
+ 38
+      }
+ 39
+      userErrors {
+ 40
+          field
+ 41
+        message
+ 42
+      }
+ 43
+    }
+ 44 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "companyCreate": {
+ 4
+        "company": {
+ 5
+          "id": "gid://shopify/Company/1",
+ 6
+          "name": "Example Company",
+ 7
+          "locations": {
+ 8
+            "edges": [
+ 9
+              {
+ 10
+                "node": {
+ 11
+                  "id": "gid://shopify/CompanyLocation/1",
+ 12
+                  "name": "Example Company Location"
+ 13
+                }
+ 14
+              }
+ 15
+            ]
+ 16
+          },
+ 17
+          "contacts": {
+ 18
+            "edges": [
+ 19
+              {
+ 20
+                "node": {
+ 21
+                  "id": "gid://shopify/CompanyContact/1",
+ 22
+                  "customer": {
+ 23
+                    "firstName": "Bo",
+ 24
+                    "lastName": "Wang",
+ 25
+                    "email": "bo.wang@example.com"
+ 26
+                  }
+ 27
+                }
+ 28
+              }
+ 29
+            ]
+ 30
+          }
+ 31
+        },
+ 32
+        "userErrors": []
+ 33
+      }
+ 34
+    }
+ 35 }
+ Step 2: Create a B2B catalog
+ A catalog is a set of products that's published and priced for certain customers based on specified conditions, such as whether they're buying for a certain B2B company location. For example, you can create a catalog that allows the Canadian branch of a company to purchase only the t-shirt products on the store, and they receive a 30% discount.
+ You can create and associate a catalog with a company location by passing the company location ID in the context field of the catalogCreate or catalogUpdate mutation.
+ Note
+ Multiple catalogs can be associated with the same company location. If a customer is logged into a B2B customer account that's eligible for multiple catalogs that contain the same product, then they receive the lowest listed price within those catalogs.
+ The following example uses the catalogCreate mutation to create and associate a catalog with the company location from the previous step:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation catalogCreate($input: CatalogCreateInput!) {
+ 2
+    catalogCreate(input: $input) {
+ 3
+      catalog {
+ 4
+        title
+ 5
+        status
+ 6
+        priceList { id }
+ 7
+        publication { id }
+ 8
+      }
+ 9
+      userErrors {
+ 10
+        field
+ 11
+        code
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ Variables
+ 1 {
+ 2
+    "input": {
+ 3
+      "title": "Catalog for testCompany's Canadian branch",
+ 4
+      "status": "ACTIVE",
+ 5
+      "context": {
+ 6
+        "companyLocationIds": [
+ 7
+          "gid://shopify/CompanyLocation/1"
+ 8
+        ]
+ 9
+      },
+ 10
+      "priceListId": "gid://shopify/PriceList/1",
+ 11
+      "publicationId": "gid://shopify/Publication/1"
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "catalogCreate": {
+ 4
+        "catalog": {
+ 5
+          "id": "gid://shopify/CompanyLocationCatalog/CREATED-CATALOG-ID",
+ 6
+          "title": "Catalog for testCompany's Canadian branch",
+ 7
+          "status": "ACTIVE",
+ 8
+          "priceList": {
+ 9
+            "id": "gid://shopify/PriceList/1"
+ 10
+          },
+ 11
+          "publication": {
+ 12
+            "id": "gid://shopify/Publication/1"
+ 13
+          }
+ 14
+        },
+ 15
+        "userErrors": []
+ 16
+      }
+ 17
+    }
+ 18 }
+ Tip
+ You can use the PriceList and Publication objects to define a subset of products and prices to be published to this catalog. Learn how catalogs work, and how to associate a price list and publication to a B2B catalog.
+ Step 3: Create a draft order for a company
+ Merchants might want to create draft orders for company approval when selling B2B.
+ You can pass the purchasingCompany input to the draftOrderCreate mutation to create a new draft order for a company.
+ The purchasingCompany input specifies the company ID, location, and contact. Billing and shipping information are included in the response because they aren't automatically populated from the company location. The lineItems object indicates the items to be purchased in the order.
+ For more information on all possible inputs, refer to the DraftOrders documentation.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation{
+ 2
+    draftOrderCreate(
+ 3
+      input: {
+ 4
+        purchasingEntity: {
+ 5
+           purchasingCompany: {
+ 6
+             companyId: "gid://shopify/Company/1"
+ 7
+             companyLocationId: "gid://shopify/CompanyLocation/1"
+ 8
+             companyContactId: "gid://shopify/CompanyContact/1"
+ 9
+           }
+ 10
+        }
+ 11
+        billingAddress: {
+ 12
+          address1: "273 Lenore Stravenue",
+ 13
+          address2: "Suite 573",
+ 14
+          city: "Laketown",
+ 15
+          company: "Alfredo Group",
+ 16
+          firstName: "Avery",
+ 17
+          lastName: "Brown",
+ 18
+          phone: "(800) 555 0100",
+ 19
+          provinceCode: "TN",
+ 20
+          zip: "38103"
+ 21
+        },
+ 22
+        customAttributes: null,
+ 23
+        lineItems: [
+ 24
+          {
+ 25
+            appliedDiscount: null,
+ 26
+            originalUnitPrice: "132.99",
+ 27
+            quantity: 1,
+ 28
+            sku: "",
+ 29
+            title: "Aerodynamic Bronze Car",
+ 30
+            variantId: "gid://shopify/ProductVariant/349",
+ 31
+            taxable: true,
+ 32
+            requiresShipping: true,
+ 33
+            customAttributes: [],
+ 34
+          }
+ 35
+        ],
+ 36
+        note: null,
+ 37
+        shippingAddress: {
+ 38
+          address1: "273 Lenore Stravenue",
+ 39
+          address2: "Suite 573",
+ 40
+          city: "Laketown",
+ 41
+          company: "Alfredo Group",
+ 42
+          firstName: "Avery",
+ 43
+          lastName: "Brown",
+ 44
+          phone: "(800) 555 0100",
+ 45
+          provinceCode: "TN",
+ 46
+          zip: "38103"
+ 47
+        },
+ 48
+        tags: [],
+ 49
+        email: "averybrown@example.com",
+ 50
+        phone: null,
+ 51
+        taxExempt: false,
+ 52
+        reserveInventoryUntil: null,
+ 53
+        appliedDiscount: null,
+ 54
+        shippingLine: null,
+ 55
+        localizationExtensions: []
+ 56
+      }
+ 57
+    ) {
+ 58
+      draftOrder{
+ 59
+        id
+ 60
+      }
+ 61
+    }
+ 62 }
+      "draftOrderCreate": {
+ 4
+        "draftOrder": {
+ 5
+          "id": "gid://shopify/DraftOrder/10",
+ 6
+          },
+ 7
+        },
+ 8
+      }
+ 9
+    }
+ Next steps
+ Learn how to create and add information to a company location by setting up tax exemptions and payment terms.
+ Learn how to associate a price list and publication to a B2B catalog to determine the published products and prices for customers ordering for a specific B2B company location.
+ Learn how to manage draft orders for B2B clients by calculating and sending invoices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Create a company
+ Step 2: Create a B2B catalog
+ Step 3: Create a draft order for a company

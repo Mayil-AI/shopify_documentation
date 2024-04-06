@@ -1,0 +1,890 @@
+Resources & tools
+ Basics
+ Tags
+ Conditional
+ HTML
+ Iteration
+ Syntax
+ Theme
+ Variable
+ Filters
+ Objects
+ Tags
+ Liquid tags are used to define logic that tells templates what to do.
+ Jump to
+ Conditional tags
+ Jump to
+ Iteration tags
+ Jump to
+ Theme tags
+ Jump to
+ Variable tags
+ Usage
+ Tags are wrapped with curly brace percentage delimiters {% %}. The text within the delimiters doesn't produce visible output when rendered.
+ In the example below, the if tag defines the condition to be met. If product.available returns true, then the price is displayed. Otherwise, the “sold-out” message is shown.
+ Tip
+ You can nest multiple tags inside one set of delimiters using the liquid tag.
+ Tags with parameters
+ Certain tags accept parameters. Some tags have required parameters, and others are optional. For example, the for tag can accept parameters like limit to exit a loop at a specific index.
+ Conditional tags
+ Conditional tags define conditions that determine whether blocks of Liquid code get executed.
+ if
+ Renders an expression if a specific condition is true.
+ Syntax
+ 1
+ 2
+ 3
+ {% if condition %}
+ expression
+ {% endif %}
+ condition
+ The condition to evaluate.
+ expression
+ The expression to render if the condition is met.
+ elsif
+ You can use the elsif tag to check for multiple conditions.
+ Was this section helpful?
+ YesNo
+ else
+ Allows you to specify a default expression to execute when no other condition is met.
+ You can use the else tag with the following tags:
+ case
+ if
+ unless
+ Syntax
+ 1
+ 2
+ {% else %}
+ expression
+ expression
+ The expression to render if no other condition is met.
+ Was this section helpful?
+ YesNo
+ unless
+ Renders an expression unless a specific condition is true.
+ Tip
+ Similar to the if tag, you can use elsif to add more conditions to an unless tag.
+ Syntax
+ 1
+ 2
+ 3
+ {% unless condition %}
+ expression
+ {% endunless %}
+ condition
+ The condition to evaluate.
+ expression
+ The expression to render unless the condition is met.
+ Was this section helpful?
+ YesNo
+ case
+ Renders a specific expression depending on the value of a specific variable.
+ Syntax
+ 1
+ 2
+ 3
+ {% case variable %}
+ {% when first_value %}
+ first_expression
+ {% when second_value %}
+ second_expression
+ {% else %}
+ third_expression
+ {% endcase %}
+ variable
+ The name of the variable you want to base your case statement on.
+ first_value
+ A specific value to check for.
+ second_value
+ A specific value to check for.
+ first_expression
+ An expression to be rendered when the variable's value matches first_value.
+ second_expression
+ An expression to be rendered when the variable's value matches second_value.
+ third_expression
+ An expression to be rendered when the variable's value has no match.
+ Multiple values
+ Syntax
+ 1
+ 2
+ 3
+ {% case variable %}
+ {% when first_value or second_value or third_value %}
+ first_expression
+ {% when fourth_value, fifth_value, sixth_value %}
+ second_expression
+ {% else %}
+ third_expression
+ {% endcase %}
+ A when tag can accept multiple values. When multiple values are provided, the expression is returned when the variable matches any of the values inside of the tag. Provide the values as a comma-separated list, or separate them using an or operator.
+ Was this section helpful?
+ YesNo
+ HTML tags
+ HTML tags render HTML elements using Shopify-specific attributes.
+ form
+ Generates an HTML <form> tag, including any required <input> tags to submit the form to a specific endpoint.
+ Because there are many different form types available in Shopify themes, the form tag requires a type. Depending on the form type, an additional parameter might be required. You can specify the following form types:
+ activate_customer_password
+ cart
+ contact
+ create_customer
+ currency
+ customer
+ customer_address
+ customer_login
+ guest_login
+ localization
+ new_comment
+ product
+ recover_customer_password
+ reset_customer_password
+ storefront_password
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'form_type' %}
+ content
+ {% endform %}
+ form_type
+ The name of the desired form type
+ content
+ The form contents
+ activate_customer_password
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'activate_customer_password', article %}
+ form_content
+ {% endform %}
+ Generates a form for activating a customer account. To learn more about using this form, and its contents, refer to the customers/activate_account template.
+ cart
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'cart', cart %}
+ form_content
+ {% endform %}
+ Generates a form for creating a checkout based on the items currently in the cart. The cart form requires a cart object as a parameter. To learn more about using the cart form in your theme, refer to the cart template.
+ contact
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'contact' %}
+ form_content
+ {% endform %}
+ Generates a form for submitting an email to the merchant. To learn more about using this form in your theme, refer to Add a contact form to your theme.
+ Tip
+ To learn more about the merchant experience of receiving submissions, refer to the Shopify Help Center.
+ create_customer
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'create_customer' %}
+ form_content
+ {% endform %}
+ Generates a form for creating a new customer account. To learn more about using this form, and its contents, refer to the customers/register template.
+ currency
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'currency' %}
+ form_content
+ {% endform %}
+ Deprecated
+ The currency form is deprecated and has been replaced by the localization form.
+ Generates a form for customers to select their preferred currency.
+ Tip
+ Use the currency_selector filter to include a currency selector inside the form.
+ customer
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'customer' %}
+ form_content
+ {% endform %}
+ Generates a form for creating a new customer without registering a new account. This form is useful for collecting customer information when you don't want customers to log in to your store, such as building a list of emails from a newsletter signup.
+ Tip
+ To generate a form that registers a customer account, use the create_customer form.
+ To learn more about using this form, and its contents, refer to Email consent.
+ customer_address
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'customer_address', address_type %}
+ form_content
+ {% endform %}
+ Generates a form for creating a new address on a customer account, or editing an existing one. The customer_address form requires a specific parameter, depending on whether a new address is being created or an existing one is being edited:
+ Parameter value Use-case
+ customer.new_address When a new address is being created.
+ address When an existing address is being edited.
+ To learn more about using this form, and its contents, refer to the customers/addresses template.
+ customer_login
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'customer_login' %}
+ form_content
+ {% endform %}
+ Generates a form for logging into a customer account. To learn more about using this form, and its contents, refer to the customers/login template.
+ guest_login
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'guest_login' %}
+ form_content
+ {% endform %}
+ Generates a form, for use in the customers/login template, that directs customers back to their checkout session as a guest instead of logging in to an account. To learn more about using this form, and its contents, refer to Offer guest checkout.
+ localization
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'localization' %}
+ form_content
+ {% endform %}
+ Generates a form for customers to select their preferred country so that they're shown the appropriate language and currency. The localization form can contain one of two selectors:
+ A country selector
+ A language selector
+ Note
+ The localization form replaces the deprecated currency form.
+ To learn more about using this form, and its contents, refer to Support multiple currencies and languages.
+ new_comment
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'new_comment', article %}
+ form_content
+ {% endform %}
+ Generates a form for creating a new comment on an article. The new_comment form requires an article object as a parameter. To learn more about using this form, and its contents, refer to the article template.
+ product
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'product', product %}
+ form_content
+ {% endform %}
+ Generates a form for adding a product variant to the cart. The product form requires a product object as a parameter. To learn more about using this form, and its contents, refer to the product template.
+ recover_customer_password
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'recover_customer_password' %}
+ form_content
+ {% endform %}
+ Generates a form, for use in the customers/login template, for a customer to recover a lost or forgotten password. To learn more about using this form, and its contents, refer to Provide a "Forgot your password" option.
+ reset_customer_password
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'reset_customer_password' %}
+ form_content
+ {% endform %}
+ Generates a form for a customer to reset their password. To learn more about using this form, and its contents, refer to the customers/reset_password template.
+ storefront_password
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'storefront_password' %}
+ form_content
+ {% endform %}
+ Generates a form for entering a password protected storefront. To learn more about using this form, and its contents, refer to the password template.
+ form tag parameters
+ return_to
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'form_type', return_to: string %}
+ content
+ {% endform %}
+ By default, each form type redirects customers to a specific page after the form submits. For example, the product form redirects to the cart page.
+ The return_to parameter allows you to specify a URL to redirect to. This can be done with the following values:
+ Value Description
+ back Redirect back to the same page that the customer was on before submitting the form.
+ A relative path A specific URL path. For example /collections/all.
+ A routes attribute For example, routes.root_url
+ HTML attributes
+ Syntax
+ 1
+ 2
+ 3
+ {% form 'form_type', attribute: string %}
+ content
+ {% endform %}
+ You can specify HTML attributes by adding a parameter that matches the attribute name with data- prepended, and the desired value.
+ Was this section helpful?
+ YesNo
+ style
+ Generates an HTML <style> tag with an attribute of data-shopify.
+ Note
+ If you reference color settings inside style tags, then the associated CSS rules will update as the setting is changed in the theme editor, without a page refresh.
+ Syntax
+ 1
+ 2
+ 3
+ {% style %}
+ CSS_rules
+ {% endstyle %}
+ CSS_rules
+ The desired CSS rules for the <style> tag.
+ Was this section helpful?
+ YesNo
+ Iteration tags
+ Iteration tags repeatedly run blocks of code.
+ for
+ Renders an expression for every item in an array.
+ You can do a maximum of 50 iterations with a for loop. If you need to iterate over more than 50 items, then use the paginate tag to split the items over multiple pages.
+ Tip
+ Every for loop has an associated forloop object with information about the loop.
+ Syntax
+ 1
+ 2
+ 3
+ {% for variable in array %}
+ expression
+ {% endfor %}
+ variable
+ The current item in the array.
+ array
+ The array to iterate over.
+ expression
+ The expression to render for each iteration.
+ for tag parameters
+ limit
+ Syntax
+ 1
+ 2
+ 3
+ {% for variable in array limit: number %}
+ expression
+ {% endfor %}
+ You can limit the number of iterations using the limit parameter.
+ offset
+ Syntax
+ 1
+ 2
+ 3
+ {% for variable in array offset: number %}
+ expression
+ {% endfor %}
+ You can specify a 1-based index to start iterating at using the offset parameter.
+ range
+ Syntax
+ 1
+ 2
+ 3
+ {% for variable in (number..number) %}
+ expression
+ {% endfor %}
+ Instead of iterating over specific items in an array, you can specify a numeric range to iterate over.
+ Note
+ You can define the range using both literal and variable values.
+ reversed
+ Syntax
+ 1
+ 2
+ 3
+ {% for variable in array reversed %}
+ expression
+ {% endfor %}
+ You can iterate in reverse order using the reversed parameter.
+ forloop
+ object
+ Information about a parent for loop.
+ Properties
+ first
+ last
+ boolean
+ length
+ number
+ parentloop
+ forloop
+ rindex
+ number
+ rindex0
+ number
+ Use the forloop object
+ Object
+ Map
+ 1 {
+ 2
+    "first": true,
+ 3
+    "index": 1,
+ 4
+    "index0": 0,
+ 5
+    "last": false,
+ 6
+    "length": 4,
+ 7
+    "rindex": 3
+ 8 }
+ Was this section helpful?
+ YesNo
+ else
+ Allows you to specify a default expression to execute when a for loop has zero length.
+ Syntax
+ 1
+ 2
+ 3
+ 4
+ 5
+ {% for variable in array %}
+ first_expression
+ {% else %}
+ second_expression
+ {% endfor %}
+ variable
+ The current item in the array.
+ array
+ The array to iterate over.
+ first_expression
+ The expression to render for each iteration.
+ second_expression
+ The expression to render if the loop has zero length.
+ Was this section helpful?
+ YesNo
+ break
+ Stops a for loop from iterating.
+ Syntax
+ 1
+ {% break %}
+ Was this section helpful?
+ YesNo
+ continue
+ Causes a for loop to skip to the next iteration.
+ Syntax
+ 1
+ {% continue %}
+ Was this section helpful?
+ YesNo
+ cycle
+ Loops through a group of strings and outputs them one at a time for each iteration of a for loop.
+ The cycle tag must be used inside a for loop.
+ Tip
+ Use the cycle tag to output text in a predictable pattern. For example, to apply odd/even classes to rows in a table.
+ Syntax
+ 1
+ {% cycle string, string, ... %}
+ Create unique cycle groups
+ Syntax
+ 1
+ {% cycle string: string, string, ... %}
+ If you include multiple cycle tags with the same parameters, in the same template, then each set of tags is treated as the same group. This means that it's possible for a cycle tag to output any of the provided strings, instead of always starting at the first string. To account for this, you can specify a group name for each cycle tag.
+ Was this section helpful?
+ YesNo
+ tablerow
+ Generates HTML table rows for every item in an array.
+ The tablerow tag must be wrapped in HTML <table> and </table> tags.
+ Tip
+ Every tablerow loop has an associated tablerowloop object with information about the loop.
+ Syntax
+ 1
+ 2
+ 3
+ {% tablerow variable in array %}
+ expression
+ {% endtablerow %}
+ variable
+ The current item in the array.
+ array
+ The array to iterate over.
+ expression
+ The expression to render.
+ tablerow tag parameters
+ cols
+ Syntax
+ 1
+ 2
+ 3
+ {% tablerow variable in array cols: number %}
+ expression
+ {% endtablerow %}
+ You can define how many columns the table should have using the cols parameter.
+ limit
+ Syntax
+ 1
+ 2
+ 3
+ {% tablerow variable in array limit: number %}
+ expression
+ {% endtablerow %}
+ You can limit the number of iterations using the limit parameter.
+ offset
+ Syntax
+ 1
+ 2
+ 3
+ {% tablerow variable in array offset: number %}
+ expression
+ {% endtablerow %}
+ You can specify a 1-based index to start iterating at using the offset parameter.
+ range
+ Syntax
+ 1
+ 2
+ 3
+ {% tablerow variable in (number..number) %}
+ expression
+ {% endtablerow %}
+ Instead of iterating over specific items in an array, you can specify a numeric range to iterate over.
+ Note
+ You can define the range using both literal and variable values.
+ tablerowloop
+ object
+ Information about a parent tablerow loop.
+ Properties
+ col
+ number
+ col0
+ number
+ col_first
+ boolean
+ col_last
+ boolean
+ first
+ boolean
+ index
+ number
+ index0
+ number
+ last
+ boolean
+ length
+ number
+ rindex
+ number
+ rindex0
+ number
+ row
+ number
+ Object
+ 1 {
+ 2
+    "col": 1,
+ 3
+    "col0": 0,
+ 4
+    "col_first": true,
+ 5
+    "col_last": false,
+ 6
+    "first": true,
+ 7
+    "index": 1,
+ 8
+    "index0": 0,
+ 9
+    "last": false,
+ 10
+    "length": 5,
+ 11
+    "rindex": 5,
+ 12
+    "rindex0": 4,
+ 13
+    "row": 1
+ 14 }
+ Was this section helpful?
+ YesNo
+ paginate
+ Splits an array's items across multiple pages.
+ Because for loops are limited to 50 iterations per page, you need to use the paginate tag to iterate over an array that has more than 50 items. The following arrays can be paginated:
+ all_products
+ article.comments
+ blog.articles
+ collections
+ collection.products
+ customer.addresses
+ customer.orders
+ pages
+ search.results
+ collection_list settings
+ product_list settings
+ Within the paginate tag, you have access to the paginate object. You can use this object, or the default_pagination filter, to build page navigation.
+ Syntax
+ 1
+ 2
+ 3
+ 4
+ 5
+ {% paginate array by page_size %}
+ {% for item in array %}
+ forloop_content
+ {% endfor %}
+ {% endpaginate %}
+ array
+ The array to be looped over.
+ page_size
+ The number of array items to include per page, between 1 and 50.
+ item
+ An item in the array being looped.
+ forloop_content
+ Content for each loop iteration.
+ Paginating setting arrays
+ To allow the pagination of product_list and collection_list settings to operate independently from other paginated lists on a page, these lists use a pagination query parameter with a unique key. The key is automatically assigned by the paginate tag, and you don't need to reference the key in your code. However, you can access the key using paginate.page_param.
+ Tip
+ To paginate two arrays independently without refreshing the entire page, you can use the Section Rendering API.
+ paginate tag parameters
+ window_size
+ Syntax
+ 1
+ {% paginate collection.products by 3, window_size: 1 %}
+ Set the window size of the pagination. The window size is the number of pages that should be visible in the pagination navigation.
+ Was this section helpful?
+ YesNo
+ Syntax tags
+ Syntax tags control how Liquid code is processed and rendered.
+ comment
+ Prevents an expression from being rendered or output.
+ Any text inside comment tags won't be output, and any Liquid code will be parsed, but not executed.
+ Syntax
+ 1
+ 2
+ 3
+ {% comment %}
+ content
+ {% endcomment %}
+ content
+ The content of the comment.
+ Inline comments
+ Syntax
+ 1
+ {% # content %}
+ Inline comments prevent an expression inside of a tag {% %} from being rendered or output.
+ You can use inline comment tags to annotate your code, or to temporarily prevent logic in your code from executing.
+ You can create multi-line inline comments. However, each line in the tag must begin with a #, or a syntax error will occur.
+ Inline comments inside liquid tags
+ You can use inline comment tags inside liquid tags. The tag must be used for each line that you want to comment.
+ Was this section helpful?
+ YesNo
+ echo
+ Outputs an expression.
+ Using the echo tag is the same as wrapping an expression in curly brackets ({{ and }}). However, unlike the curly bracket method, you can use the echo tag inside liquid tags.
+ Tip
+ You can use filters on expressions inside echo tags.
+ Syntax
+ 1
+ 2
+ 3
+ {% liquid
+ echo expression
+ %}
+ expression
+ The expression to be output.
+ Was this section helpful?
+ YesNo
+ liquid
+ Allows you to have a block of Liquid without delimeters on each tag.
+ Because the tags don't have delimeters, each tag needs to be on its own line.
+ Tip
+ Use the echo tag to output an expression inside liquid tags.
+ Syntax
+ 1
+ 2
+ 3
+ {% liquid
+ expression
+ %}
+ expression
+ The expression to be rendered inside the liquid tag.
+ Was this section helpful?
+ YesNo
+ raw
+ Outputs any Liquid code as text instead of rendering it.
+ Syntax
+ 1
+ 2
+ 3
+ {% raw %}
+ expression
+ {% endraw %}
+ expression
+ The expression to be output without being rendered.
+ Was this section helpful?
+ YesNo
+ Theme tags
+ Theme tags assign or render content that’s part of your theme.
+ include
+ deprecated
+ Renders a snippet.
+ Inside the snippet, you can access and alter variables that are created outside of the snippet.
+ Deprecated
+ Deprecated because the way that variables are handled reduces performance and makes code harder to both read and maintain.
+ The include tag has been replaced by render.
+ Syntax
+ 1
+ {% include 'filename' %}
+ filename
+ The name of the snippet to render, without the .liquid extension.
+ Was this section helpful?
+ YesNo
+ javascript
+ JavaScript code included in a section file.
+ You need to use these tags only if your section or app block is meant to be installed on multiple themes or stores. Otherwise, you should include the JavaScript that your section needs in your theme's assets directory. Each section or app block can have only one {% javascript %} tag.
+ To learn more about how section-specific JavaScript is loaded and run, refer to the documentation for sections.
+ Caution
+ Liquid isn't rendered inside of {% javascript %} tags. Including Liquid code can cause syntax errors.
+ Syntax
+ 1
+ 2
+ 3
+ {% javascript %}
+ javascript_code
+ {% endjavascript %}
+ javascript_code
+ The JavaScript code for the section.
+ Was this section helpful?
+ YesNo
+ layout
+ Specify which layout to use.
+ Syntax
+ 1
+ {% layout name %}
+ name
+ The name of the layout file you want to use, wrapped in quotes, or none for no layout.
+ By default, the theme.liquid layout is used. The layout tag allows you to specify an alternate layout, or use no layout.
+ 1 {% layout 'full-width' %}
+ 2 {% layout none %}
+ Was this section helpful?
+ YesNo
+ render
+ Renders a snippet or app block.
+ Inside snippets and app blocks, you can't directly access variables that are created outside of the snippet or app block. However, you can specify variables as parameters to pass outside variables to snippets.
+ While you can't directly access created variables, you can access global objects, as well as any objects that are directly accessible outside the snippet or app block. For example, a snippet or app block inside the product template can access the product object, and a snippet or app block inside a section can access the section object.
+ Outside a snippet or app block, you can't access variables created inside the snippet or app block.
+ Note
+ When you render a snippet using the render tag, you can't use the include tag inside the snippet.
+ Syntax
+ 1
+ {% render 'filename' %}
+ filename
+ The name of the snippet to render, without the .liquid extension.
+ render tag parameters
+ for
+ Syntax
+ 1
+ {% render 'filename' for array as item %}
+ You can render a snippet for every item in an array using the for parameter. You can also supply an optional as parameter to be able to reference the current item in the iteration inside the snippet. Additionally, you can access a forloop object for the loop inside the snippet.
+ Passing variables to a snippet
+ Syntax
+ 1
+ {% render 'filename', variable: value %}
+ Variables that have been created outside of a snippet can be passed to a snippet as parameters on the render tag.
+ Note
+ Any changes that are made to a passed variable apply only within the snippet.
+ with
+ Syntax
+ 1
+ {% render 'filename' with object as name %}
+ You can pass a single object to a snippet using the with parameter. You can also supply an optional as parameter to specify a custom name to reference the object inside the snippet. If you don't use the as parameter to specify a custom name, then you can reference the object using the snippet filename.
+ Was this section helpful?
+ YesNo
+ section
+ Renders a section.
+ Rendering a section with the section tag renders a section statically. To learn more about sections and how to use them in your theme, refer to Render a section.
+ Syntax
+ 1
+ {% section 'name' %}
+ name
+ The name of the section file you want to render.
+ Was this section helpful?
+ YesNo
+ sections
+ Renders a section group.
+ Use this tag to render section groups as part of the theme's layout content. Place the sections tag where you want to render it in the layout.
+ To learn more about section groups and how to use them in your theme, refer to Section groups.
+ Syntax
+ 1
+ {% sections 'name' %}
+ name
+ The name of the section group file you want to render.
+ Was this section helpful?
+ YesNo
+ stylesheet
+ CSS styles included in a section file.
+ You need to use these tags only if your section or app block is meant to be installed on multiple themes or stores. Otherwise, you should include the CSS styles that your section needs in your theme's assets directory. Each section or app block can have only one {% stylesheet %} tag.
+ To learn more about how section-specific CSS is loaded and run, refer to the documentation for sections.
+ Caution
+ Liquid isn't rendered inside of {% stylesheet %} tags. Including Liquid code can cause syntax errors.
+ Syntax
+ 1
+ 2
+ 3
+ {% stylesheet %}
+ css_styles
+ {% endstylesheet %}
+ css_styles
+ The CSS styles for the section.
+ Was this section helpful?
+ YesNo
+ Variable tags
+ Variable tags enable you to create new Liquid variables.
+ Caution
+ Predefined Liquid objects can be overridden by variables with the same name. To make sure that you can access all Liquid objects, make sure that your variable name doesn't match a predefined object's name.
+ assign
+ Creates a new variable.
+ You can create variables of any basic type, object, or object property.
+ Syntax
+ 1
+ {% assign variable_name = value %}
+ variable_name
+ The name of the variable being created.
+ value
+ The value you want to assign to the variable.
+ Was this section helpful?
+ YesNo
+ capture
+ Creates a new variable with a string value.
+ You can create complex strings with Liquid logic and variables.
+ Syntax
+ 1
+ 2
+ 3
+ {% capture variable %}
+ value
+ {% endcapture %}
+ variable
+ The name of the variable being created.
+ value
+ The value you want to assign to the variable.
+ Was this section helpful?
+ YesNo
+ decrement
+ Creates a new variable, with a default value of -1, that's decreased by 1 with each subsequent call.
+ Variables that are declared with decrement are unique to the layout, template, or section file that they're created in. However, the variable is shared across snippets included in the file.
+ Similarly, variables that are created with decrement are independent from those created with assign and capture. However, decrement and increment share variables.
+ Syntax
+ 1
+ {% decrement variable_name %}
+ variable_name
+ The name of the variable being decremented.
+ Was this section helpful?
+ YesNo
+ increment
+ Creates a new variable, with a default value of 0, that's increased by 1 with each subsequent call.
+ Variables that are declared with increment are unique to the layout, template, or section file that they're created in. However, the variable is shared across snippets included in the file.
+ Similarly, variables that are created with increment are independent from those created with assign and capture. However, increment and decrement share variables.
+ Syntax
+ 1
+ {% increment variable_name %}
+ variable_name
+ The name of the variable being incremented.
+ Was this section helpful?
+ YesNo

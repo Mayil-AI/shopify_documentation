@@ -1,0 +1,280 @@
+Product recommendations
+ Media and images
+ Overview
+ Support product media
+ Product media UX guidelines
+ Theme Store
+ Support product media
+ Merchants can add media to their products, like images, 3D models, videos, and YouTube or Vimeo videos.
+ In this tutorial, you'll learn how to support product media in your theme.
+ Resources
+ The media attribute of the product object
+ Media filters
+ Implementing product media
+ Product media is usually displayed on the product page. However, you might want to display product media in other areas of your theme, so it's recommended to build your media display in a snippet so that it can be reused.
+ To display product media, you can loop through the media attribute of the product object and apply the associated media filter, depending on the media type.
+ Example
+ If you want to output product media on the product page, and your product page content is hosted in a product.liquid section, then you might do the following:
+ Create a snippet called media.liquid to host your media display.
+ Render media.liquid in your product.liquid section.
+ sections/product.liquid
+ 1 {% for media in product.media %}
+ 2
+    {% render 'media', media: media %}
+ 3 {% endfor %}
+ snippets/media.liquid
+ 1 {% case media.media_type %}
+ 2
+    {% when 'image' %}
+ 3
+      <div class="product-single__media" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100}}%;" data-media-id="{{ media.id }}">
+ 4
+        {{ media | image_url: width: 2048, height: 2048 | image_tag }}
+ 5
+      </div>
+ 6
+    {% when 'external_video' %}
+ 7
+      <div class="product-single__media" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100}}%;" data-media-id="{{ media.id }}">
+ 8
+        {{ media | external_video_tag }}
+ 9
+      </div>
+ 10
+    {% when 'video' %}
+ 11
+      <div class="product-single__media" data-media-id="{{ media.id }}">
+ 12
+        {{ media | video_tag: controls: true }}
+ 13
+      </div>
+ 14
+    {% when 'model' %}
+ 15
+      <div class="product-single__media" style="padding-top: 100%" data-media-id="{{ media.id }}">
+ 16
+        {{ media | model_viewer_tag }}
+ 17
+      </div>
+ 18
+    {% else %}
+ 19
+      <div class="product-single__media" style="padding-top: 100%;" data-media-id="{{ media.id }}">
+ 20
+        {{ media | media_tag }}
+ 21
+      </div>
+ 22 {% endcase %}
+ Each media type in the example above is wrapped in a <div> element with custom style and data attributes. These are based on the considerations documented in UX considerations, and should be adjusted accordingly to match your approach.
+ Tip
+ For another example of supporting media in a theme, you can refer to Dawn's implementation in the main-product.liquid section and product-thumbnail.liquid snippet.
+ UX considerations
+ Every theme requires a different approach to create responsive media that works across all screen sizes and devices. The following general recommendations can help ensure that you're offering a good customer experience:
+ Make media elements responsive
+ Preserve media element interactivity
+ A product can have multiple videos, so if your theme has a thumbnail view for each media element, or displays multiple media elements at once, you should ensure that only the active video is playing.
+ Tip
+ For more in-depth information, refer to Product media UX guidelines.
+ Responsive media elements
+ Shopify-hosted 3D models use Google’s model viewer component, and externally rendered videos are rendered in <iframe> elements. Neither of these are responsive containers by default.
+ Shopify-hosted videos are rendered in HTML5 video players, which are responsive by default, however only once they’re rendered.
+ Given the above, you should consider using an aspect ratio box to create a responsive container for each.
+ Tip
+ 3D models don’t have predefined aspect ratios, so it’s common practice to create a square container by setting padding-top to 100%.
+ Interactive media elements
+ Shopify-hosted, and externally-hosted, video elements, and 3D models have interactive components. For example, videos have progress bars and volume control, and 3D models can be rotated.
+ If any of these media elements are hosted in a carousel or swipe-interactive display, then the interactive components shouldn’t interfere with the ability to interact with the display.
+ Use media preview images
+ Every media type has a preview_image attribute. This could be useful in scenarios like the following:
+ Product thumbnails
+ Social media images
+ Tip
+ Applying the image_url Liquid URL filter to the media object returns the preview_image URL.
+ Product thumbnails
+ If your theme displays thumbnails for each media source on the product, then you can utilize the preview_image attribute of the media object in order to show a thumbnail image for each media source.
+ For example:
+ 1 {% if product.media.size > 1 %}
+ 2
+    <div class="thumbnails-wrapper">
+ 3
+      {% for media in product.media %}
+ 4
+        <a data-thumbnail-id="{{ media.id }}">
+ 5
+          {{ media.preview_image | image_url: width: 110, height: 110, scale: 2 | image_tag: media.alt, 'product-single__thumbnail-image' }}
+ 6
+        </a>
+ 7
+      {% endfor %}
+ 8
+    </div>
+ 9 {% endif %}
+ Tip
+ The above example adds a data-thumbnail-id attribute which is intended to be used in conjunction with the data-media-id attribute that’s included in the general media loop example above. This gives you an easy way to associate a thumbnail with its media display.
+ Social media images
+ Rather than only showing images for social media previews, you can include media preview images as well.
+ For example:
+ 1 {%- if template.name == 'product' -%}
+ 2
+    {%- assign og_title = product.title | strip_html -%}
+ 3
+    {%- assign og_type = 'product' -%}
+ 4
+ 5
+    {%- if product.media.size > 0 -%}
+ 6
+      {%- capture og_image_tags -%}
+ 7
+        {% for media in product.media limit:3 -%}
+ 8
+          <meta property="og:image" content="http:{{ media | image_url: width: 1200 height: 1200 }}">
+ 9
+        {%- endfor %}
+ 10
+      {%- endcapture -%}
+ 11
+ 12
+      {%- capture og_image_secure_url_tags -%}
+ 13
+        {% for media in product.media limit:3 -%}
+ 14
+          <meta property="og:image:secure_url" content="https:{{ media | image_url: with: 1200, height: 1200 }}">
+ 15
+        {%- endfor %}
+ 16
+      {%- endcapture -%}
+ 17
+    {%- endif -%}
+ 18 {%- endif -%}
+ Support AR functionality
+ If merchants have 3D models of their products, then you can give them the option to showcase those models through AR. To do this, you can use the Shopify-XR library to support AR Quick Look in iOS’s Safari, and Android’s Scene Viewer.
+ You need to do the following to use this library:
+ Initialize the library
+ Launch the display
+ Initialize the library
+ The following JavaScript needs to be included on product pages to initialize the library:
+ 1 <script>
+ 2
+    function setupShopifyXr(){
+ 3
+      if (!window.ShopifyXR) {
+ 4
+        document.addEventListener('shopify_xr_initialized', function() {
+ 5
+          setupShopifyXr();
+ 6
+        });
+ 7
+      }else{
+ 8
+        window.ShopifyXR.addModels();
+ 9
+        window.ShopifyXR.setupXRElements();
+ 10
+      }
+ 11
+    }
+ 12
+ 13
+    window.Shopify.loadFeatures([
+ 14
+      {
+ 15
+        name: 'shopify-xr',
+ 16
+        version: '1.0',
+ 17
+        onLoad: setupShopifyXr
+ 18
+      }
+ 19
+    ]);
+ 20 </script>
+ Launch the display
+ You can launch the display in two ways:
+ With a button
+ With JavaScript
+ Launch the display with a button
+ You can launch the display with a button that has the following attributes:
+ Attribute Description
+ data-shopify-xr The Shopify-XR library scans the DOM for elements with this attribute and attaches a click handler to launch the display.
+ data-shopify-model3d-id The media ID of the current model.
+ data-shopify-title The title of the product.
+ data-shopify-xr-hidden A base data attribute for the Shopify-XR library to reference.
+ You would include a button for each model type media source.
+ For example:
+ 1 {% for media in product.media %}
+ 2
+    {% case media.type %}
+ 3
+      ...
+ 4
+      {% when 'model' %}
+ 5
+        <div class="product-single__media" style="padding-top: 100%" data-media-id="{{ media.id }}">
+ 6
+          {{ media | model_viewer_tag }}
+ 7
+        </div>
+ 8
+ 9
+        <button
+ 10
+          data-shopify-xr
+ 11
+          data-shopify-model3d-id="{{ media.id }}"
+ 12
+          data-shopify-title="{{ product.title | escape }}"
+ 13
+          data-shopify-xr-hidden
+ 14
+        />
+ 15
+      ...
+ 16
+    {% endcase %}
+ 17 {% endfor %}
+ Launch the display with JavaScript
+ Rather than include a button to launch the display, you can use JavaScript. For example:
+ 1 <script>
+ 2
+    window.ShopifyXR.launchXR({
+ 3
+      model3dId: [media-id],
+ 4
+      title: "{{ product.title | escape }}",
+ 5
+    });
+ 6 </script>
+ Note
+ In the example above, [media-id] represents the media ID for the associated model.
+ Control video functionality with parameters
+ Shopify hosted videos can have all HTML5 video attributes set when they’re rendered with the Liquid video_tag or media_tag filter. For example:
+ autoplay - Whether to automatically play the video after it’s loaded.
+ loop - Whether to loop the video.
+ muted - Whether to mute the video’s audio.
+ controls - Whether a user can control the video playback.
+ Each parameter is false by default, however you can set them to be true like the following:
+ 1 <!-- Autoplay a video -->
+ 2 {{ media | video_tag: autoplay: true }}
+ 3
+ 4 <!-- Autoplay a video, and loop it -->
+ 5 {{ media | video_tag: autoplay: true, loop: true }}
+ 6
+ 7 <!-- Autoplay a video, loop it, and mute it -->
+ 8 {{ media | video_tag: autoplay: true, loop: true, muted: true }}
+ 9
+ 10 <!-- Autoplay a video, loop it, mute it, and allow the user to control the video playback -->
+ 11 {{ media | video_tag: autoplay: true, loop: true, muted: true, controls: true }}
+ Tip
+ You can control these same behaviors for externally-hosted videos using the Liquid external_video_url filter. However, the available parameters depend on the video host.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing product media
+ UX considerations
+ Use media preview images
+ Support AR functionality
+ Control video functionality with parameters
+ Updates & News

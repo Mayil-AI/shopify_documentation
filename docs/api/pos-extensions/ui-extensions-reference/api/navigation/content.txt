@@ -1,0 +1,115 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Navigation API
+ This is the POS UI Extension API for navigating between screens.
+ Example
+ JavaScript
+ React
+ 1 import { extend, Button, Navigator, Screen, Tile } from '@shopify/retail-ui-extensions';
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'My app',
+ 6
+      subtitle: 'JavaScript',
+ 7
+      enabled: true,
+ 8
+      onPress: () => {
+ 9
+        api.smartGrid.presentModal();
+ 10
+      },
+ 11
+    };
+ 12
+ 13
+    const tile = root.createComponent(Tile, tileProps);
+ 14
+ 15
+    root.appendChild(tile);
+ 16
+    root.mount();
+ 17 });
+ 18
+ 19 extend('pos.home.modal.render', (root, api) => {
+ 20
+    let navigator = root.createComponent(Navigator);
+ 21
+    let screenOne = root.createComponent(Screen, { name: 'Screen One', title: 'Screen One Title' });
+ 22
+    let screenTwo = root.createComponent(Screen, { name: 'Screen Two', title: 'Screen Two Title' });
+ 23
+    let navigateScreenOneBtn = root.createComponent(Button, {
+ 24
+      title: 'Navigate to Screen One',
+ 25
+      onPress: () => api.navigation.navigate('Screen One'),
+ 26
+    });
+ 27
+    let navigateScreenTwoBtn = root.createComponent(Button, {
+ 28
+      title: 'Navigate to Screen Two',
+ 29
+      onPress: () => api.navigation.navigate('Screen Two'),
+ 30
+    });
+ 31
+ 32
+    root.appendChild(navigator);
+ 33
+    screenOne.appendChild(navigateScreenTwoBtn);
+ 34
+    screenTwo.appendChild(navigateScreenOneBtn);
+ 35
+    navigator.appendChild(screenOne);
+ 36
+    navigator.appendChild(screenTwo);
+ 37
+ 38
+    root.mount();
+ 39 });
+ NavigationApiContent
+ Name Type Description
+ currentModal Modal Contains the information about the currently presented modal
+ Modal
+ Name Type Description
+ path string Used to determine which Screen or Navigator to return for the Modal extension point
+ params any? Used when presenting a modal to pass any initial parameters or attach callbacks
+ Navigation actions
+ Navigate to a route in current navigation tree
+ Navigates to the specified screen. It is important to note that any screens you wish to navigate to must already exist in the Navigator.
+ Example
+ 1 // You can navigate to any of these three screens since they all exist within the same Navigator.
+ 2 return (
+ 3
+    <Navigator>
+ 4
+      <Screen name='ScreenOne' title='ScreenOneTitle' />
+ 5
+      <Screen name='ScreenTwo' title='ScreenTwoTitle' />
+ 6
+      <Screen name='ScreenThree' title='ScreenThreeTitle' />
+ 7
+    </Navigator>
+ 8 );
+ 1 navigate(screenName: string, params?: any): void;
+ Params
+ Name Type Description
+ screenName string The name of the screen you want to navigate to
+ params any? The parameters you want to pass to that screen
+ Pops the currently shown screen
+ 1 pop(): void;
+ Dismisses the modal
+ 1 dismiss(): void;
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example
+ NavigationApiContent
+ Modal
+ Navigation actions

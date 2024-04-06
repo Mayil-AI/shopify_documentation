@@ -1,0 +1,55 @@
+Overview
+ Marketing
+ Overview
+ Marketing externally
+ Marketing internally
+ Overview
+ Tracking your listing traffic
+ Managing app reviews
+ Supporting your app
+ Tracking app usage
+ Marketing your app through Shopify
+ After your app goes live, you can use several methods to promote it to the Shopify community.
+ Using the Shopify Community forums
+ You can promote yourself and your apps by creating value for merchants and other Partners in the Shopify Community forums. Being an active member in the forums and helping merchants solve issues will build trust with other members of the Shopify community. You can also suggest your app to merchants if you think it will help solve their issues. Participating in the forums can also give you ideas for improving your app, or building new apps.
+ Note
+ Before using Shopify Community forums, make sure you're familiar with the Community Code of Conduct. Be mindful of promoting your app, as it might be considered as spamming behavior.
+ Making a Partner-friendly app
+ Partner-friendly apps can be installed for free by other Shopify Partners. This helps promote your app to other developers, as well as Partners who are helping merchants to set up their store. If other Partners use your app and enjoy it, then they can help promote your app to merchants.
+ To make your app Partner-friendly, you need to offer free testing for development stores.
+ Making a freemium app
+ Freemium apps are free to download, but offer merchants in-app purchases that add extra features. Making a freemium app allows merchants to see how your app can add value to their store before they pay. The merchant can then decide to purchase your premium features. Offering a freemium app increases retention over time and increases the initial install rate. After you've shown merchants the value that your app can provide, you can consider transitioning your freemium app to a paid app.
+ Improving your app listing
+ A successful app listing will meet the needs of both of its two main audiences: Shopify merchants and the Shopify App Store search engine. Merchants read your app listing to understand the value of your app before they decide to install it on their store. The Shopify App Store search engine parses the information in your app listing to determine when to show your app to merchants.
+ Note
+ Only listed apps appear in Shopify App Store search results and category pages. By default, apps are listed when they're approved.
+ To learn about what kind of information you should include in your app listing, refer to Writing a Shopify App Store listing. This guide explains how to prepare each section of your app listing so that it appeals to Shopify merchants.
+ To improve your app listing for the Shopify App Store search engine, you can try the following:
+ Fill out as many of the fields in your app listing form as you can, including optional fields.
+ Proofread your app listing to make sure that it doesn't have any grammatical errors or spelling mistakes.
+ Create a short list of keywords and key phrases to focus on in your app listing. The Google Ads Keyword Planner is free to use and can help you generate ideas and suggestions. When you add keywords and key phrases to your app listing, they should flow logically with the rest of the content.
+ Make sure that you don't overuse the keywords and key phrases that you choose, since this can decrease your app's discoverability in the Shopify App Store.
+ Avoid using symbols in your keywords. For example, use "tshirt" instead of "t-shirt".
+ Use multiple common spellings and terms to increase your search index coverage. For example, you should optimize for both "popup" and "pop up".
+ Study on-page SEO to understand the basics of how search engines work, and learn how to apply them to improving your app's SEO on the Shopify App Store.
+ After you make changes to your listing, you can measure their impact by tracking how many merchants install your app after reading the revised listing on the Shopify App Store. You can also track your listing traffic with Google Analytics or Facebook pixel to see how and where merchants are finding your listing in the Shopify App Store.
+ Using merchant feedback
+ You can add positive feedback from merchants to your marketing material to help promote your app. You can collect feedback from reviews on the Shopify App Store, or by talking to merchants directly.
+ Getting positive reviews in the Shopify App Store can increase your app’s SEO and encourage new merchants to try your app. For more information about reviews, see our guide on managing app reviews.
+ Caution
+ Never create fake reviews, or offer merchants incentives for leaving positive reviews. If you do, then you'll be removed from the Shopify App Store.
+ Word-of-mouth marketing
+ If merchants enjoy using your app, then they will be more likely to recommend your app to other merchants. You can follow our app requirements to improve your app and provide good service to merchants using your app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Using the Shopify Community forums
+ Making a Partner-friendly app
+ Making a freemium app
+ Improving your app listing
+ Using merchant feedback
+ Word-of-mouth marketing
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

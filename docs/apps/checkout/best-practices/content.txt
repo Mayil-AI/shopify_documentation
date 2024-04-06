@@ -1,0 +1,30 @@
+Test UI extensions
+ Best practices
+ Overview
+ Multi-page extensions
+ UX guidelines
+ Distribution
+ Billing
+ App Store
+ Best practices for extending Shopify checkout
+ To optimize your app development experience, Shopify has established a set of best practices that you can refer to when developing an app that extends checkout.
+ Best practices
+ Consider the following best practices to keep stores fast, accessible, responsive, and adaptive to all markets.
+ Create multi-page extensions
+ Learn more about building extensions that can render on any checkout page.
+ Localizing checkout UI extensions
+ Learn about localizing your checkout UI extension for international merchants and customers.
+ Testing checkout UI extensions
+ Learn about how you can test your checkout UI extensions to recreate merchant and customer experiences.
+ Checkout UX guidelines
+ Learn how to improve the quality of checkout experiences by following our UX guidelines for checkout.
+ Next steps
+ For general best practices for developing apps, refer to Best practices for building Shopify apps.
+ For practical guidance on how to design a user interface for the Shopify admin, refer to Shopify's App Design Guidelines.
+ Get familiar with Polaris accessibility and content guidelines.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Best practices
+ Next steps
+ Updates & News

@@ -1,0 +1,90 @@
+Storefront search
+ Filtering
+ SEO
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Add navigation to your theme
+ Merchants can create menus for their shop navigation, and these menus can be nested to create drop-down menus.
+ In this tutorial, you'll learn how to add navigation to your theme.
+ Resources
+ The linklists object
+ The linklist object
+ The link object
+ Implementing navigation
+ To add navigation to your theme, you should reference a linklist object. Each linklist object represents a menu that's defined in the Online Store > Navigation section of the Shopify admin.
+ You can use the global linklists object to access all of the linklist objects in your store by their handle. The default menu in the Shopify admin is the Main menu, which can be accessed with its handle main-menu.
+ For example:
+ 1 {% for link in linklists.main-menu.links %}
+ 2
+    <!-- menu content -->
+ 3 {% endfor %}
+ You can let merchants select their own menu using the link_list setting. You can reference the menu using the setting name, which is the equivalent of a linklist handle:
+ 1 {% for link in section.settings.menu.links %}
+ 2
+    <!-- menu content -->
+ 3 {% endfor %}
+ For each menu link, you should output information such as the title and URL. You might also want to output the link's child links. You can nest links up to three levels deep, and you can access them through the links attribute of the link object.
+ For example, if you've created a link_list type setting called menu, so that merchants can choose the menu they want to use in the header section, then the following code shows how you might output the menu.
+ Note
+ The following example is only meant to illustrate how to iterate through a linklist and output multiple levels of links. It's not a complete navigation feature.
+ /sections/header.liquid
+ 1 <ul class="menu">
+ 2
+    {% for link in section.settings.menu.links %}
+ 3
+      <li class="menu-link">
+ 4
+        <a href="{{ link.url }}">{{ link.title }}</a>
+ 5
+ 6
+        {% if link.links.size > 0 %}
+ 7
+          <ul class="menu dropdown-child">
+ 8
+            {% for child_link in link.links %}
+ 9
+              <li class="menu-link">
+ 10
+                <a href="{{ child_link.url }}">{{ child_link.title }}</a>
+ 11
+ 12
+                {% if child_link.links.size > 0 %}
+ 13
+                  <ul class="menu dropdown-grandchild">
+ 14
+                    {% for grandchild_link in child_link.links %}
+ 15
+                      <li class="menu-link">
+ 16
+                        <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+ 17
+                      </li>
+ 18
+                    {% endfor %}
+ 19
+                  </ul>
+ 20
+                {% endif %}
+ 21
+              </li>
+ 22
+            {% endfor %}
+ 23
+          </ul>
+ 24
+        {% endif %}
+ 25
+      </li>
+ 26
+    {% endfor %}
+ 27 </ul>
+ Depending on the kind of navigation you're building, you should include your navigation code in your header or footer sections.
+ Tip
+ For another example of outputting menus, you can refer to Dawn's implementation.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Resources
+ Implementing navigation

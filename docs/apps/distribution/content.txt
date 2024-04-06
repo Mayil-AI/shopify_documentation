@@ -1,0 +1,40 @@
+Functions
+ Deployment
+ Distribution
+ Overview
+ Select a distribution method
+ Billing
+ App Store
+ Distributing your app
+ After you've added features to your app, you need to decide how to distribute it to merchants.
+ The way you choose to distribute your app depends on its purpose and your audience. You can't change the distribution method after you select it, so make sure that you understand the different capabilities and requirements of each type.
+ Capabilities and requirements
+ The following table shows the capabilities and requirements that are associated with each distribution method:
+ Distribution model Number of stores App type Authorization or authentication method Approval required Limitations
+ Public distribution Can be installed on multiple Shopify stores Public
+ If embedded, token exchange and session tokens
+ If not embedded, authorization code grant
+ Yes Must sync certain data with Shopify
+ Custom distribution Installed on a single Shopify store or on multiple stores that belong to the same Plus organization Custom
+ If embedded, token exchange and session tokens
+ If not embedded, authorization code grant
+ No Can't use the Billing API to charge merchants
+ Shopify admin Installed on a single Shopify store Custom Authenticate in the Shopify admin No
+ Can't use Shopify App Bridge to display as an embedded app
+ Can't use app extensions
+ Can't use the Billing API to charge merchants
+ Requesting a content size limit exception
+ Theme app extensions are subject to file and content size limits. If your app uses custom distribution, or your app has been granted Built for Shopify status in the Shopify App Store, then you can request an exception to the 100 KB Liquid size limit for a theme app extension. File an exemption request using this form.
+ Increasing your app's Liquid size could potentially impact its performance. Regular monitoring and optimization is advised.
+ Deprecated app types
+ The following app types can no longer be created:
+ Private apps: Deprecated as of January 2022. A private app was a type of app that one merchant could install directly on their store. If you want to create an app specifically for one merchant's store, then you can create a custom app instead. As of January 20, 2023, all private apps have been automatically migrated and converted to custom apps.
+ Unpublished apps: Deprecated as of December 9, 2019. An unpublished app was a type of public app that one or many merchants could install and had all the same functionality as other public apps. However, the app didn't require any approval from Shopify.
+ Next steps
+ Learn how to select a distribution method in the Partner Dashboard.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Capabilities and requirements
+ Deprecated app types
+ Next steps

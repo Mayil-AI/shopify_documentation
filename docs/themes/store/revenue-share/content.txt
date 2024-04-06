@@ -1,0 +1,60 @@
+Testing
+ Review process
+ Theme success
+ Theme revenue share
+ Revenue share for Shopify Theme Store developers
+ Theme developers can earn revenue by selling their themes to merchants on the Shopify Theme Store. Shopify collects 0% of the first $1,000,000 USD in annual gross theme revenue earned through the Shopify Theme Store. Total theme revenues in excess of $1,000,000 USD annually are subject to a 15% revenue share.
+ This revenue share plan applies to all themes listed on the Shopify Theme Store. There are no fees to submit themes for listing on the Shopify Theme Store.
+ Calculating Shopify Theme Store revenue
+ Revenue share for theme sales is calculated using the following formula:
+ Partners pay 0% revenue share until they reach 1,000,000 USD in gross theme revenues for that calendar year.
+ After they reach 1,000,000 USD, Partners pay 15% on theme revenues for the remainder of that calendar year.
+ Every year on January 1, the revenue share resets to 0% until the Partner reaches 1,000,000 USD threshold again for that calendar year.
+ Revenue share calculation for themes is subject to the following conditions:
+ If a Partner earns revenue across multiple themes, then revenue share is calculated based on the total cumulative revenue of all the themes, including themes developed under any Associated Theme Developer Accounts.
+ Even though total gross theme revenue is calculated across all Associated Theme Developer Accounts, revenue share is still paid out separately at the partner account level.
+ Other income, such as from the Shopify App Store or referrals, isn't included in revenue share calculation for the Shopify Theme Store. Learn more about app revenue share.
+ Tip
+ Revenue share is calculated based on gross sales, not net sales. Refunds aren't taken into account when revenue share is calculated.
+ Examples of Shopify Theme Store revenue
+ The following table provides some examples of earnings and revenue share payments:
+ Theme Store revenue examples
+ Gross Partner earnings in calendar year Revenue share calculations and earnings retained
+ $650,000 USD in theme revenue
+ $650,000 USD x 0.00 = zero revenue share paid
+ $650,000 USD earnings retained
+ $700,000 USD in revenue on one theme
+ $400,000 USD on several other themes
+ Total cumulative revenue = $700,000 USD + $400,000 USD = $1,100,000 USD
+ First $1,000,000 USD x 0.00 = zero revenue share paid
+ Remaining $100,000 USD x 0.15 = $15,000 USD revenue paid
+ $1,085,000 USD earnings retained
+ $800,000 USD in theme revenue for one Partner account
+ $400,000 USD in theme revenue for all other Associated Developer Accounts
+ Total cumulative revenue = $800,000 USD + $400,000 USD = $1,200,000 USD
+ First $1,000,000 USD x 0.00 = zero revenue share paid
+ Remaining $200,000 USD x 0.15 = #30,000 USD revenue paid
+ $1,170,000 USD earnings retained
+ $750,000 USD in revenue on themes
+ $750,000 USD in revenue on apps
+ $750,000 USD x 0.00 = zero revenue share paid for app sales
+ $750,000 USD x 0.00 = zero revenue share paid for theme sales
+ $1,500,000 USD total cumulative earnings retained
+ Associated Theme Developer accounts
+ An Associated Theme Developer Account is any Partner account that a theme developer or Associated Theme Developer has registered with Shopify. Learn more about Associated Developer Accounts on Shopify Help Center.
+ Billing fees and sales tax
+ All billing is subject to a 2.9% processing fee and applicable sales tax. As of August 1, 2021, fees and taxes are charged separately.
+ Earnings in some countries or regions are subject to additional regulatory operating fees.
+ Viewing your earnings and fees
+ There are several ways to review your earnings and fees in the Partner Dashboard:
+ View app charges for a specific store.
+ View app charges in the Payouts page.
+ View app charges from the App history page.
+ Download a CSV of your payouts in the Payouts page.
+ Review the Shopify fees invoice in the Payouts page.
+ You can also use the Shopify Partner API to programatically access the data found in your Partner Dashboard to automate your front and back office operations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Calculating Shopify Theme Store revenue
+ Viewing your earnings and fees

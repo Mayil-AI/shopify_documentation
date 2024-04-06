@@ -1,0 +1,20 @@
+Features
+ Fullscreen
+ Loading
+ Menu
+ Overview
+ Channel Menu
+ Navigation Menu
+ Modal
+ Navigation
+ POS
+ Product subscription app extensions
+ Menu
+ Learn how to use Menu actions in App Bridge to create a dynamic navigation.
+ In this section
+ Channel Menu — Learn how to modify the sidebar menu for your embedded sales channel app using App Bridge.
+ Navigation Menu — Learn how to use the navigation menu action set in App Bridge.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

@@ -1,0 +1,295 @@
+Create and manage a product subscription app extension
+ This tutorial explains how to create and manage a product subscription app extension. You'll use the Add, Create, Edit, and Remove extension modes to make requests to your app's backend server.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Set up requests to your app's backend server
+ Set up unit testing for your extension
+ Requirements
+ Configure your app's backend server and acquire a session token.
+ Extensions built with App Bridge Admin are hosted in Shopify. To receive requests from your extension, you need to enable cross-domain requests on your app’s server.
+ Extensions built with App Bridge Admin use session tokens to authenticate requests between your extension and your app's backend server. You need to provide the session token in every request to your backend server.
+ Step 1: Set up requests to your app’s backend server
+ After you generate the product subscription app extension, you can set up requests to your app's backend server for each extension mode.
+ Create a new purchase option
+ The Create mode enables users to create a new purchase option for the current product or one of its variants. The Create plan UI should display the plan title, the delivery frequency, and the discount percentage. The Create mode triggers the app overlay container.
+ The request to your backend server triggers the sellingPlanGroupsCreate mutation.
+ In the payload, include the productId and variantId collected from the extension form.
+ In the header, include the session token. If the response returns an OK status, then you can request done to re-render the modal and close to close it.
+ Example
+ Input
+ 1 interface CreatePayload {
+ 2
+    productId: string;
+ 3
+    variantId?: string;
+ 4 }
+ onPrimaryAction in Create
+ 1 const onPrimaryAction = useCallback(async () => {
+ 2
+    const token = await getSessionToken();
+ 3
+ 4
+    // The product and variant IDs collected from the modal form
+ 5
+    let payload = {
+ 6
+      productId: data.productId,
+ 7
+      variantId: data.variantId,
+ 8
+    };
+ 9
+ 10
+    // Send the form data to your app server to create the new plan.
+ 11
+    const response = await fetch('https://server-url-here', {
+ 12
+      headers: {
+ 13
+        'any-header-key': token || 'unknown token',
+ 14
+      },
+ 15
+      body: JSON.stringify(payload)
+ 16
+    });
+ 17
+ 18
+    // If the server responds with an OK status, then refresh the UI and close the modal
+ 19
+    if (response.ok) {
+ 20
+      done();
+ 21
+    } else {
+ 22
+      console.log('Handle error.');
+ 23
+    }
+ 24
+ 25
+    close();
+ 26 }, [getSessionToken, done, close]);
+ Add an existing purchase option to a product or variant
+ The Add mode enables users to add the current product to an existing purchase option. The Add plan UI should display a searchable list of purchase options on the shop. The purchase options that are already associated with the product either directly or through one of its variants should not be listed. The Add mode triggers the app modal container.
+ The request to your backend server triggers the productJoinSellingPlanGroups mutation, applying the selected SellingPlan objects to the current product.
+ In the payload, include the productId and variantId collected from the extension form.
+ In the header, include the session token. If the response returns an OK status, then you can request done to re-render the modal and close to close it.
+ Example
+ Input
+ 1 interface AddPayload {
+ 2
+    productId: string;
+ 3
+    variantId?: null;
+ 4 }
+ primaryAction in Add
+ 1 setPrimaryAction({
+ 2
+    content: 'Add to plan',
+ 3
+    onAction: async () => {
+ 4
+      // Get a fresh session token before every request to your app server.
+ 5
+      const token = await getSessionToken();
+ 6
+ 7
+      // The product and variant IDs collected from the modal form
+ 8
+      let payload = {
+ 9
+        productId: data.productId,
+ 10
+        variantId: data.variantId,
+ 11
+      };
+ 12
+ 13
+      // Here, send the form data to your app server to add the product to an existing plan.
+ 14
+      const response = await fetch('https://server-url-here', {
+ 15
+        headers: {
+ 16
+          'any-header-key': token || 'unknown token',
+ 17
+        },
+ 18
+        body: JSON.stringify(payload)
+ 19
+      });
+ 20
+ 21
+      // If the server responds with an OK status, then refresh the UI and close the modal
+ 22
+      if (response.ok) {
+ 23
+        done();
+ 24
+      } else {
+ 25
+        console.log('Handle error.');
+ 26
+      }
+ 27
+ 28
+      close();
+ 29
+    },
+ 30 });
+ Edit an existing purchase option
+ The Edit mode enables users to edit a product's purchase option. The Edit plan UI should display the plan title, the delivery frequency, and the discount percentage. The Edit mode triggers the app overlay container.
+ The request to your backend service triggers the sellingPlanGroupUpdate mutation, applying the selected SellingPlan objects to the current product.
+ In the payload, include the productId and variantId collected from the extension form and the sellingPlanGroupId.
+ In the header, include the session token. If the response returns an OK status, then you can request done to re-render the modal and close to close it.
+ Example
+ Input
+ 1 interface EditPayload {
+ 2
+    sellingPlanGroupId: string;
+ 3
+    productId: string;
+ 4
+    variantId?: string;
+ 5 }
+ onPrimaryAction in Edit
+ 1 const onPrimaryAction = useCallback(async () => {
+ 2
+    // Get a fresh session token before every request to your app server.
+ 3
+    const token = await getSessionToken();
+ 4
+    // The product ID and variant ID collected from the modal form and the selling plan group ID
+ 5
+    let payload = {
+ 6
+      sellingPlanGroupId: data.sellingPlanGroupId,
+ 7
+      productId: data.productId,
+ 8
+      variantId: data.variantId,
+ 9
+    };
+ 10
+ 11
+    // Here, send the form data to your app server to add the product to an existing plan.
+ 12
+    const response = await fetch('https://server-url-here', {
+ 13
+      headers: {
+ 14
+        'any-header-key': token || 'unknown token',
+ 15
+      },
+ 16
+      body: JSON.stringify(payload)
+ 17
+    });
+ 18
+    // If the server responds with an OK status, then refresh the UI and close the modal
+ 19
+    if (response.ok) {
+ 20
+      done();
+ 21
+    } else {
+ 22
+      console.log('Handle error.');
+ 23
+    }
+ 24
+    close();
+ 25 }, [getSessionToken, done, close]);
+ Remove an existing purchase option from a product or variant
+ The Remove mode enables users to remove a product's purchase option. The Remove plan UI should display the plan and product titles. The Remove mode triggers the app modal container.
+ If the purchase option is associated at the product level (sellingPlanGroup.appliesToProduct is true), then the request to your backend server triggers the sellingPlanGroupRemoveProducts mutation.
+ If the purchase option is associated at the variant level (sellingPlanGroup.appliesToProductVariants is true), then the request to your backend server triggers the sellingPlanGroupRemoveProductVariants mutation.
+ In the payload, include the productId, variantId, variantIds and the sellingPlanGroupId.
+ In the header, include the session token. If the response returns an OK status, then you can request done to re-render the modal and close to close it.
+ Example
+ Input
+ 1 interface RemovePayload {
+ 2
+    sellingPlanGroupId: string;
+ 3
+    productId: string;
+ 4
+    variantId?: string;
+ 5
+    variantIds: string[];
+ 6 }
+ primaryAction in Remove
+ 1 setPrimaryAction({
+ 2
+    content: 'Add to plan',
+ 3
+    onAction: async () => {
+ 4
+      // Get a fresh session token before every request to your app server.
+ 5
+      const token = await getSessionToken();
+ 6
+ 7
+      // The product ID, variant ID, variant IDs, and the selling plan group ID
+ 8
+      let payload = {
+ 9
+        sellingPlanGroupId: data.sellingPlanGroupId,
+ 10
+        productId: data.productId,
+ 11
+        variantId: data.variantId,
+ 12
+        variantIds: data.variantIds,
+ 13
+      };
+ 14
+ 15
+      // Send the form data to your app server to add the product to an existing plan.
+ 16
+      const response = await fetch('https://server-url-here', {
+ 17
+        headers: {
+ 18
+          'any-header-key': token || 'unknown token',
+ 19
+        },
+ 20
+        body: JSON.stringify(payload)
+ 21
+      });
+ 22
+ 23
+      // If the server responds with an OK status, then refresh the UI and close the modal
+ 24
+      if (response.ok) {
+ 25
+        done();
+ 26
+      } else {
+ 27
+        console.log('Handle error.');
+ 28
+      }
+ 29
+ 30
+      close();
+ 31
+    },
+ 32 });
+ Step 2: Set up unit testing
+ To thoroughly test your extension, we recommend that you set up unit testing. You can use a testing framework that best suits your needs.
+ The underlying technology for App Bridge Admin is remote-ui. @remote-ui/testing is a testing library that you can use to test subscription app extension components and their usage.
+ The APIs in @remote-ui/testing are inspired by the @shopify/react-testing library.
+ Next steps
+ Learn how to deploy and release your app extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Set up requests to your app’s backend server
+ Step 2: Set up unit testing
+ Next steps
+ Updates & News

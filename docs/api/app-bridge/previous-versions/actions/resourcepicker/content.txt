@@ -1,0 +1,280 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ ResourcePicker
+ Note
+ This is a legacy API. Use the latest version of Resource Picker instead.
+ The ResourcePicker action set provides a search-based interface to help users find and select one or more products, collections, or product variants, and then returns the selected resources to your app.
+ You can use the resoure picker action set in the following ways:
+ Plain JavaScript
+ React component
+ Plain JavaScript
+ Example code
+ Create an app and import the ResourcePicker module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {ResourcePicker} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a product picker
+ 1 const productPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Product,
+ 3 });
+ Create a product variant picker
+ 1 const variantPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.ProductVariant,
+ 3 });
+ Create a collection picker
+ 1 const collectionPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Collection,
+ 3 });
+ Picker selection and cancellation
+ Resource pickers have two main actions that you can subscribe to:
+ ResourcePicker.Action.CANCEL - App Bridge dispatches this action when the user cancels the resource picker, without making a selection.
+ ResourcePicker.Action.SELECT - App Bridge dispatches this action after the user confirms a selection. This action provides a SelectPayload: an Object with id and selection keys. The selection key is an array of all the selected resources.
+ 1 const picker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Product,
+ 3 });
+ 4
+ 5 picker.subscribe(ResourcePicker.Action.CANCEL, () => {
+ 6
+    // Picker was cancelled
+ 7 });
+ 8
+ 9 picker.subscribe(ResourcePicker.Action.SELECT, (selectPayload) => {
+ 10
+    const selection = selectPayload.selection;
+ 11
+    // Do something with `selection`
+ 12 });
+ Note
+ If you require additional information about the selected resources, then query the Admin API.
+ Options
+ initialQuery
+ default value: undefined
+ optional
+ type: string
+ note: Prepopulates the search bar of the resource picker.
+ initialSelectionIds
+ default value: []
+ optional
+ type: Resource[]
+ note: initialSelectionIds takes an array of minimal resource objects, which only need to contain a resource ID (in GraphQL ID format, ie 'gid://shopify/Product/1'). Product resources may also contain selected variants. If no variants are specified, all variants will be selected.
+ 1 const productWithSpecificVariantsSelected = {
+ 2
+    id: 'gid://shopify/Product/12345',
+ 3
+    variants: [{
+ 4
+      id: 'gid://shopify/ProductVariant/1',
+ 5
+    }],
+ 6 };
+ 7
+ 8 const productWithAllVariantsSelected = {
+ 9
+    id: 'gid://shopify/Product/67890',
+ 10 };
+ 11
+ 12 const productPicker = ResourcePicker.create(app, {
+ 13
+    resourceType: ResourcePicker.ResourceType.Product,
+ 14
+    options: {
+ 15
+      initialSelectionIds: [productWithVariantsSelected, productWithAllVariantsSelected],
+ 16
+    },
+ 17 });
+ actionVerb
+ default value: ResourcePicker.ActionVerb.Add
+ optional
+ type: ResourcePicker.ActionVerb (values: Add, Select)
+ note: The actionVerb appears in the title <actionVerb> <resourceType> and as the primary action of the resource picker.
+ selectMultiple
+ default value: true
+ optional
+ type: boolean or number
+ note: Whether to allow selecting multiple items of a specific resourceType or not. If a number is provided, then limit the selections to a maximum of that number of items. Providing a number requires version 1.28.0. When resourceType is Product, the user may still select multiple variants of a single product, even if selectMultiple is false.
+ Boolean options
+ Option Default Optional Version Note
+ showHidden true ✔️ hidden refers to products that are not published on any sales channels.
+ showVariants true ✔️ Only applies to the Product resource type picker.
+ showDraft true ✔️ 1.28.0 Whether to show draft products or not. Only applies to the Product resource type picker.
+ showArchived true ✔️ 1.28.0 Whether to show archived products or not. Only applies to the Product resource type picker.
+ showDraftBadge false ✔️ 1.28.0 Whether to show draft badge for draft products or not. Only works when showDraft prop is set, and only applies to the Product resource type picker.
+ showArchivedBadge false ✔️ 1.28.0 Whether to show archived badge for archived products or not. Only works when showArchived prop is set, and only applies to the Product resource type picker.
+ Subscribe
+ You can subscribe to modal actions by calling subscribe. This returns a function that you can call to unsubscribe from the action:
+ 1 const productPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Product,
+ 3
+    options: {
+ 4
+      selectMultiple: true,
+ 5
+      showHidden: false,
+ 6
+    },
+ 7 });
+ 8
+ 9 const selectUnsubscribe = productPicker.subscribe(ResourcePicker.Action.SELECT, ({selection}) => {
+ 10
+    // Do something with `selection`
+ 11 });
+ 12
+ 13 const cancelUnsubscribe = productPicker.subscribe(ResourcePicker.Action.CANCEL, () => {
+ 14
+    // Picker was cancelled
+ 15 });
+ 16
+ 17 // Unsubscribe to actions
+ 18 selectUnsubscribe();
+ 19 cancelUnsubscribe();
+ Unsubscribe
+ You can call unsubscribe to remove all subscriptions on the resource picker:
+ 1 const productPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Product,
+ 3
+    options: {
+ 4
+      selectMultiple: true,
+ 5
+      showHidden: false,
+ 6
+    },
+ 7 });
+ 8
+ 9 productPicker.subscribe(ResourcePicker.Action.SELECT, () => {
+ 10
+    // Do something with `selection`
+ 11 });
+ 12
+ 13 productPicker.subscribe(ResourcePicker.Action.CANCEL, () => {
+ 14
+    // Do something when the ResourcePicker is cancelled
+ 15 });
+ 16
+ 17 // Unsubscribe from all actions
+ 18 productPicker.unsubscribe();
+ Dispatch actions
+ 1 const collectionPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Collection,
+ 3
+    options: {
+ 4
+      selectMultiple: true,
+ 5
+      showHidden: false,
+ 6
+    }
+ 7 });
+ 8
+ 9 // Open the collection picker
+ 10 collectionPicker.dispatch(ResourcePicker.Action.OPEN);
+ Update options
+ You can call the set method with partial picker options. This automatically triggers the update action on the modal and merges the given options with the existing options:
+ 1 const collectionPicker = ResourcePicker.create(app, {
+ 2
+    resourceType: ResourcePicker.ResourceType.Collection,
+ 3
+    options: {
+ 4
+      selectMultiple: true,
+ 5
+      showHidden: false,
+ 6
+    },
+ 7 });
+ 8
+ 9 collectionPicker.set({showHidden: true});
+ React
+ Example code
+ Import the ResourcePicker component from @shopify/app-bridge-react.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ Note When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import React from 'react';
+ 2 import ReactDOM from 'react-dom';
+ 3 import {Provider, ResourcePicker} from '@shopify/app-bridge-react';
+ 4
+ 5 function MyApp() {
+ 6
+    return (
+ 7
+      <Provider config={config}>
+ 8
+        <ResourcePicker resourceType="Product" open />
+ 9
+      </Provider>
+ 10
+    );
+ 11 }
+ 12
+ 13 const root = document.createElement('div');
+ 14 document.body.appendChild(root);
+ 15 ReactDOM.createRoot(root).render(<MyApp />);
+ Props
+ Name Type Description Required
+ open boolean Whether the picker is open or not Yes
+ resourceType "Product", "ProductVariant", "Collection" The type of resource you want to pick Yes
+ initialQuery string GraphQL initial search query for filtering resources available in the picker. See search syntax for more information
+ initialSelectionIds Resource[] Resources that should be preselected when the picker is opened. See example below.
+ showHidden boolean Whether to show hidden products or not
+ selectMultiple boolean Whether to allow selecting multiple items of a specific resourceType or not. If a number is provided, then limit the selections to a maximum of that number of items. Providing a number requires version 1.28.0. When resourceType is Product, the user may still select multiple variants of a single product, even if selectMultiple is false.
+ showVariants boolean Whether to show product variants or not. Only applies to the product resource type picker. Requires version 1.28.0.
+ showDraft boolean Whether to show draft products or not. Only applies to the Product resource type picker. Requires version 1.28.0.
+ showArchived boolean Whether to show archived products or not. Only applies to the Product resource type picker. Requires version 1.28.0.
+ showDraftBadge boolean Whether to show draft badge for draft products or not. Only works when the showDraft prop is set, and only applies to the Product resource type picker. Requires version 1.28.0.
+ showArchivedBadge boolean Whether to show archived badge for archived products or not. Only works when the showArchived prop is set, and only applies to the Product resource type picker. Requires version 1.28.0.
+ onSelection (selectPayload: SelectPayload) => void Callback when a selection has been made. It receives a SelectPayload argument, which is an Object with id and selection keys. The selection key is an array of all the selected resources.
+ onCancel () => void Callback when the picker is closed without selection
+ initialSelectionIds
+ Use the initialSelectionIds prop to specify resources that should already be selected when the picker is opened:
+ 1 const productWithSpecificVariantsSelected = {
+ 2
+    id: 'gid://shopify/Product/12345',
+ 3
+    variants: [{
+ 4
+      id: 'gid://shopify/ProductVariant/1',
+ 5
+    }],
+ 6 };
+ 7
+ 8 const productWithAllVariantsSelected = {
+ 9
+    id: 'gid://shopify/Product/67890',
+ 10 };
+ 11
+ 12 function myComponent() {
+ 13
+    return <ResourcePicker
+ 14
+      initialSelectionIds={[
+ 15
+        productWithVariantsSelected,
+ 16
+        productWithAllVariantsSelected
+ 17
+      ]}
+ 18
+    />
+ 19 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,115 @@
+Layouts
+ Overview
+ checkout.liquid
+ Templates
+ Sections
+ Blocks
+ Section groups
+ Config
+ Locales
+ Settings
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Layouts
+ Layouts are the base of the theme, through which all templates are rendered.
+ Layouts are Liquid files that allow you to include content, that should be repeated on multiple page types, in a single location. For example, layouts are a good place to include any content you might want in your <head> element, as well as headers and footers.
+ You can edit the default theme.liquid layout, or you can create multiple custom layout files to suit your needs. You can specify which layout to use, or whether to use a layout at all, at the template level:
+ In JSON templates, the layout that's used to render a page is specified using the layout attribute.
+ In Liquid templates, the layout that's used to render a page is specified using the layout Liquid tag.
+ Location
+ Layout files are located in the layout directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      |   ├── theme.liquid
+ 4
+      |   ...
+ 5
+      ├── templates
+ 6
+      ...
+ Subtypes
+ There are the following layout types:
+ Type Description
+ General General layouts can apply to all non-checkout pages.
+ 
+ The default layout file, which must be included in all themes, is theme.liquid.
+ Checkout This layout type applies to all checkout pages. It's available to Shopify Plus merchants only.
+ 
+ To learn more about this layout, refer to checkout.liquid.
+ Schema
+ Because layout files are the base of the theme, they should follow the structure of a standard HTML document in most cases. Most layout files also contain the following Liquid objects:
+ content_for_header
+ content_for_layout
+ basic_layout_example.liquid
+ 1 <!DOCTYPE html>
+ 2 <html>
+ 3
+    <head>
+ 4
+      ...
+ 5
+      {{ content_for_header }}
+ 6
+      ...
+ 7
+    </head>
+ 8
+ 9
+    <body>
+ 10
+      ...
+ 11
+      {{ content_for_layout }}
+ 12
+      ...
+ 13
+    </body>
+ 14
+   </html>
+ Content
+ Layouts allow you to include content that's repeated across multiple page types in a single location. For example, layouts might include header and footer sections and SEO metadata.
+ Layout files are .liquid files, so content can be built using standard HTML and Liquid.
+ Layouts can access any global Liquid objects and can contain the following Liquid objects:
+ content_for_header
+ content_for_layout.
+ Caution
+ These objects are required in theme.liquid. If references to these objects aren't included, then you can't save or update the file using the code editor or tools like Shopify CLI.
+ content_for_header
+ The content_for_header object is required in theme.liquid. It must be placed inside the HTML <head> tag. It dynamically loads all scripts required by Shopify into the document head. These scripts are required for features like reCAPTCHA, Shopify apps, and more.
+ You shouldn't try to modify or parse the content_for_header object. If content_for_header changes, then the behavior of your Liquid will change.
+ content_for_layout
+ The content_for_layout object dynamically outputs the content for each template. You need to add a reference to this object between the <body> and </body> HTML tags.
+ Usage
+ When working with layout files, you should familiarize yourself with the following concepts:
+ Supporting template-specific CSS selectors
+ Accessing and customizing checkout.liquid
+ Support template-specific CSS selectors
+ You can help create CSS rules for specific templates by outputting data from the template object in the <body> tag’s class.
+ Template-specific CSS selector
+ theme.liquid
+ 1 <body class="template-{{ template.name }}">
+ 2
+    ...
+ 3 </body>
+ theme.css
+ 1 .template-product {
+ 2
+    margin-bottom: 2em;
+ 3 }
+ Access and customize checkout.liquid
+ Deprecated
+ checkout.liquid is deprecated. It will be sunset for the Information, Shipping, and Payment checkout steps on August 13, 2024, and for the Thank you and Order status pages on August 28, 2025. Additional scripts and script tags will also be sunset for the Order status page on August 28, 2025.
+ Stores that currently use checkout.liquid need to upgrade to Checkout Extensibility before these dates. Access to checkout.liquid won't be provided to new stores, with the exception of expansion stores. Shopify Scripts will continue to work alongside Checkout Extensibility until August 28, 2025.
+ Learn how to build checkout extensions that extend the functionality of Shopify checkout.
+ To enable or disable access to checkout.liquid, Shopify Plus merchants must contact support. To learn more about enabling access, refer to Access checkout.liquid.
+ Before making any customizations, you should refer to checkout.liquid to familiarize yourself with the file format and contents, as well as Best practices for editing checkout.liquid.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Subtypes
+ Schema

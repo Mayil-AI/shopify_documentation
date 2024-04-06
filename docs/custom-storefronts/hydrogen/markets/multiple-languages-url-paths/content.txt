@@ -1,0 +1,440 @@
+Building with the Customer Account API
+ Additional SDKs
+ Setup multilingual and multi-regional storefronts with URL paths
+ In this guide you will learn how to setup your Hydrogen project for supporting multi-region and multilingual storefronts by using URL paths.
+ For example, say you have a storefront that should work in English (EN) and in non-regional French (FR) for different customers.
+ You will setup the project to handle requests as following:
+ Language URL path
+ English ca.hydrogen.shop
+ French ca.hydrogen.shop/fr
+ Requirements
+ You have a working Hydrogen project. For more information, refer to the getting started guide.
+ You have setup the regions and languages you chose for your store with Shopify Markets.
+ You're familiar with using the Storefront API with Shopify Markets.
+ Step 1: Create a utility that checks the requested URL paths locale
+ Create a utility function that reads the requested host and directory path which return the right Locale object using the Storefronts API's supported language and country codes.
+ Tip
+ You can use the /app/lib/utils.js in the Hydrogen demo store as a reference.
+ The following is an example utility function with the following locales en_CA, fr_CA and en_US.
+ utils
+ JavaScript
+ TypeScript
+ /app/lib/utils.js
+ 1 export function getLocaleFromRequest(request) {
+ 2
+    // Get the user request URL
+ 3
+    const url = new URL(request.url);
+ 4
+ 5
+    // Match the URL host
+ 6
+    switch (url.host) {
+ 7
+      case 'ca.hydrogen.shop':
+ 8
+        // This regex matches `/fr/` paths in the request
+ 9
+        if (/^\/fr($|\/)/.test(url.pathname)) {
+ 10
+          return {
+ 11
+            language: 'FR',
+ 12
+            country: 'CA',
+ 13
+          };
+ 14
+        } else {
+ 15
+          return {
+ 16
+            language: 'EN',
+ 17
+            country: 'CA',
+ 18
+          };
+ 19
+        }
+ 20
+        break;
+ 21
+      default:
+ 22
+        return {
+ 23
+          language: 'EN',
+ 24
+          country: 'US',
+ 25
+        };
+ 26
+    }
+ 27 }
+ The Locale object returned should resemble the following example, which is using the Storefont API's supported language and country codes.
+ 1 import {
+ 2
+    CountryCode,
+ 3
+    LanguageCode,
+ 4 } from '@shopify/storefront-kit-react/storefront-api-types';
+ 5
+ 6 export type Locale = {
+ 7
+    language: LanguageCode;
+ 8
+    country: CountryCode;
+ 9 };
+ Step 2: Match routes that contain language in the URL
+ Using Remix's optional segments, add ($locale) in front of your routes.
+ This ensures that routes such as /products/123 and /fr/products/123 matches to the same product route file in Remix, so that the correct page is rendered.
+ The following is an example of files and folders before file rename with ($locale):
+ 1 ├── app
+ 2 │   ├── routes
+ 3 │   │   ├── _index.tsx
+ 4 │   │   ├── products.$productHandle.tsx
+ 5 ...
+ After renaming the routes with ($locale), your new file structure should look like the following example:
+ 1 ├── app
+ 2 │   ├── routes
+ 3 │   │   ├── ($locale)._index.tsx
+ 4 │   │   ├── ($locale).products.$productHandle.tsx
+ 5 ...
+ At this point, you should see your pages render when you make requests to /fr/ URL paths.
+ Step 3: Add i18n to the storefront client
+ In your server.js, update i18n to the result of the utility function when creating the Hydrogen storefront client.
+ By doing this, you now have the locale available throughout the app for every storefront query.
+ JavaScript
+ TypeScript
+ 1 const {storefront} = createStorefrontClient({
+ 2
+    ...
+ 3
+    i18n: getLocaleFromRequest(request),
+ 4
+    ...
+ 5 });
+ Step 4: Add @inContext directive to your GraphQL queries
+ To support international pricing and languages in Storefront API, you need to pass the $country and $language with an @inContext directive within any requests.
+ Update your GraphQL queries with inContext directives to include $country and $language. Hydrogen automatically injects these parameters.
+ For example, this is a Storefront API query that returns featured collections from the homepage. This updates it to include the inContext directive.
+ GraphQL queries
+ Before
+ 1 const FEATURED_QUERY = `#graphql
+ 2
+    query homepage {
+ 3
+      collections(first: 3, sortKey: UPDATED_AT) {
+ 4
+        nodes {
+ 5
+          id
+ 6
+          title
+ 7
+          handle
+ 8
+          image {
+ 9
+            altText
+ 10
+            width
+ 11
+            height
+ 12
+            url
+      }
+ 16
+    }
+ 17
+     `;
+ After
+ 1 const FEATURED_QUERY = `#graphql
+ 2
+    query homepage($country: CountryCode, $language: LanguageCode)
+ 3
+       @inContext(country: $country, language: $language) {
+ 4
+      collections(first: 3, sortKey: UPDATED_AT) {
+ 5
+        nodes {
+ 6
+          id
+ 7
+          title
+ 8
+          handle
+ 9
+          image {
+ 10
+            altText
+ 11
+            width
+ 12
+            height
+ 13
+            url
+ 14
+          }
+ 15
+        }
+ 16
+      }
+ 17
+    }
+ 18
+     `;
+ You don't need to manually provide query variables for country and language. You can make the query with storefront.query in the data loader and see the right language and currencies for each request.
+ JavaScript
+ TypeScript
+ 1 export async function loader({
+ 2
+    context: {storefront},
+ 3 }) {
+ 4
+    return json({
+ 5
+      featureCollections: await storefront.query<{
+ 6
+        collections;
+ 7
+      }>(FEATURED_COLLECTIONS_QUERY),
+ 8
+    });
+ 9 }
+ Hydrogen automatically injects the locale parameters to storefront.query based on what was defined in i18n when you created the client.
+ For example, if a request came from hydrogen.fr, then the country CA and language FR are used as defined in the utilities function.
+ The Storefront API returns the correct currency and language if the store was set up in the Shopify admin.
+ If you want to override the locale determined by your utility option, then you can supply the query variables to the storefront.query:
+ JavaScript
+ TypeScript
+ 1 export async function loader({
+ 2
+    context: {storefront},
+ 3 }) {
+ 4
+    return json({
+ 5
+      featureCollection: await storefront.query(FEATURED_COLLECTIONS_QUERY, {
+ 6
+        variables: {
+ 7
+          country: 'CA',    // Always query back in CA currency
+ 8
+          language: 'FR',   // Always query back in FR language
+ 9
+        }
+ 10
+      }),
+ 11
+    });
+ 12 }
+ Step 5: Match non-existent pages
+ A request to /this-route-does-not-exist should return a 404 not found page.
+ To achieve this, create a $.(tsx|jsx) file in the /app/routes/` folder. This Remix splat route will handle all the non-matching routes.
+ Catch-all route
+ JavaScript
+ TypeScript
+ /app/routes/$.jsx
+ 1 export async function loader() {
+ 2
+    throw new Response('Not found', {status: 404});
+ 3 }
+ 4
+ 5 export default function Component() {
+ 6
+    return null;
+ 7 }
+ Step 6: Handle invalid URL lang parameters
+ In the /app/routes/index.jsx, set up handling of invalid URL parameters localization. For example, any request with lang parameter au when you don't handle this language, should return a 404.
+ Index route
+ JavaScript
+ TypeScript
+ /app/routes/index.jsx
+ 1 export async function loader({
+ 2
+    request,
+ 3
+    params,
+ 4
+    context,
+ 5 }) {
+ 6
+    const {language, country} = context.storefront.i18n;
+ 7
+ 8
+    if (
+ 9
+      params.locale &&
+ 10
+      params.locale.toLowerCase() !== `${language}-${country}`.toLowerCase()
+ 11
+    ) {
+ 12
+      // If the locale URL param is defined, yet we still are on `EN-US`
+ 13
+      // the the locale param must be invalid, send to the 404 page
+ 14
+      throw new Response(null, {status: 404});
+ 15
+    }
+ 16
+    ...
+ 17 }
+ Step 7: Create a utility function to add a language path prefix
+ Create a utility function that adds the locale path prefix to any URL path. For example, if the path is /products and the buyer prefers the locale fr_CA, then the utility function converts it to /fr/products.
+ Use this utility function anywhere you need to define a localized path. For example, form actions should have the localized path.
+ utils
+ JavaScript
+ TypeScript
+ /server.js
+ 1 export function usePrefixPathWithLocale(path) {
+ 2
+    const [root] = useMatches();
+ 3
+    const selectedLocale = root.data.selectedLocale;
+ 4
+ 5
+    return selectedLocale
+ 6
+      ? `${selectedLocale.pathPrefix}${
+ 7
+          path.startsWith('/') ? path : '/' + path
+ 8
+        }`
+ 9
+      : path;
+ 10 }
+ Step 8: Create Link component with locale path prefix
+ Create a <Link /> wrapper component that adds the locale path prefix. You can create this file in any components folder. In the case of the Hydrogen demo store, components folder was created for base components.
+ Caution
+ Make sure your project is using this Link component for all inbound navigation. This ensures the prefix locale gets appended for every link. For example navigating from fr/products to fr/collections without this Link component loses the fr path.
+ Link
+ JavaScript
+ TypeScript
+ /app/components/Link.js
+ 1 import {
+ 2
+    Link as RemixLink,
+ 3
+    NavLink as RemixNavLink,
+ 4
+    useMatches,
+ 5 } from '@remix-run/react';
+ 6 import {usePrefixPathWithLocale} from '~/lib/utils';
+ 7
+ 8 export function Link(props) {
+ 9
+    const {to, className, ...resOfProps} = props;
+ 10
+    const [root] = useMatches();
+ 11
+    const selectedLocale = root.data.selectedLocale;
+ 12
+ 13
+    let toWithLocale = to;
+ 14
+ 15
+    if (typeof to === 'string') {
+ 16
+      toWithLocale = selectedLocale ? `${selectedLocale.pathPrefix}${to}` : to;
+ 17
+    }
+ 18
+ 19
+    if (typeof className === 'function') {
+ 20
+      return (
+ 21
+        <RemixNavLink
+ 22
+          to={toWithLocale}
+ 23
+          className={className}
+ 24
+          {...resOfProps}
+ 25
+        />
+ 26
+      );
+ 27
+    }
+ 28
+ 29
+    return (
+ 30
+      <RemixLink to={toWithLocale} className={className} {...resOfProps} />
+ 31
+    );
+ 32 }
+ 33
+ 34 export function usePrefixPathWithLocale(path) {
+ 35
+    const [root] = useMatches();
+ 36
+    const selectedLocale = root.data.selectedLocale;
+ 37
+ 38
+    return selectedLocale
+ 39
+      ? `${selectedLocale.pathPrefix}${
+ 40
+          path.startsWith('/') ? path : '/' + path
+ 41
+        }`
+ 42
+      : path;
+ 43 }
+ Step 9: Make sure redirects are properly url encoded
+ If you have multilingual handles for your product or collection, for example, products/スノーボード, make sure to encode url when making redirects.
+ Link
+ JavaScript
+ TypeScript
+ /app/routes/($locale).products.$productHandle.js
+ 1 export async function loader({params, request, context}) {
+ 2
+    const {productHandle} = params; // productHandle = 'スノーボード'
+ 3
+ 4
+    ...
+ 5
+ 6
+    if (noSelectedProductVariant) {
+ 7
+      // Use URL to prevent accidental double url encoding
+ 8
+      const newUrl = new URL(
+ 9
+        `/products/${productHandle}?${firstVariantSearchParams.toString()}`,
+ 10
+        'http://example.com'  // Any domain to satisfy the URL api
+ 11
+      );
+ 12
+ 13
+      // Redirect to '/products/%E3%82%B9%E3%83%8E%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89?Size=154cm&Color=Syntax'
+ 14
+      throw redirect(newUrl.pathname + newUrl.search, 302);
+ 15
+    }
+ 16
+ 17
+    ...
+ Next steps
+ Create a country selector: Learn how to setup a country selector to allow users to choose their own country.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a utility that checks the requested URL paths locale
+ Step 2: Match routes that contain language in the URL
+ Step 3: Add i18n to the storefront client
+ Step 4: Add @inContext directive to your GraphQL queries
+ Step 5: Match non-existent pages
+ Step 6: Handle invalid URL lang parameters
+ Step 7: Create a utility function to add a language path prefix
+ Step 8: Create Link component with locale path prefix
+ Step 9: Make sure redirects are properly url encoded
+ Next steps
+ Updates & News
+ Developer changelog

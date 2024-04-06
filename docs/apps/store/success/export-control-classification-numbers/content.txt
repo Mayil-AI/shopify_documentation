@@ -1,0 +1,10 @@
+Export Control Classification Numbers
+ Apps that are made by Partners are hosted on servers in the United States. As a result, the sale or transfer of apps might trigger certain regulatory or licensing requirements under US export control laws and regulations. To ensure your app doesn't have any such requirements associated with it, you're required to verify your app's Export Control Classification Number (ECCN).
+ The ECCN for your apps is set to EAR99 by default, which generally doesn't require any licenses. If you're not certain of your app's ECCN, then you can identify the appropriate ECCN using documentation from the Bureau of Industry and Security. If your app has an ECCN other than EAR99, then you need to update your app.
+ To update your app's ECCN:
+ Log in to your Partner Dashboard.
+ Click Apps and select the app you need to update, then click Configuration.
+ In the App settings section, on the Export control classification number card, click Edit.
+ In the modal, select Other and enter your ECCN.
+ Click Save.
+ Was this page helpful?

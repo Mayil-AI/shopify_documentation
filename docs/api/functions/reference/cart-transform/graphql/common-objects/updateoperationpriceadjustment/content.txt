@@ -1,0 +1,10 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ UpdateOperationPriceAdjustment object
+ 2024-04 latest
+ A price adjustment to apply to a cart line item.
+ Fields
+ adjustment (UpdateOperationPriceAdjustmentValue!) required
+ The price adjustment per unit to apply to the cart line item.

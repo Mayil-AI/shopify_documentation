@@ -1,0 +1,25 @@
+Billing
+ App Store
+ App home page
+ Your app home page is the first page that merchants see, and it should provide daily value to them.
+ Design
+ Design the app home page in a way that quickly answers any questions that merchants might have and conveys the actions that are available to them.
+ Switch to desktop view
+ Switch to mobile view
+ Purpose
+ App homepages take many forms. A good home page should do the following:
+ Provide status updates.
+ Enable merchants to respond to immediate needs.
+ Provide clear call-to-action (CTA) buttons so that merchants can easily see the actions that they can perform in the app.
+ Must Do
+ Your app home page should provide merchants with quick statistics, status updates, or information that’s immediately actionable.
+ Support
+ Providing stellar customer support is a great way to set your app and service apart from the rest. Place your support CTAs in a place that's consistent and discoverable. Be as responsive to merchant questions as you can.
+ Place your support CTAs consistently, but also out of the way of merchants. You can use an item in App Bridge’s ui-nav-menu web component or NavMenu React component, place a link in your page footers, or use a floating action button.
+ Previous
+ Alerts
+ Next
+ Onboarding
+ Was this page helpful?
+ YesNo
+ Updates & News

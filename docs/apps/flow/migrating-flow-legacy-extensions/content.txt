@@ -1,0 +1,50 @@
+Billing
+ App Store
+ Migrating Flow legacy extensions
+ If you have existing Flow extensions that were created through the Partner Dashboard, then you can import these extensions into your codebase. After you deploy the extensions that you’ve imported into the Shopify CLI, the Shopify CLI manages those extensions going forward.
+ Please note that extensions that are migrated to the CLI will be using the handle properties going forward. The handle property is a unique string that identifies your extension and that's used when interacting with the Shopify Flow API (see the triggers and actions runtime payloads).
+ A handle property is created in the extension's TOML configuration file after running the import command. Note that you can't change the handle property of the extensions that are present in your app's codebase after you've run the dev or deploy commands.
+ Requirements
+ Create a Partner account.
+ Create an app that uses Shopify CLI 3.0 or higher, or migrate your existing app so it's compatible with Shopify CLI 3.0 or higher.
+ Step 1: Import your Flow task extension locally
+ Note
+ The command in this procedure only generates the local file representation of your Partner Dashboard extensions. Running the deploy command migrates your extensions to CLI managed-extensions. You can only import extensions that have versions. The published version is imported, if one exists. Otherwise, the latest version is imported.
+ Navigate to your app directory.
+ To start importing your Flow extension, run the following command:
+ Terminal
+ #!/bin/bash
+ $ npm run shopify app import-flow-legacy-extensions
+ Select an extension from the list of extensions that are available to import.
+ After you’ve selected the extension to import, the Shopify CLI automatically generates the file representation in your application’s /extensions directory and displays a success message.
+ You can then go into your application’s /extensions directory and start editing your extension. The file structure of your extension should look like the following:
+ /my-flow-extension
+   shopify.extension.toml
+ To learn more about the extensions file structure, refer to App structure and the documentation for your extension type.
+ Available Flags
+ client_id
+ An application’s client_id. The ID enables you to target a specific application when running the import command.
+ Terminal
+ #!/bin/bash
+ $ npm shopify app import-flow-legacy-extensions --client_id abc123
+ Step 2: Migrate your extension
+ After you've imported the extension, you can migrate your extension by using Shopify CLI's deploy command.
+ Note
+ Deploying extensions using the app deploy command also publishes the extensions. We recommend testing changes by using app dev or deploying to a test app before deploying them to a production app.
+ Use the Shopify CLI to deploy your extensions:
+ Navigate to your app directory.
+ Run the following command to start deploying your extension(s):
+ Terminal
+ #!/bin/bash
+ $ npm run deploy
+ Follow the prompts.
+ When you receive confirmation that the deploy was successful, your extensions have been released.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Step 1: Import your Flow task extension locally
+ Step 2: Migrate your extension
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

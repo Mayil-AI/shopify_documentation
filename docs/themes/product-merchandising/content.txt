@@ -1,0 +1,15 @@
+Product recommendations
+ Media and images
+ Gift cards
+ Pricing and payments
+ Delivery and fulfillment
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Product merchandising
+ To help merchants to provide an engaging product experience, Shopify has options for the following:
+ Product variants: A simple organization of product options to help customers easily find and select their desired product.
+ Product media: Offer an immersive experience and enable merchants to increase a customer's confidence in their product.
+ Product recommendations: Enable customers to discover new products.
+ Gift cards: An alternative payment method. You can add a recipient form to your gift card product page.
+ Was this page helpful?

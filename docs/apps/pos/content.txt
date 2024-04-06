@@ -1,0 +1,20 @@
+App Store
+ Shopify Point of Sale
+ Shopify Point of Sale (POS) is a point of sale app that enables users to sell products in person. Users can create a cart for each customer, customize the cart in several ways, and then accept payment with a wide range of payment methods.
+ Integrate with Shopify POS
+ There are multiple options available that enable you to customize the Shopify POS app. The following list introduces the available technologies that you can use to extend the capabilities of Shopify POS.
+ POS UI Extensions - Use POS UI Extensions to extend the functionality of the Shopify POS app at defined extension points. With the extension API, components, and tools, developers can build a custom merchant experience in the Shopify POS app with a native look and feel.
+ POS links - Use POS links to link directly to your Shopify app from pages in the Shopify POS app.
+ Cart app extension - Add the cart app extension to your app so that users can quickly and easily manage loyalty points and apply discounts directly to the cart from within Shopify POS.
+ Product recommendations extension - Add the product recommendations extension to your app so that users can quickly and easily access product recommendations from within Shopify POS.
+ Home screen
+ The home screen on the Shopify POS app has a smart grid that is a set of configurable tiles that display different resources. POS users can add tiles representing frequently accessed products, collections, apps, or features. If an app has multiple functions, then users can choose which function the tile performs.
+ Next steps
+ Get started with extending the Shopify POS.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Integrate with Shopify POS
+ Home screen
+ Next steps
+ Updates & News

@@ -1,0 +1,95 @@
+Collaborator accounts
+ Theme Inspector
+ GitHub integration
+ Overview
+ Getting started
+ Lighthouse CI
+ Dawn
+ Best practices
+ Integrating apps
+ Product merchandising
+ Shopify GitHub integration for themes
+ Note
+ For information about using the Shopify Github app with Hydrogen storefront code, refer to the Oxygen documentation for the Shopify GitHub app.
+ The Shopify GitHub integration lets you connect a GitHub account or organization with a Shopify login. This connection helps you to make and track changes to online store theme code. It also helps you to collaborate with other developers and share progress in real time.
+ Features
+ The Shopify GitHub integration enables you to do the following tasks:
+ Automatically pull and push theme code from any organization or repository associated with your GitHub account
+ Connect one or more branches from a repository to easily develop and test new theme features or campaigns
+ Keep a theme up to date with commits to a branch, and track edits made in the Shopify admin, including the code editor and theme editor
+ Connect branches to unpublished or published themes
+ How it works
+ The Shopify GitHub integration updates your theme in the Shopify admin whenever the connected branch is updated. It also commits changes made through the Shopify admin to the branch to ensure that the branch and theme in the admin always match.
+ Note
+ Files are updated in GitHub whenever changes are made to a connected theme. This can't be disabled. If you want to separate the code that Shopify has access to from the rest of your code, then consider using multiple repositories or subtrees. For more information, refer to Version control best practices for Shopify themes.
+ Commits by Shopify
+ When your theme is edited through the Shopify admin, any changes are automatically committed to your repository by Shopify. A commit is created when any owner, staff member, or collaborator makes changes. Changes are added as a commit to the connected branch when they are saved.
+ You can edit your theme in the following areas of the Shopify admin:
+ The theme editor. When you customize a theme using the theme editor, these customizations are stored in setting files, which are part of the theme code.
+ The code editor.
+ Theme apps installed in the Online Store.
+ Connection to GitHub
+ Only the code from branches that are connected as themes is visible to other users in the store. After a branch is connected as a theme, any user who has the Themes permission can disconnect it.
+ You can connect only one GitHub account to your Shopify login. After you connect your Shopify login to a GitHub account, your Shopify login can connect repositories and branches that the Shopify GitHub app has access to.
+ If multiple users need to manage connections to a repository, then each user needs to authorize the Shopify GitHub app for their own account.
+ To disconnect your GitHub account or organization from the Shopify store, you can uninstall the Shopify GitHub app through GitHub.
+ Tip
+ If you don’t have permission to install the app for your organization, then you can send a request for your administrator to approve the installation, or install it on your organization's behalf. You can’t connect any repositories until your administrator completes the installation.
+ Organization access
+ If you grant the Shopify GitHub app access to repositories in a GitHub organization, then any user that has a GitHub account that is part of the organization, and has the Manage themes permission or Themes permission, can view any repository that the app has access to in the list of available repositories. However, these users can only connect branches for which they have write permissions, and the branch needs to match the required repository structure.
+ If you want to prevent users from viewing certain repositories, then you should grant Shopify’s GitHub app access to only the repositories that you want to connect to the Shopify store. If you grant access to only specific repositories and you create a new repository that you want to use with Shopify, then you need to grant the app access to the repository through GitHub.
+ Change a GitHub account into a GitHub organization
+ If you've changed your GitHub user into a GitHub organization while having the Shopify GitHub app installed, then you need to uninstall and reinstall the app so that Shopify can connect to new repositories.
+ GitHub permissions
+ The Shopify GitHub app requires the following permissions to access certain data in your GitHub account or organization:
+ Read-only access deployments, metadata
+ Read and Write access administration, code, pull requests, secrets, workflows
+ Note
+ Access to deployments, secrets, and workflows is necessary to support custom storefronts built with Hydrogen. For security reasons, Shopify recommends granting permissions on a per-repository basis, instead of granting them for all repositories in your account or organization.
+ Conflicts and error handling
+ If a user is editing an open file in the theme editor while the same file is being edited in GitHub or the code editor, then the user is warned that they're overriding the new changes when they save.
+ There are currently no conflict alerts in the code editor. The version of the file in the code editor overwrites the GitHub version of the file.
+ In case of a conflict in commits or pushes made outside Shopify, the developer has a chance to resolve it in GitHub or force push the change to overwrite the file in Shopify.
+ In limited cases, conflicts might occur if a file is saved in the theme editor or code editor and a change is pushed to the GitHub branch simultaneously. In this case, the commit coming from Shopify might be viewed as outdated and rejected by GitHub.
+ If you suspect that an error has occurred when pushing or pulling changes, then you can view the logs for the last few version control events by clicking View logs beside the Last saved timestamp on the theme card.
+ If you believe that the theme has fallen out of date with the branch, then you can pull the latest version of the branch manually by going to the theme card and selecting Actions > Reset to last commit.
+ Limitations
+ Branch connections and commits from GitHub to Shopify can be a maximum of 50 MB overall, and 5 MB for each file.
+ The number of pushes and pulls that you can make using the Shopify GitHub integration is controlled by standard GitHub app rate limits.
+ Getting started
+ To learn how to connect your account or organization to GitHub and connect a branch as a theme, refer to Getting started with the Shopify GitHub integration.
+ Repository structure
+ You can connect only branches that match the default Shopify theme folder structure. This structure represents a buildless theme, or a theme that has already gone through any necessary file transformations.
+ Shopify theme folder structure
+ 1 .
+ 2 ├── assets
+ 3 ├── config
+ 4 ├── layout
+ 5 ├── locales
+ 6 ├── sections
+ 7 ├── snippets
+ 8 └── templates
+ 9
+      └── customers
+ Tip
+ Folders in the repository that don't match this structure are ignored.
+ The .github folder in your repository is ignored. As a result, you can still use task automation and continuous integration tools, such as Lighthouse CI, by using this method.
+ If you want to use the Shopify GitHub integration with a theme that uses a build pipeline, then you can separate your source and generated code into two separate repositories, or store your generated code as a subtree or submodule, which you can then connect to a Shopify theme. You can also use these approaches to prevent Shopify from making changes to source code that follows the default folder structure.
+ Using these models, you need to backfill changes that are made to your generated code by Shopify into your source code. To learn more about these approaches to version control, refer to our version control best practices.
+ Branch management strategies
+ Consider the following when managing themes connected to GitHub repositories in Shopify:
+ You can't reconnect a branch to a theme after it has been disconnected. If you reconnect a branch, then it's added as a new theme.
+ If an unpublished theme is connected to a branch and then published, then it maintains its connection to the branch.
+ To understand the relationship between branches and themes, and how to optimize your workflow to use branches effectively, refer to our version control best practices.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Features
+ How it works
+ Limitations
+ Getting started
+ Repository structure
+ Branch management strategies
+ Updates & News
+ Developer changelog
+ Partner blog

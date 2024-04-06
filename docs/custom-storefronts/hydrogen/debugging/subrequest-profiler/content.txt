@@ -1,0 +1,165 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Debug performance issues with the Subrequest Profiler
+ Learn how to inspect network requests happening on the server side using Hydrogen's Subrequest Profiler. This tool helps you diagnose network and cache performance issues happening on the server side.
+ Requirements
+ You've completed the getting started guide and have a Hydrogen project that you can run in your local development environment.
+ How to use the Subrequest Profiler
+ In your Hydrogen project, start the development server by running npm run dev.
+ Open your app at http://localhost:3000.
+ In a different browser tab, open the Subrequest Profiler at http://localhost:3000/subrequest-profiler.
+ The interface looks similar to the following screenshot:
+ The Subrequest Profiler will capture any server side requests created by createStorefrontClient and createWithCache.
+ The Subrequest Profiler includes the following components :
+ A waterfall chart of server-side network requests. This is a visual representation of when requests are executed, and the time it took to fetch these requests over the network.
+ A table of server-side network requests. This is the same network request data as the waterfall cart, presented in tabular format.
+ The network request details panel. This provides detailed information for the selected request or subrequest, such as the response headers, cache status, and response data, if available.
+ Note
+ To inspect third-party network requests with the Subrequest Profiler, you need to make the request with Hydrogen's createWithCache utility, even if you don't actually store the response data in a cache. Subrequest Profiler does not monitor subrequests made with native fetch.
+ How to provide more debug information for a request
+ The Subrequest Profiler attempts to select a human-readable name for each request, based on the data query if possible. If you want to customize the request display name, then add the displayName property to your Storefront API queries and mutations:
+ storefront.query example
+ JavaScript
+ TypeScript
+ /app/routes/($locale)._index.jsx
+ 1 context.storefront.query(COLLECTION_HERO_QUERY, {
+ 2
+    displayName: 'Collection hero',
+ 3
+    variables: {
+ 4
+      handle: 'backcountry',
+ 5
+      country,
+ 6
+      language,
+ 7
+    },
+ 8 });
+ For createWithCache, you can add additional debug information with the addDebugData function from the action function callback. The following is an example:
+ createWithCache example
+ JavaScript
+ TypeScript
+ server.js
+ 1 const withCache = createWithCache({
+ 2
+    cache,
+ 3
+    waitUntil,
+ 4
+    request,
+ 5 });
+ 6 const some3PEndpoint = async () => {
+ 7
+    return await withCache(
+ 8
+      ['Some cache key'],
+ 9
+      CacheLong(),
+ 10
+      ({addDebugData}) => {
+ 11
+        return fetch('https://some-3p-api-endpoint.com').then(async (response) => {
+ 12
+          if (process.env.NODE_ENV === 'development') {
+ 13
+            addDebugData({
+ 14
+              displayName: '3P endpoint name',
+ 15
+              response,
+ 16
+            });
+ 17
+          }
+ 18
+          return (await res.json());
+ 19
+        });
+ 20
+      },
+ 21
+    );
+ 22 };
+ How to identify network performance issues with the Subrequest Profiler
+ You can diagnose potential network performance issues with the network request waterfall chart. The following are examples of request patterns that often cause performance issues:
+ Request waterfall
+ A request waterfall happens when some requests can't begin fetching until a previous request finishes. This slows the overall response time.
+ The following example is a request waterfall pattern in action:
+ Request waterfall example
+ JavaScript
+ TypeScript
+ /app/routes/($locale)._index.jsx
+ 1 export async function loader({context}) {
+ 2
+    return defer({
+ 3
+      query1: await context.some3p('query1'),
+ 4
+      query2: await context.some3p('query2'),
+ 5
+      query3: await context.some3p('query3'),
+ 6
+    });
+ 7 }
+ The following image shows the waterfall query in action. The server can't return any data until all subrequests have completed, with each running one after the other. In this case, it took 900 milliseconds to render the server's response:
+ Evaluate your queries and determine whether you need the result of a subrequest to start another subrequest. If there's no data required from one query to start another, then it's faster to execute these requests in parallel. The following is an example:
+ Parallel request example
+ JavaScript
+ TypeScript
+ /app/routes/($locale)._index.jsx
+ 1 export async function loader({context}) {
+ 2
+    const [query1, query2, query3] = await Promise.all([
+ 3
+      context.some3p('query1'),
+ 4
+      context.some3p('query2'),
+ 5
+      context.some3p('query3'),
+ 6
+    ]);
+ 7
+    return defer({
+ 8
+      query1,
+ 9
+      query2,
+ 10
+      query3,
+ 11
+    });
+ 12 }
+ The following image shows the same requests now running simultaneously, which reduces the server's response time to 300 milliseconds:
+ Defer non-critical requests
+ You can reduce the overall time spent server rendering by deferring some subqueries.
+ For example, your product page might contain critical information like the product description, price, and inventory level, along with less critical data, such as product reviews loaded from a third-party API. In this case, you can return the key product information as soon as it's available, and load the remaining data after the page has loaded.
+ The following example code shows how you can return query1 as soon as possible with the await syntax, while the remaining subqueries run after the page has loaded:
+ Defer request example
+ JavaScript
+ TypeScript
+ /app/routes/($locale)._index.jsx
+ 1 export async function loader({context}) {
+ 2
+    return defer({
+ 3
+      query1: await context.some3p('query1'),
+ 4
+      query2: context.some3p('query2'),
+ 5
+      query3: context.some3p('query3'),
+ 6
+    });
+ 7 }
+ The following image shows the initial page load finishing in 90 milliseconds, while the remaining data starts loading in parallel after the page has rendered in the user's browser:
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ How to use the Subrequest Profiler
+ How to provide more debug information for a request
+ How to identify network performance issues with the Subrequest Profiler
+ Updates & News
+ Developer changelog
+ Partner blog

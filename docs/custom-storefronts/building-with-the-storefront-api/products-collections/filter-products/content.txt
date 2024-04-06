@@ -1,0 +1,980 @@
+Building with the Customer Account API
+ Additional SDKs
+ Filter products in a collection with the Storefront API
+ You can use the Storefront API to filter products in a collection. This functionality lets you build a desired customer experience on a storefront, such as the ability to narrow down the search results that you display to customers.
+ This guide shows you how to filter products in a collection based product type, vendor, variant options, price, and whether the product is in stock.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ You're familiar with querying products and collections.
+ You've created products and collections in your store.
+ You've verified that an Online Store 2.0 compatible theme, such as Dawn, is installed by checking if your theme supports filtering. The Online Store 2.0 theme does not need to be the published theme to enable product filtering.
+ You've installed the Shopify Search & Discovery app. By default, the app enables filters for the availability and price filters. To enable other built-in filters such as tags, vendor, or product type, click Search & Discovery > Filters > Edit filters.
+ Your Headless channel or custom app has the unauthenticated_read_product_listings access scopes. Learn how to request permissions for Headless channels.
+ You're using API version 2022-01 or higher.
+ Step 1: Query products
+ You can use the Storefront API to make the following queries:
+ Query products by collection
+ Query products by type
+ Query products by vendor
+ Query products by variant options
+ Query products by price
+ Query products in stock
+ Query products by metafield value
+ Query products by collection
+ To retrieve products by the collection that they belong to, you can query the collection's handle. You'll use the handle in subsequent steps in this tutorial to filter products in a collection based on product type, vendor, variant options, price, and whether the product is in stock.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query AllProducts {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 10) {
+ 5
+        edges {
+ 6
+          node {
+ 7
+            handle
+ 8
+          }
+ 9
+        }
+ 10
+      }
+ 11
+    }
+ 12 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [{
+ 7
+            "node": {
+ 8
+              "handle": "product-a",
+ 9
+            }
+ 10
+          }]
+ 11
+        }
+ Query products by type
+ You can query products in a collection by their type (productType). In the following example, products in the collection that have the "shoes" product type are returned. Make sure to enable Product Type filter in Search & Discovery > Filters > Edit filters.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ProductType {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 10, filters: { productType: "shoes"}) {
+ 5
+        edges {
+ 6
+          node {
+ 7
+            handle
+ 8
+            productType
+ 9
+          }
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "handle": "product-a",
+ 10
+                "productType": "shoes"
+ 11
+              }
+ 12
+            }
+ 13
+          ]
+ 14
+ 17 }
+ Query products by vendor
+ You can query products in a collection by vendor (productVendor). In the following example, products in the collection that are from a vendor called "bestshop" are returned. Make sure to enable Vendor filter in Search & Discovery > Filters > Edit filters.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query ProductVendor {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 10, filters: { productVendor: "bestshop"}) {
+ 5
+        edges {
+ 6
+          node {
+ 7
+            handle
+ 8
+            vendor
+      }
+ 12
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+ 9
+                "handle": "product-a",
+ 10
+                "productVendor": "bestshop"
+ 11
+              }
+ 12
+            }
+ 13
+          ]
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17 }
+ Query products by variant options
+ Merchants can add variants to a product that has more than one option, such as size or color. Each combination of option values for a product can be a variant of that product.
+ You can query products by their variant option name (variantOptionName) and value (variantOptionValue). For example, a variant option's name might be color, and the variant option's value might be red.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query VariantOptions {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(
+ 5
+        first: 10
+ 6
+        filters: { variantOption: { name: "color", value: "red" } }
+ 7
+      ) {
+ 8
+        edges {
+ 9
+          node {
+ 10
+            handle
+ 11
+            variants(first: 10) {
+ 12
+              edges {
+ 13
+                node {
+ 14
+                  selectedOptions {
+ 15
+                    name
+ 16
+                    value
+ 17
+                  }
+ 18
+                }
+ 19
+              }
+ 20
+            }
+ 21
+          }
+ 22
+        }
+ 23
+      }
+ 24
+    }
+ 25 }
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "handle": "product-a",
+ 10
+                "variants": {
+ 11
+                  "edges": [
+ 12
+                    {
+ 13
+                      "node": {
+ 14
+                        "selectedOptions": [
+ 15
+                          {
+ 16
+                            "name": "color",
+ 17
+                            "value": "red"
+ 18
+                          }
+ 19
+                        ]
+ 20
+                      }
+ 21
+                    }
+ 22
+                  ]
+ 23
+ 26
+          ]
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+ Query products by price
+ You can query products in a collection by their price. In the following example, the first 10 products that are between the price range of 25.00 CAD and 50.00 CAD are returned.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query Price {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(
+ 5
+        first: 10
+ 6
+        filters: { price: { min: 25.0, max: 50.0 } }
+ 7
+      ) {
+ 8
+        edges {
+ 9
+          node {
+ 10
+            handle
+ 11
+            priceRange {
+ 12
+              minVariantPrice {
+ 13
+                amount
+ 14
+                currencyCode
+ 15
+              }
+ 16
+              maxVariantPrice {
+ 17
+                amount
+ 18
+                currencyCode
+ 19
+              }
+ 20
+            }
+ 21
+          }
+ 22
+        }
+ 23
+      }
+ 24
+    }
+ 25 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "handle": "product-a",
+ 10
+                "priceRange": {
+ 11
+                  "minVariantPrice": {
+ 12
+                    "amount": "29.99",
+ 13
+                    "currencyCode": "CAD"
+ 14
+                  },
+ 15
+                  "maxVariantPrice": {
+ 16
+                    "amount": "44.99",
+ 17
+                    "currencyCode": "CAD"
+ 18
+                  }
+ 19
+                }
+ 20
+              }
+ 21
+            }
+ 22
+          ]
+ 23
+        }
+ 24
+      }
+ 25
+    }
+ 26 }
+ Limitations
+ For filters of type price, passing in multiple ranges isn't supported. If you specify multiple price filters, then everything is ignored except for the first range. For example, the following filters are equivalent:
+ GraphQL input
+ 1 {
+ 2
+    filters: [
+ 3
+      { price: { min: 10 } },
+ 4
+      { price: { min: 5, max: 15 } }
+ 5
+    ]
+ 6 }
+ GraphQL input
+ 1 {
+ 2
+    filters: [
+ 3
+      { price: { min: 10 } }
+ 4
+    ]
+ 5 }
+ Query products in stock
+ To retrieve information about whether products and their associated variants are available for sale, you can specify the available: true filter and query the availableForSale field on the products object.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query InStock {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 10, filters: { available: true}) {
+            handle
+ 8
+            availableForSale
+ 9
+          }
+    }
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "handle": "product-a",
+ 10
+                "availableForSale": true,
+ 11
+              }
+ 12
+            }
+ 13
+          ]
+ 14
+        }
+ 15
+      }
+ 16
+    }
+ 17 }
+ Query products by metafield value
+ You can query products in a collection by a product or variant metafield. Use either productMetafield or variantMetafield to specify the MetafieldFilter parameters.
+ The following example returns the first product that has a product metafield value of tumble dry for a metafield with a key of drying_instructions and a product_care namespace.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query tumbleDryProducts {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 1,
+ 5
+       filters: {
+ 6
+          productMetafield:{
+ 7
+            namespace:"product_care",
+ 8
+            key:"drying_instructions",
+ 9
+            value:"tumble dry"
+ 10
+          }
+ 11
+        }) {
+ 12
+        edges {
+ 13
+          node {
+ 14
+            id
+ 15
+            title
+ 16
+          }
+ 17
+        }
+ 18
+      }
+ 19
+    }
+ 20 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "id": "gid://shopify/Product/1",
+ 10
+                "title": "First Product",
+ 11
+              }
+ 12
+            }
+ 13
+          ]
+ 14
+ 17 }
+ Limitations
+ Product and variant metafield filters are available for metafields defined using the metafield types single_line_text_field, boolean, numeric_integer, numeric_decimal using API version 2022-04 or higher.
+ Step 2: Combine filters
+ You can combine filters in your queries to retrieve products in a collection that have a set of characteristics.
+ Different filters get combined using the AND operator. For example [{ productType: "shoes" }, { productVendor: "bestshop" }] returns products that have the productType "shoes" AND are from the productVendor "bestshop".
+ Multiples of the same filter get combined using the OR operator. For example, [{ productType: "shoes" }, { productType: "socks" }] returns products that have the productType socks OR shoes.
+ The following example shows how to query for products that have all the following characteristics:
+ Type: shoes
+ Vendor: bestshop
+ Color: blue
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query MultipleVariantOptionsWithInStock {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 10, filters: [
+ 5
+        {
+ 6
+          productType: "shoes"
+ 7
+        },
+ 8
+        {
+ 9
+          productVendor: "bestshop"
+ 10
+        },
+ 11
+        {
+ 12
+          variantOption: {
+ 13
+              name: "color",
+ 14
+              value: "blue"
+      ]) {
+ 18
+        edges {
+ 19
+          node {
+ 20
+            handle
+ 21
+            availableForSale
+ 22
+            productType
+ 23
+            vendor
+ 24
+            variants(first: 10) {
+ 25
+              edges {
+ 26
+                node {
+ 27
+                  selectedOptions {
+ 28
+                    name
+ 29
+                    value
+ 30
+                  }
+ 31
+                }
+ 32
+              }
+ 33
+            }
+ 34
+          }
+    }
+ 38 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "handle": "product-a",
+ 10
+                "availableForSale": true,
+ 11
+                "productType": "shoes",
+ 12
+                "productVendor": "bestshop",
+ 13
+                "variants": {
+ 14
+                  "edges": [
+ 15
+                    {
+ 16
+                      "node": {
+ 17
+                        "selectedOptions": [
+ 18
+                          {
+ 19
+                            "name": "color",
+ 20
+                            "value": "blue"
+ 21
+                          }
+ 22
+                        ]
+ 23
+                      }
+ 24
+                    }
+ 25
+                  ]
+ 26
+                }
+ 27
+              }
+ 28
+            },
+ 29
+            {
+ 30
+              "node": {
+ 31
+                "handle": "product-b",
+ 32
+                "availableForSale": true,
+ 33
+                "productType": "shoes",
+ 34
+                "productVendor": "bestshop",
+ 35
+                "variants": {
+ 36
+                  "edges": [
+ 37
+                    {
+ 38
+                      "node": {
+ 39
+                        "selectedOptions": [
+ 40
+                          {
+ 41
+                            "name": "color",
+ 42
+                            "value": "red"
+ 43
+                          },
+ 44
+                          {
+ 45
+                            "name": "color",
+ 46
+                            "value": "blue"
+ 47
+                          }
+ 48
+                        ]
+ 49
+                      }
+ 50
+                    }
+ 51
+                  ]
+ 52
+                }
+ 53
+              }
+ 54
+            }
+ 55
+          ]
+ 56
+        }
+ 57
+      }
+ 58
+    }
+ 59 }
+ Step 3: Query available filters
+ The following example shows how to query the available filters for products in a collection. You can use the response to construct a filter panel on a storefront.
+ The type field specifies two types of user interface (UI) components: LIST and PRICE_RANGE. LIST represents multiple choice options and PRICE_RANGE represents a range of prices.
+ Each filter includes a list of selectable values with a corresponding count that indicates how many products in the collection match the filter value. Each value has an input field with a JSON serialized value. The JSON serialized value matches the ProductFilter input schema and can be used as input to the filters field of the parent products field.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query Facets {
+ 2
+    collection(handle: "filterable-collection") {
+ 3
+      handle
+ 4
+      products(first: 10) {
+ 5
+        filters {
+ 6
+          id
+ 7
+          label
+ 8
+          type
+ 9
+          values {
+ 10
+            id
+ 11
+            label
+ 12
+            count
+ 13
+            input
+      }
+ 17
+    }
+ 18 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collection": {
+ 4
+        "handle": "filterable-collection",
+ 5
+        "products": {
+ 6
+          "filters": [
+ 7
+            {
+ 8
+              "id": "filter.v.availability",
+ 9
+              "label": "Availability",
+ 10
+              "type": "LIST",
+ 11
+              "values": [
+ 12
+                {
+ 13
+                  "id": "filter.v.availability0",
+ 14
+                  "label": "Out of Stock",
+ 15
+                  "count": 3,
+ 16
+                  "input": "{\"available\":false}"
+ 17
+                },
+ 18
+                {
+ 19
+                  "id": "filter.v.availability1",
+ 20
+                  "label": "In Stock",
+ 21
+                  "count": 1,
+ 22
+                  "input": "{\"available\":true}"
+ 23
+                }
+ 24
+              ]
+ 25
+            },
+ 26
+            {
+ 27
+              "id": "filter.p.type",
+ 28
+              "label": "Type",
+ 29
+              "type": "LIST",
+ 30
+              "values": [
+ 31
+                {
+ 32
+                  "id": "filter.p.typeshoes",
+ 33
+                  "label": "Shoes",
+ 34
+                  "count": 3,
+ 35
+                  "input": "{\"productType\":\"shoes\"}"
+ 36
+                },
+ 37
+                {
+ 38
+                  "id": "filter.p.typesocks",
+ 39
+                  "label": "Socks",
+ 40
+                  "count": 1,
+ 41
+                  "input": "{\"productType\":\"socks\"}"
+ 42
+                }
+ 43
+              ]
+ 44
+            },
+ 45
+            {
+ 46
+              "id": "filter.p.vendor",
+ 47
+              "label": "Vendor",
+ 48
+              "type": "LIST",
+ 49
+              "values": [
+ 50
+                {
+ 51
+                  "id": "filter.p.vendorshoe-company",
+ 52
+                  "label": "Shoe Company",
+ 53
+                  "count": 3,
+ 54
+                  "input": "{\"productVendor\":\"shoe-company\"}"
+ 55
+                },
+ 56
+                {
+ 57
+                  "id": "filter.p.vendordsock-company",
+ 58
+                  "label": "Sock Company",
+ 59
+                  "count": 1,
+ 60
+                  "input": "{\"productVendor\":\"sock-company\"}"
+ 61
+                }
+ 62
+              ]
+ 63
+            },
+ 64
+            {
+ 65
+              "id": "filter.v.option.color",
+ 66
+              "label": "Color",
+ 67
+              "type": "LIST",
+ 68
+              "values": [
+ 69
+                {
+ 70
+                  "id": "filter.v.option.colorblue",
+ 71
+                  "label": "Blue",
+ 72
+                  "count": 1,
+ 73
+                  "input": "{\"variantOption\":{\"name\":\"color\",\"value\":\"blue\"}}"
+ 74
+                },
+ 75
+                {
+ 76
+                  "id": "filter.v.option.colorred",
+ 77
+                  "label": "Red",
+ 78
+                  "count": 1,
+ 79
+                  "input": "{\"variantOption\":{\"name\":\"color\",\"value\":\"red\"}}"
+ 80
+                }
+ 81
+              ]
+ 82
+            },
+ 83
+            {
+ 84
+              "id": "filter.v.option.size",
+ 85
+              "label": "Size",
+ 86
+              "type": "LIST",
+ 87
+              "values": [
+ 88
+                {
+ 89
+                  "id": "filter.v.option.titlesmall",
+ 90
+                  "label": "Small",
+ 91
+                  "count": 1,
+ 92
+                  "input": "{\"variantOption\":{\"name\":\"size\",\"value\":\"small\"}}"
+ 93
+                },
+ 94
+                {
+ 95
+                  "id": "filter.v.option.titlelarge",
+ 96
+                  "label": "Large",
+ 97
+                  "count": 1,
+ 98
+                  "input": "{\"variantOption\":{\"name\":\"size\",\"value\":\"large\"}}"
+ 99
+                }
+ 100
+              ]
+ 101
+            }
+ 102
+          ]
+ 103
+        }
+ 104
+      }
+ 105
+    }
+ 106 }
+ Next steps
+ Learn how to create and update a cart in Shopify with the Storefront API.
+ Learn how to manage customer accounts with the Storefront API.
+ Support multiple languages on a storefront with the Storefront API.
+ Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Query products
+ Step 2: Combine filters
+ Step 3: Query available filters
+ Next steps
+ Updates & News
+ Developer changelog

@@ -1,0 +1,45 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Dawn
+ Dawn is Shopify's reference theme, which is built for performance, flexibility, and ease of use. It uses Online Store 2.0 features, including JSON templates, which support app blocks and sections on all pages. Dawn is used as the basis of all free Shopify themes.
+ Dawn is an ultra-lightweight, mobile-first theme that uses atomic components, minimal JavaScript, and an opinionated set of features. It maximizes flexibility for merchants, while minimizing complexity.
+ Caution
+ If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be substantively different from Dawn so that it provides added value for users.
+ Note
+ Development stores created after June 29, 2021 use Dawn as their default theme. You can also install Dawn directly from the Shopify Theme Store.
+ We developed a set of best practices and used them to build Dawn:
+ Performance - Every part of Dawn was built with performance in mind. Dawn uses several strategies to optimize performance. For example, it makes use of CSS and native browser features over JavaScript wherever possible to reduce the bundle size and decrease load times.
+ Design - Dawn was built with the experience of merchants and customers in mind. It combines flexibility and ease of use with powerful brand expression and an intuitive interface.
+ Accessibility - Dawn was designed and built to follow our best practices around accessibility. Its settings are organized to help merchants design accessible color schemes.
+ Use of sections and blocks - Dawn builds flexibility into templates by splitting template functionality into sections and blocks. This allows merchants to build custom layouts on any page and introduce app blocks in multiple locations on a page.
+ You can explore Dawn and its code to understand how these best practices can be applied.
+ Shopify/dawn
+ View the Dawn repository on GitHub.
+ Demo store
+ Visit the Dawn demo store to see the theme in action.
+ Ways to use Dawn
+ The following table describes our guidelines for developers that use Dawn:
+ Allowed Not allowed
+ Clone and customize Dawn for your store or a client's store.
+ Explore Dawn to understand theme best practices.
+ Explore Dawn to understand theme components and feature implementations.
+ Leverage Dawn's components for your own theme, or a client's theme.
+ Use Dawn as a starting point to build a unique theme, with its own distinct identity and value proposition, for the Shopify Theme Store.
+ Themes that are submitted to the Shopify Theme Store must be substantively different from Dawn.
+ Submit a minimally-customized version of Dawn to the Shopify Theme Store for review.
+ Sell Dawn, a customized version of Dawn, or any of its components on a third-party website or platform.
+ Explore example theme components
+ Shopify theme architecture is flexible and can be implemented in different ways to support your merchant's goals, or meet the needs of a certain merchant segment.
+ If you're new to Shopify themes or want to understand how certain architectural components can be used, then you can explore the Dawn implementation of the component.
+ Because Dawn already has JSON templates for all of its pages, you can use it as a model when adding sections to your own theme.
+ If a component is implemented in Dawn, then its implementation is linked from the component documentation.
+ Clone Dawn and build
+ You can use Dawn as a starting point to build your own theme. If you're using Shopify CLI for theme development, then you can use the init command to clone the repository to your local machine. You can also clone Dawn directly from the repository.
+ This process is documented in the Create a theme tutorial.
+ Caution
+ If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be substantively different from Dawn so that it provides added value for users.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

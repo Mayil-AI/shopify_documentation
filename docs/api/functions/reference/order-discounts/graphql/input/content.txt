@@ -1,0 +1,25 @@
+Scalars
+ Product Discount API
+ Shipping Discount API
+ Discounts Allocator API
+ Fulfillment Constraints API
+ Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Input object
+ 2024-04 latest
+ The input object for the function.
+ On this page
+ Fields
+ Fields
+ cart (Cart!)
+ The cart.
+ discountNode (DiscountNode!)
+ The discount node executing the function.
+ localization (Localization!)
+ The localization of the Function execution context.
+ presentmentCurrencyRate (Decimal!)
+ The conversion rate between the shop's currency and the currency of the cart.
+ shop (Shop!)
+ Information about the shop.

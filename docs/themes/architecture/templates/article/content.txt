@@ -1,0 +1,85 @@
+article
+ The article template renders the article page, which contains the full content of the article, as well as an optional comments section for customers. This template is used for items like individual posts in a blog.
+ Tip
+ Refer to the article template and its main section in Dawn for an example implementation.
+ Location
+ The article template is located in the templates directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   ├── 404.json
+ 5
+      |   ├── article.json
+ You should include the following in your article template or a section inside of the template:
+ The article object
+ The comment form
+ The article object
+ You can access the Liquid article object to display the article details.
+ The comment form
+ The comment form can be added with the Liquid form tag and accompanying 'new_comment', article parameter. Within the form tag block, you need to include the following:
+ Input type name
+ Name text comment[author]
+ Email email comment[email]
+ Comment textarea comment[body]
+ For example:
+ 1 {% form 'new_comment', article %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="name">
+ 5
+      <label for="name">Name</label>
+ 6
+      <input type="text" name="comment[author]" value="{{ form.author }}">
+ 7
+    </div>
+ 8
+ 9
+    <div class="email">
+ 10
+      <label for="email">Email</label>
+ 11
+      <input type="email" name="comment[email]" value="{{ form.email }}">
+ 12
+    </div>
+ 13
+ 14
+    <div class="comment">
+ 15
+      <label for="comment">Comment</label>
+ 16
+      <textarea name="comment[body]">{{ form.body }}</textarea>
+ 17
+    </div>
+ 18
+ 19
+    <div class="submit">
+ 20
+      <input type="submit" value="Post">
+ 21
+    </div>
+ 22 {% endform %}
+ Tip
+ When a customer posts a comment, your code should provide feedback indicating whether it was posted successfully, or if there were any errors.
+ Usage
+ When working with the article template, you should familiarize yourself with paginating article comments.
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Paginate article comments
+ Article comments can be accessed through the article object, and have a limit of 50 per page. For this reason, you should paginate article comments to ensure that they’re all accessible:
+ Example
+ 1 {% paginate article.comments by 20 %}
+ 2
+    {% for comment in article.comments %}
+ 3
+      <!-- comment info -->
+ 4
+    {% endfor %}
+ 5
+ 6
+    {{ paginate | default_pagination }}
+ 7 {% endpaginate %}

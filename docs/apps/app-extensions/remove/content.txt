@@ -1,0 +1,40 @@
+Remove an app extension
+ If you no longer want users to use an app extension, or you want to temporarily disable an app extension, then you can remove it.
+ Remove a dashboard-managed app extension
+ To remove a dashboard-managed extension, you need to delete the extension and then release a new app version.
+ The active app version represents what is currently available to app users. If you don't release a new app version, then your extension can still be used in Shopify stores.
+ In the Partner Dashboard, navigate to Apps, and then select your app from the list.
+ Click Extensions.
+ Select the extension that you want to remove.
+ On the extension editing page, click Delete.
+ Click Versions.
+ From the Versions page, click Create version.
+ Optional: enter a name and message for the version.
+ Click Release. If you don't want to release right away, then you can click Create version.
+ Releasing an app version replaces the current active version that's served to stores that have your app installed. It might take several minutes for app users to be upgraded to the new version.
+ After you release your new app version, you can view the version details in the Partner Dashboard, or by running the versions list command in Shopify CLI.
+ Remove a CLI-managed app extension
+ The contents of each app version reflect the CLI-managed extensions available in your local development environment and the latest drafts of your dashboard-managed extensions.
+ To remove a CLI-managed extension from your app, you need to remove the extension from your local environment.
+ Remove the relevant files from your app's /extensions directory.
+ If you're using custom extension directories, then remove the files from the path specified in your shopify.app.toml extension_directories property, or remove the path from your extension_directories property.
+ Release a new app version by running one of the following commands.
+ Optionally, you can provide a name or message for the version using the --version and --message flags.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run deploy
+ You're prompted to confirm that you want to release a new app version. Shopify CLI lists the extensions that are being removed in the new app version.
+ Select Yes, release this new version to confirm.
+ Restore a removed app extension
+ You can roll back to a previous app version to restore a removed app extension.
+ If you're rolling back to a previous app version to restore a CLI-managed extension, and you want to include the extension in subsequent app releases, then you need to make the extension code available in your local environment before you deploy again using Shopify CLI. For example, you might revert to a previous iteration of your project using your version control tool.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Remove a dashboard-managed app extension
+ Remove a CLI-managed app extension
+ Restore a removed app extension
+ Updates & News
+ Developer changelog

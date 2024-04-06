@@ -1,0 +1,70 @@
+Product subscription app extensions
+ App Provider
+ The AppProvider component enables sharing global settings throughout the hierarchy of your application.
+ Setup
+ Import the AppProvider from @shopify/discount-app-components and pass the shop's locale and timezone. @shopify/discount-app-components contains Polaris and AppBridge functionality and must be wrapped in the Provider from @shopify/app-bridge-react and the AppProvider from @shopify/polaris.
+ 1 import {Page, AppProvider as PolarisAppProvider} from '@shopify/polaris';
+ 2 import {Provider as AppBridgeProvider} from '@shopify/app-bridge-react';
+ 3 import {
+ 4
+    SampleComponent,
+ 5
+    AppProvider,
+ 6 } from '@shopify/discount-app-components';
+ 7
+ 8 import enPolarisTranslations from '@shopify/polaris/locales/en.json';
+ 9
+ 10 import "@shopify/polaris/build/esm/styles.css";
+ 11 import "@shopify/discount-app-components/build/esm/styles.css";
+ 12
+ 13 export default function App() {
+ 14
+    const config = {
+ 15
+      // The client ID provided for your application in the Partner Dashboard.
+ 16
+      apiKey: "api_key",
+ 17
+      // The host of the specific shop that's embedding your app. This value is provided by Shopify as a URL query parameter that's appended to your application URL when your app is loaded inside the Shopify admin.
+ 18
+      host: "example.myshopify.com"
+ 19
+      };
+ 20
+    ...
+ 21
+ 22
+    return (
+ 23
+      <AppBridgeProvider config={config}>
+ 24
+        <PolarisAppProvider i18n={enPolarisTranslations}>
+ 25
+          <AppProvider locale="en-US" ianaTimezone="America/Los_Angeles">
+ 26
+            <Page title="Example app">
+ 27
+              <SampleComponent />
+ 28
+            </Page>
+ 29
+          </AppProvider>
+ 30
+        </PolarisAppProvider>
+ 31
+      </AppBridgeProvider>
+ 32
+    );
+ 33 }
+ Properties
+ Name Type Description Required
+ locale string The locale of the shop. Yes
+ ianaTimezone string The shop's time zone as defined by the IANA. Yes
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Setup
+ Properties
+ Updates & News
+ Developer changelog
+ Partner blog

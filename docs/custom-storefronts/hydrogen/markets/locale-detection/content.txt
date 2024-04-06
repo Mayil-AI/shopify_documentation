@@ -1,0 +1,65 @@
+Building with the Customer Account API
+ Additional SDKs
+ Localization detection
+ In this guide you'll learn how use headers, cookies or URL search parameters for approximating a user's location.
+ Caution
+ While it's possible to detect an approximation of the user's locale by reading the header, cookies or URL search params. Shopify only recommends this to improve the experience of the user. Learn more about using header, cookies and URL search params in the overview.
+ A good example of detecting localization is to show a banner to asking the user if they want to switch country.
+ A bad example of localization detection is when the user gets automatically redirected.
+ Other drawbacks of this approach are that page caching ignores locale cookies, headers and URL search params. SEO bots tend to origin from the US, don't have cookies and will not change their accept-language headers.
+ Requirements
+ You've completed the Hydrogen getting started guide.
+ You've setup your store's region regions and languages using Shopify Markets.
+ You're familiar with using the Storefront API with Shopify Markets.
+ Step 1: Create a utility function that reads the request
+ Create a utility function that reads the request.
+ Tip
+ You can use the /app/lib/utils.ts file in the Hydrogen demo store as a point of reference.
+ The following is an example of extracting the accept-language header from the user request:
+ /app/libs/utils
+ JavaScript
+ TypeScript
+ /app/lib/utils.js
+ 1 export function getApproximateLocaleFromRequest(request: Request): Locale {
+ 2
+    const url = new URL(request.url);
+ 3
+ 4
+    // Get the accept-language header
+ 5
+    const acceptLang = request.headers.get('accept-language');
+ 6
+ 7
+    // Do something with accept language.
+ 8
+    // For example:
+ 9
+    if(acceptLang.includes('en-US')) {
+ 10
+      return {
+ 11
+        language: 'EN',
+ 12
+        country: 'US',
+ 13
+      };
+ 14
+    }
+ 15
+ 16
+    // Use the default locale
+ 17
+    return {
+ 18
+      language: 'EN',
+ 19
+      country: 'CA',
+ 20
+    };
+ 21 }
+ You can use this utility function to trigger analytics or for reading this approximate locale.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Create a utility function that reads the request

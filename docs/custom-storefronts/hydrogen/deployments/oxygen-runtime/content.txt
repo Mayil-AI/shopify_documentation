@@ -1,0 +1,270 @@
+Additional SDKs
+ Oxygen runtime
+ Oxygen is a worker-based runtime for hosting Hydrogen storefronts at the edge.
+ Worker runtimes are JavaScript-based HTTP servers that are designed for serverless or edge-computing contexts. Workers adapt web browser APIs for server-side applications, so you can use JavaScript-standard Fetch, Streams, URL, Cache-Control, and Web Crypto APIs when you deploy to Oxygen.
+ Runtime mirroring
+ Hydrogen projects include a local development server as a dependency by default. The local development server closely replicates Oxygen's production runtime, so you can be confident that functionality that works in development will also work in production. Both the Oxygen development and production servers are based on Cloudflare's open-source workerd project.
+ In addition to runtime parity, Hydrogen's bundled development server also returns the same headers sent by Oxygen in production. It also serves static assets, such as images, from a separate localhost domain. This more closely resembles how Shopify's CDN works in production, and can help debug Hydrogen cross-origin resource permission issues earlier in your development process.
+ To start the development server locally, run the CLI command npm run dev in your Hydrogen project. Consult the Hydrogen CLI command reference for a complete list of commands and development options.
+ Note
+ Hydrogen versions prior to v2024-01 used a Node.js-based development server by default, with lower compatibility. To continue using this version of the development server, pass the --legacy-runtime flag when you run the dev command.
+ Worker runtime APIs
+ This reference provides a list of the functions that you can use with worker runtime APIs in Oxygen. These APIs are similar to the APIs that are provided by web browsers or Node.js projects.
+ Cache API
+ Oxygen provides the Cache API that's also supported in major web browsers. The contents of the cache aren't accessible outside of the originating data center.
+ For developers who are familiar with Cloudflare's Cache API, Oxygen doesn't support the caches.default API.
+ You can create instances of the Cache object by using the caches.open method:
+ 1 let myCache = await caches.open('custom:cache');
+ 2 await myCache.match(request);
+ HTTP Headers
+ The cache API supports the following HTTP headers in the HTTP response that's passed to put():
+ Cache-Control: Refer to the Cloudflare documentation on cache-control directives. For a list of HTTP response codes and their TTL when cache-control directives aren't present, refer to Edge TTL.
+ ETag: Allows cache.match() to evaluate conditional requests that contain If-None-Match.
+ Expires: A string that contains a date in the RFC2616 format, and specifies when the resource becomes invalid. You can use strings that are generated from an instance of Date being passed to the .toUTCSring() method.
+ Last-Modified: Allows cache.match() to evaluate conditional requests with If-Modified-Since.
+ Unlike the cache API for Oxygen, the cache API in web browsers ignores HTTP headers on HTTP requests or responses.
+ HTTP responses that contain Set-Cookie headers aren't cached. To store an HTTP response that contains a Set-Cookie header, you need to use one of the following methods before you use cache.put():
+ Delete the HTTP header from the HTTP response.
+ Add a Cache-Control: private=Set-Cookie HTTP header in the HTTP response.
+ Cache methods
+ You can use the methods that are described in this section to interact with the cache API in Oxygen.
+ cache.put(request, response)
+ Adds a response to the cache.
+ cache.put doesn't support the stale-while-revalidate and stale-if-error directives.
+ CACHE.PUT PARAMETERS
+ request (string or Request object): Used as the lookup key to the request. If request is a string, then request is used as the URL for a new Request object.
+ response (Response object): A Response object that's stored as the value for the request key.
+ CACHE.PUT RETURNS
+ Returns a promise that resolves to undefined when the cache stores the response.
+ CACHE.PUT ERRORS
+ cache.put will throw an error if any of the following conditions are met:
+ the request passed is a method other than GET.
+ the response passed has a status of 206 Partial Content.
+ cache.put returns a 413 error if any of the following conditions are met:
+ the Cache-Control value is set not to cache.
+ the Response object is too large.
+ cache.match(request, options)
+ Checks for a matching response in the cache.
+ cache.match supports the following HTTP headers in the string or Request object that's passed as the request parameter:
+ Range: Results in a 206 response if a matching response that contains a Content-Length HTTP header is found. Your Cloudflare cache respects range requests, even when an Accept-Ranges HTTP header is in the response.
+ If-Modified-Since: Results in a 304 response if a matching response contains a Last-Modified HTTP header that contains a value that specifies a time after the time that was specified in the If-Modified-Since HTTP header.
+ If-None-Match: Results in a 304 response if a matching response contains an ETag HTTP header with a value that matches the value that was specified in the If-None-Match HTTP header.
+ cache.match never sends a subrequest to the origin.
+ cache.match doesn't support the stale-while-revalidate and stale-if-error directives.
+ CACHE.MATCH PARAMETERS
+ request (string or Request object): Used as the lookup key to the request. If request is a string, then request is used as the URL for a new Request object.
+ options (ignoreMethod option): When ignoreMethod evaluates to true, the request is interpreted as a GET request, regardless of the actual value of the request. The ignoreSearch or ignoreVary options aren't supported. If you need to use these options, then you can remove query strings or HTTP headers when you use cache.put.
+ CACHE.MATCH RETURNS
+ Returns a promise that wraps the Response object that's keyed to the Request object. If a matching response isn't found, then the promise for undefined is returned.
+ CACHE.MATCH ERRORS
+ cache.match returns a 504 error when the content is stale.
+ cache.delete(request, options)
+ Deletes the Response object from the cache.
+ CACHE.DELETE PARAMETERS
+ request (string or Request object): Used as the lookup key to the request. If request is a string, then request is used as the URL for a new Request object.
+ options: (ignoreMethod option): When ignoreMethod evaluates to true, the request is interpreted as a GET request, regardless of the actual value of the request. The ignoreSearch or ignoreVary options aren't supported. If you need to use these options, then you can remove query strings or HTTP headers when you use cache.put.
+ CACHE.DELETE RETURNS
+ Returns a Promise for one of the following Boolean responses:
+ true: The response was cached, and is now deleted.
+ false: The response wasn't cached at the time of the cache.delete call.
+ Encoding API
+ Oxygen supports the following Web APIs:
+ TextEncoder
+ TextDecoder
+ TextEncoder and TextDecoder only support UTF-8 encoding.
+ Fetch API
+ Oxygen supports the Fetch API, which enables you to fetch resources over the network, and provides generic definitions of the Request, Response, Headers, and other primitives that are used in network requests.
+ fetch method
+ Oxygen supports the top-level fetch method, which is used to fetch resources over the network. The fetch method returns a promise, which is fulfilled when the response is available. Asynchronous fetch calls aren't executed at the top level in a worker script. You can only make calls in the asynchronous request handler method of your worker.
+ Headers
+ Headers is a globally-available constructor that represents HTTP headers in the Fetch API.
+ The Oxygen implementation of Headers is based on the Headers API.
+ Differences from the standard headers API
+ The Headers.getAll method in the standard headers API is deprecated, but you should still use this method with the Set-Cookie HTTP header, because cookies often contain date strings, which can be difficult to parse. If you use Headers.getAll with other HTTP headers, then an error is thrown.
+ The Headers.get method returns a USVString instead of a ByteString. Unlike a ByteString, which represents a sequence of bytes, a USVString represents a valid sequence of bytes that are convenient to process, and never contain surrogate code points or unpaired surrogate code units.
+ Custom headers
+ Oxygen supports custom HTTP headers that contain meta information about the incoming request.
+ You can access the following HTTP headers on incoming external instances of the Request object:
+ oxygen-buyer-ip: Customer's IP address
+ oxygen-buyer-latitude: Customer's geographical latitude
+ oxygen-buyer-longitude: Customer's geographical longitude
+ oxygen-buyer-continent: Customer's continent
+ oxygen-buyer-country: Customer's country
+ oxygen-buyer-region: Customer's region
+ oxygen-buyer-region-code: Customer's region code
+ oxygen-buyer-city: Customer's city
+ oxygen-buyer-timezone: Customer's timezone
+ oxygen-buyer-is-eu-country: If the customer's country is in the EU (any non-empty value means yes)
+ For example, to bind the value of one of the custom HTTP headers to a userCountry constant, you can use the line of code below:
+ 1 const userCountry = request.headers.get('oxygen-buyer-country');
+ Note
+ Header values can be undefined if their corresponding information isn't available.
+ Request interface
+ The Request interface represents a resource request. All properties of an incoming Request object are read-only. To modify a request, create a new instance of a Request object and pass the options to the Request object's constructor to modify.
+ Oxygen supports the following methods on instances of the Request object:
+ clone
+ arrayBuffer
+ formData
+ json
+ text
+ For example, to create an instance of a Response object, you can use the following code:
+ 1 const response = new Response(body, init);
+ Response(body, init)
+ The Response interface represents a response that's sent to the client.
+ RESPONSE PROPERTIES
+ body (SourceBuffer, FormData, ReadableStream, URLSearchParams, or USVString)
+ init (Optional) (Response object)
+ The following of Response properties are specific to Oxygen:
+ encodeBody: Workers need to compress data according to the content-encoding HTTP header when transmitting data across the network. To serve data that's already compressed, set encodeBody to manual. By default, encodeBody is set to auto.
+ RESPONSE RETURNS
+ An instance of a Response object.
+ RESPONSE METHODS
+ You can use the following methods on instances of Response objects.
+ arrayBuffer()
+ formData()
+ json()
+ text()
+ Streams APIs
+ Oxygen provides APIs for accessing and processing streams of data, which are a subset of the Streams API.
+ Workers don't need to prepare a complete response body before they return an instance of a Response object. You can use the TransformStream interface to stream a response body after sending the HTTP status and line headers. When response bodies are larger than the memory limit of workers, you'll need to stream data.
+ To maintain the streaming behavior, only modify the response body by using the methods in the Streams APIs.
+ If your worker only forwards subrequest responses to the client without reading their body text, then the body handling is already optimized, and you won't benefit from using the Streams API.
+ For a basic stream usage example, refer to the following code:
+ 1 export default {
+ 2
+    async fetch(request) {
+ 3
+      const response = await fetch(request);
+ 4
+      const { readable, writable } = new TransformStream();
+ 5
+ 6
+      // No await should be used, as streaming continues in the background!
+ 7
+      response.body.pipeTo(writable);
+ 8
+      return new Response(readable, response);
+ 9
+    }
+ 10 }
+ ReadableStream
+ The readable property in TransformStream returns a ReadableStream. You can also construct a new ReadableStream by using the new keyword.
+ The implementation of ReadableStream that's provided by Oxygen supports the following methods:
+ PIPETO(DESTINATION, OPTIONS)
+ Pipes the readable stream to a given writable stream destination and returns a promise that's fulfilled when the write operation succeeds. If the operation fails, then the instance of a promise is rejected.
+ pipeTo parameters
+ destination: Refer to the Cloudflare documentation on destination.
+ options Refer to the Cloudflare documentation on destination. The Oxygen implementation of options supports the following properties:
+ preventClose: When true, closure of the source, ReadableStream, won't cause the destination, WritableStream, to be closed.
+ preventAbort: When true, errors in the source, ReadableStream, won't abort the destination, WritableStream.
+ pipeTo returns
+ A promise that resolves when the piping process has completed, or rejects with the error from the source or any error that occurred while aborting the destination.
+ GETREADER(OPTIONS)
+ Gets an instance of ReadableStreamDefaultReader and locks the ReadableStream to that reader instance.
+ For an example of how to create a ReadableStreamBYOBReader, refer to the following code:
+ 1 const reader = readable.getReader({ mode: 'byob' });
+ getReader parameters
+ options (key-value pair, where mode is the key): An object that specifies options. The only option that's supported is mode, which you can set to 'byob'. the 'byob' mode creates a ReadableStreamBYOBReader.
+ getReader returns
+ A ReadableStreamDefaultReader or ReadableStreamBYOBReader object instance, depending on the mode value.
+ ReadableStreamBYOBReader
+ A ReadableStreamBYOBReader enables you to read into a buffer that's provided by a developer. BYOB stands for "bring your own buffer", minimizing the amount of data that's copied in-memory.
+ An instance of ReadableStreamBYOBReader is similar to the ReadableStreamDefaultReader with the exception of the read method.
+ You can create an instance of a ReadableStreamBYOBReader by retrieving it from a ReadableStream.
+ For an example of how to retrieve a ReadableStreamBYOBReader, refer to the following code:
+ 1 const { readable, writable } = new TransformStream();
+ 2 const reader = readable.getReader({ mode: 'byob' });
+ METHODS
+ read(buffer): Returns a promise with the next available chunk of data read into a passed-in buffer. The promise doesn't resolve until at least minBytes have been read.
+ read: Similar to read(buffer), without a minimum number of bytes that should be read into the buffer. For example, if you allocate 1 MB buffer, then the kernel can fulfill the read with a single byte, whether an EOF follows or not. read usually fills only 1% of the provided buffer.
+ readAtLeast(minBytes, buffer): A non-standard extension to the streams API, which enables users to specify the minBytes needs to be read into the buffer before resolving the read.
+ RETURNS
+ Returns a promise with the next available chunk of data that was read into a passed-in buffer.
+ ReadableStreamDefaultReader
+ A ReadableStreamDefaultReader is used when you want to read from a ReadableStream, rather than piping its output to a WritableStream.
+ A ReadableStreamDefaultReader is retrieved from a ReadableStream, rather than being created through its constructor.
+ For an example of how to retrieve a ReadableStreamDefaultReader, refer to the following code:
+ 1 const { readable, writable } = new TransformStream();
+ 2 const reader = readable.getReader();
+ TransformStream
+ A TransformStream consists of a writable stream and a readable stream. When data is written to the writable stream, the data is available to be read from the readable stream.
+ Oxygen provides an identity transform stream, which forwards all chunks that were written to the writable stream to the readable stream without changing the chunks.
+ WritableStream
+ A WritableStream is the writable property of a TransformStream. A WritableStream in Oxygen can't be created by using the WritableStream constructor.
+ You'll want to write to a WritableStream by piping a ReadableStream to it.
+ For an example of how to pipe a ReadableStream to a WritableStream, refer to the following code:
+ 1 readableStream
+ 2
+    .pipeTo(writableStream)
+ 3
+    .then(() => console.log('All data successfully written!'))
+ 4
+    .catch(e => console.error('Something went wrong!', e));
+ To write to a WritableStream directly, you need to use its writer:
+ 1 const writer = writableStream.getWriter();
+ 2 writer.write(data);
+ Refer to the WritableStreamDefaultWriter documentation for more details.
+ WritableStreamDefaultWriter
+ Use a WritableStreamDefaultWriter when you want to write directly to a WritableStream, rather than piping data to it from a ReadableStream.
+ For an example of how to write directly to a WritableStream, refer to the code below:
+ CHANGEME
+ 1 function writeArrayToStream(array, writableStream) {
+ 2
+    const writer = writableStream.getWriter();
+ 3
+    array.forEach(chunk => writer.write(chunk).catch(() => {}));
+ 4
+ 5
+    return writer.close();
+ 6 }
+ 7
+ 8 writeArrayToStream([1, 2, 3, 4, 5], writableStream)
+ 9
+    .then(() => console.log('All done!'))
+ 10
+    .catch(e => console.error('Error with the stream: ' + e));
+ Web Crypto API
+ The Web Crypto API provides low-level functions for common cryptographic tasks. Oxygen fully implements the Web Crypto API, with the exception of differences in the supported algorithms compared to the algorithms used in most browsers.
+ The Web Crypto API provides significant speed and security benefits compared to JavaScript implementations.
+ The Oxygen Web Crypto API is implemented through the SubtleCrypto interface, accessible through the global crypto.subtle binding. The Oxygen Web Crypto API implementations works differently from the Crypto API in Node.js. Code that uses the Node.js implementation of the Web Crypto API must be changed to work with the implementation provided by Oxygen.
+ For common uses of the Web Crypto API, refer to the Cloudflare documentation on signing requests.
+ For a detailed list of supported cryptographic algorithms, refer to the Cloudflare documentation on supported algorithms.
+ JavaScript objects and web APIs
+ Oxygen runs on the V8 JavaScript engine from Google Chrome. The runtime is frequently updated to match the latest stable release of Google Chrome. This enables you to use the latest JavaScript features without needing to transpile your code.
+ Available JavaScript objects
+ All of the standard built-in JavaScript objects are supported, except for the following APIs, for security reasons:
+ eval()
+ new Function()
+ The Date.now() method, and any time-related APIs, doesn't provide access to the exact timestamp. Instead, the current time is frozen and points to the timestamp of the last performed I/O operation.
+ Available web APIs
+ The following APIs are globally available:
+ Base64
+ atob
+ btoa
+ Timers
+ The following timers are only available inside of the worker's request handler, and can't be used in the global context:
+ setInterval()
+ clearInterval()
+ setTimeout()
+ clearTimeout()
+ Events
+ EventTarget
+ Event
+ Aborting asynchronous operations
+ AbortController
+ AbortSignal
+ URLs
+ URL
+ URLPattern
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Runtime mirroring
+ Worker runtime APIs
+ Cache API
+ Encoding API
+ Fetch API
+ Headers
+ Web Crypto API
+ JavaScript objects and web APIs
+ Updates & News

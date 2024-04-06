@@ -1,0 +1,255 @@
+Collapse sidebar
+ GraphQL Admin API
+ Unstable
+ 2024-07 release candidate
+ 2024-04 latest
+ 2024-01
+ 2023-10
+ 2023-07
+ 2024-04latest
+ Overview
+ Client libraries
+ Authentication
+ Endpoint and queries
+ Rate limits
+ Status and error codes
+ Access
+ Analytics
+ Apps
+ B2B
+ Billing
+ Bulk operations
+ Cart
+ Checkout branding
+ Common objects
+ Customers
+ Discounts and marketing
+ Events
+ Gates
+ Inventory
+ Localizations
+ Marketplaces
+ Metafields
+ Metaobjects
+ Online store
+ Orders
+ Privacy
+ Products and collections
+ Retail
+ Shipping and fulfillment
+ Shopify Markets
+ Shopify Payments
+ Store properties
+ GraphQL Types
+ GraphQL Admin API reference
+ The Admin API lets you build apps and integrations that extend and enhance the Shopify admin.
+ This page will help you get up and running with Shopify’s GraphQL API.
+ Client libraries
+ Use Shopify’s officially supported libraries to build fast, reliable apps with the programming languages and frameworks you already know.
+ curl
+ enable
+ Remix
+ enable
+ Node.js
+ enabled
+ The official client library for Node.js applications, with full TypeScript support. It has no framework dependencies, so it can be used by any Node.js app.
+ Docs
+ npm package
+ GitHub repo
+ PHP
+ enable
+ Python
+ Ruby
+ enable
+ Other
+ Shopify Node.js library installation
+ 1 npm install --save @shopify/shopify-api
+ 2 # or
+ 3 yarn add @shopify/shopify-api
+ Authentication
+ All GraphQL Admin API queries require a valid Shopify access token.
+ Public and custom apps created in the Partner Dashboard generate tokens using OAuth, and custom apps made in the Shopify admin are authenticated in the Shopify admin.
+ Include your token as a X-Shopify-Access-Token header on all API queries. Using Shopify’s supported client libraries can simplify this process.
+ To keep the platform secure, apps need to request specific access scopes during the install process. Only request as much data access as your app needs to work.
+ Learn more about getting started with authentication and building apps.
+ curl
+ Remix
+ Node.js
+ PHP
+ Ruby
+ 1
+ const {admin} = shopify.authenticate.admin(request);
+ Endpoint and queries
+ GraphQL queries are executed by sending POST HTTP requests to the endpoint:
+ POST
+ https://{store_name}.myshopify.com/admin/api/2024-04/graphql.json
+ Queries begin with one of the objects listed under QueryRoot. The QueryRoot is the schema’s entry-point for queries.
+ Queries are equivalent to making a GET request in REST. The example shown is a query to get the ID and title of the first three products.
+ Learn more about API usage.
+ Explore and learn Shopify's Admin API using GraphiQL Explorer. To build queries and mutations with shop data, install Shopify’s GraphiQL app.
+ POST
+ https://{store_name}.myshopify.com/admin/api/2024-04/graphql.json
+ curl
+ Remix
+ Node.js
+ PHP
+ Ruby
+ 1
+ 2
+ 3
+ 4
+ 15
+ 16
+ 17
+ const queryString = `{
+ products (first: 3) {
+ edges {
+ node {
+ id
+ title
+ }
+ }
+ }
+ }`
+ 
+ // `session` is built as part of the OAuth process
+ const client = new shopify.clients.Graphql({session});
+ const products = await client.query({
+ data: queryString,
+ });
+ Rate limits
+ The GraphQL Admin API is rate-limited using calculated query costs, measured in cost points. Each field returned by a query costs a set number of points. The total cost of a query is the maximum of possible fields selected, so more complex queries cost more to run.
+ Learn more about rate limits.
+ {}
+ Request
+ 1 {
+ 2
+    products(first: 1) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          title
+ 6
+        }
+ {}
+ Response
+ JSON
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+        "edges": [
+              "title": "Hiking backpack"
+ 8
+            }
+ 9
+          }
+ 10
+        ]
+ 11
+      }
+ 12
+    },
+ 13
+    "extensions": {
+ 14
+      "cost": {
+ 15
+        "requestedQueryCost": 3,
+ 16
+        "actualQueryCost": 3,
+ 17
+        "throttleStatus": {
+ 18
+          "maximumAvailable": 1000,
+ 19
+          "currentlyAvailable": 997,
+ 20
+          "restoreRate": 50
+ 21
+        }
+ 22
+      }
+ 23
+    }
+ 24 }
+ Status and error codes
+ All API queries return HTTP status codes that contain more information about the response.
+ 200 OK
+ GraphQL HTTP status codes are different from REST API status codes. Most importantly, the GraphQL API can return a 200 OK response code in cases that would typically produce 4xx or 5xx errors in REST.
+ Error handling
+ The response for the errors object contains additional detail to help you debug your operation.
+ The response for mutations contains additional detail to help debug your query. To access this, you must request userErrors.
+ Properties
+ errors
+ array
+ A list of all errors returned
+ Show error item properties
+ {}
+ Sample 200 error responses
+ Throttled
+ Internal
+ 1 {
+ 2
+    "errors": [
+ 3
+      {
+ 4
+        "message": "Query cost is 2003, which exceeds the single query max cost limit (1000).See https://shopify.dev/concepts/about-apis/rate-limits for more information on how thecost of a query is calculated.To query larger amounts of data with fewer limits, bulk operations should be used instead.See https://shopify.dev/tutorials/perform-bulk-operations-with-admin-api for usage details.",
+ 5
+        "extensions": {
+ 6
+          "code": "MAX_COST_EXCEEDED",
+ 7
+          "cost": 2003,
+ 8
+          "maxCost": 1000,
+ 9
+          "documentation": "https://shopify.dev/api/usage/rate-limits"
+ 10
+        }
+ 11
+      }
+ 12
+    ]
+ 13 }
+ 4xx and 5xx status codes
+ The 4xx and 5xx errors occur infrequently. They are often related to network communications, your account, or an issue with Shopify’s services.
+ Many errors that would typically return a 4xx or 5xx status code, return an HTTP 200 errors response instead. Refer to the 200 OK section above for details.
+ 400 Bad Request
+ The server will not process the request.
+ 402 Payment Required
+ The shop is frozen. The shop owner will need to pay the outstanding balance to unfreeze the shop.
+ 403 Forbidden
+ The shop is forbidden. Returned if the store has been marked as fraudulent.
+ 404 Not Found
+ The resource isn’t available. This is often caused by querying for something that’s been deleted.
+ 423 Locked
+ The shop isn’t available. This can happen when stores repeatedly exceed API rate limits or due to fraud risk.
+ 5xx Errors
+ An internal error occurred in Shopify. Check out the Shopify status page for more information.
+ Didn’t find the status code you’re looking for? View the complete list of API status response and error codes.
+ {}
+ Sample error codes
+ 400
+ 402
+ 403
+ 404
+ 423
+ 500
+ 1 HTTP/1.1 400 Bad Request
+ 2
+    {
+ 3
+      "errors": {
+ 4
+        "query": "Required parameter missing or invalid"
+ 5
+      }
+ 6
+    }
+ Updates & News

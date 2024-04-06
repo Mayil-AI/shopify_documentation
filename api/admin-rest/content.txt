@@ -1,0 +1,295 @@
+Collapse sidebar
+ REST Admin API
+ Unstable
+ 2024-07 release candidate
+ 2024-04 latest
+ 2024-01
+ 2023-10
+ 2023-07
+ 2024-04latest
+ Overview
+ Client libraries
+ Authentication
+ Endpoints and requests
+ Rate limits
+ Status and error codes
+ Access
+ Billing
+ Customers
+ Discounts
+ Events
+ Gift cards
+ Inventory
+ MarketingEvent
+ Metafield
+ Online store
+ Orders
+ Plus
+ Products
+ Sales channels
+ Shipping and fulfillment
+ Shopify Payments
+ Store properties
+ TenderTransaction
+ Webhooks
+ Deprecated API calls
+ REST Admin API reference
+ The Admin API lets you build apps and integrations that extend and enhance the Shopify admin.
+ Some newer platform features may only be available in GraphQL.
+ Client libraries
+ Use Shopify’s officially supported libraries to build fast, reliable apps with the programming languages and frameworks you already know.
+ curl
+ enable
+ Remix
+ enabled
+ The official package for Remix applications, with full TypeScript support.
+ Docs
+ npm package
+ GitHub repo
+ Node.js
+ enable
+ PHP
+ enable
+ Python
+ Ruby
+ enable
+ Other
+ Shopify Remix package installation
+ 1 npm install --save @shopify/shopify-app-remix
+ 2 # or
+ 3 yarn add @shopify/shopify-app-remix
+ Authentication
+ All REST Admin API queries require a valid Shopify access token.
+ Public and custom apps created in the Partner Dashboard generate tokens using OAuth, and custom apps made in the Shopify admin are authenticated in the Shopify admin. To simplify the authentication process, use one of the recommended Shopify client libraries.
+ Include your token as a X-Shopify-Access-Token header on all API queries. Using Shopify’s supported client libraries can simplify this process.
+ To keep the platform secure, apps need to request specific access scopes during the install process. Only request as much data access as your app needs to work.
+ Learn more about getting started with authentication and building apps.
+ curl
+ Remix
+ Node.js
+ PHP
+ Ruby
+ 1
+ 2
+ const { admin } = await authenticate.admin(request);
+ const response = admin.rest.get({path: 'shop'});
+ Endpoints and requests
+ Admin REST API endpoints are organized by resource type. You’ll need to use different endpoints depending on your app’s requirements.
+ All Admin REST API endpoints follow this pattern:
+ https://{store_name}.myshopify.com/admin/api/2024-04/{resource}.json
+ POST
+ Example POST request
+ GET
+ Example GET request
+ PUT
+ Example PUT request
+ DEL
+ Example DELETE request
+ The Admin API is versioned, with new releases four times per year. To keep your app stable, make sure you specify a supported version in the URL. Learn more about API versioning.
+ All REST endpoints support cursor-based pagination. All requests produce HTTP response status codes.
+ Learn more about API usage.
+ GET
+ /admin/api/2024-04/products/{product_id}.json
+ cURL
+ Remix
+ Node.js
+ PHP
+ Ruby
+ 1
+ 2
+ 3
+ 4
+ curl -X GET \
+ https://{store_name}.myshopify.com/admin/api/2024-04/products/11235813213455.json?fields=id,title \
+ -H 'Content-Type: application/json' \
+ -H 'X-Shopify-Access-Token: {access_token}'
+ HTTP/1.1 200 OK
+ {
+ "product": {
+ "id": 11235813213455,
+ "title": "Hiking backpack"
+ }
+ }
+ Rate limits
+ The REST Admin API supports a limit of 40 requests per app per store per minute. This allotment replenishes at a rate of 2 requests per second. The rate limit is increased by a factor of 10 for Shopify Plus stores.
+ Usage limitations
+ REST Admin API supports a limit of 40 requests per app per store per minute.
+ Past the limit, the API will return a 429 Too Many Requests error.
+ All REST API responses include the X-Shopify-Shop-Api-Call-Limit header, which shows how many requests the client has made, and the total number allowed per minute.
+ A 429 response will also include a Retry-After header with the number of seconds to wait until retrying your query.
+ Learn more about rate limits.
+ {}
+ Header
+ 1 X-Shopify-Shop-Api-Call-Limit: 40/40
+ 2 Retry-After: 2.0
+ {}
+ Response
+ JSON
+ 1 HTTP/1.1 429 Too Many Requests
+ 2 {
+ 3
+    "customers": [
+ 4
+      {
+ 5
+        "id": 207119551,
+ 6
+        "email": "bob.norman@hostmail.com",
+ 7
+        "accepts_marketing": false,
+ 8
+        "created_at": "2021-02-12T13:48:32-05:00",
+ 9
+        "updated_at": "2021-02-12T13:48:32-05:00",
+ 10
+        "first_name": "Bob",
+ 11
+        "last_name": "Norman",
+ 12
+        "orders_count": 1,
+ 13
+        "state": "disabled",
+ 14
+        "total_spent": "199.65",
+ 15
+        "last_order_id": 450789469,
+ 16
+        "note": null,
+ 17
+        "verified_email": true,
+ 18
+        "multipass_identifier": null,
+ 19
+        "tax_exempt": false,
+ 20
+        "phone": "+16136120707",
+ 21
+        "tags": "",
+ 22
+        "last_order_name": "#1001",
+ 23
+        "currency": "USD",
+ 24
+        "addresses": [
+ 25
+          {
+ 26
+            "id": 207119551,
+ 27
+            "customer_id": 207119551,
+ 28
+            "first_name": null,
+ 29
+            "last_name": null,
+ 30
+            "company": null,
+ 31
+            "address1": "Chestnut Street 92",
+ 32
+            "address2": "",
+ 33
+            "city": "Louisville",
+ 34
+            "province": "Kentucky",
+ 35
+            "country": "United States",
+ 36
+            "zip": "40202",
+ 37
+            "phone": "+1(800)-555-2181",
+ 38
+            "name": "",
+ 39
+            "province_code": "KY",
+ 40
+            "country_code": "US",
+ 41
+            "country_name": "United States",
+ 42
+            "default": true
+ 43
+          }
+ 44
+        ],
+ 45
+      },
+ 46
+    ],
+ 47
+    "accepts_marketing_updated_at": "2005-06-12T11:57:11-04:00",
+ 48
+    "marketing_opt_in_level": null,
+ 49
+    "tax_exemptions": [],
+ 50
+    "admin_graphql_api_id": "gid://shopify/Customer/207119551",
+ 51
+    "default_address": {
+ 52
+      "id": 207119551,
+ 53
+      "customer_id": 207119551,
+ 54
+      "first_name": null,
+ 55
+      "last_name": null,
+ 56
+      "company": null,
+ 57
+      "address1": "Chestnut Street 92",
+ 58
+      "address2": "",
+ 59
+      "city": "Louisville",
+ 60
+      "province": "Kentucky",
+ 61
+      "country": "United States",
+ 62
+      "zip": "40202",
+ 63
+      "phone": "+1(800)-555-2181",
+ 64
+      "name": "",
+ 65
+      "province_code": "KY",
+ 66
+      "country_code": "US",
+ 67
+      "country_name": "United States",
+ 68
+      "default": true
+ 69
+    }
+ 70 }
+ Status and error codes
+ All API queries return HTTP status codes that can tell you more about the response.
+ 401 Unauthorized
+ The client doesn’t have correct authentication credentials.
+ 402 Payment Required
+ The shop is frozen. The shop owner will need to pay the outstanding balance to unfreeze the shop.
+ 403 Forbidden
+ The server is refusing to respond. This is typically caused by incorrect access scopes.
+ 404 Not Found
+ The requested resource was not found but could be available again in the future.
+ 422 Unprocessable Entity
+ The request body contains semantic errors. This is typically caused by incorrect formatting, omitting required fields, or logical errors such as initiating a checkout for an out-of-stock product.
+ 429 Too Many Requests
+ The client has exceeded the rate limit.
+ 5xx Errors
+ An internal error occurred in Shopify. Check out the Shopify status page for more information.
+ Didn’t find the status code you’re looking for? View the complete list of API status response and error codes.
+ {}
+ Sample error codes
+ 401
+ 402
+ 403
+ 404
+ 422
+ 429
+ 500
+ 
+ HTTP/1.1 401 Unauthorized
+ {
+ "errors": "[API] Invalid API key or access token (unrecognized login or wrong password)"
+ }

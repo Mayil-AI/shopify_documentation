@@ -1,0 +1,135 @@
+customers/login
+ The customers/login template renders the customer login page, which hosts the form for logging into a customer account.
+ Tip
+ Refer to the customers/login template and its main section in Dawn for an example implementation.
+ Location
+ The customers/login template is located in the templates > customers directory of the theme:
+ 1 └── theme
+ 2
+      ├── layout
+ 3
+      ├── templates
+ 4
+      |   └── customers
+ 5
+      |     ├── login.json
+ You should include the customer login form in your customers/login template or a section inside of the template.
+ Optionally, you can include "Forgot your password" and guest checkout options.
+ The customer login form
+ The customer login form can be added with the Liquid form tag and accompanying 'customer_login' parameter. Within the form tag block, you need to include the following:
+ Input type name
+ Email email customer[email]
+ Password password customer[password]
+ For example:
+ 1 {% form 'customer_login' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="email">
+ 5
+      <label for="email">Email</label>
+ 6
+      <input type="email" name="customer[email]">
+ 7
+    </div>
+ 8
+ 9
+    <div class="password">
+ 10
+      <label for="password">Password</label>
+ 11
+      <input type="password" name="customer[password]">
+ 12
+    </div>
+ 13
+ 14
+    <div class="submit">
+ 15
+      <input type="submit" value="Sign in">
+ 16
+    </div>
+ 17 {% endform %}
+ Usage
+ When working with the customers/account template, you should familiarize yourself with the following:
+ Linking to the login page
+ Providing a "Forgot your password" option
+ Offering guest checkout
+ Redirecting customers on login
+ Tip
+ If you're using a JSON template, then any HTML or Liquid code needs to be included in a section that's referenced by the template.
+ Link to the login page
+ When linking to the login page, you need to consider the store's customer accounts settings, as well as the current login status.
+ For example, you don't need to show any links if customer accounts aren't enabled. If the customer is already logged in, then you can link to the account page instead. If customer accounts are enabled and optional, and the customer isn't logged in, then you can show a link to the register page:
+ Example
+ 1 {% if shop.customer_accounts_enabled %}
+ 2
+    {% if customer %}
+ 3
+      <a href="{{ routes.account_url }}">Account</a>
+ 4
+    {% else %}
+ 5
+      <a href="{{ routes.account_login_url }}">Login</a>
+ 6
+ 7
+      {% if shop.customer_accounts_optional %}
+ 8
+        <span>or</span>
+ 9
+        <a href="{{ routes.account_register_url }}">Create an account</a>
+ 10
+      {% endif %}
+ 11
+    {% endif %}
+ 12 {% endif %}
+ Provide a “Forgot your password" option
+ You can add a password recovery form with the Liquid form tag and accompanying 'recover_customer_password' parameter. Within the form tag block, you need to include an <input> with the following attributes:
+ type="email"
+ name="email"
+ For example:
+ 1 {% form 'recover_customer_password' %}
+ 2
+    {{ form.errors | default_errors }}
+ 3
+ 4
+    <div class="email">
+ 5
+      <label for="email">Email</label>
+ 6
+      <input type="email" name="email">
+ 7
+    </div>
+ 8
+ 9
+    <div class="submit">
+ 10
+      <input type="submit" value="Submit">
+ 11
+    </div>
+ 12 {% endform %}
+ If the password recovery form is submitted successfully, then the customer will receive an email with instructions on how to reset their password.
+ Offer guest checkout
+ If customer accounts are optional or required, then customers can log in to their account at the first step of checkout:
+ When customer accounts are optional, you can allow customers to check out as a guest, instead of logging in to an account. You can do this with the Liquid form tag and accompanying 'guest_login' parameter. Within the form tag block, you need to include a submit input. Additionally, to ensure that the form only shows when coming directly from the checkout, you can use the checkout.guest_login attribute of the shop object.
+ For example:
+ 1 {% if shop.checkout.guest_login %}
+ 2
+    {% form 'guest_login' %}
+ 3
+      <div class="submit">
+ 4
+        <input type="submit" value="Continue as guest">
+ 5
+      </div>
+ 6
+    {% endform %}
+ 7 {% endif %}
+ Redirect customers on login
+ By default, when a customer logs in, they're directed to the customer account page. You can change this by using the return_to parameter of the Liquid form tag.
+ The following example shows how to direct customers to the collection list page URL:
+ 1 {% form 'customer_login', return_to: routes.collections_url %}
+ 2
+    <!-- form content -->
+ 3 {% endform %}
+ Was this section helpful?

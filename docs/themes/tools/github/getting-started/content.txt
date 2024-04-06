@@ -1,0 +1,70 @@
+Collaborator accounts
+ Theme Inspector
+ GitHub integration
+ Overview
+ Getting started
+ Lighthouse CI
+ Dawn
+ Best practices
+ Integrating apps
+ Product merchandising
+ Getting started with the Shopify GitHub integration
+ The Shopify GitHub integration lets you make and track changes to theme code using Git. This tutorial explains how to install the Shopify GitHub app, connect a branch as a theme, test the connection, and then publish the theme.
+ Before you start
+ Before you start using the Shopify GitHub integration, do the following:
+ If you want to use a development store to build a theme, then create or log in to a Shopify Partner account, and then create a development store.
+ Make sure that you have an account with the Manage themes permission or Themes permission for the store that you want to work on, or that you're the owner of the store.
+ Note the GitHub repository and branch that you want to connect to. The branch must match the default Shopify theme folder structure. You can't create a repository or branch from a theme in the Shopify admin.
+ If you don't have a theme yet, then consider initializing one with Shopify CLI.
+ If you want to use an existing theme from your store, then you can download a ZIP of the theme and then create a repository with its contents.
+ If the repository belongs to an organization where you don't have rights to install an app, then you need to request that your administrator approve the installation before you can connect a theme. You can also request that your administrator install the app for your organization.
+ Step 1: Connect to a GitHub organization or account
+ To get started with the Shopify GitHub integration, you need to connect a GitHub organization or account to Shopify.
+ If you're using a new development store, then you can't set up the GitHub integration on the initial login after the store is created. To connect to GitHub successfully, you need to log out of the store, then log in to it again through the Partner Dashboard.
+ Note
+ For GitHub organizations that have SSO enabled, you require an active SAML session before connecting your organization.
+ From your Shopify admin, go to Online Store > Themes.
+ In the Theme library section, click Add theme > Connect from GitHub.
+ In the Connect theme pane, click Log in to GitHub.
+ Enter your GitHub credentials.
+ You're prompted to authorize and install the Shopify GitHub app. Select whether you want to install the app on your personal account or for your organization.
+ If you're installing the app for an organization, then choose whether to install the app for all repositories, or select repositories. Shopify recommends only granting access to specific repositories that you want to use with this integration. Learn more about granting Shopify access to GitHub repositories.
+ Tip
+ You can connect additional accounts and organizations by following the same steps, and then selecting Add organization.
+ Step 2: Connect a branch as a theme
+ To connect a branch to a theme in the Shopify admin, you need to choose a branch. The contents of the branch are added as a new theme in your theme library.
+ Branches that are 50 MB or larger can't be connected to Shopify.
+ From your Shopify admin, go to Online Store > Themes.
+ In the Theme library section, click Add theme > Connect from GitHub.
+ If prompted, log into GitHub.
+ If you're connecting a repository that belongs to an organization, then select the organization that the repository belongs to.
+ Select the repository that you want to connect, and then select the branch that you want to connect.
+ The theme appears in your theme library. Themes that are connected to GitHub list the repository, branch name, and last commit time on the theme card.
+ After the initial connection is made, all commits to the branch that you selected are pulled into the theme, and all changes that you make through the Shopify admin are pushed to the branch.
+ Step 3: Test the connection
+ To ensure that the connection between your branch and repository is working, you can make a small change to the theme and then verify that a commit was made in the branch.
+ From your Shopify admin, go to Online Store > Themes.
+ On the theme that's connected to GitHub, click Customize.
+ Change any setting in your theme. For example, in Dawn, you might change the text on the announcement bar.
+ Click Save, and then exit the theme editor.
+ In the theme library, on the card for the theme, click the name of the branch to navigate to GitHub.
+ Note the most recent commit. It should list the shopify bot as the author of the commit.
+ If desired, you can also push a change to the branch from your local machine. After you push a commit to your branch, the Last saved date on the theme updates and the change is visible in the theme.
+ Step 4: Publish the theme
+ To track changes to your published theme, you need to publish a theme from your theme library that's connected to a GitHub branch. You might add your master or main branch as a theme so you can keep your published theme up to date using Git branching and merging strategies. Learn more about branching strategies for themes.
+ You can publish the theme manually through the Shopify admin, or through Shopify CLI.
+ Troubleshooting your GitHub connection
+ In rare circumstances, when you have SSO enabled on your organization, the connection to your GitHub account might fail but show a successful connection. To rebuild the connection, you can revoke the Shopify GitHub app's access to your account through your GitHub settings, and then ensure that you're logged in and have an active SAML session before completing the setup process again.
+ You can create a SAML session by visiting https://github.com/orgs/ORGANIZATION-NAME/sso in your browser. Replace ORGANIZATION-NAME with the name of your organization.
+ For more information about SAML authentication, refer to the GitHub documentation.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Before you start
+ Step 1: Connect to a GitHub organization or account
+ Step 2: Connect a branch as a theme
+ Step 3: Test the connection
+ Step 4: Publish the theme
+ Troubleshooting your GitHub connection
+ Updates & News
+ Developer changelog

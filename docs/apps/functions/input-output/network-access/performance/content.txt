@@ -1,0 +1,80 @@
+Variables in input queries
+ Network access
+ Overview
+ Using network access
+ GraphQL reference
+ Performance and resilience
+ Language support
+ Testing and debugging
+ Localization
+ Deployment
+ Distribution
+ Billing
+ App Store
+ Performance and resilience
+ Network access for Shopify Functions gives your app specific control points to declare what information you want to request. Shopify handles the execution of the network operations.
+ This guide describes how to optimize your app for performance and resilience when configuring network access for Functions.
+ Timeouts
+ Network requests have a maximum execution timeout. The permissible range is between 100ms and 2000ms.
+ You can configure the timeout value using the HttpRequestPolicy input of an HttpRequest:
+ schema.graphql
+ 1 input HttpRequestPolicy {
+ 2
+     """
+ 3
+     Read timeout in milliseconds.
+ 4
+     """
+ 5
+     readTimeoutMs: Int!
+ 6 }
+ Refer to error management for details on how timeouts are communicated back to Functions.
+ Request cache
+ Customers engage with Shopify multiple times throughout their checkout journey. In order to ensure a stable and efficient experience, Shopify has implemented a network cache layer.
+ The cache key comprises all of the HTTP request attributes (method, URL, headers, and body). Additionally, cache isolation is enforced between stores.
+ Successful requests are cached for up to 300 seconds. This TTL (Time To Live) is subject to change.
+ Error management
+ During a network call, various issues can occur, including DNS errors, connection errors, SSL errors, gateway errors, encoding errors, and timeouts.
+ Shopify categorizes and repackages the various possible error paths. By design, a simplified view of the error is returned to the input query of the subsequent target.
+ An error is returned to the function as a fetchResult: HttpResponse with a 5xx status code:
+ Encoding error: { "status": 501, "body": "Encoding charset not supported" }
+ Timeout error: { "status": 504, "body": "Gateway Timeout" }
+ Connection error: { "status": 502, "body": "Bad Gateway" }
+ You can configure the function to either apply a locally defined fallback or to throw an error, in which case the default platform fallback is applied.
+ Fallback on errors
+ JavaScript
+ Rust
+ src/run.js
+ 1 export function run(input) {
+ 2
+    const fetchResult = input.fetchResult;
+ 3
+ 4
+    // Fallback on errors
+ 5
+    if (fetchResult.status !== 200) {
+ 6
+      const fallbackResult = "..."
+ 7
+      return { fallbackResult };
+ 8
+    }
+ 9
+ 10
+    // Successful request code...
+ 11 }
+ Network retry
+ To handle transient failures, Shopify has implemented an automated retry mechanism to manage network failures when they occur:
+ If the failure is temporary and the retried call is successful, then the system recovers transparently.
+ If the issue continues, then the error is exposed to the function's subsequent target.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Timeouts
+ Request cache
+ Error management
+ Network retry
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

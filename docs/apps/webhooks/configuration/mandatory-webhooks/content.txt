@@ -1,0 +1,130 @@
+App Store
+ Mandatory webhooks
+ Mandatory webhooks are callback methods that Shopify requires for apps listed on the Shopify App Store. Shopify requires privacy webhooks as a way to manage the personal data that an app collects.
+ Mandatory compliance webhooks
+ Data privacy rules and regulations, such as the General Data Protection Regulation (GDPR) and California Privacy Rights Act (CPRA), set requirements for parties that collect, store, or process personal data of individuals. However, Shopify takes a standardized approach and requires public apps to provide the same privacy rights for all personal data, regardless of where an individual is located.
+ Any app that you distribute through the Shopify App Store must respond to data subject requests, regardless of whether the app collects personal data. Shopify provides mandatory compliance webhooks to help.
+ If you don't provide URLs for the mandatory webhooks, or your app doesn't respond to these webhooks as required, then your app will be rejected and you'll need to fix the identified problem before submitting your app for another review.
+ Caution
+ This page isn't intended to provide you with legal advice. It sets out Shopify's privacy requirements for app developers and items that you need to consider if you're handling personal data.
+ Compliance webhook topics
+ Every app that's distributed through the Shopify App Store must subscribe to the following compliance webhook topics in the Partner Dashboard:
+ Compliance webhook topics for apps
+ Topic Event
+ customers/data_request Requests to view stored customer data
+ customers/redact Requests to delete customer data
+ shop/redact Requests to delete shop data
+ Subscribe to compliance webhooks
+ You must subscribe to compliance webhooks before publishing your app. To subscribe to compliance webhooks, you need to register endpoints and then configure them either in your app config TOML, or in the Partner Dashboard.
+ Register an endpoint for each compliance webhook. For HTTPS urls, this will require a valid SSL certificate that can correctly process webhook event notifications. For more information, refer to Register an endpoint for HTTPS, Set up an event source for AWS EventBridge, or Retrieve your Shopify service account address for Google Pub/Sub.
+ You can subscribe to the compliance webhook topics by making the following changes to your app's shopify.app.toml file in the app's root folder. Learn more about configuring your app with the TOML file.
+ shopify.app.toml
+ 1 [webhooks.privacy_compliance]
+ 2 customer_deletion_url = "https://app.example.com/api/webhooks/customer_deletion"
+ 3 customer_data_request_url = "https://app.example.com/api/webhooks/customer_request"
+ 4 shop_deletion_url = "https://app.example.com/api/webhooks/deletion"
+ Alternatively, add your endpoints in the Partner Dashboard by navigating to Apps, selecting the app that you want to subscribe to mandatory webhooks, and clicking Configuration > Compliance webhooks.
+ Note
+ The following is the structure of a Google Cloud Pub/Sub URL:
+ pubsub://{project-id}:{topic-id}
+ Where {project-id} is the ID of your Google Cloud Platform project, and {topic-id} is the ID of the topic that you set up in Google Cloud Pub/Sub.
+ The structure of an EventBridge ARN will be similar to the following example:
+ arn:aws:events:<aws_region>::event-source/aws.partner/shopify.com/<app_id>/<event_source_name>
+ Respond to compliance webhooks
+ When you receive one of the compliance webhooks, you need to take the following actions:
+ Confirm that you've received the request by responding with a 200 series status code.
+ Complete the action within 30 days of receiving the request. However, if you're unable to comply with a redaction request because you're legally required to retain data, then you shouldn't complete the action.
+ Learn more about how to receive and respond to webhooks.
+ customers/data_request
+ Customers can request their data from a store owner. When this happens, Shopify sends a payload on the customers/data_request topic to the apps that are installed on that store.
+ If your app has been granted access to customer or order data, then it will receive a data request webhook. The webhook contains the resource IDs of the customer data that you need to provide to the store owner. It's your responsibility to provide this data to the store owner directly. In some cases, a customer record contains only the customer's email address.
+ customers/data_request payload
+ 1 {
+ 2
+    "shop_id": 954889,
+ 3
+    "shop_domain": "{shop}.myshopify.com",
+ 4
+    "orders_requested": [
+ 5
+      299938,
+ 6
+      280263,
+ 7
+      220458
+ 8
+    ],
+ 9
+    "customer": {
+ 10
+      "id": 191167,
+ 11
+      "email": "john@example.com",
+ 12
+      "phone": "555-625-1199"
+ 13
+    },
+ 14
+    "data_request": {
+ 15
+      "id": 9999
+ 16
+    }
+ 17 }
+ customers/redact
+ Store owners can request that data is deleted on behalf of a customer. When this happens, Shopify sends a payload on the customers/redact topic to the apps installed on that store.
+ If your app has been granted access to the store's customer or order data, then it will receive a redaction request webhook with the resource IDs that you need to redact or delete. In some cases, a customer record contains only the customer's email address.
+ If a customer hasn't placed an order in the past six months, then Shopify sends the payload 10 days after the deletion request. Otherwise, the request is withheld until six months have passed.
+ customers/redact payload
+ 1 {
+ 2
+    "shop_id": 954889,
+ 3
+    "shop_domain": "{shop}.myshopify.com",
+ 4
+    "customer": {
+ 5
+      "id": 191167,
+ 6
+      "email": "john@example.com",
+ 7
+      "phone": "555-625-1199"
+ 8
+    },
+ 9
+    "orders_to_redact": [
+ 10
+      299938,
+ 11
+      280263,
+ 12
+      220458
+ 13
+    ]
+ 14 }
+ shop/redact
+ 48 hours after a store owner uninstalls your app, Shopify sends a payload on the shop/redact topic. This webhook provides the store's shop_id and shop_domain so that you can erase data for that store from your database.
+ shop/redact payload
+ 1 {
+ 2
+    "shop_id": 954889,
+ 3
+    "shop_domain": "{shop}.myshopify.com"
+ 4 }
+ Next steps
+ Test your configuration by manually triggering a webhook delivery using the Shopify CLI webhook trigger command. Manually triggering webhooks doesn't test your webhook subscriptions.
+ Learn how to manage webhooks for different API versions.
+ Learn about the available topics for REST Admin API webhooks.
+ Learn about the available topics for GraphQL Admin API webhooks.
+ Familiarize yourself with data privacy concepts for apps including privacy policies, data rights, and consent for marketing services.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Mandatory compliance webhooks
+ customers/data_request
+ customers/redact
+ shop/redact
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

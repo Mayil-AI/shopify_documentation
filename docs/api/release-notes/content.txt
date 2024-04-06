@@ -1,0 +1,20 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ API version release notes
+ Release notes list all of the changes that are introduced by an API version. Use them to check whether your app is compatible with an API version, and what changes you might need to make before you migrate your app.
+ Documentation updates
+ API reference documentation is updated on the first business day in Canada following the release date. For example, the API reference documentation for the 2024-01 release will be updated on January 3, 2024.
+ Available release notes
+ 2024-04 release notes — Update your app from API version 2024-01 to 2024-04.
+ 2024-01 release notes — Update your app from API version 2023-10 to 2024-01.
+ 2023-10 release notes — Update your app from API version 2023-07 to 2023-10.
+ 2023-07 release notes — Update your app from API version 2023-04 to 2023-07.
+ Developer previews — Shopify's developer previews provide early access to new features. Learn about the developer previews available and how to test your apps.
+ Release notes for previous versions — Reference a set of release notes for API versions that are no longer supported.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Documentation updates
+ Available release notes
+ Updates & News
+ Developer changelog

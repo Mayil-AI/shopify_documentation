@@ -1,0 +1,80 @@
+Product recommendations reference
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ TextField
+ Use a text field to allow merchants to enter or edit text. If you want to specify the kind of input, then use a formatted text field.
+ NewTextFieldProps
+ Name Type Description
+ disabled boolean? Whether the field can be modified.
+ error string? Indicate an error to the user. The field will be given a specific stylistic treatment to communicate problems that have to be resolved immediately.
+ label label? Content to use as the field label.
+ onBlur () => void? Callback when focus is removed.
+ onChange (value: string) => void? Callback when the user has finished editing a field.
+ onFocus () => void? Callback when input is focused.
+ onInput (value: string) => void? Callback when the user makes any changes in the field. As noted in the documentation for onChange, you must not use this to update value — use the onChange callback for that purpose. Use the onInput prop when you need to do something as soon as the user makes a change, like clearing validation errors that apply to the field as soon as the user begins making the necessary adjustments.
+ placeholder string? A short hint that describes the expected value of the field.
+ required boolean? Whether the field needs a value.
+ value string? The current value for the field. If omitted, the field will be empty. You should update this value in response to the onChange callback.
+ helpText string? Label under the text field which provides guidance or instructions that assist users.
+ action InputAction? A button under the text field to provide extra funtionality.
+ InputAction
+ Name Type Description
+ label string The text displayed in the button.
+ disabled boolean? Whether the button can be pressed.
+ onPress () => void A callback to be performed.
+ Note
+ This TextField component will only support NewTextFieldProps in version 2.0.0. Please migrate to using NewTextFieldProps as soon as possible if you are using the props below.
+ Props
+ Name Type Description
+ title string? The text displayed as the text field title.
+ subtitle string? The text displayed underneath the text field.
+ initialValue string? The initial text value in the text field.
+ placeholder string? The hint text to display when no text is input.
+ isValid boolean? Whether the input is a valid option.
+ errorMessage string? The text displayed when an error is detected on merchant input. Displayed beneath the field.
+ onChangeText ((value: string) => void)? A callback containing the new string when the text field’s value changes.
+ rightElementStyle EmbeddedElementProps? Use this value to change the type of the text field.
+ EmbeddedElementProps
+ A text field can take one of the following forms:
+ ActionProps: Tells the merchant to perform an action, like submitting an order.
+ InfoProps: Displays information to the merchant.
+ PasswordProps: Prompts the merchant to input a password.
+ SuccessProps: Displays a success message to the merchant.
+ ActionProps
+ Name Type Description
+ type 'action' Indicates that the text field is an action type.
+ message string The text displayed in the text field.
+ onPress (value: string) => void A callback to be performed when the text field is pressed.
+ InfoProps
+ Name Type Description
+ type 'info' Indicates that the text field is an info type.
+ message string The text displayed in the text field.
+ alwaysShow boolean? Whether the text field is always displayed.
+ SuccessProps
+ Name Type Description
+ type 'success' Indicates that the text field is a success type.
+ message string? The text displayed in the text field.
+ Password
+ Name Type Description
+ type 'password' Indicates that the text field is a password type.
+ onPress (value: string) => void A callback to be performed when the text field is pressed.
+ Guidelines
+ When a merchant opens a new form, the first text field should be in a focused state.
+ If the merchant is actively focused in a text field, then the keyboard should come up and the label should move to the top of the field.
+ If focus goes away from the text field, then the keyboard should hide.
+ Text fields always take up the full screen width.
+ Text fields don’t change height. If text entered is longer than the width of the text field, then the oldest text on the left should be hidden to make room.
+ When it makes sense, provide autocomplete options (for example, entering an address).
+ Content guidelines
+ If a text field is required, then it should indicate "Required".
+ Label titles should be brief and written in sentence case.
+ Use the same terms for similar label titles throughout the app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ NewTextFieldProps
+ Props
+ EmbeddedElementProps
+ Guidelines
+ Content guidelines

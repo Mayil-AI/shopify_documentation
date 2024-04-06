@@ -1,0 +1,65 @@
+Product subscription app extensions
+ TextField
+ A text field is an input field that merchants can type into.
+ Example
+ JS
+ React
+ 1 import {extend, TextField} from '@shopify/post-purchase-ui-extensions';
+ 2
+ 3 extend('Checkout::PostPurchase::Render', (root) => {
+ 4
+    const textfield = root.createComponent(TextField, {
+ 5
+      label: 'TextField',
+ 6
+    });
+ 7
+ 8
+    root.appendChild(textfield);
+ 9 });
+ Props
+ optional = ?
+ Name Type Description
+ id? string A unique identifier for the field. When no id is provided, a globally unique value will be used instead.
+ name? string An identifier for the field that is unique within the nearest containing &lt;Form /&gt; component.
+ label string Content to use as the field label. This value is also used as the placeholder when the field is empty.
+ value? string Current value for the field. If omitted, the field will be empty. You should update this value in response to the onChange callback on a text field.
+ type? "text" | "email" | "number" | "telephone" The content type a buyer will enter into the field. This type is used to provide semantic value to the field and, where possible, will provide the buyer with a better editing experience for the content type.
+ 
+ Note that the type property does not change the way the text field’s value will be provided in onChange or onInput; a text field with a type of 'number' will still provide the exact user entry, as a string, to those callbacks. The type also does not perform any form of automatic validation. If you want to perform validation, use the error property.
+ required? boolean Whether the field needs a value. This requirement adds semantic value to the field, but it will not cause an error to appear automatically. If you want to present an error when this field is empty, you can do so with the error prop.
+ error? string An error label to present with the field.
+ multiline? boolean Whether the field supports multiple lines of input.
+ autocomplete? Autocomplete | boolean A hint as to the intended content of the field.
+ 
+ When set to true, this property indicates that the field should support autofill, but you do not have any more semantic information on the intended contents.
+ 
+ When set to false, you are indicating that this field contains sensitive information, or contents that are never saved, like one-time codes. Note that it is impossible to prevent autofill in some browsers, so do not depend on its absence.
+ 
+ Alternatively, you can provide an Autocomplete object, which describes the specific data you would like to be entered into this field during autofill.
+ tooltip? Tooltip Additional hint text to display for the field. The tooltip is activated by an icon pinned to the end of the field.
+ onFocus? () => void Callback when input is focused.
+ onBlur? () => void Callback when focus is removed.
+ onChange? (value: string) => void Callback when the buyer has finished editing a field. Unlike onChange callbacks you may be familiar with from Polaris or other React component libraries, this callback is not run on every change to the input. Text fields are “partially controlled” components, which means that while the buyer edits the field, its state is controlled by the component. Once the buyer has signalled that they have finished editing the field (typically, by blurring the field), onChange is called if the input actually changed from the most recent value property. At that point, you are expected to store this “committed value” in state, and reflect it in the text field’s value property.
+ 
+ This state management model is important given how UI Extensions are rendered. UI extension components run on a separate thread from the UI, so they can’t respond to input synchronously. A pattern popularized by controlled React components is to have the component be the source of truth for the input value, and update the value on every user input. The delay in responding to events from a UI extension is only a few milliseconds, but attempting to strictly store state with this delay can cause issues if a user types quickly, or if the buyer is using a lower-powered device. Having the UI thread take ownership for “in progress” input, and only synchronizing when the user is finished with a field, avoids this risk.
+ 
+ It can still sometimes be useful to be notified when the user makes any input in the field. If you need this capability, you can use the onInput prop. However, never use that property to create tightly controlled state for the value.
+ 
+ This callback is called with the current value of the field. If the value of a field is the same as the current value prop provided to the field, the onChange callback will not be run.
+ onInput? (value: string) => void Callback when the user makes any changes in the field. As noted in the documentation for onChange, you must not use this to update state — use the onChange callback for that purpose. Use the onInput prop when you need to do something as soon as the buyer makes a change, like clearing validation errors that apply to the field as soon as the user begins making the necessary adjustments.
+ 
+ This callback is called with the current value of the field.
+ Tooltip
+ Name Type Description
+ label string A label to indicate what information the tooltip will provide. Currently, this label is only used for assistive technologies.
+ content string The content to display within the tooltip.
+ Autocomplete
+ A descriptor for selecting the data a field would like to receive during autocomplete. This attribute is modeled off of a limited set of the autocomplete values supported in browsers.
+ Name Type Description
+ group? "shipping" | "billing" The contact information “group” the autocomplete data should be sourced from.
+ field "name" | "honorific-prefix" | "given-name" | "additional-name" | "family-name" | "honorific-suffix" | "nickname" | "username" | "new-password" | "current-password" | "one-time-code" | "organization-title" | "organization" | "street-address" | "address-line1" | "address-line2" | "address-line3" | "address-level4" | "address-level3" | "address-level2" | "address-level1" | "country" | "country-name" | "postal-code" | "credit-card-name" | "credit-card-given-name" | "credit-card-additional-name" | "credit-card-family-name" | "credit-card-number" | "credit-card-expiry" | "credit-card-expiry-month" | "credit-card-expiry-year" | "credit-card-security-code" | "credit-card-type" | "transaction-currency" | "transaction-amount" | "language" | "birthday" | "birthday-day" | "birthday-month" | "birthday-year" | "sex" | "url" | "photo" | "telephone" | "telephone-country-code" | "telephone-national" | "telephone-area-code" | "telephone-local" | "telephone-local-prefix" | "telephone-local-suffix" | "telephone-extension" | "email" | "instant-message" | "home telephone" | "home telephone-country-code" | "home telephone-national" | "home telephone-area-code" | "home telephone-local" | "home telephone-local-prefix" | "home telephone-local-suffix" | "home telephone-extension" | "home email" | "home instant-message" | "work telephone" | "work telephone-country-code" | "work telephone-national" | "work telephone-area-code" | "work telephone-local" | "work telephone-local-prefix" | "work telephone-local-suffix" | "work telephone-extension" | "work email" | "work instant-message" | "mobile telephone" | "mobile telephone-country-code" | "mobile telephone-national" | "mobile telephone-area-code" | "mobile telephone-local" | "mobile telephone-local-prefix" | "mobile telephone-local-suffix" | "mobile telephone-extension" | "mobile email" | "mobile instant-message" | "fax telephone" | "fax telephone-country-code" | "fax telephone-national" | "fax telephone-area-code" | "fax telephone-local" | "fax telephone-local-prefix" | "fax telephone-local-suffix" | "fax telephone-extension" | "fax email" | "fax instant-message" | "pager telephone" | "pager telephone-country-code" | "pager telephone-national" | "pager telephone-area-code" | "pager telephone-local" | "pager telephone-local-prefix" | "pager telephone-local-suffix" | "pager telephone-extension" | "pager email" | "pager instant-message" The type of data that should be inserted into a field supporting autocomplete.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

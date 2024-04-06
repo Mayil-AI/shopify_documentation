@@ -1,0 +1,25 @@
+GraphiQL for the Admin API
+ GraphiQL is an in-browser tool for writing, validating, and testing GraphQL queries. When working with Shopify's GraphQL Admin API, GraphiQL can be useful for the following tasks:
+ Learning about the available queries and mutations
+ Executing specific queries and mutations to extract information or accomplish tasks
+ For more information on GraphQL Admin API queries, refer to the GraphQL Admin API reference.
+ GraphQL Admin API workshop
+ Learn how to make queries and mutations using the GraphQL Admin API.
+ Execute queries on your store
+ You can use GraphiQL to interact with your store's data in the following ways.
+ Install the GraphiQL app
+ To build queries and mutations on your development store, install Shopify's GraphiQL app.
+ Some scopes aren't available within the GraphiQL app. The app also can't be used to access data owned by other apps. If you're developing an app, then you should use a local GraphiQL instance instead.
+ Use a local GraphiQL instance
+ If you are developing an app using Shopify CLI, you can launch GraphiQL while running the dev command by tapping the g key.
+ The CLI's GraphiQL instance connects as your app, so it has the same access scopes as your app, and it can access data owned by your app. It can't access data owned by other apps.
+ Execute queries on a demo store
+ This is a read-only demo which can execute queries without needing to connect to a development store.
+ Click Explorer and use checkboxes and fields to build GraphQL queries.
+ Click Docs to expand the Documentation Explorer. You can search schemas to view descriptions and supported fields.
+ Launch GraphiQL in its own window.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Execute queries on your store
+ Execute queries on a demo store

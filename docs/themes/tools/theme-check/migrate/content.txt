@@ -1,0 +1,75 @@
+Overview
+ Commands
+ Configuration
+ Checks reference
+ Migrate
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Migrate to Theme Check 2.x
+ In January 2024, Theme Check 2.x was integrated into the admin code editor, the VS Code extension, and Shopify CLI.
+ On this page, you can learn about the differences between Theme Check 1.x and 2.x, and how to update your theme development environment accordingly.
+ CLI changes
+ The support for check categories has been removed in the new version. As a result, the --category and --exclude-category flags are no longer available.
+ The decision to remove these options was made to simplify the API and reduce the noise on the CLI's --help. While this might require some users to create a subset of the config for performance-related checks, the new framework's ability to extend multiple configurations makes this a more efficient approach. For more details about flags, please refer to the commands reference.
+ Configuration changes
+ In Theme Check 2.x, the extends option has been updated. It now supports values such as theme-check:all, theme-check:recommended, and theme-check:theme-app-extension, but also supports a list of configuration files and third-party modules. For more details, please refer to the configuration file reference.
+ The require option no longer supports custom Ruby checks. If you need to create your own custom checks or use a third-party set of checks with Theme Check 2.x, refer to the Creating your own checks guide.
+ Check compatibility table
+ Theme Check 2.x introduces changes to the collection of checks, including removals, renames, optimizations, and regrouping. The table below compares Theme Check 1.x and 2.x, outlining these changes.
+ Theme Check 1.x Theme Check 2.x
+ AppBlockValidTags AppBlockValidTags
+ AssetPreload AssetPreload
+ AssetSizeAppBlockCSS AssetSizeAppBlockCSS
+ AssetSizeAppBlockJavaScript AssetSizeAppBlockJavaScript
+ AssetSizeCSS AssetSizeCSS
+ AssetSizeCSSStylesheetTag AssetSizeCSS
+ AssetSizeJavaScript AssetSizeJavaScript
+ AssetUrlFilters RemoteAsset
+ CdnPreconnect CdnPreconnect
+ ContentForHeaderModification ContentForHeaderModification
+ ConvertIncludeToRender DeprecatedTag
+ DefaultLocale -
+ DeprecateBgsizes DeprecateBgsizes
+ DeprecatedFilter DeprecatedFilter
+ DeprecatedGlobalAppBlockType -
+ DeprecatedTags DeprecatedTag
+ DeprecateLazysizes DeprecateLazysizes
+ HtmlParsingError LiquidHTMLSyntaxError
+ ImgLazyLoading -
+ ImgWidthAndHeight ImgWidthAndHeight
+ LiquidTag -
+ MatchingSchemaTranslations MatchingTranslations
+ MatchingTranslations MatchingTranslations
+ MissingAsset MissingAsset
+ MissingEnableComment -
+ MissingRequiredTemplateFiles -
+ MissingTemplate MissingTemplate
+ NestedSnippet -
+ PaginationSize PaginationSize
+ ParserBlockingJavaScript ParserBlockingScript
+ ParserBlockingScriptTag ParserBlockingScript
+ RemoteAsset RemoteAsset
+ RequiredDirectories -
+ RequiredLayoutThemeObject RequiredLayoutThemeObject
+ SchemaJsonFormat -
+ SpaceInsideBraces -
+ SyntaxError LiquidHTMLSyntaxError
+ TemplateLength -
+ TranslationKeyExists TranslationKeyExists
+ - UnclosedHTMLElement
+ UndefinedObject UndefinedObject
+ UnknownFilter UnknownFilter
+ UnusedAssign UnusedAssign
+ UnusedSnippet -
+ ValidHTMLTranslation ValidHTMLTranslation
+ ValidJson JSONSyntaxError
+ ValidSchema ValidSchema
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ CLI changes
+ Configuration changes
+ Check compatibility table
+ Updates & News
+ Developer changelog

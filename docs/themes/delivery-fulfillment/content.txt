@@ -1,0 +1,10 @@
+Overview
+ Pickup availability
+ Customer engagement
+ Markets
+ Site navigation and search
+ Delivery and fulfillment
+ A big hurdle for merchants is getting customers to make a purchase, however once that purchase is made, they still need a way for the product to reach the customer. The most common method is shipping, however Shopify also provides merchants the option to offer products for local pickup.
+ As such, you can show the pickup availability on product pages so customers can see whether this is an option for their desired product.
+ Was this page helpful?
+ YesNo

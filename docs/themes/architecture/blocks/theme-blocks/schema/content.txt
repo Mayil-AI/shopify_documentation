@@ -1,0 +1,385 @@
+Section blocks
+ Theme blocks
+ Overview
+ Block schema
+ Developer preview
+ App blocks
+ Section groups
+ Config
+ Locales
+ Settings
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Block schema
+ Developer preview
+ Theme blocks are currently only available as part of the Theme blocks developer preview.
+ Theme blocks support the {% schema %} Liquid tag. This tag is used to define the following block attributes and settings:
+ name
+ settings
+ blocks
+ presets
+ tag
+ class
+ These attributes and settings enable different customization options and preconfigurations of the block inside the theme editor.
+ The following is an example of a block schema that opts-in to supporting nested blocks with its block attribute, defines some background-related settings, and assembles different variations of those settings with its presets attribute:
+ /blocks/slide.liquid
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Slide",
+ 4
+    "blocks": [{"type": "@app"}, {"type": "@theme"}],
+ 5
+    "settings": [
+ 6
+      {
+ 7
+        "type": "image_picker",
+ 8
+        "id": "image",
+ 9
+        "label": "Background image"
+ 10
+      },
+ 11
+      {
+ 12
+        "type": "color_background",
+ 13
+        "id": "background",
+ 14
+        "label": "Background color"
+ 15
+      }
+ 16
+    ],
+ 17
+    "presets": [
+ 18
+      {
+ 19
+        "name": "Slide",
+ 20
+        "settings": {
+ 21
+          "background": "#000000"
+ 22
+        },
+ 23
+        "blocks": [
+ 24
+          {
+ 25
+            "type": "text",
+ 26
+            "settings": {
+ 27
+              "text": "This is a slide!"
+ 28
+            }
+ 29
+          }
+ 30
+        ]
+ 31
+      }
+ 32
+    ]
+ 33 }
+ 34 {% endschema %}
+ Each block can have only a single {% schema %} tag, which must contain only valid JSON and can only use the attributes listed below. The schema tag can be placed anywhere within the block file, but it can’t be nested inside another Liquid tag. It doesn’t output its contents, or render any Liquid included inside it.
+ Caution
+ Having more than one {% schema %} tag, or placing it inside another Liquid tag, will result in an error.
+ name
+ The name attribute determines the block title that's shown in the theme editor. For example, the following schema returns the following output:
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Slide"
+ 4 }
+ 5 {% endschema %}
+ Output
+ Showing dynamic block titles in the theme editor
+ In specific cases, the theme editor can display an input setting value as the title of a block in the theme editor sidebar. This can help merchants to identify and rearrange blocks in a section.
+ The theme editor checks the id values of the settings in a block to determine the best one to use for the block title.
+ The theme editor uses settings with the following id values, in the following order of precedence:
+ heading
+ title
+ text
+ If a setting with a matching id value doesn't exist, then the block name is used as the title.
+ For example, the following block with a setting id of text displays in the sidebar with the title Welcome to our store.
+ File
+ 1 {
+ 2
+    "name": "Text",
+ 3
+    "settings": [
+ 4
+      {
+ 5
+        "type": "text",
+ 6
+        "id": "text",
+ 7
+        "default": "Welcome to our store",
+ 8
+        "label": "Content"
+ 9
+      }
+ 10
+    ]
+ 11 }
+ settings
+ You can create block-specific settings to enable merchants to customize the block with the settings object:
+ /blocks/slide.liquid
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Slide",
+ 4
+    "settings": [
+ 5
+      {
+ 6
+        "type": "image_picker",
+ 7
+        "id": "image",
+ 8
+        "label": "Background image"
+ 9
+      },
+ 10
+      {
+ 11
+        "type": "color_background",
+ 12
+        "id": "background",
+ 13
+        "label": "Background color"
+ 14
+      }
+ 15
+    ]
+ 16 }
+ 17 {% endschema %}
+ Caution
+ All block setting IDs must be unique within each block. Having duplicate IDs within a block throws an error.
+ Accessing block settings
+ Block settings can be accessed through the block object. Refer to Access settings to learn more.
+ blocks
+ Theme blocks can accept other app and theme blocks as children using the blocks attribute of their schema:
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Slide",
+ 4
+    "blocks": [{"type": "@app"}, {"type": "@theme"}]
+ 5 }
+ 6 {% endschema %}
+ The "@theme" type denotes that this block is compatible with other theme-defined blocks that live in the /blocks folder of the theme, while the "@app" type is used to denote that this block accepts app blocks. App blocks enable app developers to create blocks for merchants to add app content to their theme without having to directly edit theme code.
+ Note
+ Unlike sections, which can define blocks locally using the blocks attribute of their schema, Theme blocks can't define local blocks in the blocks attribute of their schema.
+ Rendering nested blocks
+ You can render a block's child blocks by using the {% content_for 'blocks' %} Liquid tag:
+ 1 <div class="slide">
+ 2
+    {% content_for 'blocks' %}
+ 3 </div>
+ In the example above, each block's content is outputted by the {% content_for 'blocks' %} tag in the order stored in the JSON template.
+ Tip
+ Theme blocks can be nested up to 8 levels deep, excluding the section level.
+ presets
+ Presets are default configurations of blocks that enable merchants to easily add a block to a JSON template through the theme editor. A block can have multiple different presets that combine its settings in a variety of different configurations. Additionally, presets of a block may reference other child blocks and assemble them in any number of configurations.
+ Presets have the following attributes:
+ presets attributes
+ Attribute Description Required
+ name The preset name, which displays in the Add block picker of the theme editor. Yes
+ settings A list of default values for any settings that you might want to populate. Each entry should include the setting name and the value. No
+ blocks A list of child blocks that you might want to include. Each entry should be an object with attributes of type and settings. The type attribute value should reflect the type of the block that you want to include, and the settings object should be in the same format as the settings attribute above. No
+ The following is an example of including presets in a block, assuming that the theme also contains a text block located in the /blocks/text.liquid Liquid file:
+ /blocks/slide.liquid
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Slide",
+ 4
+    "blocks": [{"type": "@app"}, {"type": "@theme"}],
+ 5
+    "settings": [
+ 6
+      {
+ 7
+        "type": "image_picker",
+ 8
+        "id": "image",
+ 9
+        "label": "Background image"
+ 10
+      },
+ 11
+      {
+ 12
+        "type": "color_background",
+ 13
+        "id": "background",
+ 14
+        "label": "Background color"
+ 15
+      }
+ 16
+    ],
+ 17
+    "presets": [
+ 18
+      {
+ 19
+        "name": "Slide",
+ 20
+        "settings": {
+ 21
+          "background": "#000000"
+ 22
+        },
+ 23
+        "blocks": [
+ 24
+          {
+ 25
+            "type": "text",
+ 26
+            "settings": {
+ 27
+              "text": "This is a slide!"
+ 28
+            }
+ 29
+          }
+ 30
+        ]
+ 31
+      }
+ 32
+    ]
+ 33 }
+ 34 {% endschema %}
+ tag
+ By default, when Shopify renders a block, it’s wrapped in a <div> element with a unique id attribute:
+ 1 <div id="shopify-block-[id]" class="shopify-block">
+ 2
+    // Output of the block content
+ 3 </div>
+ If you don’t want to use a <div>, then you can specify which kind of HTML element to use with the tag attribute.
+ For example, the following schema returns the following output:
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Image",
+ 4
+    "tag": "picture"
+ 5 }
+ 6 {% endschema %}
+ Output
+ 1 <picture id="shopify-block-[id]" class="shopify-block">
+ 2
+    // Output of the block content
+ 3 </picture>
+ Tip
+ The tag attribute accepts any string up to a limit of 50 characters. It can also be used to render custom HTML elements.
+ Rendering blocks without a wrapper
+ In some advanced use cases, you might want more control over the tag and the attributes that are passed to it. For example, dynamically setting a tag or class name based on the settings of the block. In these scenarios, you can render blocks without a wrapper by setting the tag attribute to null.
+ When the tag attribute is set to null, Shopify doesn't wrap the contents of the block in a wrapper element, and instead directly outputs the contents of the block.
+ Caution
+ Blocks that make use of “tag”: null should contain a single top level HTML tag within the same Liquid file. Only a single HTML element can be tagged with {{ block.shopify_attributes }}. This element should be the topmost HTML element in the file. This is important to allow the theme editor to move the entirety of the block's markup to a new index when merchants re-order blocks without leaving orphaned HTML elements.
+ 1 <{{ block.settings.tag }} class=”heading” {{ block.shopify_attributes }}>
+ 2
+    ...
+ 3 </{{ block.settings.tag }}>
+ 4
+ 5 {% schema %}
+ 6 {
+ 7
+    "name": "Heading",
+ 8
+    "tag": null,
+ 9
+    "settings": [
+ 10
+      {
+ 11
+        "type": "select",
+ 12
+        "id": "heading_size",
+ 13
+        "label": "Heading size",
+ 14
+        "options": [
+ 15
+          {
+ 16
+            "value": "h3",
+ 17
+            "label": "Small"
+ 18
+          },
+ 19
+          {
+ 20
+            "value": "h2",
+ 21
+            "label": "Medium"
+ 22
+          },
+ 23
+          {
+ 24
+            "value": "h1",
+ 25
+            "label": "Large"
+ 26
+          }
+ 27
+        ]
+ 28
+      }
+ 29
+    ]
+ 30 }
+ 31 {% endschema %}
+ Output
+ 1 <h3 class=”heading”>
+ 2
+    ...
+ 3 </h3>
+ For blocks to be compatible with the theme editor, the top level HTML element must be tagged with the {{ block.shopify_attributes }} Liquid tag. This adds the necessary data attributes for the block to be identified by the theme editor. Shopify's theme editor uses that attribute to identify blocks in its JavaScript API.
+ Note
+ Shopify automatically adds this attribute for you when it renders the wrapper around blocks, but when the tag attribute is set to null, you must ensure that the top level HTML element of your block has this attribute for it to be compatible with the theme editor.
+ class
+ When Shopify renders a block, it’s wrapped in an HTML element with the shopify-block class. You can append other classes by using the class attribute:
+ 1 {% schema %}
+ 2 {
+ 3
+    "name": "Slide",
+ 4
+    "class": "slide"
+ 5 }
+ 6 {% endschema %}
+ Output
+ 1 <div id="shopify-block-[id]" class="shopify-block slide">
+ 2
+    // Output of the block content
+ 3 </div>
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ name
+ settings
+ blocks
+ presets
+ tag
+ class
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

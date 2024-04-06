@@ -1,0 +1,160 @@
+Product subscription app extensions
+ GraphQL mutations
+ GraphQL mutations create and modify objects, similar to a PUT, POST, or DELETE request in REST. However, unlike REST, GraphQL mutations are sent to a single endpoint and use the POST HTTP method.
+ For a full list of available mutations, refer to the relevant API's reference.
+ Mutation structure
+ GraphQL mutations have the following structure:
+ The mutation operation name. This is the keyword that starts a mutation operation in a GraphQL request.
+ The mutation field name, such as customerCreate. This is the specific mutation to perform, as defined in the GraphQL schema.
+ The input data to use in the mutation, such as the information for a new customer. This is the data that the mutation needs to perform its operation. It's passed as an argument to the mutation field.
+ A selection of return fields that should be included in the response, such as the ID of a successfully created Customer object. These are the pieces of data that you want the mutation to return. In GraphQL, you specify exactly what data you want returned.
+ Example
+ Mutation structure
+ 1 mutation {
+ 2
+    mutationName(arg: "Data") {
+ 3
+      return fields
+ 4
+    }
+ 5 }
+ Mutation structure with data
+ 1 mutation {
+ 2
+    customerCreate(input: { firstName: "Ayumu", lastName: "Hirano", email: "ayumu@example.com" }) {
+ 3
+      customer {
+ 4
+        id
+ 5
+      }
+ 6
+    }
+ 7 }
+ Input objects
+ Mutations require input data, such as the data to create a new object, or the ID of an object to delete. For mutations that might require a substantial data object, the schema provides a dedicated input object type.
+ For example, the customerCreate mutation requires an input argument, which accepts a CustomerInput input object. The CustomerInput type defines all the fields that can be used to create or modify a customer.
+ Example
+ Mutation input
+ 1 mutation {
+ 2
+    customerCreate(
+ 3
+      input: {
+ 4
+        firstName: "Ayumu",
+ 5
+        lastName: "Hirano",
+ 6
+        email: "ayumu@example.com"
+ 7
+      }
+ 8
+    )
+ 9
+    {
+ 10
+      ...
+ 11
+    }
+ 12 }
+ Return fields
+ Each mutation provides a set of fields that can be returned in the response. For example, one of the return fields that's available for the customerCreate mutation is the Customer object that was created by a successful mutation. Like GraphQL queries, you can select the fields on the new object that you want to include in the response.
+ Each mutation can also return the userErrors field. The userErrors field returns information about errors when a mutation fails. You should include the userErrors field with each mutation to make it easier to troubleshoot failed mutations. Learn more about error handling in GraphQL.
+ Example
+ Mutation return fields
+ 1 mutation {
+ 2
+    customerCreate(
+ 3
+      input: {
+ 4
+        ...
+ 5
+      }
+ 6
+    )
+ 7
+    {
+ 8
+      customer {
+ 9
+        id
+ 10
+        displayName
+ 11
+ 14
+        message
+ 15
+      }
+ 16
+    }
+ 17 }
+ Example: Create a customer
+ The following mutation uses input objects and return fields to create a new customer and return their id and displayName:
+ POST /admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    customerCreate(
+ 3
+      input: {
+ 4
+        firstName: "Ayumu",
+ 5
+        lastName: "Hirano",
+ 6
+        email: "ayumu@example.com"
+ 7
+      }
+ 8
+    )
+ 9
+    {
+ 10
+      customer {
+ 11
+        id
+ 12
+        displayName
+ 13
+      }
+ 14
+      userErrors {
+ 15
+        field
+ 16
+        message
+ 17
+      }
+ 18
+    "data": {
+ 3
+      "customerCreate": {
+ 4
+        "customer": {
+ 5
+          "id": "gid:\/\/shopify\/Customer\/1310036885526",
+ 6
+          "displayName": "Ayumu Hirano"
+ 7
+        },
+ 8
+        "userErrors": []
+ 9
+      }
+ 10
+    }
+ 11
+    ...
+ 12 }
+ Next steps
+ Learn how to write reusable requests using variables.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Mutation structure
+ Input objects
+ Return fields
+ Example: Create a customer
+ Next steps

@@ -1,0 +1,10 @@
+Troubleshooting
+ Theme Store
+ Pricing and payments
+ Being able to clearly see pricing and discounts, as well as payment options, are important factors for customers making purchases from a merchant's store.
+ Some merchants might sell products in specific quantities or measurements, or as part of a selling plan. To support this, Shopify provides merchants the option to set up unit pricing, as well as Subscriptions and Pre-orders and Try before you buy.
+ To help make the payment process easier, Shopify integrates with payment providers that can offer accelerated checkouts, and some merchants can utilize Shop Pay to allow customers to pay in installments.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

@@ -1,0 +1,90 @@
+Storefront search
+ Overview
+ Predictive search
+ Predictive search UX guidelines
+ Filtering
+ Predictive search UX guidelines
+ Before you implement predictive search, make sure that you’re familiar with the following user interface (UI) and accessibility requirements, and user experience (UX) best practices. These include guidance for displaying products, styling the search field, and creating a search experience that is both accessible and mobile friendly.
+ You can also refer to Example search patterns for example UIs.
+ UI requirements
+ Requirement Description
+ Number of resources shown
+ The predictive search API by default returns a maximum of ten results across all resource types, so consider tailoring responses to include a mix of resources. For example, a query that matches on both products and pages would return a maximum of ten matching resources across products and pages.
+ Limit the overall number of suggestions to avoid overwhelming the user or taking up too much space on the screen. You can also adjust the number of suggestions to display depending on the context of where they appear. Different suggestions should be labeled uniquely or use distinct styling.
+ Close action
+ Include a close button, in the form of an icon or text, that leaves the search experience and closes the product suggestion dropdown. This action should not clear the query.
+ Search action
+ Include a search button, in the form of an icon or text, that takes the user to the search results page. This should also be able to be achieved by clicking enter on a keyboard, or "go"/"search" on a mobile keyboard.
+ Clearing query
+ The query should stay in the search field until the customer explicitly clears the query or navigates to a different page. The searched query should be also repeated on the search results page.
+ Empty state
+ Hide the empty-state drop-down when there are no product suggestions that match the query. The lack of feedback from predictive search should encourage customers to continue their search from the results page.
+ Mobile interactions
+ Focus the search field when tapping on the search icon to reduce the number of interactions required to use search.
+ Make sure that scrolling within the display is not interfered with.
+ Desktop interactions
+ Don’t hide information behind a scroll or use fixed height. Instead, ensure that the height of the dropdown adjusts to display all content.
+ Accessibility requirements
+ Requirement Description
+ Browser and mobile autocomplete Disable browser-based autocomplete and search history, as well as mobile OS text autocorrect and autocomplete. These kinds of functionality can disrupt the UI through overlays, and the general experience with competing autocomplete logic.
+ UX best practices
+ Practice Description
+ Resource information
+ Reduce search interface content and resource data to the minimum amount necessary to make selection meaningful. Using the API, you can control which elements are exposed or hidden, so you can adapt this to the needs of the merchant, however you should consider only exposing the following fields:
+ Query fields
+ styled_text
+ Product fields
+ image
+ product
+ title
+ price
+ Collection fields
+ title
+ Article fields
+ title
+ Page fields
+ title
+ Query suggestions
+ As you add query suggestions to your theme, we recommend to highlight the suggested portion instead of what the buyer types. For example, if the buyer types card and the query suggestion is cardigan, then present it as cardigan instead of cardigan. This makes it easier for buyers to scan the list of suggestions.
+ Labels
+ Only show a "Sold out" label for suggested products when the entire product is unavailable.
+ Use a heading to label product suggestions to help users anticipate the type of results they can expect. For example, use a "Products" heading for product suggestions.
+ Actions
+ Include a clear button, or text, in the search field to delete any query entered.
+ Search visibility
+ Display the search field, or at least the search icon, in the header of all pages. If search is a significant element of the overall experience you want to provide, then make sure that it’s displayed prominently.
+ For stores with only one product or a small number of products, the search field can be located within a hamburger menu.
+ Darken page background
+ As you design the overall predictive search dropdown, darken other parts of the page background while autocomplete is active to help buyers focus.
+ "More results" links
+ Display a link in the list of product suggestions to indicate that there might be more results on the search results page.
+ For example, the link could include the text "Search for [your query]", where [your query] is what the user has entered in the search field, or "View all results."
+ Example search patterns
+ The following layouts and patterns can help you implement predictive search effectively in your theme.
+ Desktop: inline search
+ Mobile: inline search
+ Desktop: in-menu search
+ Mobile: in-menu search
+ Inline search drop down
+ Desktop: inline search
+ The search dropdown overlays the page, without taking up too much visual space.
+ The search bar is visible on the site.
+ Predictive search appears as a dropdown under the search field.
+ Mobile: inline search
+ In-menu search
+ Desktop: in-menu search
+ The search dropdown overlays the page, without taking up too much visual space.
+ No search bar is visible on the site.
+ Search appears in the menu.
+ 
+ Predictive search results appear under the search field in the menu.
+ Alternatively, the search field can be positioned at the top of the menu. In this case, product suggestions would overlay the menu list (see the in-menu mobile example for this layout).
+ Mobile: in-menu search
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ UI requirements
+ Accessibility requirements
+ UX best practices
+ Example search patterns
+ Updates & News

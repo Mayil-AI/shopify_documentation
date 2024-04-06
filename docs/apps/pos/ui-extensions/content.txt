@@ -1,0 +1,35 @@
+Billing
+ App Store
+ POS UI Extensions
+ POS UI Extensions enable app developers to extend the capabilities of the Shopify POS app at defined extension points. You can use the POS UI Extension components and APIs to develop extensions that feel native to Shopify POS with faster performance.
+ For example, the following POS UI extension applies discounts to the products in the cart.
+ How it works
+ Developers can get started with POS UI extensions by using Shopify CLI to generate extension scaffolding. Leveraging the defined extension points, extension API and components, developers can build a user experience to extend the capability of POS app. For example, you can build an extension that adds update cart, read cart data, apply discount to the product added in the cart and much more.
+ Using Shopify CLI and the Partner Dashboard, developers can deploy and release extensions. Merchants can then discover and install extensions in the POS app. The demo below shows how merchants can discover and add POS UI extensions in the POS app.
+ Components
+ POS UI extensions provide UI components to build an interface with a native look and feel. Shopify POS renders the UI natively, so it's performant and accessible. Currently, these extensions are available only for the smart grid.
+ Refer to the POS UI Extensions reference for more information.
+ Extension points
+ Extension points provide locations where merchants can insert custom content functionality. An extension point in a UI extension is a plain JavaScript function. This function receives some API for interacting with the application, and is expected to return a value in a specific shape. The input arguments and the output type are different for each extension point. Shopify POS currently has two extension points available for use. These extension points allow for the rendering of different components, as well as the ability to call different API functions.
+ The following extension points are available:
+ pos.home.tile.render: Customize the functionality of the app’s smart grid tile.
+ pos.home.modal.render: Customize and build a full-screen modal that presents on top of the smart grid.
+ Note
+ In order to utilize the Modal extension point, it must be integrated alongside a smart grid tile.
+ Developer tools and resources
+ Explore the following developer tools and resources to learn more about building with POS UI extensions.
+ Shopify POS UI Extension reference
+ Build your user interface using components and APIs from the Shopify POS UI Extension library.
+ Figma UI kit
+ Use the Figma UI kit to design your extension.
+ Next steps
+ Get started building a POS UI Extension.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Developer tools and resources
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

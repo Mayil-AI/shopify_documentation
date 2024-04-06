@@ -1,0 +1,140 @@
+Themes
+ Overview
+ Getting started
+ Overview
+ Create a theme
+ Customize a theme
+ Architecture
+ Developer tools
+ Best practices
+ Integrating apps
+ Theme Store
+ Create a theme
+ You're ready to create a new theme. You might be asking yourself: How can I quickly set up my development environment and start coding?
+ In this tutorial, you'll use Shopify CLI and Dawn to create a new theme and upload it to Shopify.
+ What you'll learn
+ After you've finished this tutorial, you'll have accomplished the following:
+ Set up your local development environment
+ Cloned Dawn, Shopify's reference theme
+ Previewed changes made to your local code
+ Pushed theme code to your Shopify store and published your theme
+ Requirements
+ If you want to use a development store to build a theme, then create or log in to a Shopify Partner account, and then create a development store. We recommend using a development store for this tutorial.
+ The URL of the store that you want to work on, such as johns-apparel.myshopify.com.
+ You have a collaborator account or staff account with the Manage themes permission or Themes permission for the store that you want to work on, or you're the store owner.
+ Caution
+ To use a development store or Plus sandbox store with Shopify CLI, you need to be the store owner, or have a staff account on the store. Staff accounts are created automatically the first time you access a development store with your Partner staff account through the Partner Dashboard.
+ Installation requirements for Shopify CLI
+ The requirements to install and run Shopify CLI depend on your operating system:
+ Operating system Requirements
+ macOS
+ Homebrew
+ Node.js 18 or higher.
+ Ruby
+ Git
+ Note: When you install Shopify CLI using Homebrew, Homebrew installs Node.js, Ruby, and Git for you.
+ Windows
+ Node.js 18 or higher.
+ Ruby+Devkit 3.0, installed using RubyInstaller for Windows
+ (select the MSYS2 component and the MSYS2 base installation option)
+ Git
+ Bundler 2.3.8 or higher
+ Linux
+ Node.js 18 or higher.
+ Ruby 3.0
+ Ruby development environment (ruby-dev / ruby-devel)
+ Git
+ cURL
+ GCC
+ g++
+ Make
+ Step 1: Install Shopify CLI
+ Shopify CLI is a command-line tool that helps you to build Shopify themes. It lets you preview, test, and share changes to themes while developing locally. Follow the instructions below to install Shopify CLI on macOS, Windows, or Linux.
+ macOS (Homebrew)
+ Terminal
+ $ brew tap shopify/shopify
+ $ brew install shopify-cli
+ Windows and Linux (npm)
+ To install Shopify CLI for themes, install the @shopify/cli and @shopify/theme Node.js packages globally using the command line.
+ Terminal
+ $ npm install -g @shopify/cli @shopify/theme
+ Step 2: Initialize a new theme using Dawn
+ Use shopify theme init to clone the Dawn Git repository to your local machine.
+ Dawn is Shopify's reference theme, built for performance, flexibility, and ease of use. You can use Dawn as the starting point for building a theme.
+ Caution
+ If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be substantively different from Dawn so that it provides added value for users. Learn about the ways that you can use Dawn.
+ In a terminal, navigate to the working directory where you want to clone Dawn.
+ Enter the following command:
+ Terminal
+ $ shopify theme init
+ You're prompted to enter a name for your theme, such as my-new-theme. The theme is cloned into a folder with the same name.
+ After the theme is cloned, navigate to the folder:
+ Terminal
+ $ cd "my-new-theme"
+ Tip
+ You can also use the init command to clone a theme from another Git repository.
+ Step 3: Start a local development server
+ After you initialize your theme, you can run shopify theme dev to interact with the theme in a browser. Shopify CLI uploads the theme as a development theme on the store.
+ The command returns a URL that hot reloads local changes to CSS and sections, allowing you to preview changes in real time using the store's data. This preview is only available in Google Chrome.
+ The first time you run the dev command, you're prompted to log in to Shopify.
+ To serve your theme, run the following command, where --store represents the name of the store that you want to use to preview your theme:
+ Terminal
+ $ shopify theme dev --store {store-name}
+ 
+ You need to pass the --store flag the first time you preview your theme. The store that you specify is used for future commands until you pass the --store flag with a new value. To check which store you're connected to, run shopify theme info.
+ In Google Chrome, navigate to http://127.0.0.1:9292 to open the theme preview.
+ Tip
+ You can also use the dev to generate a preview link and a link to the theme editor for the development theme.
+ The following image shows a development server being started using dev:
+ Step 4: Upload your theme to a store
+ If you want to share a permanent link to your theme, update the code of an existing theme, or prepare for your theme to be published, then you need to push your theme code to Shopify using the theme push command.
+ The first time you push your theme code, you might want to upload the theme to your theme library as a new, unpublished theme. You can do this by running the command with the --unpublished flag. When you run the command using this flag, you're prompted to provide a name for the theme that appears in the theme library.
+ Terminal
+ $ shopify theme push --unpublished
+ After the theme is created, you can update your theme code by running the push command without any flags:
+ Terminal
+ $ shopify theme push
+ Step 5: Publish your theme
+ If you want to make your theme live on your store, then you can publish it using the theme publish command. Before you run this command, make sure that you've pushed all of your local changes to Shopify using the theme push command.
+ Enter the following command:
+ Terminal
+ $ shopify theme publish
+ Select the theme that you want to publish from the list.
+ Select Yes to confirm that you want to publish the specified theme.
+ The theme is published and is now the active theme for the store.
+ Next steps
+ Creating your first theme with our tools is only the first step in building your theme. Consider the following next steps:
+ Learn more about Shopify themes
+ Explore the architecture of a theme. Learn more about the structure of a theme, and the role of each file and folder, in our architecture documentation.
+ Review our general theme best practices. Shopify themes are powerful and flexible. To use themes to their full potential, and to create great ecommerce experiences, you should build your theme with a set of principles in mind. Our best practices cover topics like performance, accessibility, and design.
+ Review our workflow best practices. If you're building a theme with a team of developers, or if you want to use build tools or advanced version control strategies, then review our best practices to identify how these strategies can be applied to your Shopify theme development processes.
+ Implement features
+ You can enable certain Shopify features or add functionality to your theme. Features fall into the following categories:
+ Product merchandising
+ Pricing and payments
+ Delivery and fulfillment
+ Customer engagement
+ Shopify Markets
+ Site navigation and search
+ Search engine optimization
+ Trust and security
+ If you're building a theme for a client, or for your own store, then you can pick and choose from these features. If you're building a theme for the Shopify Theme Store, then some of these features need to be included in your theme.
+ Explore theme tools
+ Learn how to lint your theme code. Use Theme Check, a linter for Liquid and JSON, to detect errors and enforce Shopify theme and Liquid best practices.
+ Set up the Shopify GitHub integration. The Shopify GitHub integration lets you automatically pull and push code from a GitHub repository to a store, develop and test features collaboratively, and track edits made in the Shopify admin.
+ Distribute your theme
+ Consider submitting your theme to the Shopify Theme Store. As a theme Partner, you can create themes for the Shopify Theme Store and reach an international audience of millions of entrepreneurs. Learn about the requirements for themes in the Shopify Theme Store, and how to submit your theme.
+ Caution
+ If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be substantively different from Dawn so that it provides added value for users. Learn about the ways that you can use Dawn.
+ Prepare to hand off your store to a client. If you're building your theme for a client, then review our best practices for working with merchants.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Install Shopify CLI
+ Step 2: Initialize a new theme using Dawn
+ Step 3: Start a local development server
+ Step 4: Upload your theme to a store
+ Step 5: Publish your theme
+ Next steps

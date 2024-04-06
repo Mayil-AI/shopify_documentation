@@ -1,0 +1,80 @@
+Theme Store
+ Migrate to Shopify CLI 3.x
+ In October 2022, support for themes was added to Shopify CLI 3.x. Shopify CLI 3.x provides a streamlined authentication and store management experience.
+ On this page, you can learn about the differences between Shopify CLI 2.x and 3.x, and how to update your theme development environment.
+ Getting started
+ Refer to the following tutorials for details about creating or working on a Shopify theme using Shopify CLI:
+ Start building a theme
+ Learn how to set up your theme development environment and create a new theme.
+ Customize an existing theme
+ Learn how to set up your development environment to work on a theme in a Shopify store.
+ Workflow changes
+ Some changes were made to theme workflows to reduce the number of commands that need to be entered, simplify the command structure, and create a more consistent experience when developing across themes, apps, and custom storefronts.
+ 2.0 3.0
+ Authentication Authenticate with Shopify CLI using shopify login You don't need to log in explicitly. If you aren't logged in, then you're prompted to log in when you run a command that requires authentication.
+ View the organization you're currently logged into using shopify whoami No longer supported
+ Store selection Select a store using shopify login --store Pass a --store flag the first time you run a command that requires connection to a store. This store is used in subsequent commands.
+ Switch between stores using shopify switch Pass a --store flag with a new value when you want to run a command against a new store
+ Run shopify store to view which store you're currently using. Run shopify theme info to view which store you're currently using
+ General Preview your theme in a store using shopify theme serve Command is renamed to shopify theme dev
+ Populate stores using shopify populate [ products | draftorders | customers ] No longer supported
+ Specify the directory that you want to use using the [root] positional argument Specify the directory that you want to use using the –-path flag
+ Migrate to Shopify CLI 3.x
+ Follow the steps below to migrate your theme development environment to Shopify CLI 3.x.
+ macOS and Homebrew
+ If you use Homebrew to manage your Shopify CLI installation on macOS, then you don't need to uninstall the previous version of Shopify CLI to migrate. Instead, you can upgrade to Shopify CLI 3.x directly.
+ In addition to the requirements for Shopify CLI 2.x, Shopify CLI 3.x requires Node.js 18 or higher. . Homebrew installs Node.js for you when you upgrade to the latest version of Shopify CLI.
+ Terminal
+ $ brew upgrade shopify-cli
+ Other
+ Step 1: Install new requirements
+ In addition to the requirements for Shopify CLI 2.x, Shopify CLI 3.x requires Node.js 18 or higher. . If you use macOS, then Homebrew will install Node.js for you when you upgrade to the latest version of Shopify CLI.
+ For a complete list of requirements, refer to Install Shopify CLI.
+ Step 2: Uninstall Shopify CLI 2.x
+ Consider uninstalling the previous version of Shopify CLI. Uninstalling the previous version avoids any collisions between the two versions.
+ If you want to keep both versions of Shopify CLI installed, then refer to Using both Shopify CLI 2.x and 3.x to learn how to work with both versions in the same environment.
+ Shopify CLI can be removed from your system using the same package manager that you used to install it:
+ Terminal
+ apt
+ Yum
+ RubyGems
+ $ sudo apt remove shopify-cli
+ If you’re using a legacy version of Shopify CLI (lower than 0.9.0), then you need to uninstall it manually.
+ Step 3: Install Shopify CLI 3.x
+ Shopify CLI is managed as a set of Node.js packages:
+ @shopify/cli
+ @shopify/theme
+ You can install these packages using Homebrew on macOS, or by installing the packages globally on Windows or Linux.
+ Note
+ apt, Yum, and RubyGems installations are no longer supported.
+ MACOS
+ You can install Shopify CLI on macOS using Homebrew.
+ You need to add Shopify's third-party repositories to Homebrew using brew tap before you can install Shopify CLI.
+ Terminal
+ $ brew tap shopify/shopify
+ $ brew install shopify-cli
+ Note
+ Homebrew installs all of the requirements for running Shopify CLI, including Ruby, Node.js, and Git, for you.
+ WINDOWS AND LINUX
+ To install Shopify CLI for themes, install the @shopify/cli and @shopify/theme Node.js packages globally using the command line.
+ Terminal
+ $ npm install -g @shopify/cli @shopify/theme
+ Step 4: Verify the installation
+ To verify that Shopify CLI is installed properly, run the following command:
+ Terminal
+ $ shopify version
+ 
+ The command returns a version number.
+ Using both Shopify CLI 2.x and 3.x
+ If you have both versions of Shopify CLI installed, then the two versions might conflict because they both use the same program name (shopify).
+ Whichever version is listed first in your PATH will run. You can update your path to change the default CLI, or temporarily uninstall one version to avoid confusion.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Getting started
+ Workflow changes
+ Migrate to Shopify CLI 3.x
+ Using both Shopify CLI 2.x and 3.x
+ Updates & News
+ Developer changelog
+ Partner blog

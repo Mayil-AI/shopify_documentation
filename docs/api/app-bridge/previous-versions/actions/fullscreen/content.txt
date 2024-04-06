@@ -1,0 +1,60 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Fullscreen
+ The Fullscreen action hides Shopify UI and expands the application iframe to cover the entirety of the browser window. This gives applications the ability to implement complex workflows such as editing workflows, immersive experiences, or previews.
+ Guidelines
+ Full-screen mode should only be launched after users interact with a button that indicates the entire canvas will be used.
+ When in full-screen mode, apps must display the FullscreenBar with a back button.
+ When exiting, the app should immediately return to the same screen where the user entered full-screen mode. If the user has unsaved changes, the app should display a dialog that prompts users to save their changes before exiting.
+ Refer to the design guidelines for full-screen mode for more information.
+ Setup
+ Create an app and import the Fullscreen module from @shopify/app-bridge/actions. Note that we'll be referring to this sample application throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import {useAppBridge} from '@shopify/app-bridge-react';
+ 2 import {Fullscreen} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = useAppBridge();
+ 5 const fullscreen = Fullscreen.create(app);
+ Enter full screen
+ Put the app in full-screen mode with the ENTER action.
+ 1 // Call the `ENTER` action to put the app in full-screen mode
+ 2 fullscreen.dispatch(Fullscreen.Action.ENTER);
+ Exit full screen
+ Take the app out of full-screen mode with the EXIT action.
+ 1 // Call the `EXIT` action to take the app out of full-screen mode
+ 2 fullscreen.dispatch(Fullscreen.Action.EXIT);
+ Subscribe to actions
+ You can subscribe to actions that are dispatched through the full-screen action set,
+ 1 const unsubscribeEnter = fullscreen.subscribe(Fullscreen.Action.ENTER, () => {
+ 2
+    // Do something when fullscreen is entered
+ 3 });
+ 4
+ 5 const unsubscribeExit = fullscreen.subscribe(Fullscreen.Action.EXIT, () => {
+ 6
+    // Do something when fullscreen is exited
+ 7 });
+ Unsubscribe when the component is unloaded
+ It's important to clean up subscriptions when the subscribed component is unmounted.
+ 1 useEffect(() => {
+ 2
+    return () => {
+ 3
+      unsubscribeEnter();
+ 4
+      unsubscribeExit();
+ 5
+    }
+ 6 }, []);
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Guidelines
+ Setup
+ Enter full screen
+ Exit full screen
+ Subscribe to actions
+ Unsubscribe when the component is unloaded
+ Updates & News

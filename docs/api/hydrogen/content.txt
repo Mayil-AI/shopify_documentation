@@ -1,0 +1,105 @@
+APIs
+ Collapse sidebar
+ Hydrogen
+ 2024-01
+ 2023-10
+ 2023-07
+ 2023-04
+ 2024-01
+ Overview
+ Setup
+ Authentication
+ Versioning
+ How Hydrogen works with Hydrogen React
+ Resources
+ Components
+ Hooks
+ Utilities
+ Hydrogen
+ Hydrogen is Shopify’s opinionated stack for headless commerce, built on Remix. It provides a set of tools, utilities, and best-in-class examples for building dynamic and performant commerce applications.
+ Setup
+ Create a new Hydrogen project with your preferred package manager.
+ Import components, hooks, or utilities that you want to use in your app. For more, see the getting started guide.
+ Tutorial
+ Getting started with Hydrogen and Oxygen
+ Create a new Hydrogen project
+ npm
+ yarn
+ npm create @shopify/hydrogen@latest
+ Authentication
+ To make full use of Hydrogen, you need to authenticate with and make requests to the Storefront API and the Customer Account API. Hydrogen includes full-featured API clients to securely handle API queries and mutations.
+ You can create access tokens for your own Shopify store by installing the Hydrogen sales channel, which includes built-in support for Oxygen, Shopify’s global edge hosting platform. Or install the Headless sales channel to host your Hydrogen app anywhere.
+ Both the Storefront API and Customer Account API offer public credentials for client-side applications.
+ Install
+ Hydrogen sales channel
+ Install
+ Headless sales channel
+ Authenticate a Hydrogen app
+ server.js
+ .env
+ 1 /**
+ 2
+   * server.js
+ 3
+   * ---------
+ 4
+   * Create a storefront client.
+ 5
+   * Check the server.js file in the root of your new Hydrogen project to see
+ 6
+   * an example implementation of this function. If you start from an official
+ 7
+   * Hydrogen template (Hello World or Demo Store), then the client is already
+ 8
+   * set up for you. Update the Shopify store domain and API token to start
+ 9
+   * querying your own store inventory.
+ 10
+   */
+ 11 const {storefront} = createStorefrontClient({
+ 12
+    cache,
+ 13
+    waitUntil,
+ 14
+    i18n: {language: 'EN', country: 'US'},
+ 15
+    // `env` provides access to runtime data, including environment variables
+ 16
+    publicStorefrontToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+ 17
+    privateStorefrontToken: env.PRIVATE_STOREFRONT_API_TOKEN,
+ 18
+    storeDomain: env.PUBLIC_STORE_DOMAIN,
+ 19
+    storefrontId: env.PUBLIC_STOREFRONT_ID,
+ 20
+    storefrontHeaders: getStorefrontHeaders(request),
+ 21 });
+ Versioning
+ Hydrogen is tied to specific versions of the Storefront API, which is versioned quarterly. For example, if you're using Storefront API version 2023-10, then Hydrogen versions 2023.10.x are fully compatible.
+ Caution
+ If a Storefront API version includes breaking changes, then the corresponding Hydrogen version will include the same breaking changes.
+ Learn more
+ Shopify API versioning
+ Learn more
+ API release notes
+ How Hydrogen works with Hydrogen React
+ Hydrogen is built on Remix. But many of the components, hooks and utilities built into Hydrogen come from Hydrogen React, an underlying package that’s framework-agnostic. For convenience, the Hydrogen package re-exports those resources. This means that if you’re building a Hydrogen app, then you should import modules from the @shopify/hydrogen package.
+ Importing Hydrogen components
+ example-page.jsx
+ 1 import {ShopPayButton} from '@shopify/hydrogen';
+ 2
+ 3 export function renderShopPayButton({variantId, storeDomain}) {
+ 4
+    return <ShopPayButton variantIds={[variantId]} storeDomain={storeDomain} />;
+ 5 }
+ Resources
+ Custom storefronts on Shopify
+ Learn more about how to design, build, and manage custom storefronts on Shopify.
+ Hydrogen on Discord
+ Chat with the growing community of commerce developers building with Hydrogen
+ Hydrogen on GitHub
+ Follow the Hydrogen project, file bugs and feature requests, preview upcoming features, and more
+ Updates & News
+ Developer changelog

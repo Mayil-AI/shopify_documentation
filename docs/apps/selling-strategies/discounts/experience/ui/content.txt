@@ -1,0 +1,940 @@
+Deployment
+ Distribution
+ Billing
+ App Store
+ Build a discounts user interface
+ Users create and manage discounts in the Shopify admin. Shopify uses the URLs that you configure to render the discount creation and editing experience for the user. You can customize this UI for your function's configuration needs or to meet other requirements of your app.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Create an App Bridge UI that enables users to create a function owner.
+ Configure the UI paths for your function.
+ Requirements
+ You've completed the Add configuration to your discounts experience tutorial.
+ You created your app with the Remix app template.
+ Step 1: Set up discounts dependencies
+ The @shopify/discount-app-components package provides useful components for building a discount function configuration experience. Using it requires setting up some dependencies on top of the Remix app template.
+ Install the following packages:
+ @shopify/discount-app-components: Provides components that you can use to render a discounts UI.
+ @shopify/react-form: Provides hooks to help you manage React forms.
+ @shopify/app-bridge-react: Allows you to use App Bridge actions in React.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm install @shopify/discount-app-components @shopify/react-form @shopify/app-bridge-react
+ The @shopify/discount-app-components library requires an AppProvider for the components to work. Create a components directory in app. Within the components directory, create a providers directory.
+ Create a DiscountProvider.jsx file within the app/components/providers directory with the following contents:
+ app/components/providers/DiscountProvider.jsx
+ 1 import { AppProvider } from "@shopify/discount-app-components";
+ 2 import "@shopify/discount-app-components/build/esm/styles.css";
+ 3
+ 4 export function DiscountProvider({ children }) {
+ 5
+    return (
+ 6
+      <AppProvider locale="en-US" ianaTimezone="America/Toronto">
+ 7
+        {children}
+ 8
+      </AppProvider>
+ 9
+    );
+ 10 }
+ In app/routes/app.jsx, import and render AppBridgeReactProvider and DiscountProvider.
+ Your app.jsx should look similar to the following example:
+ app/routes/app.jsx
+ 1 import { useState } from "react";
+ 2 import { json } from "@remix-run/node";
+ 3 import { Link, Outlet, useLoaderData, useRouteError } from "@remix-run/react";
+ 4 import { Provider as AppBridgeReactProvider } from "@shopify/app-bridge-react";
+ 5 import polarisStyles from "@shopify/polaris/build/esm/styles.css";
+ 6 import { DiscountProvider } from "../components/providers/DiscountProvider";
+ 7 import { boundary } from "@shopify/shopify-app-remix/server";
+ 8 import { AppProvider } from "@shopify/shopify-app-remix/react";
+ 9
+ 10 import { authenticate } from "../shopify.server";
+ 11
+ 12 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
+ 13
+ 14 export async function loader({ request }) {
+ 15
+    await authenticate.admin(request);
+ 16
+ 17
+    const url = new URL(request.url);
+ 18
+ 19
+    return json({
+ 20
+      apiKey: process.env.SHOPIFY_API_KEY,
+ 21
+      host: url.searchParams.get("host"),
+ 22
+    });
+ 23 }
+ 24
+ 25 export default function App() {
+ 26
+    const { apiKey, host } = useLoaderData();
+ 27
+    const [config] = useState({ host, apiKey });
+ 28
+ 29
+    return (
+ 30
+      <AppProvider isEmbeddedApp apiKey={apiKey}>
+ 31
+        <AppBridgeReactProvider config={config}>
+ 32
+          <DiscountProvider>
+ 33
+            <ui-nav-menu>
+ 34
+              <Link to="/app" rel="home">
+ 35
+                Home
+ 36
+              </Link>
+ 37
+              <Link to="/app/additional">Additional page</Link>
+ 38
+            </ui-nav-menu>
+ 39
+            <Outlet />
+ 40
+          </DiscountProvider>
+ 41
+        </AppBridgeReactProvider>
+ 42
+      </AppProvider>
+ 43
+    );
+ 44 }
+ 45
+ 46 // Shopify needs Remix to catch some thrown responses, so that their headers are included in the response.
+ 47 export function ErrorBoundary() {
+ 48
+    return boundary.error(useRouteError());
+ 49 }
+ 50
+ 51 export const headers = (headersArgs) => {
+ 52
+    return boundary.headers(headersArgs);
+ 53 };
+ Step 2: Create the frontend UI for your function
+ In app/routes, create a new file named app.volume-discount.$functionId.new.jsx.
+ The Shopify Remix app template uses file-based routing, so the file name determines the page's URL. The $ prefix indicates functionId is a dynamic segment. The path for this page will be /app/volume-discount/{functionId}/new.
+ Add the following code in app.volume-discount.$functionId.new.jsx:
+ The action function handles submitting the form data to Shopify to create the discount.
+ The VolumeNew function renders the page and form components using Polaris components, Remix hooks, and discount app components.
+ app/routes/app.volume-discount.$functionId.new.jsx
+ 1 import { useEffect, useMemo } from "react";
+ 2 import { json } from "@remix-run/node";
+ 3 import { useForm, useField } from "@shopify/react-form";
+ 4 import { useAppBridge } from "@shopify/app-bridge-react";
+ 5 import { Redirect } from "@shopify/app-bridge/actions";
+ 6 import { CurrencyCode } from "@shopify/react-i18n";
+ 7 import {
+ 8
+    Form,
+ 9
+    useActionData,
+ 10
+    useNavigation,
+ 11
+    useSubmit,
+ 12 } from "@remix-run/react";
+ 13 import {
+ 14
+    ActiveDatesCard,
+ 15
+    CombinationCard,
+ 16
+    DiscountClass,
+ 17
+    DiscountMethod,
+ 18
+    MethodCard,
+ 19
+    DiscountStatus,
+ 20
+    RequirementType,
+ 21
+    SummaryCard,
+ 22
+    UsageLimitsCard,
+ 23
+    onBreadcrumbAction,
+ 24 } from "@shopify/discount-app-components";
+ 25 import {
+ 26
+    Banner,
+ 27
+    Card,
+ 28
+    Text,
+ 29
+    Layout,
+ 30
+    Page,
+ 31
+    PageActions,
+ 32
+    TextField,
+ 33
+    BlockStack,
+ 34 } from "@shopify/polaris";
+ 35
+ 36 import shopify from "../shopify.server";
+ 37
+ 38 // This is a server-side action that is invoked when the form is submitted.
+ 39 // It makes an admin GraphQL request to create a discount.
+ 40 export const action = async ({ params, request }) => {
+ 41
+    const { functionId } = params;
+ 42
+    const { admin } = await shopify.authenticate.admin(request);
+ 43
+    const formData = await request.formData();
+ 44
+    const {
+ 45
+      title,
+ 46
+      method,
+ 47
+      code,
+ 48
+      combinesWith,
+ 49
+      usageLimit,
+ 50
+      appliesOncePerCustomer,
+ 51
+      startsAt,
+ 52
+      endsAt,
+ 53
+      configuration,
+ 54
+    } = JSON.parse(formData.get("discount"));
+ 55
+ 56
+    const baseDiscount = {
+ 57
+      functionId,
+ 58
+      title,
+ 59
+      combinesWith,
+ 60
+      startsAt: new Date(startsAt),
+ 61
+      endsAt: endsAt && new Date(endsAt),
+ 62
+    };
+ 63
+ 64
+    if (method === DiscountMethod.Code) {
+ 65
+      const baseCodeDiscount = {
+ 66
+        ...baseDiscount,
+ 67
+        title: code,
+ 68
+        code,
+ 69
+        usageLimit,
+ 70
+        appliesOncePerCustomer,
+ 71
+      };
+ 72
+ 73
+      const response = await admin.graphql(
+ 74
+        `#graphql
+ 75
+            mutation CreateCodeDiscount($discount: DiscountCodeAppInput!) {
+ 76
+              discountCreate: discountCodeAppCreate(codeAppDiscount: $discount) {
+ 77
+                userErrors {
+ 78
+                  code
+ 79
+                  message
+ 80
+                  field
+ 81
+                }
+ 82
+              }
+ 83
+            }`,
+ 84
+        {
+ 85
+          variables: {
+ 86
+            discount: {
+ 87
+              ...baseCodeDiscount,
+ 88
+              metafields: [
+ 89
+                {
+ 90
+                  namespace: "$app:volume-discount",
+ 91
+                  key: "function-configuration",
+ 92
+                  type: "json",
+ 93
+                  value: JSON.stringify({
+ 94
+                    quantity: configuration.quantity,
+ 95
+                    percentage: configuration.percentage,
+ 96
+                  }),
+ 97
+                },
+ 98
+              ],
+ 99
+            },
+ 100
+          },
+ 101
+        }
+ 102
+      );
+ 103
+ 104
+      const responseJson = await response.json();
+ 105
+      const errors = responseJson.data.discountCreate?.userErrors;
+ 106
+      return json({ errors });
+ 107
+    } else {
+ 108
+      const response = await admin.graphql(
+ 109
+        `#graphql
+ 110
+            mutation CreateAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
+ 111
+              discountCreate: discountAutomaticAppCreate(automaticAppDiscount: $discount) {
+ 112
+                userErrors {
+ 113
+                  code
+ 114
+                  message
+ 115
+                  field
+ 116
+                }
+ 117
+              }
+ 118
+            }`,
+ 119
+        {
+ 120
+          variables: {
+ 121
+            discount: {
+ 122
+              ...baseDiscount,
+ 123
+              metafields: [
+ 124
+                {
+ 125
+                  namespace: "$app:volume-discount",
+ 126
+                  key: "function-configuration",
+ 127
+                  type: "json",
+ 128
+                  value: JSON.stringify({
+ 129
+                    quantity: configuration.quantity,
+ 130
+                    percentage: configuration.percentage,
+ 131
+                  }),
+ 132
+                },
+ 133
+              ],
+ 134
+            },
+ 135
+          },
+ 136
+        }
+ 137
+      );
+ 138
+ 139
+      const responseJson = await response.json();
+ 140
+      const errors = responseJson.data.discountCreate?.userErrors;
+ 141
+      return json({ errors });
+ 142
+    }
+ 143 };
+ 144
+ 145 // This is the React component for the page.
+ 146 export default function VolumeNew() {
+ 147
+    const submitForm = useSubmit();
+ 148
+    const actionData = useActionData();
+ 149
+    const navigation = useNavigation();
+ 150
+    const app = useAppBridge();
+ 151
+    const todaysDate = useMemo(() => new Date(), []);
+ 152
+ 153
+    const isLoading = navigation.state === "submitting";
+ 154
+    const currencyCode = CurrencyCode.Cad;
+ 155
+    const submitErrors = actionData?.errors || [];
+ 156
+    const redirect = Redirect.create(app);
+ 157
+ 158
+    useEffect(() => {
+ 159
+      if (actionData?.errors.length === 0) {
+ 160
+        redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
+ 161
+          name: Redirect.ResourceType.Discount,
+ 162
+        });
+ 163
+      }
+ 164
+    }, [actionData]);
+ 165
+ 166
+    const {
+ 167
+      fields: {
+ 168
+        discountTitle,
+ 169
+        discountCode,
+ 170
+        discountMethod,
+ 171
+        combinesWith,
+ 172
+        requirementType,
+ 173
+        requirementSubtotal,
+ 174
+        requirementQuantity,
+ 175
+        usageLimit,
+ 176
+        appliesOncePerCustomer,
+ 177
+        startDate,
+ 178
+        endDate,
+ 179
+        configuration,
+ 180
+      },
+ 181
+      submit,
+ 182
+    } = useForm({
+ 183
+      fields: {
+ 184
+        discountTitle: useField(""),
+ 185
+        discountMethod: useField(DiscountMethod.Code),
+ 186
+        discountCode: useField(""),
+ 187
+        combinesWith: useField({
+ 188
+          orderDiscounts: false,
+ 189
+          productDiscounts: false,
+ 190
+          shippingDiscounts: false,
+ 191
+        }),
+ 192
+        requirementType: useField(RequirementType.None),
+ 193
+        requirementSubtotal: useField("0"),
+ 194
+        requirementQuantity: useField("0"),
+ 195
+        usageLimit: useField(null),
+ 196
+        appliesOncePerCustomer: useField(false),
+ 197
+        startDate: useField(todaysDate),
+ 198
+        endDate: useField(null),
+ 199
+        configuration: {},
+ 200
+      },
+ 201
+      onSubmit: async (form) => {
+ 202
+        const discount = {
+ 203
+          title: form.discountTitle,
+ 204
+          method: form.discountMethod,
+ 205
+          code: form.discountCode,
+ 206
+          combinesWith: form.combinesWith,
+ 207
+          usageLimit: form.usageLimit == null ? null : parseInt(form.usageLimit),
+ 208
+          appliesOncePerCustomer: form.appliesOncePerCustomer,
+ 209
+          startsAt: form.startDate,
+ 210
+          endsAt: form.endDate,
+ 211
+          configuration: {},
+ 212
+        };
+ 213
+ 214
+        submitForm({ discount: JSON.stringify(discount) }, { method: "post" });
+ 215
+ 216
+        return { status: "success" };
+ 217
+      },
+ 218
+    });
+ 219
+ 220
+    const errorBanner =
+ 221
+      submitErrors.length > 0 ? (
+ 222
+        <Layout.Section>
+ 223
+          <Banner status="critical">
+ 224
+            <p>There were some issues with your form submission:</p>
+ 225
+            <ul>
+ 226
+              {submitErrors.map(({ message, field }, index) => {
+ 227
+                return (
+ 228
+                  <li key={`${message}${index}`}>
+ 229
+                    {field.join(".")} {message}
+ 230
+                  </li>
+ 231
+                );
+ 232
+              })}
+ 233
+            </ul>
+ 234
+          </Banner>
+ 235
+        </Layout.Section>
+ 236
+      ) : null;
+ 237
+ 238
+    return (
+ 239
+      // Render a discount form using Polaris components and the discount app components
+ 240
+      <Page
+ 241
+        title="Create volume discount"
+ 242
+        backAction={{
+ 243
+          content: "Discounts",
+ 244
+          onAction: () => onBreadcrumbAction(redirect, true),
+ 245
+        }}
+ 246
+        primaryAction={{
+ 247
+          content: "Save",
+ 248
+          onAction: submit,
+ 249
+          loading: isLoading,
+ 250
+        }}
+ 251
+      >
+ 252
+        <Layout>
+ 253
+          {errorBanner}
+ 254
+          <Layout.Section>
+ 255
+            <Form method="post">
+ 256
+              <BlockStack align="space-around" gap="2">
+ 257
+                <MethodCard
+ 258
+                  title="Volume"
+ 259
+                  discountTitle={discountTitle}
+ 260
+                  discountClass={DiscountClass.Product}
+ 261
+                  discountCode={discountCode}
+ 262
+                  discountMethod={discountMethod}
+ 263
+                />
+ 264
+                {discountMethod.value === DiscountMethod.Code && (
+ 265
+                  <UsageLimitsCard
+ 266
+                    totalUsageLimit={usageLimit}
+ 267
+                    oncePerCustomer={appliesOncePerCustomer}
+ 268
+                  />
+ 269
+                )}
+ 270
+                <CombinationCard
+ 271
+                  combinableDiscountTypes={combinesWith}
+ 272
+                  discountClass={DiscountClass.Product}
+ 273
+                  discountDescriptor={"Discount"}
+ 274
+                />
+ 275
+                <ActiveDatesCard
+ 276
+                  startDate={startDate}
+ 277
+                  endDate={endDate}
+ 278
+                  timezoneAbbreviation="EST"
+ 279
+                />
+ 280
+              </BlockStack>
+ 281
+            </Form>
+ 282
+          </Layout.Section>
+ 283
+          <Layout.Section secondary>
+ 284
+            <SummaryCard
+ 285
+              header={{
+ 286
+                discountMethod: discountMethod.value,
+ 287
+                discountDescriptor:
+ 288
+                  discountMethod.value === DiscountMethod.Automatic
+ 289
+                    ? discountTitle.value
+ 290
+                    : discountCode.value,
+ 291
+                appDiscountType: "Volume",
+ 292
+                isEditing: false,
+ 293
+              }}
+ 294
+              performance={{
+ 295
+                status: DiscountStatus.Scheduled,
+ 296
+                usageCount: 0,
+ 297
+                isEditing: false,
+ 298
+              }}
+ 299
+              minimumRequirements={{
+ 300
+                requirementType: requirementType.value,
+ 301
+                subtotal: requirementSubtotal.value,
+ 302
+                quantity: requirementQuantity.value,
+ 303
+                currencyCode: currencyCode,
+ 304
+              }}
+ 305
+              usageLimits={{
+ 306
+                oncePerCustomer: appliesOncePerCustomer.value,
+ 307
+                totalUsageLimit: usageLimit.value,
+ 308
+              }}
+ 309
+              activeDates={{
+ 310
+                startDate: startDate.value,
+ 311
+                endDate: endDate.value,
+ 312
+              }}
+ 313
+            />
+ 314
+          </Layout.Section>
+ 315
+          <Layout.Section>
+ 316
+            <PageActions
+ 317
+              primaryAction={{
+ 318
+                content: "Save discount",
+ 319
+                onAction: submit,
+ 320
+                loading: isLoading,
+ 321
+              }}
+ 322
+              secondaryActions={[
+ 323
+                {
+ 324
+                  content: "Discard",
+ 325
+                  onAction: () => onBreadcrumbAction(redirect, true),
+ 326
+                },
+ 327
+              ]}
+ 328
+            />
+ 329
+          </Layout.Section>
+ 330
+        </Layout>
+ 331
+      </Page>
+ 332
+    );
+ 333 }
+ Step 3: Add a card for the volume discount configuration
+ So far, this UI renders the common input fields for a discount. You need to add additional fields to collect the volume discount configuration that will be stored in your metafield.
+ In app/routes/app.volume-discount.$functionId.new.jsx, populate the quantity and percentage configuration properties and define initial states for your form data:
+ app/routes/app.volume-discount.$functionId.new.jsx
+ 1 fields: {
+ 2
+    ...
+ 3
+    endDate,
+ 4
+    configuration,
+ 5 },
+ 6 ...
+ 7 } = useForm({
+ 8 fields: {
+ 9
+    ...
+ 10
+    endDate: useField(null),
+ 11
+    configuration: { // Add quantity and percentage configuration to form data
+ 12
+      quantity: useField('1'),
+ 13
+      percentage: useField('0'),
+ 14
+    }
+ 15 },
+ In app/routes/app.volume-discount.$functionId.new.jsx, parse the quantity and percentage configuration properties and add them to your discount configuration.
+ You can store your configuration in one or more metafields on a discount. Learn more about using metafields with input queries.
+ The following example parses the configuration values to store in a metafield:
+ app/routes/app.volume-discount.$functionId.new.jsx
+ 1 onSubmit: async (form) => {
+ 2
+    const discount = {
+ 3
+      ...
+ 4
+      endsAt: form.endDate,
+ 5
+      configuration: {
+ 6
+        quantity: parseInt(form.configuration.quantity),
+ 7
+        percentage: parseFloat(form.configuration.percentage),
+ 8
+      },
+ 9
+    }
+ In app/routes/app.volume-discount.$functionId.new.jsx, after the MethodCard component, add a Card component for the volume discount configuration:
+ app/routes/app.volume-discount.$functionId.new.jsx
+ 1 ...
+ 2 <MethodCard
+ 3 ...
+ 4 />
+ 5 { /* Collect data for the configuration metafield. */ }
+ 6 <Card>
+ 7
+    <BlockStack gap="3">
+ 8
+      <Text variant="headingMd" as="h2">
+ 9
+        Volume
+ 10
+      </Text>
+ 11
+      <TextField
+ 12
+        label="Minimum quantity"
+ 13
+        autoComplete="on"
+ 14
+        {...configuration.quantity}
+ 15
+      />
+ 16
+      <TextField
+ 17
+        label="Discount percentage"
+ 18
+        autoComplete="on"
+ 19
+        {...configuration.percentage}
+ 20
+        suffix="%"
+ 21
+      />
+ 22
+    </BlockStack>
+ 23 </Card>
+ Step 4: Update your input query to use an app-owned namespace
+ In the previous tutorial, you used a metafield namespace that was accessible to any app, so that the metafield namespace could be populated using GraphiQL. To make your function ready for production, you should update the metafield namespace to use a reserved prefix so that other apps can't use your metafield.
+ Replace the code in the extensions/product-discount/src/run.graphql file with the following code.
+ The query differs slightly in JavaScript and Rust due to code generation requirements. This change is automatically reflected as long as you're running dev.
+ run.graphql
+ JavaScript input query
+ Rust input query
+ extensions/product-discount/src/run.graphql
+ 1 query RunInput {
+ 2
+    cart {
+ 3
+      lines {
+ 4
+        quantity
+ 5
+        merchandise {
+ 6
+          __typename
+ 7
+          ...on ProductVariant {
+ 8
+            id
+ 9
+          }
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13
+    discountNode {
+ 14
+      metafield(namespace: "$app:volume-discount", key: "function-configuration") {
+ 15
+        value
+ 16
+      }
+ 17
+    }
+ 18 }
+ Step 5: Configure the create UI path for your function
+ Settings in the shopify.extension.toml file define the URLs that Shopify uses for enabling users to create and edit discounts based on your function. Shopify automatically fills in any dynamic tokens in these URLs.
+ In extensions/product-discount/shopify.extension.toml, populate the two settings directly under [ui.paths]. This change is automatically reflected as long as you're running dev.
+ extensions/product-discount/shopify.extension.toml
+ 1 create = "/app/volume-discount/:functionId/new"
+ 2 details = "/app/volume-discount/:functionId/:id"
+ Note
+ This tutorial doesn't cover the creation of the details UI defined here. To enable app users to edit your discount, you must also create this route at app/routes/app.volume-discount.$functionId.$id.jsx.
+ Step 6: Create and test your discount
+ If your app isn't already running, then start it using Shopify CLI.
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ From your Shopify admin, go to Discounts.
+ If you have existing discounts from previous tutorials, then click the checkbox next to each of them, and then click Deactivate discounts.
+ Click the Create discount button.
+ Click the product-discount discount type that you created under your app name. You should see the create page for your Volume discount.
+ Fill in values for the discount:
+ For Method, use Automatic.
+ For Title, use Volume.
+ For Minimum quantity, use 4.
+ For Discount percentage, use 20.
+ Click Save. You should see a new discount in the discounts list.
+ Open your development store and build a cart with a single item in it.
+ No discounts should be applied to the cart.
+ Increase the item quantity to four.
+ The 20% Volume discount should now be applied to the cart.
+ To debug your function, or view its output, you can review its logs in your Partner Dashboard:
+ Log in to your Partner Dashboard and navigate to Apps > {your app} > Extensions > product-discount.
+ Click on any function run to view its input, output, and any logs written to STDERR.
+ Next steps
+ Learn more about how Shopify Functions work and the benefits of using Shopify Functions.
+ Consult the API references for Shopify Functions.
+ Review the UX guidelines to learn how to implement discounts in user interfaces.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Set up discounts dependencies
+ Step 2: Create the frontend UI for your function
+ Step 3: Add a card for the volume discount configuration
+ Step 4: Update your input query to use an app-owned namespace
+ Step 5: Configure the create UI path for your function
+ Step 6: Create and test your discount

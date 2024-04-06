@@ -1,0 +1,435 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ TitleBar
+ Note
+ This is a legacy API. Use the latest version of TitleBar instead.
+ The TitleBar action set allows you to populate a standardized title bar with button actions and navigation breadcrumbs.
+ You can use the title bar in the following ways:
+ Plain JavaScript
+ React component
+ Plain JavaScript
+ Example code
+ Import the createApp function from @shopify/app-bridge and the TitleBar from @shopify/app-bridge/actions. Then use the createApp function to create an app.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import { TitleBar } from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a title bar
+ Create a title bar with the title set to My page title:
+ 1 const titleBarOptions = {
+ 2
+    title: 'My page title',
+ 3 };
+ 4
+ 5 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ Create a title bar with a primary button
+ Set the title bar's primary button to a button. To learn more about buttons, refer to Button.
+ 1 const saveButton = Button.create(app, { label: 'Save' });
+ 2 const titleBarOptions = {
+ 3
+    title: 'My page title',
+ 4
+    buttons: {
+ 5
+      primary: saveButton,
+ 6
+    },
+ 7 };
+ 8
+ 9 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ Create a title bar with secondary buttons
+ Set the title bar's secondary buttons to one or more buttons. The following example creates a secondary action with the label Settings, which triggers a redirect to a settings page local to the app.
+ To learn more about buttons and redirects, refer to Button and Redirect.
+ 1 import { TitleBar, Button, Redirect } from '@shopify/app-bridge/actions';
+ 2 const settingsButton = Button.create(app, { label: 'Settings' });
+ 3 const redirect = Redirect.create(app);
+ 4
+ 5 settingsButton.subscribe('click', () => {
+ 6
+    redirect.dispatch({
+ 7
+      type: Redirect.Action.APP,
+ 8
+      payload: { path: '/settings' },
+ 9
+    });
+ 10 });
+ 11
+ 12 const titleBarOptions = {
+ 13
+    title: 'My new title',
+ 14
+    buttons: {
+ 15
+      secondary: [settingsButton],
+ 16
+    },
+ 17 };
+ 18
+ 19 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ Create a title bar with grouped secondary buttons
+ Set the title bar's secondary buttons to one or more button groups. The following example creates a grouped secondary action with the label More actions, which contains two child buttons.
+ To learn more about button groups, refer to ButtonGroup and Button.
+ 1 import { TitleBar, Button, ButtonGroup } from '@shopify/app-bridge/actions';
+ 2
+ 3 const button1 = Button.create(app, { label: 'Show toast message' });
+ 4 const button2 = Button.create(app, { label: 'Open modal' });
+ 5
+ 6 const moreActions = ButtonGroup.create(app, {
+ 7
+    label: 'More actions',
+ 8
+    buttons: [button1, button2],
+ 9 });
+ 10
+ 11 const titleBarOptions = {
+ 12
+    title: 'My new title',
+ 13
+    buttons: {
+ 14
+      secondary: [moreActions],
+ 15
+    },
+ 16 };
+ 17 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ Update title bar options
+ Call the set method with partial title bar options to update the options of an existing title bar. This automatically triggers the update action on the title bar and merges the given options with the existing options.
+ 1 const titleBarOptions = {
+ 2
+    title: 'My page title',
+ 3 };
+ 4
+ 5 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ 6 // Update the title
+ 7
+ 8 myTitleBar.set({
+ 9
+    title: 'My new title',
+ 10 });
+ Note
+ If your app contains a contextual save bar, you will not be able to make any updates to the title bar buttons while a contextual save bar is being shown. In addition, all title bar buttons will be disabled automatically while the contextual save bar is displayed. The disabled state of the title bar buttons are reset to their previous states when the contextual save bar is hidden. To learn more about the contextual save bar, see Contextual Save Bar action.
+ Update title bar primary/secondary buttons
+ You can update buttons attached to a title bar. Any updates made to the title bar's children automatically trigger an update action on the title bar:
+ 1 import { TitleBar, Button, ButtonGroup } from '@shopify/app-bridge/actions';
+ 2
+ 3 const button1 = Button.create(app, { label: 'Show toast message' });
+ 4 const button2 = Button.create(app, { label: 'Open modal' });
+ 5
+ 6 const moreActions = ButtonGroup.create(app, {
+ 7
+    label: 'More actions',
+ 8
+    buttons: [button1, button2],
+ 9 });
+ 10
+ 11 const titleBarOptions = {
+ 12
+    title: 'My new title',
+ 13
+    buttons: {
+ 14
+      secondary: [moreActions],
+ 15
+    },
+ 16 };
+ 17
+ 18 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ 19 // Update more button's label - changes automatically get propagated to the parent title bar
+ 20 moreActions.set({
+ 21
+    label: 'Additional options',
+ 22 });
+ Note
+ If your app contains a contextual save bar, you will not be able to make any updates to the title bar buttons while a contextual save bar is being shown. In addition, all title bar buttons will be disabled automatically while the contextual save bar is displayed. The disabled state of the title bar buttons are reset to their previous states when the contextual save bar is hidden. To learn more about the contextual save bar, see Contextual Save Bar action.
+ Create a title bar with breadcrumbs
+ Enable breadcrumbs in the title bar by setting a button as the breadcrumb option. You can disable it by setting the option to undefined. Note: Breadcrumbs aren't shown without a title. The following example creates a breadcrumb with the label 'My Breadcrumb', which links to '/breadcrumb-link'.
+ To learn more about buttons and redirects, refer to Button and Redirect.
+ 1 import { TitleBar, Button, Redirect } from '@shopify/app-bridge/actions';
+ 2
+ 3 const breadcrumb = Button.create(app, { label: 'My Breadcrumb' });
+ 4
+ 5 breadcrumb.subscribe(Button.Action.CLICK, () => {
+ 6
+    app.dispatch(Redirect.toApp({ path: '/breadcrumb-link' }));
+ 7 });
+ 8
+ 9 const titleBarOptions = {
+ 10
+    title: 'My new title',
+ 11
+    breadcrumbs: breadcrumb,
+ 12 };
+ 13
+ 14 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ Subscribe to title bar updates
+ You can subscribe to the title bar update action by calling subscribe. This returns a function that you can call to unsubscribe from the action:
+ 1 // Using the same title bar as above
+ 2 const updateUnsubscribe = myTitleBar.subscribe(
+ 3
+    ButtonGroup.Action.UPDATE,
+ 4
+    data => {
+ 5
+      // Do something when the button group is updated
+ 6
+      // The data is in the following shape: {id: string, label: string, buttons: [{id: string, label: string, disabled: boolean} ...]}
+ 7
+    }
+ 8 );
+ 9
+ 10 // Unsubscribe
+ 11 updateUnsubscribe();
+ Unsubscribe
+ You call unsubscribe to remove all subscriptions on the titlebar and its children:
+ 1 const settingsButton = Button.create(app, { label: 'Settings' });
+ 2 settingsButton.subscribe('click', () => {
+ 3
+    redirect.dispatch({
+ 4
+      type: Redirect.Action.APP,
+ 5
+      payload: { path: '/settings' },
+ 6
+    });
+ 7 });
+ 8 const titleBarOptions = {
+ 9
+    title: 'My new title',
+ 10
+    buttons: {
+ 11
+      secondary: [settingsButton],
+ 12
+    },
+ 13 };
+ 14 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ 15
+ 16 myTitleBar.subscribe(TitleBar.Action.UPDATE, data => {
+ 17
+    // Do something with the update action
+ 18 });
+ 19
+ 20 // Unsubscribe from the button group update action
+ 21 // Unsubscribe from settingsButton click action
+ 22 myTitleBar.unsubscribe();
+ Unsubscribe from titlebar actions only
+ You call unsubscribe with false to remove only titlebar subscriptions while leaving child subscriptions intact. For example, you might want to unsubscribe from the title bar but keep button listeners so that the buttons can be reused in a different actions (such as a modal).
+ 1 const settingsButton = Button.create(app, { label: 'Settings' });
+ 2 settingsButton.subscribe('click', () => {
+ 3
+    redirect.dispatch({
+ 4
+      type: Redirect.Action.APP,
+ 5
+      payload: { path: '/settings' },
+ 6
+    });
+ 7 });
+ 8 const titleBarOptions = {
+ 9
+    title: 'My new title',
+ 10
+    buttons: {
+ 11
+      secondary: [settingsButton],
+ 12
+    },
+ 13 };
+ 14 const myTitleBar = TitleBar.create(app, titleBarOptions);
+ 15
+ 16 myTitleBar.subscribe(TitleBar.Action.UPDATE, data => {
+ 17
+    // Do something with the update action
+ 18
+    // The data is in the following shape: {id: string, title: string, buttons: [{id: string, label: string, disabled: boolean} ...]}
+ 19 });
+ 20
+ 21 // Unsubscribe from the titlebar update action
+ 22 myTitleBar.unsubscribe(false);
+ 23
+ 24 // Reuse settingsButton in a modal
+ 25 const modalOptions = {
+ 26
+    title: 'My Modal',
+ 27
+    message: 'Hello world!',
+ 28
+    footer: { primary: settingsButton },
+ 29 };
+ 30
+ 31 const myModal = Modal.create(app, modalOptions);
+ React
+ Example code
+ Import the Provider and TitleBar component from @shopify/app-bridge-react. Only one Provider is needed for your application.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import React from 'react';
+ 2 import ReactDOM from 'react-dom';
+ 3 import {Provider, TitleBar} from '@shopify/app-bridge-react';
+ 4
+ 5 function MyApp() {
+ 6
+    const primaryAction = {content: 'Foo', url: '/foo'};
+ 7
+    const secondaryActions = [{content: 'Bar', url: '/bar', loading: true}];
+ 8
+    const actionGroups = [{title: 'Baz', actions: [{content: 'Baz', url: '/baz'}]}];
+ 9
+ 10
+    return (
+ 11
+      <Provider config={config}>
+ 12
+        <TitleBar
+ 13
+          title="Hello world!"
+ 14
+          primaryAction={primaryAction}
+ 15
+          secondaryActions={secondaryActions}
+ 16
+          actionGroups={actionGroups}
+ 17
+        />
+ 18
+      </Provider>
+ 19
+    );
+ 20 }
+ 21
+ 22 const root = document.createElement('div');
+ 23 document.body.appendChild(root);
+ 24 ReactDOM.createRoot(root).render(<MyApp />);
+ Props
+ Name Type Description Required
+ title string TitleBar title Yes
+ breadcrumbs Breadcrumb[] An array of breadcrumbs
+ primaryAction ActionProps Primary TitleBar action
+ secondaryActions ActionProps[] An array of secondary TitleBar actions
+ actionGroups ActionGroupProps[] An array of TitleBar groups of secondary actions
+ Breadcrumb
+ Name Type Description Required
+ content string Content the action displays
+ url string A destination to link to
+ target "ADMIN_PATH", "REMOTE", "APP" Where to display the target link
+ onAction () => void Callback when an action takes place
+ ActionProps
+ Name Type Description Required
+ content string Content the action displays No
+ destructive boolean Should the action be styled as destructive No
+ disabled boolean Should the action be disabled No
+ external boolean Forces url to open in a new tab No
+ loading boolean Should the action be loading No
+ target "ADMIN_PATH", "REMOTE", "APP" Where to display the target link No
+ url string A destination to link to No
+ onAction () => void Callback when an action takes place No
+ ActionGroupProps
+ Name Type Description Required
+ title string Action group title Yes
+ actions ActionProps[] List of actions Yes
+ Using TitleBar with Polaris
+ When used with embedded app functionality, the Polaris <Page> component still renders important layout elements. App Bridge React’s <TitleBar> does not. Because of this, the recommended migration path is to keep the <Page> element, but pass its props to <TitleBar> instead.
+ The following examples show the migration path, starting with the use of deprecated Polaris embedded app functionality.
+ 1 import { AppProvider, Page } from "@shopify/polaris";
+ 2
+ 3 function MyApp() {
+ 4
+    return (
+ 5
+      <AppProvider apiKey="api_key" host="example.myshopify.com">
+ 6
+        <Page
+ 7
+          title="My App using legacy code"
+ 8
+          breadcrumbs={[{ content: "Breadcrumb" }]}
+ 9
+          primaryAction={primaryAction}
+ 10
+          secondaryActions={secondaryActions}
+ 11
+          actionGroups={actionGroups}
+ 12
+        >
+ 13
+          {content}
+ 14
+        </Page>
+ 15
+      </AppProvider>
+ 16
+    );
+ 17 }
+ The recommended migration path uses App Bridge React along with the Polaris <Page> component.
+ 1 import { AppProvider, Page } from "@shopify/polaris";
+ 2 import {
+ 3
+    Provider as AppBridgeProvider,
+ 4
+    TitleBar
+ 5 } from "@shopify/app-bridge-react";
+ 6
+ 7 function MyApp() {
+ 8
+    const config = {
+ 9
+      // The client ID provided for your application in the Partner Dashboard.
+ 10
+      apiKey: "api_key",
+ 11
+      // The host of the specific shop that's embedding your app. This value is provided by Shopify as a URL query parameter that's appended to your application URL when your app is loaded inside the Shopify admin.
+ 12
+      host: "example.myshopify.com"
+ 13
+    }
+ 14
+ 15
+    return (
+ 16
+      <AppProvider>
+ 17
+        <AppBridgeProvider
+ 18
+          config={config}
+ 19
+        >
+ 20
+          <Page>
+ 21
+            <TitleBar
+ 22
+              title="My App using up-to-date code"
+ 23
+              breadcrumbs={[{ content: "Breadcrumb" }]}
+ 24
+              primaryAction={primaryAction}
+ 25
+              secondaryActions={secondaryActions}
+ 26
+              actionGroups={actionGroups}
+ 27
+            />
+ 28
+            {content}
+ 29
+          </Page>
+ 30
+        </AppBridgeProvider>
+ 31
+      </AppProvider>
+ 32
+    );
+ 33 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React
+ Using TitleBar with Polaris
+ Updates & News
+ Developer changelog
+ Partner blog

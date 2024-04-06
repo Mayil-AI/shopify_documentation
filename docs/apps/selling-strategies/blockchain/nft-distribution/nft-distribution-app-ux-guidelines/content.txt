@@ -1,0 +1,20 @@
+NFT distribution
+ Overview
+ Check NFT sales eligibility
+ Merchant eligibility
+ UX guidelines
+ Tokengating
+ Online store
+ Admin
+ Flow
+ Payments
+ Billing
+ App Store
+ UX guidelines for NFT distribution apps
+ User experience is important to the success of early-adopter merchants and their customers. The following are some recommendations and best practices for NFT distribution apps to create excellent user experiences for merchants and their customers:
+ A merchant should be able to maintain the context (requests and creations) of all of the NFTs that they offer from a single interface in the Shopify admin.
+ With respect to the minting method that's configured for a given NFT, a merchant’s NFT fulfillment actions in the Shopify admin should result in an NFT claim message being sent to the customer as soon as possible.
+ A user interface should be available to the merchant with the status of each NFT fulfillment and any subsequent fulfillment interactions with a customer.
+ An individual fulfillment should be created for each NFT line item to ensure that tracking a single NFT’s fulfillment is intuitive even to a blockchain novice. You should also include the name of the blockchain, fork, or network in the Fulfillment.tracking_company field whenever possible.
+ The app should make sure that the destination contact information for the NFT claim that's entered at checkout can't be redirected to a new recipient without the express review and confirmation of the customer, merchant, and preferably also the NFT distribution app developer.
+ To facilitate end-to-end testing of an NFT distribution app, include detailed testing instructions (for example, test store, wallet, and screencasts) that are relevant to the creation, minting, and delivery of NFTs in Part G of the app submission form.

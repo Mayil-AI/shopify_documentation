@@ -1,0 +1,70 @@
+Overview
+ Theme app extensions
+ Other integration methods
+ Verify theme support
+ Manage media
+ App integration with online stores
+ You can expose your app's features to millions of merchants' customers by integrating your app with online stores.
+ Shopify provides a flexible platform for app development, allowing developers to use Liquid templates, host assets on the Shopify CDN, and deploy with a versioning release pipeline. This enables merchants to provide a customized shopping experience for their customers.
+ This guide explains the methods that you can use to integrate your app with online stores.
+ Caution
+ If you're creating a new app that integrates with a theme, and you're submitting the app to the Shopify App Store, then you need to use theme app extensions.
+ You don't need to update apps that are already published on the Shopify App Store to use theme app extensions. However, all of the apps in the Shopify App Store need to be compatible with Online Store 2.0 themes, and you might want to use theme app extensions to achieve this.
+ Theme app extensions
+ Theme app extensions provide your app with two integration types that extend themes in the online store: app blocks and app embed blocks. These integration types take advantage of Online Store 2.0 features. Every new app that you submit to the Shopify App Store needs to use theme app extensions to integrate with online store themes.
+ Theme app extensions don't edit theme code, which provides the following benefits:
+ Reduced risk of an app introducing breaking changes to the theme
+ Minimized app support debt
+ Increased app adoption by offering users a cleaner experience for app integration and customization.
+ Increased user retention owing to a graceful, out of the box integration experience.
+ Other integration methods for themes
+ You can use the ScriptTag resource alongside theme app extensions to provide specific types of support for vintage themes.
+ If you're creating a new app that integrates with a theme, and you're submitting the app to the Shopify App Store, then you need to use theme app extensions.
+ You don't need to update apps that are already published on the Shopify App Store to use theme app extensions. However, all of the apps in the Shopify App Store need to be compatible with Online Store 2.0 themes, and you might want to use theme app extensions to achieve this.
+ Caution
+ If your app uses the ScriptTag resource to edit theme code, then merchants might not be able to upgrade their themes. This results in a poor merchant experience and could negatively impact your ability to attract new app users and retain existing users.
+ Requirements
+ If your app adds a visible element to an online store, then the element needs to be deactivated by default so that merchants can either preview or edit the element before activating it. You need to provide merchants with instructions on how to activate either the visible element or the app.
+ If uninstalling your app leaves code behind in the theme, then you need to provide merchants with instructions on how to remove the code completely, so that they can remain on their theme upgrade path. When a merchant removes the code, leaving even an extra line break or space will take the theme off its upgrade path.
+ If your app edits theme code and a merchant changes their published theme, then you need to update your app to work on the new theme.
+ Other integration method for the online store
+ An app proxy forwards requests made to a configurable route on an online store's origin to an external origin to display data on a store page. For example, an app proxy can forward requests from https://{shop}.myshopify.com/admin/themes/app/my-app to your app server. App proxies allow you to share data with an online store without worrying about Cross-origin Security Concerns (CORS).
+ The contents of an app proxy response can be just about anything, from static assets like CSS, JavaScript, and images, to dynamic responses like Liquid templates or JSON data.
+ What integration method should I use?
+ Review the following app use cases to determine which integration method you should use.
+ Use case Integration method
+ Your app injects inline content on a page App blocks for themes
+ Your app doesn't have a UI component or it adds a floating or overlaid element to a theme App embed blocks
+ You want to retrieve customer-facing values through an API
+ Storefront API
+ Note:
+ The linked content describes using the Storefront API for custom storefronts. However, most of this information also applies to using the Storefront API in apps that integrate with online stores.
+ Your app injects inline content on a page and you want to add support for vintage themes ScriptTags API
+ Your app must modify the code of vintage themes Asset REST Admin API resource (not recommended)
+ You want to forward requests made to a route on an online store's origin to an external origin to display data on a store page App proxies
+ Considerations for building online store apps
+ If your app interacts with a store's theme, then you need to make sure that the app also works in the theme editor environment. If necessary, you can set your app to detect the theme editor, so that you can adjust your app to work in that environment.
+ If your app extends the online store, then you might want to integrate Shopify theme components and patterns. When you're building your app, you can use the guides for building Shopify themes to learn how to implement features for the online store. This information will help you to build an app that feels like a part of a merchant's theme, and behaves as expected with other online store features. Below are a few guides to get you started:
+ Building with sections and blocks
+ Review design principles for building purposeful, flexible blocks for Shopify themes.
+ Support multiple currencies and languages
+ Learn how to support country selection and use dynamic URLs for themes.
+ Tools and resources
+ Use JavaScript responsibly
+ Follow our principles for optimizing your JavaScript.
+ Verify theme support for app blocks
+ Verify whether an online store's published theme supports your theme app extension or requires another method of app integration.
+ Next steps
+ Add app blocks and app embedded blocks with theme app extensions
+ Use the Asset or ScriptTag integration methods
+ Use the App proxies integration method
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Theme app extensions
+ Other integration methods for themes
+ Other integration method for the online store
+ What integration method should I use?
+ Considerations for building online store apps
+ Tools and resources
+ Next steps

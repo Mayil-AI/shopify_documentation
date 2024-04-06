@@ -1,0 +1,30 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ PickupAddress object
+ unstable
+ The pickup point delivery option address.
+ Fields
+ address1 (String!) required
+ Address line 1.
+ address2 (String)
+ Address line 2.
+ city (String!) required
+ City.
+ country (String)
+ Country.
+ countryCode (CountryCode!) required
+ Country code.
+ latitude (Float!) required
+ Latitude.
+ longitude (Float!) required
+ Longitude.
+ phone (String)
+ Phone number.
+ province (String)
+ Province.
+ provinceCode (String)
+ Province code.
+ zip (String)
+ Zip code.
+ Was this page helpful?
+ YesNo

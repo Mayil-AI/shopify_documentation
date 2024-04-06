@@ -1,0 +1,65 @@
+Overview
+ Getting started
+ Add configuration
+ Build a user interface
+ Cart permalinks
+ Styling
+ Header and footer
+ Banners and fields
+ Delivery and shipping
+ Product offers
+ Distribution
+ Billing
+ App Store
+ Create complex validation rules
+ You can use Cart and Checkout Validation Functions to ensure that purchases meet certain criteria before customers can complete an order. In this tutorial series, you’ll use Shopify Functions to enforce product limits on store merchandise.
+ Note
+ Errors from validation functions are exposed to the Storefront API's Cart object, in themes using the cart template and during checkout.
+ What you'll learn
+ In this tutorial series, you’ll learn how to do the following tasks:
+ Create a validation function.
+ Add configuration using metafields.
+ Build a validation settings user interface using Admin UI Extensions.
+ Requirements
+ You've created a Partner account.
+ You've created a development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ You've created an app that uses Shopify CLI 3.49.5 or higher. If you previously installed Shopify CLI, then make sure that you're using the latest version.
+ If you plan to create a UI for your extension, then start with the Remix app template.
+ You've installed Node.js 16 or higher.
+ You've installed your app on the development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ Rust-specific requirements
+ The following requirements are specific to Rust-based development with Shopify Functions.
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Tutorial series
+ Follow the tutorial series to go from "Hello World" to a functional custom validation experience.
+ Tutorial 1: Getting started with building validations
+ Create a new validation function.
+ Tutorial 2: Add configuration to your validation
+ Add configuration to your validation using metafields.
+ Tutorial 3: Build a validation settings user interface
+ Build an Admin UI extension where merchant can view and configure your validation.
+ Developer tools and resources
+ Explore the following developer tools and resources to get familiar with building payment customizations.
+ Validation API reference
+ Consult the GraphQL reference for the Validation API.
+ Language support
+ Learn about the language support and tooling that are available in Shopify Functions.
+ Next steps
+ Get started with building validations.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Tutorial series
+ Developer tools and resources
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

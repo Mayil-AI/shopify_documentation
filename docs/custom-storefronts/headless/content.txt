@@ -1,0 +1,60 @@
+Bring your own stack
+ Overview
+ Headless with B2B
+ Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Bring your own headless stack
+ Shopify’s composable commerce APIs allow you to integrate Shopify into nearly any technology stack, so you have the freedom to use the frameworks, hosting, and workflows that work best for you.
+ Install the Headless channel
+ To start accessing the Storefront API and the Customer Account API, you need to install the Headless channel from the Shopify App Store.
+ This channel gives you a single place to manage API access for all your client applications. It enables you to publish products to the Headless sales channel, as well as manage API permissions and credentials.
+ Create a storefront
+ You can create multiple storefronts in the Headless channel.
+ Each storefront has its own set of API tokens, but all storefronts in the Headless channel share the same API permissions.
+ From your Shopify admin, under Sales channels, click Headless.
+ Click Add storefront.
+ (Optional) On the storefront detail page, click Rename to edit the storefront’s default name.
+ Manage API permissions
+ You can control which store data is available through the Storefront or Customer Account APIs. All storefronts in the Headless channel share the same API permissions.
+ From your Shopify admin, under Sales channels, click Headless.
+ Click the name of the storefront that you want to update.
+ Under Manage API access, click Manage for the API that you want to update.
+ Under Permissions, click the edit icon.
+ Check the permission scopes that you want enabled.
+ Click Save.
+ Rotate API credentials
+ For security purposes, you can update your API credentials at any time.
+ From your Shopify admin, under Sales channels, click Headless.
+ Click the name of the storefront to update.
+ Under Manage API access, click Manage for the API that you want to update.
+ Under Rotate credentials, click Generate new token. Both the old and new credentials are valid until you delete the old credentials.
+ Update your client apps with the new credentials.
+ The Storefront API access relies on an API token.
+ The Customer Account API might have a Client ID and a Client Secret, depending on the type of access.
+ After you’ve updated your apps, delete the old credentials by clicking Revoke.
+ Delete a storefront
+ Deleting a storefront in the Headless channel revokes all its access tokens. You need to update any clients using those tokens.
+ From your Shopify admin, under Sales channels, click Headless.
+ Click the name of the storefront that you want to delete.
+ Click Delete storefront.
+ To confirm, click Delete storefront.
+ Next steps
+ From here, what you build is up to you! The Storefront API and the Customer Account API provide a wide selection of commerce primitives that enable you to integrate Shopify into your existing tech stack, or create something new.
+ Learn more about getting started with the Storefront API.
+ Learn more about getting started with the Customer Account API.
+ Learn more about headless with B2B.
+ Consult the complete Storefront API Reference.
+ Consult the complete Customer Account API Reference.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Install the Headless channel
+ Create a storefront
+ Manage API permissions
+ Rotate API credentials
+ Delete a storefront
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

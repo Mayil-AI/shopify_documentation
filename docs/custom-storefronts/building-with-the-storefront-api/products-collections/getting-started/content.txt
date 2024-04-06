@@ -1,0 +1,590 @@
+Building with the Customer Account API
+ Additional SDKs
+ Getting started with querying products and collections
+ The Storefront API lets you build custom storefronts with any language and technology. It provides public access using GraphQL to products, collections, customers, carts, checkouts, and other store resources that you can use to build custom purchasing experiences. After you've requested access tokens for your app and generated a Storefront API access token, you can make queries using the Storefront API.
+ What you'll learn
+ After you've finished this tutorial, you'll have accomplished the following:
+ Requested public, unauthenticated Storefront API access scopes for your app
+ Generated a Storefront API access token
+ Queried products and collections
+ Tip
+ If you're a Shopify Partner, then you can create a development store to test Storefront API queries.
+ Requirements
+ You've completed the Getting started with the Storefront API guide.
+ If instead of completing the Getting started, you've created a public or custom app with Storefront API access enabled in the Configuration page. If you've created a public app, then you need to turn your app into a sales channel.
+ You've created products, product variants, and collections in your store.
+ Query products
+ You can use the products query to retrieve a list of products. The products query uses an argument (for example, first) to specify the number of results to query.
+ The following example shows how to query the IDs of the first 5 products in your store. For more information on selecting which set of results to query, refer to Paginating results with GraphQL.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    products(first:5) {
+ 3
+      edges {
+        }
+ 7
+      }
+ 8
+    }
+ 3
+      "products": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/Product/1"
+ 8
+            }
+ 9
+          },
+ 10
+          {
+ 11
+            "node": {
+ 12
+              "id": "gid://shopify/Product/2"
+ 13
+            }
+ 14
+          },
+ 15
+          {
+ 16
+            "node": {
+ 17
+              "id": "gid://shopify/Product/3"
+ 18
+            }
+ 19
+          },
+ 20
+          {
+ 21
+            "node": {
+ 22
+              "id": "gid://shopify/Product/4"
+ 23
+            }
+ 24
+          },
+ 25
+          {
+ 26
+            "node": {
+ 27
+              "id": "gid://shopify/Product/5"
+ 28
+            }
+ 29
+          }
+ 30
+        ]
+ 31
+      }
+ 32
+    }
+ 33 }
+ Query a single product
+ Products are identified by a globally unique ID, which can be used to query for information. You can use the product query to retrieve a single product. The following example shows how to pass in the product ID to the product query.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    # You can use `product(handle:)` to query a single product by its handle instead.
+ 3
+    product(id: "gid:\/\/shopify\/Product\/1") {
+ 4
+      title
+ 5
+    }
+ 6 }
+      "product": {
+ 4
+        "title": "Black Ban Glasses"
+ 5
+      }
+ 6
+    }
+ 7 }
+ Query product variants
+ A product variant represents a different version of a product, such as differing sizes or differing colors. You can query the variants associated with a product by querying variants on the Product object.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    node(id: "gid:\/\/shopify\/Product\/1") {
+ 3
+      id
+ 4
+      ... on Product {
+ 5
+        variants(first: 5) {
+ 6
+          edges {
+ 7
+            node {
+ 8
+              id
+ 9
+            }
+ 10
+ 13
+    }
+ 14 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "node": {
+ 4
+        "id": "gid://shopify/Product/1",
+ 5
+        "variants": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "id": "gid://shopify/ProductVariant/1"
+ 10
+              }
+ 11
+            },
+ 12
+            {
+ 13
+              "node": {
+ 14
+                "id": "gid://shopify/ProductVariant/2"
+ 15
+              }
+ 16
+            },
+ 17
+            {
+ 18
+              "node": {
+ 19
+                "id": "gid://shopify/ProductVariant/3"
+ 20
+              }
+ 21
+            },
+ 22
+            {
+ 23
+              "node": {
+ 24
+                "id": "gid://shopify/ProductVariant/4"
+ 25
+              }
+ 26
+            },
+ 27
+            {
+ 28
+              "node": {
+ 29
+                "id": "gid://shopify/ProductVariant/5"
+ 30
+              }
+ 31
+            }
+ 32
+          ]
+ 33
+        }
+ 34
+      }
+ 35
+    }
+ 36 }
+ Query product recommendations
+ Product recommendations can help merchants boost sales and conversions. You can use the productRecommendations query to retrieve a list of up to ten recommended products that display to customers. In your query, provide the following arguments:
+ productId: The global ID of the product that's published to the storefront. This is the product for which the recommended products are generated.
+ intent: The type of recommendation set that will be generated. This helps you tailor recommendations for a particular surface on a storefront or selling strategy. For more information, refer to recommendation intents.
+ The following example shows how to retrieve related product recommendations for a given product. The query returns the product IDs for each recommended product.
+ Note
+ Shopify provides auto-generated product recommendations. Merchants can also customize their product recommendations using the Shopify Search & Discovery app.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    # The `intent` argument is available only in the unstable API version.
+ 3
+    productRecommendations(productId: "gid://shopify/Product/1", intent: RELATED) {
+ 4
+      id
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productRecommendations": [
+ 4
+        {
+ 5
+          "id": "gid:\/\/shopify\/Product\/2",
+ 6
+          },
+ 7
+        {
+ 8
+          "id": "gid:\/\/shopify\/Product\/3",
+ 9
+          },
+ 10
+        {
+ 11
+          "id": "gid:\/\/shopify\/Product\/4",
+ 12
+          },
+ 13
+        {
+ 14
+          "id": "gid:\/\/shopify\/Product\/5",
+ 15
+          },
+ 16
+        {
+ 17
+          "id": "gid:\/\/shopify\/Product\/6",
+ 18
+          },
+ 19
+        {
+ 20
+          "id": "gid:\/\/shopify\/Product\/7",
+ 21
+          },
+ 22
+        {
+ 23
+          "id": "gid:\/\/shopify\/Product\/8",
+ 24
+          },
+ 25
+        {
+ 26
+          "id": "gid:\/\/shopify\/Product\/9",
+ 27
+          },
+ 28
+        {
+ 29
+          "id": "gid:\/\/shopify\/Product\/10",
+ 30
+          },
+ 31
+        {
+ 32
+          "id": "gid:\/\/shopify\/Product\/11",
+ 33
+        }
+ 34
+      ]
+ 35
+    }
+ 36 }
+ Query product media
+ You can use the Storefront API to query a product's media and display it on a storefront.
+ Specify the media field on the Product object to query for a product's media. Then use a fragment to specify the fields that you want to return for each possible media type.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    product(id: "gid:\/\/shopify\/ProductVariant\/1") {
+ 3
+      id
+ 4
+      media(first: 10) {
+ 5
+      edges {
+ 6
+        node {
+ 7
+          mediaContentType
+ 8
+          alt
+ 9
+          ...mediaFieldsByType
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ 13 }
+ 14 fragment mediaFieldsByType on Media {
+ 15
+    ...on ExternalVideo {
+ 16
+      id
+ 17
+      embeddedUrl
+ 18
+    }
+ 19
+    ...on MediaImage {
+ 20
+      image {
+ 21
+        url
+ 22
+      }
+ 23
+    }
+ 24
+    ...on Model3d {
+ 25
+      sources {
+ 26
+        url
+ 27
+        mimeType
+ 28
+        format
+ 29
+        filesize
+ 30
+      }
+ 31
+    }
+ 32
+    ...on Video {
+ 33
+      sources {
+ 34
+        url
+ 35
+        mimeType
+ 36
+        format
+ 37
+        height
+ 38
+        width
+ 39
+      }
+ 40
+    }
+ 41 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "product": {
+ 4
+        "id": "gid://shopify/ProductVariant/1",
+ 5
+        "media": {
+ 6
+          "edges": [
+ 7
+            {
+ 8
+              "node": {
+ 9
+                "mediaContentType": "VIDEO",
+ 10
+                "alt": "Comparison video showing the different models of watches.",
+ 11
+                "sources": [
+ 12
+                  {
+ 13
+                    "url": "https://videos.shopifycdn.com/c/vp/2a82811738ca41e7a508e6744028d169/SD-360p.mp4?Expires=1575744400&KeyName=core-signing-key-1&Signature=OPKELzhY-kYTx9QH9x6NJA9IqnI=",
+ 14
+                    "mimeType": "video/mp4",
+ 15
+                    "format": "mp4",
+ 16
+                    "height": 360,
+ 17
+                    "width": 640
+ 18
+                  }
+ 19
+                ]
+ 20
+              }
+ 21
+            },
+ 22
+            {
+ 23
+              "node": {
+ 24
+                "mediaContentType": "IMAGE",
+ 25
+                "alt": "Polaris watch",
+ 26
+                "image": {
+ 27
+                  "url": "https://cdn.shopify.com/s/files/1/1768/1717/products/IGQ.png?v=1560528103"
+ 28
+                }
+ 29
+              }
+ 30
+            }
+ 31
+          ]
+ 32
+        }
+ 33
+      }
+ 34
+    }
+ 35 }
+ Query collections
+ A collection represents a grouping of products that a store owner can create to organize them or make their stores easier to browse. For example, a merchant might create a collection for a specific type of product that they sell, such as footwear.
+ Merchants can create collections by selecting products individually or by defining rules that automatically determine whether products are included.
+ The following example shows how to query for collections and the products that belong to those collections.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    collections(first: 2) {
+          id
+ 6
+          products(first: 5) {
+ 7
+            edges {
+ 8
+              node {
+ 9
+                id
+ 10
+              }
+ 11
+            }
+ 12
+          }
+    }
+ 16 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "collections": {
+ 4
+        "edges": [
+              "id": "gid://shopify/Collection/1",
+ 8
+              "products": {
+ 9
+                "edges": [
+ 10
+                  {
+ 11
+                    "node": {
+ 12
+                      "id": "gid://shopify/Product/1"
+ 13
+                    }
+ 14
+                  },
+ 15
+                  {
+ 16
+                    "node": {
+ 17
+                      "id": "gid://shopify/Product/2"
+ 18
+                    }
+ 19
+                  },
+ 20
+                  {
+ 21
+                    "node": {
+ 22
+                      "id": "gid://shopify/Product/3"
+ 23
+                    }
+ 24
+                  }
+ 25
+                ]
+ 26
+              }
+ 27
+            }
+ 28
+          },
+ 29
+          {
+ 30
+            "node": {
+ 31
+              "id": "gid://shopify/Collection/2",
+ 32
+              "products": {
+ 33
+                "edges": [
+ 34
+                  {
+ 35
+                    "node": {
+ 36
+                      "id": "gid://shopify/Product/4"
+ 37
+                    }
+ 38
+                  },
+ 39
+                  {
+ 40
+                    "node": {
+ 41
+                      "id": "gid://shopify/Product/5"
+ 42
+                    }
+ 43
+                  }
+ 44
+                ]
+ 45
+              }
+ 46
+            }
+ 47
+          }
+ 48
+        ]
+ 49
+      }
+ 50
+    }
+ 51 }
+ Next steps
+ Filter products in a collection with the Storefront API.
+ Create and update a cart with the Storefront API.
+ Learn about the different tools that you can use to create unique buying experiences anywhere your customers are, including websites, apps, and video games.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Query products
+ Query a single product
+ Query product variants
+ Query product recommendations
+ Query product media
+ Query collections
+ Next steps
+ Updates & News

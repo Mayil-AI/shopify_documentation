@@ -1,0 +1,20 @@
+Marketing activities app extensions
+ Product subscription app extensions
+ PickupPoint object
+ unstable
+ A pickup point.
+ Fields
+ address (PickupAddress!) required
+ The pickup point address.
+ businessHours ([BusinessHours!]!) required
+ The business hours of the pickup point location. Any day that is either not mentioned or does not have any defined periods will be considered as closed.
+ externalId (String!) required
+ The external id assigned by the provider for the pickup point delivery option.
+ name (String!) required
+ The name assigned by the provider for pickup point delivery option.
+ provider (Provider!) required
+ The pickup point delivery option provider.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

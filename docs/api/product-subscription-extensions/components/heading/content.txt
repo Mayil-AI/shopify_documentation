@@ -1,0 +1,40 @@
+TextField
+ Thumbnail
+ Heading
+ Headings are used as the titles of each major section of an extension.
+ JavaScript
+ React
+ 1 import {extend, Heading} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const heading = root.createComponent(Heading, {
+ 5
+      id: 'profile_heading',
+ 6
+      level: 3,
+ 7
+    });
+ 8
+ 9
+    const headingText = root.createText('This is a Title');
+ 10
+    heading.appendChild(headingText);
+ 11
+    root.appendChild(heading);
+ 12
+ 13
+    root.mount();
+ 14 });
+ Props
+ optional = ?
+ Name Type Description
+ level? 1 | 2 | 3 | 4 | 5 | 6 @default 2
+ Guidelines
+ 📱 Headings should clearly describe the section of interface they refer to
+ 📱 Use Headings to highlight the most important concept or piece of information merchants need to know
+ ✅ Do 🛑 Don't
+ Use headings to support the hierarchy and structure of the page Nest too many Headings in one area
+ Place Headings at the top of a page or section they refer to
+ For more guidelines, refer to Polaris' Text best practices.
+ Was this section helpful?

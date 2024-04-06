@@ -1,0 +1,360 @@
+Billing cycles
+ Overview
+ Manage billing cycle contracts
+ Combine billing cycle contracts
+ Orders
+ App Store
+ Combine the content of multiple contracts
+ When a customer has multiple subscription contracts with the same merchant, you might want to combine the contents of their contracts together when their billing cycles align. When you combine the contents of multiple contracts together, you only need to create one billing attempt on any of the combined contract and their respective billing cycle. This billing attempt will be linked to all the combined billing cycles. Shopify then creates only one order that has all the combined pricing and line information. And the order will be linked to all the combined contracts. This can be useful to save on shipping, billing, and other administrative costs. The app should create billing attempts on any contract that you combined.
+ For example, a customer might have one subscription that bills and delivers weekly, and one subscription that bills and delivers monthly. When the billing and delivery for both subscriptions occur within the same week, the merchant might want to combine the subscription orders for that week so they can be fulfilled in one shipment.
+ This tutorial shows you how to combine the contents of multiple contracts together on their respective billing cycles.
+ What you'll learn
+ In this tutorial, you'll learn how to do the following tasks:
+ Retrieve a draft of the most up-to-date contract information for a subscription billing cycle
+ Combine multiple contracts to the same subscription draft
+ Commit the combined contract information
+ Fetch the combined contract information on a subscription billing cycle
+ Create an order for a subscription billing cycle
+ Requirements
+ Note
+ Most Subscriptions, Pre-order and Try before you buy (TBYB) apps need to request API access through the Partner Dashboard. We give API access to apps that are designed according to our principles for Subscriptions, Pre-order and TBYB apps.
+ Public apps that use Subscriptions, Pre-order or TBYB need to meet specific requirements to be published on the Shopify App Store.
+ Custom apps created in the Shopify admin can't use Subscriptions, Pre-order or TBYB because these apps can't use extensions or request access to protected scopes. If you're building a solution for a single store, then build your custom app in the Partner Dashboard.
+ Your app can make authenticated requests to the GraphQL Admin API.
+ Your app has the read_own_subscription_contracts and write_own_subscription_contracts access scopes. Learn how to configure your access scopes using Shopify CLI.
+ You've created products and product variants in your development store.
+ You've created at least two active subscription contracts for the same customer with recurring billing and delivery policies.
+ You've familiarized yourself with managing billing cycle contracts.
+ What you can create
+ The following diagram shows a preview of how combining contracts works:
+ In this example, the buyer has two contracts, one weekly and one bi-weekly for coffee and tea. Both contracts have billing cycles and share similar billing cycles 01/01, 01/15, and 01/29. Merchants might want to combine these subscription orders to consolidate fulfillment and shipping costs into one order.
+ Step 1: Create a subscription draft
+ You can use the subscriptionBillingCycleContractEdit mutation to create a subscription draft with the most up-to-date contract information on a specified billing cycle. Choose any one of the subscription contracts to be combined, and pass the contract ID and either the index or a date belonging to the billing cycle to specify the billing cycle.
+ Make note of the subscription contract draft ID. You'll use it to join additional contracts in the next step.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionBillingCycleContractEdit(
+ 3
+      billingCycleInput: {
+ 4
+        contractId: "gid://shopify/SubscriptionContract/123",
+ 5
+        selector: { date: "2023-01-10T00:00:00Z" }
+ 6
+      }
+ 7
+    ) {
+ 8
+      draft {
+ 9
+        # Subscription draft fields
+ 10
+        id
+ 11
+ 14
+        message
+ 15
+      }
+ 16
+    }
+ 17 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "draft": {
+ 4
+        "id": "gid://shopify/SubscriptionDraft/321"
+ 5
+      },
+ 6
+      "userErrors": []
+ 7
+    }
+ 8 }
+ Step 2: Combine the contracts
+ After retrieving the draft ID, you can combine other contracts to the draft by passing their billing cycles and the draft ID to the subscriptionBillingCycleContractDraftConcatenate mutation:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionBillingCycleContractDraftConcatenate(
+ 3
+      draftId: "gid://shopify/SubscriptionDraft/321"
+ 4
+      concatenatedBillingCycleContracts: [
+ 5
+        {
+ 6
+          contractId: "gid://shopify/SubscriptionContract/456",
+ 7
+          selector: { date: "2023-01-10T00:00:00Z" }
+ 8
+        }
+ 9
+        {
+ 10
+          contractId: "gid://shopify/SubscriptionContract/789",
+ 11
+          selector: { date: "2023-01-10T00:00:00Z" }
+ 12
+        }
+ 13
+      ]
+ 14
+    ) {
+ 15
+      draft {
+ 16
+        # Subscription draft fields
+ 17
+        id
+ 18
+      }
+ 19
+      userErrors {
+ 20
+        field
+ 21
+        message
+ 22
+      }
+ 23
+    }
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "draft": {
+ 4
+        "id": "gid://shopify/SubscriptionDraft/321"
+ 5
+      },
+ 6
+      "userErrors": []
+ 7
+    }
+ 8 }
+ Step 3 (Optional): Update the subscription draft
+ After combining the contracts together, you can update the subscription draft if needed. For example, you might want to add a discount to reward the customer for having multiple subscriptions.
+ For more information about updating the subscription draft, refer to Manage billing cycle contracts.
+ Step 4: Commit the subscription draft
+ When you commit the subscription draft, the changes that you've made become active on the billing cycles for which the draft was created and for which the contracts were combined. You can call the subscriptionDraft query to review the information on the subscription draft before committing it.
+ After you're satisfied with your updates, you can call the subscriptionBillingCycleContractDraftCommit mutation to commit the changes for all the respective billing cycles for each contract:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionBillingCycleContractDraftCommit(
+ 3
+      draftId: "gid://shopify/SubscriptionDraft/321"
+ 4
+    ) {
+ 5
+      contract {
+ 6
+        # Subscription billing cycle edited contract fields
+ 7
+        billingCycles (first:10) {
+ 8
+          edges { node { cycleIndex } }
+ 9
+        }
+ 10
+      }
+ 11
+      userErrors {
+ 12
+        field
+ 13
+        message
+      "contract": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "cycleIndex": 5
+ 8
+            }
+ 9
+          }
+ 10
+        ]
+ 11
+      },
+ 12
+      "userErrors": []
+ 13
+    }
+ 14 }
+ Step 5: Fetch the edited contract
+ After committing the subscription draft, you might want to fetch the information on your edited contract. You can do so using subscriptionBillingCycle query.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 subscriptionBillingCycle(
+ 2
+    billingCycleInput: {
+ 3
+      # Note the input here could be any of the contracts that go through the combination process,
+ 4
+      # their billing cycles will share the same editedContract information.
+ 5
+      contractId: "gid://shopify/SubscriptionContract/456",
+ 6
+      selector: { date: "2023-01-10T00:00:00Z" }
+ 7
+    }
+ 8 ) {
+ 9
+    subscriptionBillingCycle {
+ 10
+      editedContract {
+ 11
+        # Subscription billing cycle edited contract fields
+ 12
+        lines(first: 10) {
+ 13
+          id
+ 14
+          quantity
+ 15
+          variantId
+ 16
+ 19
+    userErrors {
+ 20
+      field
+ 21
+      message
+ 22
+    }
+ 23 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "subscriptionBillingCycle": {
+ 4
+        "editedContract": {
+ 5
+           "lines": {
+ 6
+             "edges": [
+ 7
+              {
+ 8
+                "node": {
+ 9
+                  "id": "gid://shopify/SubscriptionLine/2",
+ 10
+                  "variantId": "gid://shopify/ProductVariant/11111",
+ 11
+                  "quantity": 1,
+ 12
+                }
+ 13
+              }
+ 14
+            ]
+ 15
+          }
+ 16
+        }
+ 17
+      },
+ 18
+      "userErrors": []
+ 19
+    }
+ 20 }
+ Step 6: Create an order
+ When the billing date comes, you can use subscriptionBillingAttemptCreate mutation on any of the combined contracts to create an order.
+ If no billingCycleSelector was specified, Shopify will create an order based on the current billing cycle's contract information by default.
+ If you want to create an order for a certain billing cycle, you must specify billingCycleSelector.
+ Tip
+ If you specify both originTime and billingCycleSelector arguments, then originTime needs to be within the selected billing cycle's start and end at date.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation {
+ 2
+    subscriptionBillingAttemptCreate(
+ 3
+      # Note the subscriptionContractId here could be any of the contracts that went through the combination process.
+ 4
+      subscriptionContractId: "gid://shopify/SubscriptionContract/456",
+ 5
+      subscriptionBillingAttemptInput: {
+ 6
+        idempotencyKey: "123",
+ 7
+        billingCycleSelector: { date: "2023-01-10T00:00:00Z" }
+ 8
+      }
+ 9
+    ) {
+ 10
+      subscriptionBillingAttempt {
+ 11
+        id
+ 12
+        errorMessage
+ 13
+        order {
+ 14
+          id
+ 15
+        }
+ 16
+        ready
+ 17
+      }
+ 18
+    "data": {
+ 3
+      "subscriptionBillingAttemptCreate": {
+ 4
+        "subscriptionBillingAttempt": {
+ 5
+          "id": "gid://shopify/SubscriptionBillingAttempt/1",
+ 6
+          "errorMessage": null,
+ 7
+          "order": {
+ 8
+            "id": "gid://shopify/Order/1"
+ 9
+          },
+ 10
+          "ready": true
+ 11
+        }
+ 12
+      },
+ 13
+      "userErrors": []
+ 14
+    }
+ 15 }
+ Next steps
+ Learn how to manage orders and fulfillments for prepaid subscriptions.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ What you can create
+ Step 1: Create a subscription draft
+ Step 2: Combine the contracts
+ Step 3 (Optional): Update the subscription draft
+ Step 4: Commit the subscription draft
+ Step 5: Fetch the edited contract
+ Step 6: Create an order

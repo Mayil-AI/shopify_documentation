@@ -1,0 +1,20 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ MergeOperation object
+ 2024-04 latest
+ A cart line merge operation.
+ Fields
+ attributes ([AttributeOutput!])
+ The CartLine attributes to be added to the parent line.
+ cartLines ([CartLineInput!]!) required
+ The list of cart lines to merge.
+ image (ImageInput)
+ The image of the group.
+ parentVariantId (ID!) required
+ The product variant that models the group of lines.
+ price (PriceAdjustment)
+ The price adjustment to the group.
+ title (String)
+ The name of the group of lines to merge. If it isn't specified, it will use the parent_variant' name.

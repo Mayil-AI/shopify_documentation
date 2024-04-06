@@ -1,0 +1,220 @@
+App Store ads
+ Security
+ App categories
+ App categories, subcategories, and tags allow merchants to find apps that meet their specific needs.
+ You need to categorize your app on the app listing form. A primary tag is required, and should represent your app’s main function. You can add a secondary tag if the primary doesn’t fully describe your app’s function. For example, if your app manages email marketing and SMS marketing, you should add tags for both of these functions. If your app is mainly for email marketing and only has a small SMS marketing features, then you should add only the email marketing tag.
+ As part of the app review process, Shopify app review team will review and confirm that your app is classified accurately.
+ We regularly review app classification as a part of our taxonomy governance. Ongoing governance can also result in changes to the taxonomy. Both of these activities could result in changes to the categories, subcategories, and tags applied to an app.
+ Tip
+ To discover categories applicable to your app, research apps that are similar to yours on the Shopify App Store and use the categories that they use.
+ The Shopify App QA team will continue to be involved to ensure that apps are classified accurately.
+ If your app capabilities change and you want to change how your app is categorized, then you can submit an appeal to change the app categorization by using the link in the app submission form. After the Shopify app review team completes their review, they'll send a response, whether it's approved or rejected.
+ List of app categories, subcategories, and tags
+ Apps can be assigned to one of the following categories:
+ Finding products
+ Selling products
+ Orders and shipping
+ Store design
+ Marketing and conversion
+ Store management
+ Each category is divided into subcategories, and each subcategory has multiple tags associated with it.
+ List of app categories, subcategories, and tags on the Shopify App Store
+ Categories Subcategories Tags
+ Finding products: Apps that help merchants find and source products for their store. Product sourcing: Apps that connect merchants with vendors to purchase products. Finding suppliers: Apps that manage integrations with material suppliers, wholesalers, and other suppliers.
+ Dropshipping: Apps that manage third-party inventory and fulfillment services.
+ Print on demand (POD): Apps that manage third-party custom product design, printing, and shipping.
+ Buying wholesale: Apps that let merchants buy products from wholesale suppliers.
+ Product sourcing - Other: Apps related to other product sourcing methods.
+ Selling products: Apps that help merchants display and sell products to customers. Selling methods: Apps that let merchants sell to customers using sales channels. Retail: Apps that let merchants sell in person.
+ Mobile app builder: Apps that help build mobile apps for customers to shop on iOS or Android.
+ Online marketplaces: Apps that let merchants sell online using marketplaces.
+ Social media: Apps that let customers shop on social media platforms.
+ Live shopping: Apps that let merchants sell and interact with customers via livestream.
+ Custom storefronts: Apps that help merchants build a custom store using headless commerce.
+ Selling methods - Other: Apps related to other selling methods.
+ Product display: Apps that manage how products are presented on a storefront. Product comparison: Apps that let customers compare products and decide what to buy.
+ Quick view: Apps that let customers get a quick product close-up or add to bag.
+ 3D/AR/VR: Apps that help customers visualize and try on products in real life.
+ Product Display - Other: Apps related to other product display methods.
+ Product variants: Apps that display product options or variants to customers. Product options: Apps that let customers pick multiple product variants.
+ Color swatches: Apps that let customers pick products in different colors.
+ Custom file upload: Apps that let customers add images and custom info to their order.
+ Product variants - Other: Apps related to other product variants.
+ Pricing: Apps that let merchants sell products using different pricing options. Competitive pricing: Apps that let customers sell products using different pricing options.
+ Custom pricing and quotes: Apps that help create custom prices or offer ways to request quotes.
+ Wholesale pricing: Apps that let merchants sell to other businesses at discount.
+ Installments: Apps that let customers pay for products in installments.
+ Payment providers: Apps that let merchants offer customers financing options.
+ Pricing - Other: Apps related to other pricing options.
+ Purchase options: Apps that let merchants manage when and how customers place orders. Subscriptions: Apps that let customers pay for ongoing subscriptions for products.
+ Pre-orders: Apps that let merchants accept orders in advance for upcoming products.
+ Order limits: Apps that limit the number or weight of items that customers can buy.
+ Purchase options - Other: Apps related to other purchase options.
+ Gifts: Apps that let customers buy products as gifts for other people. Gift cards: Apps that let customers email gift cards to other people.
+ Gift receipts: Apps that let customers send gift previews to other people.
+ Gift wrapping: Apps that let customers choose to have products gift wrapped.
+ Gifts - Other: Apps related to other gift options.
+ Digital products: Apps that let merchants sell digital items and add-ons. Digital downloads: Apps that let merchants sell and deliver digital products.
+ Donations: Apps that let customers give donations to charity or environmental causes.
+ Warranties and insurance: Apps that let customers add warranties or insurance to purchases.
+ Appointment booking: Apps that let customers book appointments and add to calendar.
+ Digital products - Other: Apps related to other digital product options.
+ Blockchain: Apps that let merchants access blockchain assets or functionality. NFT distribution: Apps that let merchants sell or gift NFTs.
+ Tokengating and loyalty: Apps that manage blockchain loyalty programs and gate reactions.
+ Blockchain - Other: Apps related to other blockchain functionality.
+ Orders and shipping: Apps that help merchants manage and process orders for customers. Managing orders: Apps that help merchants keep track of customer orders. Order tagger: Apps that let merchants tag orders based on fields, such as status or product type.
+ Order sync: Apps that sync order details between Shopify and other platforms.
+ Order editing: Apps that let merchants make updates to orders.
+ Merchant order notifications: Apps that send notifications to merchants and keep them updated on orders.
+ Purchase orders: Apps that let merchants create purchase orders (POs) to send to suppliers.
+ Invoices and receipts: Apps that manage invoices and receipts for orders.
+ Order and shipping reports: Apps that create and export order or shipping reports.
+ Managing orders - Other: Apps related to other methods for managing orders.
+ Fulfilling orders: Apps that help merchants fulfill orders and ship to customers. Order scanner: Apps that help merchants scan orders.
+ Warehouse management: Apps that help merchants manage operations in a warehouse
+ Outsourced fulfillment: Apps that let merchants hire third-party logistics providers (3PLs) to store and ship products.
+ SKU and barcodes: Apps that help merchants create SKUs and barcodes for products.
+ Packing slips: Apps that create and print a list of items within an order package.
+ Shipping labels: Apps that help merchants pay for and print shipping labels.
+ Shipping rate calculator: Apps that calculate and display shipping rates to customers during checkout.
+ Packaging: Apps that let merchants brand and customize packing for orders.
+ Fulfilling orders - Other: Apps related to other methods for fulfilling orders.
+ Managing inventory: Apps that help merchants keep track of available stock and inventory. Inventory sync: Apps that sync inventory details between Shopify and other platforms.
+ Product replenishment: Apps that help merchants restock their inventory.
+ Stock alerts: Apps that notify merchants when their inventory is low.
+ Inventory optimization: Apps that help optimize stock and inventory levels.
+ Inventory tracking: Apps that help merchants track their current stock.
+ Inventory forecastings: Apps that help merchants predict stock and trends over time.
+ Managing inventory - Other: Apps related to other methods for managing inventory.
+ Delivery and pickups: Apps that let merchants offer local delivery or pickup for orders. Cash/collect on delivery (COD): Apps that help merchants collect and verify payment during delivery.
+ Delivery date: Apps that let customers select a delivery date for their order.
+ In-store pickups: Apps that let customers pick up their order in person at a retail location.
+ Local delivery: Apps that let merchants set up and deliver orders to local customers.
+ Delivery and pickups - Other: Apps related to other delivery and pickup methods.
+ Store design: Apps that help merchants customize the look and feel of their store. Store pages: Apps that let merchants display custom pages for their store. Page builder: Apps that let merchants build and customize pages within their theme.
+ Pre-launch: Apps that create landing pages for stores that are launching soon.
+ Store pages - Other: Apps related to other store pages.
+ Navigation and search: Apps that help merchants enhance navigation and search on their store. Navigation and filters: Apps that let customers browse menus and apply filters for products.
+ Search: Apps that let customers browse and find products using search terms.
+ Navigation and search - Other: Apps related to other navigation and search options.
+ Images and media: Apps that help merchants create and manage digital assets for their store. Icons: Apps that add customizable icons or buttons to a store.
+ Image slider: Apps that display images and videos in a slideshow or carousel.
+ Image galleries: Apps that group and display a collection of images on a store.
+ Image editor: Apps that help merchants edit and optimize images.
+ Video editor: Apps that help merchants create and edit video content.
+ Audio player: Apps that add music or other audio for customers on a store.
+ Content manager: Apps that sync product content and media across multiple stores.
+ Image and media - Other: Apps related to other images and media.
+ Notifications: Apps that help display and draw attention to announcements for customers. Product badges: Apps that add labels or badges for products, such as new product or on sale badges.
+ Popups: Apps that create and display popup windows on a store.
+ Banners: Apps that create and display banners or announcement bars on a store.
+ Notifications - Other: Apps related to other notification options.
+ Store alerts: Apps that alert customers to act on products or offers. Countdown timer: Apps that display how much time remains for customers to buy a product.
+ Stock counter: Apps that display how much stock remains for a product.
+ Back in stock alert: Apps that notify customers when products are available for purchase again.
+ Price change alert: Apps that notify customers about changes in price for a product.
+ Store alerts - Other: Apps related to other store alerts.
+ Internationalization: Apps that let customers shop in their language or currency on a store. Currency: Apps that display and convert prices in multiple currencies.
+ Language and translations: Apps that display and translate information in multiple languages.
+ Internationalization - Other: Apps related to other internationalization options.
+ Page enhancements: Apps that enhance store pages with added design or functionality. Event calendar: Apps that display events happening on a store using a calendar.
+ Store locator: Apps that help customers find retail locations for a store.
+ Seasonal design: Apps that display seasonal decorations on a store during events and holidays.
+ Accessibility: Apps that support accessibility when shopping on a store using assistive technology.
+ Metafields: Apps that add custom information to pages, such as product ingredients or care instructions.
+ Page enhancements - Other: Apps related to other page enhancements.
+ Social proof: Apps that encourage shopping based on customer trends. Social proof: Apps that signal customer shopping trends, such as recent orders or trending products.
+ Trust badges: Apps that display trust badges, such as for secure checkout and payments.
+ Product reviews: Apps that collect or display product ratings and testimonials from customers.
+ Visitor counter: Apps that display the number of visitors on a store, or the number of views on a page.
+ Social proof - Other: Apps related to other social proof methods.
+ Marketing and conversion: Apps that help merchants promote and motivate customers to buy. Search engine optimization (SEO): Apps that help merchants optimize site traffic and performance. SEO: Apps that help boost and manage SEO.
+ Page redirect: Apps that manage redirects from one URL to another.
+ Sitemap builder: Apps that build or generate sitemaps.
+ Speed optimization: Apps that optimize and boost site speed.
+ Search engine optimization - Other: Apps related to other SEO options.
+ Advertising: Apps that help merchants promote products and reach new customers. Advertising: Apps that run ads, such as paid search ads, social media ads, or native ads.
+ Retargeting ads: Apps that run ads to previous customers or site visitors.
+ Social media ads: Apps that run ads on social media.
+ Affiliate programs: Apps that help sell products through a network of people and companies.
+ Product feeds: Apps that show products in a list that's viewable outside of a store.
+ Advertising - Other: Apps related to other advertising methods.
+ Email marketing: Apps that let merchants reach out to customers using email. Email marketing: Apps that help merchants send marketing emails to customers.
+ Email capture: Apps that capture customer emails with incentives.
+ Campaign management: Apps that help manage email campaigns.
+ Email marketing - Other: Apps related to other email marketing methods.
+ Direct marketing: Apps that let merchants communicate and send information directly to customers Offline marketing: Apps that help with offline marketing for media such as print, radio, or television.
+ Push notifications: Apps that send and manage push alerts for customers.
+ SMS marketing: Apps that automate, manage, or send SMS marketing to customers.
+ Direct marketing - Other: Apps related to other direct marketing methods.
+ Content marketing: Apps that help create content to attract and retain customer interest. Lookbooks: Apps that display products or content as a collection of photos.
+ Blogs: Apps that help display and manage posted content, such as blogs.
+ Content marketing - Other: Apps related to other content marketing methods.
+ Promotions: Apps that let merchants offer discounts or special sales for products. Discounts: Apps that help create and manage discount codes and sales.
+ Gift with purchase: Apps that include free add-ons or items when a purchase is made.
+ Giveaways and contests: Apps that let customers win prizes from giveaways or contests.
+ Buy one, get one (BOGO): Apps that let customers buy a product, and get an extra free item or discount.
+ Promotions - Other: Apps related to other promotion options.
+ Upselling and cross-selling: Apps that encourage customers to shop for related products before checkout. Upselling and cross-selling: Apps that encourage customers to add more items to their order, such as additional upgrades or add-ons.
+ Product bundles: Apps that let merchants sell multiple products in a single bundle.
+ Recently viewed: Apps that display products that were recently viewed by the customer.
+ Recommended products: Apps that suggest products to customers based on their shopping or activity.
+ Upselling and cross-selling - Other: Apps related to other upselling and cross-selling methods.
+ Cart modification: Apps that improve checkout and adding products to cart:
+ 
+ Cart modification: Apps that let merchants customize and add features to the cart page.
+ One-click checkout: Apps that create a quick checkout without an intermediate cart page.
+ Add to cart: Apps that modify the add to cart button to make it sticky, or allow for bulk product purchases.
+ Cart modification - Other: Apps related to other cart modification options.
+ Cart recovery: Apps that help merchants recover incomplete or abandoned orders. Abandoned cart: Apps that encourage customers to finish a purchase after leaving their cart.
+ Exit offers: Apps that encourage customers to finish a purchase before they leave.
+ Cart recovery - Other: Apps related to other cart recovery options.
+ Store management: Apps that help merchants to manage their store. Customer accounts: Apps that let customers create and manage their account on a store. Accounts and login: Apps that manage customer account creation, including login and passwords.
+ Loyalty and rewards: Apps that manage customer rewards and loyalty programs.
+ Wishlists: Apps that let customers create and save lists of products for later.
+ Product registration: Apps that let customers register items, such as for product updates or warranties.
+ Gift registry: Apps that let customers share which gifts they want to receive.
+ Customer accounts - Other: Apps related to other customer account options.
+ Support: Apps that let merchants provide help and resolve issues for customers. Chat: Apps that allow customers to connect with merchants through chat.
+ Phone support: Apps that provide support through services such as telephone, call forwarding, or voice mail.
+ Contact form: Apps that let merchants create contact forms, and display their contact information.
+ Feedback and surveys: Apps that collect customer sentiment about a business through sources, such as surveys and polls.
+ FAQ: Apps that create and display pages for frequently asked questions.
+ Customer order tracking: Apps that let merchants share order information to customers, on the store or through notifications.
+ Returns and exchanges: Apps that manage product returns or exchanges.
+ Support ticket management: Apps that manage help desks or workflows for customer support tickets.
+ Support - Other: Apps related to other support options.
+ Store data: Apps that help merchants manage their store or product data. Store data importers: Apps that migrate product and store data between Shopify and other platforms.
+ Test data generator: Apps that let merchants test or demo their store using fictitious data.
+ Backup: Apps that help merchants back up and recover business data.
+ Store data - Other: Apps related to other store data options.
+ Operations: Apps that help merchants manage staff and automate their work. Collection manager: Apps that help merchants import, export, and bulk update collections.
+ Bulk editor: Apps that update multiple products at once, such as for pricing or image updates.
+ Staff manager: Apps that manage staff operations, such as scheduling and permissions.
+ Workflow automation: Apps that automate tasks, such as for customer management or bulk fulfillment.
+ Enterprise resource planning: Apps that integrate and automate operations such as finance or project management.
+ Operations - Other: Apps related to other operations.
+ Privacy and security: Apps that help with legal, privacy, and security measures. Fraud: Apps that detect, flag, or prevent fraudulent transactions.
+ Content protector: Apps that protect digital assets like images from being copied or stolen.
+ Age verifier: Apps that verify the age of customers or store visitors.
+ IP blocker: Apps that block visitors from specific IP addresses.
+ Legal: Apps that help with legal compliance, terms and conditions, or other legal matters.
+ Privacy: Apps that protect or control access to customer data like cookies.
+ Security: Apps that protect a store from spam or block unwanted access.
+ Privacy and security - Other: Apps related to other privacy and security measures.
+ Finances: Apps that help merchants manage their money and financial records. Accounting: Apps that run accounting operations, such as managing cash flow or expenses.
+ Taxes: Apps that help merchants collect, calculate, or submit tax information.
+ Crowdfunding: Apps that help merchants run and manage fundraising campaigns.
+ Profit calculator: Apps that calculate profit, accounting for factors such as revenue, expenses, or taxes.
+ Financial reports: Apps that help merchants generate financial reports.
+ Finances - Other: Apps related to other finance options.
+ Analytics: Apps that analyze and generate insights or recommendations for a store. Sales analytics: Apps that provide reporting and analytics for sales data.
+ Customer analytics: Apps that provide reporting and analytics for customer behavior and data.
+ Dashboards: Apps that use a dashboard to provide reporting for business metrics.
+ Store activity: Apps that provide reporting and analytics for store activity data.
+ Marketing analytics: Apps that provide reporting and analytics for marketing data.
+ Analytics - Other: Apps related to other analytics.
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

@@ -1,0 +1,390 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ unstable_Picker
+ The Picker action set provides a search-based interface to help users find and select one or more resources. Unlike the ResourcePicker, it provides a lower-level API where you are in charge of providing the data as well as implementing search or pagination features.
+ You can use the contextual save bar in the following ways:
+ Plain JavaScript
+ React component
+ Caution
+ This feature is still under development. As such, the API might be updated without warning and it is currently incompatible with optimized loading on mobile devices.
+ Plain JavaScript
+ Create an app and import the unstable_Picker module from @shopify/app-bridge/actions. This sample app is used throughout the examples below.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ 1 import createApp from '@shopify/app-bridge';
+ 2 import {unstable_Picker} from '@shopify/app-bridge/actions';
+ 3
+ 4 const app = createApp(config);
+ Create a picker to display a list of resources
+ The following snippet creates a Picker with 2 resources. The first resource has 2 options. We're also specifying the title, search placeholder, and action labels.
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    items: [
+ 3
+      {
+ 4
+        id: 'resource1',
+ 5
+        name: 'Resource 1',
+ 6
+        options: [
+ 7
+          {
+ 8
+            id: 'option1',
+ 9
+            name: 'Option1',
+ 10
+          },
+ 11
+          {
+ 12
+            id: 'option2',
+ 13
+            name: 'Option2',
+ 14
+          },
+ 15
+        ],
+ 16
+      },
+ 17
+      {
+ 18
+        id: 'resource2',
+ 19
+        name: 'Resource 2',
+ 20
+      },
+ 21
+    ],
+ 22
+    title: 'Select Resource',
+ 23
+    searchQueryPlaceholder: 'Search resources',
+ 24
+    primaryActionLabel: 'Save',
+ 25
+    secondaryActionLabel: 'Cancel',
+ 26 });
+ Common Picker actions
+ Selection and Cancellation
+ The Picker has two main actions that you can subscribe to:
+ unstable_Picker.Action.SELECT - This action is dispatched when the user triggers the primary action. This action generally corresponds to a selection event. It receives a SelectPayload argument, which is an Object with id and selection keys. The selection key is an array of all the selected items.
+ unstable_Picker.Action.CANCEL - This action is dispatched when the user triggers the secondary action. This action generally corresponds to a cancelled event.
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    items: [...],
+ 3
+    ...
+ 4 });
+ 5
+ 6 picker.subscribe(unstable_Picker.Action.SELECT, ({selection}) => {
+ 7
+    // Do something with `selection`
+ 8 });
+ 9
+ 10 picker.subscribe(unstable_Picker.Action.CANCEL, () => {
+ 11
+    // Picker was cancelled
+ 12 });
+ Search
+ The Picker has the unstable_Picker.Action.SEARCH search action that you can subscribe to.
+ This action is dispatched when the user enters a search query string. It receives a SearchPayload argument, which is an Object with id and searchQuery. The searchQuery is a string.
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    items: [...],
+ 3
+    ...
+ 4 });
+ 5
+ 6 picker.subscribe(unstable_Picker.Action.SEARCH, ({searchQuery}) => {
+ 7
+    // Do something with the searchQuery
+ 8
+    // You can then call picker.set({items: [...]}) in order to update the items with the result of the search query.
+ 9 });
+ Pagination
+ The Picker has the unstable_Picker.Action.LOAD_MORE pagination action that you can subscribe to. To enable this option make sure to set canLoadMore to true when creating your picker instance.
+ This action is dispatched when the user reaches the bottom of the list of items. It does not have any arguments.
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    items: [...],
+ 3
+    ...
+ 4 });
+ 5
+ 6 picker.subscribe(unstable_Picker.Action.LOAD_MORE, () => {
+ 7
+    // Do something to load additional data
+ 8
+    // You can then call picker.set({items: [...]}) in order to update the items the additional items loaded.
+ 9 });
+ Options
+ items
+ default value: []
+ optional
+ type: BaseResource[]
+ note: items takes an array of minimal resource objects, which only need to contain a resource id and a name value. A resource may also contain child options. For example:
+ 1 const picker =  unstable_Picker.create(app, {
+ 2
+    items: [
+ 3
+      {
+ 4
+        id: 'customResource1',
+ 5
+        name: 'Custom Resource 1',
+ 6
+        options: [
+ 7
+          {
+ 8
+            id: 'option1',
+ 9
+            name: 'Option1',
+ 10
+          },
+ 11
+          {
+ 12
+            id: 'option2',
+ 13
+            name: 'Option2',
+ 14
+          },
+ 15
+        ],
+ 16
+      },
+ 17
+      {
+ 18
+        id: 'customResource2',
+ 19
+        name: 'Custom Resource 2',
+ 20
+      },
+ 21
+    ],
+ 22
+    ...
+ 23 });
+ selectedItems
+ default value: []
+ optional
+ type: BaseResource[]
+ note: selectedItems takes an array of minimal resource objects, which only need to contain a resource id (in GraphQL ID format, ie 'gid://shopify/Product/1'). Resources may also contain selected options. If no option is specified, all options are selected.
+ maxSelectable
+ default value: 0
+ optional
+ type: number
+ note: Limits the total number of selections to a maximum of the passed value, or 0 for no limit.
+ title
+ default value: undefined
+ optional
+ type: string
+ note: Used as the title of the modal.
+ loading
+ default value: false
+ optional
+ type: boolean
+ note: Indicates if the picker should be in a loading state.
+ searchQueryPlaceholder
+ default value: undefined
+ optional
+ type: string
+ note: Used as the placeholder in the search input.
+ searchQuery
+ default value: undefined
+ optional
+ type: string
+ note: The search query to be displayed in the search input field.
+ primaryActionLabel
+ default value: undefined
+ optional
+ type: string
+ note: Label to be used on the primary action button.
+ secondaryActionLabel
+ default value: undefined
+ optional
+ type: string
+ note: Label to be used on the secondary action button.
+ canLoadMore
+ default value: false
+ optional
+ type: boolean
+ note: Whether the Picker can load more items on the list.
+ loadingMore
+ default value: false
+ optional
+ type: boolean
+ note: Indicates if the Picker is currently loading more items.
+ emptySearchLabel
+ default value: undefined
+ optional
+ type: EmptySearchLabel
+ note: emptySearchLabel takes an object that describes the interface of the picker when there is no item to display. For example:
+ 1 const picker =  unstable_Picker.create(app, {
+ 2
+    items: [],
+ 3
+    emptySearchLabel: {
+ 4
+      title: 'No resources',
+ 5
+      description: 'There are no resources to display',
+ 6
+      withIllustration: true,
+ 7
+    }
+ 8 });
+ Subscribe to actions
+ You can subscribe to Picker actions by calling subscribe. This returns a method that you can call to unsubscribe from the action. For example:
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    ...
+ 3 });
+ 4
+ 5 const selectUnsubscribe = picker.subscribe(unstable_Picker.Action.SELECT, ({selection}) => {
+ 6
+    // Do something with `selection`
+ 7 });
+ 8
+ 9 const cancelUnsubscribe = picker.subscribe(unstable_Picker.Action.CANCEL, () => {
+ 10
+    // Picker was cancelled
+ 11 });
+ 12
+ 13 // Unsubscribe to actions
+ 14 selectUnsubscribe();
+ 15 cancelUnsubscribe();
+ Unsubscribe
+ You can call unsubscribe to remove all subscriptions on the picker:
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    ...
+ 3 });
+ 4
+ 5 picker.subscribe(unstable_Picker.Action.SELECT, () => {
+ 6
+    // Do something with `selection`
+ 7 });
+ 8
+ 9 picker.subscribe(unstable_Picker.Action.CANCEL, () => {
+ 10
+    // Picker was cancelled
+ 11 });
+ 12
+ 13 // Unsubscribe from all actions
+ 14 picker.unsubscribe();
+ Dispatch actions
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    ...
+ 3 });
+ 4
+ 5 // Open the picker
+ 6 picker.dispatch(unstable_Picker.Action.OPEN);
+ Update options
+ You can call the set method with partial picker options. This automatically triggers the update action on the picker and merges the given options with the existing options:
+ 1 const picker = unstable_Picker.create(app, {
+ 2
+    ...
+ 3 });
+ 4
+ 5 picker.set({items: [/* a list of items*/]});
+ React
+ Example code
+ Import the Provider and unstable_Picker component from @shopify/app-bridge-react.
+ Note
+ In the following example, config is a valid App Bridge configuration object. Learn more about configuring App Bridge.
+ Note When using the App Bridge React library, you need to wrap all of your App Bridge React code inside of a single App Bridge Provider.
+ 1 import React from 'react';
+ 2 import ReactDOM from 'react-dom';
+ 3 import {
+ 4
+    Provider,
+ 5
+    unstable_Picker as Picker
+ 6 } from '@shopify/app-bridge-react';
+ 7
+ 8 function MyApp() {
+ 9
+    return (
+ 10
+      <Provider config={config}>
+ 11
+        <Picker
+ 12
+          open
+ 13
+          items={/* list of items */}
+ 14
+          selectedItems={/* selected items */}
+ 15
+          title="Resource Picker"
+ 16
+          searchQueryPlaceholder="Search Resource"
+ 17
+          primaryActionLabel="Select"
+ 18
+          secondaryActionLabel="Cancel"
+ 19
+          emptySearchLabel={
+ 20
+            {
+ 21
+              title: 'No resources',
+ 22
+              description: 'There are no resources to display',
+ 23
+              withIllustration: true,
+ 24
+            }
+ 25
+          }
+ 26
+          onCancel={/* cancel even handler */}
+ 27
+          onSelect={/* select even handler */}
+ 28
+          onSearch={/* search even handler */}
+ 29
+          onLoadMore={/* load more even handler */}
+ 30
+          />
+ 31
+      </Provider>
+ 32
+    );
+ 33 }
+ 34
+ 35 const root = document.createElement('div');
+ 36 document.body.appendChild(root);
+ 37 ReactDOM.createRoot(root).render(<MyApp />);
+ Props
+ Name Type Description Required
+ open boolean Whether the picker is open or not. Yes
+ items BaseResource[] The list of items to display. Yes
+ canLoadMore boolean Whether the Picker can load more items on the list. No
+ selectedItems BaseResource[] The items which are selected. No
+ maxSelectable number Limits the total number of selections to a maximum of the passed value, or 0 for no limit. No
+ title string Used as the title of the modal. No
+ loading boolean Indicates if the Picker should be in a loading state. No
+ loadingMore boolean Indicates if the Picker is currently loading more items. No
+ searchQueryPlaceholder string Used as the placeholder in the search input. No
+ searchQuery string The search query to be displayed in the search input field. No
+ primaryActionLabel string Label to be used on the primary action button. No
+ secondaryActionLabel string Label to be used on the secondary action button. No
+ emptySearchLabel EmptySearchLabel An object that describes the interface of the picker when there is no item to display. No
+ onCancel () => void Callback when the user triggers the secondary action. No
+ onSelect (selectPayload: SelectPayload) => void Callback when a selection has been made. It receives a SelectPayload argument, which is an Object with id and selection keys. The selection key is an array of all the selected resources. No
+ onSearch (searchPayload: SearchPayload) => void Callback when the user enters a search query string. It receives a SearchPayload argument, which is an Object with id and searchQuery. The searchQuery is a string. No
+ onLoadMore () => void Callback when the user reaches the bottom of the list of items. It does not have any argument. No
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Plain JavaScript
+ React

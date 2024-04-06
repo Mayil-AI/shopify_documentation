@@ -1,0 +1,35 @@
+Product description
+ Overview
+ Description pages
+ Buy now buttons
+ Policies
+ Cart and checkout
+ Onboard merchants
+ Post checkout
+ Product descriptions
+ Caution
+ The merchant-facing sales channel app referenced in this tutorial isn't compatible with Shopify CLI 3, and can't be previewed using Shopify development tools. You can use the app and these tutorials as reference material to build a CLI 3-compatible app using the same patterns.
+ Tip
+ Marketplace Kit tutorials require you to have a buyer-facing marketplace in place. If you don't have one, then you can clone code for a buyer-facing app as a springboard to get you started.
+ A good marketplace contains the product information that buyers need to make purchasing decisions.
+ The product details surfaced in the marketplace affect the way that products appear to buyers. They also make it easier for you to organize products and help buyers find them. Product description pages are an effective way of surfacing product details from a storefront.
+ This guide introduces you to the tutorials for managing product browsing experiences on a marketplace.
+ Marketplace considerations
+ Including product details in marketplaces requires unique design considerations. You need to keep the information that's important to buyers in proximity to the product.
+ For example, in an online store, shipping policies are often included in the theme footer. In a marketplace, buyers can arrive at a product page without passing through a shop page. Because store policies can influence the decision to purchase from one shop over another, you might include shop policies in product descriptions.
+ Product description pages
+ Product description pages surface product details from a merchant's storefront that buyers might need to make a purchase. For example, a product description page can include variant pickers such as available sizes.
+ Buy now buttons
+ Buy Now buttons take buyers directly from a product page to an online store for checkout.
+ Policies
+ Store policies can affect a buyer's decision to purchase from one shop over another. Surface store policies on product description pages
+ Next steps
+ Learn how to add product description pages to a marketplace.
+ Share feedback on Marketplace Kit.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Marketplace considerations
+ Product description pages
+ Buy now buttons
+ Policies

@@ -1,0 +1,35 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Build Shopify themes
+ Themes shape the online store experience for merchants and their customers. Build fast, flexible themes at scale using Liquid, Shopify's theme templating language, along with HTML, CSS, JavaScript, and JSON.
+ Build a new theme
+ Get started with building Shopify Themes. Learn how to set up your development environment and build a new theme using our reference theme, Dawn.
+ Customize a theme
+ Learn how to access a merchant’s store, and make theme customizations to represent each merchant’s unique brand.
+ Architecture
+ Shopify themes are a package of template files, building blocks, and supporting assets. Use these building blocks to create modular, customizable themes.
+ Learn about the architecture of a theme
+ Liquid
+ The Liquid templating language is the backbone of Shopify themes, and is used to load dynamic content on storefronts. Extend Liquid objects to store and present custom data using metafields.
+ View the Liquid reference
+ Dawn starter theme
+ Dawn is our vision for the next generation of Shopify themes. Browse the code on GitHub, then use it as a starting point to build your own theme.
+ Learn more about Dawn
+ Migrate your theme to Online Store 2.0
+ Make your theme more flexible and easier to maintain by migrating it to the new architecture. Using Online Store 2.0, you can add and remove sections from any template, and prepare your theme for app blocks.
+ Build fast with Shopify tools
+ Shopify provides a range of tools to help you to collaborate and build themes faster.
+ Learn more about Shopify’s tools for themes
+ Shopify CLI
+ Initialize, preview, test and share themes in your local development environment.
+ Shopify GitHub integration
+ Integrate GitHub into your Shopify admin to manage your theme code.
+ Theme Check
+ Detect errors and enforce best practices as you code, or as part of your CI pipeline.
+ Shopify Theme Store
+ Design beautiful, purpose-built themes for different markets, and sell them to millions of merchants on the Shopify Theme Store.
+ Learn how to start selling
+ Updates & News
+ Developer changelog
+ Partner blog

@@ -1,0 +1,100 @@
+Overview
+ Color
+ App icon
+ Typography
+ Icons
+ Illustrations
+ Content
+ Navigation
+ User experience
+ Checkout
+ Distribution
+ Billing
+ App Store
+ Visual design
+ Visual design focuses on app aesthetics through the strategic use of images, colors, fonts, and other elements.
+ Colors, fonts, icons, illustrations, and many other visual elements have a big influence on your app’s usability. Great apps use strong visual design to heighten the merchant experience.
+ Fitting into the admin
+ Because merchant workflows cross between apps and the Shopify admin, merchants can have an easier time accomplishing their tasks when apps use the same visual design cues as the admin. The easiest way to create a harmonious experience with the Shopify admin is by following our design system, Polaris.
+ Info
+ Admin UI extensions blend in seamlessly with the Shopify admin UI. For optimal integration, we recommend that embedded app workflows follow Polaris. Otherwise, the merchant experience across embedded apps and admin UI extensions might break or feel jarring.
+ Refer to the Polaris style tokens for styles that we use across the Shopify admin, such as colors, typography, spacing, shadows, borders, and more.
+ Color
+ Color can provide visual continuity, communicate status information, and give feedback on merchant actions.
+ Your app exists within the Shopify admin, so you should consider colors that complement the Shopify admin color scheme. Your colors should also respect minimum contrast ratios when used with text or interactive elements.
+ Do Not
+ Don't contradict the Color Roles defined by the Polaris design system. In example above, the dark pink affirming action could be misunderstood as red, which is used in the Shopify admin for destructive actions and critical errors.
+ Must Do
+ Background-to-text contrast ratio must be at least 4.5:1 to be WCAG AA compliant. Test your ratios using a tool such as WebAIM Contrast Checker.
+ Color roles
+ The Shopify admin uses certain colors for specific messaging.
+ These color roles add additional meaning to the interface and reinforce messaging to merchants. Learn more about color roles in the Polaris color guidelines.
+ Colors like green, yellow, and red have specific roles such as indicating a successful interaction, a warning, or an error. Be careful when using them in your app.
+ 
+ While colors are useful in design, avoid relying on color only to provide context. For alerts like error states, success states, or system warnings, include messaging or iconography that explains what’s happening.
+ App icon
+ Your app icon acts as the main visual identifier for merchants.
+ The app icon displays in many touch points, like in the Shopify App Store, on the Apps page in the Shopify admin. Shopify renders your app icon as an SVG into the admin left hand navigation.
+ Info
+ For guidance on changing your app icon, go to the App Setup page in the Partner Dashboard.
+ Tip
+ App icons will be used on white and light gray backgrounds, so avoid using similar colors that might make your icon illegible. Refer to Polaris style tokens for Shopify admin color values.
+ Specifications
+ Adhere to the following app icon specifications:
+ PNG or JPG
+ Square 1200px × 1200px
+ No rounded corners
+ Additional Shopify App Store icon guidelines
+ Preparing your app icon
+ Design your app icon at 1200px × 1200px. This ensures that your icon meets the size requirements.
+ Tip
+ We recommend using the app icon templates to easily adhere to app icon guidelines.
+ Must Do
+ Design your icon to fill 10/16ths (750px for a 1200px icon) of a vertical or horizontal space.
+ Must Do
+ Design your icon to at most fill 12/16ths (900px for a 1200px icon) of a vertical or horizontal space.
+ Must Do
+ Leave a 1/16th (75px for a 1200px icon) margin around your icon that’s free of any visual elements.
+ Do Not
+ Don’t use excessive amounts of text in your icon. This makes it hard to identify and read at smaller sizes.
+ Do Not
+ Don’t mislead merchants by using an app icon that you don’t own. This includes any part of the Shopify logo.
+ Typography
+ Typography is the arrangement of letters in a way that makes reading text easy and comfortable for merchants.
+ Polaris typography tokens provide a great way to streamline typography.
+ Type hierarchy
+ Proper use of typography can improve the app experience. By creating a healthy visual hierarchy between headlines and copy, you’ll improve legibility and consistency with the Shopify admin.
+ Tip
+ Typography should create a clear hierarchy between headings and text that’s easily legible by merchants. Whenever possible, the title of the current page should be the largest heading size.
+ Must Do
+ Make headings visually distinct from the rest of the text, by being bolder, larger in size, or both. Don’t use underlines that might be mistaken for links.
+ Do Not
+ Don't use only color to distinguish a heading to convey hierarchy. This is confusing for merchants who don’t perceive color.
+ Font sizes
+ Our font size specifications apply to the minimum sizes required for legibility in the Shopify admin.
+ Must Do
+ Use 13px as the minimum size for headings, body text, and text in interactive elements.
+ Must Do
+ 12px is the minimum size for smaller copy, like captions and subheadings.
+ Icons
+ Icons act as visual aids to help merchants complete tasks. They’re often paired with text to make your app easier to use and to disambiguate certain interactions.
+ You can save time by using Polaris icons, or create your own by following the Polaris icon guidelines.
+ Tip
+ Icons can help merchants better understand the outcome of an action, or help them understand more technical terms that they might not be familiar with.
+ Do Not
+ Don't use icons inconsistently in lists and other repeating elements. This makes your app look broken.
+ Illustrations
+ Illustrations give your app personality and help merchants understand complex concepts through meaningful visual metaphors.
+ Following the Polaris illustrations guidelines is a great way to make your app’s illustrations fit nicely with the Shopify admin.
+ Tip
+ Keeping a consistent illustration style in your app can strengthen your brand presence and make your app easily recognizable.
+ Do Not
+ Don't use low resolution photos or images, which can convey a lack of care and poor quality experience.
+ Previous
+ Layout
+ Next
+ Content
+ Was this page helpful?
+ YesNo
+ Updates & News
+ Developer changelog

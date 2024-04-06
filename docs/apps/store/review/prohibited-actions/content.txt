@@ -1,0 +1,35 @@
+App Store ads
+ Security
+ Prohibited actions on the Shopify App Store
+ We value our app partners and want to make the app experience the best possible for everyone involved. App partners are expected to adhere to the Partner Program Agreement.
+ This page outlines some of the actions that could lead to you having your app removed from the Shopify App Store, having your client ID suspended, or being removed from the Shopify Partner program. While this page presents a series of important guidelines, it's not intended to be comprehensive.
+ If you violate any of the terms in the Partner Program Agreement, then the Merchant App Experience Team will use their discretion to determine the appropriate disciplinary action. This can include:
+ an email requiring your prompt attention to a situation with a set timeframe to take action
+ immediate unpublishing
+ deprecation of client IDs
+ removal from the Shopify Partners program
+ The terms can change at any time without notice. Any other behaviour the Merchant App Experience team deems unacceptable, objectionable, or harmful can result in the app being removed from the Shopify Apps Store.
+ Note
+ For information specific to prohibited actions involving app reviews, refer to Prohibited actions involving app reviews.
+ Merchant experience
+ Continuous failure to respond to merchant support requests.
+ Selling or abusing merchant data (section C-2 of the Partner Program Agreement).
+ Failing to provide consistent service, app often experiences critical errors resulting in support debt.
+ Failing to provide enough time to sunset your app.
+ Unsolicited marketing
+ No spam, illegal, or invasive marketing tactics (A-2). Emails, and SMS or text messages, should only be sent to merchants who have your app actively installed or have clearly opted-in to your marketing communications.
+ No affiliate links in your app listing page.
+ Requirement violations
+ Modifying your app or app listing after publication, which results in the app no longer meeting the Shopify app requirements.
+ Fatal errors resulting in the app failing to install from the Shopify App Store.
+ Reporting violations
+ If you encounter an app that doesn't adhere to the Partner Program Agreement, then you can report it directly by filling out the Report a Partner violation form.
+ We appreciate your collaboration in making the Shopify App Store the best commerce app marketplace in the world.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Merchant experience
+ Unsolicited marketing
+ Requirement violations
+ Reporting violations
+ Updates & News

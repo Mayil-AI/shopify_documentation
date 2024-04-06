@@ -1,0 +1,480 @@
+App Store
+ Update color settings
+ This guide demonstrates how to design a color system that reflects your brand, using the GraphQL Admin API's checkout branding types and their associated fields. You'll learn some sample customizations, but you can use what you've learned to make other color customizations.
+ Tip
+ You can reset styles to their defaults by writing parent fields to null with the GraphQL Admin API. Refer to examples of resetting some and all values to the defaults.
+ Requirements
+ The store that you're modifying must be on a Shopify Plus plan.
+ You've created a new development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ You've completed the GraphQL and REST Admin API getting started guide.
+ You've either installed the GraphiQL app on your store or created an app, with the read_checkout_branding_settings and write_checkout_branding_settings access scopes.
+ You're using API version 2023-10 or higher.
+ You're familiar with the GraphQL Admin API's branding types.
+ Step 1: Retrieve the store's checkout profile IDs
+ Checkout styling properties apply to a checkout profile ID. In this step, you'll retrieve the checkout profile to which you'll apply color changes.
+ Query checkoutProfiles to retrieve a list of checkout profile IDs.
+ The is_published parameter indicates which checkout profile is currently applied to your store's live checkout.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query checkoutProfiles {
+ 2
+    checkoutProfiles(first: 1, query: "is_published:true") {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id
+ 6
+          name
+ 7
+ 3
+      "checkoutProfiles": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/CheckoutProfile/1",
+ 8
+              "name": "Default checkout profile"
+ 9
+            }
+ 10
+ 13
+    }
+ 14 }
+ Make note of your corresponding ID from the list. You'll supply the ID in subsequent mutations.
+ Step 2: Configure global colors
+ The GraphQL Admin API's CheckoutBrandingColorGlobalInput enables you to quickly update the following global colors to match your brand:
+ brand - Used for the primary and secondary buttons, such as the Pay Now button.
+ accent - Used for links and focus, such as Terms of Service.
+ decorative - Used to highlight content in UI extensions such as the Text component using the decorative color.
+ critical - Used to communicate a blocking error, such as Enter a valid card number.
+ warning - Used to communicate something might be wrong but not blocking.
+ success - Used to communicate a positive state.
+ info - Used to communicate general information.
+ You'll also learn how to make granular color changes in a subsequent step.
+ The following code changes the global brand and accent colors to match a shop's visual identity:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation ChangeGlobalColors($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+       designSystem {
+ 5
+        colors {
+ 6
+          global {
+ 7
+            brand
+ 8
+            accent
+ 9
+          }
+ 10
+        }
+ 11
+       }
+ 12
+      }
+ 13
+      userErrors {
+ 14
+        field
+ 15
+        message
+ 16
+      }
+ 17
+    }
+ 18 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "designSystem": {
+ 5
+        "colors": {
+ 6
+          "global": {
+ 7
+            "brand": "#456920",
+ 8
+            "accent": "#456920"
+ 9
+          }
+ 10
+ 13 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "designSystem": {
+ 6
+            "colors": {
+ 7
+              "global": {
+ 8
+                "brand": "#456920",
+ 9
+                "accent": "#456920"
+ 10
+              }
+ 11
+            }
+ 12
+          }
+ 13
+        },
+ 14
+        "userErrors": []
+ 15
+      }
+ 16
+    },
+ 17
+    "extensions": {
+ 18
+      "cost": {
+ 19
+        "requestedQueryCost": 13,
+ 20
+        "actualQueryCost": 13
+ 21
+      }
+ 22
+    }
+ 23 }
+ Step 3: Configure color schemes
+ Configuring color schemes gives you a lot of flexibility when the default colors specified in step 1 need to change for a particular context like drawing attention to different checkout sections, or emphasizing content in a particular location. You can apply color schemes to different parts of the UI in step 3.
+ Color schemes are made up of color groups, and all components utilize values specified within these groups. This means that all UI extensions also use these values and automatically inherit your colors.
+ base - Used for the surface background, text, links and more.
+ control - Used for TextField, ChoiceList and other form controls.
+ primaryButton - Used for the main payment button(s), such as Pay Now.
+ secondaryButton - Used for secondary actions.
+ Note
+ Some color groups have nested groups to configure state colors, such as a hover state of the primary button, or a selected state of the ChoiceList component.
+ Every color group has the following overridable values:
+ background
+ border
+ icon
+ text
+ accent
+ decorative
+ Note
+ We automatically derive extra colors from these, for example, text subdued is generated from text.
+ The following code applies shades of green to scheme1 that match the store's visual identity. The code sets a light green background, text that matches the logo, darker border controls, a dark selected state and makes the primary button hover state more prominent.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation ChangeColorScheme1($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+       designSystem {
+ 5
+        colors {
+ 6
+          schemes {
+ 7
+            scheme1 {
+ 8
+              base {
+ 9
+                background
+ 10
+                text
+ 11
+              }
+ 12
+              control {
+ 13
+                background
+ 14
+                border
+ 15
+                selected {
+ 16
+                  background
+ 17
+                  border
+ 18
+                }
+ 19
+              }
+ 20
+              primaryButton {
+ 21
+                hover {
+ 22
+                  background
+ 23
+                }
+ 24
+              }
+ 25
+            }
+ 26
+          }
+ 27
+        }
+ 28
+       }
+ 29
+      }
+ 30
+      userErrors {
+ 31
+        field
+ 32
+        message
+ 33
+      }
+ 34
+    }
+ 35 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "designSystem": {
+ 5
+        "colors": {
+ 6
+          "schemes": {
+ 7
+            "scheme1": {
+ 8
+              "base": {
+ 9
+                "background": "#F7FAF5",
+ 10
+                "text": "#44691E"
+ 11
+              },
+ 12
+              "control": {
+ 13
+                "background": "#F7FAF5",
+ 14
+                "border": "#70815F",
+ 15
+                "selected": {
+ 16
+                  "background": "#456920",
+ 17
+                  "border": "#44691E"
+ 18
+                }
+ 19
+              },
+ 20
+              "primaryButton": {
+ 21
+                "hover": {
+ 22
+                  "background": "#395719"
+ 23
+ 26
+          }
+ 27
+        }
+ 28
+      }
+ 29
+    }
+ 30 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "designSystem": {
+ 6
+            "colors": {
+ 7
+              "schemes": {
+ 8
+                "scheme1": {
+ 9
+                  "base": {
+ 10
+                    "background": "#f7faf5",
+ 11
+                    "text": "#44691e"
+ 12
+                  },
+ 13
+                  "control": {
+ 14
+                    "background": "#f7faf5",
+ 15
+                    "border": "#70815f",
+ 16
+                    "selected": {
+ 17
+                      "background": "#456920",
+ 18
+                      "border": "#44691e"
+ 19
+                    }
+ 20
+                  },
+ 21
+                  "primaryButton": {
+ 22
+                    "hover": {
+ 23
+                      "background": "#395719"
+ 24
+                    }
+ 25
+                  }
+ 26
+                }
+ 27
+              }
+ 28
+            }
+ 29
+          }
+ 30
+        },
+ 31
+        "userErrors": []
+ 32
+      }
+ 33
+    },
+ 34
+    "extensions": {
+ 35
+      "cost": {
+ 36
+        "requestedQueryCost": 19,
+ 37
+        "actualQueryCost": 19
+ 38
+      }
+ 39
+    }
+ 40 }
+ Step 4: Apply color schemes
+ Configuring color schemes to apply to different parts of the UI overrides the default color scheme.
+ By default, the following schemes are used:
+ scheme1 - Used for the primary surface, like the main area of checkout.
+ scheme2 - Used for the secondary surface, like the order summary of checkout.
+ Note
+ In the future, you’ll be able to apply color schemes to more surfaces.
+ Scheme applications are customizable. The following code changes the default scheme structure so that scheme1 can be applied to the order summary.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation ChangeOrderSummaryScheme($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+        customizations {
+ 5
+          orderSummary {
+ 6
+            colorScheme
+ 7
+          }
+ 8
+        }
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "orderSummary": {
+ 6
+          "colorScheme": "COLOR_SCHEME1"
+ 7
+        }
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "orderSummary": {
+ 7
+              "colorScheme": "COLOR_SCHEME1"
+ 8
+            }
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    },
+ 14
+    "extensions": {
+ 15
+      "cost": {
+ 16
+        "requestedQueryCost": 12,
+ 17
+        "actualQueryCost": 12
+ 18
+      }
+ 19
+    }
+ 20 }
+ Next steps
+ Explore the GraphQL Admin API to learn more about customizing checkout's colors.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Step 1: Retrieve the store's checkout profile IDs
+ Step 2: Configure global colors
+ Step 3: Configure color schemes
+ Step 4: Apply color schemes
+ Next steps

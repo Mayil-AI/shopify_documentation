@@ -1,0 +1,395 @@
+App Store
+ Customize form controls
+ Checkout forms are made up of different checkout UI components for user inputs, such as Checkbox, DatePicker, and TextField.
+ This guide teaches you how to use the GraphQL Admin API to customize form controls, beyond what you can customize using the checkout editor. In some cases, you'll style form controls using design system tokens. You'll learn some sample customizations, but you can use what you've learned to make other form control customizations.
+ Tip
+ You can reset styles to their defaults by writing parent fields to null with the GraphQL Admin API. Refer to examples of resetting some and all values to the defaults.
+ What you'll learn
+ In this tutorial, you’ll learn how to do the following tasks:
+ Retrieve a list of your store's checkout profile IDs
+ Customize the label position and corner radius for all form controls
+ Customize checkboxes to add a distinct corner radius
+ Customize buttons to add inner padding and a distinct corner radius
+ Requirements
+ The store that you're modifying must be on a Shopify Plus plan.
+ You've created a new development store with the Checkout and Customer Accounts Extensibility developer preview enabled.
+ You've completed the GraphQL and REST Admin API getting started guide.
+ You've either installed the GraphiQL app on your store or created an app, with the read_checkout_branding_settings and write_checkout_branding_settings access scopes.
+ You're using API version 2023-10 or higher.
+ You're familiar with the GraphQL Admin API's branding types.
+ Step 1: Retrieve the store's checkout profile IDs
+ Checkout styling properties apply to a checkout profile ID. In this step, you'll retrieve the checkout profile to which you'll apply form control changes.
+ Query checkoutProfiles to retrieve a list of checkout profile IDs.
+ The is_published parameter indicates which checkout profile is currently applied to your store's live checkout.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query checkoutProfiles {
+ 2
+    checkoutProfiles(first: 1, query: "is_published:true") {
+ 3
+      edges {
+          name
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutProfiles": {
+ 4
+ 7
+              "id": "gid://shopify/CheckoutProfile/1",
+ 8
+              "name": "Default checkout profile"
+ 9
+            }
+ 10
+          }
+ 11
+        ]
+ Make note of your corresponding ID from the list. You'll supply the ID in subsequent mutations.
+ Step 2: Set the label position and corner radius
+ In this step, you'll set the label position and then the corner radius for form controls. For both styles, you'll use the checkoutBrandingUpsert mutation's customizations object and the CheckoutBrandingInput input object.
+ Set the label position.
+ The following example puts labels outside fields. This keeps field labels visible when users are typing inputs, and improves accessibility.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CustomizingControls($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+        customizations {
+ 5
+          control {
+ 6
+            labelPosition
+ 7
+          }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "control": {
+ 6
+          "labelPosition": "OUTSIDE"
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "control": {
+ 7
+              "labelPosition": "OUTSIDE"
+ 8
+            }
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Set the corner radius.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CustomizingControls($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+        customizations {
+ 5
+          control {
+ 6
+            cornerRadius
+ 7
+          }
+ 8
+        }
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "control": {
+ 6
+          "cornerRadius": "LARGE"
+ 7
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "control": {
+ 7
+              "cornerRadius": "LARGE"
+ 8
+            }
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Step 3: Set the corner radius for checkboxes
+ At this point, checkboxes have the corner radius that you set for form controls. However, this style makes the checkboxes look like radio buttons. In this step, you'll adjust the checkbox's corner radius to visually distinguish it as a checkbox and make its function clear.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CustomizingControls($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+        customizations {
+ 5
+          checkbox {
+ 6
+            cornerRadius
+ 7
+          }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "checkbox": {
+ 6
+          "cornerRadius": "BASE"
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "checkbox": {
+ 7
+              "cornerRadius": "BASE"
+ 8
+            }
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Step 4: Style primary buttons
+ The customizations for control don't apply to buttons. In this step, you'll style the corner radius and padding for primary buttons. For both styles, you'll use the checkoutBrandingUpsert mutation's customizations object and the CheckoutBrandingInput input object.
+ Set the corner radius.
+ The following example shapes the buttons as rectangles with sharp corners, which affects the perceived clickability of the button.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CustomizingControls($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+        customizations {
+ 5
+          primaryButton {
+ 6
+            cornerRadius
+ 7
+          }
+ 13
+      }
+ 14 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "primaryButton": {
+ 6
+          "cornerRadius": "NONE"
+    }
+ 10 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "primaryButton": {
+ 7
+              "cornerRadius": "NONE"
+ 8
+            }
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Set the inline padding.
+ The following example helps to ensure that the label doesn't touch the button edges, which improves readability and aesthetics.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL mutation
+ 1 mutation CustomizingControls($checkoutBrandingInput: CheckoutBrandingInput!, $checkoutProfileId: ID!) {
+ 2
+    checkoutBrandingUpsert(checkoutBrandingInput: $checkoutBrandingInput, checkoutProfileId: $checkoutProfileId) {
+ 3
+      checkoutBranding {
+ 4
+        customizations {
+ 5
+          primaryButton {
+ 6
+            inlinePadding
+ 7
+          }
+ 8
+        }
+ 9
+      }
+ 10
+      userErrors {
+ 11
+        field
+ 12
+        message
+ 13
+      }
+ 14
+    }
+ 15 }
+ Query variables
+ 1 {
+ 2
+    "checkoutProfileId": "gid://shopify/CheckoutProfile/YOUR_CHECKOUT_PROFILE_ID_HERE",
+ 3
+    "checkoutBrandingInput": {
+ 4
+      "customizations": {
+ 5
+        "primaryButton": {
+ 6
+          "inlinePadding": "BASE"
+ 7
+        }
+      "checkoutBrandingUpsert": {
+ 4
+        "checkoutBranding": {
+ 5
+          "customizations": {
+ 6
+            "primaryButton": {
+ 7
+              "inlinePadding": "BASE"
+ 8
+            }
+ 9
+          }
+ 10
+        },
+ 11
+        "userErrors": []
+ 12
+      }
+ 13
+    }
+ 14 }
+ Next steps
+ Explore the GraphQL Admin API to learn more about customizing checkout's form controls.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ What you'll learn
+ Requirements
+ Step 1: Retrieve the store's checkout profile IDs
+ Step 2: Set the label position and corner radius
+ Step 3: Set the corner radius for checkboxes
+ Step 4: Style primary buttons
+ Next steps
+ Updates & News

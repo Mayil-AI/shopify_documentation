@@ -1,0 +1,40 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ MailingAddress object
+ 2024-04 latest
+ Represents a mailing address.
+ On this page
+ Fields
+ Types that return MailingAddress
+ Fields
+ address1 (String)
+ The first line of the address. Typically the street address or PO Box number.
+ address2 (String)
+ The second line of the address. Typically the number of the apartment, suite, or unit.
+ city (String)
+ The name of the city, district, village, or town.
+ company (String)
+ The name of the customer's company or organization.
+ countryCode (CountryCode)
+ The two-letter code for the country of the address. For example, US.
+ firstName (String)
+ The first name of the customer.
+ lastName (String)
+ The last name of the customer.
+ latitude (Float)
+ The approximate latitude of the address.
+ longitude (Float)
+ The approximate longitude of the address.
+ market (Market)
+ The market of the address.
+ name (String)
+ The full name of the customer, based on firstName and lastName.
+ phone (String)
+ A unique phone number for the customer. Formatted using E.164 standard. For example, +16135551111.
+ provinceCode (String)
+ The two-letter code for the region. For example, ON.
+ zip (String)
+ The zip or postal code of the address.
+ Types that return MailingAddress
+ CartDeliveryGroup.deliveryAddress

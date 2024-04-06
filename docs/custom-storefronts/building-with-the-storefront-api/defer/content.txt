@@ -1,0 +1,115 @@
+Additional SDKs
+ Prioritizing data in your query
+ Developer preview
+ This feature is only available in the Defer Directive developer preview. Please provide feedback through GitHub.
+ The @defer directive allows clients to prioritize part of a GraphQL query without having to make more requests to fetch the remaining information. You can use this directive to minimize the overhead when fetching data from Shopify. Rather than maintaining multiple queries and performing several API calls, clients can make a single request and receive the data as a stream of responses.
+ Requirements
+ Your app can make requests to the GraphQL Storefront API.
+ You have a development store with the Defer Directive developer preview enabled.
+ Choosing a supported client
+ The @defer directive is currently a draft contribution to the GraphQL specification. To maximize compatibility with clients that support some variant of the @defer specification today, we have implemented the spec as of its description on August 23, 2022.
+ You can use one of the following compatible GraphQL libraries:
+ Shopify GraphQL Client
+ Shopify Storefront API Client
+ Apollo Client
+ urql
+ Optimize a query using @defer
+ The @defer directive can be applied to fragment spreads and inline fragments in a GraphQL query. Fields cannot use @defer directly.
+ Many client libraries support @defer in two ways: after each response is received, or once all responses have been received. To get the benefits of @defer it’s strongly suggested to handle each response as it arrives, so the client can begin rendering as soon as possible.
+ The following example retrieves details about a product before the list of related products. It uses @defer to deprioritize the productRecommendations query, but still receive those recommendations afterward without making an additional request. Each response (including the undeferred part) begins with --graphql.
+ POST https://{shop}.myshopify.com/api/{api_version}/graphql.json
+ 1 query product($productId: ID!) {
+ 2
+    product(id: $productId) {
+ 3
+      id
+ 4
+      title
+ 5
+    }
+ 6
+    ... relatedProducts @defer
+ 7 }
+ 8
+ 9 fragment relatedProducts on QueryRoot {
+ 10
+    productRecommendations(productId: $productId) {
+ 11
+      id
+ 12
+      title
+ 13
+    }
+ 14 }
+ GraphQL Response
+ Headers
+ content-type: multipart/mixed; boundary=graphql
+ Body
+ 1 --graphql
+ 2 Content-Type: application/json
+ 3 Content-Length: 108
+ 4
+ 5 {
+ 6
+    "data":{
+ 7
+      "product": {
+ 8
+        "id": "gid://shopify/Product/191637365",
+ 9
+        "title": "Black Dot Dress Shirt"
+ 10
+      }
+ 11
+    },
+ 12
+    "hasNext": true
+ 13 }
+ 14
+ 15 --graphql
+ 16 Content-Type: application/json
+ 17 Content-Length: 286
+ 18
+ 19 {
+ 20
+    "incremental": [
+ 21
+      {
+ 22
+        "path": [],
+ 23
+        "data": {
+ 24
+          "productRecommendations": [
+ 25
+            { "id": "gid://shopify/Product/1328794861624", "title": "Baseball t-shirt" },
+ 26
+            { "id": "gid://shopify/Product/1328794894392", "title": "Fancy t-shirt" },
+ 27
+            { "id": "gid://shopify/Product/1328795091000", "title": "Sports t-shirt" }
+ 28
+          ]
+ 29
+        }
+ 30
+      }
+ 31
+    ],
+ 32
+    "hasNext": false
+ 33 }
+ 34
+ 35 --graphql--
+ In the provided example, the @defer directive is used with the relatedProducts fragment. This fragment, defined separately, includes the productRecommendations query. By using @defer on this fragment, we're instructing to the server that it's acceptable to return the data for productRecommendations after the product.
+ When the server processes this query, it first returns the main product data, indicated by the "hasNext": true in the response. The server then continues to process the deferred fragment and returns the product recommendations. You will know that all parts have been received when the response contains "hasNext": false.
+ There might be some situations where Shopify believes it to be more efficient to serve the deferred fragment inline, rather than as a second streamed value. In this case, the initial response will contain all of the requested JSON. As before, streamed responses are complete when indicated by the presence of "hasNext": false in the response.
+ Technical details
+ Streamed responses for @defer follow the Incremental Delivery over HTTP specification for GraphQL. In particular, that means clients receive a multipart content response, indicated by the HTTP header of content-type: multipart/mixed; boundary=graphql. If the client only supports a maximum of HTTP/1.1, the response will also be served using transfer-encoding: chunked, which is no longer necessary as of HTTP/2.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ Choosing a supported client
+ Optimize a query using `@defer`
+ Technical details
+ Updates & News

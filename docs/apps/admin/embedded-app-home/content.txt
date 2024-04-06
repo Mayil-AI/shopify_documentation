@@ -1,0 +1,30 @@
+Admin
+ Overview
+ Embedded app home
+ Overview
+ Admin action and block extensions
+ Admin links
+ Flow
+ Payments
+ Fulfillment
+ Point of Sale
+ Embedded app home
+ The primary place where users engage with your app is its embedded app home. This is the location where merchants are directed when they navigate to your app in Shopify.
+ The Shopify admin provides a surface for apps to render the UX for their embedded app home. On the web, the surface is an iframe and in the Shopify mobile app, the surface is a WebView.
+ By combining Shopify App Bridge and Polaris, you can make your app display seamlessly in the Shopify admin. Polaris enables apps to match the visual appearance of the admin by using the same design components. App Bridge enables apps to communicate with the Shopify admin and create UI elements outside of the app's surface. Such elements include navigation menus, modals that cover the entire screen, and contextual save bars that prevent users from navigating away from the page when they have unsaved changes.
+ When you're building your embedded app home, follow the App Design Guidelines and the admin performance best practices to ensure that you create a great experience for users.
+ Developer tools and resources
+ Shopify App Bridge
+ A JavaScript library that lets you embed app pages in the Shopify admin.
+ Polaris design system
+ Design patterns and a library of UI components, tokens, and icons to build embedded app home pages.
+ App Design Guidelines
+ Directives to show you what great Shopify apps look like and how they’re crafted.
+ Performance best practices
+ A set of best practices for building fast and responsive apps in the Shopify admin.
+ Next steps
+ Create an embedded app home in the Shopify admin.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Developer tools and resources

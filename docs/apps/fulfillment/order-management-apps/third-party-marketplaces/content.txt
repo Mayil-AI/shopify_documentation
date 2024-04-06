@@ -1,0 +1,135 @@
+Billing
+ App Store
+ Track orders placed through third-party marketplaces
+ Orders that are created through third-party marketplaces, like Facebook or Google, use Shopify Payments as the payment processor.
+ This guide describes a high-level, recommended workflow for using Shopify APIs to track orders placed through third-party marketplaces.
+ Caution
+ If you maintain a third-party app or Shopify Flow workflow that relies on Order (GraphQL or REST) and Fulfillment (GraphQL or REST) API resources for order automation, then you should review and implement the recommendations in this guide to make sure that your apps and workflows continue to work as expected.
+ Requirements
+ Your app can make authenticated requests to the REST Admin API or GraphQL Admin API.
+ Your store has existing orders that are unfulfilled.
+ If you want to create test orders, then refer to Manage test orders.
+ If you need to make changes to an unfulfilled item, then you can edit an order.
+ You're familiar with the API objects that pertain to fulfillment orders.
+ You've met Shopify's protected customer data requirements.
+ How it works
+ Orders that are placed through third-party marketplaces and orders placed from other channels go through different workflows. The following diagram illustrates the differences between the workflows:
+ Orders placed through third-party marketplaces
+ The following workflow considerations apply for orders that are placed through third-party marketplaces:
+ Orders aren't created with automatically captured transactions.
+ Merchants have to fulfill an order before the transaction is captured automatically and the order is marked as paid. Transaction capture is initiated by the third-party marketplace.
+ Orders can't be fulfilled immediately.
+ They must be held until a period between 30 minutes and 24 hours has passed before they can be fulfilled. This is to account for customer cancellation, payment authorization, and fraud and risk analysis.
+ From the time that a payment is authorized until it's captured, merchants can't perform the following actions on an order:
+ Change the destination address
+ Edit the order
+ Issue refunds for custom amounts
+ Capture the payment manually
+ Orders placed through other channels
+ For orders placed through other channels, transactions are automatically captured before the order is fulfilled. Merchants or third-party fulfillment services can also immediately act on orders to begin the fulfillment process.
+ To learn more about fulfillment workflows for orders placed through other channels, refer to the following guides:
+ Manage fulfillments as an order management app
+ Manage fulfillments as a fulfillment service app
+ Step 1: Migrate your app to use fulfillment orders
+ In Shopify, the FulfillmentOrder resource models an end-to-end fulfillment process and is available in both the REST Admin API and the GraphQL Admin API. The FulfillmentOrder resource enables fulfillment data to sync accurately between Shopify and apps.
+ By API version 2023-07, all apps should be using the FulfillmentOrder object to manage fulfillments. Apps using the following REST or GraphQL Admin API resources or objects to fulfill orders are using a legacy workflow that is no longer supported as of API version 2022-07:
+ Order REST or GraphQL.
+ Fulfillment REST or GraphQL.
+ To learn how to migrate your app, refer to Migrate to fulfillment orders.
+ Step 2: Determine the source channel of an order
+ You can use the following API resources to determine the source channel of an order:
+ REST Admin API: Use the Order or Checkout resources.
+ GraphQL Admin API: Use the DraftOrderInput input object.
+ Note
+ For an order to be correctly attributed to a channel, you must register the channels that your app is managing. After that, or if your app already has its channels registered, you can refer to the list of source_name values in the Partner Dashboard, on the app's Marketplace extension.
+ Identify orders processed with Shopify Payments or Facebook Payments
+ To identify an order that was processed with Shopify Payments or Facebook Payments, you can retrieve the order using the GraphQL Admin API or REST Admin API and review the information in specific response fields.
+ The following table lists the response fields and values that you can review when you retrieve an order:
+ GraphQL order response fields and values
+ API Field or property Shopify Payments value Facebook Payments value
+ GraphQL Admin API displayFulfillmentStatus ON_HOLD UNFULFILLED
+ displayFinancialStatus AUTHORIZED PAID
+ paymentGatewayNames ["shopify_payments"] ["instagram"]
+ REST Admin API financial_status authorized paid
+ gateway shopify_payments instagram
+ payment_gateway_names ["shopify_payments"] ["instagram"]
+ processing_method "direct" ""
+ source_identifier 250736083723744,2283522795111633 255082969810519
+ reference nil 255082969810519
+ customer_locale en nil
+ shipping_lines
+ source: custom
+ title: STANDARD (3-5 Business days)
+ source: nil
+ title: FB STANDARD (3-7 Business days)
+ Considerations
+ Because orders that are placed through third-party marketplaces use Shopify Payments instead of a unique payment gateway, the gateway value doesn't reflect the channel in which the order is created. Fields like reference and source_identifier aren't guaranteed across different apps.
+ Orders that are created using the GraphQL Admin API or REST Admin API can be assigned any of the source_name values that are listed in the Partner Dashboard.
+ Use the source_name of an order to determine its channel source. The source_name property can be set only during order creation. It's not writeable afterwards.
+ Alternatively, orders can be assigned a custom string or left unspecified:
+ If source_name is a custom string, then the order is unattributed.
+ If source_name is unspecified, then new orders are assigned the value of your app's ID.
+ Step 3: Determine if the order can be fulfilled
+ You can use the order financial status and fulfillment order status to determine if an order should be fulfilled. The following table describes the fields or properties, values, and webhooks that you can use to determine if an order can be fulfilled:
+ Fields and values in the GraphQL Admin and REST Admin APIs
+ API Object or resource Field or property Value Webhooks
+ GraphQL Admin API Order displayFinancialStatus AUTHORIZED or PAID orders/updated
+ FulfillmentOrder status OPEN fulfillment_orders/
+ order_routing_complete
+ 
+ fulfillment_orders/
+ scheduled_fulfillment_order_ready
+ 
+ fulfillment_orders/
+ hold_released
+ 
+ (API version 2023-01 and higher)
+ REST Admin API Order financial_status authorized or paid orders/updated
+ FulfillmentOrder status open fulfillment_orders/
+ order_routing_complete
+ 
+ fulfillment_orders/
+ scheduled_fulfillment_order_ready
+ 
+ fulfillment_orders/
+ hold_released
+ 
+ (API version 2023-01 and higher)
+ Order financial status
+ Sales channel apps for third-party marketplaces require that an order is fulfilled before payments are automatically captured by the marketplace.
+ To prevent the expiration of authorized payments, a post-order workflow shouldn't use payment captured as the condition for fulfillment. Instead, determine if an order has payment authorization ("status": "authorized") and an open fulfillment order ("status": "open") before fulfillment. You can do this by reviewing the following information:
+ the financial_status property in the REST Admin API Order resource
+ the displayFinancialStatus field in the GraphQL Admin API Order object
+ Fulfillment order status
+ A fulfillment order is ready for fulfillment when its status is open. For more information about how a fulfillment order transitions to different statuses, refer to Statuses.
+ Each fulfillment order includes a list of supported fulfillment order actions to determine which actions it can take. For more information about fulfillment order actions, refer to determine which actions to take.
+ Considerations
+ You can't use line_items.fulfillable_quantity to determine if an order is fulfillable if the fulfillment order is on hold. The value 0 is returned.
+ Check the status of the fulfillment order before you create a fulfillment following an order/create webhook. If the status is on_hold, then the API request to create a fulfillment fails.
+ Avoid using a predetermined value for the on-hold time period. This value differs across marketplaces.
+ Avoid using the gateway field or property to determine if an order is created through a channel.
+ For example, after migrating your app, the gateway value of an order created on the Facebook sales channel app changes from instagram/facebook to shopify_payments. Instead, use source_name to determine the source of an order.
+ Best practices
+ The following section provides some best practices for tracking orders that are placed through third-party marketplaces.
+ Don't rely on order creation events to initiate fulfillments
+ Avoid workflows that depend on the orders/create, order_transactions/create or order/paid webhook events to initiate fulfillments.
+ Instead, use the fulfillment_orders/ready_to_fulfill webhook (available only in the unstable version of the API) and the FulfillmentOrder response body to determine if a fulfillment order is ready for fulfillment.
+ Support Facebook Payments and Shopify Payments workflows
+ During the transition, apps need to support both the Facebook Payments and Shopify Payments workflows. For the transition period, we recommend determining the post-order workflow based on the gateway.
+ Orders that are created through a sales channel app on a Shopify Payments-enabled store will see transactions created in an authorized state. Orders have to complete fulfillment before payment is captured automatically by the marketplace. During the transition period, create a condition check on the payment gateways value to determine the post-order workflow.
+ Next steps
+ Learn how to manage fulfillments as an order management app.
+ Learn how to manage fulfillments as a fulfillment service app.
+ Learn how to create test orders and transactions to validate your app's behavior.
+ Edit existing orders using the GraphQL Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ How it works
+ Step 1: Migrate your app to use fulfillment orders
+ Step 2: Determine the source channel of an order
+ Step 3: Determine if the order can be fulfilled
+ Best practices
+ Next steps
+ Updates & News

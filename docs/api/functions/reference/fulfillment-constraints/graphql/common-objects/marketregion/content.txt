@@ -1,0 +1,15 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ MarketRegion interface
+ 2024-04 latest
+ Represents a region.
+ Fields
+ name (String)
+ The name of the region in the language of the current localization.
+ Types that implement MarketRegion
+ MarketRegionCountry
+ Was this page helpful?
+ YesNo
+ Updates & News

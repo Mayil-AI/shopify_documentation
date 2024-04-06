@@ -1,0 +1,60 @@
+Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ SmartGrid API
+ SmartGrid API allows to present a modal screen from a smart grid tile.
+ Note
+ It is mandatory to wrap all your components within a Screen component.
+ Example
+ JavaScript
+ React
+ 1 import { extend, Screen, Tile } from '@shopify/retail-ui-extensions';
+ 2
+ 3 extend('pos.home.tile.render', (root, api) => {
+ 4
+    const tileProps = {
+ 5
+      title: 'SmartGrid API',
+ 6
+      subtitle: 'SmartGrid Extension',
+ 7
+      enabled: true,
+ 8
+      onPress: () => {
+ 9
+        api.smartGrid.presentModal();
+ 10
+      },
+ 11
+    };
+ 12
+    const tile = root.createComponent(Tile, tileProps);
+ 13
+    root.appendChild(tile);
+ 14
+    root.mount();
+ 15 });
+ 16
+ 17 extend('pos.home.modal.render', (root, api) => {
+ 18
+    const screenOne = root.createComponent(Screen, {
+ 19
+      name: 'Screen One',
+ 20
+      title: 'Screen One Title'
+ 21
+    });
+ 22
+    root.appendChild(screenOne);
+ 23
+ 24
+    root.mount();
+ 25 });
+ Props
+ Name Type Description
+ presentModal (screenName?: string) => void Opens a full screen with the pos.home.modal.render extension point.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Example
+ Props

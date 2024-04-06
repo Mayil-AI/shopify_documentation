@@ -1,0 +1,45 @@
+TextField
+ Thumbnail
+ Button
+ Buttons are used primarily for actions, such as “Add”, “Close”, “Cancel”, or “Save”.
+ JavaScript
+ React
+ 1 import {extend, Button} from '@shopify/admin-ui-extensions';
+ 2
+ 3 extend('Playground', (root) => {
+ 4
+    const button = root.createComponent(Button, {
+ 5
+      title: 'Settings',
+ 6
+      kind: 'primary',
+ 7
+      appearance: 'critical',
+ 8
+      size: 'large',
+ 9
+      inlineSize: 'fill',
+ 10
+      accessibilityLabel: 'open settings',
+ 11
+      disabled: false,
+ 12
+      onPress: () => console.log('Pressed'),
+ 13
+    });
+ 14
+ 15
+    root.appendChild(button);
+ 16
+    root.mount();
+ 17 });
+ Guidelines
+ Buttons will wrap their content if placed inside a Stack component, otherwise they will expand to the width of the container
+ Buttons wrap their content, regardless of the container they are placed in
+ ✅ Do 🛑 Don't
+ Align buttons vertically Buttons should not be stacked horizontally
+ Use short, succinct titles that describe an action
+ Use an icon to supplement the title of the button
+ Use only a single primary Button per section
+ Primary buttons should be before secondary buttons
+ For more guidelines, refer to Polaris' Button best practices.

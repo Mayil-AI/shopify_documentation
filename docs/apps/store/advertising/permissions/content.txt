@@ -1,0 +1,15 @@
+Ad permissions
+ Frequently asked questions
+ Security
+ Shopify App Store ad permission settings for team members
+ If you have an Owner account, then you can update your team members' permissions in the Partner Dashboard. When you update your team members' permissions, it changes how each member can interact with your ads on the Shopify App store.
+ There are three permissions related to Shopify App Store ads that you can give to a team account:
+ View financials: View the Ad billing page. This permission also allows the team member on view and edit payout information on the Settings page.
+ View ads: View the ad reporting dashboard.
+ Manage ads: Create and make changes to Shopify App Store ads. This permission gives View ads access by default.
+ For more information about managing your team's accounts, refer to the Partner documentation on managing your team's accounts.
+ Update a team member's ad permissions
+ Log in to your Partner Dashboard.
+ Click Team, and then click the name of the team member whose permissions you want to update.
+ In the Sensitive permissions section, select the ad permissions that you want the team member to have.
+ Click Save.

@@ -1,0 +1,625 @@
+Point of Sale app extensions
+ Web pixel app extensions
+ Marketing activities app extensions
+ Product subscription app extensions
+ Getting started with the GraphQL Admin and REST Admin APIs
+ The GraphQL Admin and REST Admin APIs let you build apps and other integrations for the Shopify admin using GraphQL or REST. With the APIs, you can create apps that offer functionality at every stage of a store's operation, including shipping, fulfillment, and product management.
+ GraphQL Admin API workshop
+ Learn how to make queries and mutations using the GraphQL Admin API.
+ Authentication
+ The GraphQL Admin and REST Admin APIs require a Shopify access token (for public apps and custom apps) for making authenticated requests.
+ To get the access token for a public or custom app, use token exchange for embedded apps and authorization code grant for apps that are not embedded. Include the access token as a X-Shopify-Access-Token header in your requests.
+ If you created your custom app in the Shopify admin, then you need to authenticate the app with access tokens. This is applicable only to custom apps created in the Shopify admin.
+ GraphQL Admin API
+ The GraphQL Admin API is a GraphQL-based alternative to the REST-based Admin API, and makes the functionality of the Shopify admin available at a single GraphQL endpoint:
+ 1 POST https://{shop}.myshopify.com/admin/api/2024-04/graphql.json
+ You can access the GraphQL Admin API using the GraphiQL app, curl, or any HTTP client:
+ Use the GraphiQL app
+ Use curl (or your preferred HTTP client)
+ Note
+ Shopify’s GraphQL APIs only accept POST requests. Other HTTP methods, such as GET or PUT, will return a 400 (Bad request) or 406 (Not acceptable) response.
+ Use the GraphiQL app
+ We recommend installing Shopify’s own GraphiQL app to explore your shop’s data using the GraphQL Admin API. After you've installed the app, you can test it by running the following query:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 query {
+ 2
+      shop {
+ 3
+        name
+ 4
+        primaryDomain {
+ 5
+          url
+ 6
+          host
+    }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "shop": {
+ 4
+        "name": "graphql",
+ 5
+        "primaryDomain": {
+ 6
+          "url": "https://graphql.myshopify.com",
+ 7
+          "host": "graphql.myshopify.com"
+    }
+ 11 }
+ Use curl
+ The following example shows a query for the first five product IDs and handles. Replace {shop} with your store’s domain and {access_token} with the access token that you generated in the Authentication section.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 curl -X POST \
+ 2
+    https://{shop}.myshopify.com/admin/api/2024-04/graphql.json \
+ 3
+    -H 'Content-Type: application/json' \
+ 4
+    -H 'X-Shopify-Access-Token: {access_token}' \
+ 5
+    -d '{
+ 6
+      "query": "{
+ 7
+        products(first: 5) {
+ 8
+          edges {
+ 9
+            node {
+ 10
+              id
+ 11
+              handle
+ 12
+            }
+ 13
+          }
+ 14
+          pageInfo {
+ 15
+            hasNextPage
+ 16
+          }
+ 17
+        }
+ 18
+      }"
+ 19
+    }'
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "products": {
+ 4
+ 7
+              "id": "gid://shopify/Product/1974208299030",
+ 8
+              "handle": "rough-snowflake-camisole"
+ 9
+            }
+ 10
+          }
+ 11
+        ],
+ 12
+        "pageInfo": {
+ 13
+          "hasNextPage": true
+ 14
+ 17 }
+ Example query
+ In GraphQL, queries are the equivalent of REST’s GET action verb. Queries generally begin with one of the objects listed under QueryRoot and can get data from any connections that an object has. Even though a POST is being sent to the GraphQL endpoint, if the body only contains queries, then data is only retrieved and not modified.
+ The following example shows a query for the quantity of inventory items available at a location:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+      inventoryItem(id: "gid://shopify/InventoryItem/19848949301270") {
+ 3
+        id
+ 4
+        inventoryLevels(first: 10) {
+ 5
+          edges {
+ 6
+            node {
+ 7
+              available
+ 8
+            }
+ 9
+          }
+ 10
+        }
+ 11
+      }
+ 12
+    }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "inventoryItem": {
+ 4
+        "id": "gid://shopify/InventoryItem/19848949301270",
+ 5
+        "inventoryLevels": {
+ 6
+ 9
+                "available": 5
+ 10
+              }
+ 11
+            }
+ 12
+          ]
+ 13
+        }
+ Example mutation
+ Mutations are the equivalent of REST’s data-modifying action verbs, such as PUT or DELETE. The following example shows a mutation that increases the available inventory at a location:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+      inventoryAdjustQuantity(
+ 3
+        input:{
+ 4
+          inventoryLevelId: "gid://shopify/InventoryLevel/13570506808?inventory_item_id=10820777115690"
+ 5
+          availableDelta: 1
+ 6
+        }
+ 7
+      )
+ 8
+      {
+ 9
+        inventoryLevel {
+ 10
+          available
+ 11
+        }
+ 12
+      }
+ 13
+    }
+ JSON response
+ 1 {
+ 2
+    "inventoryAdjustQuantity": {
+ 3
+      "inventoryLevel": {
+ 4
+        "available": 9
+ 5
+      },
+ 6
+      "userErrors": []
+ 7
+    }
+ 8 }
+ REST Admin API
+ You can access the REST Admin API using curl or any other HTTP client. REST Admin API endpoints are organized by resource type. You need to use different API endpoints depending on the service that your app provides.
+ Example GET request using curl
+ The following curl request retrieves information by using the Shop resource and the GET /admin/api/2024-04/shop.json endpoint. Replace {shop} with your store’s domain and {access_token} with the access token that you generated in the Authentication section.
+ GET https://{shop}.myshopify.com/admin/api/{api_version}/shop.json
+ GET request in curl
+ 1 curl -X GET \
+ 2
+    https://{shop}.myshopify.com/admin/api/2024-04/shop.json \
+ 3
+    -H 'Content-Type: application/json' \
+ 4
+    -H 'X-Shopify-Access-Token: {access_token}'
+ JSON response
+ 1 {
+ 2
+    "shop": {
+ 3
+      "id": 690933842,
+ 4
+      "name": "Example Shop",
+ 5
+      "email": "steve@example.com",
+ 6
+      "domain": "shop.example.com",
+ 7
+      "province": "Arizona",
+ 8
+      "country": "US",
+ 9
+      "address1": "2050 Monjaboom Blvd",
+ 10
+      "zip": "12345",
+ 11
+      "city": "Golden Pony",
+ 12
+      "source": null,
+ 13
+      "phone": "8005550100",
+ 14
+      "latitude": 45.45,
+ 15
+      "longitude": -75.43,
+ 16
+      "primary_locale": "en",
+ 17
+      "address2": "Suite 100",
+ 18
+      "created_at": "2007-12-31T19:00:00-05:00",
+ 19
+      "updated_at": "2021-01-01T14:39:35-05:00",
+ 20
+      "country_code": "US",
+ 21
+      "country_name": "United States",
+ 22
+      "currency": "USD",
+ 23
+      "customer_email": "customers@example.com",
+ 24
+      "timezone": "(GMT-05:00) Eastern Time (US & Canada)",
+ 25
+      "iana_timezone": "America/New_York",
+ 26
+      "shop_owner": "Salma Ayad",
+ 27
+      "money_format": "$",
+ 28
+      "money_with_currency_format": "$ USD",
+ 29
+      "weight_unit": "lb",
+ 30
+      "province_code": "AZ",
+ 31
+      "taxes_included": null,
+ 32
+      "auto_configure_tax_inclusivity": null,
+ 33
+      "tax_shipping": null,
+ 34
+      "county_taxes": true,
+ 35
+      "plan_display_name": "Shopify Plus",
+ 36
+      "plan_name": "enterprise",
+ 37
+      "has_discounts": true,
+ 38
+      "has_gift_cards": true,
+ 39
+      "myshopify_domain": "example.myshopify.com",
+ 40
+      "google_apps_domain": null,
+ 41
+      "google_apps_login_enabled": null,
+ 42
+      "money_in_emails_format": "$",
+ 43
+      "money_with_currency_in_emails_format": "$ USD",
+ 44
+      "eligible_for_payments": true,
+ 45
+      "requires_extra_payments_agreement": false,
+ 46
+      "password_enabled": false,
+ 47
+      "has_storefront": true,
+ 48
+      "eligible_for_card_reader_giveaway": false,
+ 49
+      "finances": true,
+ 50
+      "primary_location_id": 905684977,
+ 51
+      "cookie_consent_level": "implicit",
+ 52
+      "force_ssl": true,
+ 53
+      "checkout_api_supported": true,
+ 54
+      "multi_location_enabled": false,
+ 55
+      "setup_required": false,
+ 56
+      "pre_launch_enabled": false,
+ 57
+      "enabled_presentment_currencies": [
+ 58
+        "USD"
+ 59
+      ]
+ 60
+    }
+ 61 }
+ Example POST request
+ The following example illustrates how to create customer with the Customer resource and the POST /admin/api/2024-04/customers.json endpoint.
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/customers.json
+ REST body
+ 1 {
+ 2
+    "customer": {
+ 3
+      "first_name": "Steve",
+ 4
+      "last_name": "Lastnameson",
+ 5
+      "email": "steve.lastnameson@example.com",
+ 6
+      "phone": "+15142546011",
+ 7
+      "verified_email": true,
+ 8
+      "addresses": [
+ 9
+        {
+ 10
+          "address1": "123 Oak St",
+ 11
+          "city": "Ottawa",
+ 12
+          "province": "ON",
+ 13
+          "phone": "555-1212",
+ 14
+          "zip": "123 ABC",
+ 15
+          "last_name": "Lastnameson",
+ 16
+          "first_name": "Mother",
+ 17
+          "country": "CA"
+ 18
+        }
+ 19
+      ],
+ 20
+      "password": "newpass",
+ 21
+      "password_confirmation": "newpass",
+ 22
+      "send_email_welcome": false
+ 23
+    }
+ 24 }
+ JSON response
+ 1 {
+ 2
+    "customer": {
+ 3
+      "id": 1073339481,
+ 4
+      "email": "steve.lastnameson@example.com",
+ 5
+      "created_at": "2024-02-22T11:31:07-05:00",
+ 6
+      "updated_at": "2024-02-22T11:31:07-05:00",
+ 7
+      "first_name": "Steve",
+ 8
+      "last_name": "Lastnameson",
+ 9
+      "orders_count": 0,
+ 10
+      "state": "enabled",
+ 11
+      "total_spent": "0.00",
+ 12
+      "last_order_id": null,
+ 13
+      "note": null,
+ 14
+      "verified_email": true,
+ 15
+      "multipass_identifier": null,
+ 16
+      "tax_exempt": false,
+ 17
+      "tags": "",
+ 18
+      "last_order_name": null,
+ 19
+      "currency": "USD",
+ 20
+      "phone": "+15142546011",
+ 21
+      "addresses": [
+ 22
+        {
+ 23
+          "id": 1053317311,
+ 24
+          "customer_id": 1073339481,
+ 25
+          "first_name": "Mother",
+ 26
+          "last_name": "Lastnameson",
+ 27
+          "company": null,
+ 28
+          "address1": "123 Oak St",
+ 29
+          "address2": null,
+ 30
+          "city": "Ottawa",
+ 31
+          "province": "Ontario",
+ 32
+          "country": "Canada",
+ 33
+          "zip": "123 ABC",
+ 34
+          "phone": "555-1212",
+ 35
+          "name": "Mother Lastnameson",
+ 36
+          "province_code": "ON",
+ 37
+          "country_code": "CA",
+ 38
+          "country_name": "Canada",
+ 39
+          "default": true
+ 40
+        }
+ 41
+      ],
+ 42
+      "accepts_marketing": false,
+ 43
+      "accepts_marketing_updated_at": "2024-02-22T11:31:07-05:00",
+ 44
+      "marketing_opt_in_level": null,
+ 45
+      "tax_exemptions": [],
+ 46
+      "email_marketing_consent": {
+ 47
+        "state": "not_subscribed",
+ 48
+        "opt_in_level": "single_opt_in",
+ 49
+        "consent_updated_at": null
+ 50
+      },
+ 51
+      "sms_marketing_consent": {
+ 52
+        "state": "not_subscribed",
+ 53
+        "opt_in_level": "single_opt_in",
+ 54
+        "consent_updated_at": null,
+ 55
+        "consent_collected_from": "OTHER"
+ 56
+      },
+ 57
+      "admin_graphql_api_id": "gid://shopify/Customer/1073339481",
+ 58
+      "default_address": {
+ 59
+        "id": 1053317311,
+ 60
+        "customer_id": 1073339481,
+ 61
+        "first_name": "Mother",
+ 62
+        "last_name": "Lastnameson",
+ 63
+        "company": null,
+ 64
+        "address1": "123 Oak St",
+ 65
+        "address2": null,
+ 66
+        "city": "Ottawa",
+ 67
+        "province": "Ontario",
+ 68
+        "country": "Canada",
+ 69
+        "zip": "123 ABC",
+ 70
+        "phone": "555-1212",
+ 71
+        "name": "Mother Lastnameson",
+ 72
+        "province_code": "ON",
+ 73
+        "country_code": "CA",
+ 74
+        "country_name": "Canada",
+ 75
+        "default": true
+ 76
+      }
+ 77
+    }
+ 78 }
+ Example PUT request
+ The following example illustrates how to update the postal code of a customer address with the Customer Address resource and the PUT /admin/api/2024-04/customers{customer_id}/addresses/{address_id}.json endpoint.
+ Request:
+ PUT https://{shop}.myshopify.com/admin/api/{api_version}/customers/207119551/addresses/207119551.json
+ REST body
+ 1 {
+ 2
+    "address": {
+ 3
+      "id": 207119551,
+ 4
+      "zip": "90210"
+ 5
+    }
+ 6 }
+ JSON response
+ 1 {
+ 2
+    "customer_address": {
+ 3
+      "id": 207119551,
+ 4
+      "customer_id": 207119551,
+ 5
+      "first_name": null,
+ 6
+      "last_name": null,
+ 7
+      "company": null,
+ 8
+      "address1": "Chestnut Street 92",
+ 9
+      "address2": "",
+ 10
+      "city": "Louisville",
+ 11
+      "province": "Kentucky",
+ 12
+      "country": "United States",
+ 13
+      "zip": "90210",
+ 14
+      "phone": "+1(800)-555-2181",
+ 15
+      "name": "",
+ 16
+      "province_code": "KY",
+ 17
+      "country_code": "US",
+ 18
+      "country_name": "United States",
+ 19
+      "default": true
+ 20
+    }
+ 21 }
+ Example DELETE request
+ The following example illustrates how to delete an order with the Order resource and the DELETE /admin/api/2024-04/orders/{order_id}.json endpoint.
+ DELETE https://{shop}.myshopify.com/admin/api/{api_version}/orders/450789469.json
+ REST body
+ 1 (empty)
+ JSON response
+ 1 HTTP/1.1 200 OK
+ 2 {}
+ Next steps
+ Use the Shopify Admin API GraphiQL explorer to build GraphQL queries.
+ Explore the GraphQL Admin API reference to learn more about the different resources and endpoints that you can access using the GraphQL Admin API.
+ Explore the REST Admin API reference to learn more about the different resources and endpoints that you can access using the REST Admin API.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Authentication
+ GraphQL Admin API
+ REST Admin API
+ Next steps
+ Updates & News
+ Developer changelog

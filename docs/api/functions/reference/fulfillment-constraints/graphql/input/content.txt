@@ -1,0 +1,30 @@
+Scalars
+ Local Pickup Delivery Option Generator API
+ Order Routing Location Rule API
+ Payment Customization API
+ Configuration
+ Input object
+ 2024-04 latest
+ The input object for the function.
+ On this page
+ Fields
+ Fields
+ cart (Cart!)
+ The cart.
+ fulfillmentConstraintRule (FulfillmentConstraintRule!)
+ The fulfillment constraint rule containing the function.
+ localization (Localization!)
+ The localization of the Function execution context.
+ locations ([Location!]!)
+ A list of all locations for the current shop.
+ Argument Description
+ identifiers ( [String!] )
+ The list of location GIDs to search for.
+ names ( [String!] )
+ The list of location names to search for.
+ presentmentCurrencyRate (Decimal!)
+ The conversion rate between the shop's currency and the currency of the cart.
+ shop (Shop!)
+ Information about the shop.
+ Was this page helpful?
+ YesNo

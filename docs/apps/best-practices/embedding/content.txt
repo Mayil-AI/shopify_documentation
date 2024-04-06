@@ -1,0 +1,50 @@
+Billing
+ App Store
+ Best practices for embedding your app in the Shopify admin
+ Embedding your app in the Shopify admin makes your app feel familiar, gives you access to Shopify UI elements, and lets users use your app easily on mobile devices.
+ When you embed your app in Shopify, you should design your app so that the user isn't forced to leave the Shopify admin on a regular basis. All of your app's basic functionality, and some key settings, should be available within the embedded app. This includes primary workflows, key monitoring and reporting metrics, and connection settings.
+ If your app includes less frequently used workflows or advanced configurations, then you can make them available on an external website or app surface.
+ Tip
+ Apps that follow embedded app best practices, and meet other applicable criteria, are eligible for Built for Shopify status.
+ Keep primary app workflows within Shopify
+ Users should be able to complete all of the primary workflows of your app in your embedded app, or using Shopify admin app extensions. Users shouldn't need to access an external website or app surface to complete a workflow.
+ The exception to this rule is when the primary workflows of your app need to be available consistently, including while using other areas of the Shopify admin. For example, if your app offers an inbox for customer service, then users might want to keep the inbox open consistently.
+ Include simplified monitoring or reporting
+ If your app includes monitoring or reporting functionality with metrics that users need to reference on a regular basis, then you should include a simplified version of the monitoring or reporting functionality in the embedded app. More complex reports can be presented on an external website or app surface.
+ Keep third-party connection settings within Shopify
+ Any settings or configurations that control the connection between Shopify and a third-party system should be available inside the Shopify embedded app interface.
+ Examples
+ This section provides examples of apps that don't follow embedded app best practices, and examples of apps that do follow embedded app best practices.
+ Doesn't follow best practices
+ The following examples demonstrate app patterns that don’t follow embedded app best practices:
+ The embedded app contains a single button that sends the user to your app on an external website.
+ The embedded app contains a landing page with cards that link to workflows on an external website.
+ The user is able to perform most workflows in the embedded app, but needs to visit an external site to view reports. No summary metrics are provided.
+ Follows best practices: Shopify Search & Discovery
+ The Shopify Search & Discovery app lets users customize search, filtering, and product recommendations to enhance result relevance.
+ Guideline Example
+ Keep primary app workflows within Shopify All basic workflows, including customizing filters, search, and recommendations, are included as pages in the embedded app.
+ 
+ Include simplified monitoring or reporting Shopify Search & Discovery exposes key metrics about search and recommendation performance, including the click rate and purchase rate over the past 30 days. Users can click View report to view more detailed information in the Analytics section of the Shopify admin.
+ 
+ Follows best practices: Shopify Inbox
+ The Shopify Inbox app is a messaging tool that lets app users communicate with customers.
+ Guideline Example
+ Keep primary app workflows within Shopify Most basic workflows, such as setting up a chat widget, creating automated replies, and configuring notifications are included as pages in the embedded app.
+ 
+ 
+ 
+ Because users want to continuously monitor their conversation inbox, and continue to access other areas of the Shopify admin at the same time, the customer conversation workflows in Shopify Inbox are available on an external website.
+ 
+ Include simplified monitoring or reporting Shopify Inbox exposes key metrics about conversations, including the number of conversations, the response time, and the number of conversations associated with a sale.
+ 
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Keep primary app workflows within Shopify
+ Include simplified monitoring or reporting
+ Keep third-party connection settings within Shopify
+ Examples
+ Updates & News
+ Developer changelog
+ Partner blog

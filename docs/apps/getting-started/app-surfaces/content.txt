@@ -1,0 +1,185 @@
+Apps
+ Overview
+ Getting started
+ Overview
+ Create an app
+ Build an app
+ App surfaces
+ Developer tools
+ Best practices
+ Design guidelines
+ Deployment
+ Distribution
+ Billing
+ App Store
+ App surfaces
+ Shopify apps can appear in and add functionality to nearly every area of the Shopify platform. A single app can add functionality to multiple areas of the platform. Shopify provides multiple tools and resources to surface apps in each area. Depending on the tool that you're using, Shopify might host your code, or you might have to arrange for hosting yourself.
+ Note
+ Regardless of where you surface your app, you need to create a Shopify Partner account and create a development store to test your app.
+ The Shopify admin
+ The Shopify admin is the primary interface for merchants to manage their stores, and core Shopify objects such as products, orders, and customers. The Shopify admin is also the place where merchants can manage their apps. Developers can surface their app's functionality in the Shopify admin using the following technologies:
+ Embedded app pages
+ Custom data
+ App extensions
+ Embedded app pages
+ You can embed your app user interface, or parts of your app user interface, directly inside of the Shopify admin. Embedding your app in the Shopify admin makes your app feel familiar, gives you access to Shopify user interface elements, and lets merchants use your app on mobile devices.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build embedded app pages:
+ Shopify App Bridge
+ A JavaScript library that lets you embed app pages in the Shopify admin.
+ Shopify CLI
+ A command-line tool that helps you build Shopify apps faster, and provides an easy way to clone boilerplate code for embedded app pages.
+ Polaris design system
+ Design patterns and guidance, including a library of UI components, tokens, and icons to build embedded app pages.
+ Admin API
+ GraphQL and REST APIs that let you read and write Shopify resource data, including products, customers, orders, inventory, fulfillment, and more.
+ Shopify app templates
+ App templates in Node.js, Ruby, and PHP that provide a starting point for building embedded app pages.
+ Custom data
+ Shopify's platform includes data models for basic commerce concepts such as products, collections, and orders. However, merchants might require more complex or specific data models. Apps can extend the data models of Shopify's platform by creating custom data models using metafields and metaobjects. Metafields let you add new fields on Shopify-defined resources like orders or products. Metaobjects are custom data structures that your app can define and create to store your app's information. Similar to metafields, metaobjects can be associated with a Shopify resource such as a product or a collection. However, metaobjects can also exist on their own. Metafields and metaobjects can be connected to Shopify resources, and used by merchants in the Shopify admin.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build with custom data:
+ Metafields overview
+ Learn about creating and defining custom fields on resources in Shopify.
+ Metaobjects overview
+ Get started with defining and creating metaobjects to extend your store's data model.
+ Admin app extensions
+ App extensions allow you to add your app's functionality to the Shopify admin. For example, a bulk action link extension lets you make your app accessible to merchants wherever action drop-down lists are available in the Shopify admin.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build embedded app extensions:
+ Admin actions and blocks
+ Learn about admin action and block extensions that appear as modals and cards in the Shopify admin.
+ Create admin app extensions
+ Learn how to create some basic app extensions that display in the Shopify admin, including admin links, bulk action links, and navigation links.
+ List of app extensions
+ Review the available app extension types and learn how to create them.
+ Checkout
+ Merchants use Shopify checkout to accept orders and receive payments wherever they sell online. You can add functionality to Shopify checkout by building an app. Apps can extend Shopify checkout using the following technologies:
+ Checkout UI extensions
+ Shopify Functions
+ Post-purchase checkout extensions
+ Checkout UI extensions
+ Checkout UI extensions allow app developers to build custom UI components and functionality that merchants can install at defined points in the checkout flow. For example, app developers can create extensions for custom fields and product offers that render directly in the checkout flow.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build Checkout UI extensions:
+ Checkout overview
+ Learn more about customizing checkout UI extensions with our tutorials for building common use cases.
+ Checkout UI target APIs
+ APIs and JavaScript functions for rendering a user interface and adding functionality to checkout.
+ Checkout UI extension components
+ A library of vanilla JavaScript components and React components that checkout UI extensions can use to render an interface.
+ Shopify CLI
+ A command-line tool to help you build Shopify apps, and create and register Checkout UI extensions.
+ Extension-only apps
+ Learn how to create an extension-only app.
+ Shopify Functions
+ Shopify Functions let developers customize the backend logic that powers parts of Shopify. Developers can write code to create custom discount logic, customize the names and sort order for checkout delivery and payment options, provide custom checkout and cart validation, and more. This code is pushed to Shopify and executed on Shopify’s infrastructure.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build Shopify Functions:
+ Shopify Functions overview
+ Understand what Shopify Functions are and how to use them to customize the backend logic that powers parts of Shopify.
+ Shopify Functions tutorials
+ Learn more about Shopify Functions with our tutorials for building common use cases.
+ Functions API reference
+ Explore the Functions API reference to learn about the backend logic that you can customize.
+ Shopify CLI
+ A command-line tool to help you build Shopify apps, and create and register app extensions that use Shopify Functions.
+ Post-purchase checkout extensions
+ Post-purchase checkout extensions let merchants add a post-purchase page directly into the Shopify checkout. You can use these extensions to add custom content such as product offers, survey requests, and important information about the order.
+ Tools, APIs and resources
+ You can use the following Shopify resources to build post-purchase checkout extensions:
+ Tutorial: Building a post-purchase checkout extension
+ Learn how to build a post-purchase checkout extension.
+ Checkout extension component library
+ A library of vanilla JavaScript components and React components that post-purchase checkout extensions can use to render an interface.
+ Shopify CLI
+ A command-line tool to help you build Shopify apps, and create and register post-purchase checkout extensions.
+ Online store
+ The online store is a storefront that merchants use to sell their products. You can add functionality to the online store using the following technologies:
+ Theme app extensions
+ Web pixels
+ Storefront API
+ Theme app extensions
+ Theme app extensions let merchants add dynamic elements to their themes without having to interact with Liquid templates or code. Theme app extensions automatically expose your app in the theme editor. You can leverage the editor’s visual editing capabilities without needing to replicate them in your app. Apps that are built in the theme app extension framework don't edit theme code, which decreases the risk of introducing breaking changes to the theme. This makes it easier to iterate on the content of the integration and provides for a better merchant experience, such as upgrading a theme.
+ Tools, APIs and resources
+ You can use the following Shopify resources to build theme app extensions:
+ Tutorial: Building a theme app extension
+ Learn how to build a theme app extension.
+ Shopify CLI
+ A command-line tool to help you build Shopify apps, and create and register theme app extensions.
+ Web pixels
+ Web pixels are JavaScript code snippets that run on the online store and collect behavioral data, which are referred to as customer events, for marketing campaign optimization and analytics. After you’ve created your web pixel and configured it to a merchant’s store, your pixel can load in the store's online store. As a customer browses the online store, they’ll trigger customer events that your pixel can subscribe to.
+ Tools, APIs and resources
+ You can use the following Shopify resources to build web pixels:
+ Web pixels overview
+ Learn more about how your app can use web pixels.
+ Customer events reference
+ Learn about the ways of tracking and sending events with web pixels.
+ Web pixel extension API
+ Learn about the sandboxing modes for web pixels and the API references that are available for the sandbox.
+ Shopify CLI
+ A command-line tool to help you build Shopify apps faster and create and register web pixels.
+ Storefront API
+ Storefront API allows you to retrieve customer-facing values with built-in contextualization, such as international pricing and translations.
+ Tools, APIs and resources
+ You can use the following Shopify resources to build with Storefront API:
+ Storefront access scopes
+ Learn about the different Storefront access scopes you can request for your app. These access scopes don't require authentication.
+ International pricing
+ Learn how to use the Storefront API to retrieve international pricing for products that the merchant has configured.
+ Shopify Flow
+ Shopify Flow is an app and platform that lets merchants customize their store through automation. You can integrate your app with Shopify Flow through custom triggers and actions. Triggers enable your app to start a Flow workflow. Actions enable Flow to call your app or service in a workflow to do work.
+ Tools, APIs and resources
+ You can use the following Shopify resources to build with Shopify Flow:
+ Shopify Flow triggers
+ Learn how to create Shopify Flow triggers, which enable your app to start a workflow.
+ Shopify Flow actions
+ Learn how to create Shopify Flow actions. Actions enable Flow to call your app or service in a workflow to do work.
+ Point of Sale
+ Shopify Point of Sale (POS) is a point of sale app that merchants can use to sell products in person. Merchants can create a cart for each customer, customize the cart in several ways, and then accept payment with a wide range of payment methods. You can surface your app's functionality in Shopify POS through standardized APIs and extensions.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build POS apps:
+ Point of Sale links
+ Learn how to add a POS App extension to push and pull data from the cart page or pull data from the order completed page.
+ Cart app extension
+ Add your app’s loyalty points or other promotional discounts to the cart in the Shopify POS app.
+ Server-only apps
+ Some apps might not provide a user interface for merchants. Instead, they might provide backend functionality for other apps, or sync data from Shopify to another system.
+ Note
+ Apps that don't provide a user interface for merchants can't be distributed through the Shopify App Store.
+ Tools, APIs, and resources
+ You can use the following Shopify resources to build server-only apps:
+ App distribution models
+ Learn about the ways that you can distribute your app, and the capabilities and requirements for each distribution method.
+ Authentication for custom apps in the Shopify admin
+ Create a new custom app directly from the Shopify admin.
+ Hosting
+ Depending on how you're integrating with Shopify, Shopify might host your code, or you might have to arrange for hosting yourself. Shopify hosted tools are hosted on Shopify's infrastructure, which require deployment to Shopify and can be viewed and managed in the Partner Dashboard. For app components such as the app server and embedded admin pages, the app developer manages the infrastructure. Shopify provides resources for deploying CLI-generated apps to common hosting providers.
+ Shopify surface App component Hosted by Shopify Hosted by developer
+ The Shopify admin Embedded app pages ✓
+ Custom data ✓
+ Admin UI extensions ✓
+ Checkout Checkout UI extensions ✓
+ Shopify Functions ✓
+ Post-purchase checkout extensions ✓
+ Online Store Theme app extensions ✓
+ Web pixels ✓
+ Shopify Flow ✓
+ Point of Sale ✓
+ Server-only apps ✓
+ Next steps
+ Follow this in-depth tutorial to gain experience with the most popular Shopify APIs, tools, and libraries, while building a QR code generator app.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ The Shopify admin
+ Checkout
+ Online store
+ Shopify Flow
+ Point of Sale
+ Server-only apps
+ Hosting
+ Next steps
+ Updates & News
+ Developer changelog
+ Partner blog

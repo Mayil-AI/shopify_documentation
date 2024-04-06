@@ -1,0 +1,225 @@
+Overview
+ Migrate
+ Config
+ Locales
+ Settings
+ Trust and security
+ Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Section groups
+ A section group is a JSON data file that stores a list of sections and app blocks to be rendered, and their associated settings. Merchants can add sections to the section group, as well as remove and reorder them, in the theme editor.
+ You can add a reference to a section group in a layout file to add support for sections in areas that are controlled by the layout, such as the header or footer.
+ The sections and app blocks referenced in a section group are rendered in the order specified by the order attribute, with no markup between the sections. Section groups can render up to 25 sections, and each section can have up to 50 blocks.
+ The sections and app blocks referenced in section groups are the same sections and app blocks referenced in templates, and should follow the same guidelines.
+ You can use section groups in place of static sections in layouts. Learn how to migrate from static sections to section groups.
+ Tip
+ In most themes, you should use section groups for only the header and footer. If you create additional section groups for other areas of the theme, such as a navigation sidebar, then name the section group to reflect its intended purpose.
+ Location
+ Section group files are located in the sections directory of the theme:
+ 1 └─ theme
+ 2
+      ...
+ 3
+      ├─ layout
+ 4
+      │  └─ theme.liquid
+ 5
+      ├─ sections
+ 6
+      │  ├─ footer-group.json
+ 7
+      │  ├─ header.liquid
+ 8
+      │  ├─ header-group.json
+ 9
+      │  └─ ...
+ 10
+      ...
+ Schema
+ Section groups must be valid JSON files. The root should be an object with the following attributes:
+ Attribute Type Required Description
+ type String Yes
+ The type of the section group.
+ Accepted values:
+ header
+ footer
+ aside
+ A custom type, in the format custom.<name>, where <name> is a unique identifier for your section group type.
+ name String Yes
+ A name for the section group.
+ Maximum length: 50 characters
+ sections Object Yes An object that uses section IDs as keys, and section data as values. You can leave this attribute empty.
+ 
+ Duplicate IDs within the template aren't allowed.
+ 
+ The format of the section data is the same as the section data in settings_data.json. JSON templates can render up to 25 sections, and each section can have up to 50 blocks.
+ order Array Yes An array of section IDs, listed in the order that they should be rendered. The IDs must exist in the sections object. You can leave this attribute empty. Duplicate IDs aren't allowed.
+ Example
+ 1 {
+ 2
+    "type": "header",
+ 3
+    "name": "Header Group",
+ 4
+    "sections": {
+ 5
+      "header": {
+ 6
+        "type": "header",
+ 7
+        "settings": {}
+ 8
+      }
+ 9
+    },
+ 10
+    "order": [
+ 11
+      "header"
+ 12
+    ]
+ 13 }
+ Section data
+ The sections attribute of section groups holds the data for the sections to be rendered by the section group. These can be either theme sections or app sections. You can't share section data across section groups, so each section must have an ID that's unique within the section group.
+ Section groups can render up to 25 sections, and each section can have up to 50 blocks.
+ You can add sections to a group in code, or through the theme editor.
+ The following table outlines the format of section data:
+ Value Type Required Description
+ <SectionID> String - A unique ID for the section. Accepts only alphanumeric characters.
+ <SectionType> String Yes The filename of the section file to render, without the extension.
+ <SectionDisabled> Boolean No When true, the section isn't rendered but can still be customized in the theme editor. Is false by default.
+ <BlockID> String - A unique ID for the block. Accepts only alphanumeric characters.
+ <BlockType> String Yes The type of block to render, as defined in the schema of the section file.
+ <BlockOrder> Array No An array of block IDs, ordered as they should be rendered. The IDs must exist in the blocks object, and duplicate IDs aren't allowed.
+ <SettingID> String - The ID of a setting as defined in the schema of the section or the block.
+ <SettingValue> (multiple) - A valid value for the setting.
+ For example:
+ 1 sections: {
+ 2
+    <SectionID>: {
+ 3
+      "type": <SectionType>,
+ 4
+      "disabled": <SectionDisabled>,
+ 5
+      "settings": {
+ 6
+        <SettingID>: <SettingValue>
+ 7
+      },
+ 8
+      "blocks": {
+ 9
+        <BlockID>: {
+ 10
+          "type": <BlockType>,
+ 11
+          "settings": {
+ 12
+            <SettingID>: <SettingValue>
+      },
+ 16
+      "block_order": <BlockOrder>
+ 17
+    }
+ 18 }
+ For example, the following section group renders the quick-links and newsletter-signup section files:
+ sections/footer-group.json
+ 1 {
+ 2
+    "type": "footer",
+ 3
+    "name": "Footer group",
+ 4
+    "sections": {
+ 5
+      "quick-links": {
+ 6
+        "type": "quick-links",
+ 7
+        "settings": {}
+ 8
+      },
+ 9
+      "newsletter-signup": {
+ 10
+        "type": "newsletter-signup",
+ 11
+        "settings": {}
+ 12
+      }
+ 13
+    },
+ 14
+    "order": [
+ 15
+      "newsletter-signup",
+ 16
+      "quick-links"
+ 17
+    ]
+ 18 }
+ Caution
+ Any sections that are included in a section group, and aren't app sections, must exist in the theme. If a section doesn't exist and is referenced in a section group, then it results in an error.
+ Usage
+ When working with section groups, you should familiarize yourself with the process of including a section group in a layout, and considerations for using both section groups and static sections in a layout.
+ You can also optionally use section groups to render your template content.
+ Contextual section groups
+ When a merchant adapts a section group for a specific buyer context, a new contextual section group file is created. The file takes the name of the context in the following format: header-group.context.<context-string>.json.
+ A contextual section group file includes the overrides that you make to the section group for a context. The context and parent file are defined at the top of the template. The context value can contain either "market": "market-handle" or "b2b": true. For example, the following code contextualizes the announcement-bar section for market handle ca:
+ header-group.context.ca
+ 1 {
+ 2
+    "context": {
+ 3
+      "market": "ca"
+ 4
+    },
+ 5
+    "parent": "header-group.json",
+ 6
+    "sections": {
+ 7
+      "announcement-bar": {
+ 8
+        "blocks": {
+ 9
+          "announcement-bar-one": {
+ 10
+            "settings": {
+ 11
+              "text": "Free shipping for Canada!"
+ 12
+            }
+ 13
+          }
+ 14
+        },
+ 15
+        "settings": {
+ 16
+          "change_slides_speed": 5
+ 17
+        }
+ 18
+      }
+ 19
+    }
+ 20 }
+ Include a section group in a layout file
+ Use the sections Liquid tag to render section groups as part of the theme's layout content. Place the sections tag where you want to render it in the layout.
+ The sections Liquid tag uses the following syntax, where <filename> is the name of the section group without its file extension:
+ Syntax
+ 1 {% sections '<filename>' %}
+ For example, if you have a /sections/header-group.json file that contains your theme's header content, such as header section and announcement bar section, then you might want to include that section group in theme.liquid so that the header section group is rendered on all pages that use that layout:
+ layout/theme.liquid
+ 1 {% sections 'header-group' %}
+ Static section and section group coexistence
+ Avoid using both section groups and static sections in the same layout file. If you need to use both, then you should identify which sections are static in the section name.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Location
+ Schema
+ Usage

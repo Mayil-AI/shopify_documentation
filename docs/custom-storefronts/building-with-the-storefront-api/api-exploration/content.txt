@@ -1,0 +1,35 @@
+API exploration
+ Overview
+ GraphiQL Storefront API explorer
+ Storefront API learning kit
+ Products and collections
+ Search and discovery
+ Markets
+ Cart
+ Customers
+ Prioritizing data in your query
+ Release notes
+ Storefront API reference
+ Building with the Customer Account API
+ Additional SDKs
+ API exploration
+ Learning how to interact with the Storefront API is an important part of accelerating the development process behind building custom storefronts. Shopify provides tools and learning kits to improve your developer experience.
+ Requirements
+ Familiarize yourself with the Storefront API.
+ Complete the Storefront API Getting started guide.
+ GraphiQL explorer
+ Start exploring Shopify's Storefront GraphQL API on a demo shop.
+ Storefront API GraphiQL explorer
+ Use the interactive GraphiQL explorer for the Storefront API.
+ Storefront API Learning Kit
+ Download queries that demonstrate how to use Shopify's GraphQL Storefront API.
+ Storefront API learning kit
+ Download a package of a complete set of sample GraphQL queries to the Storefront API
+ Next steps
+ Learn about querying products and collections in your custom storefront.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Requirements
+ GraphiQL explorer
+ Storefront API Learning Kit

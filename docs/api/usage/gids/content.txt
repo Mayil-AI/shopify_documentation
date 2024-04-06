@@ -1,0 +1,310 @@
+Product subscription app extensions
+ Global IDs in Shopify APIs
+ Shopify's GraphQL APIs use global IDs to refer to objects. A global ID is an application-wide uniform resource identifier (URI) that uniquely identifies an object. You can use a global ID to retrieve a specific Shopify object of any type.
+ How it works
+ To enable GraphQL clients to neatly handle caching and data refetching, GraphQL servers expose object identifiers in a standardized way using the Relay specification.
+ Relay asks for a compliant server to expose a standard mechanism for fetching any object given an ID. These objects are referred as nodes and they implement the Node interface. Shopify's GraphQL APIs provide a versionable implementation of this interface.
+ Global ID structure
+ Shopify uses GlobalID to encode global IDs. By default, when implementing a Node interface, a type's id field constructs a global ID with the following structure:
+ Global ID structure
+ gid://shopify/{object_name}/{id}
+ For example, a Product object with the ID 123 would resolve to the following global ID:
+ Global ID of a Product object
+ gid://shopify/Product/123
+ Parameterized global IDs
+ Some objects are more complex and have global IDs that contain parameters. A global ID with parameters has the following structure:
+ Parameterized global ID structure
+ gid://shopify/{child_object_name}/{child_object_id}?{parent_object_name}_id={parent_object_id}
+ For example, the InventoryLevel object is associated with the InventoryItem object. If the InventoryLevel object's ID is 123 and the InventoryItem object's ID is 456, then the global ID would resolve to the following structure:
+ Parameterized global ID for InventoryLevel object
+ gid://shopify/InventoryLevel/123?inventory_item_id=456
+ Global ID examples
+ The following table provides some common examples of global IDs that are associated with different GraphQL objects. For example purposes, each global ID is referenced as 123.
+ GraphQL object Example global ID Description
+ Collection gid://shopify/Collection/123 A globally unique identifier of a collection.
+ Customer gid://shopify/Customer/123 A globally unique identifier of a customer.
+ DeliveryCarrierService gid://shopify/DeliveryCarrierService/123 A globally unique identifier of a delivery carrier service.
+ DeliveryLocationGroup gid://shopify/DeliveryLocationGroup/123 A globally unique identifier of a delivery location group.
+ DeliveryProfile gid://shopify/DeliveryProfile/123 A globally unique identifier of a delivery profile, an object that enables shops to create shipping rates for each product variant and location.
+ DeliveryZone gid://shopify/DeliveryZone/123 A globally unique identifier of a delivery zone.
+ DraftOrder gid://shopify/DraftOrder/123 A globally unique identifier of a draft order.
+ DraftOrderLineItem gid://shopify/DraftOrderLineItem/123 A globally unique identifier of a line item in a draft order.
+ Duty gid://shopify/Duty/123 A globally unique identifier of duties on an order.
+ EmailTemplate gid://shopify/EmailTemplate/123 A globally unique identifier of an email notification template that's associated with a Shopify store.
+ Fulfillment gid://shopify/Fulfillment/123 A globally unique identifier of a fulfillment.
+ FulfillmentEvent gid://shopify/FulfillmentEvent/123 A globally unique identifier of a fulfillment event.
+ FulfillmentService gid://shopify/FulfillmentService/123 A globally unique identifier of a fulfillment service.
+ InventoryItem gid://shopify/InventoryItem/123 A globally unique identifier of an inventory item, an object that represents a physical good.
+ InventoryLevel gid://shopify/InventoryLevel/123?inventory_item_id=456 A globally unique identifier of an inventory level, an object that represents the quantities of an inventory item for a location.
+ LineItem gid://shopify/LineItem/123 A globally unique identifier of a line item.
+ Location gid://shopify/Location/123 A globally unique identifier of a location, an object that represents a geographical location where your stores, pop-up stores, headquarters, and warehouses exist.
+ MarketingEvent gid://shopify/MarketingEvent/123 A globally unique identifer of a marketing event, an object that represents actions taken by your app, on behalf of the app user, to market products, collections, discounts, pages, blog posts, and other features.
+ MediaImage gid://shopify/MediaImage/123 A globally unique identifier of a Shopify-hosted image.
+ Metafield gid://shopify/Metafield/123 A globally unique identifier of a metafield, an object that provides a flexible way to attach additional information to a Shopify object.
+ OnlineStoreArticle gid://shopify/OnlineStoreArticle/123 A globally unique identifier of an online store article.
+ OnlineStoreBlog gid://shopify/OnlineStoreBlog/123 A globally unique identifier of an online store blog.
+ OnlineStorePage gid://shopify/OnlineStorePage/123 A globally unique identifier of an online store page.
+ Order gid://shopify/Order/123 A globally unique identifier of an order.
+ OrderTransaction gid://shopify/OrderTransaction/123 A globally unique identifier of an order transaction.
+ Product gid://shopify/Product/123 A globally unique identifier of a product.
+ ProductImage gid://shopify/ProductImage/123 A globally unique identifier of a product image.
+ ProductVariant gid://shopify/ProductVariant/123 A globally unique identifier of a product variant.
+ Refund gid://shopify/Refund/123 A globally unique identifier of a refund.
+ Shop gid://shopify/Shop/123 A globally unique identifier of a Shopify store.
+ StaffMember gid://shopify/StaffMember/123 A globally unique identifier of a staff member in a Shopify store.
+ Theme gid://shopify/Theme/123 A globally unique identifier of a Shopify theme.
+ Querying global IDs
+ A node is an object that has a global ID and is of a type that's defined by the schema. Connections retrieve a list of nodes. For example, the products connection finds all the Product type nodes connected to the query root.
+ The following example shows how to use the GraphQL Admin API to query the global IDs of the first 5 products in your store:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    products(first:5) {
+ 3
+      edges {
+        }
+ 7
+      }
+ 8
+    }
+ 3
+      "products": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/Product/1"
+ 8
+            }
+ 9
+          },
+ 10
+          {
+ 11
+            "node": {
+ 12
+              "id": "gid://shopify/Product/2"
+ 13
+            }
+ 14
+          },
+ 15
+          {
+ 16
+            "node": {
+ 17
+              "id": "gid://shopify/Product/3"
+ 18
+            }
+ 19
+          },
+ 20
+          {
+ 21
+            "node": {
+ 22
+              "id": "gid://shopify/Product/4"
+ 23
+            }
+ 24
+          },
+ 25
+          {
+ 26
+            "node": {
+ 27
+              "id": "gid://shopify/Product/5"
+ 28
+            }
+ 29
+          }
+ 30
+        ]
+ 31
+      }
+ 32
+    }
+ 33 }
+ Retrieving global IDs through the UI
+ Some global IDs can be quickly retrieved through the user interface (UI). For example, you can find a product's global ID from your Shopify admin by clicking Products and clicking a specific product. The URL of the page contains the product's global ID:
+ Page URL containing the global ID of a product
+ https://admin.shopify.com/store/{shop}/products/{id}
+ Using global IDs in mutations
+ Many mutations in Shopify's GraphQL APIs require an id input field. The value of the id field needs to be constructed as a global ID.
+ The following example shows how to use an id input field to update a product's status:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 mutation {
+ 2
+    productUpdate(input: {id: "gid://shopify/Product/3", title: "Burton Custom Freestyle 151", status: "ARCHIVED"} ) {
+ 3
+      product {
+ 4
+        id
+ 5
+        status
+ 6
+      }
+ 7
+    }
+ 8 }
+ JSON response
+ 1 {
+ 2
+    "data": {
+ 3
+      "productUpdate": {
+ 4
+        "product": {
+ 5
+          "id": "gid://shopify/Product/3",
+ 6
+          "status": "ARCHIVED"
+ 7
+        }
+ 8
+      }
+ 9
+    }
+ 10 }
+ Simple IDs
+ Shopify's REST Admin API contains simple IDs, which differ from global IDs. A simple ID is a unique series of numbers that identifies a REST resource:
+ Simple ID example
+ 1 "id": 123456789
+ For example, the REST Admin API's DiscountCode resource includes an id property that has a simple ID as a value:
+ DiscountCode resource
+ 1 {
+ 2
+    "code": "SUMMERSALE10OFF",
+ 3
+    "created_at": "2022-03-13T16:09:54-04:00",
+ 4
+    "updated_at": "2022-03-13T16:09:54-04:00",
+ 5
+    "id": 9808080986,
+ 6
+    ...
+ 7 }
+ Simple IDs also exist for properties that have descriptive names appended by id. For example, the REST Admin API's GiftCard resource includes the following properties that each have a simple ID as a value:
+ GiftCard resource
+ 1 {
+ 2
+    "api_client_id": 123456789,
+ 3
+    "customer_id": 234567890,
+ 4
+    "line_item_id": 345678901,
+ 5
+    "order_id": 456789012,
+ 6
+    "user_id": 567890123,
+ 7
+    ...
+ 8 }
+ Most REST Admin API resources include an admin_graphql_api_id property, which provides a global ID for the equivalent object in the GraphQL Admin API. For example, the following two properties on the Customer resource are equivalent:
+ Customer resource
+ 1 {
+ 2
+    "id": 123456789, // A simple ID for a Customer resource in the REST Admin API
+ 3
+    "admin_graphql_api_id": "gid://shopify/Customer/123456789" // A global ID for the equivalent Customer object in the GraphQL Admin API
+ 4 }
+ Similarly, most GraphQL Admin API objects include a legacyResourceId field, which provides a simple ID for the equivalent resource in the REST Admin API. For example, the following two fields on the Product object are equivalent:
+ POST https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json
+ GraphQL query
+ 1 {
+ 2
+    products(first:5) {
+ 3
+      edges {
+ 4
+        node {
+ 5
+          id # A global ID for the Product object in the GraphQL Admin API
+ 6
+          legacyResourceId  # A simple ID for the equivalent Product resource in the REST Admin API
+ 7
+ 3
+      "products": {
+ 4
+        "edges": [
+ 5
+          {
+ 6
+            "node": {
+ 7
+              "id": "gid://shopify/Product/4353554645014",
+ 8
+              "legacyResourceId": "4353554645014"
+ 9
+            }
+ 10
+          },
+ 11
+          {
+ 12
+            "node": {
+ 13
+              "id": "gid://shopify/Product/4353554710550",
+ 14
+              "legacyResourceId": "4353554710550"
+ 15
+            }
+ 16
+          },
+ 17
+          {
+ 18
+            "node": {
+ 19
+              "id": "gid://shopify/Product/4358159007766",
+ 20
+              "legacyResourceId": "4358159007766"
+ 21
+            }
+ 22
+          },
+ 23
+          {
+ 24
+            "node": {
+ 25
+              "id": "gid://shopify/Product/5591484858390",
+ 26
+              "legacyResourceId": "5591484858390"
+ 27
+            }
+ 28
+          },
+ 29
+          {
+ 30
+            "node": {
+ 31
+              "id": "gid://shopify/Product/5591485448214",
+ 32
+              "legacyResourceId": "5591485448214"
+ 33
+            }
+ 34
+          }
+ 35
+        ]
+ 36
+      }
+ 37
+    }
+ 38 }
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ How it works
+ Global ID examples
+ Querying global IDs
+ Using global IDs in mutations
+ Simple IDs
+ Updates & News

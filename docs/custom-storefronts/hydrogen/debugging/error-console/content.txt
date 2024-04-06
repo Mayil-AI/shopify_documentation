@@ -1,0 +1,25 @@
+Building with the Storefront API
+ Building with the Customer Account API
+ Additional SDKs
+ Error console
+ The error console helps you debug server errors in Hydrogen code deployed to Oxygen.
+ Accessing the error console
+ The error console is available to apps deployed to Oxygen. To open the error console for a deployment, click on any error in the runtime log on its deployment detail page. The error console highlights the line that caused a server error and allows you to explore the complete source code of the deployed worker bundle.
+ The error console and stack trace within it require a source map file to be generated along with your worker bundle. The Hydrogen CLI generates the source map file by default when you run the build command.
+ Raw stack traces
+ Prettified source maps can occasionally be inaccurate. If the formatted stack trace doesn't work, then you can inspect the raw stack trace for more detail about the error. To view a raw stack trace, do the following:
+ On the deployment detail page, click the error you want to inspect.
+ In the Stack trace panel, click Raw traces.
+ Download the worker bundle and use the raw stack trace to dig deeper into the problem.
+ Disabling source maps
+ You can disable source maps by passing the --no-sourcemap flag when running the build command. Doing so means you won't have access to the error console or stack traces in your runtime logs.
+ Terminal
+ $ npx shopify hydrogen build --no-sourcemap
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Accessing the error console
+ Raw stack traces
+ Disabling source maps
+ Updates & News
+ Developer changelog

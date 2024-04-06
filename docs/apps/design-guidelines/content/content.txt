@@ -1,0 +1,60 @@
+Content
+ Overview
+ Voice and tone
+ Product content
+ Grammar and mechanics
+ Navigation
+ User experience
+ Checkout
+ Customer accounts
+ Selling strategies
+ App Store
+ Content
+ Writing and designing content in a thoughtful way makes your app usable, accessible, and readable.
+ Voice and tone
+ Your written content’s voice and tone help you talk to merchants in a consistent, recognizable way.
+ Voice refers to aspects of writing that are consistent across all contexts and audiences. Tone can change based on the audience and their current context.
+ Learn how to apply Shopify’s voice and choose the right tone, no matter what app you’re building, by referring to the Polaris guidelines on voice and tone.
+ Product content
+ The following are some principles behind writing product content for a quality merchant experience.
+ Do Not
+ Don’t duplicate content, such as adding a page title under the App Bridge-set page title, adding horizontal navigation when using the App Bridge ui-nav-menu web component or NavMenu React component, or presenting the same content in different ways on the same page.
+ Use plain language
+ Shopify merchants are located all over the world, have varying levels of literacy, and might not speak English as their first language. Content can easily be mistranslated or misinterpreted.
+ Structure your content in a clear, efficient way.
+ Must Do
+ Use headings, bullets, and short sentences to make your content more scannable.
+ Must Do
+ Use clear terms that are easily understood. As a benchmark, aim for a United States grade 7 reading level. You can check reading levels with tools like Hemingway App.
+ Do Not
+ Don't use jargon or overly technical language that might be difficult for merchants to understand.
+ Do Not
+ Don't use large blocks of text, because they're hard for merchants to scan and gather the most important information quickly.
+ Do Not
+ Don't use idioms and phrases with indirect or ironic meanings, as they can be misinterpreted or mistranslated.
+ Be consistent
+ To help merchants understand key concepts and actions, use terms in a consistent way.
+ One way to ensure consistency is to identify and eliminate synonyms for key concepts and actions.
+ Must Do
+ Use a single noun, verb, or phrase to describe a specific thing, action, or concept.
+ Do Not
+ Don’t use multiple synonyms to describe a specific thing, action, or concept.
+ Encourage action
+ Merchants use Shopify to get things done for their businesses. Write content that helps merchants understand and take the most important actions.
+ Must Do
+ For calls to action (CTAs), start with a strong verb that describes the action. Use active voice to clarify the subject and the action.
+ Must Do
+ Prioritize the most important information and tasks. Break complicated tasks into steps that focus on individual actions.
+ Guide, don’t prescribe
+ Write in a way that puts your merchant at the center and in control. Provide merchants with tools and knowledge for making the best decision.
+ Must Do
+ Give merchants enough information to make the right decision on their own.
+ Grammar and mechanics
+ For spelling, punctuation, and other grammatical considerations, refer to the Polaris guidelines on grammar and mechanics.
+ Must Do
+ In the first reference to your app or company, use its proper name to avoid confusing merchants. If you require additional references in the same content section, then you can use "we". This helps maintain clarity while keeping the content concise.
+ Previous
+ Visual design
+ Next
+ Navigation
+ Was this page helpful?

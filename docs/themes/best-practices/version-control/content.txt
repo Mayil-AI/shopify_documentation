@@ -1,0 +1,70 @@
+Migrating to Online Store 2.0
+ Troubleshooting
+ Theme Store
+ Version control for Shopify themes
+ When you build a Shopify theme, you can introduce optional version control to track and manage changes to your theme code. Version control helps you to manage changes to your code over time.
+ The Shopify GitHub integration lets you add version control to themes in a Shopify store. When a theme is connected to a GitHub repository using the Shopify GitHub integration, any changes that a merchant makes to the theme are tracked as commits to the branch.
+ You should consider the following factors when planning a version control strategy for a Shopify theme:
+ Branch organization and publishing strategy - Because the GitHub integration lets you develop features and campaigns using branches, you should consider how you want to organize your branches and manage your published theme.
+ Managing source and compiled code - The Shopify GitHub integration only supports the default Shopify theme folder structure. If you use a build pipeline to transform your theme's source code into compiled code, then you need to choose an approach that allows you to use a build pipeline, but also lets you track and manage changes to compiled code using the GitHub integration.
+ Branch organization
+ If you're using the Shopify GitHub integration to develop your theme, then consider connecting your main or master branch to your store and then publishing the resulting theme. This ensures that the published theme is always up to date with features as they are merged to the main or master branch.
+ For events like sales, consider using non-main branches to customize your theme. Themes connected to these branches can be published temporarily. After the event is over, you can republish the theme that's connected to your main branch.
+ If you use a build pipeline to transform your code, then you should create a specific deploy branch that acts as your main production code branch, and then deploy the code that you compile off of master to this branch. To learn more, read about managing source and compiled code in the next section.
+ Managing source and compiled code
+ You might use a build pipeline to transform your theme's source code into compiled code that's optimized for browser runtime. Because the Shopify GitHub integration supports only branches that match the default Shopify theme folder structure, you need to organize your code so that a branch that's connected to Shopify matches this structure. For example, a branch that's connected to Shopify can't contain src and dist folders.
+ You can choose from several strategies to manage both your source and compiled code in version control:
+ Use separate repositories for source code and compiled code
+ Separate source code and compiled code using branches (recommended)
+ Mix source code and compiled code
+ If you don't want to track your theme code using the Shopify GitHub integration, then you can also choose to manage only your source code in version control.
+ Tip
+ Instead of using a build pipeline, you can also use Shopify-provided just-in-time file transformations for certain file transformation tasks. This strategy lets you organize your theme code using the default folder structure. To learn more, refer to Just-in-time file transformations.
+ Advantages to managing your source and compiled code using version control
+ Managing your source and compiled code using version control has the following advantages:
+ You can leverage common build tools such as Webpack, Rollup, and PostCSS.
+ Files can be incrementally built on the developer's machine, which allows for live previews of changes made to source code.
+ Changes to compiled code via Shopify can be easily identified.
+ You can push changes to compiled code to the store using the Shopify GitHub integration.
+ However, using this model, changes made to compiled code need to be manually backfilled into the source code.
+ Use separate repositories for source code and compiled code
+ A developer can have one repository that contains their source code and build tools, and another repository that contains a versioned representation of their compiled code.
+ Advantages
+ Using separate repositories is easy to adopt when moving from a source-only versioning model. You can continue to push compiled code directly to a store, and then use the Shopify GitHub integration to track changes to your compiled code over time.
+ Disadvantages
+ You need to work across two repositories for a single theme, which can make backfilling source code more complex.
+ Static files that aren't impacted by file transformations are copied between repositories, resulting in extra maintenance and backfilling.
+ Separate source code and compiled code using branches (recommended)
+ You can publish the compiled code for a theme in a separate branch from the source code. The contents of this branch are compatible with the Shopify theme platform and Theme Check.
+ One way to accomplish this is by using git subtree. Using the subtree command, you can extract your compiled code to a branch that can then be safely connected to a theme.
+ Advantages
+ There is a distinct location within your repository for your production code.
+ The commit history of the branch is clean. The only commits in the production branches are updates to production code. Changes to source code stay in their own branches.
+ Disadvantages
+ Previewing the contents of a working branch requires another branch that contains the "preview" production code. Managing branches might become cumbersome.
+ Static files that aren't impacted by file transformations reside in separate branches, resulting in extra maintenance and backfilling.
+ Mix source code and compiled code
+ You can mix compiled code files within the same folder structure as the source code. For example, inside of an assets folder, you can add a main.js source file and a compiled main.min.js.
+ Advantages
+ Mixing source and compiled code minimizes the number of compiled files to only those that need to be compiled. This means that a merchant's changes to non-compiled files don't need to be backfilled or backported to your source code.
+ Disadvantages
+ Compiled code might be hard to identify, and merchants might edit it directly.
+ If edits are made to compiled code, then they need to be backfilled to avoid being lost the next time the code is compiled from its source.
+ Manage only your source code in version control
+ You can choose to commit only your source code to version control, and then deploy compiled code directly to a store when you want to create a release. Deployment can be done manually from a developer's machine using Shopify CLI, or automated using continuous integration.
+ Advantages
+ This approach is well supported in the Shopify theme developer community.
+ It can leverage common build tools such as Webpack, Rollup, and PostCSS.
+ Files can be incrementally built on the developer's machine, which allows for live previews of changes made to source code.
+ Disadvantages
+ Because the repo only contains source code that isn't compatible with the Shopify theme platform, this method isn't compatible with the Shopify GitHub integration.
+ Compiled code isn't version controlled, which makes tracking changes difficult. You need to manually identify changes to the compiled code, and then backfill your source code so that changes persist the next time the code is compiled and the theme is overwritten.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Branch organization
+ Managing source and compiled code
+ Updates & News
+ Developer changelog
+ Partner blog
+ Engineering blog

@@ -1,0 +1,25 @@
+Billing
+ App Store
+ App performance best practices and guidelines
+ Performance is an important factor for users when they choose apps. When you build an app, you should build with performance in mind.
+ Optimizing your app for performance is key to the success of the users that you support and to the experiences of their customers. Performance directly influences conversion rates, repeat business, and search engine rankings.
+ Performance and the Shopify App Store
+ To be published in the Shopify App Store, your app must not reduce storefront Lighthouse performance scores by more than 10 points.
+ Apps that don't significantly reduce storefront Lighthouse performance scores, and that meet all of the mandatory Shopify admin and Checkout performance criteria are eligible for Built for Shopify status. To qualify for Built for Shopify status, your app must not reduce Lighthouse performance scores by more than ten points, and must meet other applicable criteria.
+ Best practice guides
+ Review the following guides to learn how to measure and improve your app performance in general, and in specific areas of Shopify that your app might interact with.
+ General performance best practices
+ Review general best practices for improving the performance of any Shopify app.
+ Shopify admin, installation, and OAuth performance
+ Improve the performance of apps embedded in the Shopify admin, and for your OAuth flow.
+ Storefront performance
+ Measure and optimize for storefront performance, and learn how Shopify measures an app's impact on storefront performance.
+ Checkout performance
+ Optimize the performance of shipping rate apps, and avoid blocking checkout.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Performance and the Shopify App Store
+ Best practice guides
+ Updates & News
+ Developer changelog

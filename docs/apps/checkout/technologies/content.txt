@@ -1,0 +1,110 @@
+Technologies for customizing Shopify checkout
+ There are many options available that allow you to customize and extend Shopify checkout. This guide introduces the available technologies for customizing checkout, and ways that you can extend checkout.
+ Technologies
+ You can customize Shopify checkout using the following technologies:
+ Technology Customization type Availability
+ Checkout UI extensions Add custom UI or content to the checkout process and Order status page Shopify Plus.
+ 
+ Thank you and Order status extensions are available to all plans except Shopify Starter.
+ GraphQL Admin API Customize the look and feel of checkout Shopify Plus
+ Shopify Functions Extend or replace key parts of Shopify’s backend with custom logic All plans except Shopify Starter.
+ 
+ Some Function APIs are only available in developer preview.
+ 
+ Merchants that have checkout.liquid customizations need to upgrade to Checkout Extensibility to use Function APIs.
+ Post-purchase checkout extensions Add new content to the post-purchase page All plans except Shopify Starter.
+ 
+ Currently in beta. Can be used without restrictions in a development store. To use post-purchase extensions on a live store, you need to request access.
+ Web pixel app extensions Track customer behavior All plans except Shopify starter.
+ The following diagram provides a decision tree for choosing a technology:
+ Use cases
+ There are a variety of ways that you can customize Shopify checkout. The following table describes some common use cases that you can build:
+ Technology Customization type Use cases
+ Checkout UI extensions Add custom UI or content to the checkout process and Order status page
+ Show a product offer before a customer completes checkout.
+ Capture additional input from customers.
+ Build a custom banner that displays in checkout.
+ Capture a survey of the buying experience, or reviews when orders are fulfilled.
+ Provide a referral code to new customers.
+ Add a field validation at checkout that blocks customers from progressing in the checkout if they input invalid data.
+ GraphQL Admin API Customize the look and feel of checkout
+ Apply branding changes such as changing the colors and corner radius settings on checkout form fields.
+ Shopify Functions Extend or replace key parts of Shopify’s backend with custom logic
+ Create a new type of discount that's offered in the cart and at checkout.
+ Rename, reorder, and sort the payment options available to customers during checkout.
+ Rename, reorder, and sort the delivery options available to customers during checkout.
+ Enforce an order maximum for customers with insufficient order history and prevent them from proceeding through checkout.
+ Use location rules to rank the possible locations for a line item during checkout.
+ Use fulfillment constraints to customize fulfillment and delivery strategies during the checkout and fulfillment process.
+ Generate options for the pickup points that are available to customers.
+ Post-purchase checkout extensions Add new content to the post-purchase page
+ Show a product offer after customers have checked out, but before they arrive at the order confirmation page.
+ Capture additional information after customers have checked out, but before they arrive at the order confirmation page.
+ Web pixel app extensions Track customer behavior
+ Collect customer behavioral data to measure and optimize marketing campaign performance as well as your online store's conversion funnel.
+ Getting started
+ To get started with Checkout UI extensions, Shopify Functions, Post-purchase extensions, or Web pixel app extensions, you can use Shopify CLI, which generates starter code for building your extension and automates common development tasks.
+ Learn how to use the GraphQL Admin API to style checkout for a brand, such as changing the colors and corner radius settings on checkout form fields.
+ General requirements
+ You've created a Partner account.
+ You've created a new development store. Depending on the extension type that you're generating, you might also need to enable the Checkout and Customer Accounts Extensibility developer preview.
+ You understand how apps fit into Shopify.
+ You've installed Node.js 18 or higher.
+ You've installed a Node.js package manager: either npm, Yarn 1.x, or pnpm.
+ You've installed Git 2.28.0 or higher.
+ You're using the latest version of Chrome or Firefox.
+ Language-specific requirements for writing Shopify Functions in Rust
+ You've installed Rust.
+ On Windows, Rust requires the Microsoft C++ Build Tools. Make sure to select the Desktop development with C++ workload when installing the tools.
+ You've installed cargo-wasi:
+ Terminal
+ $ cargo install cargo-wasi
+ Note
+ If you've previously installed cargo-wasi and updated Rust to version 1.67 or higher, then you also need to update to the latest cargo-wasi by running cargo install cargo-wasi.
+ Steps
+ Create an app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm init @shopify/app@latest
+ Navigate to your app directory:
+ Terminal
+ $ cd <directory>
+ Run one of the following commands to create a new extension:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run shopify app generate extension -- --name my-extension
+ Choose from one of the following extension types:
+ Checkout UI
+ Function (any of the sub-types)
+ Post-purchase UI
+ Web Pixel
+ Select a language for your extension.
+ For this quickstart, if you chose a Function extension type, then select either JavaScript or Rust.
+ Complete one of the following steps:
+ If you chose a Checkout UI, Post-purchase UI or Web Pixel extension type, then start your development server to build and preview your app:
+ Terminal
+ npm
+ Yarn
+ pnpm
+ $ npm run dev
+ Press p to open the developer console. In the developer console page, click on the preview link for your extension.
+ If you chose a Function extension type, then navigate to extensions/my-extension and build the function's Wasm module:
+ Terminal
+ $ cd extensions/my-extension
+ $ cargo wasi build --release
+ To test your function, you need to make it available to your development store. Learn more.
+ Next steps
+ Learn how to use checkout UI and post-purchase extensions by following one of our use case tutorials.
+ Learn how to use Shopify Functions by following one of our use case tutorials.
+ Create a web pixel app extension to track customer behavior and subscribe to all events emitted by Shopify.
+ Use the GraphQL Admin API to apply branding changes to checkout.
+ Was this section helpful?
+ YesNo
+ ON THIS PAGE
+ Technologies
+ Use cases
+ Getting started
